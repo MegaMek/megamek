@@ -29,6 +29,7 @@ import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
+import megamek.common.icons.Portrait;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -214,9 +215,8 @@ public class MMStaticDirectoryManager {
     public static Image getUnscaledPortraitImage(String category, String name) {
         // Return the default portrait when parameters are null
         // or no portrait is selected
-        if ((category == null)
-                || (name == null)
-                || category.equals(Crew.PORTRAIT_NONE)) {
+        if ((category == null) || (name == null)
+                || AbstractIcon.DEFAULT_ICON_FILENAME.equals(category)) {
             return getDefaultPortrait();
         }
 
@@ -232,11 +232,12 @@ public class MMStaticDirectoryManager {
         try {
             // Translate the root portrait directory name and PORTRAIT_NONE
             // This could be improved by not passing around ROOT_PORTRAIT
-            if (category.equals(Crew.ROOT_PORTRAIT)) {
+            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
                 category = "";
             }
-            if (name.equals(Crew.PORTRAIT_NONE)) {
-                name = "default.gif";
+
+            if (AbstractIcon.DEFAULT_ICON_FILENAME.equals(name)) {
+                name = Portrait.DEFAULT_PORTRAIT_FILENAME;
             }
 
             Image image = (Image) portraitDirectory.getItem(category, name);
@@ -322,7 +323,7 @@ public class MMStaticDirectoryManager {
      */
     public static Image getDefaultPortrait() {
         try {
-            Image image = (Image) (portraitDirectory.getItem("", "default.gif"));
+            Image image = (Image) (portraitDirectory.getItem("", Portrait.DEFAULT_PORTRAIT_FILENAME));
 
             // When getItem() doesn't find the default portrait, it returns null
             // In that case, fall back to the failPortrait
@@ -515,7 +516,6 @@ public class MMStaticDirectoryManager {
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
             MegaMek.getLogger().error("A null color was passed.");
-
             return ImageUtil.failStandardImage();
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);

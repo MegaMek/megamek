@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.enums.Gender;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -119,8 +120,6 @@ public class Crew implements Serializable {
     private PilotOptions options = new PilotOptions();
 
     // pathway to pilot portrait
-    public static final String ROOT_PORTRAIT = "-- General --";
-    public static final String PORTRAIT_NONE = "None";
     private final String[] portraitCategory;
     private final String[] portraitFileName;
 
@@ -170,7 +169,6 @@ public class Crew implements Serializable {
     public static final String MAP_SURNAME = "surname";
     public static final String MAP_BLOODNAME = "bloodname";
     public static final String MAP_PHENOTYPE = "phenotype";
-    public static final String MAP_RANK = "rank";
     //endregion extraData inner map keys
     /**
      * The number of hits that a pilot can take before he dies.
@@ -318,9 +316,9 @@ public class Crew implements Serializable {
         fatigue = 0;
         toughness = new int[slots];
         portraitCategory = new String[slots];
-        Arrays.fill(portraitCategory, ROOT_PORTRAIT);
+        Arrays.fill(portraitCategory, AbstractIcon.ROOT_CATEGORY);
         portraitFileName = new String[slots];
-        Arrays.fill(portraitFileName, PORTRAIT_NONE);
+        Arrays.fill(portraitFileName, AbstractIcon.DEFAULT_ICON_FILENAME);
 
         options.initialize();
 
@@ -1196,7 +1194,7 @@ public class Crew implements Serializable {
         if (portraitFileName.length > pos) {
             return portraitFileName[pos];
         } else {
-            return PORTRAIT_NONE;
+            return AbstractIcon.DEFAULT_ICON_FILENAME;
         }
     }
 

@@ -26,6 +26,7 @@ import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -1236,11 +1237,11 @@ public class EntityListFile {
             output.write("\" hits=\"");
             output.write(String.valueOf(crew.getHits(pos)));
         }
-        if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory(pos))) {
+        if (!AbstractIcon.ROOT_CATEGORY.equals(crew.getPortraitCategory(pos))) {
             output.write("\" portraitCat=\"");
             output.write(crew.getPortraitCategory(pos));
         }
-        if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName(pos))) {
+        if (!AbstractIcon.DEFAULT_ICON_FILENAME.equals(crew.getPortraitFileName(pos))) {
             output.write("\" portraitFile=\"");
             output.write(crew.getPortraitFileName(pos));
         }

@@ -21,6 +21,7 @@ package megamek.common.icons;
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Portrait extends AbstractIcon {
@@ -45,6 +46,16 @@ public class Portrait extends AbstractIcon {
         return super.hasDefaultFilename() || DEFAULT_PORTRAIT_FILENAME.equals(getFilename());
     }
     //endregion Boolean Methods
+
+    @Override
+    public ImageIcon getImageIcon() {
+        return getImageIcon(72);
+    }
+
+    @Override
+    public Image getImage() {
+        return getImage(72);
+    }
 
     @Override
     public Image getBaseImage() {

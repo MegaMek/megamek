@@ -101,12 +101,16 @@ public abstract class AbstractIcon implements Serializable {
         return new ImageIcon(getImage());
     }
 
+    public ImageIcon getImageIcon(int size) {
+        return new ImageIcon(getImage(size));
+    }
+
     public Image getImage() {
         return getImage(0, 0);
     }
 
     public Image getImage(int size) {
-        return getImage(size, size);
+        return getImage(size, -1);
     }
 
     /**

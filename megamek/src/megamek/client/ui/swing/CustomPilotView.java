@@ -20,6 +20,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -78,7 +79,7 @@ public class CustomPilotView extends JPanel {
     
     private final JComboBox<String> cbBackup = new JComboBox<>();
     
-    private final ArrayList<Entity> entityUnitNum = new ArrayList<>();
+    private final List<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
     
     private String portraitCategory;
@@ -97,27 +98,28 @@ public class CustomPilotView extends JPanel {
             add(chkMissing, GBC.eop());
         }
         
-        JButton button = new JButton();
-        button.setPreferredSize(new Dimension(72, 72));
-        button.setText(Messages.getString("CustomMechDialog.labPortrait"));
-        button.setActionCommand("portrait"); 
-        button.addActionListener(e -> {
+        JButton portraitButton = new JButton();
+        portraitButton.setPreferredSize(new Dimension(72, 72));
+        portraitButton.setName("portrait");
+        portraitButton.addActionListener(e -> {
             AbstractIconChooser portraitDialog = new PortraitChooser(parent,
                     entity.getCrew().getPortrait(slot));
             int result = portraitDialog.showDialog();
             if (result == JOptionPane.OK_OPTION) {
                 if (portraitDialog.getSelectedItem() != null) {
-                    ((JButton) e.getSource()).setIcon(portraitDialog.getSelectedItem().getImageIcon());
+                    portraitCategory = portraitDialog.getSelectedItem().getCategory();
+                    portraitFilename = portraitDialog.getSelectedItem().getFilename();
+                    portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
                 }
             }
         });
         
         portraitCategory = entity.getCrew().getPortraitCategory(slot);
         portraitFilename = entity.getCrew().getPortraitFileName(slot);
-        button.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
-        add(button, GBC.std().gridheight(2));
+        portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
+        add(portraitButton, GBC.std().gridheight(2));
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
+        JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
             gender = RandomGenderGenerator.generate();
             fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
@@ -141,51 +143,51 @@ public class CustomPilotView extends JPanel {
         });
         add(button, GBC.eop());
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
+        label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldName, GBC.eol());
         fldName.setText(entity.getCrew().getName(slot));
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT); //$NON-NLS-1$
+        label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldNick, GBC.eop());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
         if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryL, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryM, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
             
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroL, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroM, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroB, GBC.eol());
             }
 
         } else {
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunnery, GBC.eol());
 
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAero, GBC.eol());
             }

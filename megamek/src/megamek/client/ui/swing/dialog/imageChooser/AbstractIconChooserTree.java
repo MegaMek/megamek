@@ -59,7 +59,7 @@ public abstract class AbstractIconChooserTree extends JTree {
                 } else {
                     // I guess we're done? This shouldn't happen, as there
                     // shouldn't be duplicates
-                    MegaMek.getLogger().error(this, "");
+                    MegaMek.getLogger().error("Duplicate categories found in tree");
                 }
             }
         }

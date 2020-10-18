@@ -44,7 +44,6 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
         add(lblText);
     }
 
-
     /**
      * Sets the image based on the passed category and name from
      * the DirectoryItems that the list currently displays.

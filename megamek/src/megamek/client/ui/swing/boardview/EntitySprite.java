@@ -943,7 +943,7 @@ class EntitySprite extends Sprite {
                 if (f.exists()) {
                     // HACK: Get the real portrait to find the size of the image
                     // and scale the tooltip HTML IMG accordingly
-                    Image portrait = icon.getImage();
+                    Image portrait = icon.getImage(0, 0);
                     if (portrait.getWidth(null) > portrait.getHeight(null)) {
                         float h = 60f * portrait.getHeight(null) / portrait.getWidth(null);
                         addToTT("PilotPortraitW", BR, imagePath, (int) h);

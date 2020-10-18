@@ -31,7 +31,6 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.DirectoryItems;
 
 import javax.swing.*;
@@ -443,8 +442,8 @@ public class MMStaticDirectoryManager {
      *
      * @see ImageUtil#failStandardImage()
      */
-    public static Image getCamoImage(DirectoryItem name) {
-        return getCamoImage(name.getCategory(), name.getItem());
+    public static Image getCamoImage(AbstractIcon name) {
+        return getCamoImage(name.getCategory(), name.getFilename());
     }
 
     /**

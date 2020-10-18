@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
@@ -169,6 +170,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getNbrMFInferno() {
         return num_mf_inferno;
+    }
+
+    @Override
+    public AbstractIcon getCamouflage() {
+        return new Camouflage(getCamoCategory(), getCamoFileName());
     }
 
     @Override

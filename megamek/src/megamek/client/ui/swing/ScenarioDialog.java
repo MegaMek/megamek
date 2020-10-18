@@ -34,8 +34,8 @@ import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.IPlayer;
 import megamek.common.Player;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.DirectoryItem;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -90,13 +90,13 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 }
 
                 // Otherwise, update the player data from the selection
-                DirectoryItem selectedItem = camoDialog.getSelectedItem();
-                String category = selectedItem.getCategory();
+                AbstractIcon selectedIcon = camoDialog.getSelectedItem();
+                String category = selectedIcon.getCategory();
                 if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
                     curPlayer.setColorIndex(camoDialog.getSelectedIndex());
                 }
                 curPlayer.setCamoCategory(category);
-                curPlayer.setCamoFileName(selectedItem.getItem());
+                curPlayer.setCamoFileName(selectedIcon.getFilename());
                 curButton.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(curPlayer));
             });
         }

@@ -105,12 +105,13 @@ public class CustomPilotView extends JPanel {
         button.setText(Messages.getString("CustomMechDialog.labPortrait"));
         button.setActionCommand("portrait"); 
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int result = portraitDialog.showDialog(entity.getCrew(), slot);
                 if (result == JOptionPane.OK_OPTION) {
                     if (portraitDialog.getSelectedItem() != null) {
                         portraitCategory = portraitDialog.getSelectedItem().getCategory();
-                        portraitFilename = portraitDialog.getSelectedItem().getItem();
+                        portraitFilename = portraitDialog.getSelectedItem().getFilename();
                         ((JButton) e.getSource()).setIcon(
                                 MMStaticDirectoryManager.getPortraitIcon(portraitCategory, portraitFilename));
                     } 
@@ -276,10 +277,10 @@ public class CustomPilotView extends JPanel {
 
         if (entity instanceof Protomech) {
             // All ProtoMechs have a callsign.
-            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " + //$NON-NLS-1$
+            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " +
                     (entity.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()) +
-                    '-' + entity.getId();//$NON-NLS-1$
+                    '-' + entity.getId();
             label = new JLabel(callsign, SwingConstants.CENTER);
             add(label, GBC.eol().anchor(GridBagConstraints.CENTER));
 
@@ -291,6 +292,7 @@ public class CustomPilotView extends JPanel {
 
                         private final short unitNumber = entity.getUnitNumber();
 
+                        @Override
                         public boolean accept(Entity unitEntity) {
                             return (unitEntity instanceof Protomech)
                                     && (ownerId == unitEntity.getOwnerId())

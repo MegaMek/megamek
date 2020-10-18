@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 
 public class CamoChooserTree extends AbstractIconChooserTree {
     private static final long serialVersionUID = -452869897803327464L;
@@ -30,7 +31,7 @@ public class CamoChooserTree extends AbstractIconChooserTree {
         super();
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        root.add(new DefaultMutableTreeNode(AbstractIcon.DEFAULT_ICON_FILENAME));
+        root.add(new DefaultMutableTreeNode(Camouflage.NO_CAMOUFLAGE));
         if (MMStaticDirectoryManager.getCamouflage() != null) {
             if (MMStaticDirectoryManager.getCamouflage().getItemNames("").hasNext()) {
                 root.add(new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY));

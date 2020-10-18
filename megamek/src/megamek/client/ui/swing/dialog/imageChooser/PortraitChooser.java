@@ -26,7 +26,6 @@ import java.util.List;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Configuration;
-import megamek.common.Crew;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 
@@ -44,7 +43,11 @@ public class PortraitChooser extends AbstractIconChooser {
 
     /** Creates a dialog that allows players to choose a portrait. */
     public PortraitChooser(Window parent) {
-        super(parent, Messages.getString("PortraitChoiceDialog.select_portrait"),
+        this(parent, null);
+    }
+
+    public PortraitChooser(Window parent, AbstractIcon icon) {
+        super(parent, icon, Messages.getString("PortraitChoiceDialog.select_portrait"),
                 new AbstractIconRenderer(), new PortraitChooserTree());
     }
 
@@ -80,26 +83,9 @@ public class PortraitChooser extends AbstractIconChooser {
         }
     }
 
-    /**
-     * Show the portrait chooser dialog and pre-select the portrait
-     * of the given crew and slot. The dialog will allow choosing a portrait.
-     * Also reloads the portrait directory from disk.
-     */
-    public int showDialog(Crew crew, int slot) {
-        refreshPortraits();
-        setPilot(crew, slot);
-        return showDialog();
-    }
-
     /** Reloads the camouflage directory from disk. */
     private void refreshPortraits() {
         MMStaticDirectoryManager.refreshPortraitDirectory();
         refreshDirectory(new PortraitChooserTree());
-    }
-
-    /** Preselects the portrait of the given pilot. */
-    public void setPilot(Crew pilot, int slot) {
-        AbstractIcon portrait = pilot.getPortrait(slot);
-        setSelection(portrait);
     }
 }

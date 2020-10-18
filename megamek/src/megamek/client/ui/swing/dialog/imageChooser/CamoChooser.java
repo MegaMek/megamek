@@ -39,6 +39,7 @@ import megamek.common.icons.AbstractIcon;
  * @see AbstractIconChooser
  */
 public class CamoChooser extends AbstractIconChooser {
+    //region Variable Declarations
     private static final long serialVersionUID = -8060324139099113292L;
 
     /** True when an individual camo is being selected for an entity. */
@@ -46,13 +47,16 @@ public class CamoChooser extends AbstractIconChooser {
 
     /** When an individual camo is being selected, the player's camo is displayed as a reset option. */
     private AbstractIcon entityOwnerCamo;
+    //endregion Variable Declarations
 
+    //region Constructors
     /** Creates a dialog that allows players to choose a camo pattern. */
     public CamoChooser(Window parent) {
-        super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"),
+        super(parent, null, Messages.getString("CamoChoiceDialog.select_camo_pattern"),
                 new AbstractIconRenderer(), new CamoChooserTree());
         showSearch(true);
     }
+    //endregion Constructors
 
     /**
      * Show the camo choice dialog and pre-select the camo or color

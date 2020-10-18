@@ -18,8 +18,6 @@ package megamek.client.ui.swing;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -37,6 +35,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooser;
 import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -63,7 +62,6 @@ public class CustomPilotView extends JPanel {
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
-    private final PortraitChooser portraitDialog;
     private final JTextField fldNick = new JTextField(20);
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
@@ -103,19 +101,17 @@ public class CustomPilotView extends JPanel {
         button.setPreferredSize(new Dimension(72, 72));
         button.setText(Messages.getString("CustomMechDialog.labPortrait"));
         button.setActionCommand("portrait"); 
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = portraitDialog.showDialog(entity.getCrew(), slot);
-                if (result == JOptionPane.OK_OPTION) {
-                    if (portraitDialog.getSelectedItem() != null) {
-                        ((JButton) e.getSource()).setIcon(portraitDialog.getSelectedItem().getImageIcon());
-                    }
+        button.addActionListener(e -> {
+            AbstractIconChooser portraitDialog = new PortraitChooser(parent,
+                    entity.getCrew().getPortrait(slot));
+            int result = portraitDialog.showDialog();
+            if (result == JOptionPane.OK_OPTION) {
+                if (portraitDialog.getSelectedItem() != null) {
+                    ((JButton) e.getSource()).setIcon(portraitDialog.getSelectedItem().getImageIcon());
                 }
             }
         });
         
-        portraitDialog = new PortraitChooser(parent);
         portraitCategory = entity.getCrew().getPortraitCategory(slot);
         portraitFilename = entity.getCrew().getPortraitFileName(slot);
         button.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());

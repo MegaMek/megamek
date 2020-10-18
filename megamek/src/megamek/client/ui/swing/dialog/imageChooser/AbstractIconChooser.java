@@ -66,6 +66,7 @@ import megamek.common.icons.AbstractIcon;
  * should be called in the constructor to show the search panel.
  */
 public abstract class AbstractIconChooser extends JDialog implements TreeSelectionListener {
+    //region Variable Declarations
     private static final long serialVersionUID = -7836502700465322620L;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -89,7 +90,9 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
 
     /** When true, camos from all subdirectories of the current selection are shown. */
     protected boolean includeSubDirs = true;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Creates a dialog that allows players to choose a directory from
      * a directory tree and an image from the images in that directory.
@@ -99,7 +102,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
      * @param renderer A ListCellRenderer<AbstractIcon> to show the images
      * @param tree the JTree with the directories
      */
-    public AbstractIconChooser(Window parent, String title,
+    public AbstractIconChooser(Window parent, AbstractIcon icon, String title,
                                ListCellRenderer<AbstractIcon> renderer, JTree tree) {
         super(parent, title, ModalityType.APPLICATION_MODAL);
 
@@ -142,7 +145,12 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
                 cancel();
             }
         });
+
+        if (icon != null) {
+            setSelection(icon);
+        }
     }
+    //endregion Constructors
 
     /** Constructs the bottom panel with the Okay and Cancel buttons. */
     private JPanel buttonPanel() {

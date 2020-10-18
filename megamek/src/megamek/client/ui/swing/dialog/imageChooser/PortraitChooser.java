@@ -83,7 +83,7 @@ public class PortraitChooser extends AbstractIconChooser {
         }
     }
 
-    /** Reloads the camouflage directory from disk. */
+    /** Reloads the portrait directory from disk. */
     private void refreshPortraits() {
         MMStaticDirectoryManager.refreshPortraitDirectory();
         refreshDirectory(new PortraitChooserTree());

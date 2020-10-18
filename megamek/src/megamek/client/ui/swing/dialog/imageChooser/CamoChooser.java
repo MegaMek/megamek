@@ -26,7 +26,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.DirectoryItem;
+import megamek.common.icons.AbstractIcon;
 
 /**
  * This dialog allows players to select the camo pattern (or color) used by
@@ -35,36 +35,26 @@ import megamek.common.util.fileUtils.DirectoryItem;
  * {@link Configuration#camoDir()} directory tree.
  * Should be shown by using showDialog(IPlayer) or showDialog(Entity). These
  * methods return either JOptionPane.OK_OPTION or .CANCEL_OPTION.
- * 
- * @see AbstractImageChooser
+ *
+ * @see AbstractIconChooser
  */
-public class CamoChooser extends AbstractImageChooser {
+public class CamoChooser extends AbstractIconChooser {
     private static final long serialVersionUID = -8060324139099113292L;
 
-    /** When true, camos from all subdirectories of the current selection are shown. */
-    private boolean includeSubDirs = true;
-    
     /** True when an individual camo is being selected for an entity. */
     private boolean individualCamo = false;
-    
+
     /** When an individual camo is being selected, the player's camo is displayed as a reset option. */
-    private DirectoryItem entityOwnerCamo;
-    
+    private AbstractIcon entityOwnerCamo;
+
     /** Creates a dialog that allows players to choose a camo pattern. */
     public CamoChooser(Window parent) {
-        super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"), 
-                new CamoRenderer(), new CamoChooserTree());
-        showSearch(true);
-    }
-
-    /** Creates a dialog that allows players to choose a camo pattern. */
-    public CamoChooser(Window parent, String category, String filename) {
         super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"),
-                new CamoRenderer(), new CamoChooserTree());
+                new AbstractIconRenderer(), new CamoChooserTree());
         showSearch(true);
     }
 
-    /** 
+    /**
      * Show the camo choice dialog and pre-select the camo or color
      * of the given player. The dialog will allow choosing camos
      * and colors. Also refreshes the camos from disk.
@@ -72,11 +62,11 @@ public class CamoChooser extends AbstractImageChooser {
     public int showDialog(IPlayer player) {
         refreshCamos();
         individualCamo = false;
-        setPlayer(player);
+        setSelection(player.getCamouflage());
         return showDialog();
     }
 
-    /** 
+    /**
      * Show the camo choice dialog and pre-select the camo or color
      * of the given entity. The dialog will allow choosing camos
      * and the single color of the player owning the entity.
@@ -96,31 +86,32 @@ public class CamoChooser extends AbstractImageChooser {
     }
 
     @Override
-    protected List<DirectoryItem> getItems(String category) {
-        List<DirectoryItem> result = new ArrayList<>();
-        
-        // If a player camo is being selected, the items presented in the 
-        // NO_CAMO section are the available player colors. 
-        // If an individual camo is being selected, then the only item presented 
-        // in the NO_CAMO section is the owner's camo. This can be chosen 
-        // to remove the individual camo. 
+    protected List<AbstractIcon> getItems(String category) {
+        List<AbstractIcon> result = new ArrayList<>();
+
+        // If a player camo is being selected, the items presented in the
+        // NO_CAMO section are the available player colors.
+        // If an individual camo is being selected, then the only item presented
+        // in the NO_CAMO section is the owner's camo. This can be chosen
+        // to remove the individual camo.
         if (category.startsWith(Camouflage.NO_CAMOUFLAGE)) {
             if (individualCamo) {
                 result.add(entityOwnerCamo);
             } else {
                 for (String color: IPlayer.colorNames) {
-                    result.add(new DirectoryItem(Camouflage.NO_CAMOUFLAGE, color));
+                    result.add(new Camouflage(Camouflage.NO_CAMOUFLAGE, color));
                 }
-            } 
+            }
             return result;
         }
-        
+
         // In any other camo section, the camos of the selected category are
         // presented. When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames(); catNames.hasNext(); ) {
-                String tcat = catNames.next(); 
+            for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
+                 catNames.hasNext(); ) {
+                String tcat = catNames.next();
                 if (tcat.startsWith(category)) {
                     addCategoryItems(tcat, result);
                 }
@@ -130,25 +121,28 @@ public class CamoChooser extends AbstractImageChooser {
         }
         return result;
     }
-    
+
     @Override
-    protected List<DirectoryItem> getSearchedItems(String searched) {
+    protected List<AbstractIcon> getSearchedItems(String searched) {
         // For a category that contains the search string, all its items
-        // are added to the list. Additionally, all items that contain 
+        // are added to the list. Additionally, all items that contain
         // the search string are added.
-        List<DirectoryItem> result = new ArrayList<>();
+
+        List<AbstractIcon> result = new ArrayList<>();
         String lowerSearched = searched.toLowerCase();
-        
-        for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames(); catNames.hasNext(); ) {
-            String tcat = catNames.next(); 
+
+        for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
+             catNames.hasNext(); ) {
+            String tcat = catNames.next();
             if (tcat.toLowerCase().contains(lowerSearched)) {
                 addCategoryItems(tcat, result);
                 continue;
             }
-            for (Iterator<String> itemNames = MMStaticDirectoryManager.getCamouflage().getItemNames(tcat); itemNames.hasNext(); ) {
+            for (Iterator<String> itemNames = MMStaticDirectoryManager.getCamouflage().getItemNames(tcat);
+                 itemNames.hasNext(); ) {
                 String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
-                    result.add(new DirectoryItem(tcat, item));
+                    result.add(new Camouflage(tcat, item));
                 }
             }
         }
@@ -156,32 +150,18 @@ public class CamoChooser extends AbstractImageChooser {
         return result;
     }
 
-    /** 
+    /**
      * Adds the camos of the given category to the given items ArrayList.
-     * Assumes that the root of the path (IPlayer.ROOT_CAMO) is passed as ""! 
-     */
-    private void addCategoryItems(String category, List<DirectoryItem> items) {
-        for (Iterator<String> camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(category); camoNames.hasNext(); ) {
-            items.add(new DirectoryItem(category, camoNames.next()));
+     * Assumes that the root of the path (IPlayer.ROOT_CAMO) is passed as ""!
+     * */
+    private void addCategoryItems(String category, List<AbstractIcon> items) {
+        for (Iterator<String> camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(category);
+             camoNames.hasNext(); ) {
+            items.add(new Camouflage(category, camoNames.next()));
         }
     }
 
     /**
-     * Preselects the Tree and the Images with the given player's camo.
-     */
-    private void setPlayer(IPlayer player) {
-        String category = player.getCamoCategory();
-        String filename;
-        if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
-            filename = IPlayer.colorNames[player.getColorIndex()];
-        } else {
-            filename = player.getCamoFileName();
-        }
-        
-        setSelection(category, filename);
-    }
-
-    /** 
      * Preselects the Tree and the Images with the given entity's camo
      * or the owner's, if the entity has no individual camo. Also stores
      * the owner's camo to present a "revert to no individual" camo option.
@@ -189,21 +169,18 @@ public class CamoChooser extends AbstractImageChooser {
     private void setEntity(Entity entity) {
         // Store the owner's camo to display as the only "No Camo" option
         // This may be a color
-        String item = entity.getOwner().getCamoFileName();
-        if (Camouflage.NO_CAMOUFLAGE.equals(entity.getOwner().getCamoCategory())) {
+        String item = entity.getOwner().getCamouflage().getFilename();
+        if (entity.getOwner().getCamouflage().getCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
             item = IPlayer.colorNames[entity.getOwner().getColorIndex()];
         }
-        entityOwnerCamo = new DirectoryItem(entity.getOwner().getCamoCategory(), item);
+        entityOwnerCamo = new Camouflage(entity.getOwner().getCamouflage().getCategory(), item);
 
         // Set the camo category and filename to the entity's if it has one,
         // otherwise to the corresponding player's camo category
-        if (entity.getCamoCategory() == null) {
-            setPlayer(entity.getOwner());
+        if (entity.getCamouflage().isDefault()) {
+            setSelection(entity.getOwner().getCamouflage());
         } else {
-            String category = entity.getCamoCategory();
-            String filename = entity.getCamoFileName();
-            setSelection(category, filename);
+            setSelection(entity.getCamouflage());
         }
     }
-        
 }

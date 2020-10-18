@@ -80,6 +80,7 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -88,7 +89,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
@@ -469,7 +469,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             // Update the player from the camo selection
-            DirectoryItem selectedItem = camoDialog.getSelectedItem();
+            AbstractIcon selectedItem = camoDialog.getSelectedItem();
             if (Camouflage.NO_CAMOUFLAGE.equals(selectedItem.getCategory())) {
                 player.setColorIndex(camoDialog.getSelectedIndex());
             }

@@ -1,16 +1,17 @@
 /*
- *  This file is part of MegaMek
- * Copyright (C) 2017 - The MegaMek Team
+ * Copyright (C) 2017 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -37,7 +38,6 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -54,7 +54,6 @@ import megamek.common.preference.PreferenceManager;
  * for the entire crew.
  * 
  * @author Neoancient
- *
  */
 public class CustomPilotView extends JPanel {
     private static final long serialVersionUID = 345126674612500365L;
@@ -110,11 +109,8 @@ public class CustomPilotView extends JPanel {
                 int result = portraitDialog.showDialog(entity.getCrew(), slot);
                 if (result == JOptionPane.OK_OPTION) {
                     if (portraitDialog.getSelectedItem() != null) {
-                        portraitCategory = portraitDialog.getSelectedItem().getCategory();
-                        portraitFilename = portraitDialog.getSelectedItem().getFilename();
-                        ((JButton) e.getSource()).setIcon(
-                                MMStaticDirectoryManager.getPortraitIcon(portraitCategory, portraitFilename));
-                    } 
+                        ((JButton) e.getSource()).setIcon(portraitDialog.getSelectedItem().getImageIcon());
+                    }
                 }
             }
         });
@@ -122,7 +118,7 @@ public class CustomPilotView extends JPanel {
         portraitDialog = new PortraitChooser(parent);
         portraitCategory = entity.getCrew().getPortraitCategory(slot);
         portraitFilename = entity.getCrew().getPortraitFileName(slot);
-        button.setIcon(MMStaticDirectoryManager.getPortraitIcon(entity.getCrew(), slot));
+        button.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName"));

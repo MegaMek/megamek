@@ -23,13 +23,11 @@ import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.Configuration;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-import megamek.common.icons.Portrait;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItems;
 
@@ -196,204 +194,18 @@ public class MMStaticDirectoryManager {
     }
     //endregion Refreshers
 
-    //region Portraits
-    /** Holds a drawn "fail" image that can be used when image loading fails. */
-    public static BufferedImage failPortrait;
-
-    /**
-     * Returns an Image of the portrait given
-     * by its category (aka directory) and name (aka filename).
-     * The image is not scaled in any way.
-     * When the portrait cannot be created, the default portrait
-     * or - if that cannot be found - a placeholder "fail" image
-     * is returned.
-     *
-     * @see #getDefaultPortrait()
-     * @see #failPortrait()
-     */
-    public static Image getUnscaledPortraitImage(String category, String name) {
-        // Return the default portrait when parameters are null
-        // or no portrait is selected
-        if ((category == null) || (name == null)
-                || AbstractIcon.DEFAULT_ICON_FILENAME.equals(category)) {
-            return getDefaultPortrait();
-        }
-
-        // Make sure the portraitDirectory has been initialized
-        // If the portraitDirectory is still null, there's an error
-        // loading it which has been logged already
-        initializePortraits();
-        if (portraitDirectory == null) {
-            return getDefaultPortrait();
-        }
-
-        // Try to get the portrait
-        try {
-            // Translate the root portrait directory name and DEFAULT_ICON_FILENAME
-            // This could be improved by not passing around ROOT_CATEGORY
-            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
-                category = "";
-            }
-
-            if (AbstractIcon.DEFAULT_ICON_FILENAME.equals(name)) {
-                name = Portrait.DEFAULT_PORTRAIT_FILENAME;
-            }
-
-            Image image = (Image) portraitDirectory.getItem(category, name);
-
-            // When getItem() doesn't find the category+name, it returns null
-            if (image != null) {
-                return image;
-            }
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
-        }
-
-        // An error must have occurred, fall back to the default portrait
-        MegaMek.getLogger().error("Could not load portrait image! Category: " + category + "; Name: " + name);
-        return getDefaultPortrait();
-    }
-
-    /**
-     * Returns an Image of the portrait given
-     * by its category (aka directory) and name (aka filename).
-     * The image will be scaled and centered to 72x72 pixels.
-     * When the portrait cannot be created, the default portrait
-     * or - if that cannot be found - a placeholder "fail" image
-     * is returned.
-     *
-     * @see #getDefaultPortrait()
-     * @see #failPortrait()
-     */
-    public static Image getPortraitImage(String category, String name) {
-        return scaleAndCenter(getUnscaledPortraitImage(category, name), 72);
-    }
-
-    /**
-     * Returns an Icon of the portrait given
-     * by its category (aka directory) and name (aka filename).
-     * The image will be scaled to be 72 pixels high.
-     * When the portrait cannot be created, the default portrait
-     * or - if that cannot be found - a placeholder "fail" image
-     * is returned.
-     *
-     * @see #getDefaultPortrait()
-     * @see #failPortrait()
-     */
-    public static Icon getPortraitIcon(String category, String name) {
-        return new ImageIcon(getPortraitImage(category, name));
-    }
-
-    /**
-     * Returns an Icon of the portrait given
-     * by its crew/pilot and slot.
-     * The image will be scaled to be 72 pixels high.
-     * When the portrait cannot be created, the default portrait
-     * or - if that cannot be found - a placeholder "fail" image
-     * is returned.
-     *
-     * @see #getDefaultPortrait()
-     * @see #failPortrait()
-     */
-    public static Image getPortraitImage(Crew crew, int slot) {
-        String category = crew.getPortraitCategory(slot);
-        String filename = crew.getPortraitFileName(slot);
-        return getPortraitImage(category, filename);
-    }
-
-    /**
-     * Returns an Icon of the portrait given
-     * by its crew/pilot and slot.
-     * The image will be scaled to be 72 pixels high.
-     * When the portrait cannot be created, the default portrait
-     * or - if that cannot be found - a placeholder "fail" image
-     * is returned.
-     *
-     * @see #getDefaultPortrait()
-     * @see #failPortrait()
-     */
-    public static Icon getPortraitIcon(Crew crew, int slot) {
-        return new ImageIcon(getPortraitImage(crew, slot));
-    }
-
-    /**
-     * Returns the default portrait (default.gif) or
-     * the failPortrait() in case of an error.
-     */
-    public static Image getDefaultPortrait() {
-        try {
-            Image image = (Image) (portraitDirectory.getItem("", Portrait.DEFAULT_PORTRAIT_FILENAME));
-
-            // When getItem() doesn't find the default portrait, it returns null
-            // In that case, fall back to the failPortrait
-            if (image != null) {
-                return image;
-            }
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
-        }
-
-        MegaMek.getLogger().error("Could not load default portrait image!");
-        return failPortrait();
-    }
-
-    /**
-     * Returns a square (72x72) "fail" image having a gray on dark gray cross.
-     * The image is drawn, not loaded and should therefore work in almost all cases.
-     */
-    public static Image failPortrait() {
-        if (failPortrait == null) {
-            failPortrait = new BufferedImage(72, 72, BufferedImage.TYPE_INT_RGB);
-            Graphics2D graphics = failPortrait.createGraphics();
-            graphics.setColor(Color.DARK_GRAY);
-            graphics.fillRect(0, 0, 72, 72);
-            graphics.setStroke(new BasicStroke(4f));
-            graphics.setColor(Color.GRAY);
-            graphics.drawLine(56, 56, 16, 16);
-            graphics.drawLine(56, 16, 16, 56);
-        }
-        return failPortrait;
-    }
-
-    /**
-     * Returns the portrait image scaled to 50x50. The aspect ratio
-     * of the image is preserved and when the portrait is not square,
-     * it is centered as necessary on a transparent background.
-     */
-    public static Image getPreviewPortraitImage(String category, String name) {
-        return scaleAndCenter(getUnscaledPortraitImage(category, name), 50);
-    }
-
-    /**
-     * Returns a square BufferedImage of the given size.
-     * Scales the given image to fit into the square and centers it
-     * on a transparent background.
-     */
-    private static BufferedImage scaleAndCenter(Image image, int size) {
-        BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
-        Graphics g = result.getGraphics();
-        if (image.getWidth(null) > image.getHeight(null)) {
-            image = image.getScaledInstance(size, -1, Image.SCALE_SMOOTH);
-            g.drawImage(image, 0, (size - image.getHeight(null)) / 2, null);
-        } else {
-            image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
-            g.drawImage(image, (size - image.getWidth(null)) / 2, 0, null);
-        }
-        return result;
-    }
-    //endregion Portraits
-
     //region Camouflage
     /**
      * Returns an Image of the camo pattern given
      * by its category (aka directory) and name (aka filename).
-        * Will try to return an image if the category indicates
+     * Will try to return an image if the category indicates
      * that a color was selected.
      * When the camo image cannot be created, a placeholder
      * "fail" image is returned.
      *
      * @see ImageUtil#failStandardImage()
      */
+    @Deprecated
     public static Image getCamoImage(String category, String name) {
         // Return a fail image when parameters are null
         if ((category == null) || (name == null)) {
@@ -436,64 +248,6 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Returns an Image of the camo pattern given by a DirectoryItem object.
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    public static Image getCamoImage(AbstractIcon name) {
-        return getCamoImage(name.getCategory(), name.getFilename());
-    }
-
-    /**
-     * Returns an Icon of the camo pattern given
-     * by its category (aka directory) and name (aka filename).
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    public static Icon getCamoIcon(String category, String name) {
-        return new ImageIcon(getCamoImage(category, name));
-    }
-
-    /**
-     * Returns an Image of the camo pattern or player color
-     * for the given IPlayer.
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    public static Image getPlayerCamoImage(IPlayer player) {
-        String category = player.getCamoCategory();
-
-        if (Camouflage.NO_CAMOUFLAGE.equals(category)) { // Colour Camouflage
-            return colorCamoImage(PlayerColors.getColor(player.getColorIndex()));
-        }
-
-        if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
-            category = "";
-        }
-
-        // A camo was selected
-        return getCamoImage(category, player.getCamoFileName());
-    }
-
-    /**
-     * Returns an Icon of the camo pattern or player color
-     * for the given IPlayer.
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    public static Icon getPlayerCamoIcon(IPlayer player) {
-        return new ImageIcon(getPlayerCamoImage(player));
-    }
-
-    /**
      * Returns an Image of the camo pattern or player color
      * for the given entity.
      * When the camo image cannot be created, a placeholder
@@ -501,6 +255,7 @@ public class MMStaticDirectoryManager {
      *
      * @see ImageUtil#failStandardImage()
      */
+    @Deprecated
     public static Image getEntityCamoImage(Entity entity) {
         return getCamoImage(entity.getCamoCategory(), entity.getCamoFileName());
     }
@@ -511,6 +266,7 @@ public class MMStaticDirectoryManager {
      *
      * @see ImageUtil#failStandardImage()
      */
+    @Deprecated
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
             MegaMek.getLogger().error("A null color was passed.");
@@ -521,16 +277,6 @@ public class MMStaticDirectoryManager {
         graphics.setColor(color);
         graphics.fillRect(0, 0, 84, 72);
         return result;
-    }
-
-    /**
-     * Returns a standard size (84x72) icon of a single color.
-     * When color is null, a "fail" standard image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    public static Icon colorCamoIcon(Color color) {
-        return new ImageIcon(colorCamoImage(color));
     }
     //endregion Camouflage
 }

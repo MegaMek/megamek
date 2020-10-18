@@ -19,6 +19,7 @@
 package megamek.common.icons;
 
 import megamek.MegaMek;
+import megamek.common.util.ImageUtil;
 import megamek.utils.MegaMekXmlUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,9 +40,6 @@ public abstract class AbstractIcon implements Serializable {
 
     private String category;
     private String filename;
-
-    private int width;
-    private int height;
     //endregion Variable Declarations
 
     //region Constructors
@@ -50,14 +48,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     protected AbstractIcon(String category, String filename) {
-        this(category, filename, 0, 0);
-    }
-
-    protected AbstractIcon(String category, String filename, int width, int height) {
         setCategory(category);
         setFilename(filename);
-        setWidth(width);
-        setHeight(height);
     }
     //endregion Constructors
 
@@ -77,22 +69,6 @@ public abstract class AbstractIcon implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
     //endregion Getters/Setters
 
     //region Boolean Methods
@@ -111,11 +87,11 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * This is used to determine whether the created image should be scaled or not by checking the
-     * Height and Width values. If either is a 0, then we need to scale the produced image
+     * Height and Width values. If either is -1, then we need to scale the produced image
      * @return whether to scale the image or not
      */
-    protected boolean isScaled() {
-        return (getHeight() == 0) || (getWidth() == 0);
+    protected boolean isScaled(int width, int height) {
+        return (width == -1) || (height == -1);
     }
 
     /**
@@ -125,21 +101,47 @@ public abstract class AbstractIcon implements Serializable {
         return new ImageIcon(getImage());
     }
 
+    public Image getImage() {
+        return getImage(0, 0);
+    }
+
+    public Image getImage(int size) {
+        return getImage(size, size);
+    }
+
     /**
      * This is used to create the proper image and scale it if required. It also handles null protection
      * by creating a blank image if required.
      * @return the created image
      */
-    public Image getImage() {
+    public Image getImage(int width, int height) {
         Image image = getBaseImage();
 
         if (image == null) {
-            return createBlankImage();
-        } else if (isScaled()) {
-            return image.getScaledInstance(getWidth(), getHeight(), Image.SCALE_DEFAULT);
+            return ImageUtil.failStandardImage();
+        } else if (isScaled(width, height)) {
+            return scaleAndCenter(image, (width != -1) ? width : height);
         } else {
             return image;
         }
+    }
+
+    /**
+     * Returns a square BufferedImage of the given size.
+     * Scales the given image to fit into the square and centers it
+     * on a transparent background.
+     */
+    private static BufferedImage scaleAndCenter(Image image, int size) {
+        BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
+        Graphics g = result.getGraphics();
+        if (image.getWidth(null) > image.getHeight(null)) {
+            image = image.getScaledInstance(size, -1, Image.SCALE_SMOOTH);
+            g.drawImage(image, 0, (size - image.getHeight(null)) / 2, null);
+        } else {
+            image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
+            g.drawImage(image, (size - image.getWidth(null)) / 2, 0, null);
+        }
+        return result;
     }
 
     /**
@@ -147,21 +149,6 @@ public abstract class AbstractIcon implements Serializable {
      * @return the Image stored by the AbstractIcon
      */
     public abstract Image getBaseImage();
-
-    /**
-     * This is a utility method that creates a blank image in the case that no image is found.
-     * @return a clear blank image
-     */
-    protected Image createBlankImage() {
-        final int width = (getWidth() == 0) ? DEFAULT_IMAGE_SCALE : getWidth();
-        final int height = (getHeight() == 0) ? DEFAULT_IMAGE_SCALE : getHeight();
-        BufferedImage blankImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = blankImage.createGraphics();
-        graphics.setComposite(AlphaComposite.Clear);
-        graphics.fillRect(0, 0, width, height);
-
-        return blankImage;
-    }
 
     //region File IO
     /**

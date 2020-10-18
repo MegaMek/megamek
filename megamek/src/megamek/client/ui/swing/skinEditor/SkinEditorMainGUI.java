@@ -2,15 +2,15 @@
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.skinEditor;
 
@@ -67,7 +67,6 @@ import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -84,12 +83,8 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-public class SkinEditorMainGUI extends JPanel implements WindowListener,
-        BoardViewListener, ActionListener, ComponentListener {
-
-    /**
-     * 
-     */
+public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardViewListener,
+        ActionListener, ComponentListener {
     private static final long serialVersionUID = 5625499617779156289L;
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
@@ -122,7 +117,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap<String, String> mainNames = new HashMap<String, String>();
+    private HashMap<String, String> mainNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -137,7 +132,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
+    private HashMap<String, String> secondaryNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the secondary display area.
@@ -154,7 +149,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map phase component names to phase component objects.
      */
-    HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
+    HashMap<String, JComponent> phaseComponents = new HashMap<>();
 
     public SkinEditorMainGUI() {
         super(new BorderLayout());
@@ -221,7 +216,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame.setMinimumSize(new Dimension(640, 480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        List<Image> iconList = new ArrayList<Image>();
+        List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
                         .toString()));
@@ -877,13 +872,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
    
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
-            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
-        }
+        Image camo = (entity.getCamoCategory() != null && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
+                ? entity.getCamouflage() : player.getCamouflage()).getImage();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(
-                entity, camo, tint, bp)));
+        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp)));
     }
 
    

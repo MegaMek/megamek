@@ -83,7 +83,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -115,6 +114,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
@@ -1852,13 +1852,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
+        AbstractIcon camo = player.getCamouflage();
         if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
-            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
+            camo = entity.getCamouflage();
         }
         // This seems unnecessary as the CamoManager will return an image for a playercolor:
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo.getImage(), tint, bp);
         if (icon != null) {
             bp.setIcon(new ImageIcon(icon));
         } else {

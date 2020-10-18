@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -31,7 +31,6 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.icons.AbstractIcon;
@@ -97,7 +96,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 }
                 curPlayer.setCamoCategory(category);
                 curPlayer.setCamoFileName(selectedIcon.getFilename());
-                curButton.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(curPlayer));
+                curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
             });
         }
         getContentPane().setLayout(new BorderLayout());

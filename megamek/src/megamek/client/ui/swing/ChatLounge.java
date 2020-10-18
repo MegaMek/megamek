@@ -1,17 +1,17 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -69,7 +69,6 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -475,7 +474,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             player.setCamoCategory(selectedItem.getCategory());
             player.setCamoFileName(selectedItem.getFilename());
-            butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
             getPlayerSelected().sendPlayerInfo();
         });
         camoDialog = new CamoChooser(clientgui.getFrame());
@@ -1938,7 +1937,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
+        butCamo.setIcon(getPlayerSelected().getLocalPlayer().getCamouflage().getImageIcon());
     }
 
     /**
@@ -3484,7 +3483,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         if (compact) {
                             clearImage();
                         } else {
-                            setPortrait(entity.getCrew());
+                            setImage(entity.getCrew().getPortrait(0).getImage(50));
                         }
                         setToolTipText(formatPilotTooltip(entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
@@ -3533,13 +3532,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
                 return c;
             }
-
-            public void setPortrait(Crew pilot) {
-                String category = pilot.getPortraitCategory(0);
-                String file = pilot.getPortraitFileName(0);
-                setImage(MMStaticDirectoryManager.getPreviewPortraitImage(category, file));
-            }
-
         }
     }
 

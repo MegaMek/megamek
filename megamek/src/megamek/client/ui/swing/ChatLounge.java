@@ -71,6 +71,7 @@ import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.UnitToolTip;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -1427,6 +1428,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     public static String formatUnitTooltip(Entity entity) {
+        return "<HTML>" + UnitToolTip.getTooltip(entity, clientgui.getClient().getLocalPlayer()) + "</HTML>";
 
         GunEmplacement thisGunEmp = null;
         if (entity instanceof GunEmplacement)

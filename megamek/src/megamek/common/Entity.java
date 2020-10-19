@@ -16,6 +16,8 @@
 
 package megamek.common;
 
+import java.awt.Image;
+import java.io.File;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -33,11 +35,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
@@ -57,6 +63,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
+import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -15977,5 +15984,373 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isOffBoardObserved(int teamID) {
         return offBoardShotObservers.contains(teamID);
+    }
+
+    private StringBuffer tooltipString;
+    private final boolean BR = true;
+    private final boolean NOBR = false;
+    private boolean skipBRafterTable = false;
+    
+    private void addToTT(String ttSName, boolean startBR, Object... ttO) {
+        if (startBR == BR){
+            if (skipBRafterTable) {
+                skipBRafterTable = false;
+            } else {
+                tooltipString.append("<BR>");
+            }
+        }
+        if (ttO != null) {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName, ttO));
+        } else {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName));
+        }
+    }
+    
+    public String getToolTipText() {
+        // No sensor blip...
+        tooltipString = new StringBuffer();
+
+        // Unit Chassis and Player
+        addToTT("Unit", NOBR, Integer.toHexString(PlayerColors.getColorRGB(getOwner().getColorIndex())), 
+                getChassis(), getOwner().getName());
+        
+        // Pilot Info
+        //put everything in table to allow for a pilot photo in second column
+        addToTT("PilotStart",BR);
+        
+        // Nickname > Name > "Pilot"
+        for (int i = 0; i < getCrew().getSlotCount(); i++) {
+            String pnameStr = "Pilot";
+    
+            if (getCrew().isMissing(i)) {
+                continue;
+            }
+            if ((getCrew().getName(i) != null)
+                    && !getCrew().getName(i).equals("")) 
+                pnameStr = getCrew().getName(i);
+            
+            if ((getCrew().getNickname(i) != null)
+                    && !getCrew().getNickname(i).equals("")) {
+                pnameStr = "'" + getCrew().getNickname(i) + "'";
+            }
+            
+            if (getCrew().getSlotCount() > 1) {
+                pnameStr += " (" + getCrew().getCrewType().getRoleName(i) + ")";
+            }
+
+            addToTT("Pilot", NOBR, pnameStr,
+                    getCrew().getSkillsAsString(
+                            game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
+
+            // Pilot Status
+            if (!getCrew().getStatusDesc(i).equals("")) {
+                addToTT("PilotStatus", NOBR, getCrew().getStatusDesc(i));
+            }
+        }
+        
+        // Pilot Advantages
+        int numAdv = getCrew().countOptions(
+                PilotOptions.LVL3_ADVANTAGES);
+        if (numAdv == 1)
+            addToTT("Adv1", NOBR, numAdv);
+        else if (numAdv > 1) 
+            addToTT("Advs", NOBR, numAdv);
+        
+        // Pilot Manei Domini
+        if ((getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0))  {
+            addToTT("MD", NOBR);
+        }
+        
+        if (this instanceof Infantry) {
+            Infantry inf = (Infantry) this;
+            int spec = inf.getSpecializations();
+            if (spec > 0) {
+                addToTT("InfSpec", BR, Infantry.getSpecializationName(spec));
+            }
+        }
+        
+        //add portrait?
+        if(null != getCrew()) {
+            String category = getCrew().getPortraitCategory(0);
+            String file = getCrew().getPortraitFileName(0);
+            if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT) &&
+                    (null != category) && (null != file)) {
+                String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
+                File f = new File(imagePath);
+                if(f.exists()) {
+                    // HACK: Get the real portrait to find the size of the image
+                    // and scale the tooltip HTML IMG accordingly
+                    Image portrait = MMStaticDirectoryManager.getUnscaledPortraitImage(category, file);
+                    if (portrait.getWidth(null) > portrait.getHeight(null)) {
+                        float h = 60f * portrait.getHeight(null) / portrait.getWidth(null);
+                        addToTT("PilotPortraitW", BR, imagePath, (int) h);
+                    } else {
+                        float w = 60f * portrait.getWidth(null) / portrait.getHeight(null);
+                        addToTT("PilotPortraitH", BR, imagePath, (int) w);
+                    }
+                }
+            }
+        }
+        
+        addToTT("PilotEnd",NOBR);
+
+        // Unit movement ability
+        if (!(this instanceof GunEmplacement)) {
+            addToTT("Movement", BR, getWalkMP(), getRunMPasString());
+            if (getJumpMP() > 0) tooltipString.append("/" + getJumpMP());
+        }
+        
+        // Armor and Internals
+        addToTT("ArmorInternals", BR, getTotalArmor(),
+                getTotalInternal());
+
+        // Build a "status bar" visual representation of each
+        // component of the unit using block element characters.
+        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
+            addArmorMiniVisToTT();
+            skipBRafterTable = true;
+        }
+        
+     // Weapon List
+        if (GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
+
+            ArrayList<Mounted> weapons = getWeaponList();
+            HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
+
+            // Gather names, counts, Clan/IS
+            // When clan then the number will be stored as negative
+            for (Mounted curWp: weapons) {
+                String weapDesc = curWp.getDesc();
+                // Append ranges
+                WeaponType wtype = (WeaponType)curWp.getType();
+                int ranges[];
+                if (isAero()) {
+                    ranges = wtype.getATRanges();
+                } else {
+                    ranges = wtype.getRanges(curWp);
+                }
+                String rangeString = " \u22EF ";
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
+                    rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
+                }
+                int maxRange = RangeType.RANGE_LONG;
+                if (game.getOptions().booleanOption(
+                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                    maxRange = RangeType.RANGE_EXTREME;
+                }
+                for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
+                    rangeString += ranges[i];
+                    if (i != maxRange) {
+                        rangeString += "\u2B1D";
+                    }
+                }
+                weapDesc += rangeString;
+                if (wpNames.containsKey(weapDesc)) {
+                    int number = wpNames.get(weapDesc);
+                    if (number > 0) 
+                        wpNames.put(weapDesc, number + 1);
+                    else 
+                        wpNames.put(weapDesc, number - 1);
+                } else {
+                    WeaponType wpT = ((WeaponType)curWp.getType());
+
+                    if (isClan() && TechConstants.isClan(wpT.getTechLevel(getYear()))) 
+                        wpNames.put(weapDesc, -1);
+                    else
+                        wpNames.put(weapDesc, 1);
+                }
+            }
+
+            // Print to Tooltip
+            tooltipString.append("<FONT SIZE=\"-2\">");
+
+            for (Entry<String, Integer> entry : wpNames.entrySet()) {
+                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                // Also remove "+", means currently selected for firing
+                boolean wpDest = false;
+                String nameStr = entry.getKey();
+                if (entry.getKey().startsWith("x ")) { 
+                    nameStr = entry.getKey().substring(2, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("*")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("+")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    nameStr = nameStr.concat(" <I>(Firing)</I>");
+                }
+
+                // normal coloring 
+                tooltipString.append("<FONT COLOR=#8080FF>");
+                // but: color gray and strikethrough when weapon destroyed
+                if (wpDest) tooltipString.append("<FONT COLOR=#a0a0a0><S>");
+
+                String clanStr = "";
+                if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+
+                // when more than 5 weapons are present, they will be grouped
+                // and listed with a multiplier
+                if (weapons.size() > 5) {
+                    addToTT("WeaponN", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+
+                } else { // few weapons: list each weapon separately
+                    for (int i = 0; i < Math.abs(entry.getValue()); i++) {
+                        addToTT("Weapon", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+                    }
+                }
+                // Weapon destroyed? End strikethrough
+                if (wpDest) tooltipString.append("</S>");
+                tooltipString.append("</FONT>"); 
+            }
+            tooltipString.append("</FONT>");
+        }
+        
+        // Add StratOps quirks, if activated
+        if ((getGame() != null)
+                && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            for (Enumeration<IOptionGroup> advGroups = getQuirks().getGroups(); advGroups.hasMoreElements();) {
+                IOptionGroup advGroup = advGroups.nextElement();
+                if (countQuirks(advGroup.getKey()) > 0) {
+                    tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i>");
+                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                        IOption adv = advs.nextElement();
+                        if (adv.booleanValue()) {
+                            tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
+                        }
+                    }
+                }
+            }
+            for (Mounted weapon : getWeaponList()) {
+                for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks().getGroups(); advGroups
+                        .hasMoreElements();) {
+                    IOptionGroup advGroup = advGroups.nextElement();
+                    if (weapon.countQuirks() > 0) {
+                        tooltipString.append("<BR><i>" + weapon.getDesc() + ":</i>");
+                        for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                            IOption adv = advs.nextElement();
+                            if (adv.booleanValue()) {
+                                tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add partial repairs, if activated
+        for (Enumeration<IOptionGroup> advGroups = getPartialRepairs().getGroups(); advGroups
+                .hasMoreElements();) {
+            IOptionGroup advGroup = advGroups.nextElement();
+            if (countPartialRepairs() > 0) {
+                tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i><br>");
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                    IOption adv = advs.nextElement();
+                    if (adv.booleanValue()) {
+                        tooltipString.append("&nbsp;" + adv.getDisplayableNameWithValue() + "<br>");
+                    }
+                }
+            }
+        }
+        
+        return tooltipString.toString();
+
+    }
+    
+    private void addArmorMiniVisToTT() {
+        String armorChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniArmorChar");
+        String internalChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniISChar");
+        String destroyedChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniDestroyedChar");
+        String fontSize = Integer.toString(GUIPreferences.getInstance().getInt("AdvancedArmorMiniFrontSizeMod"));
+        // HTML color String from Preferences
+        String colorIntact = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorIntact").getRGB() & 0xFFFFFF);
+        String colorPartialDmg = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorPartialDmg").getRGB() & 0xFFFFFF);
+        String colorDamaged = Integer
+                .toHexString(GUIPreferences.getInstance()
+                        .getColor("AdvancedArmorMiniColorDamaged").getRGB() & 0xFFFFFF);
+        int visUnit = GUIPreferences.getInstance().getInt("AdvancedArmorMiniUnitsPerBlock");
+        addToTT("ArmorMiniPanelStart", BR);
+        for (int loc = 0 ; loc < locations(); loc++) {
+            // addToTT("ArmorMiniPanelPart", BR, getLocationAbbr(loc));
+            // If location is destroyed, mark it and move on
+            if (getInternal(loc) == IArmorState.ARMOR_DOOMED ||
+                    getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
+                // This is a really awkward way of making sure
+                addToTT("ArmorMiniPanelPartNoRear", BR, getLocationAbbr(loc), fontSize);
+                for (int a = 0; a <= getOInternal(loc)/visUnit; a++) {
+                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorDamaged);
+                }
+
+            } else {
+                // Put rear armor blocks first, with some spacing, if unit has any.
+                if (hasRearArmor(loc)) {
+                    addToTT("ArmorMiniPanelPartRear", BR, getLocationAbbr(loc), fontSize);
+                    for (int a = 0; a <= (getOArmor(loc, true)/visUnit); a++) {
+                        if (a < (getArmor(loc, true)/visUnit)) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                        } else if (a == (getArmor(loc, true)/visUnit) &&
+                                (getArmor(loc, true) % visUnit) > 0) {
+                            // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                            if (getArmor(loc, true) == getOArmor(loc, true)) {
+                                addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                            } else {
+                                addToTT("BlockColored", NOBR, armorChar, fontSize, colorPartialDmg);;
+                            }
+                        } else if ((getOArmor(loc, true) % visUnit) > 0) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
+                        }
+                    }
+                    tooltipString.append("&nbsp;&nbsp;");
+                    addToTT("ArmorMiniPanelPart", BR, getLocationAbbr(loc), fontSize);
+                } else {
+                    addToTT("ArmorMiniPanelPartNoRear", BR, getLocationAbbr(loc), fontSize);
+                }
+                // Add IS shade blocks.
+                for (int a = 0; a <= (getOInternal(loc)/visUnit); a++) {
+                    if (a < (getInternal(loc)/visUnit)) {
+                        addToTT("BlockColored", NOBR, internalChar, fontSize, colorIntact);
+                    } else if (a == (getInternal(loc)/visUnit) &&
+                            (getInternal(loc) % visUnit) > 0) {
+                        // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                        if (getInternal(loc) == getOInternal(loc)) {
+                            addToTT("BlockColored", NOBR, internalChar, fontSize, colorIntact);
+                        } else {
+                            addToTT("BlockColored", NOBR, internalChar, fontSize, colorPartialDmg);
+                        }
+                    } else if ((getOInternal(loc) % visUnit) > 0) {
+                        addToTT("BlockColored", NOBR, internalChar, fontSize, colorDamaged);
+                    }
+                }
+                // Add main armor blocks.
+                for (int a = 0; a <= (getOArmor(loc)/visUnit); a++) {
+                    if (a < (getArmor(loc)/visUnit)) {
+                        addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                    } else if (a == (getArmor(loc)/visUnit) &&
+                            (getArmor(loc) % visUnit) > 0) {
+                        // Fraction of a visUnit left, but still display a "full" if at starting max armor
+                        if (getArmor(loc) == getOArmor(loc)) {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorIntact);
+                        } else {
+                            addToTT("BlockColored", NOBR, armorChar, fontSize, colorPartialDmg);
+                        }
+                    } else if ((getOArmor(loc) % visUnit) > 0){
+                        addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
+                    }
+                }
+            }
+
+        }
+        addToTT("ArmorMiniPanelEnd", NOBR);
     }
 }

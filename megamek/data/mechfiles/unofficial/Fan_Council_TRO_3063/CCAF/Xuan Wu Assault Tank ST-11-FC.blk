@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -106,4 +106,3 @@ RS 3063 - Clan Invasion
 <tonnage>
 100.0
 </tonnage>
-

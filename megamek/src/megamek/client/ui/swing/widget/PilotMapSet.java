@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Infantry;
@@ -184,7 +184,7 @@ public class PilotMapSet implements DisplayMapSet {
             pilotL.setVisible(true);
             pilotR.setVisible(true);
 
-            portraitArea.setIdleImage(PortraitManager.getPortraitImage(en.getCrew(), slot));
+            portraitArea.setIdleImage(MMStaticDirectoryManager.getPortraitImage(en.getCrew(), slot));
 
             if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));

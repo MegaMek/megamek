@@ -3,32 +3,32 @@ Stealth
 STH-5X
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3076
-Source:XTRO Steiner - Jihad
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3099
+source:XTRO Steiner - Jihad
+rules level:4
 
-Mass:45
-Engine:315 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:45
+engine:315 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
+heat sinks:10 Double
+walk mp:7
+jump mp:7
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:14
-RA Armor:14
-LT Armor:17
-RT Armor:17
-CT Armor:22
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:17
+RT armor:17
+CT armor:20
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:6
 ER Flamer, Left Arm
@@ -43,48 +43,47 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Chameleon Light Polarization Shield
 ER Flamer
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+Chameleon Light Polarization Shield
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Chameleon Light Polarization Shield
 ER Flamer
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Chameleon Light Polarization Shield
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+ISMASC
+ISMASC
 Chameleon Light Polarization Shield
-Jump Jet
-Jump Jet
-Jump Jet
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-ISMASC
-ISMASC
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Chameleon Light Polarization Shield
 Jump Jet
 Jump Jet
 Jump Jet
@@ -93,6 +92,7 @@ CLStreakSRM6
 Clan Streak SRM 6 Ammo
 CLActiveProbe
 CLECMSuite
+Chameleon Light Polarization Shield
 
 Center Torso:
 Fusion Engine
@@ -128,7 +128,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Chameleon Light Polarization Shield
-Clan Endo Steel
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,7 +142,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Chameleon Light Polarization Shield
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

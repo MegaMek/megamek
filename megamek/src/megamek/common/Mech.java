@@ -3773,6 +3773,7 @@ public abstract class Mech extends Entity {
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC))) {
                 toSubtract = 0;
             }

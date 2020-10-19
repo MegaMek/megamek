@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -88,4 +88,3 @@ RS 3145 NTNU - Late Republic
 <tonnage>
 50.0
 </tonnage>
-

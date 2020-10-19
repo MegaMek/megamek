@@ -17,10 +17,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import megamek.MegaMek;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IBoard;
 import megamek.common.MovePath;
-import megamek.common.logging.LogLevel;
 
 /**
  * This contains useful classes and functions for geometric questions
@@ -116,26 +117,15 @@ public class BotGeometry {
      * for directions 1,2,4,5 intercept is the x=0 intercept
      */
     public static class HexLine {
-        private static final Princess fakeOwner = new Princess("fake", "localhost", 2020, LogLevel.OFF);
-        private final Princess owner;
-
         private int intercept;
         private int direction;
 
         /**
          * Create a hexline from a point and direction
          */
-        public HexLine(Coords c, int dir, Princess owner) {
+        public HexLine(Coords c, int dir) {
             @SuppressWarnings("unused")
             final String METHOD_NAME = "HexLine(Coords, int)";
-
-            // some places don't have a Princess available, in which case we pass in a singleton fake on
-            // to avoid having to initialize one every time we make a hex line
-            if (owner == null) {
-                this.owner = fakeOwner;
-            } else {
-                this.owner = owner;
-            }
 
             setDirection(dir);
             if ((getDirection() == 0) || (getDirection() == 3)) {
@@ -153,19 +143,14 @@ public class BotGeometry {
          * and 0 if the point is on the line
          */
         public int judgePoint(Coords c) {
-            owner.getLogger().methodBegin();
-
-            try {
-                HexLine comparor = new HexLine(c, getDirection(), owner);
-                if (comparor.getIntercept() < getIntercept()) {
-                    return (getDirection() < 3) ? -1 : 1;
-                } else if (comparor.getIntercept() > getIntercept()) {
-                    return (getDirection() < 3) ? 1 : -1;
-                }
-                return 0;
-            } finally {
-                owner.getLogger().methodEnd();
+            HexLine comparor = new HexLine(c, getDirection());
+            if (comparor.getIntercept() < getIntercept()) {
+                return (getDirection() < 3) ? -1 : 1;
+            } else if (comparor.getIntercept() > getIntercept()) {
+                return (getDirection() < 3) ? 1 : -1;
             }
+            
+            return 0;
         }
 
         /**
@@ -174,34 +159,28 @@ public class BotGeometry {
          * returns 0 if the area is divided by the line
          */
         public int judgeArea(ConvexBoardArea a) {
-            owner.getLogger().methodBegin();
-
-            try {
-                boolean flip = getDirection() > 2;
-                HexLine[] edges = a.getEdges();
-                if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
-                    System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
-                                                                 a.toString()));
-                    return 0;
-                }
-                if (edges[getDirection()].getIntercept() == getIntercept()) {
-                    return 0;
-                }
-                if (edges[(getDirection() + 3) % 6].getIntercept() == getIntercept()) {
-                    return 0;
-                }
-                boolean edgeone = (edges[getDirection()].getIntercept() < getIntercept()) ^ flip;
-                boolean edgetwo = (edges[(getDirection() + 3) % 6].getIntercept() < getIntercept()) ^ flip;
-                if (edgeone && edgetwo) {
-                    return 1;
-                }
-                if ((!edgeone) && (!edgetwo)) {
-                    return -1;
-                }
+            boolean flip = getDirection() > 2;
+            HexLine[] edges = a.getEdges();
+            if ((edges[getDirection()] == null) || (edges[(getDirection() + 3) % 6] == null)) {
+                System.err.println(new IllegalStateException("Detection of NULL edges in ConvexBoardArea :: " +
+                                                             a.toString()));
                 return 0;
-            } finally {
-                owner.getLogger().methodEnd();
             }
+            if (edges[getDirection()].getIntercept() == getIntercept()) {
+                return 0;
+            }
+            if (edges[(getDirection() + 3) % 6].getIntercept() == getIntercept()) {
+                return 0;
+            }
+            boolean edgeone = (edges[getDirection()].getIntercept() < getIntercept()) ^ flip;
+            boolean edgetwo = (edges[(getDirection() + 3) % 6].getIntercept() < getIntercept()) ^ flip;
+            if (edgeone && edgetwo) {
+                return 1;
+            }
+            if ((!edgeone) && (!edgetwo)) {
+                return -1;
+            }
+            return 0;
         }
 
         /**
@@ -209,20 +188,14 @@ public class BotGeometry {
          * Note that the function getXfromY would be multvalued
          */
         public int getYfromX(int x) {
-            owner.getLogger().methodBegin();
-
-            try {
-                if ((getDirection() == 0) || (getDirection() == 3)) {
-                    return 0;
-                }
-                if ((getDirection() == 1) || (getDirection() == 4)) {
-                    return getIntercept() - ((x + 1) / 2); //halfs round down
-                }
-                // direction==5||direction==2
-                return getIntercept() + ((x) / 2);     //halfs round down
-            } finally {
-                owner.getLogger().methodEnd();
+            if ((getDirection() == 0) || (getDirection() == 3)) {
+                return 0;
             }
+            if ((getDirection() == 1) || (getDirection() == 4)) {
+                return getIntercept() - ((x + 1) / 2); //halfs round down
+            }
+            // direction==5||direction==2
+            return getIntercept() + ((x) / 2);     //halfs round down
         }
 
         /**
@@ -230,26 +203,20 @@ public class BotGeometry {
          * if lines are parallel (even if they are coincident) returns null
          */
         public Coords getIntersection(HexLine h) {
-            owner.getLogger().methodBegin();
-
-            try {
-                if ((h.getDirection() % 3) == (getDirection() % 3)) {
-                    return null;
-                }
-                if (h.getDirection() == 0) {
-                    return h.getIntersection(this);
-                }
-                if (getDirection() == 2) {
-                    return h.getIntersection(this);
-                }
-                if (getDirection() == 0 || getDirection() == 3) {
-                    return new Coords(getIntercept(), h.getYfromX(getIntercept()));
-                }
-                //direction must be 1 here, and h.direction=2
-                return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
-            } finally {
-                owner.getLogger().methodEnd();
+            if ((h.getDirection() % 3) == (getDirection() % 3)) {
+                return null;
             }
+            if (h.getDirection() == 0) {
+                return h.getIntersection(this);
+            }
+            if (getDirection() == 2) {
+                return h.getIntersection(this);
+            }
+            if (getDirection() == 0 || getDirection() == 3) {
+                return new Coords(getIntercept(), h.getYfromX(getIntercept()));
+            }
+            //direction must be 1 here, and h.direction=2
+            return new Coords(getIntercept() - h.getIntercept(), getYfromX(getIntercept() - h.getIntercept()));
         }
 
         /**
@@ -257,21 +224,15 @@ public class BotGeometry {
          * line to another point
          */
         public Coords getClosestPoint(Coords c) {
-            owner.getLogger().methodBegin();
-
-            try {
-                if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
-                    // but who's counting
-                    return new Coords(getIntercept(), c.getY());
-                } else if ((getDirection() == 1) || (getDirection() == 4)) {
-                    double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.getY() - (2.0 * c.getX()));
-                    return new Coords((int) myx, getYfromX((int) myx));
-                }
-                double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
+            if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
+                // but who's counting
+                return new Coords(getIntercept(), c.getY());
+            } else if ((getDirection() == 1) || (getDirection() == 4)) {
+                double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.getY() - (2.0 * c.getX()));
                 return new Coords((int) myx, getYfromX((int) myx));
-            } finally {
-                owner.getLogger().methodEnd();
             }
+            double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
+            return new Coords((int) myx, getYfromX((int) myx));
         }
 
         @Override
@@ -331,19 +292,15 @@ public class BotGeometry {
      */
     public static class ConvexBoardArea {
 
-        private final Princess owner;
-
         //left/right indicates whether its the small x
         //or large x line
         //        HexLine[] left=new HexLine[3];
         //        HexLine[] right=new HexLine[3];
         //edge points to the previous lines in the right order
         private HexLine[] edges = new HexLine[6];
-        private final ReentrantReadWriteLock EDGES_LOCK = new ReentrantReadWriteLock();
-
-        ConvexBoardArea(Princess owner) {
-            this.owner = owner;
-            clearEdges();
+        private Coords[] vertices = new Coords[6];
+        
+        ConvexBoardArea() {
         }
 
         @Override
@@ -387,18 +344,12 @@ public class BotGeometry {
             return msg.toString();
         }
 
-        void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit) {
-            owner.getLogger().methodBegin();
-
-            try {
-                while (cfit.hasNext()) {
-                    CoordFacingCombo cf = cfit.next();
-                    if(cf != null && owner.getGame().getBoard().contains(cf.coords)) {
-                        expandToInclude(cf.getCoords());
-                    }
+        void addCoordFacingCombos(Iterator<CoordFacingCombo> cfit, IBoard board) {
+            while (cfit.hasNext()) {
+                CoordFacingCombo cf = cfit.next();
+                if(cf != null && board.contains(cf.coords)) {
+                    expandToInclude(cf.getCoords());
                 }
-            } finally {
-                owner.getLogger().methodEnd();
             }
         }
 
@@ -407,108 +358,85 @@ public class BotGeometry {
          * false if it is not
          */
         public boolean contains(Coords c) {
-            owner.getLogger().methodBegin();
-
-            try {
-                HexLine[] edges = getEdges();
-                if (edges[0] == null) {
+            HexLine[] edges = getEdges();
+            if (edges[0] == null) {
+                return false;
+            }
+            for (int i = 0; i < 6; i++) {
+                if (edges[i].judgePoint(c) > 0) {
                     return false;
                 }
-                for (int i = 0; i < 6; i++) {
-                    if (edges[i].judgePoint(c) > 0) {
-                        return false;
-                    }
-                }
-                return true;
-            } finally {
-                owner.getLogger().methodEnd();
             }
+            return true;
         }
 
         /**
          * expands the board area to include point onc
          */
         void expandToInclude(Coords onc) {
-            owner.getLogger().methodBegin();
-
-            try {
-                HexLine[] edges = getEdges();
-                for (int i = 0; i < 6; i++) {
-                    if ((edges[i] == null) || (edges[i].judgePoint(onc) > 0)) {
-                        edges[i] = new HexLine(onc, i, owner);
-                    }
+            HexLine[] edges = getEdges();
+            for (int i = 0; i < 6; i++) {
+                if ((edges[i] == null) || (edges[i].judgePoint(onc) > 0)) {
+                    edges[i] = new HexLine(onc, i);
                 }
-                setEdges(edges);
-            } finally {
-                owner.getLogger().methodEnd();
             }
+            setEdges(edges);
         }
 
         /**
          * Returns a vertex, with zero starting at the upper left of the hex
          */
         public Coords getVertexNum(int i) {
-            owner.getLogger().methodBegin();
-
-            try {
-                HexLine[] edges = getEdges();
-                if (edges[i] == null || edges[(i + 1) % 6] == null) {
-                    System.err.println(new IllegalStateException("Edge[" + i + "] is NULL."));
-                    return null;
-                }
-                return edges[i].getIntersection(edges[(i + 1) % 6]);
-            } finally {
-                owner.getLogger().methodEnd();
+            if (vertices[i] != null) {
+                return vertices[i];
             }
+            
+            HexLine[] edges = getEdges();
+            if (edges[i] == null || edges[(i + 1) % 6] == null) {
+                MegaMek.getLogger().error("Edge[" + i + "] is NULL.");
+                return null;
+            }
+            
+            vertices[i] = edges[i].getIntersection(edges[(i + 1) % 6]);
+            return vertices[i];
         }
 
         /**
          * returns the closest coord in the area to the given coord
          */
         public Coords getClosestCoordsTo(Coords c) {
-            owner.getLogger().methodBegin();
-
-            try {
-                Coords closest = null;
-                int closest_dist = 0;
-                HexLine[] edges = getEdges();
-                for (int i = 0; i < 6; i++) {
-                    if (edges[i] == null) {
-                        continue;
+            Coords closest = null;
+            int closest_dist = 0;
+            HexLine[] edges = getEdges();
+            for (int i = 0; i < 6; i++) {
+                if (edges[i] == null) {
+                    continue;
+                }
+                if (edges[i].judgePoint(c) > 0) {
+                    Coords vert = getVertexNum(i);
+                    int vdist = vert.distance(c);
+                    if ((closest == null) || (vdist < closest_dist)) {
+                        closest = vert;
+                        closest_dist = vdist;
                     }
-                    if (edges[i].judgePoint(c) > 0) {
-                        Coords vert = getVertexNum(i);
-                        int vdist = vert.distance(c);
-                        if ((closest == null) || (vdist < closest_dist)) {
-                            closest = vert;
-                            closest_dist = vdist;
-                        }
-                        Coords online = edges[i].getClosestPoint(c);
-                        if (contains(online)) {
-                            int ldist = online.distance(c);
-                            if (ldist < closest_dist) {
-                                closest = online;
-                                closest_dist = ldist;
-                            }
+                    Coords online = edges[i].getClosestPoint(c);
+                    if (contains(online)) {
+                        int ldist = online.distance(c);
+                        if (ldist < closest_dist) {
+                            closest = online;
+                            closest_dist = ldist;
                         }
                     }
                 }
-                if (closest == null) {
-                    return new Coords(c.getX(), c.getY());
-                }
-                return closest;
-            } finally {
-                owner.getLogger().methodEnd();
             }
+            if (closest == null) {
+                return new Coords(c.getX(), c.getY());
+            }
+            return closest;
         }
 
         public HexLine[] getEdges() {
-            EDGES_LOCK.readLock().lock();
-            try {
-                return Arrays.copyOf(edges, edges.length);
-            } finally {
-                EDGES_LOCK.readLock().unlock();
-            }
+            return edges;
         }
 
         void setEdges(HexLine[] edges) {
@@ -519,23 +447,12 @@ public class BotGeometry {
                 throw new IllegalArgumentException("Edges must have exactly 6 members.");
             }
 
-            EDGES_LOCK.writeLock().lock();
-            try {
-                this.edges = edges;
-            } finally {
-                EDGES_LOCK.writeLock().unlock();
-            }
+            this.edges = edges;
+            vertices = new Coords[6];
         }
 
         void clearEdges() {
-            EDGES_LOCK.writeLock().lock();
-            try {
-                for (int i = 0; i < edges.length; i++) {
-                    edges[i] = null;
-                }
-            } finally {
-                EDGES_LOCK.writeLock().unlock();
-            }
+            setEdges(new HexLine[6]);
         }
     }
 
@@ -552,7 +469,7 @@ public class BotGeometry {
             Coords center = new Coords(4, 6);
             HexLine[] lines = new HexLine[6];
             for (int i = 0; i < 6; i++) {
-                lines[i] = new HexLine(center, i, owner);
+                lines[i] = new HexLine(center, i);
             }
 
             msg.append("\n\tTesting that center lies in lines... ");
@@ -608,7 +525,7 @@ public class BotGeometry {
             Coords areapt1 = new Coords(1, 1);
             Coords areapt2 = new Coords(3, 1);
             Coords areapt3 = new Coords(2, 3);
-            ConvexBoardArea area = new ConvexBoardArea(owner);
+            ConvexBoardArea area = new ConvexBoardArea();
             area.expandToInclude(areapt1);
             area.expandToInclude(areapt2);
             area.expandToInclude(areapt3);

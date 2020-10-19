@@ -19,7 +19,6 @@
 package megamek.common.icons;
 
 import megamek.MegaMek;
-import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.utils.MegaMekXmlUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -106,21 +105,19 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @param imageDirectory the directory the image is stored within
      * @return the ImageIcon for the Image stored by the AbstractIcon
      */
-    public ImageIcon getImageIcon(DirectoryItems imageDirectory) {
-        return new ImageIcon(getImage(imageDirectory));
+    public ImageIcon getImageIcon() {
+        return new ImageIcon(getImage());
     }
 
     /**
      * This is used to create the proper image and scale it if required. It also handles null protection
      * by creating a blank image if required.
-     * @param imageDirectory the directory the image is stored within
      * @return the created image
      */
-    public Image getImage(DirectoryItems imageDirectory) {
-        Image image = getBaseImage(imageDirectory);
+    public Image getImage() {
+        Image image = getBaseImage();
 
         if (image == null) {
             return createBlankImage();
@@ -133,10 +130,9 @@ public abstract class AbstractIcon implements Serializable {
 
     /**
      * This is abstract to allow for different formats for determining the image in question
-     * @param imageDirectory the directory the image is stored within
      * @return the Image stored by the AbstractIcon
      */
-    public abstract Image getBaseImage(DirectoryItems imageDirectory);
+    public abstract Image getBaseImage();
 
     /**
      * This is a utility method that creates a blank image in the case that no image is found.

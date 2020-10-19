@@ -23,7 +23,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import megamek.client.ui.swing.tileset.CamoManager;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.util.fileUtils.DirectoryItem;
 
 /** 
@@ -65,10 +65,10 @@ public class CamoRenderer extends JPanel implements ListCellRenderer<DirectoryIt
     
     /** 
      * Sets the image based on the passed category and name from 
-     * the DirectoryItems that the list currently displays.
+     * the displayed camouflage directory
      */
     private void setImage(String category, String name) {
-        lblImage.setIcon(CamoManager.getCamoIcon(category, name));
+        lblImage.setIcon(MMStaticDirectoryManager.getCamoIcon(category, name));
         tip = "<HTML><BODY>" + category + "<BR>" + name;
     }
     

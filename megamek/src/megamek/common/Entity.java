@@ -2547,12 +2547,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return sec_facing;
     }
 
-    /**
-     * Sets the secondary facing.
-     */
     public void setSecondaryFacing(int sec_facing) {
+        setSecondaryFacing(sec_facing, true);
+    }
+    
+    /**
+     * Sets the secondary facing. 
+     * Optionally does not fire a game change event (useful for bot evaluation)
+     */
+    public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
         this.sec_facing = sec_facing;
-        if (game != null) {
+        if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
     }
@@ -3764,23 +3769,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Determine how much ammunition (of all munition types) remains which is
-     * compatible with the given ammo.
+     * compatible with the given weapon.
      *
-     * @param et - the <code>EquipmentType</code> of the ammo to be found. This
-     *           value may be <code>null</code>.
+     * @param weapon The weapon being considered
      * @return the <code>int</code> count of the amount of shots of all
-     * munitions equivalent to the given ammo type.
+     * munitions available for the given weapon.
      */
-    public int getTotalMunitionsOfType(@Nullable EquipmentType et) {
+    public int getTotalMunitionsOfType(Mounted weapon) {
         int totalShotsLeft = 0;
-
+        
         // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
-            boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
-            boolean etCaseless = (et != null) && ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
-            boolean caselessMismatch = amCaseless != etCaseless;
+            boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(weapon, (AmmoType) amounted.getType());
 
-            if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {
+            if (canSwitchToAmmo && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
@@ -10640,7 +10642,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getArmorType(int loc) {
-        return armorType[loc];
+        if ((loc >= 0 ) && (loc < armorType.length)) {
+            return armorType[loc];
+        } else {
+            return EquipmentType.T_ARMOR_UNKNOWN;
+        }
     }
 
     public void setArmorTechLevel(int newTL) {
@@ -10749,7 +10755,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
-        if (isSupportVehicle()) {
+        // Large craft have a separate section for bays
+        if (!isLargeCraft()) {
             long seatCost = 0;
             long quartersCost = 0;
             long bayCost = 0;
@@ -13790,7 +13797,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+        if (hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+            return 0.0;
+        }
+        // Small support vehicles do not need power amplifiers.
+        if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them
@@ -13799,16 +13810,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                || wt.hasFlag(WeaponType.F_PPC)
-                || wt.hasFlag(WeaponType.F_PLASMA)
-                || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                total += m.getTonnage();
+            }
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                total += m.getLinkedBy().getTonnage();
+            }
+        }
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
                 total += m.getTonnage();
             }
         }
         // Finally use that total to compute and return the actual power
         // amplifier weight.
-        return Math.ceil(total / 5) / 2;
+        return RoundWeight.nextHalfTon(total);
     }
 
     public Vector<Integer> getLoadedKeepers() {

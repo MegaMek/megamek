@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -108,4 +108,3 @@ IS Ammo LRM-10 Artemis-capable
 <tonnage>
 90.0
 </tonnage>
-

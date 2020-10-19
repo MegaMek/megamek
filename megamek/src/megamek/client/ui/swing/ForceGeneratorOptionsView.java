@@ -52,7 +52,6 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ratgenerator.TOCNode;
 import megamek.client.ratgenerator.ValueNode;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.tileset.MechTileset;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Game;
@@ -1147,20 +1146,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     static class UnitRenderer extends DefaultTreeCellRenderer {
-        /**
-         * 
-         */
         private static final long serialVersionUID = -5915350078441133119L;
 
-        private MechTileset mt;
-
         public UnitRenderer() {
-            mt = new MechTileset(new File("data/images/units"));
-            try {
-                mt.loadFromFile("mechset.txt");
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
+
         }
 
         @Override

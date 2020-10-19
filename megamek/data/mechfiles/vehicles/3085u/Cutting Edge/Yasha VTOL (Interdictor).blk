@@ -24,6 +24,10 @@ Yasha VTOL
 3085
 </year>
 
+<originalBuildYear>
+3085
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 7
@@ -41,11 +48,11 @@ VTOL
 </engine_type>
 
 <armor_type>
-1
+6
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -68,6 +75,7 @@ ISCASE
 <Front Equipment>
 ISMML7
 ISMML7
+ISArtemisIV
 ISArtemisIV
 </Front Equipment>
 

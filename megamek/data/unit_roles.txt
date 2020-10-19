@@ -5385,12 +5385,12 @@ Mongoose C:STRIKER
 Mongoose C 2:STRIKER
 Drift Shag:STRIKER
 Night Hawk NTK-2Q-EC:STRIKER
-Talon TLN-5W-EC:STRIKER 
+Talon TLN-5W-EC:STRIKER
 Coyotl B:STRIKER
 Coyotl C:STRIKER
 Coyotl D:STRIKER
-Phoenix Hawk PXH-1-EC:SKIRMISHER 
-Enfield END-6J-EC:SKIRMISHER 
+Phoenix Hawk PXH-1-EC:SKIRMISHER
+Enfield END-6J-EC:SKIRMISHER
 Fox CS-1:MISSILE_BOAT
 Fox:MISSILE_BOAT
 Omni-Corvis Prime:SNIPER
@@ -5413,7 +5413,7 @@ Lupus D:BRAWLER
 Vision Quest VQ-1NC:SNIPER
 Vision Quest:BRAWLER
 Vision Quest 2:SNIPER
-Cestus CTS-6Y-EC:BRAWLER 
+Cestus CTS-6Y-EC:BRAWLER
 Exterminator EXT-4Db-EC:SKIRMISHER
 Excalibur EXC-B2b-EC:MISSILE_BOAT
 Minsk MNK-101:BRAWLER
@@ -5499,7 +5499,7 @@ Dig Lord RCL-4M-B MiningMech MOD:JUGGERNAUT
 MuckRaker GMMM-2M MiningMech MOD:AMBUSHER
 #MuckRaker GMMM-2 MiningMech:NONE
 MuckRaker GMMM-2M-B MiningMech MOD:MISSILE_BOAT
-St. Florian FLN-366-M FireMech MOD:JUGGERNAUT    
+St. Florian FLN-366-M FireMech MOD:JUGGERNAUT
 #St. Florian FLN-366 FireMech:NONE
 #OTP Hanseatic League
 Cazador:STRIKER
@@ -5514,3 +5514,20 @@ Reconquista:BRAWLER
 #Shrapnel
 Centurion CN10-J:BRAWLER
 Centurion CN10-W:SNIPER
+#tukayyid
+Adder (Puma) TC:STRIKER
+Shadow Cat TC:SCOUT
+Stormcrow (Ryoken) TC:SKIRMISHER
+Stormcrow (Ryoken) Attwater:SNIPER
+Mad Dog (Vulture) S:SKIRMISHER
+Hellbringer (Loki) M:SNIPER
+Timber Wolf (Mad Cat) TC:SKIRMISHER
+Executioner (Gladiator) TC:SKIRMISHER
+Phoenix Hawk PXH-1bC:SKIRMISHER
+Shadow Hawk SHD-2Ht:SKIRMISHER
+Rifleman RFL-5CS:SNIPER
+Archer ARC-5CS:MISSILE BOAT
+Warhammer WHM-7CS:BRAWLER
+Black Knight BLK-9-KNT:BRAWLER
+Marauder MAD-5CS:SNIPER
+

@@ -18,7 +18,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
-
+import javax.xml.bind.annotation.XmlElement;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 
 /**
@@ -43,9 +43,14 @@ public class Coords implements Serializable {
     public static final double HEXSIDE = Math.PI / 3.0;
     public static final int [] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
 
+    @XmlElement(name="x")
     private final int x;
+    
+    @XmlElement(name="y")
     private final int y;
-    private int hash = 0; // assigned only when first called
+
+    @XmlElement(name="hash")
+    private int hash;
 
     /** Constructs a new coordinate pair at (x, y). Note: Coords are immutable. */
     public Coords(int x, int y) {
@@ -187,7 +192,7 @@ public class Coords implements Serializable {
         
         int direction = initialDirection;
         
-        HexLine startLine = new HexLine(this, direction, null);
+        HexLine startLine = new HexLine(this, direction);
         int directionIncrement = 0;
         int pointJudgement = startLine.judgePoint(second);
         if(pointJudgement == 0) {

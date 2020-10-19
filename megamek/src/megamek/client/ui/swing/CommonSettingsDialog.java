@@ -1795,7 +1795,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     /** Constructs the button ordering panel for one phase. */ 
     private JScrollPane getButtonOrderPane(DefaultListModel<PhaseCommand> list, 
-            StatusBarPhaseDisplay.PhaseCommand commands[]) {
+            StatusBarPhaseDisplay.PhaseCommand[] commands) {
         JPanel panel = new JPanel();
         Arrays.sort(commands, cmdComp);        
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {

@@ -312,12 +312,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
-        store.setDefault(FOV_HIGHLIGHT,false);
+        store.setDefault(FOV_HIGHLIGHT, false);
         store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
-        store.setDefault(FOV_DARKEN,true);
+        store.setDefault(FOV_DARKEN, true);
         store.setDefault(FOV_DARKEN_ALPHA, 100);
         store.setDefault(FOV_STRIPES, 35);
-        store.setDefault(FOV_GRAYSCALE, "false");
+        store.setDefault(FOV_GRAYSCALE, false);
 
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
@@ -336,7 +336,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
-        store.setDefault(FIRING_SOLUTIONS,true);
+        store.setDefault(FIRING_SOLUTIONS, true);
 
         store.setDefault(IMAGE_CHOOSER_POS_X, 200);
         store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
@@ -353,14 +353,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
-        store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
-        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
-        store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
+        store.setDefault(MECH_SELECTOR_UNIT_TYPE, 0);
+        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS, 15);
+        store.setDefault(MECH_SELECTOR_RULES_LEVELS, "[0]");
         store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
         store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
-        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
-        store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
+        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
+        store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
         
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);

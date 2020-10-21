@@ -757,11 +757,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -778,11 +774,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -806,11 +798,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -857,11 +845,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -889,11 +873,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -921,11 +901,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -953,11 +929,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -985,11 +957,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1007,11 +975,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1038,11 +1002,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1050,6 +1010,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         toggleKeybindsOverlay();
                     }
                 });
+        
+        // Register the action for TOGGLE_HEX_COORDS
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_HEX_COORDS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        return !shouldIgnoreKeyCommands();
+                    }
+
+                    @Override
+                    public void performAction() {
+                        boolean coordsShown = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS);
+                        GUIPreferences.getInstance().setValue(GUIPreferences.ADVANCED_SHOW_COORDS, !coordsShown);
+                    }
+
+                });
+
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1106,8 +1084,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
                 || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
-                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
-                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
+                || e.getName().equals(GUIPreferences.TEAM_COLORING)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();
@@ -1118,7 +1097,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
-                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
+                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_GRAYSCALE)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_STRIPES)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII)
+                || e.getName().equals(GUIPreferences.SHADOWMAP)) {
             clearHexImageCache();
             repaint();
         }

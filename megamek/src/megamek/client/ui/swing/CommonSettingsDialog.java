@@ -345,7 +345,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         setLayout(new BorderLayout());
         getContentPane().add(panTabs, BorderLayout.CENTER);
         getContentPane().add(getButtonsPanel(), BorderLayout.PAGE_END);
-        
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
             @Override
@@ -594,7 +593,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(getFocus);
         comps.add(row);
-        
         mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(mouseWheelZoom);

@@ -115,6 +115,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int engineHits = 0;
     private int avionicsHits = 0;
     private int cicHits = 0;
+    private boolean fuelTankHit = false;
     private boolean gearHit = false;
     private int structIntegrity;
     private int orig_structIntegrity;
@@ -673,6 +674,14 @@ public class Aero extends Entity implements IAero, IBomber {
             hits = 3;
         }
         fcsHits = hits;
+    }
+    
+    public boolean fuelTankHit() {
+        return fuelTankHit;
+    }
+    
+    public void setFuelTankHit(boolean value) {
+        fuelTankHit = value;
     }
 
     public void setCICHits(int hits) {
@@ -3957,7 +3966,7 @@ public class Aero extends Entity implements IAero, IBomber {
         } else if (getEngineHits() > 0) {
             MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
-        } else if (getPotCrit() == CRIT_FUEL_TANK) {
+        } else if (fuelTankHit()) {
             MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {

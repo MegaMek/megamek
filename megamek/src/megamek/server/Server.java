@@ -25328,6 +25328,8 @@ public class Server implements Runnable {
                     r.choose(false);
                     reports.add(r);
                 }
+                
+                aero.setFuelTankHit(true);
                 break;
             case Aero.CRIT_CREW:
                 // pilot hit

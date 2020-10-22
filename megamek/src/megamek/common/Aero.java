@@ -3966,8 +3966,7 @@ public class Aero extends Entity implements IAero, IBomber {
         } else if (getEngineHits() > 0) {
             MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
-        }
-        if (fuelTankHit()) {
+        } else if (fuelTankHit()) {
             MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {

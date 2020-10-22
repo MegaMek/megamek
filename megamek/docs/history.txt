@@ -12,6 +12,9 @@ VERSION HISTORY:
 + Issue #2338: Artemis IV counting for slot space
 + PR #2336: New equipment: ram plate
 + Issue #2344: Incorrect generic infantry armor cost
++ PR #2350: Allow java.util.TreeMap to be deserialized
++ PR #2334: Modernizing Multiple Visual Configs
++ PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

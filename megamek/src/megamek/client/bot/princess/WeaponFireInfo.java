@@ -463,7 +463,7 @@ public class WeaponFireInfo {
                 
                 int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName()); 
                 for (int radius = 0; radius <= blastRadius; radius++) {
-                    affectedHexes.addAll(BotGeometry.getHexDonut(bombedHex, radius));
+                    affectedHexes.addAll(bombedHex.allAtDistance(radius));
                 }
                 
                 // now we go through all affected hexes and add up the damage done

@@ -17,11 +17,10 @@ package megamek.common.weapons;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
-import megamek.client.bot.princess.BotGeometry;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -241,7 +240,7 @@ public class AreaEffectHelper {
         //      not here, but in artilleryDamageHex, make sure to .5x damage for "castle brian" or "armored" building
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies on 9-, BA dies on 7-
         for(int damageBracket = blastRadius, distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
-            Set<Coords> donut = BotGeometry.getHexDonut(center, distFromCenter);
+            List<Coords> donut = center.allAtDistance(distFromCenter);
             for(Coords coords : donut) {
                 int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
                 if(thinAtmo) {

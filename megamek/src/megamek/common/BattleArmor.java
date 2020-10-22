@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
@@ -2130,18 +2131,14 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double) getNumberActiverTroopers()
-                / getSquadSize();
+        double activeTroopPercent = (double) getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: only "
-                        + NumberFormat.getPercentInstance().format(
-                                activeTroopPercent) + " troops remaining.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override

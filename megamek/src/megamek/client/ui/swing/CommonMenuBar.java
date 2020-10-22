@@ -14,6 +14,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -460,6 +461,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu.add(viewGameOptions);
         viewClientSettings = new JMenuItem(Messages.getString("CommonMenuBar.viewClientSettings")); //$NON-NLS-1$
         viewClientSettings.setActionCommand(ClientGUI.VIEW_CLIENT_SETTINGS);
+        viewClientSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
         viewClientSettings.addActionListener(this);
         menu.add(viewClientSettings);
         viewLOSSetting = new JMenuItem(Messages.getString("CommonMenuBar.viewLOSSetting")); //$NON-NLS-1$

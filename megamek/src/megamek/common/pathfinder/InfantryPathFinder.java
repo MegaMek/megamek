@@ -83,7 +83,7 @@ public class InfantryPathFinder {
             infantryPaths.addAll(rotatedPaths);
             
             // add "flee" option if we haven't done anything else
-            if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&
+            if(game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);

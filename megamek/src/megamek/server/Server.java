@@ -4078,7 +4078,7 @@ public class Server implements Runnable {
         // ok now I need to look at the damage rings - start at 2 and go to 7
         for (int i = 2; i < 8; i++) {
             int damageDice = (8 - i) * 2;
-            List<Coords> ring = Compute.coordsAtRange(centralPos, i);
+            List<Coords> ring = centralPos.allAtDistance(i);
             for (Coords pos : ring) {
                 if (rearArc && !Compute.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
                     continue;
@@ -8773,7 +8773,7 @@ public class Server implements Runnable {
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
-            lastPos = new Coords(curPos);
+            lastPos = curPos;
             lastElevation = curElevation;
             prevStep = step;
             prevHex = curHex;
@@ -10065,7 +10065,7 @@ public class Server implements Runnable {
             // May need to reset here for each new hex.
             int hexDamage = damage;
             if (dir == 6) {// The targeted hex.
-                mfCoord = new Coords(coords);
+                mfCoord = coords;
             } else {// The hex in the dir direction from the targeted hex.
                 mfCoord = coords.translated(dir);
             }
@@ -13976,7 +13976,7 @@ public class Server implements Runnable {
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {
-                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    List<Coords> coords = e.getPosition().allAtDistance(dist);
                     for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e.getEquipmentNum(ams),
@@ -23972,7 +23972,7 @@ public class Server implements Runnable {
 
         // Handle surrounding coords
         for (int dist = 1; dist < maxDist; dist++) {
-            List<Coords> coords = Compute.coordsAtRange(position, dist);
+            List<Coords> coords = position.allAtDistance(dist);
             for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
                 if ((hex != null) && hex.hasTerrainfactor()) {
@@ -24260,11 +24260,10 @@ public class Server implements Runnable {
         int range = 0;
         while (range < (2 * craterDepth)) {
             // Get the set of hexes at this range.
-            Enumeration<Coords> hexSet = game.getBoard().getHexesAtDistance(position, range);
+            List<Coords> hexSet = position.allAtDistance(range);
 
             // Iterate through the hexes.
-            while (hexSet.hasMoreElements()) {
-                Coords myHexCoords = hexSet.nextElement();
+            for (Coords myHexCoords: hexSet) {
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
@@ -24376,11 +24375,10 @@ public class Server implements Runnable {
             for (int x = range; damageFlag; x++) {
                 // Damage terrain as necessary.
                 // Get all the hexes, and then iterate through them.
-                Enumeration<Coords> hexSet = game.getBoard().getHexesAtDistance(position, x);
+                List<Coords> hexSet = position.allAtDistance(x);
 
                 // Iterate through the hexes.
-                while (hexSet.hasMoreElements()) {
-                    Coords myHexCoords = hexSet.nextElement();
+                for (Coords myHexCoords: hexSet) {
                     IHex myHex = game.getBoard().getHex(myHexCoords);
 
                     // For each 3000 damage, water level is reduced by 1.
@@ -25331,6 +25329,8 @@ public class Server implements Runnable {
                     r.choose(false);
                     reports.add(r);
                 }
+                
+                aero.setFuelTankHit(true);
                 break;
             case Aero.CRIT_CREW:
                 // pilot hit
@@ -35113,7 +35113,7 @@ public class Server implements Runnable {
                                     Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
-            List<Coords> hexes = Compute.coordsAtRange(centre, ring);
+            List<Coords> hexes = centre.allAtDistance(ring);
             for (Coords c : hexes) {
                 alreadyHit = artilleryDamageHex(c, attackSource, damage, ammo,
                         subjectId, killer, null, flak, altitude, vPhaseReport,
@@ -35137,7 +35137,7 @@ public class Server implements Runnable {
                 subjectId, killer, null, false, 0, vPhaseReport, false,
                 alreadyHit, false);
         if (range > 0) {
-            List<Coords> hexes = Compute.coordsAtRange(centre, range);
+            List<Coords> hexes = centre.allAtDistance(range);
             for (Coords c : hexes) {
                 alreadyHit = artilleryDamageHex(c, centre, damage, null,
                         subjectId, killer, null, false, 0, vPhaseReport, false,

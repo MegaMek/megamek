@@ -122,7 +122,7 @@ public class EscapePods extends SmallCraft {
     }
     
     @Override
-    public boolean isCrippled() {
+    public boolean isCrippled(boolean checkCrew) {
         // Ejected crew should always attempt to flee according to Forced Withdrawal.
         return true;
     }

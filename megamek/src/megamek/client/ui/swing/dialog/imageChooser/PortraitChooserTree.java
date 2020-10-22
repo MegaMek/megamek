@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.common.Crew;
+import megamek.common.icons.AbstractIcon;
 
 public class PortraitChooserTree extends JTree {
     
@@ -22,7 +22,7 @@ public class PortraitChooserTree extends JTree {
         // set up the directory tree (left panel) 
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(Crew.ROOT_PORTRAIT);
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
         if (MMStaticDirectoryManager.getPortraits() != null) {
             Iterator<String> catNames = MMStaticDirectoryManager.getPortraits().getCategoryNames();
             while (catNames.hasNext()) {
@@ -44,8 +44,7 @@ public class PortraitChooserTree extends JTree {
      * @param node
      * @param names
      */
-    private void addCategoryToTree(DefaultMutableTreeNode node, String[] names) {
-
+    private void addCategoryToTree(DefaultMutableTreeNode node, String... names) {
         // Shouldn't happen
         if (names.length == 0) {
             return;
@@ -70,9 +69,8 @@ public class PortraitChooserTree extends JTree {
         // If we didn't match, lets create nodes for each name
         if (!matched) {
             DefaultMutableTreeNode root = node;
-            for (int i = 0; i < names.length; i++) {
-                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
-                        names[i]);
+            for (String name : names) {
+                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(name);
                 root.add(newNode);
                 root = newNode;
             }

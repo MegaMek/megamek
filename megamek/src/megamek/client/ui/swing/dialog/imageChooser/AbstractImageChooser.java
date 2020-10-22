@@ -17,13 +17,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
@@ -62,13 +61,13 @@ import megamek.common.util.fileUtils.DirectoryItem;
  * should be called in the constructor to show the search panel.
  */
 public abstract class AbstractImageChooser extends JDialog implements TreeSelectionListener {
-
+    //region Variable Declarations
     private static final long serialVersionUID = -7836502700465322620L;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     // display frames
     private JSplitPane splitPane;
-    
+
     // The scrollpane containing the directory tree
     private JScrollPane scrpTree;
 
@@ -80,10 +79,12 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
 
     /** True when the user canceled. */
     private boolean wasCanceled = false;
-    
-    /** A JPanel containing the search Textfield */
-    private JPanel searchPanel; 
 
+    /** A JPanel containing the search Textfield */
+    private JPanel searchPanel;
+    //endregion Variable Declarations
+
+    //region Constructors
     /**
      * Creates a dialog that allows players to choose a directory from
      * a directory tree and an image from the images in that directory.
@@ -93,10 +94,10 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
      * @param renderer A ListCellRenderer<DirectoryItem> to show the images
      * @param tree the JTree with the directories
      */
-    public AbstractImageChooser(Window parent, String title, 
-            ListCellRenderer<DirectoryItem> renderer, JTree tree) {
+    public AbstractImageChooser(Window parent, String title, ListCellRenderer<DirectoryItem> renderer,
+                                JTree tree) {
         super(parent, title, ModalityType.APPLICATION_MODAL);
-        
+
         // Set up the image list (right panel)
         imageList = new ImageList(renderer);
         imageList.addMouseListener(new ImageChoiceMouseAdapter());
@@ -112,22 +113,22 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrpTree, scrpImages);
         splitPane.setResizeWeight(0.5);
-        
+
         setLayout(new BorderLayout());
         searchPanel = searchPanel();
         add(searchPanel, BorderLayout.PAGE_START);
         add(splitPane, BorderLayout.CENTER);
         add(buttonPanel(), BorderLayout.PAGE_END);
-        
+
         // Do not show the search panel by default
         showSearch(false);
-        
+
         // Size and position of the dialog
         setMinimumSize(new Dimension(480, 240));
         splitPane.setDividerLocation(GUIP.getInt(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS));
         setSize(GUIP.getImageChoiceSizeWidth(), GUIP.getImageChoiceSizeHeight());
         setLocation(GUIP.getImageChoicePosX(), GUIP.getImageChoicePosY());
-        
+
         // Make the close "X" cancel the dialog
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -137,36 +138,29 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
             }
         });
     }
+    //endregion Constructors
 
     /** Constructs the bottom panel with the Okay and Cancel buttons. */
     private JPanel buttonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-        
+
         JButton btnCancel = new JButton(Messages.getString("Cancel"));
-        btnCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancel();
-            }
-        });
-        
+        btnCancel.addActionListener(evt -> cancel());
+
         JButton btnOkay = new JButton(Messages.getString("Okay"));
-        btnOkay.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                select();
-            }
-        });
-        
+        btnOkay.addActionListener(evt -> select());
+
         panel.add(btnOkay);
         panel.add(btnCancel);
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
     }
-    
+
     /** Shows or hides the search panel. */
     public void showSearch(boolean b) {
         searchPanel.setVisible(b);
     }
-    
+
     /** Constructs a functions panel containing the search bar. */
     private JPanel searchPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
@@ -174,23 +168,28 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         JLabel searchLbl = new JLabel("Search: "); 
         JTextField search = new JTextField(20);
         search.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 updateSearch(search.getText());
             }
+
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 updateSearch(search.getText());
             }
+
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 updateSearch(search.getText());
             }
         });
         panel.add(searchLbl);
         panel.add(search);
-        
+
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
     }
-    
+
     /** 
      * Reacts to changes in the search field, showing searched items
      * for the search string given by contents when at least 
@@ -210,26 +209,26 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
             // if there's any, so when the root itself is selected, 
             // category remains "".
             Object[] nodes = path.getPath();
-            String category = "";
+            StringBuilder category = new StringBuilder();
             for (int i = 1; i < nodes.length; i++) {
-                category += (String) ((DefaultMutableTreeNode) nodes[i]).getUserObject() + "/";
+                category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
-            imageList.updateImages(getItems(category));
+            imageList.updateImages(getItems(category.toString()));
         } else if (contents.length() > 2) {
             imageList.updateImages(getSearchedItems(contents));
         }
     }
-    
+
     private void cancel() {
         wasCanceled = true;
         setVisible(false);
     }
-   
+
     /** Returns the selected DirectoryItem. May be null. */
     public DirectoryItem getSelectedItem() {
         return imageList.getSelectedValue();
     }
-    
+
     /** Returns the index of the selected image. */
     public int getSelectedIndex() {
         return imageList.getSelectedIndex();
@@ -253,7 +252,7 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         wasCanceled = false;
         setVisible(false);
     }
-    
+
     /** Saves the position, size and split of the dialog. */
     private void saveWindowSettings() {
         GUIP.setValue(GUIPreferences.IMAGE_CHOOSER_POS_X, getLocation().x);
@@ -262,21 +261,21 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         GUIP.setValue(GUIPreferences.IMAGE_CHOOSER_SIZE_HEIGHT, getSize().height);
         GUIP.setValue(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS, splitPane.getDividerLocation());
     }
-    
+
     /** 
      * Called at start and when a new category is selected in the directory tree.
      * Returns a list of items that should be shown for the category which
      * is given as a Treepath. 
      */
-    protected abstract ArrayList<DirectoryItem> getItems(String category);
-    
+    protected abstract List<DirectoryItem> getItems(String category);
+
     /** 
      * Called when at least 3 characters are entered into the search bar.
      * Returns a list of items that should be shown for this particular search string.
      */
-    protected ArrayList<DirectoryItem> getSearchedItems(String searchString) {
-        return new ArrayList<DirectoryItem>();
-    }; 
+    protected List<DirectoryItem> getSearchedItems(String searchString) {
+        return new ArrayList<>();
+    }
 
     /**
      * Selects the given category in the tree, updates the shown images to this
@@ -288,14 +287,13 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         // a TreePath so it can be selected in the dialog
         // When the camo directory has changes, the previous selection might not be found
         boolean found = false;
-        String[] names = category.split(Pattern.quote("/"));
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeCategories.getModel().getRoot();
         DefaultMutableTreeNode currentNode = root;
-        for (int i = 0; i < names.length; i++) {
+        for (String name : category.split(Pattern.quote("/"))) {
             found = false;
-            for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements();) {
+            for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
                 DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
-                if (names[i].equals(child.getUserObject())) {
+                if (name.equals(child.getUserObject())) {
                     currentNode = child;
                     found = true;
                     break;
@@ -313,7 +311,7 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
             treeCategories.setSelectionPath(new TreePath(root.getPath()));
         }
     }
-    
+
     public void refreshDirectory(JTree newTree) {
         treeCategories.removeTreeSelectionListener(this);
         treeCategories = newTree;
@@ -322,7 +320,7 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
         splitPane.setLeftComponent(scrpTree);
         splitPane.setDividerLocation(GUIP.getInt(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS));
     }
-    
+
     @Override
     public void valueChanged(TreeSelectionEvent ev) {
         if (ev.getSource().equals(treeCategories)) {
@@ -336,17 +334,16 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
             // if there's any, so when the root itself is selected, 
             // category remains "".
             Object[] nodes = path.getPath();
-            String category = "";
+            StringBuilder category = new StringBuilder();
             for (int i = 1; i < nodes.length; i++) {
-                category += (String) ((DefaultMutableTreeNode) nodes[i]).getUserObject() + "/";
+                category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
-            imageList.updateImages(getItems(category));
+            imageList.updateImages(getItems(category.toString()));
         }
     }
-    
+
     /** Catches a double-click to immediately select the clicked image. */
     class ImageChoiceMouseAdapter extends MouseInputAdapter {
-
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
@@ -354,5 +351,4 @@ public abstract class AbstractImageChooser extends JDialog implements TreeSelect
             }
         }
     }
-    
 }

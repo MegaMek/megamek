@@ -80,6 +80,7 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -457,33 +458,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCamo = new JButton();
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo");
-        butCamo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Show the CamoChooser for the selected player
-                IPlayer player = getPlayerSelected().getLocalPlayer();
-                int result = camoDialog.showDialog(player);
-                
-                // If the dialog was canceled or nothing selected, do nothing
-                if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
-                    return; 
-                }
-                
-                // Update the player from the camo selection
-                DirectoryItem selectedItem = camoDialog.getSelectedItem();
-                if (selectedItem.getCategory().equals(IPlayer.NO_CAMO)) {
-                    player.setColorIndex(camoDialog.getSelectedIndex());
-                }
-                player.setCamoCategory(selectedItem.getCategory());
-                player.setCamoFileName(selectedItem.getItem());
-                butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
-                getPlayerSelected().sendPlayerInfo();
+        butCamo.addActionListener(e -> {
+            // Show the CamoChooser for the selected player
+            IPlayer player = getPlayerSelected().getLocalPlayer();
+            int result = camoDialog.showDialog(player);
+
+            // If the dialog was canceled or nothing selected, do nothing
+            if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
+                return;
             }
+
+            // Update the player from the camo selection
+            DirectoryItem selectedItem = camoDialog.getSelectedItem();
+            if (Camouflage.NO_CAMOUFLAGE.equals(selectedItem.getCategory())) {
+                player.setColorIndex(camoDialog.getSelectedIndex());
+            }
+            player.setCamoCategory(selectedItem.getCategory());
+            player.setCamoFileName(selectedItem.getItem());
+            butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
+            getPlayerSelected().sendPlayerInfo();
         });
         camoDialog = new CamoChooser(clientgui.getFrame());
         refreshCamos();
 
-        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
+        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart"));
         butChangeStart.addActionListener(this);
 
         // layout

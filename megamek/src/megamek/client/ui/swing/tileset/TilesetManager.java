@@ -40,6 +40,7 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
 import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -617,7 +618,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
         Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
+        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
             camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
         EntityImage entityImage = null;

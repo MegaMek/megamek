@@ -19,9 +19,9 @@
 package megamek.client.ui.swing.tileset;
 
 import megamek.MegaMek;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
+import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;

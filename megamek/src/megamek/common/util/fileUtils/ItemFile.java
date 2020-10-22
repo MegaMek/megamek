@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2004 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -18,13 +19,15 @@
  */
 package megamek.common.util.fileUtils;
 
-import java.io.File;
-
 /**
- * This class is used to hold a default directory
+ * This interface represents a categorizable file. Created on January 18, 2004
+ * @author James Damour
  */
-public class DefaultDirectory extends AbstractDirectory {
-    public DefaultDirectory(File file, String rootName, ItemFileFactory itemFileFactory) {
-        super(file, rootName, itemFileFactory);
-    }
+public interface ItemFile {
+    /**
+     * Get the item for this file.
+     *
+     * @throws Exception if there's any error getting the item.
+     */
+    Object getItem() throws Exception;
 }

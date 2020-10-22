@@ -72,6 +72,11 @@ public class PortraitChooser extends AbstractIconChooser {
         return result;
     }
 
+    @Override
+    protected List<AbstractIcon> getSearchedItems(String searched) {
+        return getSearchedItems(searched, MMStaticDirectoryManager.getPortraits());
+    }
+
     /**
      * Adds the portraits of the given category to the given items List.
      * Assumes that the root of the path {@link AbstractIcon}.ROOT_CATEGORY is passed as ""!

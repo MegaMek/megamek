@@ -128,30 +128,7 @@ public class CamoChooser extends AbstractIconChooser {
 
     @Override
     protected List<AbstractIcon> getSearchedItems(String searched) {
-        // For a category that contains the search string, all its items
-        // are added to the list. Additionally, all items that contain
-        // the search string are added.
-
-        List<AbstractIcon> result = new ArrayList<>();
-        String lowerSearched = searched.toLowerCase();
-
-        for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
-             catNames.hasNext(); ) {
-            String tcat = catNames.next();
-            if (tcat.toLowerCase().contains(lowerSearched)) {
-                addCategoryItems(tcat, result);
-                continue;
-            }
-            for (Iterator<String> itemNames = MMStaticDirectoryManager.getCamouflage().getItemNames(tcat);
-                 itemNames.hasNext(); ) {
-                String item = itemNames.next();
-                if (item.toLowerCase().contains(lowerSearched)) {
-                    result.add(new Camouflage(tcat, item));
-                }
-            }
-        }
-
-        return result;
+        return getSearchedItems(searched, MMStaticDirectoryManager.getCamouflage());
     }
 
     /**

@@ -27,6 +27,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,10 @@ import javax.swing.tree.TreePath;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * Creates a dialog that allows players to select a directory from
@@ -240,7 +244,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     }
 
     /** Returns the selected AbstractIcon. May be null. */
-    public AbstractIcon getSelectedItem() {
+    public @Nullable AbstractIcon getSelectedItem() {
         return imageList.getSelectedValue();
     }
 
@@ -287,16 +291,50 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
 
     /**
      * Called when at least 3 characters are entered into the search bar.
-     * Returns a list of items that should be shown for this particular search string.
+     *
+     * @param searchString the string to search for
+     * @return a list of icons that fit the provided search string
      */
-    protected List<AbstractIcon> getSearchedItems(String searchString) {
-        return new ArrayList<>();
+    protected abstract List<AbstractIcon> getSearchedItems(String searchString);
+
+    /**
+     * This is ONLY to be called by getSearchedItems(String searched), as it requires the proper
+     * directory to be supplied but otherwise the code is the exact same.
+     *
+     * @param searchString the string to search for
+     * @param directory the directory to search for the specified item
+     * @return a list of icons that fit the provided search string
+     */
+    protected List<AbstractIcon> getSearchedItems(String searchString, DirectoryItems directory) {
+        // For a category that contains the search string, all its items
+        // are added to the list. Additionally, all items that contain
+        // the search string are added.
+
+        List<AbstractIcon> result = new ArrayList<>();
+        String lowerSearched = searchString.toLowerCase();
+
+        for (Iterator<String> catNames = directory.getCategoryNames();
+             catNames.hasNext(); ) {
+            String tcat = catNames.next();
+            if (tcat.toLowerCase().contains(lowerSearched)) {
+                addCategoryItems(tcat, result);
+                continue;
+            }
+            for (Iterator<String> itemNames = directory.getItemNames(tcat);
+                 itemNames.hasNext(); ) {
+                String item = itemNames.next();
+                if (item.toLowerCase().contains(lowerSearched)) {
+                    result.add(new Camouflage(tcat, item));
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
      * Selects the given category in the tree, updates the shown images to this
-     * category and selects the item given by filename in the
-     * image list.
+     * category and selects the item given by filename in the image list.
      */
     protected void setSelection(AbstractIcon icon) {
         // This cumbersome code takes the category name and transforms it into

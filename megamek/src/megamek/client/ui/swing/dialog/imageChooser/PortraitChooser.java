@@ -73,10 +73,11 @@ public class PortraitChooser extends AbstractIconChooser {
     }
 
     /**
-     * Adds the portraits of the given category to the given items ArrayList.
+     * Adds the portraits of the given category to the given items List.
      * Assumes that the root of the path {@link AbstractIcon}.ROOT_CATEGORY is passed as ""!
      */
-    private void addCategoryItems(String category, List<AbstractIcon> items) {
+    @Override
+    protected void addCategoryItems(String category, List<AbstractIcon> items) {
         for (Iterator<String> portNames = MMStaticDirectoryManager.getPortraits().getItemNames(category);
              portNames.hasNext(); ) {
             items.add(new Portrait(category, portNames.next()));
@@ -84,7 +85,8 @@ public class PortraitChooser extends AbstractIconChooser {
     }
 
     /** Reloads the portrait directory from disk. */
-    private void refreshPortraits() {
+    @Override
+    protected void refreshDirectory() {
         MMStaticDirectoryManager.refreshPortraitDirectory();
         refreshDirectory(new PortraitChooserTree());
     }

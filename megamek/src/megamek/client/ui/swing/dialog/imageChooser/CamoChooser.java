@@ -64,7 +64,7 @@ public class CamoChooser extends AbstractIconChooser {
      * and colors. Also refreshes the camos from disk.
      */
     public int showDialog(IPlayer player) {
-        refreshCamos();
+        refreshDirectory();
         individualCamo = false;
         setSelection(player.getCamouflage());
         return showDialog();
@@ -77,14 +77,15 @@ public class CamoChooser extends AbstractIconChooser {
      * Also refreshes the camos from disk.
      */
     public int showDialog(Entity entity) {
-        refreshCamos();
+        refreshDirectory();
         individualCamo = true;
         setEntity(entity);
         return showDialog();
     }
 
     /** Reloads the camo directory from disk. */
-    private void refreshCamos() {
+    @Override
+    protected void refreshDirectory() {
         MMStaticDirectoryManager.refreshCamouflageDirectory();
         refreshDirectory(new CamoChooserTree());
     }
@@ -155,10 +156,11 @@ public class CamoChooser extends AbstractIconChooser {
     }
 
     /**
-     * Adds the camos of the given category to the given items ArrayList.
-     * Assumes that the root of the path (IPlayer.ROOT_CAMO) is passed as ""!
+     * Adds the camos of the given category to the given items List.
+     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
      * */
-    private void addCategoryItems(String category, List<AbstractIcon> items) {
+    @Override
+    protected void addCategoryItems(String category, List<AbstractIcon> items) {
         for (Iterator<String> camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(category);
              camoNames.hasNext(); ) {
             items.add(new Camouflage(category, camoNames.next()));

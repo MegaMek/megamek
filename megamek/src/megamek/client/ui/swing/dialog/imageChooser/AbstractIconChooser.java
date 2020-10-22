@@ -79,7 +79,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     // directory selection tree
     protected JTree treeCategories;
 
-    // camo selection list
+    // image selection list
     protected ImageList imageList;
 
     /** True when the user canceled. */
@@ -106,9 +106,26 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
                                ListCellRenderer<AbstractIcon> renderer, JTree tree) {
         super(parent, title, ModalityType.APPLICATION_MODAL);
 
+        initialize(renderer, tree);
+
+        if (icon != null) {
+            setSelection(icon);
+        }
+    }
+    //endregion Constructors
+
+    //region Initialization
+    private void initialize(ListCellRenderer<AbstractIcon> renderer, JTree tree) {
         // Set up the image list (right panel)
         imageList = new ImageList(renderer);
-        imageList.addMouseListener(new ImageChoiceMouseAdapter());
+        imageList.addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    select();
+                }
+            }
+        });
         JScrollPane scrpImages = new JScrollPane(imageList);
         scrpImages.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrpImages.setMinimumSize(new Dimension(500, 240));
@@ -145,12 +162,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
                 cancel();
             }
         });
-
-        if (icon != null) {
-            setSelection(icon);
-        }
     }
-    //endregion Constructors
 
     /** Constructs the bottom panel with the Okay and Cancel buttons. */
     private JPanel buttonPanel() {
@@ -166,11 +178,6 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         panel.add(btnCancel);
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
-    }
-
-    /** Shows or hides the search panel. */
-    public void showSearch(boolean b) {
-        searchPanel.setVisible(b);
     }
 
     /** Constructs a functions panel containing the search bar. */
@@ -202,6 +209,18 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         return panel;
     }
 
+    /** Shows or hides the search panel. */
+    public void showSearch(boolean b) {
+        searchPanel.setVisible(b);
+    }
+
+    /**
+     * Adds the portraits of the given category to the given items List.
+     * Assumes that the root of the path {@link AbstractIcon}.ROOT_CATEGORY is passed as ""!
+     */
+    protected abstract void addCategoryItems(String category, List<AbstractIcon> items);
+    //endregion Initialization
+
     /**
      * Reacts to changes in the search field, showing searched items
      * for the search string given by contents when at least
@@ -231,11 +250,6 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         }
     }
 
-    private void cancel() {
-        wasCanceled = true;
-        setVisible(false);
-    }
-
     /** Returns the selected AbstractIcon. May be null. */
     public AbstractIcon getSelectedItem() {
         return imageList.getSelectedValue();
@@ -249,15 +263,20 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     /** Activates the dialog and returns if the user cancelled. */
     public int showDialog() {
         wasCanceled = false;
-        setVisible (true);
+        setVisible(true);
         // After returning from the modal dialog, save settings the return whether it was cancelled or not...
         saveWindowSettings();
         return wasCanceled ? JOptionPane.CANCEL_OPTION : JOptionPane.OK_OPTION;
     }
 
-    /** Called when the Okay button is pressed or a camo is double-clicked. */
+    /** Called when the Okay button is pressed or an image is double-clicked. */
     protected void select() {
         wasCanceled = false;
+        setVisible(false);
+    }
+
+    private void cancel() {
+        wasCanceled = true;
         setVisible(false);
     }
 
@@ -293,7 +312,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     protected void setSelection(AbstractIcon icon) {
         // This cumbersome code takes the category name and transforms it into
         // a TreePath so it can be selected in the dialog
-        // When the camo directory has changes, the previous selection might not be found
+        // When the icon directory has changes, the previous selection might not be found
         boolean found = false;
         String[] names = icon.getCategory().split(Pattern.quote("/"));
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeCategories.getModel().getRoot();
@@ -321,7 +340,17 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         }
     }
 
-    public void refreshDirectory(JTree newTree) {
+    /**
+     * This is used to refresh the contents of the directory
+     */
+    protected abstract void refreshDirectory();
+
+    /**
+     * This method is to ONLY be called by those methods overwriting the abstract refreshDirectory
+     * above
+     * @param newTree the new directory tree
+     */
+    protected void refreshDirectory(JTree newTree) {
         treeCategories.removeTreeSelectionListener(this);
         treeCategories = newTree;
         treeCategories.addTreeSelectionListener(this);
@@ -348,16 +377,6 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
             imageList.updateImages(getItems(category.toString()));
-        }
-    }
-
-    /** Catches a double-click to immediately select the clicked image. */
-    class ImageChoiceMouseAdapter extends MouseInputAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
-                select();
-            }
         }
     }
 }

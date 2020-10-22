@@ -118,6 +118,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int engineHits = 0;
     private int avionicsHits = 0;
     private int cicHits = 0;
+    private boolean fuelTankHit = false;
     private boolean gearHit = false;
     private int structIntegrity;
     private int orig_structIntegrity;
@@ -676,6 +677,14 @@ public class Aero extends Entity implements IAero, IBomber {
             hits = 3;
         }
         fcsHits = hits;
+    }
+    
+    public boolean fuelTankHit() {
+        return fuelTankHit;
+    }
+    
+    public void setFuelTankHit(boolean value) {
+        fuelTankHit = value;
     }
 
     public void setCICHits(int hits) {
@@ -3960,7 +3969,7 @@ public class Aero extends Entity implements IAero, IBomber {
             System.out.println(msg + engineHits + " Engine Hits.");
             return true;
         }
-        if (getPotCrit() == CRIT_FUEL_TANK) {
+        if (fuelTankHit()) {
             System.out.println(msg + " Fuel Tank Hit.");
             return true;
         }

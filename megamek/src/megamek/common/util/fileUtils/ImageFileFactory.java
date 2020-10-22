@@ -23,7 +23,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Objects;
@@ -34,24 +33,22 @@ import megamek.common.util.*;
 
 /**
  * A FilenameFilter that produces image files (PNG, JPG/JPEG, GIF). 
- * (The images are not scaled. To produce images scaled to 84x72 use ScaledImageFileFactory.)
+ * (The images are not scaled. To produce scaled images use ScaledImageFileFactory.)
  */
 public class ImageFileFactory implements ItemFileFactory {
     //region Variable Declarations
     /** Accepted image file extensions */
-    private static final String JPG = "JPG";
-    private static final String JPEG = "JPEG";
-    private static final String GIF = "GIF";
-    private static final String PNG = "PNG";
+    protected static final String JPG = "JPG";
+    protected static final String JPEG = "JPEG";
+    protected static final String GIF = "GIF";
+    protected static final String PNG = "PNG";
     //endregion Variable Declarations
 
-    /** Singleton */
-    private ImageFileFactory() {}
-    private static ImageFileFactory singleton = new ImageFileFactory();
-    /** Returns the singleton ImageFileFactory. */
-    public static ImageFileFactory getInstance() {
-        return singleton;
+    //region Constructors
+    public ImageFileFactory() {
+
     }
+    //endregion Constructors
 
     /**
      * Get the <code>ItemFile</code> for the given <code>File</code>.
@@ -59,10 +56,9 @@ public class ImageFileFactory implements ItemFileFactory {
      * @param file The input <code>File</code> object that will be read to produce the item.
      *             This value must not be <code>null</code>.
      * @return an <code>ItemFile</code> for the given file.
-     * @throws IllegalArgumentException if the <code>file</code> is <code>null</code>.
      */
     @Override
-    public ItemFile getItemFile(final File file) throws IllegalArgumentException {
+    public ItemFile getItemFile(final File file) {
         // Validate the input.
         Objects.requireNonNull(file, "A null image file was passed");
 
@@ -91,11 +87,9 @@ public class ImageFileFactory implements ItemFileFactory {
      * @param zipFile The <code>ZipFile</code> object that contains the <code>ZipEntry</code>
      *                that will produce the item. This value must not be <code>null</code>.
      * @return an <code>ItemFile</code> for the given zip file entry.
-     * @throws IllegalArgumentException if the <code>file</code> is <code>null</code>.
      */
     @Override
-    public ItemFile getItemFile(final ZipEntry zipEntry, final ZipFile zipFile)
-            throws IllegalArgumentException {
+    public ItemFile getItemFile(final ZipEntry zipEntry, final ZipFile zipFile) {
         // Validate the input.
         Objects.requireNonNull(zipEntry, "A null ZIP entry was passed.");
         Objects.requireNonNull(zipFile, "A null ZIP file was passed.");
@@ -109,41 +103,51 @@ public class ImageFileFactory implements ItemFileFactory {
             public Object getItem() throws Exception {
                 // Cache the image on first use.
                 if (image == null) {
-
-                    // Get ready to read from the item.
-                    try (InputStream in = new BufferedInputStream(zipFile.getInputStream(itemEntry),
-                            (int) itemEntry.getSize())) {
-                        // Make a buffer big enough to hold the item,
-                        // read from the ZIP file, and write it to temp.
-                        byte[] buffer = new byte[(int) itemEntry.getSize()];
-                        in.read(buffer);
-
-                        // Check the last 10 bytes. I've been having
-                        // some problems with incomplete image files,
-                        // and I want to detect it early and give advice
-                        // to players for dealing with the problem.
-                        int index = (int) itemEntry.getSize() - 10;
-                        while (itemEntry.getSize() > index) {
-                            if (buffer[index] == 0) {
-                                index++;
-                            } else {
-                                break;
-                            }
-                        }
-
-                        if (itemEntry.getSize() <= index) {
-                            throw new IOException("Error reading " + itemEntry.getName()
-                                    + "\nYou may want to unzip " + zipFile.getName());
-                        }
-
-                        // Create the image from the buffer.
-                        image = Toolkit.getDefaultToolkit().createImage(buffer);
-                    }
+                    image = createZippedImage(itemEntry, zipFile);
                 }
 
                 return ImageUtil.createAcceleratedImage(image);
             }
         };
+    }
+
+    /**
+     * This creates an image from a zipped image
+     * @param zipEntry The <code>ZipEntry</code> that will be read to produce the item. This value
+     *                 must not be <code>null</code>.
+     * @param zipFile The <code>ZipFile</code> object that contains the <code>ZipEntry</code>
+     *                that will produce the item. This value must not be <code>null</code>.
+     * @return
+     * @throws Exception if there is an error reading the file
+     */
+    protected Image createZippedImage(final ZipEntry zipEntry, final ZipFile zipFile) throws Exception {
+        // Get ready to read from the item.
+        try (InputStream in = new BufferedInputStream(zipFile.getInputStream(zipEntry),
+                (int) zipEntry.getSize())) {
+            // Make a buffer big enough to hold the item,
+            // read from the ZIP file, and write it to temp.
+            byte[] buffer = new byte[(int) zipEntry.getSize()];
+            in.read(buffer);
+
+            // Check the last 10 bytes. I've been having
+            // some problems with incomplete image files,
+            // and I want to detect it early and give advice
+            // to players for dealing with the problem.
+            int index = (int) zipEntry.getSize() - 10;
+            while (zipEntry.getSize() > index) {
+                if (buffer[index] == 0) {
+                    index++;
+                } else {
+                    break;
+                }
+            }
+
+            assert zipEntry.getSize() > index : "Error reading " + zipEntry.getName()
+                    + "\nYou may want to unzip " + zipFile.getName();
+
+            // Create the image from the buffer.
+            return Toolkit.getDefaultToolkit().createImage(buffer);
+        }
     }
 
     /**

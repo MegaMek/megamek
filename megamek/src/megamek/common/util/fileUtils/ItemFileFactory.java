@@ -25,10 +25,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * This interface represents a factory that can produce items from cate-
- * gorizable files. This interface extends the <code>FilenameFilter</code>,
- * so the factory is aware of the files that it can handle as input. Created on
- * January 18, 2004
+ * This interface represents a factory that can produce items from categorizable files.
+ * This interface extends the <code>FilenameFilter</code>, so the factory is aware of the files that
+ * it can handle as input. Created on January 18, 2004
  *
  * @author James Damour
  * @version 1
@@ -40,9 +39,8 @@ public interface ItemFileFactory extends FilenameFilter {
      * @param file The input <code>File</code> object that will be read to produce the item.
      *             This value must not be <code>null</code>.
      * @return an <code>ItemFile</code> for the given file.
-     * @throws IllegalArgumentException if the <code>file</code> is <code>null</code>.
      */
-    ItemFile getItemFile(File file) throws IllegalArgumentException;
+    ItemFile getItemFile(File file);
 
     /**
      * Get the <code>ItemFile</code> for the given <code>ZipEntry</code> in the <code>ZipFile</code>.
@@ -52,9 +50,8 @@ public interface ItemFileFactory extends FilenameFilter {
      * @param zipFile The <code>ZipFile</code> object that contains the <code>ZipEntry</code>
      *                that will produce the item. This value must not be <code>null</code>.
      * @return an <code>ItemFile</code> for the given zip file entry.
-     * @throws IllegalArgumentException if the <code>file</code> is <code>null</code>.
      */
-    ItemFile getItemFile(ZipEntry zipEntry, ZipFile zipFile) throws IllegalArgumentException;
+    ItemFile getItemFile(ZipEntry zipEntry, ZipFile zipFile);
 
     /**
      * The method that must be implemented by any object that filters filenames

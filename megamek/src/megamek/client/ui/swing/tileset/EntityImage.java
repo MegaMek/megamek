@@ -72,8 +72,7 @@ public class EntityImage {
     
     static {
         try {
-            DecalImages = new DirectoryItems(DECAL_PATH, "",  
-                    ImageFileFactory.getInstance());
+            DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
             MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());

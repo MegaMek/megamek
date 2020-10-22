@@ -77,7 +77,7 @@ public class MMStaticDirectoryManager {
             parsePortraitDirectory = false;
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
-                        "", ImageFileFactory.getInstance());
+                        "", new ImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the portraits directory!", e);
             }
@@ -96,7 +96,7 @@ public class MMStaticDirectoryManager {
             parseCamouflageDirectory = false;
             try {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(), "",
-                        ScaledImageFileFactory.getInstance());
+                        new ScaledImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the camo directory!", e);
             }

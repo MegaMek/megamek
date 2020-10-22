@@ -117,8 +117,7 @@ public class CamoChooser extends AbstractIconChooser {
         // presented. When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = getDirectory().getCategoryNames();
-                 catNames.hasNext(); ) {
+            for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
                 String tcat = catNames.next();
                 if (tcat.startsWith(category)) {
                     addCategoryItems(tcat, result);

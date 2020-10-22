@@ -87,10 +87,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         ActionListener, ComponentListener {
     private static final long serialVersionUID = 5625499617779156289L;
 
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
+    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
+    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
+    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     // a frame, to show stuff in
     private JFrame frame;
@@ -872,7 +872,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     }
    
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = (entity.getCamoCategory() != null && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
+        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
                 ? entity.getCamouflage() : player.getCamouflage()).getImage();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp)));

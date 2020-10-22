@@ -336,10 +336,9 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         // a TreePath so it can be selected in the dialog
         // When the icon directory has changes, the previous selection might not be found
         boolean found = false;
-        String[] names = icon.getCategory().split(Pattern.quote("/"));
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeCategories.getModel().getRoot();
         DefaultMutableTreeNode currentNode = root;
-        for (String name : names) {
+        for (String name : icon.getCategory().split(Pattern.quote("/"))) {
             found = false;
             for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
                 DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();

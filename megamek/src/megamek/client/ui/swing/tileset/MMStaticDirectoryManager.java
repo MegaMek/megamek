@@ -24,14 +24,12 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItems;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

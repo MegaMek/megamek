@@ -27,6 +27,7 @@ import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * This dialog allows players to select the camo pattern (or color) used by
@@ -57,6 +58,16 @@ public class CamoChooser extends AbstractIconChooser {
     }
     //endregion Constructors
 
+    @Override
+    protected DirectoryItems getDirectory() {
+        return MMStaticDirectoryManager.getCamouflage();
+    }
+
+    @Override
+    protected AbstractIcon createIcon(String category, String filename) {
+        return new Camouflage(category, filename);
+    }
+
     /**
      * Show the camo choice dialog and pre-select the camo or color
      * of the given player. The dialog will allow choosing camos
@@ -82,13 +93,6 @@ public class CamoChooser extends AbstractIconChooser {
         return showDialog();
     }
 
-    /** Reloads the camo directory from disk. */
-    @Override
-    protected void refreshDirectory() {
-        MMStaticDirectoryManager.refreshCamouflageDirectory();
-        refreshDirectory(new CamoChooserTree());
-    }
-
     @Override
     protected List<AbstractIcon> getItems(String category) {
         List<AbstractIcon> result = new ArrayList<>();
@@ -103,7 +107,7 @@ public class CamoChooser extends AbstractIconChooser {
                 result.add(entityOwnerCamo);
             } else {
                 for (String color: IPlayer.colorNames) {
-                    result.add(new Camouflage(Camouflage.NO_CAMOUFLAGE, color));
+                    result.add(createIcon(Camouflage.NO_CAMOUFLAGE, color));
                 }
             }
             return result;
@@ -113,7 +117,7 @@ public class CamoChooser extends AbstractIconChooser {
         // presented. When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
+            for (Iterator<String> catNames = getDirectory().getCategoryNames();
                  catNames.hasNext(); ) {
                 String tcat = catNames.next();
                 if (tcat.startsWith(category)) {
@@ -126,21 +130,11 @@ public class CamoChooser extends AbstractIconChooser {
         return result;
     }
 
+    /** Reloads the camo directory from disk. */
     @Override
-    protected List<AbstractIcon> getSearchedItems(String searched) {
-        return getSearchedItems(searched, MMStaticDirectoryManager.getCamouflage());
-    }
-
-    /**
-     * Adds the camos of the given category to the given items List.
-     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
-     * */
-    @Override
-    protected void addCategoryItems(String category, List<AbstractIcon> items) {
-        for (Iterator<String> camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(category);
-             camoNames.hasNext(); ) {
-            items.add(new Camouflage(category, camoNames.next()));
-        }
+    protected void refreshDirectory() {
+        MMStaticDirectoryManager.refreshCamouflageDirectory();
+        refreshDirectory(new CamoChooserTree());
     }
 
     /**
@@ -155,7 +149,7 @@ public class CamoChooser extends AbstractIconChooser {
         if (entity.getOwner().getCamouflage().getCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
             item = IPlayer.colorNames[entity.getOwner().getColorIndex()];
         }
-        entityOwnerCamo = new Camouflage(entity.getOwner().getCamouflage().getCategory(), item);
+        entityOwnerCamo = createIcon(entity.getOwner().getCamouflage().getCategory(), item);
 
         // Set the camo category and filename to the entity's if it has one,
         // otherwise to the corresponding player's camo category

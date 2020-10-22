@@ -56,7 +56,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
@@ -89,7 +88,7 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     /** True when the user canceled. */
     private boolean wasCanceled = false;
 
-    /** When true, camos from all subdirectories of the current selection are shown. */
+    /** When true, icons from all subdirectories of the current selection are shown. */
     protected boolean includeSubDirs = true;
     //endregion Variable Declarations
 
@@ -208,11 +207,20 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     }
 
     /**
-     * Adds the portraits of the given category to the given items List.
-     * Assumes that the root of the path {@link AbstractIcon}.ROOT_CATEGORY is passed as ""!
+     * Adds the icons of the given category to the given items List.
+     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
      */
-    protected abstract void addCategoryItems(String category, List<AbstractIcon> items);
+    protected void addCategoryItems(String category, List<AbstractIcon> items) {
+        for (Iterator<String> iconNames = getDirectory().getItemNames(category);
+             iconNames.hasNext(); ) {
+            items.add(createIcon(category, iconNames.next()));
+        }
+    }
     //endregion Initialization
+
+    protected abstract DirectoryItems getDirectory();
+
+    protected abstract AbstractIcon createIcon(String category, String filename);
 
     /**
      * Reacts to changes in the search field, showing searched items
@@ -295,36 +303,23 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
      * @param searchString the string to search for
      * @return a list of icons that fit the provided search string
      */
-    protected abstract List<AbstractIcon> getSearchedItems(String searchString);
-
-    /**
-     * This is ONLY to be called by getSearchedItems(String searched), as it requires the proper
-     * directory to be supplied but otherwise the code is the exact same.
-     *
-     * @param searchString the string to search for
-     * @param directory the directory to search for the specified item
-     * @return a list of icons that fit the provided search string
-     */
-    protected List<AbstractIcon> getSearchedItems(String searchString, DirectoryItems directory) {
+    protected List<AbstractIcon> getSearchedItems(String searchString) {
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain
         // the search string are added.
-
         List<AbstractIcon> result = new ArrayList<>();
         String lowerSearched = searchString.toLowerCase();
 
-        for (Iterator<String> catNames = directory.getCategoryNames();
-             catNames.hasNext(); ) {
+        for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
             String tcat = catNames.next();
             if (tcat.toLowerCase().contains(lowerSearched)) {
                 addCategoryItems(tcat, result);
                 continue;
             }
-            for (Iterator<String> itemNames = directory.getItemNames(tcat);
-                 itemNames.hasNext(); ) {
+            for (Iterator<String> itemNames = getDirectory().getItemNames(tcat); itemNames.hasNext(); ) {
                 String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
-                    result.add(new Camouflage(tcat, item));
+                    result.add(createIcon(tcat, item));
                 }
             }
         }

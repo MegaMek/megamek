@@ -2365,7 +2365,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         // individual camo.
         AbstractIcon selectedItem = mcd.getSelectedItem();
         IPlayer owner = entities.get(0).getOwner();
-        AbstractIcon ownerCamo = new Camouflage(owner.getCamoCategory(), owner.getCamoFileName());
+        AbstractIcon ownerCamo = owner.getCamouflage();
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
         
         // Update all allowed entities with the camo

@@ -28,6 +28,7 @@ import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.Configuration;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
+import megamek.common.util.fileUtils.DirectoryItems;
 
 /**
  * This dialog allows players to select a portrait
@@ -42,13 +43,19 @@ public class PortraitChooser extends AbstractIconChooser {
     private static final long serialVersionUID = 6487684461690549139L;
 
     /** Creates a dialog that allows players to choose a portrait. */
-    public PortraitChooser(Window parent) {
-        this(parent, null);
-    }
-
     public PortraitChooser(Window parent, AbstractIcon icon) {
         super(parent, icon, Messages.getString("PortraitChoiceDialog.select_portrait"),
                 new AbstractIconRenderer(), new PortraitChooserTree());
+    }
+
+    @Override
+    protected DirectoryItems getDirectory() {
+        return MMStaticDirectoryManager.getPortraits();
+    }
+
+    @Override
+    protected AbstractIcon createIcon(String category, String filename) {
+        return new Portrait(category, filename);
     }
 
     @Override
@@ -59,8 +66,7 @@ public class PortraitChooser extends AbstractIconChooser {
         // When the includeSubDirs flag is true, all categories
         // below the selected one are also presented.
         if (includeSubDirs) {
-            for (Iterator<String> catNames = MMStaticDirectoryManager.getPortraits().getCategoryNames();
-                 catNames.hasNext(); ) {
+            for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
                 String tcat = catNames.next();
                 if (tcat.startsWith(category)) {
                     addCategoryItems(tcat, result);
@@ -70,23 +76,6 @@ public class PortraitChooser extends AbstractIconChooser {
             addCategoryItems(category, result);
         }
         return result;
-    }
-
-    @Override
-    protected List<AbstractIcon> getSearchedItems(String searched) {
-        return getSearchedItems(searched, MMStaticDirectoryManager.getPortraits());
-    }
-
-    /**
-     * Adds the portraits of the given category to the given items List.
-     * Assumes that the root of the path {@link AbstractIcon}.ROOT_CATEGORY is passed as ""!
-     */
-    @Override
-    protected void addCategoryItems(String category, List<AbstractIcon> items) {
-        for (Iterator<String> portNames = MMStaticDirectoryManager.getPortraits().getItemNames(category);
-             portNames.hasNext(); ) {
-            items.add(new Portrait(category, portNames.next()));
-        }
     }
 
     /** Reloads the portrait directory from disk. */

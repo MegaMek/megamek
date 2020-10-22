@@ -210,7 +210,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private AccessibilityWindow aw;
     private String helpFileName = 
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
-                                                          Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
+                    Messages.getString("CommonMenuBar.helpFilePath"));
 
     public MegaMekController controller;
     // keep me
@@ -1847,9 +1847,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = (entity.getCamoCategory() != null && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
+        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
                 ? entity.getCamouflage() : player.getCamouflage()).getImage();
-        // This seems unnecessary as the CamoManager will return an image for a playercolor:
+        // This seems unnecessary as Camouflage will return an image for a playercolor:
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
         if (icon != null) {

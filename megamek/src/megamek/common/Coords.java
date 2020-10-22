@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -16,104 +17,65 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
-
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.common.util.HashCodeUtil;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
  * values are a half-hex down. Directions work clockwise around the hex,
- * starting with zero at the top. 
+ * starting with zero at the top. For a hex with an even x, the hexes in directions
+ * 2 and 4 (left and right downward) have the same y.
  *      -y
  *       0
  *     _____
  *  5 /     \ 1
-  -x /       \ +x 
+ *-x /       \ +x 
  *   \       / 
  *  4 \_____/ 2 
  *       3
  *      +y
  */
 public class Coords implements Serializable {
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -4451256806040563030L;
 
     public static final double HEXSIDE = Math.PI / 3.0;
-
-    /**
-     * Allow at most 30 boards (510 hexes) in the 'y' direction.
-     */
-    private static final int SHIFT = 9;
-    private static final int MASK = (1 << Coords.SHIFT) - 1;
-
-    /**
-     * The maximum height of a board in number of hexes.
-     */
-    public static final int MAX_BOARD_HEIGHT = Integer.MAX_VALUE & Coords.MASK;
-
-    /**
-     * The maximum width of a board in number of hexes. Also need to make room
-     * for the sign bits.
-     */
-    public static final int MAX_BOARD_WIDTH = (Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT) >> (Coords.SHIFT + 2);
+    public static final int [] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
 
     @XmlElement(name="x")
     private final int x;
     
     @XmlElement(name="y")
     private final int y;
-    
-    @XmlElement(name="hash")
-    private final int hash;
 
-    /**
-     * Constructs a new coordinate pair at (x, y).
-     */
+    @XmlElement(name="hash")
+    private int hash;
+
+    /** Constructs a new coordinate pair at (x, y). Note: Coords are immutable. */
     public Coords(int x, int y) {
         this.x = x;
         this.y = y;
-        // Make sure the hash is positive
-        this.hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
     }
 
     /**
-     * Constructs a new coordinate pair at (0, 0).
+     * Returns the coordinate 1 unit in the specified direction dir.
      */
-    public Coords() {
-        this(0, 0);
-    }
-
-    /**
-     * Constructs a new coordinate pair that is a duplicate of the parameter.
-     */
-    public Coords(Coords c) {
-        this(c.getX(), c.getY());
-    }
-
-    /**
-     * Returns a new coordinate that represents the coordinate 1 unit in the
-     * specified direction.
-     * 
-     * @return the new coordinate, if the direction is valid; otherwise, a new
-     *         copy of this coordinate.
-     * @param dir the direction.
-     */
-    public final Coords translated(int dir) {
+    public Coords translated(int dir) {
         return translated(dir, 1);
     }
 
-    public final Coords translated(int dir, int distance) {
-        int newx = xInDir(getX(), getY(), dir, distance);
-        int newy = yInDir(getX(), getY(), dir, distance);
+    /**
+     * Returns the coordinate the given distance away in the
+     * specified direction dir.
+     */
+    public Coords translated(int dir, int distance) {
+        int newx = xInDir(dir, distance);
+        int newy = yInDir(dir, distance);
         return new Coords(newx, newy);
     }
 
-    public final Coords translated(String dir) {
+    public Coords translated(String dir) {
         int intDir = 0;
 
         try {
@@ -136,23 +98,16 @@ public class Coords implements Serializable {
 
         return translated(intDir);
     }
+    
+    // The instance methods xInDir etc. make for convenient calls
+    // while the static xInDir etc. can be called to avoid Coords construction
 
-    /**
-     * Returns the x parameter of the coordinates in the direction
-     */
+    /** Returns the x value of the adjacent Coords in the direction dir. */
     public static int xInDir(int x, int y, int dir) {
-        switch (dir) {
-            case 1:
-            case 2:
-                return x + 1;
-            case 4:
-            case 5:
-                return x - 1;
-            default:
-                return x;
-        }
+        return xInDir(x, y, dir, 1);
     }
 
+    /** Returns the x value of the Coords the given distance in the direction dir. */
     public static int xInDir(int x, int y, int dir, int distance) {
         switch (dir) {
             case 1:
@@ -166,54 +121,54 @@ public class Coords implements Serializable {
         }
     }
 
-    /**
-     * Returns the y parameter of the coordinates in the direction
-     */
+    /** Returns the y value of the adjacent Coords in the direction dir. */
     public static int yInDir(int x, int y, int dir) {
-        switch (dir) {
-            case 0:
-                return y - 1;
-            case 1:
-            case 5:
-                return y - ((x + 1) & 1);
-            case 2:
-            case 4:
-                return y + (x & 1);
-            case 3:
-                return y + 1;
-            default:
-                return y;
-        }
+        return yInDir(x, y, dir, 1);
     }
 
+    /** Returns the x value of the Coords the given distance in the direction dir. */
     public static int yInDir(int x, int y, int dir, int distance) {
         switch (dir) {
             case 0:
                 return y - distance;
             case 1:
             case 5:
-                if ((x & 1) == 1)
-                    return y - (distance / 2);
-                return y - ((distance + 1) / 2);
+                return y - ((distance + 1 - (x & 1)) / 2);
             case 2:
             case 4:
-                if ((x & 1) == 0)
-                    return y + (distance / 2);
-                return y + ((distance + 1) / 2);
-            case 3:
-                return y + distance;
+                return y + ((distance + (x & 1)) / 2);
             default:
-                return y;
+                return y + distance;
         }
+    }
+    
+    /** Returns the x value of the adjacent Coords in the direction dir. */
+    public int xInDir(int dir) {
+        return Coords.xInDir(x, y, dir, 1);
+    }
+
+    /** Returns the x value of the Coords the given distance in the direction dir. */
+    public int xInDir(int dir, int distance) {
+        return Coords.xInDir(x, y, dir, distance);
+    }
+    
+    /** Returns the y value of the adjacent Coords in the direction dir. */
+    public int yInDir(int dir) {
+        return Coords.yInDir(x, y, dir, 1);
+    }
+
+    /** Returns the y value of the Coords the given distance in the direction dir. */
+    public int yInDir(int dir, int distance) {
+        return Coords.yInDir(x, y, dir, distance);    
     }
 
     /**
-     * Tests whether the x coordinate of this coordinate is odd. This is
+     * Returns true when the x coordinate of this Coords is odd. This is
      * significant in determining where this coordinate lies in relation to
      * other coordinates.
      */
-    public final boolean isXOdd() {
-        return (getX() & 1) == 1;
+    public boolean isXOdd() {
+        return (x & 1) == 1;
     }
 
     /**
@@ -275,7 +230,7 @@ public class Coords implements Serializable {
      * 
      * @param d the destination coordinate.
      */
-    public final double radian(Coords d) {
+    public double radian(Coords d) {
         final IdealHex src = IdealHex.get(this);
         final IdealHex dst = IdealHex.get(d);
 
@@ -302,40 +257,37 @@ public class Coords implements Serializable {
      * 
      * @param d the destination coordinate.
      */
-    public final int degree(Coords d) {
+    public int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }
 
-    /**
-     * Returns the distance to another coordinate.
-     */
-    public final int distance(Coords c) {
-        // based off of
-        // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
-        // since I'm too dumb to make my own
-        int xd, ym, ymin, ymax, yo;
-        xd = Math.abs(this.getX() - c.getX());
-        yo = (xd / 2) + (!isXOdd() && c.isXOdd() ? 1 : 0);
-        ymin = this.getY() - yo;
-        ymax = ymin + xd;
-        ym = 0;
-        if (c.getY() < ymin) {
-            ym = ymin - c.getY();
-        }
-        if (c.getY() > ymax) {
-            ym = c.getY() - ymax;
-        }
-        return xd + ym;
+    /** Returns the distance to the given Coords c. */
+    public int distance(Coords c) {
+        return distance(c.getX(), c.getY());
     }
 
-    public final int distance(int distx, int disty) {
-        return distance(new Coords(distx, disty));
+    /** Returns the distance to the coordinate given as distx, disty. */
+    public int distance(int distx, int disty) {
+        // based on
+        // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
+        int xd = Math.abs(x - distx);
+        int yo = (xd / 2) + (!isXOdd() && ((distx & 1) == 1) ? 1 : 0);
+        int ymin = y - yo;
+        int ymax = ymin + xd;
+        int ym = 0;
+        if (disty < ymin) {
+            ym = ymin - disty;
+        }
+        if (disty > ymax) {
+            ym = disty - ymax;
+        }
+        return xd + ym;
     }
 
     /**
      * Returns a string representing a coordinate in "board number" format.
      */
-    public final String getBoardNum() {
+    public String getBoardNum() {
         StringBuilder num = new StringBuilder();
 
         num.append(getX() > -1 && getX() < 9 ? "0" : "").append(getX() + 1);
@@ -355,26 +307,15 @@ public class Coords implements Serializable {
             return false;
         }
         Coords other = (Coords) object;
-        return other.getX() == this.getX() && other.getY() == this.getY();
+        return (other.getX() == x) && (other.getY() == y);
     }
 
-    /* 
-     * Determines if this set of coordinates is on the edge of the board
-     */
-    public boolean isOnBoardEdge(IBoard board) {
-        return (getX() == 0) 
-                || (getY() == 0)
-                || (getX() == (board.getWidth() - 1)) 
-                || (getY() == (board.getHeight() - 1));
-    }
-    
-    /**
-     * Get the hash code for these coords.
-     * 
-     * @return The <code>int</code> hash code for these coords.
-     */
+    /** Returns the hash code for these coords. */
     @Override
     public int hashCode() {
+        if (hash == 0) {
+            hash = Objects.hash(x, y); 
+        }
         return hash;
     }
 
@@ -511,32 +452,53 @@ public class Coords implements Serializable {
     }
 
     /**
-     * Convenience function that returns a list of all adjacent coordinates, regardless of whether they're on the board or not.
-     * @return List of adjacent coordinates.
+     * Returns a list of all adjacent coordinates (distance = 1), 
+     * regardless of whether they're on the board or not.
      */
-    public final List<Coords> allAdjacent() {
-        List<Coords> retVal = new ArrayList<>();
+    public ArrayList<Coords> allAdjacent() {
+        return (allAtDistance(1));
+    }
+    
+    /**
+     * Returns a list of all coordinates at the given distance dist, 
+     * regardless of whether they're on the board or not. Returns an 
+     * empty Set for dist < 0 and the calling Coords itself for dist == 0.
+     */
+    public ArrayList<Coords> allAtDistance(int dist) { 
+        ArrayList<Coords> retval = new ArrayList<>();
         
-        for(int dir = 0; dir < 6; dir++) {
-            retVal.add(translated(dir));
+        if (dist == 0) {
+            retval.add(this);
+        } else if (dist > 0) {
+            // algorithm outline: travel to the southwest a number of hexes equal to the radius
+            // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
+            // then rotating clockwise and moving northeast to draw the northwest side and so on, 
+            // until we circle around. The length of a hex side is equivalent to the radius
+            Coords currentHex = translated(4, dist);
+
+            for(int direction = 0; direction < 6; direction++) {
+                for(int translation = 0; translation < dist; translation++) {
+                    currentHex = currentHex.translated(direction);
+                    retval.add(currentHex);
+                }
+            }
         }
-        
-        return retVal;
+        return retval;
     }
     
     /**
      * this makes the coordinates 1 based instead of 0 based to match the tiles
      * diaplayed on the grid.
      */
-    public final String toFriendlyString() {
-        return "(" + (getX() + 1) + ", " + (getY() + 1) + ")";
+    public String toFriendlyString() {
+        return "(" + (x + 1) + ", " + (y + 1) + ")";
     }
 
-    public final int getX() {
+    public int getX() {
         return x;
     }
 
-    public final int getY() {
+    public int getY() {
         return y;
     }
 }

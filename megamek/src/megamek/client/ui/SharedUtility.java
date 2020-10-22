@@ -573,7 +573,7 @@ public class SharedUtility {
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
-            lastPos = new Coords(curPos);
+            lastPos = curPos;
             prevStep = step;
             prevHex = curHex;
             lastElevation = step.getElevation();

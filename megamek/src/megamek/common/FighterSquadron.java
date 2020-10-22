@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
 
 import java.util.ArrayList;
@@ -33,18 +30,18 @@ import megamek.common.options.OptionsConstants;
  * @author Jay Lawson Fighter squadrons are basically "containers" for a bunch
  *         of fighters.
  */
-public class FighterSquadron extends Aero implements IAero {
+public class FighterSquadron extends Aero {
     private static final long serialVersionUID = 3491212296982370726L;
 
-    public static int MAX_SIZE = 6;
+    public static final int MAX_SIZE = 6;
     // Value is arbitrary, but StratOps shows up to 10 so we'll use that as an
     // alternate MAX_SIZE when using
     // the option for larger squadrons
-    public static int ALTERNATE_MAX_SIZE = 10;
+    public static final int ALTERNATE_MAX_SIZE = 10;
 
     private static final Predicate<Entity> ACTIVE_CHECK = ent -> !(ent.isDestroyed() || ent.isDoomed());
     
-    private Vector<Integer> fighters = new Vector<Integer>();
+    private Vector<Integer> fighters = new Vector<>();
 
     // fighter squadrons need to keep track of heat capacity apart from their
     // fighters
@@ -118,7 +115,7 @@ public class FighterSquadron extends Aero implements IAero {
      * @see megamek.common.Aero#isCrippled()
      */
     @Override
-    public boolean isCrippled() {
+    public boolean isCrippled(boolean checkCrew) {
         return false;
     }
 
@@ -190,8 +187,7 @@ public class FighterSquadron extends Aero implements IAero {
             return super.hasActiveECM();
         }
         return fighters.stream().map(fid -> game.getEntity(fid))
-                .filter(ACTIVE_CHECK).filter(ent -> ent.hasActiveECM())
-                .findFirst().isPresent();
+                .filter(ACTIVE_CHECK).anyMatch(Entity::hasActiveECM);
     }
 
     /**
@@ -276,7 +272,6 @@ public class FighterSquadron extends Aero implements IAero {
 
         return bv;
     }
-    
 
     /*
      * (non-Javadoc)

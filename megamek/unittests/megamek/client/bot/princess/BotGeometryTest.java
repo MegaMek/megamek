@@ -1,10 +1,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +19,12 @@ public class BotGeometryTest {
     public void testDonut() {
         Coords testCoords = new Coords(0, 0);
         
-        Set<Coords> resultingCoords = BotGeometry.getHexDonut(testCoords, 0);
+        List<Coords> resultingCoords = testCoords.allAtDistance(0);
         Assert.assertEquals(1, resultingCoords.size());
         Assert.assertEquals(true, resultingCoords.contains(testCoords));
         
         // for a radius 1 donut, we expect to see 6 hexes.
-        resultingCoords = BotGeometry.getHexDonut(testCoords, 1);
+        resultingCoords = testCoords.allAtDistance(1);
         
         List<Coords> expectedCoords = new ArrayList<>();
         expectedCoords.add(new Coords(1, -1));
@@ -43,7 +40,7 @@ public class BotGeometryTest {
         }
         
         // for a radius 2 donut we expect to see 12 hexes.
-        resultingCoords = BotGeometry.getHexDonut(testCoords, 2);
+        resultingCoords = testCoords.allAtDistance(2);
         
         expectedCoords = new ArrayList<>();
         expectedCoords.add(new Coords(-2, 0));

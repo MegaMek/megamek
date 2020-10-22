@@ -54,7 +54,7 @@ public class KeyBindingsOverlay implements IDisplayable {
     private static final int PADDING_Y = 5;
     private static final Color TEXT_COLOR = new Color(200, 250, 200);
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
-    private static final Color BG_COLOR = new Color(80, 80, 80, 120);
+    private static final Color BG_COLOR = new Color(80, 80, 80, 200);
     private static final float FADE_SPEED = 0.2f;
     
     /** The keybinds to be shown during the firing phases (incl. physical etc.) */
@@ -86,14 +86,24 @@ public class KeyBindingsOverlay implements IDisplayable {
 
     /** The keybinds to be shown in all phases during any player's turn */
     private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(
-            KeyCommandBind.TOGGLE_KEYBIND_DISPLAY,
             KeyCommandBind.TOGGLE_CHAT,
             KeyCommandBind.TOGGLE_ISO,
-            KeyCommandBind.TOGGLE_DRAW_LABELS
+            KeyCommandBind.TOGGLE_DRAW_LABELS,
+            KeyCommandBind.TOGGLE_HEX_COORDS
+            );
+    
+    /** The keybinds to be shown in the Board Editor */
+    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
+            KeyCommandBind.TOGGLE_ISO,
+            KeyCommandBind.TOGGLE_HEX_COORDS
             );
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));
+    
+    private static final List<String> ADDTL_BINDS_BOARD_EDITOR = Arrays.asList(
+            Messages.getString("KeyBindingsDisplay.fixedBindsBoardEd").split("\n"));
+
 
     ClientGUI clientGui;
 
@@ -190,12 +200,18 @@ public class KeyBindingsOverlay implements IDisplayable {
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
         
-        result.add(Messages.getString("KeyBindingsDisplay.heading"));
-
-        // Most of the keybinds are only active during the local player's turn 
-        if ((clientGui != null) && (clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
-            List<KeyCommandBind> listForPhase = new ArrayList<>();
-            switch (currentPhase) {
+        KeyCommandBind kcb = KeyCommandBind.TOGGLE_KEYBIND_DISPLAY;
+        String mod = KeyEvent.getKeyModifiersText(kcb.modifiers);
+        String key = KeyEvent.getKeyText(kcb.key);
+        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
+        result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
+        
+        if (clientGui != null) {
+            // In a game, not the Board Editor
+            // Most of the keybinds are only active during the local player's turn 
+            if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
+                List<KeyCommandBind> listForPhase = new ArrayList<>();
+                switch (currentPhase) {
                 case PHASE_MOVEMENT:
                     listForPhase = BINDS_MOVE;
                     break;
@@ -205,14 +221,19 @@ public class KeyBindingsOverlay implements IDisplayable {
                     listForPhase = BINDS_FIRE;
                     break;
                 default:
-            }
+                }
 
-            result.addAll(convertToStrings(listForPhase));
-            result.addAll(convertToStrings(BINDS_MY_TURN));
+                result.addAll(convertToStrings(listForPhase));
+                result.addAll(convertToStrings(BINDS_MY_TURN));
+            }
+            result.addAll(convertToStrings(BINDS_ANY_TURN));
+            result.addAll(ADDTL_BINDS);
+        } else {
+            // Board Editor
+            result.addAll(convertToStrings(BINDS_BOARD_EDITOR));
+            result.addAll(ADDTL_BINDS_BOARD_EDITOR);
         }
 
-        result.addAll(convertToStrings(BINDS_ANY_TURN));
-        result.addAll(ADDTL_BINDS);
         return result;
     }
     
@@ -229,7 +250,7 @@ public class KeyBindingsOverlay implements IDisplayable {
     }
     
     /** 
-     * Draws the String s to the Graphics graph  at position x,y 
+     * Draws the String s to the Graphics graph at position x,y 
      * with a shadow. If the string starts with #789ABC then 789ABC 
      * is converted to a color to write the rest of the text,
      * otherwise TEXT_COLOR is used.

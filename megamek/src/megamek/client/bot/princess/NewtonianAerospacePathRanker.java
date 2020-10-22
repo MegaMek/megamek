@@ -16,7 +16,6 @@ package megamek.client.bot.princess;
 
 import java.util.Iterator;
 import java.util.List;
-
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.common.Compute;
 import megamek.common.Coords;

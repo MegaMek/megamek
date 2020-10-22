@@ -210,12 +210,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
                                     && containsForest && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<Coords>();
 
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection),
-                                Coords.yInDir(currentXCoord, currentYCoord, windDirection)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6),
-                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6),
-                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6)));
+                        smokeList.add(currentCoords.translated(windDirection));
+                        smokeList.add(currentCoords.translated((windDirection + 1) % 6));
+                        smokeList.add(currentCoords.translated((windDirection + 5) % 6));
 
                         server.addSmoke(smokeList, windDirection, bInferno);
                         board.initializeAround(currentXCoord, currentYCoord);

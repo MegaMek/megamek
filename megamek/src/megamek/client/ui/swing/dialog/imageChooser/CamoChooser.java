@@ -54,7 +54,6 @@ public class CamoChooser extends AbstractIconChooser {
     public CamoChooser(Window parent) {
         super(parent, null, Messages.getString("CamoChoiceDialog.select_camo_pattern"),
                 new AbstractIconRenderer(), new CamoChooserTree());
-        showSearch(true);
     }
     //endregion Constructors
 

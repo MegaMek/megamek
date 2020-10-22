@@ -85,9 +85,6 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
     /** True when the user canceled. */
     private boolean wasCanceled = false;
 
-    /** A JPanel containing the search Textfield */
-    private JPanel searchPanel;
-
     /** When true, camos from all subdirectories of the current selection are shown. */
     protected boolean includeSubDirs = true;
     //endregion Variable Declarations
@@ -140,13 +137,10 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
         splitPane.setResizeWeight(0.5);
 
         setLayout(new BorderLayout());
-        searchPanel = searchPanel();
+        JPanel searchPanel = searchPanel();
         add(searchPanel, BorderLayout.PAGE_START);
         add(splitPane, BorderLayout.CENTER);
         add(buttonPanel(), BorderLayout.PAGE_END);
-
-        // Do not show the search panel by default
-        showSearch(false);
 
         // Size and position of the dialog
         setMinimumSize(new Dimension(480, 240));
@@ -207,11 +201,6 @@ public abstract class AbstractIconChooser extends JDialog implements TreeSelecti
 
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
-    }
-
-    /** Shows or hides the search panel. */
-    public void showSearch(boolean b) {
-        searchPanel.setVisible(b);
     }
 
     /**

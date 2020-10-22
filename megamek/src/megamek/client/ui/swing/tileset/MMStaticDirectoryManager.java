@@ -27,6 +27,9 @@ import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
+import megamek.common.icons.Portrait;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -212,9 +215,8 @@ public class MMStaticDirectoryManager {
     public static Image getUnscaledPortraitImage(String category, String name) {
         // Return the default portrait when parameters are null
         // or no portrait is selected
-        if ((category == null)
-                || (name == null)
-                || category.equals(Crew.PORTRAIT_NONE)) {
+        if ((category == null) || (name == null)
+                || AbstractIcon.DEFAULT_ICON_FILENAME.equals(category)) {
             return getDefaultPortrait();
         }
 
@@ -228,13 +230,14 @@ public class MMStaticDirectoryManager {
 
         // Try to get the portrait
         try {
-            // Translate the root portrait directory name and PORTRAIT_NONE
-            // This could be improved by not passing around ROOT_PORTRAIT
-            if (category.equals(Crew.ROOT_PORTRAIT)) {
+            // Translate the root portrait directory name and DEFAULT_ICON_FILENAME
+            // This could be improved by not passing around ROOT_CATEGORY
+            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
                 category = "";
             }
-            if (name.equals(Crew.PORTRAIT_NONE)) {
-                name = "default.gif";
+
+            if (AbstractIcon.DEFAULT_ICON_FILENAME.equals(name)) {
+                name = Portrait.DEFAULT_PORTRAIT_FILENAME;
             }
 
             Image image = (Image) portraitDirectory.getItem(category, name);
@@ -320,7 +323,7 @@ public class MMStaticDirectoryManager {
      */
     public static Image getDefaultPortrait() {
         try {
-            Image image = (Image) (portraitDirectory.getItem("", "default.gif"));
+            Image image = (Image) (portraitDirectory.getItem("", Portrait.DEFAULT_PORTRAIT_FILENAME));
 
             // When getItem() doesn't find the default portrait, it returns null
             // In that case, fall back to the failPortrait
@@ -372,10 +375,10 @@ public class MMStaticDirectoryManager {
         Graphics g = result.getGraphics();
         if (image.getWidth(null) > image.getHeight(null)) {
             image = image.getScaledInstance(size, -1, Image.SCALE_SMOOTH);
-            g.drawImage(image, 0, (size-image.getHeight(null))/2, null);
+            g.drawImage(image, 0, (size - image.getHeight(null)) / 2, null);
         } else {
             image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
-            g.drawImage(image, (size-image.getWidth(null))/2, 0, null);
+            g.drawImage(image, (size - image.getWidth(null)) / 2, 0, null);
         }
         return result;
     }
@@ -409,13 +412,13 @@ public class MMStaticDirectoryManager {
         // Try to get the camo image
         try {
             // A color was selected
-            if (category.equals(IPlayer.NO_CAMO)) {
+            if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
                 return colorCamoImage(PlayerColors.getColor(name));
             }
 
             // Translate the root camo directory name.
             // This could be improved by translating before saving it
-            if (IPlayer.ROOT_CAMO.equals(category)) {
+            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
                 category = "";
             }
 
@@ -465,19 +468,18 @@ public class MMStaticDirectoryManager {
      * @see ImageUtil#failStandardImage()
      */
     public static Image getPlayerCamoImage(IPlayer player) {
-        String cat = player.getCamoCategory();
-        String name = player.getCamoFileName();
-        if (cat.equals(IPlayer.ROOT_CAMO)) {
-            cat = "";
-        }
+        String category = player.getCamoCategory();
 
-        // A color was selected
-        if (cat.equals(IPlayer.NO_CAMO)) {
+        if (Camouflage.NO_CAMOUFLAGE.equals(category)) { // Colour Camouflage
             return colorCamoImage(PlayerColors.getColor(player.getColorIndex()));
         }
 
+        if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
+            category = "";
+        }
+
         // A camo was selected
-        return getCamoImage(cat, name);
+        return getCamoImage(category, player.getCamoFileName());
     }
 
     /**
@@ -513,7 +515,6 @@ public class MMStaticDirectoryManager {
     public static BufferedImage colorCamoImage(Color color) {
         if (color == null) {
             MegaMek.getLogger().error("A null color was passed.");
-
             return ImageUtil.failStandardImage();
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);

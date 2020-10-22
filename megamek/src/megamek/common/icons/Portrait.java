@@ -20,21 +20,43 @@ package megamek.common.icons;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.common.Crew;
 
 import java.awt.*;
 
 public class Portrait extends AbstractIcon {
+    //region Variable Declarations
     private static final long serialVersionUID = -7562297705213174435L;
     public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
+    //endregion Variable Declarations
+
+    //region Constructors
+    public Portrait() {
+        super();
+    }
+
+    public Portrait(String category, String filename) {
+        super(category, filename);
+    }
+
+    public Portrait(String category, String filename, int width, int height) {
+        super(category, filename, width, height);
+    }
+    //endregion Constructors
+
+    //region Boolean Methods
+    @Override
+    public boolean hasDefaultFilename() {
+        return super.hasDefaultFilename() || DEFAULT_PORTRAIT_FILENAME.equals(getFilename());
+    }
+    //endregion Boolean Methods
 
     @Override
     public Image getBaseImage() {
-        String category = (Crew.ROOT_PORTRAIT.equals(getCategory())) ? "" : getCategory();
-        String filename = getFileName();
+        String category = hasDefaultCategory() ? "" : getCategory();
+        String filename = getFilename();
 
         // Return the default image if the player has selected no portrait file.
-        if ((category == null) || (filename == null) || Crew.PORTRAIT_NONE.equals(filename)) {
+        if ((category == null) || (filename == null) || hasDefaultFilename()) {
             filename = DEFAULT_PORTRAIT_FILENAME;
         }
 

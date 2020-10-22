@@ -1729,7 +1729,7 @@ public class TestBot extends BotClient {
         int hex_count, x_ave, y_ave, nDir;
         double av_range;
 
-        Coords pointing_to = new Coords();
+        Coords pointing_to;
 
         int entNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";

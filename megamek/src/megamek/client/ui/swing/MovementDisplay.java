@@ -59,14 +59,6 @@ import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.client.ui.swing.util.TurnTimer;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      *
@@ -3326,9 +3318,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos)
                             .getLevel()
                    + ce.getElevation();
-        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        List<Coords> ring = pos.allAdjacent();
         if (ce instanceof Dropship) {
-            ring = Compute.coordsAtRange(pos, 2);
+            ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available
         // Positions
@@ -3404,9 +3396,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         crew.setId(clientgui.getClient().getGame().getNextEntityId());
         crew.setGame(clientgui.getClient().getGame());
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos).getLevel() + abandoned.getElevation();
-        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        List<Coords> ring = pos.allAdjacent();
         if (abandoned instanceof Dropship) {
-            ring = Compute.coordsAtRange(pos, 2);
+            ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available
         // Positions

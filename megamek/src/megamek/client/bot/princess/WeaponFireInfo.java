@@ -33,7 +33,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
@@ -169,22 +168,15 @@ public class WeaponFireInfo {
                            final boolean guess,
                            final Princess owner,
                            final int[] bombPayload) {
-        final String METHOD_NAME =
-                "WeaponFireInfo(Entity, EntityState, MovePath, Targetable, EntityState, Mounted, IGame, boolean)";
-        owner.methodBegin(getClass(), METHOD_NAME);
         this.owner = owner;
 
-        try {
-            setShooter(shooter);
-            setShooterState(shooterState);
-            setTarget(target);
-            setTargetState(targetState);
-            setWeapon(weapon);
-            setGame(game);
-            initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
-        }
+        setShooter(shooter);
+        setShooterState(shooterState);
+        setTarget(target);
+        setTargetState(targetState);
+        setWeapon(weapon);
+        setGame(game);
+        initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
     }
 
     protected WeaponAttackAction getAction() {
@@ -471,7 +463,7 @@ public class WeaponFireInfo {
                 
                 int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName()); 
                 for (int radius = 0; radius <= blastRadius; radius++) {
-                    affectedHexes.addAll(BotGeometry.getHexDonut(bombedHex, radius));
+                    affectedHexes.addAll(bombedHex.allAtDistance(radius));
                 }
                 
                 // now we go through all affected hexes and add up the damage done
@@ -504,160 +496,167 @@ public class WeaponFireInfo {
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
                     final int[] bombPayload) {
-        final String METHOD_NAME = "initDamage(MovePath, boolean)";
-
+        boolean debugging = false;
+        
         final StringBuilder msg =
-                new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
+                debugging ?
+                        new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" firing ").append(getWeapon().getDesc())
                                                              .append(" at ").append(getTarget().getDisplayName())
-                                                             .append(":");
+                                                             .append(":") :
+                        null;
 
-        try {
-            // Set up the attack action and calculate the chance to hit.
-            if ((null == bombPayload) || (0 == bombPayload.length)) {
-                setAction(buildWeaponAttackAction());
+        // Set up the attack action and calculate the chance to hit.
+        if ((null == bombPayload) || (0 == bombPayload.length)) {
+            setAction(buildWeaponAttackAction());
+        }
+        else {
+            setAction(buildBombAttackAction(bombPayload));
+        }
+        
+        if (!guess) {
+            setToHit(calcRealToHit(getWeaponAttackAction()));
+        } else if (null != shooterPath) {
+            setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
+        } else {
+            setToHit(calcToHit());
+        }
+        // If we can't hit, set everything zero and return..
+        if (12 < getToHit().getValue()) {
+            if(debugging) {
+                owner.getLogger().debug(msg.append("\n\tImpossible toHit: ").append(getToHit().getValue()).toString());
             }
-            else {
-                setAction(buildBombAttackAction(bombPayload));
-            }
-            
-            if (!guess) {
-                setToHit(calcRealToHit(getWeaponAttackAction()));
-            } else if (null != shooterPath) {
-                setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
-            } else {
-                setToHit(calcToHit());
-            }
-            // If we can't hit, set everything zero and return..
-            if (12 < getToHit().getValue()) {
-                owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.append("\n\tImpossible toHit: ")
-                                                                      .append(getToHit().getValue()).toString());
-                setProbabilityToHit(0);
-                setMaxDamage(0);
-                setHeat(0);
-                setExpectedCriticals(0);
-                setKillProbability(0);
-                setExpectedDamageOnHit(0);
-                return;
-            }
-            
-            if (getShooterState().hasNaturalAptGun()) {
-                msg.append("\n\tAttacker has Natural Aptitude Gunnery");
-            }
-            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
-            msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
-
-            // now that we've calculated hit odds, if we're shooting
-            // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
-            String currentFireMode = getWeapon().curMode().getName();
-            int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
-            if(!currentFireMode.equals(getWeapon().curMode().getName())) {
-            	setUpdatedFiringMode(spinMode);
-            }
-            
-            setHeat(computeHeat(weapon));
-            msg.append("\n\tHeat: ").append(getHeat());
-
-            setExpectedDamageOnHit(computeExpectedDamage());
-            setMaxDamage(getExpectedDamageOnHit());
-            msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
-
-            final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
-
-            // there's always the chance of rolling a '2'
-            final double ROLL_TWO = 0.028;
-            setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
-
+            setProbabilityToHit(0);
+            setMaxDamage(0);
+            setHeat(0);
+            setExpectedCriticals(0);
             setKillProbability(0);
-            if (!(getTarget() instanceof Mech)) {
-                return;
-            }
+            setExpectedDamageOnHit(0);
+            return;
+        }
+        
+        if (debugging && getShooterState().hasNaturalAptGun()) {
+            msg.append("\n\tAttacker has Natural Aptitude Gunnery");
+        }
+        
+        setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
+        
+        if (debugging) {
+            msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
+        }
 
-            // now guess how many critical hits will be done
-            final Mech targetMech = (Mech) getTarget();
+        // now that we've calculated hit odds, if we're shooting
+        // a weapon capable of rapid fire, it's time to decide whether we're going to spin it up
+        String currentFireMode = getWeapon().curMode().getName();
+        int spinMode = Compute.spinUpCannon(getGame(), getAction(), owner.getSpinupThreshold());
+        if(!currentFireMode.equals(getWeapon().curMode().getName())) {
+        	setUpdatedFiringMode(spinMode);
+        }
+        
+        setHeat(computeHeat(weapon));
+        
+        if(debugging) {
+            msg.append("\n\tHeat: ").append(getHeat());
+        }
 
-            // A mech with a torso-mounted cockpit can survive losing its head.
-            double headlessOdds = 0.0;
+        setExpectedDamageOnHit(computeExpectedDamage());
+        setMaxDamage(getExpectedDamageOnHit());
+        
+        if (debugging) {
+            msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+        }
 
-            // Loop through hit locations.
-            // todo Targeting tripods.
-            for (int i = 0; 7 >= i; i++) {
-                int hitLocation = i;
+        final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();
 
-                while (targetMech.isLocationBad(hitLocation) &&
-                       (Mech.LOC_CT != hitLocation)) {
+        // there's always the chance of rolling a '2'
+        final double ROLL_TWO = 0.028;
+        setExpectedCriticals(ROLL_TWO * expectedCriticalHitCount * getProbabilityToHit());
 
-                    // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
-                    if (Mech.LOC_HEAD == hitLocation) {
-                        headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mech.LOC_HEAD);
-                        break;
-                    }
+        setKillProbability(0);
+        if (!(getTarget() instanceof Mech)) {
+            return;
+        }
 
-                    // Get the next most inward location.
-                    hitLocation = Mech.getInnerLocation(hitLocation);
+        // now guess how many critical hits will be done
+        final Mech targetMech = (Mech) getTarget();
+
+        // A mech with a torso-mounted cockpit can survive losing its head.
+        double headlessOdds = 0.0;
+
+        // Loop through hit locations.
+        // todo Targeting tripods.
+        for (int i = 0; 7 >= i; i++) {
+            int hitLocation = i;
+
+            while (targetMech.isLocationBad(hitLocation) &&
+                   (Mech.LOC_CT != hitLocation)) {
+
+                // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
+                if (Mech.LOC_HEAD == hitLocation) {
+                    headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mech.LOC_HEAD);
+                    break;
                 }
-                double hitLocationProbability =
-                        ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
 
-                // Account for the possibility of re-rolling a head hit on a headless mech.
-                hitLocationProbability += (hitLocationProbability * headlessOdds);
+                // Get the next most inward location.
+                hitLocation = Mech.getInnerLocation(hitLocation);
+            }
+            double hitLocationProbability =
+                    ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
 
-                // Get the armor and internals for this location.
-                final int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (3 == getDamageDirection())));
-                final int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
+            // Account for the possibility of re-rolling a head hit on a headless mech.
+            hitLocationProbability += (hitLocationProbability * headlessOdds);
 
-                // If the location could be destroyed outright...
-                if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
-                    setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
-                    if (Mech.LOC_CT == hitLocation) {
-                        setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
-                    } else if ((Mech.LOC_HEAD == hitLocation) &&
+            // Get the armor and internals for this location.
+            final int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (3 == getDamageDirection())));
+            final int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
+
+            // If the location could be destroyed outright...
+            if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
+                setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
+                if (Mech.LOC_CT == hitLocation) {
+                    setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
+                } else if ((Mech.LOC_HEAD == hitLocation) &&
+                               (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
                                (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType()) &&
                                (Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL != targetMech.getCockpitType()) &&
                                (Mech.COCKPIT_VRRP != targetMech.getCockpitType()) ) {
-                        setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
-                    }
-
-                    // If the armor can be breached, but the location not destroyed...
-                } else if (getExpectedDamageOnHit() > (targetArmor)) {
-                    setExpectedCriticals(getExpectedCriticals() +
-                                                 (hitLocationProbability * getProbabilityToHit() *
-                                                         expectedCriticalHitCount));
+                    setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
+
+                // If the armor can be breached, but the location not destroyed...
+            } else if (getExpectedDamageOnHit() > (targetArmor)) {
+                setExpectedCriticals(getExpectedCriticals() +
+                                             (hitLocationProbability * getProbabilityToHit() *
+                                                     expectedCriticalHitCount));
             }
-        } finally {
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+        }
+
+        if(debugging) {
+            owner.getLogger().debug(msg.toString());
         }
     }
     
     WeaponAttackAction getWeaponAttackAction() {
-        final String METHOD_NAME = "getWeaponAttackAction(IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            if (null != getAction()) {
-                return getAction();
-            }
-            if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || (getWeapon().getType() instanceof CapitalMissileWeapon
-                            && Compute.isGroundToGround(shooter, target)))) {
-                setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
-                        getShooter().getEquipmentNum(getWeapon())));
-            } else {
-                setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
-                        getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
-                        getGame()));
-            }
-            if (getAction() == null) {
-                setProbabilityToHit(0);
-                return null;
-            }
-            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
-                                                  getShooterState().hasNaturalAptGun()) / 100.0);
+        if (null != getAction()) {
             return getAction();
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
         }
+        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
+                || (getWeapon().getType() instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(shooter, target)))) {
+            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
+                    getShooter().getEquipmentNum(getWeapon())));
+        } else {
+            setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
+                    getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
+                    getGame()));
+        }
+        if (getAction() == null) {
+            setProbabilityToHit(0);
+            return null;
+        }
+        setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
+                                              getShooterState().hasNaturalAptGun()) / 100.0);
+        return getAction();
     }
 
     String getDebugDescription() {

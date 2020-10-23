@@ -93,10 +93,10 @@ public class ScaledImageFileFactory extends ImageFileFactory {
                 // Cache the image on first use.
                 if (image == null) {
                     String name = itemFile.getAbsolutePath();
-                    image = ImageUtil.loadImageFromFile(name);
+                    image = ImageUtil.getScaledImage(ImageUtil.loadImageFromFile(name), getWidth(), getHeight());
                 }
-                // Return a copy of the image.
-                return ImageUtil.getScaledImage(image, getWidth(), getHeight());
+                // Return the image.
+                return image;
             }
         };
     }
@@ -125,10 +125,10 @@ public class ScaledImageFileFactory extends ImageFileFactory {
             public Object getItem() throws Exception {
                 // Cache the image on first use.
                 if (image == null) {
-                    image = createZippedImage(itemEntry, zipFile);
+                    image = ImageUtil.getScaledImage(createZippedImage(itemEntry, zipFile),
+                            getWidth(), getHeight());
                 }
-                // Return a copy of the image.
-                return ImageUtil.getScaledImage(image, getWidth(), getHeight());
+                return image;
             }
         };
     }

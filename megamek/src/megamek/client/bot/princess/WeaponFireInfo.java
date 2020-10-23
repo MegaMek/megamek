@@ -616,7 +616,6 @@ public class WeaponFireInfo {
                 if (Mech.LOC_CT == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 } else if ((Mech.LOC_HEAD == hitLocation) &&
-                               (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType())) {
                                (Mech.COCKPIT_TORSO_MOUNTED != targetMech.getCockpitType()) &&
                                (Mech.COCKPIT_TORSO_MOUNTED_INDUSTRIAL != targetMech.getCockpitType()) &&
                                (Mech.COCKPIT_VRRP != targetMech.getCockpitType()) ) {

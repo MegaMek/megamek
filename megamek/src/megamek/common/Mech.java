@@ -7247,6 +7247,38 @@ public abstract class Mech extends Entity {
         }
         return success;
     }
+    
+    /**
+     * Convenience function that returns the critical slot containing the cockpit
+     * @return
+     */
+    public List<CriticalSlot> getCockpit() {
+        List<CriticalSlot> retVal = new ArrayList<>();
+        
+        switch (cockpitType) {
+        // these always occupy slots 2 and 3 in the head
+        case Mech.COCKPIT_COMMAND_CONSOLE:
+        case Mech.COCKPIT_DUAL:
+        case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+        case Mech.COCKPIT_INTERFACE:
+        case Mech.COCKPIT_QUADVEE:
+        case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            retVal.add(getCritical(Mech.LOC_HEAD, 2));
+            retVal.add(getCritical(Mech.LOC_HEAD, 3));
+            break;
+        case Mech.COCKPIT_TORSO_MOUNTED:
+            for (int critIndex = 0; critIndex < getNumberOfCriticals(Mech.LOC_CT); critIndex++) {
+                CriticalSlot slot = getCritical(Mech.LOC_CT, critIndex);
+                if (slot.getIndex() == SYSTEM_COCKPIT) {
+                    retVal.add(slot);
+                }
+            }
+        default:
+            retVal.add(getCritical(Mech.LOC_HEAD, 2));
+        }
+        
+        return retVal;
+    }
 
     /**
      * Determines which crew slot is associated with a particular cockpit critical.

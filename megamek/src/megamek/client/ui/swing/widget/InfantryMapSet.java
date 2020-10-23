@@ -30,7 +30,7 @@ import megamek.common.Configuration;
 import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.Infantry;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Set of areas for PicMap to represent infantry platoon in MechDisplay

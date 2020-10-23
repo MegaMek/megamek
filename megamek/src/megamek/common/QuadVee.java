@@ -157,7 +157,7 @@ public class QuadVee extends QuadMech {
         if (badTracks == 4) {
             return 0;
         } else if (badTracks > 1) {
-            wmp = wmp / 1 << badTracks;
+            wmp = wmp / (1 << badTracks);
         }
 
         //Now apply modifiers

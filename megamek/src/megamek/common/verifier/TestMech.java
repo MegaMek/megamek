@@ -647,12 +647,9 @@ public class TestMech extends TestEntity {
             correct = false;
         }
         if (!heatSinks.isEmpty()) {
-            int sinks = heatSinks.elements().nextElement().intValue();
-            buff.append(sinks)
-                    .append(" of ")
-                    .append(engine.integralHeatSinkCapacity(mech
-                            .hasCompactHeatSinks()))
-                    .append(" possible Internal Heat Sinks!").append("\n");
+            int sinks = heatSinks.elements().nextElement();
+            buff.append(sinks - engine.integralHeatSinkCapacity(mech
+                    .hasCompactHeatSinks())).append(" unallocated heat sinks\n");
             correct = false;
         }
         if (!checkSystemCriticals(buff)) {
@@ -719,7 +716,8 @@ public class TestMech extends TestEntity {
             }
         }
 
-        if (getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor()) {
+        if (!getEntity().hasPatchworkArmor()
+                && (getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor())) {
             correct = false;
             buff.append("Too many armor points allocated");
         }
@@ -1016,6 +1014,25 @@ public class TestMech extends TestEntity {
                 }
             }
 
+            if (misc.hasFlag(MiscType.F_RAM_PLATE)) {
+                if (!(mech instanceof QuadMech)) {
+                    buff.append(misc.getName()).append(" can only be mounted on a quad mech.\n");
+                    illegal = true;
+                }
+                if (!mech.hasReinforcedStructure()) {
+                    buff.append(misc.getName()).append(" requires reinforced structure.\n");
+                    illegal = true;
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsTorso(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 1) {
+                        illegal = true;
+                        buff.append(misc.getName()).append(" requires one critical slot in each torso location.\n");
+                        break;
+                    }
+                }
+            }
+
             if (mech.isSuperHeavy()
                     && (misc.hasFlag(MiscType.F_TSM)
                             || misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
@@ -1054,6 +1071,7 @@ public class TestMech extends TestEntity {
                         || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
                         || misc.hasFlag(MiscType.F_FUEL)) {
                     buff.append("Non-industrial mech can't mount ").append(misc.getName()).append("\n");
+                    illegal = true;
                 }
             }
             
@@ -1075,20 +1093,24 @@ public class TestMech extends TestEntity {
         
         if (mech.isSuperHeavy()) {
             switch (mech.hasEngine()? mech.getEngine().getEngineType() : Engine.NONE) {
-            case Engine.NORMAL_ENGINE:
-            case Engine.LARGE_ENGINE:
-                break;
-            case Engine.XL_ENGINE:
-            case Engine.XXL_ENGINE:
-            case Engine.COMPACT_ENGINE:
-            case Engine.LIGHT_ENGINE:
-                if (mech.isIndustrial()) {
-                    buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+                case Engine.NORMAL_ENGINE:
+                case Engine.LARGE_ENGINE:
+                    break;
+                case Engine.XL_ENGINE:
+                case Engine.XXL_ENGINE:
+                case Engine.COMPACT_ENGINE:
+                case Engine.LIGHT_ENGINE:
+                    if (mech.isIndustrial()) {
+                        buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+                        illegal = true;
+                    }
+                    break;
+                default:
+                    buff.append("Superheavy Mechs must use some type of fusion engine\n");
                     illegal = true;
-                }
-                break;
-            default:
-                buff.append("Superheavy Mechs must use some type of fusion engine\n");
+            }
+            if (mech.getGyroType() != Mech.GYRO_SUPERHEAVY) {
+                buff.append("Superheavy Mechs must use a superheavy gyro.\n");
                 illegal = true;
             }
             
@@ -1100,6 +1122,9 @@ public class TestMech extends TestEntity {
             if (mech instanceof QuadVee) {
                 buff.append("QuadVees cannot be constructed as superheavies.\n");
             }
+        } else if (mech.getGyroType() == Mech.GYRO_SUPERHEAVY) {
+            buff.append("Only superheavy Mechs can use a superheavy gyro.\n");
+            illegal = true;
         }
         
         if (mech.isIndustrial()) {
@@ -1115,7 +1140,7 @@ public class TestMech extends TestEntity {
                 buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
                 illegal = true;
             }
-            if (mech.getGyroType() != Mech.GYRO_STANDARD) {
+            if ((mech.getGyroType() != Mech.GYRO_STANDARD) && (mech.getGyroType() != Mech.GYRO_SUPERHEAVY)) {
                 buff.append("industrial mechs can only mount standard gyros\n");
                 illegal = true;
             }

@@ -26,9 +26,11 @@ import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -105,13 +107,25 @@ public class EntityListFile {
                 if (mount.getEntity().usesWeaponBays() 
                         || mount.getEntity() instanceof Dropship) {
                     output.append("\" capacity=\"")
-                        .append(String.valueOf(mount.getAmmoCapacity()));
+                        .append(String.valueOf(mount.getSize()));
                 }
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
+            }
+            if (mount.getEntity().isSupportVehicle()
+                    && (mount.getType() instanceof InfantryWeapon)) {
+                for (Mounted ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
+                    if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                        output.append("\" inferno=\"").append(ammo.getBaseShotsLeft())
+                            .append(":").append(ammo.getOriginalShots());
+                    } else {
+                        output.append("\" standard=\"").append(ammo.getBaseShotsLeft())
+                                .append(":").append(ammo.getOriginalShots());
+                    }
+                }
             }
             if (mount.isRapidfire()) {
                 output.append("\" rfmg=\"true");
@@ -169,6 +183,7 @@ public class EntityListFile {
      */
     public static String getLocString(Entity entity, int indentLvl) {
         boolean isMech = entity instanceof Mech;
+        boolean isNonSmallCraftAero = (entity instanceof Aero) && !(entity instanceof SmallCraft);
         boolean haveSlot = false;
         StringBuffer output = new StringBuffer();
         StringBuffer thisLoc = new StringBuffer();
@@ -177,6 +192,10 @@ public class EntityListFile {
         // Walk through the locations for the entity,
         // and only record damage and ammo.
         for (int loc = 0; loc < entity.locations(); loc++) {
+            // Aero.LOC_WINGS and Aero.LOC_FUSELAGE are not "real"
+            // locations for the purpose of being destroyed or blown off,
+            // but they may contain equipment which should be used below.
+            boolean isPseudoLocation = isNonSmallCraftAero && (loc >= Aero.LOC_WINGS);
 
             // if the location is blown off, remove it so we can get the real
             // values
@@ -196,9 +215,14 @@ public class EntityListFile {
                 isDestroyed = false;
             }
 
+            if (isPseudoLocation) {
+                isDestroyed = false;
+                blownOff = false;
+            }
+
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.
-            if (!isDestroyed) {
+            if (!isDestroyed && !isPseudoLocation) {
                 int currentArmor;
                 if (entity instanceof BattleArmor){
                     currentArmor = entity.getArmor(loc);
@@ -350,9 +374,11 @@ public class EntityListFile {
                     }
 
                     // Record the munition type of oneshot launchers
+                    // and the ammunition shots of small SV weapons
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)
-                            && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                            && ((mount.getType()).hasFlag(WeaponType.F_ONESHOT)
+                            || (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),
                                 slot.isDestroyed(), slot.isRepairable(),
@@ -594,8 +620,7 @@ public class EntityListFile {
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if(null != killer
-                        && !killer.getExternalIdAsString().equals("-1")
-                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                        && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), "None");
@@ -611,8 +636,7 @@ public class EntityListFile {
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
                 if(null != killer
-                        && !killer.getExternalIdAsString().equals("-1")
-                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                        && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), "None");
@@ -808,9 +832,9 @@ public class EntityListFile {
             if ((entity instanceof Infantry)
                     && !(entity instanceof BattleArmor)) {
                 Infantry inf = (Infantry) entity;
-                if (inf.getDamageDivisor() != 1) {
+                if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
-                    output.write(inf.getDamageDivisor() + "");
+                    output.write(inf.getArmorDamageDivisor() + "");
                 }
                 if (inf.isArmorEncumbering()) {
                     output.write("\" " + MULParser.ARMOR_ENC + "=\"1");
@@ -1175,8 +1199,6 @@ public class EntityListFile {
         output.write("\" nick=\"");
         output.write(crew.getNickname(pos).replaceAll("\"", "&quot;"));
         output.write("\" gender=\"" + crew.getGender(pos).name());
-        output.write("\" gunnery=\"");
-        output.write(String.valueOf(crew.getGunnery(pos)));
 
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
@@ -1187,6 +1209,9 @@ public class EntityListFile {
             output.write(String.valueOf(crew.getGunneryM(pos)));
             output.write("\" gunneryB=\"");
             output.write(String.valueOf(crew.getGunneryB(pos)));
+        } else {
+            output.write("\" gunnery=\"");
+            output.write(String.valueOf(crew.getGunnery(pos)));
         }
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));
@@ -1212,11 +1237,11 @@ public class EntityListFile {
             output.write("\" hits=\"");
             output.write(String.valueOf(crew.getHits(pos)));
         }
-        if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory(pos))) {
+        if (!AbstractIcon.ROOT_CATEGORY.equals(crew.getPortraitCategory(pos))) {
             output.write("\" portraitCat=\"");
             output.write(crew.getPortraitCategory(pos));
         }
-        if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName(pos))) {
+        if (!AbstractIcon.DEFAULT_ICON_FILENAME.equals(crew.getPortraitFileName(pos))) {
             output.write("\" portraitFile=\"");
             output.write(crew.getPortraitFileName(pos));
         }

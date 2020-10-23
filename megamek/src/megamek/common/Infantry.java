@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -417,8 +418,8 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
@@ -487,8 +488,8 @@ public class Infantry extends Entity {
             mp = getOriginalJumpMP();
         }
         if ((getSecondaryN() > 1)
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !hasAbility(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
@@ -908,7 +909,7 @@ public class Infantry extends Entity {
 
         double dbr = 0; //defensive battle rating
 
-        dbr = men * 1.5 * getDamageDivisor();
+        dbr = men * 1.5 * calcDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
                 .getValue();
 
@@ -1020,7 +1021,7 @@ public class Infantry extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
-        bvText.append(df.format(getDamageDivisor()));
+        bvText.append(df.format(calcDamageDivisor()));
         bvText.append(endColumn);
         bvText.append(endRow);
 
@@ -1032,7 +1033,7 @@ public class Infantry extends Entity {
         bvText.append(" x 1.5 x ");
         bvText.append(tmmFactor);
         bvText.append(" x ");
-        bvText.append(getDamageDivisor());
+        bvText.append(calcDamageDivisor());
         bvText.append(endColumn);
         bvText.append(startColumn);
 
@@ -1966,11 +1967,24 @@ public class Infantry extends Entity {
     	}
     }
 
-    public double getDamageDivisor() {
+    public double calcDamageDivisor() {
+        double divisor = damageDivisor;
+        // TSM implant reduces divisor to 0.5 if no other armor is worn
+        if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            divisor = 0.5;
+        }
+        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
+        if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+            divisor += 1.0;
+        }
+        return divisor;
+    }
+
+    public double getArmorDamageDivisor() {
     	return damageDivisor;
     }
 
-    public void setDamageDivisor(double d) {
+    public void setArmorDamageDivisor(double d) {
         damageDivisor = d;
     }
 
@@ -2420,20 +2434,7 @@ public class Infantry extends Entity {
 
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
-        double divisor = getDamageDivisor();
-        if (getCrew() != null) {
-	    	// TSM reduces divisor to 0.5 if no other armor is worn.
-	    	if (hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-	    		if (getArmorKit() == null) {
-	    			divisor = 0.5;
-	    		}
-	    	}
-	    	// Dermal armor adds one, cumulative with TSM (which gives a total of 1.5 if unarmored).
-	    	if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-	    		divisor++;
-	    	}
-        }
-        sArmor.append(divisor);
+        sArmor.append(calcDamageDivisor());
         if(isArmorEncumbering()) {
             sArmor.append("E");
         }
@@ -2602,17 +2603,14 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
+        double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: only "
-                        + NumberFormat.getPercentInstance().format(
-                                activeTroopPercent) + " troops remaining.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -2622,17 +2620,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
     }
 
     @Override
     public boolean isDmgModerate() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
     }
 
     @Override
     public boolean isDmgLight() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
     }
 
     public boolean hasFieldGun() {

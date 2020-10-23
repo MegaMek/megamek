@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Firefighter
 </Name>
 
 <Model>
-Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars
+Twenty-fourth Hellfire Firefighting Battalion; 84th Avalon LI; 17th Avalon Hussars
 </Model>
 
 <year>
@@ -54,4 +54,3 @@ DavionKit
 <source>
 TRO 3085 - Clan Invasion
 </source>
-

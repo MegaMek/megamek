@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Compute;
@@ -336,6 +338,27 @@ class EntitySprite extends Sprite {
                     graph.setComposite(AlphaComposite.getInstance(
                             AlphaComposite.SRC_OVER, 0.5f));
                 }
+                
+                // draw the 'fuel leak' decal where appropriate
+                boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
+                
+                if(drawFuelLeak) {
+                    Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
+                    if (null != fuelLeak) {
+                        graph.drawImage(fuelLeak, 0, 0, this);
+                    }
+                }
+                
+                // draw the 'tires' or 'tracks' decal where appropriate
+                boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+                
+                if(drawMotiveWreckage) {
+                    Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+                    if (null != motiveWreckage) {
+                        graph.drawImage(motiveWreckage, 0, 0, this);
+                    }
+                }
+                
                 graph.drawImage(bv.getScaledImage(bv.tileManager.imageFor(entity, secondaryPos), true),
                         0, 0, this);
                 graph.setComposite(AlphaComposite.getInstance(
@@ -510,9 +533,22 @@ class EntitySprite extends Sprite {
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
                         labelRect.height, 5, 10);
 
-                if (guip.getEntityOwnerLabelColor()) {
-                    graph.setColor(PlayerColors.getColor(
-                            entity.getOwner().getColorIndex(), false));
+                // Draw a label border with player colors or team coloring
+                if (guip.getUnitLabelBorder()) {
+                    if (guip.getTeamColoring()) {
+                        boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
+                        boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
+                        if (isLocalPlayer) {
+                            graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                        } else if (isLocalTeam) {
+                            graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                        } else {
+                            graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                        }
+                    } else {
+                        graph.setColor(PlayerColors.getColor(
+                                entity.getOwner().getColorIndex(), false));
+                    }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
@@ -700,7 +736,7 @@ class EntitySprite extends Sprite {
                 // This is a really awkward way of making sure
                 addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
                 for (int a = 0; a <= entity.getOInternal(loc)/visUnit; a++) {
-                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorIntact);
+                    addToTT("BlockColored", NOBR, destroyedChar, fontSize, colorDamaged);
                 }
 
             } else {
@@ -722,6 +758,7 @@ class EntitySprite extends Sprite {
                             addToTT("BlockColored", NOBR, armorChar, fontSize, colorDamaged);
                         }
                     }
+                    tooltipString.append("&nbsp;&nbsp;");
                     addToTT("ArmorMiniPanelPart", BR, entity.getLocationAbbr(loc), fontSize);
                 } else {
                     addToTT("ArmorMiniPanelPartNoRear", BR, entity.getLocationAbbr(loc), fontSize);
@@ -846,12 +883,11 @@ class EntitySprite extends Sprite {
             if (entity.getCrew().getSlotCount() > 1) {
                 pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
             }
-            
-            addToTT("Pilot", NOBR,
-                    pnameStr, 
-                    entity.getCrew().getGunnery(i), 
-                    entity.getCrew().getPiloting(i));
-    
+
+            addToTT("Pilot", NOBR, pnameStr,
+                    entity.getCrew().getSkillsAsString(
+                            bv.game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
+
             // Pilot Status
             if (!entity.getCrew().getStatusDesc(i).equals(""))
                 addToTT("PilotStatus", NOBR, 
@@ -888,7 +924,16 @@ class EntitySprite extends Sprite {
                 String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
                 File f = new File(imagePath);
                 if(f.exists()) {
-                    addToTT("PilotPortrait",BR,imagePath);
+                    // HACK: Get the real portrait to find the size of the image
+                    // and scale the tooltip HTML IMG accordingly
+                    Image portrait = MMStaticDirectoryManager.getUnscaledPortraitImage(category, file);
+                    if (portrait.getWidth(null) > portrait.getHeight(null)) {
+                        float h = 60f * portrait.getHeight(null) / portrait.getWidth(null);
+                        addToTT("PilotPortraitW", BR, imagePath, (int) h);
+                    } else {
+                        float w = 60f * portrait.getWidth(null) / portrait.getHeight(null);
+                        addToTT("PilotPortraitH", BR, imagePath, (int) w);
+                    }
                 }
             }
         }
@@ -954,29 +999,8 @@ class EntitySprite extends Sprite {
                     
                 // Unit did move
                 } else {
-                    // Colored arrow
-                    // get the color resource
-                    String guipName = "AdvancedMoveDefaultColor";
-                    if ((entity.moved == EntityMovementType.MOVE_RUN)
-                            || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                            || (entity.moved == EntityMovementType.MOVE_OVER_THRUST)) 
-                        guipName = "AdvancedMoveRunColor";
-                    else if (entity.moved == EntityMovementType.MOVE_SPRINT
-                            || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) 
-                        guipName = "AdvancedMoveSprintColor";
-                    else if (entity.moved == EntityMovementType.MOVE_JUMP) 
-                        guipName = "AdvancedMoveJumpColor";
-
-                    // HTML color String from Preferences
-                    String moveTypeColor = Integer
-                            .toHexString(GUIPreferences.getInstance()
-                                    .getColor(guipName).getRGB() & 0xFFFFFF);
-
-                    // Arrow
-                    addToTT("Arrow", BR, moveTypeColor);
-
                     // Actual movement and modifier
-                    addToTT("MovementF", NOBR,
+                    addToTT("MovementF", BR,
                             entity.getMovementString(entity.moved),
                             entity.delta_distance,
                             tmm);
@@ -1088,12 +1112,10 @@ class EntitySprite extends Sprite {
                 } else {
                     ranges = wtype.getRanges(curWp);
                 }
-                String rangeString = "(";
+                String rangeString = " \u22EF ";
                 if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
                         && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
-                    rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
-                } else {
-                    rangeString += "-/";
+                    rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
                 }
                 int maxRange = RangeType.RANGE_LONG;
                 if (bv.game.getOptions().booleanOption(
@@ -1103,11 +1125,10 @@ class EntitySprite extends Sprite {
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
                     rangeString += ranges[i];
                     if (i != maxRange) {
-                        rangeString += "/";
+                        rangeString += "\u2B1D";
                     }
                 }
-                
-                weapDesc += rangeString + ")";
+                weapDesc += rangeString;
                 if (wpNames.containsKey(weapDesc)) {
                     int number = wpNames.get(weapDesc);
                     if (number > 0) 
@@ -1213,4 +1234,3 @@ class EntitySprite extends Sprite {
         return entity.getSpriteDrawPriority();
     }
 }
-

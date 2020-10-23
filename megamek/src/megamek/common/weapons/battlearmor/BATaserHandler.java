@@ -69,6 +69,8 @@ public class BATaserHandler extends AmmoWeaponHandler {
         vPhaseReport.add(r);
         if (entityTarget instanceof BattleArmor) {
             if (taserRoll >= 9) {
+                initHit(entityTarget);
+            
                 r = new Report(3706);
                 r.addDesc(entityTarget);
                 // shut down for rest of scenario, so we actually kill it

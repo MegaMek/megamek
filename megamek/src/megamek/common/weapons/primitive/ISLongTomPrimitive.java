@@ -18,6 +18,7 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -58,7 +59,8 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         .setISAdvancement(2445, DATE_PS, DATE_PS, 2500, DATE_NONE)
         .setISApproximate(false, false, false,true, false)
         .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
+        .setProductionFactions(F_TH)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
 }

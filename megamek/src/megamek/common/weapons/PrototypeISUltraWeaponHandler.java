@@ -53,6 +53,10 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if (((roll <= 4) && (howManyShots == 2))
                 || ((roll == 2) && (howManyShots == 1))) {
             Report r = new Report();

@@ -43,6 +43,10 @@ public class PrimitiveACWeaponHandler extends ACWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if (roll == 2) {
             Report r = new Report(3161);
             r.subject = subjectId;

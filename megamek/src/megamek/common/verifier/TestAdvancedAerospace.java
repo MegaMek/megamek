@@ -757,7 +757,8 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctCrew(buff);
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
-        
+        correct &= correctCriticals(buff);
+
         return correct;
     }
 
@@ -958,8 +959,18 @@ public class TestAdvancedAerospace extends TestAero {
                 illegal = true;
             }
         }
-        
-        int bayDoors = vessel.getTransportBays().stream().mapToInt(Bay::getDoors).sum();
+
+        int bayDoors = 0;
+        for (Bay bay : vessel.getTransportBays()) {
+            bayDoors += bay.getDoors();
+            if (bay.getDoors() == 0) {
+                BayData data = BayData.getBayType(bay);
+                if ((data != null) && !data.isCargoBay() && !data.isInfantryBay()) {
+                    buff.append("Transport bays other than cargo and infantry require at least one door.\n");
+                    illegal = true;
+                }
+            }
+        }
         if (bayDoors > maxBayDoors(vessel)) {
             buff.append("Exceeds maximum number of bay doors.\n");
             illegal = true;
@@ -1167,7 +1178,7 @@ public class TestAdvancedAerospace extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return true;
+        return super.correctCriticals(buff);
     }
     
     @Override

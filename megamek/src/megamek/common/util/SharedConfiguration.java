@@ -19,9 +19,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
-import megamek.common.logging.LogLevel;
+import megamek.MegaMek;
 
 /**
  * Singleton class used to get configuration values shared across different applications.
@@ -40,17 +38,11 @@ public class SharedConfiguration {
     private static SharedConfiguration instance;
     
     private SharedConfiguration() {
-        final MMLogger logger = DefaultMmLogger.getInstance();
-        
         try {
             InputStream is = new FileInputStream("mmconf/shared.properties");
             properties.load(is);
         } catch (Exception e) {
-            logger.log(SharedConfiguration.class, 
-                       "SharedConfiguration()", 
-                       LogLevel.ERROR, 
-                       "Error trying to load shared.properties", 
-                       e);
+            MegaMek.getLogger().error("Error trying to load shared.properties", e);
         }
     }
 

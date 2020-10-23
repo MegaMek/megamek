@@ -40,29 +40,10 @@ import javax.swing.border.TitledBorder;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.IBomber;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Protomech;
-import megamek.common.SimpleTechLevel;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -394,8 +375,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             ((MunitionChoicePanel) newVar2).applyChoice();
         }
         if (panMunitions instanceof BayMunitionsChoicePanel) {
-            ((BayMunitionsChoicePanel)panMunitions).apply();
+            ((BayMunitionsChoicePanel) panMunitions).apply();
         } else {
+            if (panMunitions instanceof SmallSVMunitionsChoicePanel) {
+                ((SmallSVMunitionsChoicePanel) panMunitions).apply();
+            }
             // update ammo names for weapon ammo choice selectors
             for(WeaponAmmoChoicePanel wacPanel : m_vWeaponAmmoChoice) {
                 wacPanel.applyChoice();
@@ -646,6 +630,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         if (entity.usesWeaponBays() || entity instanceof Dropship) {
             //Grounded dropships don't *use* weapon bays as such, but should load ammo as if they did
             panMunitions = new BayMunitionsChoicePanel(entity, game);
+            return;
+        }
+        // Small support vehicle ammo is part of the weapon, and the only munitions choice is
+        // standard or inferno, and only for some weapons.
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            panMunitions = new SmallSVMunitionsChoicePanel(entity);
             return;
         }
         panMunitions.setLayout(gbl);
@@ -1330,7 +1320,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              */
             public WeaponAmmoChoicePanel(Mounted weapon) {
                 // for safety purposes, if the given mounted isn't a weapon, don't do anything.
-                if(!(weapon.getType() instanceof WeaponType)) {
+                if (!(weapon.getType() instanceof WeaponType)) {
                     return;
                 }
                 
@@ -1345,12 +1335,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
-                if (m_mounted.isOneShot()) {
+                if (m_mounted.isOneShot() || (entity.isSupportVehicle()
+                        && (m_mounted.getType() instanceof InfantryWeapon))) {
                     // One-shot weapons can only access their own bin
                     matchingAmmoBins.add(m_mounted.getLinked());
+                    // Fusillade and some small SV weapons are treated like one-shot
+                    // weapons but may have a second munition type available.
+                    if ((m_mounted.getLinked().getLinked() != null)
+                            && (((AmmoType) m_mounted.getLinked().getType()).getMunitionType()
+                                != (((AmmoType) m_mounted.getLinked().getLinked().getType()).getMunitionType()))) {
+                        matchingAmmoBins.add(m_mounted.getLinked().getLinked());
+                    }
                 } else {
-                    for(Mounted ammoBin : weapon.getEntity().getAmmo()) {
-                        if((ammoBin.getLocation() != Entity.LOC_NONE)
+                    for (Mounted ammoBin : weapon.getEntity().getAmmo()) {
+                        if ((ammoBin.getLocation() != Entity.LOC_NONE)
                             && ((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
                             matchingAmmoBins.add(ammoBin);
                         }
@@ -1369,16 +1367,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 ammoBins.removeAllItems();
                 
                 int currentIndex = 0;
-                for(Mounted ammoBin : matchingAmmoBins) {
+                for (Mounted ammoBin : matchingAmmoBins) {
                     ammoBins.addItem("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + ammoBin.getName());
-                    if(m_mounted.getLinked() == ammoBin) {
+                    if (m_mounted.getLinked() == ammoBin) {
                         selectedIndex = currentIndex;
                     }
                     
                     currentIndex++;
                 }
                 
-                if(selectedIndex >= 0) {
+                if (selectedIndex >= 0) {
                     ammoBins.setSelectedIndex(selectedIndex);
                 }
                 
@@ -1395,20 +1393,20 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int index = 0;
                 boolean matchFound = false;
                 
-                for(index = 0; index < matchingAmmoBins.size(); index++) {
-                    if(matchingAmmoBins.get(index) == ammoBin) {
+                for (index = 0; index < matchingAmmoBins.size(); index++) {
+                    if (matchingAmmoBins.get(index) == ammoBin) {
                         matchFound = true;
                         break;
                     }
                 }
                 
-                if(matchFound) {
+                if (matchFound) {
                     int currentBinIndex = ammoBins.getSelectedIndex();
                     
                     ammoBins.removeItemAt(index);
                     ammoBins.insertItemAt("(" + ammoBin.getEntity().getLocationAbbr(ammoBin.getLocation()) + ") " + selectedAmmoType.getName(), index);
                     
-                    if(currentBinIndex == index) {                    
+                    if (currentBinIndex == index) {
                         ammoBins.setSelectedIndex(index);
                     }
                     
@@ -1556,7 +1554,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 } else {
                     cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
                 }
-                fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
+                fldDivisor.setText(Double.toString(inf.calcDamageDivisor()));
                 chEncumber.setSelected(inf.isArmorEncumbering());
                 chSpaceSuit.setSelected(inf.hasSpaceSuit());
                 chDEST.setSelected(inf.hasDEST());
@@ -1607,7 +1605,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     inf.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
                 } else {
                     inf.setArmorKit(null);
-                    inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
+                    inf.setArmorDamageDivisor(Double.valueOf(fldDivisor.getText()));
                     inf.setArmorEncumbering(chEncumber.isSelected());
                     inf.setSpaceSuit(chSpaceSuit.isSelected());
                     inf.setDEST(chDEST.isSelected());

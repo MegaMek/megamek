@@ -14,6 +14,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -89,6 +90,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
     private JMenuItem viewAccessibilityWindow;
+    private JCheckBoxMenuItem viewKeybindsOverlay;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
     private JMenuItem viewResetWindowPositions;
@@ -352,6 +354,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);
         
+        viewKeybindsOverlay = new JCheckBoxMenuItem(Messages.getString("CommonMenuBar.viewKeyboardShortcuts"));
+        viewKeybindsOverlay.addActionListener(this);
+        viewKeybindsOverlay.setState(GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
+        viewKeybindsOverlay.setActionCommand(ClientGUI.VIEW_KEYBINDS_OVERLAY);
+        menu.add(viewKeybindsOverlay);
+        viewKeybindsOverlay.setEnabled(false);
+        
         viewResetWindowPositions = new JMenuItem(Messages.getString("CommonMenuBar.viewResetWindowPos")); //$NON-NLS-1$
         viewResetWindowPositions.addActionListener(this);
         viewResetWindowPositions.setActionCommand(ClientGUI.VIEW_RESET_WINDOW_POSITIONS);
@@ -452,6 +461,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu.add(viewGameOptions);
         viewClientSettings = new JMenuItem(Messages.getString("CommonMenuBar.viewClientSettings")); //$NON-NLS-1$
         viewClientSettings.setActionCommand(ClientGUI.VIEW_CLIENT_SETTINGS);
+        viewClientSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
         viewClientSettings.addActionListener(this);
         menu.add(viewClientSettings);
         viewLOSSetting = new JMenuItem(Messages.getString("CommonMenuBar.viewLOSSetting")); //$NON-NLS-1$
@@ -641,7 +651,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
                 Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MoveCommand.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
         moveHullDown = createMenuItem(
                 submenu,
-                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MoveCommand.MOVE_CLEAR.getCmd()); //$NON-NLS-1$
+                Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MoveCommand.MOVE_HULL_DOWN.getCmd()); //$NON-NLS-1$
         moveLayMine = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MoveCommand.MOVE_LAY_MINE.getCmd()); //$NON-NLS-1$
@@ -907,6 +917,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
             viewZoomOut.setEnabled(true);
+            viewKeybindsOverlay.setEnabled(true);
         }
         // If we don't have a board we can't view the mini map.
         else {
@@ -917,6 +928,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);
+            viewKeybindsOverlay.setEnabled(false);
         }
 
         // If we have a unit list, and if we are in the lounge,
@@ -1450,6 +1462,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             toggleIsometric.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
             toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
+            viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
         }
     }
 

@@ -36,7 +36,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryVintageMiniGun");
 		addLookupName("VintageMinGun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 50000;
 		tonnage = .021;
 		bv = 0.0;
@@ -44,6 +44,10 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 		infantryDamage = 0.81;
 		infantryRange = 2;
 		crew = 2;
+		ammoWeight = 0.012;
+		ammoCost = 600;
+		shots = 500;
+		bursts = 10;
 		rulesRefs = "195,ATOW-C";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

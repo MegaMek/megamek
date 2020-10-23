@@ -86,7 +86,7 @@ import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -1270,15 +1270,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     ((BattleArmor) entity).setInternal(2);
                 } else {
                     ((BattleArmor) entity).setInternal(1);
-                }
-            } else if (entity instanceof Infantry) {
-                // need to reset armor on conventional infantry
-                if (entity.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
-                    entity.initializeArmor(
-                            entity.getOInternal(Infantry.LOC_INFANTRY),
-                            Infantry.LOC_INFANTRY);
-                } else {
-                    entity.initializeArmor(0, Infantry.LOC_INFANTRY);
                 }
             }
         }

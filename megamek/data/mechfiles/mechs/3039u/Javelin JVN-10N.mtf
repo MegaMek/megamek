@@ -147,3 +147,19 @@ Jump Jet
 -Empty-
 
 
+Overview: The Javelin was introduced by Stormvanger Assemblies towards the end of the Star League. It was not well integrated into Great House armies at the start of the Succession Wars as a result, and its appearance and largely unknown capabilities often surprised combatants. Trial and error showed that Javelins operated best as a well-armed scout or ambusher, and even the destruction of its only production facility on Caph did little to lower its growing popularity. 
+
+Capabilities: The heavy firepower of most Javelins give it a surprising punch. Many light scouts that run afoul of one quickly learn to pull back rather than face a Javelin head on, as most Javelins lack the weapons to fight at range. Its speed average for most light 'Mechs, its armor is also scant better than many "bug" designs such as the Stinger or Wasp. If the Javelin has one flaw, however, it is the unusual center of gravity for the design. The Javelin's chest protrudes foward on the torso, and many MechWarriors new to the design can easily stumble or fall when running at higher speeds or on unstable terrain.
+
+Deployment: A widespread design, the Javlin can be found in nearly all  parts of the Inner Sphere. The only state to firmly embrace the design, the Federated Suns has a notably higher concentration of Javelins within their forces, with several regiments fielding dozens of the design. This runs true for the original Javelin, whos numbers have only somewhat dropped in the Federated Suns even after recent violent conflicts. There is also a notable number within the break-off Filtvelt Coalition, who appreciate the reliable nature of the design.
+
+systemmanufacturer:CHASSIS:Duralyte
+systemmode:CHASSIS:246
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:180
+systemmanufacturer:ARMOR:StarGuard
+systemmode:ARMOR:I
+systemmanufacturer:COMMUNICATIONS:Garret
+systemmode:COMMUNICATIONS:T10B
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:128C

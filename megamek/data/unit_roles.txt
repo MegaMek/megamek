@@ -3899,8 +3899,8 @@ Ryoken III-XP D:STRIKER
 Ryoken III-XP Prime:STRIKER
 SM1 Tank Destroyer SM1:MISSILE_BOAT
 SM1A Tank Destroyer SM1A:STRIKER
-SM2 Heavy Artilley Vehicle (LTC):MISSILE_BOAT
-SM2 Heavy Artilley Vehicle (Standard):MISSILE_BOAT
+SM2 Heavy Artillery Vehicle (LTC):MISSILE_BOAT
+SM2 Heavy Artillery Vehicle (Standard):MISSILE_BOAT
 SM3 Tank Destroyer SM3:STRIKER
 SRM Carrier (3054 Upgrade):AMBUSHER
 SRM Carrier (C3):AMBUSHER
@@ -5313,3 +5313,221 @@ Zugvogel Omni Support Aircraft D 'Raubvogel':FIRE_SUPPORT
 Zugvogel Omni Support Aircraft E:ATTACK_FIGHTER
 Zugvogel Omni Support Aircraft F:FIRE_SUPPORT
 Zugvogel Omni Support Aircraft Prime:FIRE_SUPPORT
+#ilClan Rec Guide 1
+Commando COM-9S:STRIKER
+Pack Hunter 5:SNIPER
+Griffin C:SNIPER
+Griffin GRF-1DS:MISSILE_BOAT
+Griffin GRF-2N:SKIRMISHER
+Griffin GRF-3M:SNIPER
+Griffin GRF-3N:SNIPER
+Hellbringer (Loki) F:STRIKER
+Hellbringer (Loki) G:STRIKER
+Hellbringer (Loki) J:SCOUT
+Hellbringer (Loki) T:SNIPER
+Dominator:SKIRMISHER
+Dominator 2:SNIPER
+Grasshopper GHR-8K:SKIRMISHER
+Goliath C:SNIPER
+#ilClan Rec Guide 2
+UrbanMech UM-R96:AMBUSHER
+Ostscout OTT-7K:SCOUT
+Ostscout OTT-8J:SCOUT
+Ostscout OTT-12R:SCOUT
+Grendal T:STRIKER
+Grendal F:STRIKER
+Grendal G:SCOUT
+Grendal I:STRIKER
+Grendal J:STRIKER
+Grendal M:SNIPER
+Bushwacker BSW-X4:SKIRMISHER
+Sojourner Prime:SNIPER
+Sojourner A:BRAWLER
+Sojourner B:BRAWLER
+Sojourner C:MISSILE_BOAT
+Sojourner D:BRAWLER
+Zeus ZEU-11S:SNIPER
+Stone Rhino (Behemoth):SNIPER
+Stone Rhino (Behemoth) 4:JUGGERNAUT
+Stone Rhino (Behemoth) 5:JUGGERNAUT
+Stone Rhino (Behemoth) 6:BRAWLER
+Stone Rhino (Behemoth) 7:SNIPER
+Stone Rhino (Behemoth) 8:SNIPER
+#ilClan Rec Guide 3
+Adder (Puma) I:STRIKER
+Adder (Puma) K:SNIPER
+Adder (Puma) L:STRIKER
+Adder (Puma) S:SCOUT
+Adder (Puma) T:SNIPER
+Hierofalcon Prime:STRIKER
+Hierofalcon A:STRIKER
+Hierofalcon B:STRIKER
+Hierofalcon C:SNIPER
+Hierofalcon D:STRIKER
+Shadow Cat III Prime:STRIKER
+Shadow Cat III A:STRIKER
+Shadow Cat III B:STRIKER
+Shadow Cat III C:STRIKER
+Summoner (Thor) T:SNIPER
+Summoner (Thor) AA:SNIPER
+Summoner (Thor) F:SKIRMISHER
+Summoner (Thor) J:SKIRMISHER
+Summoner (Thor) Q:SKIRMISHER
+BattleMaster BLR-2C:BRAWLER
+BattleMaster BLR-3M:BRAWLER
+BattleMaster BLR-3M-DC:BRAWLER
+BattleMaster BLR-3S:BRAWLER
+BattleMaster BLR-6C:JUGGERNAUT
+BattleMaster BLR-6G:BRAWLER
+BattleMaster C 3:JUGGERNAUT
+#GoldenCentury
+Mongoose C:STRIKER
+Mongoose C 2:STRIKER
+Drift Shag:STRIKER
+Night Hawk NTK-2Q-EC:STRIKER
+Talon TLN-5W-EC:STRIKER
+Coyotl B:STRIKER
+Coyotl C:STRIKER
+Coyotl D:STRIKER
+Phoenix Hawk PXH-1-EC:SKIRMISHER
+Enfield END-6J-EC:SKIRMISHER
+Fox CS-1:MISSILE_BOAT
+Fox:MISSILE_BOAT
+Omni-Corvis Prime:SNIPER
+Omni-Corvis A:BRAWLER
+Omni-Corvis B:MISSILE_BOAT
+Starslayer STY-2C-EC:SKIRMISHER
+Lynx C:SKIRMISHER
+Naja KTO-19b-EC:SKIRMISHER
+Naja:SKIRMISHER
+Sun Bear (Prototype A) Prime:BRAWLER
+Sun Bear (Prototype A) A:SKIRMISHER
+Sun Bear (Prototype A) B:MISSILE_BOAT
+Lancelot C:SNIPER
+Lancelot C 2:SNIPER
+Lupus Prime:MISSILE_BOAT
+Lupus A:SKIRMISHER
+Lupus B:SKIRMISHER
+Lupus C:BRAWLER
+Lupus D:BRAWLER
+Vision Quest VQ-1NC:SNIPER
+Vision Quest:BRAWLER
+Vision Quest 2:SNIPER
+Cestus CTS-6Y-EC:BRAWLER
+Exterminator EXT-4Db-EC:SKIRMISHER
+Excalibur EXC-B2b-EC:MISSILE_BOAT
+Minsk MNK-101:BRAWLER
+Minsk:BRAWLER
+Minsk 2:BRAWLER
+Masauwu:BRAWLER
+Redback:SKIRMISHER
+Woodsman B:BRAWLER
+Woodsman C:BRAWLER
+Woodsman D:MISSILE_BOAT
+Spartan C:SKIRMISHER
+Emperor EMP-6A-EC:JUGGERNAUT
+Pulverizer PUL-3R:BRAWLER
+Pulverizer:BRAWLER
+Devastator DVS-2-EC:JUGGERNAUT
+Storm Giant:MISSILE_BOAT
+Storm Giant 2:JUGGERNAUT
+#ToS Kaumberg
+Copper SecurityMech CPK-65KM:AMBUSHER
+Commando COM-1AK:SCOUT
+Crosscut ED-X4K LoggerMech:AMBUSHER
+Phoenix PX-1KC:BRAWLER
+Phoenix PX-1KL:BRAWLER
+Phoenix PX-1KT:MISSILE_BOAT
+Phoenix PX-1KR:BRAWLER
+#IrTech
+Sturmvogel Maritime Patrol WiGE:STRIKER
+Sturmvogel Gunship WiGE:SNIPER
+Sturmvogel Maritime Patrol WiGE (LB-2X):SNIPER
+Sturmvogel Maritime Patrol WiGE (LB-10X):STRIKER
+#Prime Mover:NONE
+Wheeled SCOUT:SCOUT
+#Exo HaulerMech HMX-1:NONE
+#Exo HaulerMech HMX-2:NONE
+#Exo HaulerMech HMX-3:NONE
+#Exo HaulerMech HMX-3M:NONE
+Guard SecurityMech GS-54:AMBUSHER
+Guard SecurityMech GS-107X:AMBUSHER
+Pompier PoliceMech GM-4P:AMBUSHER
+Gulon MiningMech GLN-1A:AMBUSHER
+Gulon SecurityMech GLN-1B:AMBUSHER
+Gulon SolahmaMech C:AMBUSHER
+#Opossum SalvageMech OPO-2:NONE
+Opossum SalvageMech OPO-3 MOD:SNIPER
+Carbine CON-9M-J ConstructionMech MOD:AMBUSHER
+Carbine CON-9M-JB ConstructionMech MOD:AMBUSHER
+Carbine CON-9M Karenna:SNIPER
+Crosscut ED-X4M-L LoggerMech MOD:SNIPER
+Crosscut ED-X4M-A LoggerMech MOD:SNIPER
+Crosscut ED-X4M-E LoggerMech MOD:SNIPER
+Demeter WLD-1-M AgroMech MOD:AMBUSHER
+#Demeter WLD-1 AgroMech:NONE
+Pacifier SecurityMech CCU-36:AMBUSHER
+Pacifier SecurityMech CCU-40:AMBUSHER
+Firebee WI-WAM MilitiaMech:MISSILE_BOAT
+DemolitionMech WI-DMM MOD:AMBUSHER
+Inquisitor ITW-80 SecurityMech:SCOUT
+Inquisitor ITW-85 SecurityMech:SCOUT
+#StrongArm SC CV ConstructionMech:NONE
+#StrongArm SC CVI ConstructionMech:NONE
+StrongArm SC CV-M ConstructionMech MOD:AMBUSHER
+Harvester HVR-199M AgroMech MOD:SNIPER
+Harvester HVR-199M-A AgroMech MOD:AMBUSHER
+Harvester HVR-199M-B AgroMech MOD:SNIPER
+Harvester HVR-199M-M AgroMech MOD:SNIPER
+#Harvester HVR-199 AgroMech:NONE
+Buster BC XXI-M HaulerMech MOD:AMBUSHER
+Centurion CN9-H2 MilitiaMech:BRAWLER
+Centurion CN9-H2H MilitiaMech:BRAWLER
+Centurion CN9-H3 MilitiaMech:BRAWLER
+Heavy Lifter HCL-1M CargoMech MOD:BRAWLER
+Heavy Lifter HCL-1MM MilitiaMech:BRAWLER
+#Heavy Forester HFL-1 LoggerMech:NONE
+Heavy Forester HFL-1M LoggerMech MOD:SNIPER
+Ground Pounder DVM-2 MiningMech:AMBUSHER
+Ground Pounder DVM-2M MiningMech MOD:AMBUSHER
+#Burrower DTM-1 MiningMech:NONE
+Burrower DTM-1M MiningMech MOD:AMBUSHER
+Deep Lord MilitiaMech RCL-Z1M:JUGGERNAUT
+Deep Lord MilitiaMech RCL-Z1M-B:BRAWLER
+Dig Lord RCL-4M MiningMech MOD:JUGGERNAUT
+Dig Lord RCL-4M-B MiningMech MOD:JUGGERNAUT
+MuckRaker GMMM-2M MiningMech MOD:AMBUSHER
+#MuckRaker GMMM-2 MiningMech:NONE
+MuckRaker GMMM-2M-B MiningMech MOD:MISSILE_BOAT
+St. Florian FLN-366-M FireMech MOD:JUGGERNAUT
+#St. Florian FLN-366 FireMech:NONE
+#OTP Hanseatic League
+Cazador:STRIKER
+Snow Fox (Omni) Prime:SCOUT
+Snow Fox (Omni) A:STRIKER
+Snow Fox (Omni) B:SNIPER
+Surtur SUR-T1:SKIRMISHER
+Tolva:SKIRMISHER
+Rhino:SKIRMISHER
+#TOS Valencia
+Reconquista:BRAWLER
+#Shrapnel
+Centurion CN10-J:BRAWLER
+Centurion CN10-W:SNIPER
+#tukayyid
+Adder (Puma) TC:STRIKER
+Shadow Cat TC:SCOUT
+Stormcrow (Ryoken) TC:SKIRMISHER
+Stormcrow (Ryoken) Attwater:SNIPER
+Mad Dog (Vulture) S:SKIRMISHER
+Hellbringer (Loki) M:SNIPER
+Timber Wolf (Mad Cat) TC:SKIRMISHER
+Executioner (Gladiator) TC:SKIRMISHER
+Phoenix Hawk PXH-1bC:SKIRMISHER
+Shadow Hawk SHD-2Ht:SKIRMISHER
+Rifleman RFL-5CS:SNIPER
+Archer ARC-5CS:MISSILE BOAT
+Warhammer WHM-7CS:BRAWLER
+Black Knight BLK-9-KNT:BRAWLER
+Marauder MAD-5CS:SNIPER
+

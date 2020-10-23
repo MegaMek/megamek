@@ -36,13 +36,17 @@ public class InfantrySMGWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantrySMG");
 		addLookupName("Submachinegun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 80;
 		bv = 0.23;
 		tonnage = .003;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.25;
 		infantryRange = 0;
+		ammoWeight = 0.00057;
+		ammoCost = 5;
+		shots = 50;
+		bursts = 5;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

@@ -15,6 +15,10 @@
 # smoke
 # elevator
 
+include "incline/inclines2.tileinc"
+include "high_incline/high_inclines.tileinc"
+include "Cliff/Cliffs.tileinc"
+
 include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
@@ -35,13 +39,13 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 super * "water:1" "" "boring/blue_water_1.gif"
 
-super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
+super * "woods:1;foliage_elev:*" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2;foliage_elev:*" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3;foliage_elev:*" "tropical" "jungle/ultra_heavy_jungle1.png"
 
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
+super * "jungle:1;foliage_elev:*" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "jungle:2;foliage_elev:*" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "jungle:3;foliage_elev:*" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:2" "" "boring/blue_water_2.gif"
 super * "water:3" "" "boring/blue_water_3.gif"
@@ -192,14 +196,14 @@ base -4 "rough:1;snow:1" "" "snow/snow_rough_-3.gif"
 base -5 "rough:1;snow:1" "" "snow/snow_rough_-5.gif"
 base -6 "rough:1;snow:1" "" "snow/snow_rough_-5.gif"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-base * "woods:1" "" "boring/light_forest_0.gif;boring/light_forest_1.gif;boring/light_forest_2.gif"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+base * "woods:1;foliage_elev:*" "" "boring/light_forest_0.gif;boring/light_forest_1.gif;boring/light_forest_2.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy
-base * "woods:2" "" "boring/heavy_forest_0.gif;boring/heavy_forest_1.gif"
-base * "woods:3" "" "boring/uhf.gif"
+base * "woods:2;foliage_elev:*" "" "boring/heavy_forest_0.gif;boring/heavy_forest_1.gif"
+base * "woods:3;foliage_elev:*" "" "boring/uhf.gif"
 
-base * "woods:1;snow:1" "" "snow/snow_light_forest_0.gif;snow/snow_light_forest_1.gif;snow/snow_light_forest_2.gif"
-base * "woods:2;snow:1" "" "snow/snow_heavy_forest_0.gif;snow/snow_heavy_forest_1.gif"
+base * "woods:1;foliage_elev:*;snow:1" "" "snow/snow_light_forest_0.gif;snow/snow_light_forest_1.gif;snow/snow_light_forest_2.gif"
+base * "woods:2;foliage_elev:*;snow:1" "" "snow/snow_heavy_forest_0.gif;snow/snow_heavy_forest_1.gif"
 
 base * "planted_fields:1" "" "boring/fields.gif"
 base * "planted_fields:2" "" "boring/vineyard.png"

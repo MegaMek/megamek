@@ -93,11 +93,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
+    public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
+    public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
     /* --End advanced settings-- */
 
 
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
+    public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
@@ -112,7 +115,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
-    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
+    public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
+    public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -129,6 +133,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
+    public static final String IMAGE_CHOOSER_POS_X = "ImageChooserPosX";
+    public static final String IMAGE_CHOOSER_POS_Y = "ImageChooserPosY";
+    public static final String IMAGE_CHOOSER_SIZE_HEIGHT = "ImageChooserSizeHeight";
+    public static final String IMAGE_CHOOSER_SIZE_WIDTH = "ImageChooserSizeWidth";
+    public static final String IMAGE_CHOOSER_SPLIT_POS = "ImageChooserSplitPos";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -142,6 +151,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
     public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
     public static final String MECH_SELECTOR_RULES_LEVELS= "MechSelectorRuleType";
+    public static final String MECH_SELECTOR_SORT_COLUMN = "MechSelectorSortColumn";
+    public static final String MECH_SELECTOR_SORT_ORDER = "MechSelectorSortOrder";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
@@ -193,12 +204,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
+    public static final String RND_MAP_POS_X = "RndMapPosX";
+    public static final String RND_MAP_POS_Y = "RndMapPosY";
+    public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
+    public static final String RND_MAP_SIZE_WIDTH = "RndMapSizeWidth";
+    public static final String RND_MAP_ADVANCED = "RndMapAdvanced";
     public static final String LOS_MECH_IN_FIRST = "LOSMechInFirst";
     public static final String LOS_MECH_IN_SECOND = "LOSMechInSecond";
     public static final String SHOW_MAPSHEETS = "ShowMapsheets";
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
+    public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
@@ -206,6 +223,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
     public static final String BOARDEDIT_RNDDIALOG_START = "BoardEditRandomDialogStart";
     public static final String WARNING_COLOR = "WarningColor";
+    public static final String ALLY_UNIT_COLOR = "AllyUnitColor";
+    public static final String MY_UNIT_COLOR = "MyUnitColor";
+    public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
+    public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -255,14 +276,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
-        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");     // █
-        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");       //  ▓
-        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2327");
-        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(0, 0, 0)); // HTML hex #008000
-        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
-        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
+        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square    
+        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot     
+        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x 
+        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(100, 180, 100)); // medium green 
+        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(180, 180, 100));  // medium yellow
+        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(150, 80, 80));  // medium dark red  
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(WARNING_COLOR, Color.RED);
+        setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
 
 
         setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
@@ -271,7 +293,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
 
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
-        store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
+        store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, false);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
@@ -286,16 +308,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
+        store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
-
+        store.setDefault(FOV_HIGHLIGHT, false);
+        store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
+        store.setDefault(FOV_DARKEN, true);
+        store.setDefault(FOV_DARKEN_ALPHA, 100);
+        store.setDefault(FOV_STRIPES, 35);
+        store.setDefault(FOV_GRAYSCALE, false);
 
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
-        store.setDefault(SHADOWMAP, false);
+        store.setDefault(SHADOWMAP, true);
+        store.setDefault(INCLINES, true);
         store.setDefault(FLOATINGISO, false);
         store.setDefault(LEVELHIGHLIGHT, false);
+
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -303,16 +333,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
-        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
+        store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
-        store.setDefault(FIRING_SOLUTIONS,true);
-        store.setDefault(FOV_HIGHLIGHT,false);
-        store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
-        store.setDefault(FOV_DARKEN,true);
-        store.setDefault(FOV_DARKEN_ALPHA, 100);
-        store.setDefault(FOV_STRIPES, 35);
-        store.setDefault(FOV_GRAYSCALE, "false");
+        store.setDefault(FIRING_SOLUTIONS, true);
+
+        store.setDefault(IMAGE_CHOOSER_POS_X, 200);
+        store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
+        store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
+        store.setDefault(IMAGE_CHOOSER_SIZE_HEIGHT, 400);
+        store.setDefault(IMAGE_CHOOSER_SPLIT_POS, 50);
+        
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -322,22 +353,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
-        store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
-        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
-        store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
+        store.setDefault(MECH_SELECTOR_UNIT_TYPE, 0);
+        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS, 15);
+        store.setDefault(MECH_SELECTOR_RULES_LEVELS, "[0]");
+        store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
+        store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
-        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
-        store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
+        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
+        store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
+        
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
+        
         store.setDefault(MINI_REPORT_POS_X, 200);
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
-        store.setDefault(MOUSE_WHEEL_ZOOM, false);
-        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, false);
+        
+        store.setDefault(MOUSE_WHEEL_ZOOM, true);
+        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
+        
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
@@ -351,30 +388,47 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
         store.setDefault(NAG_FOR_DOOMED, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
+        
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
         store.setDefault(RULER_POS_Y, 0);
         store.setDefault(RULER_SIZE_HEIGHT, 300);
         store.setDefault(RULER_SIZE_WIDTH, 500);
+        
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_FIELD_OF_FIRE, true);
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
+        
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
+        store.setDefault(SHOW_WPS_IN_TT, true);
+        store.setDefault(SHOW_ARMOR_MINIVIS_TT, true);
+        store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);
+        
+        store.setDefault(USE_ISOMETRIC, false);
+        
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
+        
+        store.setDefault(RND_MAP_SIZE_HEIGHT, 500);
+        store.setDefault(RND_MAP_SIZE_WIDTH, 500);
+        store.setDefault(RND_MAP_POS_X, 400);
+        store.setDefault(RND_MAP_POS_Y, 400);
+        store.setDefault(RND_MAP_ADVANCED, false);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
+        
         store.setDefault(SHOW_MAPSHEETS, false);
-        store.setDefault(SHOW_WPS_IN_TT, false);
-        store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
-        store.setDefault(SHOW_PILOT_PORTRAIT_TT, false);
-        store.setDefault(USE_ISOMETRIC, false);
+        
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
+        store.setDefault(DEFAULT_WEAP_SORT_ORDER, Entity.WeaponSortOrder.DEFAULT.ordinal());
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
+        store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
         store.setDefault(UI_THEME, javax.swing.UIManager.getSystemLookAndFeelClassName());
@@ -391,11 +445,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
         
-        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
-        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
+        setDefault(ALLY_UNIT_COLOR, new Color(60, 140, 240));  // greenish blue
+        setDefault(ENEMY_UNIT_COLOR, new Color(200, 40, 40)); // red
+        setDefault(MY_UNIT_COLOR, new Color(40, 210, 40));  // light green
+        setDefault(TEAM_COLORING, true);
         
-        store.setDefault(DEFAULT_WEAP_SORT_ORDER,
-                Entity.WeaponSortOrder.DEFAULT.ordinal());
+        setDefault(SHOW_KEYBINDS_OVERLAY, true);
         
     }
 
@@ -426,6 +481,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShadowMap() {
         return store.getBoolean(SHADOWMAP);
     }
+    
+    public boolean getHexInclines() {
+        return store.getBoolean(INCLINES);
+    }
 
     public boolean getLevelHighlight() {
         return store.getBoolean(LEVELHIGHLIGHT);
@@ -433,6 +492,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getAutoEndFiring() {
         return store.getBoolean(AUTO_END_FIRING);
+    }
+    
+    public boolean getTeamColoring() {
+        return store.getBoolean(TEAM_COLORING);
     }
 
     public boolean getAutoDeclareSearchlight() {
@@ -467,8 +530,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(DISPLAY_SIZE_WIDTH);
     }
 
-    public boolean getEntityOwnerLabelColor() {
-        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
+    public boolean getUnitLabelBorder() {
+        return store.getBoolean(UNIT_LABEL_BORDER);
     }
 
     public boolean getFocus() {
@@ -575,6 +638,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(MECH_SELECTOR_RULES_LEVELS);
     }
 
+    public int getMechSelectorSortColumn() {
+        return store.getInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public int getMechSelectorDefaultSortColumn() {
+        return store.getDefaultInt(MECH_SELECTOR_SORT_COLUMN);
+    }
+
+    public String getMechSelectorSortOrder() {
+        return store.getString(MECH_SELECTOR_SORT_ORDER);
+    }
+
+    public String getMechSelectorDefaultSortOrder() {
+        return store.getDefaultString(MECH_SELECTOR_SORT_ORDER);
+    }
 
     public int getMechSelectorSizeHeight() {
         return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
@@ -639,6 +717,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getMiniReportSizeWidth() {
         return store.getInt(MINI_REPORT_SIZE_WIDTH);
     }
+    
+    public int getImageChoicePosX() {
+        return store.getInt(IMAGE_CHOOSER_POS_X);
+    }
+
+    public int getImageChoicePosY() {
+        return store.getInt(IMAGE_CHOOSER_POS_Y);
+    }
+
+    public int getImageChoiceSizeHeight() {
+        return store.getInt(IMAGE_CHOOSER_SIZE_HEIGHT);
+    }
+
+    public int getImageChoiceSizeWidth() {
+        return store.getInt(IMAGE_CHOOSER_SIZE_WIDTH);
+    }
 
     public boolean getMouseWheelZoom() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM);
@@ -699,6 +793,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
+    }
+    
+    public Color getMyUnitColor() {
+        return getColor(MY_UNIT_COLOR);
+    }
+    
+    public Color getEnemyUnitColor() {
+        return getColor(ENEMY_UNIT_COLOR);
+    }
+    
+    public Color getAllyUnitColor() {
+        return getColor(ALLY_UNIT_COLOR);
     }
 
     public Color getRulerColor1() {
@@ -840,6 +946,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
     }
+    
+    public void setHexInclines(boolean state) {
+        store.setValue(INCLINES, state);
+    }
 
     public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
@@ -859,6 +969,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowDamageLevel() {
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
+    }
+    
+    public boolean getShowDamageDecal() {
+        return store.getBoolean(SHOW_DAMAGE_DECAL);
     }
 
     public void setAutoEndFiring(boolean state) {
@@ -897,8 +1011,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
     }
 
-    public void setEntityOwnerLabelColor(boolean i) {
-        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
+    public void setUnitLabelBorder(boolean i) {
+        store.setValue(UNIT_LABEL_BORDER, i);
     }
 
     public void setGetFocus(boolean state) {
@@ -1001,6 +1115,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
     }
 
+    public void setMechSelectorSortColumn(int columnId) {
+        store.setValue(MECH_SELECTOR_SORT_COLUMN, columnId);
+    }
+
+    public void setMechSelectorSortOrder(String order) {
+        store.setValue(MECH_SELECTOR_SORT_ORDER, order);
+    }
 
     public void setMechSelectorSizeHeight(int i) {
         store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
@@ -1040,6 +1161,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setBoardEditLoadWidth(int i) {
         store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
+    }
+    
+    public void setTeamColoring(boolean bt) {
+        store.setValue(TEAM_COLORING, bt);
     }
 
     public void setMiniReportSizeHeight(int i) {
@@ -1222,6 +1347,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
     
+    public void setShowDamageDecal(boolean b){
+        store.setValue(SHOW_DAMAGE_DECAL, b);
+    }
+    
     public void setSkinFile(String s) {
         store.setValue(SKIN_FILE, s);
     }
@@ -1324,6 +1453,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
+    }
+    
+    public void setMyUnitColor(Color col) {
+        store.setValue(MY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setEnemyUnitColor(Color col) {
+        store.setValue(ENEMY_UNIT_COLOR, getColorString(col));
+    }
+    
+    public void setAllyUnitColor(Color col) {
+        store.setValue(ALLY_UNIT_COLOR, getColorString(col));
     }
 
     protected ColorParser p = new ColorParser();

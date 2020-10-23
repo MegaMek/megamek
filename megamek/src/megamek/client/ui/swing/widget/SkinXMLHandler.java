@@ -35,7 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;

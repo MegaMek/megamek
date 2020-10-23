@@ -98,7 +98,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -708,8 +708,6 @@ public class MiniMap extends JPanel {
         }
         
         Color oldColor = g.getColor();
-        // g.setColor(BACKGROUND);
-        // g.fillRect(0, 0, getSize().width, getSize().height);
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
@@ -955,19 +953,19 @@ public class MiniMap extends JPanel {
                 String label;
                 switch (heightDisplayMode) {
                     case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.NoHeightLabel"); 
                         break;
                     case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.GroundHeightLabel");
                         break;
                     case SHOW_BUILDING_HEIGHT:
-                        label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.BuildingHeightLabel"); 
                         break;
                     case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.TotalHeightLabel"); 
                         break;
                     default:
-                        label = ""; //$NON-NLS-1$
+                        label = "";
                 }
                 g.drawString(label, 17, (getSize().height - 14) + 12);
             }
@@ -1253,6 +1251,20 @@ public class MiniMap extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
         Stroke svStroke = g2.getStroke();
+        
+        // Choose player or team color depending on preferences
+        Color iconColor = PlayerColors.getColor(entity.getOwner().getColorIndex(), false);
+        if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
+            boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
+            boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());
+            if (isLocalPlayer) {
+                iconColor = GUIPreferences.getInstance().getMyUnitColor();
+            } else if (isLocalTeam) {
+                iconColor = GUIPreferences.getInstance().getAllyUnitColor();
+            } else {
+                iconColor = GUIPreferences.getInstance().getEnemyUnitColor();
+            }
+        }
 
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.MMSYMBOL)) {
             AffineTransform svTransform = g2.getTransform();
@@ -1313,9 +1325,8 @@ public class MiniMap extends JPanel {
                 form = STRAT_INFANTRY;
             }
 
-            // Fill the form in player color
-            g2.setColor(new Color(PlayerColors.getColorRGB(
-                    entity.getOwner().getColorIndex())));
+            // Fill the form in player color / team color
+            g.setColor(iconColor);
             g2.fill(form);
 
             // Add the weight class or other lettering for certain units
@@ -1356,10 +1367,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawOval(baseX - radius, baseY - radius, dia, dia);
 
-                // Fill the icon according to player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillOval(baseX - radius, baseY - radius, dia, dia);
 
                 // Draw a white border to better show the player color
@@ -1372,10 +1381,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawPolygon(xPoints, yPoints, xPoints.length);
 
-                // Fill the icon according to the player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillPolygon(xPoints, yPoints, xPoints.length);
 
                 // Draw a white border to better show the player color
@@ -1697,19 +1704,25 @@ public class MiniMap extends JPanel {
                 initializeMap();
             } else {
                 if (x < 14) {
-                    zoomIn();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 } else if ((x < 28) && (zoom > 2)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-                            : heightDisplayMode;
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
-                    zoomOut();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomOut();
+                    } else {
+                        zoomIn();
+                    }
                 } else {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
                     m_mapImage = createImage(Math.max(1, getSize().width), 14);
-
                     minimized = true;
                     initializeMap();
                 }  
@@ -1721,8 +1734,7 @@ public class MiniMap extends JPanel {
                 return;
             }
             if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                m_bview
-                        .checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),

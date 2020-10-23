@@ -19,10 +19,8 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.CriticalSlot;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -55,6 +53,10 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         int jamLevel = 4;
         boolean kindRapidFire = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC);
         if (kindRapidFire) {
@@ -70,24 +72,11 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
             } else {
                 Report r = new Report(3162);
                 r.subject = subjectId;
-                weapon.setJammed(true);
-                weapon.setHit(true);
-                int wloc = weapon.getLocation();
-                for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-                    CriticalSlot slot1 = ae.getCritical(wloc, i);
-                    if ((slot1 == null) || 
-                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        continue;
-                    }
-                    Mounted mounted = slot1.getMount();
-                    if (mounted.equals(weapon)) {
-                        ae.hitAllCriticals(wloc, i);
-                        break;
-                    }
-                }
                 r.choose(false);
+                r.indent();
                 vPhaseReport.addElement(r);
-                vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+                
+                explodeRoundInBarrel(vPhaseReport);
             }
             return false;
         }

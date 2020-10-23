@@ -20,10 +20,9 @@ import java.util.stream.Collectors;
 
 import org.w3c.dom.Node;
 
+import megamek.MegaMek;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 
 /**
  * Base class of all nodes in the Force Generator faction ruleset files.
@@ -246,8 +245,6 @@ public class RulesetNode {
     }
 
     public void apply(ForceDescriptor fd, int i) {
-        final String METHOD_NAME = "apply(ForceDescriptor, int)";
-
         for (Object key : assertions.keySet()) {
             String property = assertions.getProperty((String)key);
             switch ((String)key) {
@@ -282,8 +279,7 @@ public class RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                                        "Force generator could not parse role " + p); //$NON-NLS-1$
+                                MegaMek.getLogger().error("Force generator could not parse role " + p);
                             }
                         }
                     }
@@ -293,8 +289,7 @@ public class RulesetNode {
                     if (null != ft) {
                         fd.setFormationType(ft);
                     } else {
-                        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                                "Could not parse formation type " + property);
+                        MegaMek.getLogger().warning("Could not parse formation type " + property);
                     }
                     break;
                 case "flags":

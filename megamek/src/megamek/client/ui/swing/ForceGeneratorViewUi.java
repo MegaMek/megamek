@@ -23,8 +23,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +48,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
@@ -58,8 +57,6 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame.Phase;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 import megamek.common.UnitType;
 
 /**
@@ -68,9 +65,7 @@ import megamek.common.UnitType;
  * RandomArmyDialog.
  * 
  * @author Neoancient
- *
  */
-
 public class ForceGeneratorViewUi {
 	
 	private JPanel leftPanel;
@@ -484,20 +479,10 @@ public class ForceGeneratorViewUi {
     }
     
     class UnitRenderer extends DefaultTreeCellRenderer {
-    	/**
-    	 * 
-    	 */
     	private static final long serialVersionUID = -5915350078441133119L;
-    	
-    	private MechTileset mt;
-    	
+
     	public UnitRenderer() {
-            mt = new MechTileset(new File("data/images/units"));
-            try {
-                mt.loadFromFile("mechset.txt");
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
+
     	}
 
         @Override
@@ -534,9 +519,7 @@ public class ForceGeneratorViewUi {
                     	clientGui.loadPreviewImage(this, fd.getEntity(),
                     			clientGui.getClient().getLocalPlayer());
                     } catch (NullPointerException ex) {
-                        DefaultMmLogger.getInstance().log(getClass(),
-                                "getTreeCellRendererComponent(JTree, Object, boolean, boolean, boolean, int, boolean)",
-                                LogLevel.WARNING, "No image found for " + fd.getEntity().getShortNameRaw());
+                        MegaMek.getLogger().warning("No image found for " + fd.getEntity().getShortNameRaw());
                     }
                 }
             } else {

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -63,6 +63,14 @@ Aerodyne
 0
 </engine_type>
 
+<armor_type>
+39
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 21
 13
@@ -99,4 +107,3 @@ XTRO RetroTech - Jihad
 <tonnage>
 30.0
 </tonnage>
-

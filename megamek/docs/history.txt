@@ -1,6 +1,107 @@
 VERSION HISTORY:
 ----------------
-0.47.8-SNAPSHOT
+0.47.12-SNAPSHOT 
++ PR #2310: Implement "Static Ammo Feed" quirk 
++ PR #2315: Prevent bot freeze when bot attempts to counter-battery fire using an on-board unit vs off-board artillery
++ PR #2308: Normalizes Data Files
++ Issue #2313: Some fixes for SSW -> MM BV Issues
++ Issue #2331: Laser Insulator costs (slightly) wrong
++ Data: New Sprites, new units (Rec Guides 4/5, Kaumberg, Hanseatic Crusade)
++ Data: Mass/Crit slots of Prototype UAC5 Wrong.
++ PR #2332: Substantial Princess performance (turn calculation speed) improvement across the board, especially visible for fast units
++ Issue #2338: Artemis IV counting for slot space
++ PR #2336: New equipment: ram plate
++ Issue #2344: Incorrect generic infantry armor cost
++ PR #2350: Allow java.util.TreeMap to be deserialized
++ PR #2334: Modernizing Multiple Visual Configs
++ PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
+
+0.47.11 (2020-10-04 2100 UTC)
++ Data: Fixing missing ProtoMek Sprites
++ Issue #2144: correctly report avoidance of ASF ammo explosions due to heat
++ PR #2230: fix NPE in portrait chooser when customizing a pilot twice in a row
++ PR #2231: Swapping to LocalDateTime For Hour, Minute, and/or Second Dated MegaMek Saves
++ Issue #1233: VTOLs can now stack more than two per hex at different elevations
++ Issue #705: Jumping into water and getting a 'hull down' result on the PSR no longer causes the unit to become permanently stuck on top of the water
++ Issues #1762, #2233: Board editor fixes
++ Issue #1093: Addressed several issues with magma crust handling; hovercraft don't trigger breakthrough check, jumping onto crust breaks through on 4+
++ Issue #2093: Mech summary/TRO view properly displays mechs with 0 heat sinks
++ PR #2254: Fix wreck decal path Linux UI rendering problem
++ Issue #1918: Vibrabombs no longer damage units moving out of the mined hex
++ Issue #1813: Lasers (and other non-ammo weapons) are once again unable to clear minefields; prevent endless loops in weapon attack handling in certain cases
++ PR #2260: Fixing a key bindings NPE
++ Issue #2251: Bandaid Fix for the Clan OmniFighter TRO View Panel
++ Issue #2215: add exception handling when failing to draw background image
++ Issue #2269: 0.47.10 Prototype LB-10X record sheet typo
++ Issue #2271: 0.47.9 Rocket Launcher introduction dates
++ Issue #2215: Fix for exception drawing background image in certain themes on 4k monitors
++ Issue #2043: Artillery flak attacks can damage flying Battle Armor, WIGEs, LAMs in airmech mode, etc.
++ PR #2283: Fixing Large Support Tank isCrippled Check
++ PR #2284: Fix soft-lock when selecting infantry units using infantry weapons
++ PR #2285: Fixing isCrippled check for Super Heavy Tanks
++ PR #2288: Fixing player name display for game connection dialog from MekHQ
++ PR #2289: Fixing Unit Selector Name Generation
++ Issue #2240: Unit Tooltip Work
++ Issue #2214: Generic Infantry Types Data
++ Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
++ Issue #2235: Primitive Prototype Weapons missing Static Tech tags.
++ Data: Fix for #2154 Stoat Weight, Protomek Sprites and Fluff for Units (Thanks Greekfire).
++ Issue #2253: Screwy speed on a Notos with QuadVee
++ Issue #2273: Address instability in BV calcs for Aeros
++ PR #2286: IS foot infantry fixes
++ PR #2295: Implement ammo feed problem quirk
++ Issue #1898: Boards of sizes xx:yyy don't load
++ PR #2298: VTOL pathfinding and movement corrections 
+
+0.47.10 (2020-09-20 2100 UTC)
++ Issue #2127 - Physical attack to-hit values incorrect
++ Data: Fed Com armor has wrong modifier.
++ Data: Fluff text (Thx Greekfire) and some royal Sprites.
++ PR #2088: Reduced unnecessary logging for tileset and mech summary cache
++ Issue #2146: Grounded LAMs no longer have to make PSRs when prone and taking damage.
++ Issue #2099: Advanced option to display attacker/defender sprites in the combat log
++ Issue #2141, 2142: Attempts to fix multiple threading-related bot freezes (addressable by kicking and replacing)
++ PR #2148: Out-of-control spheroid dropships in atmo no longer pretend to let the player control movement
++ Data: New Sprites
++ PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
++ Issue #2150: Fixing Princess Vehicle Abandonment NPE
++ Issue #2089: Generate Names from Specified Historical Ethnicity
++ PR #2158: Press ctrl-k for a handy summary of keyboard shortcuts
++ PR #2103: Graphical upgrade for all unit wrecks, except mechs and infantry. 
+	Immobilized tanks also have a visual indicator depending on motive type and power plant.
++ Data New Sprites, add Rec Guide Vol 1/2 and Golden Century.
++ Data: Updated Maps including AGoAC maps
++ PR #2168: Improvements to Princess behavior when attempting to navigate to a destination/retreat edge
++ Issue #2176: Added multiple "unofficial" high-powered turrets
++ Data: New Sprites, undated SimonLandmine and Dervs map packs
++ Issue #2029: Skidding into terrain will now properly apply 2x damage to reflective armor
++ Issue #2074: Mech mortars now properly apply only 1/2 damage to reactive armor
++ Issue #2207: Fixing Typo on Partial Repairs tab
++ PR #2194: Princess will avoid bulldozing her own turrets when doing long-range pathfinding
++ Data: New Sprites (Includes start of new Deadborder Proto sprites)
++ Data: Fixing Issues #2203, #2159, #2157, #2145
++ PR #2149: StratOps ECHO maneuver for airborne dropships and warships (basically, torso twisting with an MP/to-hit cost)
++ Issue #2206: Reduced DFA damage to proper levels
++ PR #2219: Track ammo for small support vehicles
++ Issue #2186, 2190: Inconsistent Combat Log Sprites
++ PR #2221: Combat Sprite are now default in the round report
++ PR #2198: New Camo and Portrait Choosers
++ Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
++ Issue #1719: Level 1 Foliage
++ Issue #2212: Diagramming LOS calculation issue
+
+0.47.9 (2020-08-07 1830 UTC)
++ Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit
++ Issue #2110: When using the LOS tool, if you somehow manage to select an out-of-bounds hex, it will no longer throw an error
++ Issue #2113: Fixing Alternate Pilot Skill BV Mod Tooltip
++ PR #2111: Another attempt to get Princess to stop firing on crippled units when using forced withdrawal rules
++ Issue #2115: Prevent NPE when rolling individual initiative for non-existing units belonging to phantom player who's not in the game
++ Issue #2116: Going hull down from the top-level dropdown menu no longer attempts to sweep mines instead
++ Data: Updated Sprites (This includes some temporary removal of existing Royal Sprites but they will return)
++ Issue #2122: Blazer has incorrect short range AV
++ Data: Moving the unused sprites to the extras repo to save space in releases.
+
+0.47.8 (2020-08-02 2300 UTC)
 + Data: New Sprites and numerous Mechset naming fixes.
 + Issue #2024: Fix possible NREs in AccessibilityWindow during various game events
 + Issue #2023: Destroying artillery which has rounds in-flight no longer stops the game
@@ -15,6 +116,27 @@ VERSION HISTORY:
 + PR #2060: Fix game freeze for bot-controlled ejected pilots and hot-dropped infantry on ground maps
 + PR #2061: Random Callsign Generator
 + PR #2041: Remove weird 'Hardened' on the equipment section of some Combat Vehicles
++ Issue #2066: Changing year or tech level for DropShip sometimes removes anti-missile systems from assigned bays
++ Data: First units from Fluff Text project (Thanks to Greekfire for this batch)
++ Data: RAT and Force Gen name fixes.
++ Issue #2054: New Ahne Texture pack (Tileset) for the megamek client
++ Issue #2037: New additions to TheJungle for Kaji maps (and some other new maps)
++ Issue #2071: Battle armor taser attacks against battle armor no longer lock the game up when a BA suit in the target unit shuts down
++ Issue #2028: Units now visually indicate damage levels
++ PR #2079: Update dermal armor implant to use IO rules for conventional infantry 
++ PR #2082: Wasp and Stinger LAMs are now more rare when using RAT generator; Wasp Mk I LAM now has actual bomb bays instead of cargo bays
++ PR #2085: Recolor movement in tooltip for dark themes
++ PR #2080: Unit Label Team Coloring
++ Issue #2022: Lobby summary/TRO view for gun emplacements no longer shows up blank
++ PR #1998: Improving formatting of legacy gunnery skills
++ Data: New Sprites (first of the ones based on KS images.Thanks to Deadborder)
++ PR #2087: Gun emplacements are no longer considered to have dual turrets (fixing some tech progression calculation issues for those units)
++ Data: Some infantry name fixes.
++ Data: New Sprites (fix for HMG ranges)
++ PR #2092: Screamer, Pwkka, Yurei LAMs have actual bomb bays; removed incorrect alias for protomech MG ammo; micro laser tech ratings corrected
++ PR #1992: Inclines and cliffs, as per TacOps page 39
++ Issue #2065: PPCs with charging capacitors now build up heat on the first turn of the charge
++ Data: New Sprites (Thanks Bloodwolf for working on making some of these royals)
 
 0.47.7 (2020-06-22 2330 UTC)
 + PR #1912: Fixing spelling issues in Campaign Options

@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Rapier
+</Name>
+
+<Model>
+RPR-100b-EC
+</Model>
+
+<year>
+2820
+</year>
+
+<originalBuildYear>
+2820
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+18
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor>
+70
+52
+52
+50
+</armor>
+
+<Nose Equipment>
+Autocannon/20
+ImprovedLargePulseLaser
+ImprovedLargePulseLaser
+Improved LRM 20
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+ClanImprovedLRM20Ammo
+ClanImprovedLRM20Ammo
+ClanImprovedLRM20Ammo
+IS Ammo AC/20
+IS Ammo AC/20
+CLCASE
+</Fuselage Equipment>
+
+<history>
+Two improved large pulse lasers replaced the older Star League models, but the real change came with the installation of an improved LRM 20 launcher. The weight saved allowed for the addition of three more heat sinks, two more tons of armor, additional AC ammo and fuel, making the fighter even more dangerous in the hands of skilled Wolverine pilots.
+</history>
+
+<source>
+Succession War
+</source>
+
+<tonnage>
+85.0
+</tonnage>

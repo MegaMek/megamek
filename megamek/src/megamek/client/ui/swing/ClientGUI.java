@@ -69,6 +69,7 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -80,7 +81,11 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
+import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -110,12 +115,12 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.logging.DefaultMmLogger;
+import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
@@ -162,6 +167,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //region view menu
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
@@ -226,12 +232,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
-    private UnitSelectorDialog mechSelectorDialog;
+    private AbstractUnitSelectorDialog mechSelectorDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
-    private RandomNameDialog randomNameDialog;
     private PlanetaryConditionsDialog conditionsDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -454,7 +459,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
-
+            client.setBoardView(bv);
         } catch (Exception e) {
             e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -615,11 +620,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
-        mechSelectorDialog = new UnitSelectorDialog(this, unitLoadingDialog);
+        mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
-        randomNameDialog = new RandomNameDialog(this);
-        new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
+        new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
         frame.setVisible(true);
     }
 
@@ -678,7 +682,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
                     JOptionPane.ERROR_MESSAGE);
-            DefaultMmLogger.getInstance().error(getClass(), "showSkinningHowTo", e);
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -837,6 +841,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
+                break;
+            case VIEW_KEYBINDS_OVERLAY:
+                bv.toggleKeybindsOverlay();
                 break;
             case VIEW_MINI_MAP:
                 toggleMap();
@@ -1060,7 +1067,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return gameOptionsDialog;
     }
 
-    public UnitSelectorDialog getMechSelectorDialog() {
+    public AbstractUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
     }
 
@@ -1416,12 +1423,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Toggles the minimap window Also, toggles the minimap enabled setting
      */
     private void toggleMap() {
-        if (minimapW.isVisible()) {
-            GUIPreferences.getInstance().setMinimapEnabled(false);
-        } else {
-            GUIPreferences.getInstance().setMinimapEnabled(true);
-        }
         minimapW.setVisible(!minimapW.isVisible());
+        GUIPreferences.getInstance().setMinimapEnabled(minimapW.isVisible());
         if (minimapW.isVisible()) {
             frame.requestFocus();
         }
@@ -1470,7 +1473,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
-
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        textArea.setEditorKit(toolKit);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -1844,12 +1848,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo;
-        if (entity.getCamoFileName() != null) {
-            camo = bv.getTilesetManager().getEntityCamo(entity);
-        } else {
-            camo = bv.getTilesetManager().getPlayerCamo(player);
+        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
+        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
+            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
+        // This seems unnecessary as the CamoManager will return an image for a playercolor:
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
         if (icon != null) {
@@ -1869,22 +1872,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     private GameListener gameListener = new GameListenerAdapter() {
-
-
+        @Override
         public void gamePlayerChange(GamePlayerChangeEvent e){
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
+
              if ((curPanel instanceof ReportDisplay) && !client.getLocalPlayer().isDone()) {
                  ((ReportDisplay) curPanel).resetReadyButton();
              }
         }
-        
+
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane.showMessageDialog(frame,
-                Messages.getString("ClientGUI.Disconnected.message"), //$NON-NLS-1
-                Messages.getString("ClientGUI.Disconnected.title"), //$NON-NLS-1
+                Messages.getString("ClientGUI.Disconnected.message"),
+                Messages.getString("ClientGUI.Disconnected.title"),
                 JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();
@@ -2320,7 +2323,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public RandomNameDialog getRandomNameDialog() {
-        return randomNameDialog;
+        return new RandomNameDialog(this);
     }
 
     /**
@@ -2333,12 +2336,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             return;
         }
         // save!
-        try {
-            OutputStream os = new FileOutputStream(curfileBoard);
-            // tell the board to save!
+        try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-            // okay, done!
-            os.close();
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
@@ -2384,17 +2383,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
-        fc.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File dir) {
-                return (dir.getName().endsWith(".board") || dir.isDirectory()); //$NON-NLS-1$
-            }
-
-            @Override
-            public String getDescription() {
-                return "*.board";
-            }
-        });
+        fc.setFileFilter(new BoardFileFilter());
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             // I want a file, y'know!

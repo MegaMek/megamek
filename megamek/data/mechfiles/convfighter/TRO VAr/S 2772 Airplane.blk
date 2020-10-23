@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -106,4 +106,3 @@ TRO Vehicle Annex (r) - Age of War
 <tonnage>
 130.0
 </tonnage>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Bridge-builder Engineers
 </Name>
 
 <Model>
-Take the Time III-chi, Forty-eighth Division
+Take the Time III-chi; Forty-eighth Division
 </Model>
 
 <year>
@@ -58,4 +58,3 @@ Infantry bridge-building equipment not coded in MM.  Unit included for completen
 <era>
 TRO 3085 - Early Succession War
 </era>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -103,4 +103,3 @@ HB:Major Periphery States - Succession Wars
 <tonnage>
 50.0
 </tonnage>
-

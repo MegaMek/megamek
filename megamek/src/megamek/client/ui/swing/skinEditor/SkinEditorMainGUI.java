@@ -67,6 +67,7 @@ import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
@@ -78,9 +79,10 @@ import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener,
         BoardViewListener, ActionListener, ComponentListener {
@@ -821,6 +823,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     //
     // WindowListener
     //
+    @Override
     public void windowActivated(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI 
@@ -830,10 +833,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame.setState(Frame.NORMAL);
     }
 
+    @Override
     public void windowClosed(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowClosing(WindowEvent windowEvent) {
         if (windowEvent.getWindow().equals(skinSpecEditorD)) {
             setDisplayVisible(false);
@@ -841,10 +846,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         }
     }
 
+    @Override
     public void windowDeactivated(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowDeiconified(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI 
@@ -870,11 +877,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
    
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = null;
-        if (entity.getCamoFileName() != null) {
-            camo = bv.getTilesetManager().getEntityCamo(entity);
-        } else {
-            camo = bv.getTilesetManager().getPlayerCamo(player);
+        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
+        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
+            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
         }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(
@@ -882,24 +887,29 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
 
    
+    @Override
     public void hexMoused(BoardViewEvent b) {
         if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
             
         }
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         // ignored
     }

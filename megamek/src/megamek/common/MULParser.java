@@ -25,10 +25,10 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.enums.Gender;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,7 +48,6 @@ public class MULParser {
 
     public static final String VERSION = "version";
 
-    public static final MMLogger logger = DefaultMmLogger.getInstance();
     /**
      * The names of the various elements recognized by this parser.
      */
@@ -163,6 +162,8 @@ public class MULParser {
     private static final String CAPACITY = "capacity";
     private static final String IS_HIT = "isHit";
     private static final String MUNITION = "munition";
+    private static final String STANDARD = "standard";
+    private static final String INFERNO = "inferno";
     private static final String DIRECTION = "direction";
     private static final String INTEGRITY = "integrity";
     private static final String SINK = "sinks";
@@ -753,7 +754,7 @@ public class MULParser {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
-                inf.setDamageDivisor(Double.parseDouble(armorDiv));
+                inf.setArmorDamageDivisor(Double.parseDouble(armorDiv));
             }
             if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
                 inf.setArmorEncumbering(true);
@@ -1062,23 +1063,86 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
+        final boolean hasGun = attributes.containsKey(GUNNERY) && (attributes.get(GUNNERY).length() > 0);
+        final boolean hasRpgGun = attributes.containsKey(GUNNERYL) && (attributes.get(GUNNERYL).length() > 0) &&
+                attributes.containsKey(GUNNERYM) && (attributes.get(GUNNERYM).length() > 0) &&
+                attributes.containsKey(GUNNERYB) && (attributes.get(GUNNERYB).length() > 0);
+
         // Did we find required attributes?
-        if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
+        if (!hasGun && !hasRpgGun) {
             warning.append("Could not find gunnery for pilot.\n");
         } else if (!attributes.containsKey(PILOTING) || (attributes.get(PILOTING).length() == 0)) {
             warning.append("Could not find piloting for pilot.\n");
         } else {
             // Try to get a good gunnery value.
             int gunVal = -1;
-            try {
-                gunVal = Integer.parseInt(attributes.get(GUNNERY));
-            } catch (NumberFormatException ignored) {
-                // Handled by the next if test.
+            if (hasGun) {
+                try {
+                    gunVal = Integer.parseInt(attributes.get(GUNNERY));
+                } catch (NumberFormatException ignored) {
+                    // Handled by the next if test.
+                }
+
+                if ((gunVal < 0)
+                        || (gunVal > Crew.MAX_SKILL)) {
+                    warning.append("Found invalid gunnery value: ")
+                            .append(attributes.get(GUNNERY)).append(".\n");
+                    return;
+                }
             }
-            if ((gunVal < 0) || (gunVal > Crew.MAX_SKILL)) {
-                warning.append("Found invalid gunnery value: ")
-                        .append(attributes.get(GUNNERY)).append(".\n");
-                return;
+
+            // get RPG skills
+            int gunneryLVal = -1;
+            int gunneryMVal = -1;
+            int gunneryBVal = -1;
+            if (hasRpgGun) {
+                if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
+                    try {
+                        gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryLVal < 0)
+                            || (gunneryLVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYL)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
+                    try {
+                        gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryMVal < 0)
+                            || (gunneryMVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYM)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
+                    try {
+                        gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryBVal < 0)
+                            || (gunneryBVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYB)).append(".\n");
+                        return;
+                    }
+                }
+            }
+
+            if (!hasGun) {
+                gunVal = (gunneryLVal + gunneryMVal + gunneryBVal) / 3;
+            } else if (!hasRpgGun) {
+                gunneryLVal = gunVal;
+                gunneryMVal = gunVal;
+                gunneryBVal = gunVal;
             }
 
             // Try to get a good piloting value.
@@ -1101,46 +1165,6 @@ public class MULParser {
                     toughVal = Integer.parseInt(attributes.get(TOUGH));
                 } catch (NumberFormatException ignored) {
                     // Handled by the next if test.
-                }
-            }
-            // get RPG skills
-            int gunneryLVal = gunVal;
-            int gunneryMVal = gunVal;
-            int gunneryBVal = gunVal;
-            if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
-                try {
-                    gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryLVal < 0) || (gunneryLVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYL)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
-                try {
-                    gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryMVal < 0) || (gunneryMVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYM)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
-                try {
-                    gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryBVal < 0) || (gunneryBVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYB)).append(".\n");
-                    return;
                 }
             }
 
@@ -1223,8 +1247,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    logger.error(getClass(), "setPilotAttributes",
-                            "Error in loading MUL, issues with extraData elements!");
+                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         } // End have-required-fields
@@ -1410,6 +1433,8 @@ public class MULParser {
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
         String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
+        String standard = slotTag.getAttribute(STANDARD);
+        String inferno = slotTag.getAttribute(INFERNO);
         String quirks = slotTag.getAttribute(QUIRKS);
         String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
@@ -1729,6 +1754,24 @@ public class MULParser {
                         warning.append("XML file expects")
                                 .append(" ammo for munition argument of")
                                 .append(" slot tag.\n");
+                    }
+                }
+                if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
+                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
+                    for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
+                        if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                            if (!inferno.isEmpty()) {
+                                String[] fields = inferno.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        } else {
+                            if (!standard.isEmpty()) {
+                                String[] fields = standard.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        }
                     }
                 }
 

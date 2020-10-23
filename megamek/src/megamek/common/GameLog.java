@@ -18,14 +18,13 @@
  * Created on March 30, 2002, 2:40 PM
  * Renamed from ServerLog to GameLog in July 2005
  */
-
 package megamek.common;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDate;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -36,8 +35,7 @@ import megamek.common.util.StringUtil;
  */
 public class GameLog {
 
-    public static final String LOG_DIR = PreferenceManager
-            .getClientPreferences().getLogDirectory();
+    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
 
     private File logfile;
 
@@ -62,7 +60,7 @@ public class GameLog {
             // writer = new BufferedWriter(new FileWriter(LOG_DIR +
             // File.separator + filename, append));
             writer = new BufferedWriter(new FileWriter(logfile));
-            append("Log file opened " + new Date().toString()); //$NON-NLS-1$
+            append("Log file opened " + LocalDate.now().toString());
         } catch (IOException ex) {
             writer = null;
             System.err.println("GameLog:" + ex.getMessage());

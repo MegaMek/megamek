@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ Lamprey Transport Helicopter
 </year>
 
 <type>
-IS Level 2
+IS Level 1
 </type>
 
 <motion_type>
@@ -86,4 +86,3 @@ TRO 3145 Mercenaries - Late Republic
 <tonnage>
 30.0
 </tonnage>
-

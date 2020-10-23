@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -328,4 +328,3 @@ FR2765-LCAF - Star League
 <escape_pod>
 30
 </escape_pod>
-

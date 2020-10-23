@@ -36,6 +36,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
@@ -51,6 +52,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -84,6 +86,7 @@ import megamek.common.weapons.bombs.ISASMissileWeapon;
 import megamek.common.weapons.bombs.ISBombTAG;
 import megamek.common.weapons.bombs.ISLAAMissileWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -189,7 +192,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected int id = Entity.NONE;
 
-    protected String camoCategory = IPlayer.NO_CAMO;
+    protected String camoCategory = Camouflage.NO_CAMOUFLAGE;
     protected String camoFileName = null;
 
     /**
@@ -1319,6 +1322,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         ctl.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
                 TechConstants.isClan(structureTechLevel)));
+        /* TM, p. 122 gives general eras for each tech rating, but not specific dates.
+         * Besides that, there are many canon units with higher tech ratings than should
+         * be possible in their era, so we're just going to add a stub to get the tech rating right
+         * for cost purposes. */
+        if (isSupportVehicle()) {
+            TechAdvancement blank = new TechAdvancement(getConstructionTechAdvancement());
+            ctl.addComponent(blank.setTechRating(getEngineTechRating()));
+            ctl.addComponent(blank.setTechRating(getStructuralTechRating()));
+            if (!hasPatchworkArmor() && (getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD)) {
+                ctl.addComponent(blank.setTechRating(getArmorTechRating()));
+            }
+        }
     }
 
     public int getRecoveryTurn() {
@@ -1372,6 +1387,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isClanArmor(int loc) {
+        // if the location does not exist, it does not have clan armor
+        if (loc >= locations()) {
+            return false;
+        }
+        
         if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }
@@ -2110,15 +2130,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!getGame().getBoard().contains(assumedPos)) {
             return false;
         }
-        boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
         int minAlt = hex.surface();
-        if (hex.containsTerrain(Terrains.WOODS)
-            || hex.containsTerrain(Terrains.WATER)
-            || hex.containsTerrain(Terrains.JUNGLE)) {
-            inWaterOrWoods = true;
-        }
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -2142,10 +2156,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
                 // else fall through
             case VTOL:
-                minAlt = hex.ceiling();
-                if (inWaterOrWoods) {
-                    minAlt++; // can't land here
+                int minElev = 0;
+                // When over a bridge, limit downward movement. Can land on a bridge.
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
+                        && (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) ) {
+                    minElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
                 }
+                // Cannot land on woods or water
+                if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
+                    minElev = Math.max(minElev, hex.terrainLevel(Terrains.FOLIAGE_ELEV) - hex.depth() + 1);
+                }
+                if (hex.depth() > 0) {
+                    minElev = Math.max(minElev, 1);
+                }
+                // Can land on buildings
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    minElev = Math.max(minElev, hex.terrainLevel(Terrains.BLDG_ELEV) - hex.depth());
+                }
+                minAlt = minElev + hex.surface();
                 break;
             case AERODYNE:
             case SPHEROID:
@@ -2214,6 +2242,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case VTOL:
                 maxAlt = hex.surface() + 50;
+                // When under a bridge, restrict upward movement
+                // "- 1" to correct that height() reports one less than the rules (TW p.99) say
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)
+                        && assumedElevation < hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                    maxAlt = hex.terrainLevel(Terrains.BRIDGE_ELEV) - height() - 1;   
+                }
                 break;
             case AERODYNE:
             case SPHEROID:
@@ -2268,23 +2302,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int assumedAlt = assumedElevation + hex.surface();
         if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry)
-                && (hex.containsTerrain(Terrains.BUILDING)
-                    || hex.containsTerrain(Terrains.WOODS) || hex
-                    .containsTerrain(Terrains.JUNGLE))) {
+                    && (hex.containsTerrain(Terrains.BUILDING)
+                            || hex.containsTerrain(Terrains.WOODS) 
+                            || hex.containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
                 return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
-            } else if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                // fly under a bridge as long as there is enough clearance below and above the unit
-                return (assumedElevation <= 50)
-                        && assumedElevation > hex.floor()
-                        && (assumedElevation > hex.terrainLevel(Terrains.BRIDGE_ELEV)
-                                || assumedElevation + height() < hex.terrainLevel(Terrains.BRIDGE_ELEV) - 1);
-            } else if (hex.containsTerrain(Terrains.WOODS)
-                       || hex.containsTerrain(Terrains.WATER)
-                       || hex.containsTerrain(Terrains.JUNGLE)) {
-                return ((assumedElevation <= 50) && (assumedAlt > hex.ceiling()));
+            } else {
+                // VTOLs can be anywhere on or above ground and fly beneath bridges,
+                // land on buildings and ignore planted fields and industrial zone 
+                // but cannot land on water or trees
+                // As always, height() reports one less than the rules (TW p.99) say
+                // Units may move under a bridge if their top is 
+                // lower than or equal to the bridge height (TW p.62)
+                boolean allowed = (assumedElevation <= 50) && (assumedElevation >= 0);
+                if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                    allowed &= (assumedElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))
+                            || (assumedElevation + height() + 1 <= hex.terrainLevel(Terrains.BRIDGE_ELEV));
+                }
+                if (hex.containsTerrain(Terrains.FOLIAGE_ELEV)) {
+                    allowed &= (assumedElevation > hex.terrainLevel(Terrains.FOLIAGE_ELEV) - hex.depth());
+                }
+                if (hex.depth() > 0) {
+                    allowed &= (assumedElevation > 0);
+                }
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    allowed &= (assumedElevation >= hex.terrainLevel(Terrains.BLDG_ELEV) - hex.depth());
+                }
+                return allowed;
             }
-            return ((assumedElevation <= 50) && (assumedAlt >= hex.ceiling()));
         } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
                    || ((getMovementMode() == EntityMovementMode.INF_UMU) && hex
                 .containsTerrain(Terrains.WATER))
@@ -2503,14 +2548,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return sec_facing;
     }
 
-    /**
-     * Sets the secondary facing.
-     */
     public void setSecondaryFacing(int sec_facing) {
+        setSecondaryFacing(sec_facing, true);
+    }
+    
+    /**
+     * Sets the secondary facing. 
+     * Optionally does not fire a game change event (useful for bot evaluation)
+     */
+    public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
         this.sec_facing = sec_facing;
-        if (game != null) {
+        if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
+    }
+    
+    /**
+     * Utility function that handles situations where a facing change
+     * imparts some kind of permanent effect to the entity.
+     */
+    public void postProcessFacingChange() {
+    	
     }
 
     /**
@@ -3590,29 +3648,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // one-shot launchers need their single shot of ammo added.
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+            if ((mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+                    || (isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)))
                     && (AmmoType.getOneshotAmmo(mounted) != null)) {
-                Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
-                m.setOmniPodMounted(mounted.isOmniPodMounted());
-                int shots = 1;
-                // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
-                if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
-                    shots = getTotalInternal();
-                }
-                m.setShotsLeft(shots);
-                mounted.setLinked(m);
-                // Oneshot ammo will be identified by having a location
-                // of null. Other areas in the code will rely on this.
-                addEquipment(m, Entity.LOC_NONE, false);
-                // Fusillade gets a second round, which can be a different munition type so
-                // need to allow for two separate mounts.
-                if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-                    Mounted m2 = new Mounted(this, m.getType());
-                    m2.setOmniPodMounted(mounted.isOmniPodMounted());
-                    m2.setShotsLeft(shots);
-                    m.setLinked(m2);
-                    addEquipment(m2, Entity.LOC_NONE, false);
-                }
+                addOneshotAmmo(mounted);
             }
         }
         if (mounted.getType() instanceof AmmoType) {
@@ -3623,6 +3662,50 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (mounted.getType() instanceof MiscType) {
             miscList.add(mounted);
+        }
+    }
+
+    private void addOneshotAmmo(Mounted mounted) throws LocationFullException {
+        EquipmentType ammo;
+        int shots;
+        if (mounted.getType() instanceof InfantryWeapon) {
+            ammo = EquipmentType.get(EquipmentTypeLookup.INFANTRY_AMMO);
+            shots = ((InfantryWeapon) mounted.getType()).getShots() * (int) mounted.getSize();
+        } else {
+            ammo = AmmoType.getOneshotAmmo(mounted);
+            shots = 1;
+        }
+        if (ammo == null) {
+            MegaMek.getLogger().error("Equipment lookup failed for ammo for " + mounted.getName());
+            return;
+        }
+        Mounted m = new Mounted(this, ammo);
+        m.setOmniPodMounted(mounted.isOmniPodMounted());
+        // BA pop-up mines can be fired individually and need a shot for each launcher in the squad.
+        if (mounted.getType().hasFlag(WeaponType.F_BA_INDIVIDUAL)) {
+            shots = getTotalInternal();
+        }
+        m.setShotsLeft(shots);
+        m.setOriginalShots(shots);
+        mounted.setLinked(m);
+        addEquipment(m, Entity.LOC_NONE, false);
+        // Fusillade gets a second round, which can be a different munition type so
+        // need to allow for two separate mounts. Some infantry weapons have alternate
+        // inferno ammo, which will use the same mechanism but start with zero shots.
+        if (mounted.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            Mounted m2 = new Mounted(this, m.getType());
+            m2.setOmniPodMounted(mounted.isOmniPodMounted());
+            m2.setShotsLeft(shots);
+            m2.setOriginalShots(shots);
+            m.setLinked(m2);
+            addEquipment(m2, Entity.LOC_NONE, false);
+        } else if ((mounted.getType() instanceof InfantryWeapon)
+                && ((InfantryWeapon) mounted.getType()).hasInfernoAmmo()) {
+            Mounted m2 = new Mounted(this, EquipmentType.get(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO));
+            m2.setOmniPodMounted(mounted.isOmniPodMounted());
+            m2.setShotsLeft(0);
+            m.setLinked(m2);
+            addEquipment(m2, Entity.LOC_NONE, false);
         }
     }
 
@@ -3687,23 +3770,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * Determine how much ammunition (of all munition types) remains which is
-     * compatible with the given ammo.
+     * compatible with the given weapon.
      *
-     * @param et - the <code>EquipmentType</code> of the ammo to be found. This
-     *           value may be <code>null</code>.
+     * @param weapon The weapon being considered
      * @return the <code>int</code> count of the amount of shots of all
-     * munitions equivalent to the given ammo type.
+     * munitions available for the given weapon.
      */
-    public int getTotalMunitionsOfType(@Nullable EquipmentType et) {
+    public int getTotalMunitionsOfType(Mounted weapon) {
         int totalShotsLeft = 0;
-
+        
         // specifically don't count caseless munitions as being of the same type as non-caseless
         for (Mounted amounted : getAmmo()) {
-            boolean amCaseless = ((AmmoType) amounted.getType()).getMunitionType() == AmmoType.M_CASELESS;
-            boolean etCaseless = (et != null) && ((AmmoType) et).getMunitionType() == AmmoType.M_CASELESS;
-            boolean caselessMismatch = amCaseless != etCaseless;
+            boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(weapon, (AmmoType) amounted.getType());
 
-            if (amounted.getType().equals(et) && !caselessMismatch && !amounted.isDumping()) {
+            if (canSwitchToAmmo && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
@@ -3946,7 +4026,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
-        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+        } else if ((wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                    || (wtype.getAmmoType() == AmmoType.T_INFANTRY))
                 && (mountedAmmo.getLocation() == Entity.LOC_NONE)) {
             // Make sure this ammo is in the chain, then move it to the head.
             for (Mounted current = mounted; current != null; current = current.getLinked()) {
@@ -10562,7 +10643,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getArmorType(int loc) {
-        return armorType[loc];
+        if ((loc >= 0 ) && (loc < armorType.length)) {
+            return armorType[loc];
+        } else {
+            return EquipmentType.T_ARMOR_UNKNOWN;
+        }
     }
 
     public void setArmorTechLevel(int newTL) {
@@ -10636,6 +10721,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             long itemCost = (long) mounted.getCost();
+            if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
+                    && (mounted.getType() instanceof InfantryWeapon)) {
+                itemCost += (mounted.getSize() - 1)
+                        * ((InfantryWeapon) mounted.getType()).getAmmoCost();
+            }
 
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {
@@ -10666,7 +10756,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
-        if (isSupportVehicle()) {
+        // Large craft have a separate section for bays
+        if (!isLargeCraft()) {
             long seatCost = 0;
             long quartersCost = 0;
             long bayCost = 0;
@@ -13707,7 +13798,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+        if (hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
+            return 0.0;
+        }
+        // Small support vehicles do not need power amplifiers.
+        if (getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them
@@ -13716,16 +13811,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted m : getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                || wt.hasFlag(WeaponType.F_PPC)
-                || wt.hasFlag(WeaponType.F_PLASMA)
-                || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+                total += m.getTonnage();
+            }
+            if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                    MiscType) && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                total += m.getLinkedBy().getTonnage();
+            }
+        }
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
                 total += m.getTonnage();
             }
         }
         // Finally use that total to compute and return the actual power
         // amplifier weight.
-        return Math.ceil(total / 5) / 2;
+        return RoundWeight.nextHalfTon(total);
     }
 
     public Vector<Integer> getLoadedKeepers() {

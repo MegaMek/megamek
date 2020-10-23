@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,11 +17,11 @@ Heavy Mountain Infantry
 </Name>
 
 <Model>
-Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers
+Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers
 </Model>
 
 <year>
-3071
+2500
 </year>
 
 <type>
@@ -34,10 +34,6 @@ Leg
 
 <Field Guns Equipment>
 </Field Guns Equipment>
-
-<source>
-TRO 3085 - Civil War
-</source>
 
 <squad_size>
 7
@@ -52,18 +48,21 @@ TRO 3085 - Civil War
 </secondn>
 
 <Primary>
-Rifle (Imperator AX-22 Assault)
+Imperator AX-22 Assault Rifle
 </Primary>
 
 <Secondary>
-Mortar (Heavy)
+Infantry Heavy Mortar
 </Secondary>
+
+<specialization>
+128
+</specialization>
+
+<armorKit>
+CanopianKit
+</armorKit>
 
 <antimek>
 8
 </antimek>
-
-<armorKit>
-Magistracy of Canopus Infantry Kit
-</armorKit>
-

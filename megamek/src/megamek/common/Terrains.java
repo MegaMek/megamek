@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 import megamek.server.SmokeCloud;
@@ -36,7 +38,6 @@ public class Terrains implements ITerrainFactory {
     public static final int SPACE = 11;
     // unimplemented
     // Level 1 Foliage
-    // Sheer Cliffs
 
     // Terrain modifications
     public static final int PAVEMENT = 12;
@@ -104,6 +105,7 @@ public class Terrains implements ITerrainFactory {
     public static final int METAL_CONTENT = 42; // Is there metal content that
                                                 // will block magscan sensors?
     public static final int BLDG_BASE_COLLAPSED = 43; // 1 means collapsed
+    
     // Additional fluff types so that stacking of special images is possible
     public static final int BLDG_FLUFF = 44; // Ideally used to denote special bldg images
     public static final int ROAD_FLUFF = 45; // Ideally used to denote special road images
@@ -112,6 +114,32 @@ public class Terrains implements ITerrainFactory {
                                             // matching is not exact while super is 
     public static final int WATER_FLUFF = 47; // Ideally used to denote special water images
 
+    // Cliffs, use with exits to denote cliffsides; only valid when there's
+    // actually a level drop/rise in the specified direction
+    public static final int CLIFF_TOP = 48;
+    public static final int CLIFF_BOTTOM = 49; 
+    
+    // Terrain for the incline at a hex edge towards a higher or lower 
+    // neighboring hex. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
+    // manual use in the Editor
+    public static final int INCLINE_TOP = 50; 
+    public static final int INCLINE_BOTTOM = 51;
+    
+    // Hex level differences of at least 3 levels, used with exits to 
+    // denote the hex side. Used to add highlighting/images to hex sides
+    // This is added to hexes automatically by MegaMek, not for
+    // manual use in the Editor
+    public static final int INCLINE_HIGH_TOP = 52;
+    public static final int INCLINE_HIGH_BOTTOM = 53; 
+    
+    // Helper terrain that gives the elevation for foliage (woods and jungle).
+    // Allowed values are 1 for L/H/U, 2 for L/H and 3 for U foliage.
+    // This terrain is meaningless when alone but must be present in any
+    // hex that has either woods or jungle. It is added by the board loader
+    // when it's not present in the board file.
+    public static final int FOLIAGE_ELEV = 54;
+    
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -122,7 +150,13 @@ public class Terrains implements ITerrainFactory {
             "snow", "fire", "smoke", "geyser", "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class",
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
-            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff" };
+            "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom", 
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev" };
+    
+    /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
+    public static final HashSet<Integer> AUTOMATIC = 
+            new HashSet<Integer>(Arrays.asList(
+                    INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM));
 
     public static final int SIZE = names.length;
 
@@ -219,6 +253,8 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Woods (unknown)";
             }
+        case (FOLIAGE_ELEV):
+            return "Woods/Jungle elevation: " + level; 
         case (ROUGH):
             if (level == 1) {
                 return "Rough";
@@ -351,6 +387,8 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Extremely high metal content";
             }
+        case (CLIFF_TOP):
+            return "Cliff-Top";
         default:
             return null;
         }
@@ -433,15 +471,20 @@ public class Terrains implements ITerrainFactory {
     public static int getTerrainFactor(int type, int level) {
         switch (type) {
             case (WOODS):
-            case (JUNGLE):
-                if (level == 1) {
-                    return 50;
-                } else if (level == 2) {
+                if (level == 2) {
                     return 90;
+                } else if (level == 3) {
+                    return 120;
+                } else {
+                    return 50;
+                }
+            case (JUNGLE):
+                if (level == 2) {
+                    return 100;
                 } else if (level == 3) {
                     return 130;
                 } else {
-                    return 50;
+                    return 60;
                 }
             case (ROUGH):
             case (PAVEMENT):
@@ -493,8 +536,7 @@ public class Terrains implements ITerrainFactory {
         // Handle altitudes
         if (inAtmosphere) {
             switch (terrainType) {
-            case WOODS:
-            case JUNGLE:
+            case FOLIAGE_ELEV:
                 return 1;
             default:
                 return 0;
@@ -505,14 +547,8 @@ public class Terrains implements ITerrainFactory {
         case INDUSTRIAL:
         case BLDG_ELEV:
         case BRIDGE_ELEV:
+        case FOLIAGE_ELEV:
             return terrainLevel;
-        case WOODS:
-        case JUNGLE:
-            if (terrainLevel > 2) {
-                return 3;
-            } else {
-                return 2;
-            }
         case FIELDS:
             return 1;
         default:

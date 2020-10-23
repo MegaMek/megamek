@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -69,4 +69,3 @@ troopspace:0.5
 <tonnage>
 3.0
 </tonnage>
-

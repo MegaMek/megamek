@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -241,4 +241,3 @@ H:Wars of the Republic Era - Early Republic
 <escape_pod>
 0
 </escape_pod>
-

@@ -34,6 +34,7 @@ public class RocketLauncher10 extends RLWeapon {
         addLookupName("RL 10");
         addLookupName("ISRocketLauncher10");
         addLookupName("IS RLauncher-10");
+        addLookupName("Rocket Launcher 10");
         heat = 3;
         rackSize = 10;
         shortRange = 5;
@@ -53,9 +54,9 @@ public class RocketLauncher10 extends RLWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_B)
             .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-            .setISAdvancement(DATE_ES, 3064, 3067, DATE_NONE, DATE_NONE)
+            .setISAdvancement(DATE_NONE, 3064, 3067, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
-            .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
             .setClanApproximate(false, false, false,false, false)
             .setProductionFactions(F_MH);
     }

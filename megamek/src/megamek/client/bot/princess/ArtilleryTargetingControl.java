@@ -92,7 +92,7 @@ public class ArtilleryTargetingControl {
             // the damage done is actual damage - 10 * # hexes from center
             int currentDamage = damage - distanceFromCenter * 10;
 
-            for(Coords currentCoords : BotGeometry.getHexDonut(coords, distanceFromCenter)) {
+            for(Coords currentCoords : coords.allAtDistance(distanceFromCenter)) {
                 totalDamage += calculateDamageValueForHex(currentDamage, currentCoords, shooter, game, owner);
             }
         }
@@ -194,8 +194,8 @@ public class ArtilleryTargetingControl {
         for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
-            // skip airborne entities
-            if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
+            // skip airborne entities, and those off board - we'll handle them later
+            if(!e.isAirborne() && !e.isAirborneVTOLorWIGE() && !e.isOffBoard()) {
                 targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
@@ -230,10 +230,10 @@ public class ArtilleryTargetingControl {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
         // of the designated coordinates 
         for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
-            for(Coords donutHex : BotGeometry.getHexDonut(coords, radius)) {
+            for(Coords donutHex : coords.allAtDistance(radius)) {
                 // don't bother adding off-board donuts.
                 if(game.getBoard().contains(donutHex)) {
-                    targetList.add(new HexTarget(donutHex, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+                    targetList.add(new HexTarget(donutHex, Targetable.TYPE_HEX_ARTILLERY));
                 }
             }
         }

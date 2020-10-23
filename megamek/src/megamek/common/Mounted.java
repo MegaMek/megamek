@@ -27,9 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -568,8 +567,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (bay != null) {
                 return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
             }
-            DefaultMmLogger.getInstance().warning(getClass(), "getTonnage(RoundWeight)",
-                    "Found dumper not linked to a cargo bay. Using zero for the weight.");
+            MegaMek.getLogger().warning("Found dumper not linked to a cargo bay. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);
@@ -979,35 +977,60 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
     }
+    
+    /** Returns true when m is a PPC Capacitor and not destroyed. */
+    private boolean isWorkingCapacitor(Mounted m) {
+        return !m.isDestroyed()
+        && m.getType() instanceof MiscType
+        && ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
+    }
 
-    /**
-     * does this <code>Mounted</code> have a linked and charged PPC Capacitor?
+    /** 
+     * Returns 1 or 2 if this Mounted has a linked
+     * and charged (= set to charge in an earlier turn) 
+     * PPC Capacitor.
      */
-
     public int hasChargedCapacitor() {
-
-        if ((getCrossLinkedBy() != null)
-                && (getCrossLinkedBy().getType() instanceof MiscType)
-                && !getCrossLinkedBy().isDestroyed()) {
-
-            MiscType cap = (MiscType) getCrossLinkedBy().getType();
-            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && getCrossLinkedBy().curMode().equals("Charge")) {
-                return 2;
-            }
+        if (getCrossLinkedBy() != null
+                && isWorkingCapacitor(getCrossLinkedBy())
+                && getCrossLinkedBy().curMode().equals("Charge")) {
+            return 2;
         }
 
-        if ((getLinkedBy() != null)
-                && (getLinkedBy().getType() instanceof MiscType)
-                && !getLinkedBy().isDestroyed()) {
-
-            MiscType cap = (MiscType) getLinkedBy().getType();
-            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    && getLinkedBy().curMode().equals("Charge")) {
-                return 1;
-            }
+        if (getLinkedBy() != null
+                && isWorkingCapacitor(getLinkedBy())
+                && getLinkedBy().curMode().equals("Charge")) {
+            return 1;
         }
         return 0;
+    }
+
+    /** 
+     * Returns 1 or 2 if this Mounted has a linked
+     * and charged (= set to charge in an earlier turn) 
+     * or charging (= set to charge this turn)
+     * PPC Capacitor. Used to determine heat. 
+     */
+    public int hasChargedOrChargingCapacitor() {
+        int isCharged = hasChargedCapacitor();
+        if (isCharged != 0) {
+            return isCharged;
+        } else {
+            // When it has been set to charge this turn,
+            // pendingMode is set
+            if (getCrossLinkedBy() != null
+                    && isWorkingCapacitor(getCrossLinkedBy())
+                    && getCrossLinkedBy().pendingMode().equals("Charge")) {
+                return 2;
+            }
+
+            if (getLinkedBy() != null
+                    && isWorkingCapacitor(getLinkedBy())
+                    && getLinkedBy().pendingMode().equals("Charge")) {
+                return 1;
+            }
+            return 0;
+        }
     }
 
     public int getLocation() {
@@ -1175,7 +1198,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     && curMode().equals("Powered Down")) {
                 return 0;
             }
-            if (isHotLoaded() && (getLinked().getUsableShotsLeft() > 0)) {
+            if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
+                    && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();

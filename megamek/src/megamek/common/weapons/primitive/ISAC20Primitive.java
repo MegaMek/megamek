@@ -16,6 +16,7 @@ package megamek.common.weapons.primitive;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -69,7 +70,8 @@ public class ISAC20Primitive extends ACWeapon {
             .setISAdvancement(2488, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TA);
+            .setProductionFactions(F_TA)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

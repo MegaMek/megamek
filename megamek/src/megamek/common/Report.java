@@ -160,6 +160,12 @@ public class Report implements Serializable {
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
 
+    /** bool for determining when code should be used to show image. */
+    private transient boolean showImage = false;
+
+    /** string to add to reports to show sprites **/
+    private String imageCode = "";
+
     /**
      * Default constructor, note that using this means the
      * <code>messageId</code> field must be explicitly set.
@@ -307,6 +313,9 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
+            if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
+                imageCode = "<span id='" + entity.getId() + "'></span>";
+            }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);
             String colorcode = Integer.toHexString(PlayerColors.getColor(
@@ -314,6 +323,13 @@ public class Report implements Serializable {
             add("<B><font color='" + colorcode + "'>"
                     + entity.getOwner().getName() + "</font></B>");
         }
+    }
+
+    /**
+     * Manually Toggle if the report should show an image of the entity
+    */
+    public void setShowImage(boolean showImage){
+        this.showImage = showImage;
     }
 
     /**
@@ -468,6 +484,15 @@ public class Report implements Serializable {
                     i = endTagIdx;
                 }
                 i++;
+            }
+            //add the sprite code at the beginning of the line
+            if (!imageCode.isEmpty()) {
+                if (text.toString().startsWith("\n")) {
+                    text.insert(1, imageCode);
+                }
+                else {
+                    text.insert(0, imageCode);
+                }
             }
             text.append(raw.substring(mark));
             handleIndentation(text);

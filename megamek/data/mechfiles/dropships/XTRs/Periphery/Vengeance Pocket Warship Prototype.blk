@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -225,4 +225,3 @@ XTRO Periphery - Jihad
 <escape_pod>
 33
 </escape_pod>
-

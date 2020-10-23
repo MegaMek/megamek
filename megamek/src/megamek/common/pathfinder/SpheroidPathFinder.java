@@ -68,8 +68,6 @@ public class SpheroidPathFinder {
      * @param startingEdge the starting node. Should be empty.
      */
     public void run(MovePath startingEdge) {
-        final String METHOD_NAME = "run";
-        
         try {
             spheroidPaths = new ArrayList<MovePath>();
 
@@ -111,7 +109,7 @@ public class SpheroidPathFinder {
             visitedCoords.clear();
             
             // add "flee" option if we haven't done anything else
-            if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&
+            if(game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
@@ -128,9 +126,9 @@ public class SpheroidPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
+            getLogger().error(memoryMessage, e);
         } catch(Exception e) {
-            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     

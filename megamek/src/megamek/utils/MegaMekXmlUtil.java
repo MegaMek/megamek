@@ -21,7 +21,9 @@ package megamek.utils;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -123,6 +125,18 @@ public class MegaMekXmlUtil {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
 
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
+        if (val != null) {
+            writeSimpleXmlTag(pw1, indent, name, val.toString());
+        }
+    }
+
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
+        if (val != null) {
+            writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
+        }
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
@@ -144,11 +158,11 @@ public class MegaMekXmlUtil {
     }
 
     public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "<" + name + ">");
+        pw1.println(indentStr(indent) + "<" + escape(name) + ">");
     }
 
     public static void writeSimpleXMLCloseIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "</" + name + ">");
+        pw1.println(indentStr(indent) + "</" + escape(name) + ">");
     }
 
     private static final String[] INDENTS = new String[] {
@@ -176,12 +190,28 @@ public class MegaMekXmlUtil {
      */
     public static LocalDate parseDate(String value) throws DateTimeParseException {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
-        // Accept: yyyy-MM-dd
+        // Accept (legacy): YYYYMMDD
+        // Accept (preferred): yyyy-MM-dd
+        // Accept (assumes first day of month): yyyy-MM
+        // Accept (assumes first day of year: yyyy
+        // Accept (assumes decade specification, so multiplied by 10 at first day of year): yyy
+        switch (value.length()) {
+            case 3:
+                return LocalDate.ofYearDay(Integer.parseInt(value) * 10, 1);
+            case 4:
+                return LocalDate.ofYearDay(Integer.parseInt(value), 1);
+            case 6:
+            case 7:
+                return LocalDate.parse(value + "-01");
+        }
+
         int firstSpace = value.indexOf(' ');
-        if (firstSpace < 0) {
-            return LocalDate.parse(value);
-        } else {
+        if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));
+        } else if (value.indexOf('-') < 0) {
+            return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else { // default parsing
+            return LocalDate.parse(value);
         }
     }
 

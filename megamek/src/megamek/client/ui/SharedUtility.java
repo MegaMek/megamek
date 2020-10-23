@@ -37,6 +37,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -295,6 +296,8 @@ public class SharedUtility {
             rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
                     lastPos, curPos, isLastStep, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
+            
+            
 
             int lightPenalty = entity.getGame().getPlanetaryConditions()
                     .getLightPilotPenalty();
@@ -341,6 +344,7 @@ public class SharedUtility {
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
             if ((level == 1) && (step.getElevation() == 0)
+                    && (entity.getMovementMode() != EntityMovementMode.HOVER)
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages
@@ -436,6 +440,49 @@ public class SharedUtility {
                     }
                 }
             }
+            
+            // Sheer Cliffs, TO p.39
+            // Roads over cliffs cancel the cliff effects for units that move on roads
+            boolean vehicleAffectedByCliff = entity instanceof Tank 
+                    && !entity.isAirborneVTOLorWIGE();
+            boolean quadveeVehMode = entity instanceof QuadVee
+                    && ((QuadVee)entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+            boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
+                    && moveType != EntityMovementType.MOVE_JUMP
+                    && !entity.isAero();
+            // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+            int stepHeight = curElevation + curHex.getLevel() 
+                    - (lastElevation + prevHex.getLevel());
+            boolean isUpCliff = !lastPos.equals(curPos) 
+                    && curHex.hasCliffTopTowards(prevHex)
+                    && (stepHeight == 1 || stepHeight == 2);
+            boolean isDownCliff = !lastPos.equals(curPos) 
+                    && prevHex.hasCliffTopTowards(curHex)
+                    && (stepHeight == -1 || stepHeight == -2);
+
+            // Vehicles (exc. WIGE/VTOL) moving down a cliff
+            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Mechs moving down a cliff
+            // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
+            // Protomechs as Meks
+            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Mechs moving up a cliff
+            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep,
@@ -526,7 +573,7 @@ public class SharedUtility {
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
-            lastPos = new Coords(curPos);
+            lastPos = curPos;
             prevStep = step;
             prevHex = curHex;
             lastElevation = step.getElevation();
@@ -578,6 +625,14 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
 
+            }
+            
+            // check for magma
+            int level = hex.terrainLevel(Terrains.MAGMA);
+            if ((level == 1) && (lastElevation == 0)) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaCrustJumpLanding"));
+            } else if ((level == 2) && (lastElevation == 0)) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
         }

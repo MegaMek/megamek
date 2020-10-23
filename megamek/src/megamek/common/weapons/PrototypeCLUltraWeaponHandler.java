@@ -52,6 +52,10 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if ((roll <= 3) && (howManyShots == 2)) {
             Report r = new Report(3160);
             r.subject = subjectId;

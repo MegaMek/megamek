@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Combat Engineer
 </Name>
 
 <Model>
-Royal Engineers, 1st Lyran Royal Guards RCT
+Royal Engineers; 1st Lyran Royal Guards RCT
 </Model>
 
 <year>
@@ -54,4 +54,3 @@ SteinerKit3060
 <specialization>
 32
 </specialization>
-

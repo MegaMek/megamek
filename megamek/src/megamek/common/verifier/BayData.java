@@ -15,26 +15,7 @@ package megamek.common.verifier;
 
 import java.util.function.BiFunction;
 
-import megamek.common.ASFBay;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.CargoBay;
-import megamek.common.DropshuttleBay;
-import megamek.common.Entity;
-import megamek.common.HeavyVehicleBay;
-import megamek.common.InfantryBay;
-import megamek.common.InsulatedCargoBay;
-import megamek.common.LightVehicleBay;
-import megamek.common.LiquidCargoBay;
-import megamek.common.LivestockCargoBay;
-import megamek.common.MechBay;
-import megamek.common.NavalRepairFacility;
-import megamek.common.ProtomechBay;
-import megamek.common.RefrigeratedCargoBay;
-import megamek.common.ReinforcedRepairFacility;
-import megamek.common.SmallCraftBay;
-import megamek.common.SuperHeavyVehicleBay;
-import megamek.common.TechAdvancement;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -80,6 +61,14 @@ public enum BayData {
             (size, num) -> new NavalRepairFacility(size, 1, num, 0, true)),
     REPAIR_REINFORCED ("Reinforced Repair Facility", 0.1, 0, ReinforcedRepairFacility.techAdvancement(),
             (size, num) -> new ReinforcedRepairFacility(size, 1, num, 0)),
+    ARTS_FIGHTER ("ARTS Fighter", 187.5, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new ASFBay(size, 1, num, true)),
+    ARTS_SMALL_CRAFT ("ARTS Small Craft", 250.0, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new SmallCraftBay(size, 1, num, true)),
+    ARTS_REPAIR_UNPRESSURIZED ("ARTS Standard Repair Facility (Unpressurized)", 0.03125, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, false, true)),
+    ARTS_REPAIR_PRESSURIZED ("ARTS Standard Repair Facility (Pressurized)", 0.09375, 0, Bay.artsTechAdvancement(),
+            (size, num) -> new NavalRepairFacility(size, 1, num, 0, true, true)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
             (size, num) -> new CargoBay(size, 1, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
@@ -91,11 +80,11 @@ public enum BayData {
     LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
             (size, num) -> new LivestockCargoBay(size, 1, num));
     
-    private String name;
-    private double weight;
-    private int personnel;
-    private TechAdvancement techAdvancement;
-    private BiFunction<Double,Integer,Bay> init;
+    private final String name;
+    private final double weight;
+    private final int personnel;
+    private final TechAdvancement techAdvancement;
+    private final BiFunction<Double,Integer,Bay> init;
     
     BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
@@ -139,7 +128,8 @@ public enum BayData {
      */
     public Bay newBay(double size, int bayNum) {
         if (isCargoBay()) {
-            return init.apply(size / weight, bayNum);
+            // Remove floating point inaccuracy
+            return init.apply(RoundWeight.nearestKg(size / weight), bayNum);
         } else {
             return init.apply(size, bayNum);
         }
@@ -156,7 +146,8 @@ public enum BayData {
      * Identifies the type of bay.
      * 
      * @param bay A <code>Bay</code> that is (or can be) mounted on a unit. 
-     * @return    The enum value for the bay.
+     * @return    The enum value for the bay. Returns null if the bay is not a transport by
+     *            (e.g. crew quarters)
      */
     public static @Nullable BayData getBayType(Bay bay) {
         if (bay instanceof MechBay) {
@@ -190,15 +181,19 @@ public enum BayData {
             }
             return IS_BATTLE_ARMOR;
         } else if (bay instanceof ASFBay) {
-            return FIGHTER;
+            return ((ASFBay) bay).hasARTS() ? ARTS_FIGHTER : FIGHTER;
         } else if (bay instanceof DropshuttleBay) {
             return DROPSHUTTLE;
         } else if (bay instanceof ReinforcedRepairFacility) {
             return REPAIR_REINFORCED;
         } else if (bay instanceof NavalRepairFacility) {
-            return ((NavalRepairFacility) bay).isPressurized()? REPAIR_PRESSURIZED : REPAIR_UNPRESSURIZED;
+            if (((NavalRepairFacility) bay).isPressurized()) {
+                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_PRESSURIZED : REPAIR_PRESSURIZED;
+            } else {
+                return ((NavalRepairFacility) bay).hasARTS() ? ARTS_REPAIR_UNPRESSURIZED : REPAIR_UNPRESSURIZED;
+            }
         } else if (bay instanceof SmallCraftBay) {
-            return SMALL_CRAFT;
+            return ((SmallCraftBay) bay).hasARTS() ? ARTS_SMALL_CRAFT : SMALL_CRAFT;
         } else if (bay instanceof LiquidCargoBay) {
             return LIQUID_CARGO;
         } else if (bay instanceof LivestockCargoBay) {
@@ -221,13 +216,21 @@ public enum BayData {
     public boolean isCargoBay() {
         return ordinal() >= CARGO.ordinal();
     }
+
+    /**
+     * @return true if the bay is an infantry transport bay (including battlearmor)
+     */
+    public boolean isInfantryBay() {
+        return (ordinal() >= INFANTRY_FOOT.ordinal())
+                && (ordinal() <= CS_BATTLE_ARMOR.ordinal());
+    }
     
     /**
      * Determines whether the bay is legal to mount on a given <code>Entity</code>. Whether it is
      * technically possible or practical is another matter.
      * 
-     * @param en
-     * @return
+     * @param en The entity
+     * @return   Whether the bay is legal
      */
     public boolean isLegalFor(Entity en) {
         //TODO: Container cargo bays aren't implemented, but when added they can be carried by
@@ -252,7 +255,9 @@ public enum BayData {
         return (this == DROPSHUTTLE)
                 || (this == REPAIR_UNPRESSURIZED)
                 || (this == REPAIR_PRESSURIZED)
-                || (this == REPAIR_REINFORCED);
+                || (this == REPAIR_REINFORCED)
+                || (this == ARTS_REPAIR_PRESSURIZED)
+                || (this == ARTS_REPAIR_UNPRESSURIZED);
     }
 
     /**

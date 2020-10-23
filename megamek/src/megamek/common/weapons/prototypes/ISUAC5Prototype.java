@@ -53,8 +53,8 @@ public class ISUAC5Prototype extends UACWeapon {
         mediumRange = 13;
         longRange = 20;
         extremeRange = 26;
-        tonnage = 7.0;
-        criticals = 2;
+        tonnage = 9.0;
+        criticals = 6;
         bv = 112;
         cost = 1000000;
         explosionDamage = damage;

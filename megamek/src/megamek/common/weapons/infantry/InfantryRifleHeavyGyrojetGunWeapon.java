@@ -36,13 +36,16 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHeavyGyrojetGun");
 		addLookupName("Heavy Gyrojet Gun");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2500;
 		bv = 1.07;
 		tonnage = .010;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.21;
 		infantryRange = 2;
+		ammoWeight = 0.001;
+		ammoCost = 250;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2585, 2590, 2600, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

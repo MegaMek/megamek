@@ -36,13 +36,15 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryClanERLaserRifle");
 		addLookupName("Infantry Clan ER Laser Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 2000;
 		bv = 2.01;
 		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.28;
 		infantryRange = 3;
+		ammoWeight = 0.0003;
+		shots = 6;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2840, 2845, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)

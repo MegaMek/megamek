@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -24,9 +23,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
@@ -34,9 +34,6 @@ import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
  * You know what tanks are, silly.
  */
 public class Tank extends Entity {
-    /**
-     *
-     */
     private static final long serialVersionUID = -857210851169206264L;
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
@@ -59,7 +56,7 @@ public class Tank extends Entity {
     private boolean moderateMovementDamage = false;
     private boolean heavyMovementDamage = false;
     private boolean infernoFire = false;
-    private ArrayList<Mounted> jammedWeapons = new ArrayList<Mounted>();
+    private ArrayList<Mounted> jammedWeapons = new ArrayList<>();
     protected boolean engineHit = false;
 
     // locations
@@ -2699,33 +2696,24 @@ public class Tank extends Entity {
         }
 
         double freeHeatSinks = (hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0);
-        int sinks = 0;
+        int sinks = TestEntity.calcHeatNeutralHSRequirement(this);
         double turretWeight = 0;
-        double paWeight = 0;
+        double paWeight = getPowerAmplifierWeight();
         for (Mounted m : getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
-                sinks += wt.getHeat();
-                paWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
+            if ((m.getLocation() == getLocTurret()) || (m.getLocation() == getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += m.getTonnage() / 10.0;
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
+                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    turretWeight += m.getLinkedBy().getTonnage() / 10.0;
+                }
             }
         }
-        paWeight = Math.ceil(paWeight * 2) / 2;
-        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
-                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            paWeight = 0;
-        }
-        turretWeight = Math.ceil(turretWeight * 2) / 2;
+        turretWeight = RoundWeight.standard(turretWeight, this);
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo) + getExtraCrewSeats() * 100;
 
         if (!isSupportVehicle()) {
             double diveTonnage;
@@ -4025,56 +4013,32 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean isCrippled() {
+        return isCrippled(true);
+    }
+
+    @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front armor destroyed.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
-        }
-        if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Turret destroyed.");
-            }
+        } else if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
-        }
-
-        if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Turret destroyed.");
-            }
+        } else if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
-        }
-
-        if (isPermanentlyImmobilized(checkCrew)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out
-                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
-            }
+        } else if (isPermanentlyImmobilized(checkCrew)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -4088,27 +4052,22 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: has no more viable weapons.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean isCrippled() {
-        return isCrippled(true);
-    }
-
-    @Override
     public boolean isDmgHeavy() {
         if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
-        }
-
-        if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.33.");
             return true;
         }
 
@@ -4131,6 +4090,9 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.67.");
             return true;
         }
 
@@ -4154,10 +4116,13 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgLight() {
         if (getWalkMP() < getOriginalWalkMP()) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;
-        }
-
-        if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.8.");
             return true;
         }
 

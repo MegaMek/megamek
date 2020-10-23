@@ -1,52 +1,53 @@
-Version:1.0
+Version:1.2
 Wolfhound
 WLF-3S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3064
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3064
+source:TRO 3050 - Civil War
+rules level:3
 
-Mass:35
-Engine:210 Light Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:35
+engine:210 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:0
+heat sinks:12 Double
+walk mp:6
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:12
-RA Armor:12
-LT Armor:11
-RT Armor:11
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:5
-1 ISERPPC, Right Arm
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Left Torso
-1 ISERMediumLaser, Center Torso
-1 ISERSmallLaser, Center Torso (R)
+ER PPC, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -58,39 +59,39 @@ Lower Arm Actuator
 ISERPPC
 ISERPPC
 ISERPPC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -148,4 +149,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

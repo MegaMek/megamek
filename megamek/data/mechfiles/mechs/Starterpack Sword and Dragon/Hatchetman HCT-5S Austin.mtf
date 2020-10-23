@@ -1,34 +1,35 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-5S (Austin)
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3059
-Source:Starterbook: Sword and Dragon - Clan Invasion
-Rules Level:4
+techbase:Inner Sphere
+era:3059
+source:Starterbook: Sword and Dragon - Clan Invasion
+rules level:4
 
-Mass:45
-Engine:180 Light Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
+heat sinks:10 Double
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
 Weapons:4
 ER Medium Laser, Left Arm
@@ -44,11 +45,11 @@ Hand Actuator
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -61,8 +62,8 @@ ISDoubleHeatSink
 Hatchet
 Hatchet
 Hatchet
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
@@ -73,10 +74,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -90,7 +91,7 @@ ISLBXAC10
 IS LB 10-X Cluster Ammo
 IS LB 10-X AC Ammo
 ISCASE
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -147,4 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

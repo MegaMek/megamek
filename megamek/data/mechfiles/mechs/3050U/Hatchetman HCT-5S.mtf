@@ -1,40 +1,41 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-5S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3049
+source:TRO 3050 - Clan Invasion
+rules level:3
 
-Mass:45
-Engine:180 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:4
+heat sinks:10 Single
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
 Weapons:4
-1 ISLBXAC10, Right Torso, Ammo:10
-1 ISMediumPulseLaser, Left Torso
-1 ISMediumPulseLaser, Left Arm
-1 ISMediumPulseLaser, Right Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
+LB 10-X AC, Right Torso
 
 Left Arm:
 Shoulder
@@ -42,9 +43,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -59,9 +60,9 @@ ISMediumPulseLaser
 Hatchet
 Hatchet
 Hatchet
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -70,13 +71,13 @@ Fusion Engine
 Fusion Engine
 Heat Sink
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -89,7 +90,7 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 CL Ammo
+IS LB 10-X Cluster Ammo
 ISCASE
 
 Center Torso:
@@ -103,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Head:
@@ -147,4 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -1,39 +1,40 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-3F
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3023
-Source:TRO 3039 - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:3023
+source:TRO 3039 - Succession Wars
+rules level:3
 
-Mass:45
-Engine:180 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:11 Single
-Walk MP:4
-Jump MP:4
+heat sinks:11 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:11
-RA Armor:11
-LT Armor:14
-RT Armor:14
-CT Armor:14
-HD Armor:6
-LL Armor:11
-RL Armor:11
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:14
+RT armor:14
+CT armor:14
+HD armor:6
+LL armor:11
+RL armor:11
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
 Weapons:3
-Medium Laser, Right Arm
 Medium Laser, Left Arm
-Autocannon/10, Right Torso
+Medium Laser, Right Arm
+AC/10, Right Torso
 
 Left Arm:
 Shoulder

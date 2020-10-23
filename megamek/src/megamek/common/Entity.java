@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.math.BigInteger;
@@ -52,6 +51,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -92,11 +92,8 @@ import megamek.common.weapons.other.TSEMPWeapon;
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
-public abstract class Entity extends TurnOrdered implements Transporter,
-        Targetable, RoundUpdated, PhaseUpdated, ITechnology {
-    /**
-     *
-     */
+public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
+        PhaseUpdated, ITechnology {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -8327,15 +8324,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public List<Integer> getBayLoadedUnitIds() {
-        List<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
             if (next instanceof Bay) {
-                for (int i : ((Bay)next).getLoadedUnitIds()) {
-                    result.add(i);
-                }
+                result.addAll(((Bay) next).getLoadedUnitIds());
             }
         }
 
@@ -8393,7 +8388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return only entities in ASF Bays
      */
     public Vector<Entity> getLoadedFighters() {
-        Vector<Entity> result = new Vector<Entity>();
+        Vector<Entity> result = new Vector<>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
@@ -14510,6 +14505,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     // Deal with per entity camo
+    public AbstractIcon getCamouflage() {
+        return new Camouflage(getCamoCategory(), getCamoFileName());
+    }
+
     public void setCamoCategory(String name) {
         camoCategory = name;
     }

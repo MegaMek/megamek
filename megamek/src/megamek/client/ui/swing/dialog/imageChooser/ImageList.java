@@ -1,16 +1,17 @@
-/* MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team  
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.dialog.imageChooser;
 
@@ -21,36 +22,35 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 
-import megamek.common.util.fileUtils.DirectoryItem;
+import megamek.common.icons.AbstractIcon;
 
 /**
- * A specialized JList to display a list of (ImageChoiceDialog.DirectoryItem)s
+ * A specialized JList to display a list of AbstractIcons
  * for the ImageChoiceDialog, e.g. camos or portraits. The images
  * will be displayed with horizontal wrap. This is best embedded
  * in a JScrollpane. 
  * Using any of the renderers in the package the images can be displayed
  * with or without the filename.
  */
-public class ImageList extends JList<DirectoryItem> {
-
+public class ImageList extends JList<AbstractIcon> {
     private static final long serialVersionUID = -8060324139099113292L;
 
     /** The list model; a default model. */
-    private DefaultListModel<DirectoryItem> itemModel;
-    
+    private DefaultListModel<AbstractIcon> iconModel;
+
     /**
-     * A specialized JList to display a list of (ImageChoiceDialog.DirectoryItem)s
+     * A specialized JList to display a list of AbstractIcons
      * for the ImageChoiceDialog, e.g. camos or portraits. The images
      * will be displayed with horizontal wrap. This is best embedded
      * in a JScrollpane. 
      * Using any of the renderers in the package the images can be displayed
      * with or without the filename.
      */
-    public ImageList(ListCellRenderer<DirectoryItem> renderer) {
+    public ImageList(ListCellRenderer<AbstractIcon> renderer) {
         super(); 
-        itemModel = new DefaultListModel<DirectoryItem>();
-        setModel(itemModel);
-        
+        iconModel = new DefaultListModel<>();
+        setModel(iconModel);
+
         setOpaque(true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -59,15 +59,15 @@ public class ImageList extends JList<DirectoryItem> {
         setVisibleRowCount(-1);
         setCellRenderer(renderer);
     }
-    
+
     /** 
-     * Updates the list to show (only) the given items.
+     * Updates the list to show (only) the given icons.
      */
-    public void updateImages(List<DirectoryItem> items) {
-        itemModel.clear();
-        // LGTM does not accept addAll
-        for (DirectoryItem di: items) {
-            itemModel.addElement(di);
+    public void updateImages(List<AbstractIcon> icons) {
+        iconModel.clear();
+        // TODO : Java 11 : Swap to addAll
+        for (AbstractIcon icon: icons) {
+            iconModel.addElement(icon);
         }
     }
 }

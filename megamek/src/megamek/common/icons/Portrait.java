@@ -21,6 +21,7 @@ package megamek.common.icons;
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class Portrait extends AbstractIcon {
@@ -37,10 +38,6 @@ public class Portrait extends AbstractIcon {
     public Portrait(String category, String filename) {
         super(category, filename);
     }
-
-    public Portrait(String category, String filename, int width, int height) {
-        super(category, filename, width, height);
-    }
     //endregion Constructors
 
     //region Boolean Methods
@@ -51,14 +48,25 @@ public class Portrait extends AbstractIcon {
     //endregion Boolean Methods
 
     @Override
-    public Image getBaseImage() {
-        String category = hasDefaultCategory() ? "" : getCategory();
-        String filename = getFilename();
+    public ImageIcon getImageIcon() {
+        return getImageIcon(72);
+    }
 
-        // Return the default image if the player has selected no portrait file.
-        if ((category == null) || (filename == null) || hasDefaultFilename()) {
-            filename = DEFAULT_PORTRAIT_FILENAME;
+    @Override
+    public Image getImage() {
+        return getImage(72);
+    }
+
+    @Override
+    public Image getBaseImage() {
+        // If we can't create the portrait directory,
+        if (MMStaticDirectoryManager.getPortraits() == null) {
+            return null;
         }
+
+        String category = (hasDefaultCategory() || (getCategory() == null)) ? "" : getCategory();
+        String filename = (hasDefaultFilename() || (getFilename() == null))
+                ? DEFAULT_PORTRAIT_FILENAME : getFilename();
 
         // Try to get the player's portrait file.
         Image portrait = null;

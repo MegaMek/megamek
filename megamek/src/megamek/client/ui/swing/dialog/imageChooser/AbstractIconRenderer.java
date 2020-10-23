@@ -25,9 +25,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class AbstractIconRenderer extends JPanel implements ListCellRenderer<AbstractIcon> {
-    /** Image file extensions, .jpg .jpeg .png .gif */
-    protected static final String[] EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif"};
-
     /** This JLabel displays the selectable image */
     protected JLabel lblImage = new JLabel();
 
@@ -35,7 +32,7 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
     protected JLabel lblText = new JLabel();
 
     /** The tooltip to be displayed */
-    protected String tip = "";
+    protected String tip = null;
 
     public AbstractIconRenderer() {
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -58,18 +55,6 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
         return tip;
     }
 
-    /** Sets the label text of the image, removing the file extension. */
-    private void setText(String text) {
-        // Remove the file extension
-        for (String ext: EXTENSIONS) {
-            if (text.toLowerCase().contains(ext)) {
-                text = text.replace(ext, "");
-                break;
-            }
-        }
-        lblText.setText(text);
-    }
-
     @Override
     public Component getListCellRendererComponent(JList<? extends AbstractIcon> list,
                                                   AbstractIcon value, int index,
@@ -82,7 +67,7 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
             setForeground(UIManager.getColor("Table.foreground"));
         }
         setImage(value);
-        setText(value.getFilename());
+        lblText.setText(value.getFilename());
 
         return this;
     }

@@ -17,6 +17,7 @@ VERSION HISTORY:
 + PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
 + PR #2357: Restored(?) full head ejection system to a lot of Wolfhound/Hatchetman variants;
 	ejection now hits the cockpit or blows off the head for full head ejection
++ Issue #2246: "Change Tileset Theme" menu entry disabled outside the Board Editor
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

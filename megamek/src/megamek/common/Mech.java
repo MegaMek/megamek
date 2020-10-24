@@ -7299,7 +7299,7 @@ public abstract class Mech extends Entity {
         	setCockpitType(COCKPIT_TORSO_MOUNTED_INDUSTRIAL);
         }
         return success;
-    
+    }
     /**
      * Convenience function that returns the critical slot containing the cockpit
      * @return

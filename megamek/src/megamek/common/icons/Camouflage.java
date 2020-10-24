@@ -18,7 +18,12 @@
  */
 package megamek.common.icons;
 
+import megamek.MegaMek;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.PlayerColors;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Camouflage extends AbstractIcon {
     //region Variable Declarations
@@ -35,15 +40,38 @@ public class Camouflage extends AbstractIcon {
     public Camouflage(String category, String filename) {
         super(category, filename);
     }
-
-    public Camouflage(String category, String filename, int width, int height) {
-        super(category, filename, width, height);
-    }
     //endregion Constructors
 
     @Override
     public Image getBaseImage() {
-        // TODO : Implement me
-        return null;
+        if ((MMStaticDirectoryManager.getCamouflage() == null) || (getCategory() == null)
+                || (getFilename() == null)) {
+            return null;
+        } else if (Camouflage.NO_CAMOUFLAGE.equals(getCategory())) {
+            return getColourCamouflageImage(PlayerColors.getColor(getFilename()));
+        }
+
+        final String category = AbstractIcon.ROOT_CATEGORY.equals(getCategory()) ? "" : getCategory();
+        Image camouflage = null;
+
+        try {
+            camouflage = (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+        }
+
+        return camouflage;
+    }
+
+    private Image getColourCamouflageImage(Color colour) {
+        if (colour == null) {
+            MegaMek.getLogger().error("A null colour was passed.");
+            return null;
+        }
+        BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = result.createGraphics();
+        graphics.setColor(colour);
+        graphics.fillRect(0, 0, 84, 72);
+        return result;
     }
 }

@@ -26,6 +26,7 @@ import java.util.Vector;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.enums.Gender;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -1176,6 +1177,10 @@ public class Crew implements Serializable {
 
     public int getExternalId(int pos) {
         return Integer.parseInt(externalId[pos]);
+    }
+
+    public AbstractIcon getPortrait(int pos) {
+        return new Portrait(getPortraitCategory(pos), getPortraitFileName(pos));
     }
 
     public void setPortraitCategory(String name, int pos) {

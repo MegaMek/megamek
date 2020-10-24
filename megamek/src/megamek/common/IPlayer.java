@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.icons.AbstractIcon;
+
 import java.util.Vector;
 
 /**
@@ -69,6 +71,8 @@ public interface IPlayer extends ITurnOrdered {
     int getNbrMFActive();
 
     int getNbrMFInferno();
+
+    AbstractIcon getCamouflage();
 
     void setCamoCategory(String name);
 

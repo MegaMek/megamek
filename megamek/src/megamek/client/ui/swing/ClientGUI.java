@@ -2,15 +2,15 @@
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -83,7 +83,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -211,7 +210,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private AccessibilityWindow aw;
     private String helpFileName = 
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
-                                                          Messages.getString("CommonMenuBar.helpFilePath")); //$NON-NLS-1$
+                    Messages.getString("CommonMenuBar.helpFilePath"));
 
     public MegaMekController controller;
     // keep me
@@ -1848,11 +1847,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())) {
-            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
-        }
-        // This seems unnecessary as the CamoManager will return an image for a playercolor:
+        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
+                ? entity.getCamouflage() : player.getCamouflage()).getImage();
+        // This seems unnecessary as Camouflage will return an image for a playercolor:
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
         if (icon != null) {

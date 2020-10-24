@@ -1,17 +1,17 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -58,6 +58,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -68,7 +69,6 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -80,6 +80,7 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -88,7 +89,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
@@ -213,15 +213,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
         butCompact.addActionListener(this);
 
-        butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("ChatLounge.butDone"));
         Font font = null;
         try {
-            font = new Font("sanserif", Font.BOLD, 12); //$NON-NLS-1$
+            font = new Font("sanserif", Font.BOLD, 12);
         } catch (Exception exp) {
-            exp.printStackTrace();
+            MegaMek.getLogger().error(exp);
         }
         if (font == null) {
-            System.err.println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
+            MegaMek.getLogger().error("Couldn't find the new font for the 'Done' button.");
         } else {
             butDone.setFont(font);
         }
@@ -255,7 +255,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * Sets up the entities table
      */
     private void setupEntities() {
-
         mekModel = new MekTableModel();
         tableEntities = new JTable();
         tableEntities.setModel(mekModel);
@@ -469,13 +468,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             // Update the player from the camo selection
-            DirectoryItem selectedItem = camoDialog.getSelectedItem();
+            AbstractIcon selectedItem = camoDialog.getSelectedItem();
             if (Camouflage.NO_CAMOUFLAGE.equals(selectedItem.getCategory())) {
                 player.setColorIndex(camoDialog.getSelectedIndex());
             }
             player.setCamoCategory(selectedItem.getCategory());
-            player.setCamoFileName(selectedItem.getItem());
-            butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
+            player.setCamoFileName(selectedItem.getFilename());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
             getPlayerSelected().sendPlayerInfo();
         });
         camoDialog = new CamoChooser(clientgui.getFrame());
@@ -1938,7 +1937,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
+        butCamo.setIcon(getPlayerSelected().getLocalPlayer().getCamouflage().getImageIcon());
     }
 
     /**
@@ -2364,9 +2363,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         // Choosing the player camo resets the units to have no 
         // individual camo.
-        DirectoryItem selectedItem = mcd.getSelectedItem();
+        AbstractIcon selectedItem = mcd.getSelectedItem();
         IPlayer owner = entities.get(0).getOwner();
-        DirectoryItem ownerCamo = new DirectoryItem(owner.getCamoCategory(), owner.getCamoFileName());
+        AbstractIcon ownerCamo = owner.getCamouflage();
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
         
         // Update all allowed entities with the camo
@@ -2377,7 +2376,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     ent.setCamoFileName(null);
                 } else {
                     ent.setCamoCategory(selectedItem.getCategory());
-                    ent.setCamoFileName(selectedItem.getItem());
+                    ent.setCamoFileName(selectedItem.getFilename());
                 }
                 getLocalClient(ent).sendUpdateEntity(ent);
             }
@@ -2909,7 +2908,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 + (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " //$NON-NLS-1$
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (chkIncludeGround.isSelected()) {
-            txt = txt + " " + (String) comboMapType.getSelectedItem();
+            txt = txt + " " + comboMapType.getSelectedItem();
         } else {
             txt = txt + " " + "Space Map"; //$NON-NLS-1$
         }
@@ -2988,7 +2987,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            ArrayList<String> players = new ArrayList<String>();
+            List<String> players = new ArrayList<>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
@@ -3175,20 +3174,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_PLAYER):
+                case COL_PLAYER:
                     return Messages.getString("ChatLounge.colPlayer");
-                case (COL_START):
+                case COL_START:
                     return "Start";
-                case (COL_TEAM):
+                case COL_TEAM:
                     return "Team";
-                case (COL_TON):
+                case COL_TON:
                     return Messages.getString("ChatLounge.colTon");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("ChatLounge.colBV");
-                case (COL_COST):
+                case COL_COST:
                     return Messages.getString("ChatLounge.colCost");
+                default:
+                    return "??";
             }
-            return "??";
         }
 
         @Override
@@ -3483,7 +3483,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         if (compact) {
                             clearImage();
                         } else {
-                            setPortrait(entity.getCrew());
+                            setImage(entity.getCrew().getPortrait(0).getImage(50));
                         }
                         setToolTipText(formatPilotTooltip(entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
@@ -3532,13 +3532,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
                 return c;
             }
-
-            public void setPortrait(Crew pilot) {
-                String category = pilot.getPortraitCategory(0);
-                String file = pilot.getPortraitFileName(0);
-                setImage(MMStaticDirectoryManager.getPreviewPortraitImage(category, file));
-            }
-
         }
     }
 

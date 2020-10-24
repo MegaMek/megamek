@@ -33528,6 +33528,19 @@ public class Server implements Runnable {
                 }
             } // Crew safely ejects.
 
+            // ejection damages the cockpit
+            // kind of irrelevant in stand-alone games, but important for MekHQ
+            if (entity instanceof Mech) {
+                Mech mech = (Mech) entity;
+                // in case of mechs with 'full head ejection', the head is treated as blown off
+                if (mech.hasFullHeadEject()) {
+                    entity.destroyLocation(Mech.LOC_HEAD, true);
+                } else {
+                    for (CriticalSlot slot : (mech.getCockpit())) {
+                        slot.setDestroyed(true);
+                    }
+                }
+            }            
         } // End entity-is-Mek or fighter
         else if (game.getBoard().contains(entity.getPosition())
                  && (entity instanceof Tank)) {

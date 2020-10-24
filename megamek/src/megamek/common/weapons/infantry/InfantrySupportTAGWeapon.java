@@ -37,8 +37,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
 
 	public InfantrySupportTAGWeapon() {
 		super();
-		flags = flags.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_TANK_WEAPON)
-		        .andNot(F_BA_WEAPON).andNot(F_PROTO_WEAPON).or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
+		flags = flags.andNot(F_MECH_WEAPON).or(F_INF_SUPPORT).or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
 
 		name = "TAG (Light, Man-Portable)";
 		setInternalName(EquipmentTypeLookup.INFANTRY_TAG);

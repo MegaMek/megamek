@@ -2878,7 +2878,7 @@ public class MoveStep implements Serializable {
 
         // only walking speed in Tornados
         if (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F4) {
-            if (movementType != EntityMovementType.MOVE_WALK) {
+            if (getMpUsed() > tmpWalkMP) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }

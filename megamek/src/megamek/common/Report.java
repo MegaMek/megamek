@@ -486,7 +486,7 @@ public class Report implements Serializable {
                 i++;
             }
             //add the sprite code at the beginning of the line
-            if (!imageCode.isEmpty()) {
+            if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
                 }

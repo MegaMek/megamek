@@ -3210,12 +3210,10 @@ public class FireControl {
 
     /**
      * Given a firing plan, calculate the best target to light up with a searchlight
-     * @param plan
-     * @return
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
-        // no search light if it's not on
-        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight()) {
+        // no search light if it's not on, unit doesn't have one, or is hidden
+        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight() || shooter.isHidden()) {
             return null;
         }
         

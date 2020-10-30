@@ -1116,9 +1116,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (sensorHits > 3) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
-        }
         // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
-        if ((sensorHits > 1)
+        } else if ((sensorHits > 1)
                 || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
             return Messages.getString("WeaponAttackAction.SensorsDestroyed");
         }

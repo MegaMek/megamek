@@ -16,10 +16,12 @@ VERSION HISTORY:
 + PR #2334: Modernizing Multiple Visual Configs
 + PR #2351: Prevent aerospace units from sometimes showing as crippled after rolling for but not confirming a crit
 + PR #2357: Restored(?) full head ejection system to a lot of Wolfhound/Hatchetman variants;
-	ejection now hits the cockpit or blows off the head for full head ejection
+	ejection now hits the cockpit or blows off the head for full head ejection - mostly relevant for MekHQ
 + Issue #2246: "Change Tileset Theme" menu entry disabled outside the Board Editor
 + Issues #2349, #2347. #2339 Various Data fixes
 + Data: New Sprites
++ Issue #2343: Player units can flee during tornado; fix for blank report when loading game with report sprites in client with report sprites disabled
++ Issue #2367: Bot can no longer use searchlights with hidden units
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

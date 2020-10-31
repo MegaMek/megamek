@@ -95,6 +95,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -508,6 +509,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     /** A map overlay showing some important keybinds. */ 
     KeyBindingsOverlay keybindOverlay;
+    
+    /** The coords where the mouse was last. */
+    Coords lastCoords;
 
 
     /**
@@ -644,6 +648,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
                     disp.isMouseOver(point, drawDimension);
+                }
+                
+                final Coords mcoords = getCoordsAt(point);
+                if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
+                    lastCoords = mcoords;
+                    setToolTipText(getHexTooltip(e));
+                } else {
+                    if (prevTipX > 0 && prevTipY > 0) {
+                        int deltaX = point.x - prevTipX;
+                        int deltaY = point.y - prevTipY;
+                        double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
+                            prevTipX = -1; prevTipY = -1;
+                            // Set the dismissal delay to 0 so that the tooltip
+                            // goes away and does not reappear until the mouse
+                            // has moved more than the suppression distance
+                            ToolTipManager.sharedInstance().setDismissDelay(0);
+                        }
+                    }
+                    prevTipX = point.x; prevTipY = point.y;
                 }
             }
 
@@ -5713,80 +5737,44 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * The text to be displayed when the mouse is at a certain point.
      */
-    @Override
-    public String getToolTipText(MouseEvent e) {
-        // If new instance of mouse event, redraw obscured hexes and elevations.
-        repaint();
-
-        StringBuffer txt = new StringBuffer();
-        IHex mhex = null;
+    public String getHexTooltip(MouseEvent e) {
         final Point point = e.getPoint();
-        if (prevTipX > 0 && prevTipY > 0) {
-            int deltaX = point.x - prevTipX;
-            int deltaY = point.y - prevTipY;
-            double deltaMagnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            if (deltaMagnitude > GUIPreferences.getInstance().getTooltipDistSuppression()) {
-                prevTipX = -1; prevTipY = -1;
-                // Set the dismissal delay to 0 so that the tooltip
-                // goes away and does not reappear until the mouse
-                // has moved more than the suppression distance
-                ToolTipManager.sharedInstance().setDismissDelay(0);
-                return new String(""); //$NON-NLS-1$
-            }
-        }
-        prevTipX = point.x; prevTipY = point.y;
         final Coords mcoords = getCoordsAt(point);
-        final ArrayList<ArtilleryAttackAction> artilleryAttacks =
-                getArtilleryAttacksAtLocation(mcoords);
-        final Mounted curWeapon = getSelectedArtilleryWeapon();
 
-        if (game.getBoard().contains(mcoords))
-            mhex = game.getBoard().getHex(mcoords);
+        if (!game.getBoard().contains(mcoords)) {
+            return "";
+        } 
+        IHex mhex = game.getBoard().getHex(mcoords);
 
-        txt.append("<html>"); //$NON-NLS-1$
-
-
+        StringBuffer txt = new StringBuffer("<HTML>");
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
 
             txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
 
-            txt.append(Messages.getString("BoardView1.Tooltip.Hex", //$NON-NLS-1$
-                    new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
-            txt.append("<br>"); //$NON-NLS-1$
+            txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
+            txt.append("<br>"); 
 
             // cycle through the terrains and report types found
-            // this will skip buildings and other constructed units
-            int terrainTypes[] = mhex.getTerrainTypes();
-            for (int i = 0; i < terrainTypes.length; i++) {
-                int terType = terrainTypes[i];
-                if (mhex.containsTerrain(terType)) {
-                    int tf = mhex.getTerrain(terType).getTerrainFactor();
-                    int ttl = mhex.getTerrain(terType).getLevel();
-                    String name = Terrains.getDisplayName(terType, ttl);
-                    if (tf > 0) {
-                        name = name + " (TF: " + tf + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    if (name != null) {
-                        txt.append(name);
-                        txt.append("<br>"); //$NON-NLS-1$
-                    }
+            for (int terType: mhex.getTerrainTypes()) {
+                int tf = mhex.getTerrain(terType).getTerrainFactor();
+                int ttl = mhex.getTerrain(terType).getLevel();
+                String name = Terrains.getDisplayName(terType, ttl);
+                if (name != null) {
+                    name += (tf > 0) ? " (TF: " + tf + ")" : "";
+                    txt.append(name + "<BR>");
                 }
             }
             txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
 
             // Distance from the selected unit and a planned movement end point
-            if ((selectedEntity != null) &&
-                    (selectedEntity.getPosition() != null)) {
-                int distance = selectedEntity
-                        .getPosition()
-                        .distance(mcoords);
+            if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
+                int distance = selectedEntity.getPosition().distance(mcoords);
                 txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 if (distance == 1) {
                     txt.append(Messages.getString("BoardView1.Tooltip.Distance1")); //$NON-NLS-1$
                 } else {
-                    txt.append(Messages.getString("BoardView1.Tooltip.DistanceN", //$NON-NLS-1$
-                            new Object[] { distance }));
+                    txt.append(Messages.getString("BoardView1.Tooltip.DistanceN", distance));
                 }
 
                 if ((game.getPhase() == Phase.PHASE_MOVEMENT) &&
@@ -5796,8 +5784,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (disPM == 1) {
                         txt.append(Messages.getString("BoardView1.Tooltip.DistanceMove1")); //$NON-NLS-1$
                     } else {
-                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", //$NON-NLS-1$
-                                new Object[] { disPM }));
+                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM));
                     }
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
@@ -6016,8 +6003,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append(eSprite.getPlayerColor());
                     txt.append(" width=6></TD><TD>"); //$NON-NLS-1$
 
-                    // TT generated by Sprite
-                    txt.append(eSprite.getTooltip());
+                    // Entity tooltip
+                    txt.append(UnitToolTip.getEntityTooltip(eSprite.entity, getLocalPlayer()));
 
                     // ECM and ECCM source
                     if (eSprite.entity.hasActiveECM()) {
@@ -6052,7 +6039,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Artillery attacks
-        for (ArtilleryAttackAction aaa : artilleryAttacks) {
+        for (ArtilleryAttackAction aaa : getArtilleryAttacksAtLocation(mcoords)) {
             // Default texts if no real names can be found
             String wpName = Messages.getString("BoardView1.Artillery");
             String ammoName = "Unknown";
@@ -6079,6 +6066,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Artillery fire adjustment
+        final Mounted curWeapon = getSelectedArtilleryWeapon();
         if ((curWeapon != null) && (selectedEntity != null)) {
             // process targetted hexes
             int amod = 0;
@@ -6139,8 +6127,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         txt.append("</html>"); //$NON-NLS-1$
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals("<html></html>")) { //$NON-NLS-1$
-            return new String(""); //$NON-NLS-1$
+        if (txt.toString().equals("<html></html>")) { 
+            return "";
         }
 
         // Now that a valid tooltip text seems to be present,

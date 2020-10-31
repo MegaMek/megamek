@@ -25,6 +25,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -44,7 +46,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -69,9 +70,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.MenuScroller;
-import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.UnitToolTip;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -87,12 +88,14 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
-        ListSelectionListener, MouseListener, IMapSettingsObserver {
+        ListSelectionListener, MouseListener, IMapSettingsObserver, IPreferenceChangeListener {
     private static final long serialVersionUID = 1454736776730903786L;
 
     private JButton butOptions;
@@ -249,6 +252,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else {
             add(panMain, BorderLayout.CENTER);
         }
+        
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     /**
@@ -1386,267 +1391,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     }
 
-    private static StringBuffer tooltipString;
-    private static final boolean BR = true;
-    private static final boolean NOBR = false;
-
-    /**
-     * Adds a resource string to the entity tooltip
-     *
-     * @param ttSName
-     *            The resource string name. "BoardView1.Tooltip." will be added
-     *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR
-     *            = true will start the string with a &lt;BR&gt;; The constants
-     *            BR and NOBR can be used here.
-     * @param ttO
-     *            a list of Objects to insert into the {x} places in the
-     *            resource.
-     */
-    private static void addToTT(String ttSName, boolean startBR, Object... ttO) {
-        if (startBR == BR)
-            tooltipString.append("<BR>");
-        if (ttO != null) {
-            tooltipString.append(Messages.getString("BoardView1.Tooltip." + ttSName, ttO));
-        } else {
-            tooltipString.append(Messages.getString("BoardView1.Tooltip." + ttSName));
-        }
-    }
-
-    /**
-     * Adds a resource string to the entity tooltip
-     *
-     * @param ttSName
-     *            The resource string name. "BoardView1.Tooltip." will be added
-     *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR
-     *            = true will start the string with a &lt;BR&gt;; The constants
-     *            BR and NOBR can be used here.
-     */
-    private static void addToTT(String ttSName, boolean startBR) {
-        addToTT(ttSName, startBR, (Object[]) null);
-    }
-
-    public static String formatUnitTooltip(Entity entity) {
-        return "<HTML>" + UnitToolTip.getTooltip(entity, clientgui.getClient().getLocalPlayer()) + "</HTML>";
-
-        GunEmplacement thisGunEmp = null;
-        if (entity instanceof GunEmplacement)
-            thisGunEmp = (GunEmplacement) entity;
-
-        tooltipString = new StringBuffer();
-        tooltipString.append("<HTML>");
-
-        // Unit Chassis and Player
-        addToTT("Unit", NOBR, Integer.toHexString(PlayerColors.getColorRGB(entity.getOwner().getColorIndex())),
-                entity.getChassis(), entity.getOwner().getName());
-
-        // Pilot Info
-        // Nickname > Name > "Pilot"
-        for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
-            if (entity.getCrew().isMissing(i)) {
-                continue;
-            }
-            String pnameStr = entity.getCrew().getCrewType().getRoleName(i);
-
-            if ((entity.getCrew().getName(i) != null) && !entity.getCrew().getName(i).equals(""))
-                pnameStr = entity.getCrew().getName(i);
-
-            if ((entity.getCrew().getNickname(i) != null) && !entity.getCrew().getNickname(i).equals(""))
-                pnameStr = "'" + entity.getCrew().getNickname(i) + "'";
-
-            if (entity.getCrew().getSlotCount() > 1) {
-                pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
-            }
-
-            addToTT("Pilot", BR, pnameStr, entity.getCrew().getGunnery(i), entity.getCrew().getPiloting(i));
-
-            // Pilot Status
-            if (!entity.getCrew().getStatusDesc(i).equals(""))
-                addToTT("PilotStatus", NOBR, entity.getCrew().getStatusDesc(i));
-        }
-
-        // Pilot Advantages
-        int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
-        if (numAdv == 1)
-            addToTT("Adv1", NOBR, numAdv);
-        else if (numAdv > 1)
-            addToTT("Advs", NOBR, numAdv);
-
-        // Pilot Manei Domini
-        if ((entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0))
-            addToTT("MD", NOBR);
-
-        // Unit movement ability
-        if (thisGunEmp == null) {
-            addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
-            if (entity.getJumpMP() > 0)
-                tooltipString.append("/" + entity.getJumpMP());
-        }
-
-        // Armor and Internals
-        addToTT("ArmorInternals", BR,
-                entity.getTotalArmor()
-                        + ((entity.getTotalArmor() != entity.getTotalOArmor()) ? "/" + entity.getTotalOArmor() : ""),
-                entity.getTotalInternal() + ((entity.getTotalInternal() != entity.getTotalOInternal())
-                        ? "/" + entity.getTotalOInternal() : ""));
-
-        // Weapon List
-        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
-
-            ArrayList<Mounted> weapons = entity.getWeaponList();
-            HashMap<String, Integer> wpNames = new HashMap<String, Integer>();
-
-            // Gather names, counts, Clan/IS
-            // When clan then the number will be stored as negative
-            for (Mounted curWp : weapons) {
-                String weapDesc = curWp.getDesc();
-                // Append ranges
-                WeaponType wtype = (WeaponType) curWp.getType();
-                int ranges[];
-                if (entity.isAero()) {
-                    ranges = wtype.getATRanges();
-                } else {
-                    ranges = wtype.getRanges(curWp);
-                }
-                String rangeString = "(";
-                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA)
-                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
-                    rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
-                } else {
-                    rangeString += "-/";
-                }
-                int maxRange = RangeType.RANGE_LONG;
-
-                if ((entity.getGame() != null)
-                        && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
-                    maxRange = RangeType.RANGE_EXTREME;
-                }
-                for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
-                    rangeString += ranges[i];
-                    if (i != maxRange) {
-                        rangeString += "/";
-                    }
-                }
-
-                weapDesc += rangeString + ")";
-                if (wpNames.containsKey(weapDesc)) {
-                    int number = wpNames.get(weapDesc);
-                    if (number > 0)
-                        wpNames.put(weapDesc, number + 1);
-                    else
-                        wpNames.put(weapDesc, number - 1);
-                } else {
-                    WeaponType wpT = ((WeaponType) curWp.getType());
-
-                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear())))
-                        wpNames.put(weapDesc, -1);
-                    else
-                        wpNames.put(weapDesc, 1);
-                }
-            }
-
-            // Print to Tooltip
-            tooltipString.append("<FONT SIZE=\"-2\">");
-
-            for (Entry<String, Integer> entry : wpNames.entrySet()) {
-                // Check if weapon is destroyed, text gray and strikethrough if
-                // so, remove the "x "/"*"
-                // Also remove "+", means currently selected for firing
-                boolean wpDest = false;
-                String nameStr = entry.getKey();
-                if (entry.getKey().startsWith("x ")) {
-                    nameStr = entry.getKey().substring(2, entry.getKey().length());
-                    wpDest = true;
-                }
-
-                if (entry.getKey().startsWith("*")) {
-                    nameStr = entry.getKey().substring(1, entry.getKey().length());
-                    wpDest = true;
-                }
-
-                if (entry.getKey().startsWith("+")) {
-                    nameStr = entry.getKey().substring(1, entry.getKey().length());
-                    nameStr = nameStr.concat(" <I>(Firing)</I>");
-                }
-
-                // normal coloring
-                tooltipString.append("<FONT COLOR=#8080FF>");
-                // but: color gray and strikethrough when weapon destroyed
-                if (wpDest)
-                    tooltipString.append("<FONT COLOR=#a0a0a0><S>");
-
-                String clanStr = "";
-                if (entry.getValue() < 0)
-                    clanStr = Messages.getString("BoardView1.Tooltip.Clan");
-
-                // when more than 5 weapons are present, they will be grouped
-                // and listed with a multiplier
-                if (weapons.size() > 5) {
-                    addToTT("WeaponN", BR, Math.abs(entry.getValue()), clanStr, nameStr);
-
-                } else { // few weapons: list each weapon separately
-                    for (int i = 0; i < Math.abs(entry.getValue()); i++) {
-                        addToTT("Weapon", BR, Math.abs(entry.getValue()), clanStr, nameStr);
-                    }
-                }
-                // Weapon destroyed? End strikethrough
-                if (wpDest)
-                    tooltipString.append("</S>");
-                tooltipString.append("</FONT>");
-            }
-            tooltipString.append("</FONT>");
-        }
-
-        // Add StratOps quirks, if activated
-        if ((entity.getGame() != null)
-                && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            for (Enumeration<IOptionGroup> advGroups = entity.getQuirks().getGroups(); advGroups.hasMoreElements();) {
-                IOptionGroup advGroup = advGroups.nextElement();
-                if (entity.countQuirks(advGroup.getKey()) > 0) {
-                    tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i>");
-                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                        IOption adv = advs.nextElement();
-                        if (adv.booleanValue()) {
-                            tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
-                        }
-                    }
-                }
-            }
-            for (Mounted weapon : entity.getWeaponList()) {
-                for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks().getGroups(); advGroups
-                        .hasMoreElements();) {
-                    IOptionGroup advGroup = advGroups.nextElement();
-                    if (weapon.countQuirks() > 0) {
-                        tooltipString.append("<BR><i>" + weapon.getDesc() + ":</i>");
-                        for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                            IOption adv = advs.nextElement();
-                            if (adv.booleanValue()) {
-                                tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Add partial repairs, if activated
-        for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs().getGroups(); advGroups
-                .hasMoreElements();) {
-            IOptionGroup advGroup = advGroups.nextElement();
-            if (entity.countPartialRepairs() > 0) {
-                tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i><br>");
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                    IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
-                        tooltipString.append("&nbsp;" + adv.getDisplayableNameWithValue() + "<br>");
-                    }
-                }
-            }
-        }
-
-        tooltipString.append("</html>");
-        return tooltipString.toString();
+    public String formatUnitTooltip(Entity entity) {
+        return "<HTML>" + UnitToolTip.getEntityTooltip(entity, clientgui.getClient().getLocalPlayer()) + "</HTML>";
     }
 
     public static String formatUnitCompact(Entity entity, boolean blindDrop) {
@@ -3489,15 +3235,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         } else {
                             setPortrait(entity.getCrew());
                         }
-                        setToolTipText(formatPilotTooltip(entity.getCrew(),
-                                clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_COMMAND_INIT),
-                                clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
-                                clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS),
-                                clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)));
+                        setToolTipText("<HTML>" + PilotToolTip.getPilotTipDetailed(entity) + "</HTML>");
                     }
                 }
 
@@ -4533,6 +4271,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else {
                 lblLoad.setText("");
             }
+        }
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            // Makes the tooltip appear immediately rescaled
+            ToolTipManager manager = ToolTipManager.sharedInstance();
+            // Trigger immediately
+            long time = System.currentTimeMillis() - manager.getInitialDelay() + 1;
+            Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
+            Point locationOnComponent = new Point(locationOnScreen);
+            SwingUtilities.convertPointFromScreen(locationOnComponent, tableEntities);
+            MouseEvent event = new MouseEvent(tableEntities, -1, time, 0, 
+                    locationOnComponent.x, locationOnComponent.y, 0, 0, 1, false, 0);
+            manager.mouseMoved(event);
         }
     }
 }

@@ -128,7 +128,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
-
+    
+    /** The smallest GUI scaling value; smaller will make text unreadable */  
+    public static final float MIN_GUISCALE = 0.7f;
+    /** The highest GUI scaling value; increase this for 16K monitors */  
+    public static final float MAX_GUISCALE = 2.4f;
+    
     private static final long serialVersionUID = 3913466735610109147L;
 
     //region action commands
@@ -166,6 +171,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //region view menu
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_INCGUISCALE = "viewIncGUIScale";
+    public static final String VIEW_DECGUISCALE = "viewDecGUIScale";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
@@ -840,6 +847,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
+                break;
+            case VIEW_INCGUISCALE:
+                float guiScale = GUIPreferences.getInstance().getGUIScale();
+                if (guiScale < MAX_GUISCALE) {
+                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
+                }
+                break;
+            case VIEW_DECGUISCALE:
+                guiScale = GUIPreferences.getInstance().getGUIScale();
+                if (guiScale > MIN_GUISCALE) {
+                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
+                }
                 break;
             case VIEW_KEYBINDS_OVERLAY:
                 bv.toggleKeybindsOverlay();

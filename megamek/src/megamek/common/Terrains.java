@@ -211,38 +211,16 @@ public class Terrains implements ITerrainFactory {
     }
 
     /**
+     * Returns a name to be displayed in tooltips. 
+     * Intentionally returns null for terrains that should be treated
+     * separately such as buildings and for terrains that should not be listed
+     * such as cliff-tops.
      * @param type the type of terrain to get the name for
      * @param level the level of the terrain to get the specific name
      * @return a displayable name for this terrain (for tooltips)
      */
     public static String getDisplayName(int type, int level) {
         switch (type) {
-        case (BUILDING):
-            if (level == 1) {
-                return "Light building";
-            } else if (level == 2) {
-                return "Medium building";
-            } else if (level == 3) {
-                return "Heavy building";
-            } else if (level == 4) {
-                return "Hardened Building";
-            } else if (level == 5) {
-                return "Wall";
-            } else {
-                return "Building (unknown)";
-            }
-        case (BLDG_CLASS):
-            if (level == 0) {
-                return "Standard";
-            } else if (level == 1) {
-                return "Hangar";
-            } else if (level == 2) {
-                return "Fortress";
-            } else if (level == 3) {
-                return "Gun Emplacement";
-            } else {
-                return "Building Class (unknown)";
-            }
         case (WOODS):
             if (level == 1) {
                 return "Light woods";
@@ -387,8 +365,6 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Extremely high metal content";
             }
-        case (CLIFF_TOP):
-            return "Cliff-Top";
         default:
             return null;
         }

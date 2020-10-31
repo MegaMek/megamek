@@ -87,12 +87,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
     public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
     public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
+    public static final String ADVANCED_ARMORMINI_CAP_ARMOR_CHAR = "AdvancedArmorMiniCapArmorChar";
     public static final String ADVANCED_ARMORMINI_IS_CHAR = "AdvancedArmorMiniISChar";
     public static final String ADVANCED_ARMORMINI_DESTROYED_CHAR = "AdvancedArmorMiniDestroyedChar";
     public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
     public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
     public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
-    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
+    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFontSizeMod";
     public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
     /* --End advanced settings-- */
@@ -133,6 +134,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
+    public static final String GUI_SCALE = "GUIScale";
     public static final String IMAGE_CHOOSER_POS_X = "ImageChooserPosX";
     public static final String IMAGE_CHOOSER_POS_Y = "ImageChooserPosY";
     public static final String IMAGE_CHOOSER_SIZE_HEIGHT = "ImageChooserSizeHeight";
@@ -277,6 +279,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
         setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square    
+        setDefault(ADVANCED_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
         setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot     
         setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x 
         setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(100, 180, 100)); // medium green 
@@ -337,6 +340,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_DARKEN_ALPHA, 100);
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, "false");
+        store.setDefault(GUI_SCALE, 1);
         store.setDefault(IMAGE_CHOOSER_POS_X, 200);
         store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
         store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
@@ -869,6 +873,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getTooltipDistSuppression() {
         return store.getInt(TOOLTIP_DIST_SUPRESSION);
+    }
+    
+    public float getGUIScale() {
+        return store.getFloat(GUI_SCALE);
     }
 
     public int getWindowPosX() {

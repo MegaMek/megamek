@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -209,6 +211,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
+    private JSlider guiScale;
 
     private JCheckBox keepGameLog;
     private JTextField gameLogFilename;
@@ -414,7 +417,26 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 5)));
         comps.add(row);
-        // --------------        
+        // --------------   
+        guiScale = new JSlider();
+        guiScale.setMajorTickSpacing(3);
+        guiScale.setMinimum(7);
+        guiScale.setMaximum(24);
+        Hashtable<Integer, JComponent> table = new Hashtable<Integer, JComponent>();
+        table.put(7, new JLabel("70%"));
+        table.put(10, new JLabel("100%"));
+        table.put(16, new JLabel("160%"));
+        table.put(22, new JLabel("220%"));
+        guiScale.setLabelTable(table);
+        guiScale.setPaintTicks(true);
+        guiScale.setPaintLabels(true);
+        guiScale.setMaximumSize(new Dimension(250, 100));
+        guiScale.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
+        JLabel guiScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.guiScale"));
+        row = new ArrayList<>();
+        row.add(guiScaleLabel);
+        row.add(guiScale);
+        comps.add(row);
 
         minimapEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -537,7 +559,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showPilotPortraitTT);
         comps.add(row);
-        
+
         // Horizontal Line and Spacer
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -769,6 +791,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
         tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
+        guiScale.setValue((int)(gs.getGUIScale() * 10));
         showWpsinTT.setSelected(gs.getShowWpsinTT());
         showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
         showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
@@ -954,6 +977,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
+        gs.setValue(GUIPreferences.GUI_SCALE, (float)(guiScale.getValue()) / 10);
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
 

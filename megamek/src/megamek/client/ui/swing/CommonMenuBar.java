@@ -14,6 +14,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -108,6 +109,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewClientSettings;
     private JMenuItem viewPlayerSettings;
     private JMenuItem viewPlayerList;
+    private JMenuItem viewIncGUIScale;
+    private JMenuItem viewDecGUIScale;
     private JMenuItem deployMinesConventional;
     private JMenuItem deployMinesCommand;
     private JMenuItem deployMinesVibrabomb;
@@ -352,6 +355,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewAccessibilityWindow.addActionListener(this);
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);
+        
+        viewIncGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewIncGUIScale"));
+        viewIncGUIScale.addActionListener(this);
+        viewIncGUIScale.setActionCommand(ClientGUI.VIEW_INCGUISCALE);
+        viewIncGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewIncGUIScale);
+        
+        viewDecGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewDecGUIScale"));
+        viewDecGUIScale.addActionListener(this);
+        viewDecGUIScale.setActionCommand(ClientGUI.VIEW_DECGUISCALE);
+        viewDecGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewDecGUIScale);
         
         viewKeybindsOverlay = new JCheckBoxMenuItem(Messages.getString("CommonMenuBar.viewKeyboardShortcuts"));
         viewKeybindsOverlay.addActionListener(this);

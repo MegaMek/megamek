@@ -1081,8 +1081,8 @@ public abstract class Mech extends Entity {
             return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2)
                     - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return Math.max(0, super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
+                - (hasMPReducingHardenedArmor() ? 1 : 0));
     }
 
     /*

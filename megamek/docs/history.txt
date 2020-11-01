@@ -24,6 +24,7 @@ VERSION HISTORY:
 + Issue #2367: Bot can no longer use searchlights with hidden units
 + Issue #2369: Heavy Machine Gun 0/0/0 Range
 + Issue #2300: Head loss with torso-mounted cockpit no longer prevents weapons fire unless other sensor damage has occurred
++ Issue #2371: Odd interaction between Modular Armor and Hardened Armor
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

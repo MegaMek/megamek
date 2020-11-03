@@ -6545,8 +6545,8 @@ public abstract class Mech extends Entity {
                     && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
-            // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+            // mechs can deploy in water if the water covers them entirely
+            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) < (height() + 1))) {
                 return true;
             }
             // Can't deploy in clear hex

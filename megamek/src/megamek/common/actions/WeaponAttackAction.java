@@ -941,13 +941,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return null;
         }
         
+        // got ammo?
+        if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
+            return Messages.getString("WeaponAttackAction.OutOfAmmo");
+        }
+        
         // Ammo-specific Reasons
-        if ((atype != null) || usesAmmo) {
-            // got ammo?
-            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
-                return Messages.getString("WeaponAttackAction.OutOfAmmo");
-            }
-            
+        if (atype != null) {
             // Are we dumping that ammo?
             if (usesAmmo && ammo != null && ammo.isDumping()) {
                 ae.loadWeaponWithSameAmmo(weapon);

@@ -941,6 +941,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return null;
         }
         
+        // got ammo?
+        if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
+            return Messages.getString("WeaponAttackAction.OutOfAmmo");
+        }
+        
         // Ammo-specific Reasons
         if (atype != null) {
             // Are we dumping that ammo?
@@ -967,11 +972,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (atype.getMunitionType() == AmmoType.M_FLARE)
                     && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
                 return Messages.getString("WeaponAttackAction.OnlyFlare");
-            }
-            
-            // got ammo?
-            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
-                return Messages.getString("WeaponAttackAction.OutOfAmmo");
             }
 
             // Aeros must have enough ammo for the maximum rate of fire because

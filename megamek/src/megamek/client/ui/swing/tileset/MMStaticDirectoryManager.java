@@ -19,9 +19,9 @@
 package megamek.client.ui.swing.tileset;
 
 import megamek.MegaMek;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.ScaledImageFileFactory;
+import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
@@ -75,7 +75,7 @@ public class MMStaticDirectoryManager {
             parsePortraitDirectory = false;
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
-                        "", ImageFileFactory.getInstance());
+                        "", new ImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the portraits directory!", e);
             }
@@ -94,7 +94,7 @@ public class MMStaticDirectoryManager {
             parseCamouflageDirectory = false;
             try {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(), "",
-                        ScaledImageFileFactory.getInstance());
+                        new ScaledImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the camo directory!", e);
             }

@@ -19,8 +19,6 @@
  */
 package megamek.common.util.fileUtils;
 
-import megamek.common.util.ItemFileFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;

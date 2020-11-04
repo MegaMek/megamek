@@ -20,7 +20,6 @@
 package megamek.common.util.fileUtils;
 
 import megamek.MegaMek;
-import megamek.common.util.ItemFileFactory;
 
 import java.io.File;
 import java.util.Objects;

@@ -56,8 +56,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -73,6 +75,8 @@ import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.MenuScroller;
+import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -84,7 +88,6 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
@@ -264,13 +267,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         mekModel = new MekTableModel();
         tableEntities = new JTable();
         tableEntities.setModel(mekModel);
-        tableEntities.setRowHeight(80);
+        setEntityTableRowHeight();
         tableEntities.setIntercellSpacing(new Dimension(0, 0));
         tableEntities.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         TableColumn column = null;
         for (int i = 0; i < MekTableModel.N_COL; i++) {
-            tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
             column = tableEntities.getColumnModel().getColumn(i);
+            column.setCellRenderer(mekModel.getRenderer());
             if ((i == MekTableModel.COL_UNIT) || (i == MekTableModel.COL_PILOT)) {
                 column.setPreferredWidth(170);
             } else if (i == MekTableModel.COL_PLAYER) {
@@ -284,7 +287,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         tableEntities.getSelectionModel().addListSelectionListener(this);
         scrEntities = new JScrollPane(tableEntities);
         scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
     }
 
     /**
@@ -1200,10 +1202,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             @Override
             public int compare(final Entity a, final Entity b) {
                 // entity.getOwner() does not work properly because teams are
-                // not updated for
-                // entities when the user switches teams
-                final IPlayer p_a = clientgui.getClient().getGame().getPlayer(a.getOwnerId());// a.getOwner();
-                final IPlayer p_b = clientgui.getClient().getGame().getPlayer(b.getOwnerId());// b.getOwner();
+                // not updated for entities when the user switches teams
+                final IPlayer p_a = clientgui.getClient().getGame().getPlayer(a.getOwnerId());
+                final IPlayer p_b = clientgui.getClient().getGame().getPlayer(b.getOwnerId());
                 final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 final int t_a = p_a.getTeam();
                 final int t_b = p_b.getTeam();
@@ -1224,14 +1225,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 } else {
                     int a_id = a.getId();
                     int b_id = b.getId();
-                    // loaded units should be put immediately below their parent
-                    // unit
+                    // loaded units should be put immediately below their parent unit
                     // if a unit's transport ID is not none, then it should
                     // replace their actual id
                     if (tr_a == tr_b) {
                         // either they are both not being transported, or they
-                        // are being transported
-                        // by the same unit
+                        // are being transported by the same unit
                         return a_id - b_id;
                     }
 
@@ -1299,19 +1298,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     public static String formatPilotCompact(Crew pilot, boolean blindDrop, boolean rpgSkills) {
-
-        String value = "";
+        String value = UIUtil.getFontHTML();
         if (blindDrop) {
             value += Messages.getString("ChatLounge.Unknown");
         } else {
-            value += pilot.getDesc();
+            if (pilot.getSlotCount() > 1) {
+                value += "<I>Multiple Crewmembers</I>";
+            } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).equals("")) {
+                value += UIUtil.getFontHTML(PilotToolTip.NICK_COLOR) + "<B>'"; 
+                value += pilot.getNickname(0).toUpperCase() + "'</B></FONT>";
+                if (!pilot.getStatusDesc(0).isBlank()) {
+                    value += " (" + pilot.getStatusDesc(0) + ")";
+                }
+            } else {
+                value += pilot.getDesc(0);
+            }
         }
-
+            
         value += " (" + pilot.getSkillsAsString(rpgSkills) + ")";
         if (pilot.countOptions() > 0) {
-            value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
+            value += " \u2B1D ";
+            value += pilot.countOptions() + Messages.getString("ChatLounge.abilities");
         }
 
+        value += "</FONT>";
         return value;
 
     }
@@ -1323,6 +1333,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         String value = "";
         if (!blindDrop && pilot.getSlotCount() > 1) {
+            value += UIUtil.getSmallFontHTML();
             for (int i = 0; i < pilot.getSlotCount(); i++) {
                 if (pilot.isMissing(i)) {
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
@@ -1333,6 +1344,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 value += "<br/>";
             }
         } else {
+            value += UIUtil.getFontHTML();
             if (blindDrop) {
                 value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br/>";
             } else {
@@ -1348,129 +1360,143 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             value += "<i>" + Messages.getString("ChatLounge.md") + "</i>, " + implants
                     + Messages.getString("ChatLounge.implants") + "<br>";
         }
-
-        return value;
-
-    }
-
-    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough, boolean rpgSkills) {
-
-        String value = "<html>";
-        value += "<b>" + pilot.getDesc() + "</b><br>";
-        if (pilot.getNickname().length() > 0) {
-            value += "<i>" + pilot.getNickname() + "</i><br>";
-        }
-        if (pilot.getHits() > 0) {
-            value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
-        }
-        value += "" + pilot.getSkillsAsString(rpgSkills) + "<br>";
-        if (tough) {
-            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
-        }
-        if (command) {
-            value += Messages.getString("ChatLounge.Command") + pilot.getCommandBonus() + "<br>";
-        }
-        if (init) {
-            value += Messages.getString("ChatLounge.Initiative") + pilot.getInitBonus() + "<br>";
-        }
-        value += "<br>";
-        for (Enumeration<IOptionGroup> advGroups = pilot.getOptions().getGroups(); advGroups.hasMoreElements();) {
-            IOptionGroup advGroup = advGroups.nextElement();
-            if (pilot.countOptions(advGroup.getKey()) > 0) {
-                value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                    IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
-                        value += "  " + adv.getDisplayableNameWithValue() + "<br>";
-                    }
-                }
-            }
-        }
-        value += "</html>";
+        value += "</FONT>";
         return value;
 
     }
 
     public String formatUnitTooltip(Entity entity) {
-        return "<HTML>" + UnitToolTip.getEntityTooltip(entity, clientgui.getClient().getLocalPlayer()) + "</HTML>";
+        return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, 
+                clientgui.getClient().getLocalPlayer(), mapSettings) + "</HTML>";
     }
 
-    public static String formatUnitCompact(Entity entity, boolean blindDrop) {
-
-        String value = "";
-        // Reset the tree strings.
-        String strTreeSet = ""; //$NON-NLS-1$
-        String strTreeView = ""; //$NON-NLS-1$
-
+    private static final String DOT_SPACER = " \u2B1D ";
+    private static final String LOADED_SIGN = " \u26DF ";
+    private static final String UNCONNECTED_SIGN = " \u26AC ";
+    private static final String CONNECTED_SIGN = " \u26AF ";
+    private static final String WARNING_SIGN = " \u26A0 ";
+    
+    public static String formatUnitCompact(Entity entity, boolean blindDrop, int mapType) {
+        String value = UIUtil.getFontHTML();
+        
         if (blindDrop) {
+            value += DOT_SPACER;
             if (entity instanceof Infantry) {
-                value += Messages.getString("ChatLounge.0"); //$NON-NLS-1$
+                value += Messages.getString("ChatLounge.0");
             } else if (entity instanceof Protomech) {
-                value += Messages.getString("ChatLounge.1"); //$NON-NLS-1$
+                value += Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
-                value += Messages.getString("ChatLounge.2"); //$NON-NLS-1$
+                value += Messages.getString("ChatLounge.2");
             } else {
                 value += entity.getWeightClassName();
                 if (entity instanceof Tank) {
-                    value += Messages.getString("ChatLounge.6"); //$NON-NLS-1$
+                    value += Messages.getString("ChatLounge.6");
                 }
             }
+            value += DOT_SPACER;
             return value;
         }
 
-        // Set the tree strings based on C3 settings for the unit.
+        // Signs before the unit name
+        
+        // Loaded unit
+        if (entity.getTransportId() != Entity.NONE) {
+            value += UIUtil.getFontHTML(UIUtil.uiGreen()) + LOADED_SIGN + "</FONT>";
+        }
+
+        // Warning sign
+        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                || ((entity.getC3Master() == null) && entity.hasC3S())
+                || (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
+                || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+                || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+                || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+                ) {
+            value += UIUtil.getFontHTML(GUIPreferences.getInstance().getWarningColor()); 
+            value += WARNING_SIGN + "</FONT>";
+        }
+
+        // Unit name
+        value += entity.getShortName();
+        
+        // C3 ...
         if (entity.hasC3i() || entity.hasNavalC3()) {
+            value += DOT_SPACER;
             if (entity.calculateFreeC3Nodes() == 5) {
-                strTreeSet = "**"; //$NON-NLS-1$
+                value += UIUtil.getFontHTML(UIUtil.uiLightRed()) + "C3i" + UNCONNECTED_SIGN;
+            } else {
+                value += UIUtil.getFontHTML(UIUtil.uiLightBlue()) + "C3i" + CONNECTED_SIGN + entity.getC3NetId();
             }
-            strTreeView = " (" + entity.getC3NetId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            value += "</FONT>";
         } else if (entity.hasC3()) {
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiLightBlue());
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
-                    strTreeSet = "***"; //$NON-NLS-1$
+                    value += UIUtil.getFontHTML(UIUtil.uiLightRed()) + "C3S" + UNCONNECTED_SIGN; 
                 } else {
-                    strTreeSet = "*"; //$NON-NLS-1$
+                    value += "C3M"; 
                 }
-            } else if (!entity.C3MasterIs(entity)) {
-                strTreeSet = ">"; //$NON-NLS-1$
-                if ((entity.getC3Master().getC3Master() != null)
-                        && !entity.getC3Master().C3MasterIs(entity.getC3Master())) {
-                    strTreeSet = ">>"; //$NON-NLS-1$
+            } else if (entity.C3MasterIs(entity)) {
+                value += "C3M (CC)";
+            } else {
+                if (entity.hasC3S()) {
+                    value += "C3S" + CONNECTED_SIGN; 
+                } else {
+                    value += "C3M" + CONNECTED_SIGN; 
                 }
-                strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
+                value += entity.getC3Master().getShortName();
             }
+            value += "</FONT>";
         }
 
-        value += strTreeSet + entity.getShortName() + strTreeView;
-
+        // Loaded onto another unit
         if (entity.getTransportId() != Entity.NONE) {
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            value += ", aboard " + loader.getShortName() + "";
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) +  "<I>(";
+            value += loader.getShortName() + ")</I></FONT>";
         }
 
+        // Hidden deployment
         if (entity.isHidden()) {
-            value += " (" + Messages.getString("ChatLounge.hidden") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) + "<I>";
+            value += Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>";
+        }
+        
+        if (entity.isHullDown()) {
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) + "<I>";
+            value += Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>";
+        }
+        
+        if (entity.isProne()) {
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) + "<I>";
+            value += Messages.getString("ChatLounge.compact.prone") + "</I></FONT>";
+        }
+        
+        if (entity.countPartialRepairs() > 0) {
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiLightRed()) + "<I>";
+            value += "Partial Repairs" + "</I></FONT>";
         }
 
+        // Offboard deployment
         if (entity.isOffBoard()) {
-            value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) + "<I>"; 
+            value += Messages.getString("ChatLounge.compact.deploysOffBoard") + "</I></FONT>";
         } else if (entity.getDeployRound() > 0) {
-            value += " (" + Messages.getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$ //$NON-NLS-2$
-                    + entity.getDeployRound();
+            value += DOT_SPACER + UIUtil.getFontHTML(UIUtil.uiGreen()) + "<I>";
+            value += Messages.getString("ChatLounge.compact.deploysAfterRound") + entity.getDeployRound();
             if (entity.getStartingPos(false) != Board.START_NONE) {
-                value += Messages.getString("ChatLounge.deploysAfterZone") //$NON-NLS-1$
-                        + IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)];
+                value += Messages.getString("ChatLounge.deploysAfterZone");
+                value += IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)];
             }
-            // $NON-NLS-2$
-            value += ")"; //$NON-NLS-1$
+            value += "</I></FONT>";
         }
         return value;
     }
 
-    public static String formatUnitHTML(Entity entity, boolean blindDrop) {
+    public static String formatUnitFull(Entity entity, boolean blindDrop, int mapType) {
 
         String value = "";
-
+        value += UIUtil.getFontHTML();
         if (blindDrop) {
             if (entity instanceof Infantry) {
                 value += Messages.getString("ChatLounge.0"); //$NON-NLS-1$
@@ -1539,6 +1565,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
             int partRepCount = entity.countPartialRepairs();
 
+            // Warning sign
+            if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                    || ((entity.getC3Master() == null) && entity.hasC3S())
+                    || (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
+                    || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+                    || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+                    || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+                    ) {
+                value += UIUtil.getFontHTML(GUIPreferences.getInstance().getWarningColor()); 
+                value += WARNING_SIGN + "</FONT>";
+            }
+            
             value += "<b>" + entity.getShortName() + "</b><br>";
             value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
             if (entity.getTransportId() != Entity.NONE) {
@@ -2484,11 +2522,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getSource().equals(butCompact)) {
-            if (butCompact.isSelected()) {
-                tableEntities.setRowHeight(15);
-            } else {
-                tableEntities.setRowHeight(80);
-            }
+            setEntityTableRowHeight();
             refreshEntities();
         } else if (ev.getSource().equals(butChangeStart)) {
             clientgui.getStartingPositionDialog().update();
@@ -3113,13 +3147,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public String getColumnName(int column) {
             switch (column) {
                 case (COL_PILOT):
-                    return Messages.getString("ChatLounge.colPilot");
+                    return "<HTML>" + UIUtil.getFontHTML() + Messages.getString("ChatLounge.colPilot");
                 case (COL_UNIT):
-                    return Messages.getString("ChatLounge.colUnit");
+                    return "<HTML>" + UIUtil.getFontHTML() + Messages.getString("ChatLounge.colUnit");
                 case (COL_PLAYER):
-                    return Messages.getString("ChatLounge.colPlayer");
+                    return "<HTML>" + UIUtil.getFontHTML() + Messages.getString("ChatLounge.colPlayer");
                 case (COL_BV):
-                    return Messages.getString("ChatLounge.colBV");
+                    return "<HTML>" + UIUtil.getFontHTML() + Messages.getString("ChatLounge.colBV");
             }
             return "??";
         }
@@ -3142,13 +3176,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             String value = "";
             if (col == COL_BV) {
+                value += UIUtil.getFontHTML();
                 value += entity.calculateBattleValue();
             } else if (col == COL_PLAYER) {
                 if (compact) {
+                    IPlayer owner = clientgui.getClient().getGame().getPlayer(entity.getOwnerId());
+                    value += UIUtil.getSmallFontHTML(PlayerColors.getColor(owner.getColorIndex()));
                     value += entity.getOwner().getName();
+                    value += "</FONT>" + UIUtil.getFontHTML() + " \u2B1D </FONT>";
+                    boolean isEnemy = clientgui.getClient().getLocalPlayer().isEnemyOf(owner);
+                    value += UIUtil.getSmallFontHTML(isEnemy ? Color.RED : UIUtil.uiGreen());
+                    value += " Team " + owner.getTeam();
                 } else {
-                    value += entity.getOwner().getName() + "<br>Team "
-                            + clientgui.getClient().getGame().getPlayer(entity.getOwnerId()).getTeam();
+                    IPlayer owner = clientgui.getClient().getGame().getPlayer(entity.getOwnerId());
+                    value += UIUtil.getFontHTML(PlayerColors.getColor(owner.getColorIndex()));
+                    value += entity.getOwner().getName();
+                    value += "</FONT>";
+                    boolean isEnemy = clientgui.getClient().getLocalPlayer().isEnemyOf(owner);
+                    value += UIUtil.getFontHTML(isEnemy ? Color.RED : UIUtil.uiGreen());
+                    value += "<BR>Team " + owner.getTeam();
                 }
             } else if (col == COL_PILOT) {
                 final boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
@@ -3158,9 +3204,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 return formatPilotHTML(entity.getCrew(), blindDrop, rpgSkills);
             } else {
                 if (compact) {
-                    return formatUnitCompact(entity, blindDrop);
+                    return formatUnitCompact(entity, blindDrop, mapSettings.getMedium());
                 }
-                return formatUnitHTML(entity, blindDrop);
+                return formatUnitFull(entity, blindDrop, mapSettings.getMedium());
             }
             return value;
         }
@@ -3178,7 +3224,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         public class Renderer extends MekInfo implements TableCellRenderer {
 
-            private static final String FILENAME_PORTRAIT_DEFAULT = "default.gif";
             private static final String FILENAME_UNKNOWN_UNIT = "unknown_unit.gif";
             private static final long serialVersionUID = -9154596036677641620L;
 
@@ -3195,44 +3240,36 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 boolean blindDrop = clientgui.getClient().getGame().getOptions()
                         .booleanOption(OptionsConstants.BASE_BLIND_DROP);
                 boolean compact = butCompact.isSelected();
+                if (compact) {
+                    clearImage();
+                }
                 if (!isOwner && blindDrop) {
                     if (column == COL_UNIT) {
-                        if (compact) {
-                            clearImage();
-                        } else {
+                        if (!compact) {
                             Image image = getToolkit().getImage(
                                     new MegaMekFile(Configuration.miscImagesDir(),
                                             FILENAME_UNKNOWN_UNIT).toString());
-                            image = image.getScaledInstance(-1, 72,
-                                    Image.SCALE_DEFAULT);
+                            int size = (int)(GUIPreferences.getInstance().getGUIScale() * 70);
+                            image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
                             setImage(image);
                         }
+                        setToolTipText(null);
                     } else if (column == COL_PILOT) {
-                        if (compact) {
-                            clearImage();
-                        } else {
-                            Image image = getToolkit().getImage(
-                                    new MegaMekFile(Configuration.portraitImagesDir(),
-                                            FILENAME_PORTRAIT_DEFAULT)
-                                            .toString());
-                            image = image.getScaledInstance(-1, 50,
-                                    Image.SCALE_DEFAULT);
-                            setImage(image);
+                        if (!compact) {
+                            Image image = MMStaticDirectoryManager.getDefaultPortrait();
+                            int size = (int)(GUIPreferences.getInstance().getGUIScale() * 70);
+                            setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
                         }
+                        setToolTipText(null);
                     }
                 } else {
                     if (column == COL_UNIT) {
-                        if (compact) {
-                            clearImage();
-                        } else {
+                        if (!compact) {
                             clientgui.loadPreviewImage(getLabel(), entity);
                         }
                         setToolTipText(formatUnitTooltip(entity));
-                        setLoad(entity.getTransportId() != Entity.NONE);
                     } else if (column == COL_PILOT) {
-                        if (compact) {
-                            clearImage();
-                        } else {
+                        if (!compact) {
                             setPortrait(entity.getCrew());
                         }
                         setToolTipText("<HTML>" + PilotToolTip.getPilotTipDetailed(entity) + "</HTML>");
@@ -3276,9 +3313,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             public void setPortrait(Crew pilot) {
-                String category = pilot.getPortraitCategory(0);
-                String file = pilot.getPortraitFileName(0);
-                setImage(MMStaticDirectoryManager.getPreviewPortraitImage(category, file));
+                Image image = MMStaticDirectoryManager.getPortraitImage(pilot, 0);
+                int size = (int)(GUIPreferences.getInstance().getGUIScale() * 70);
+                setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
             }
 
         }
@@ -3693,19 +3730,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         @Override
         public void mousePressed(MouseEvent e) {
-            maybeShowPopup(e);
+            if (e.isPopupTrigger() && tableEntities.getSelectedRowCount() > 0) {
+                showPopup(e);
+            }
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            maybeShowPopup(e);
+            if (e.isPopupTrigger() && tableEntities.getSelectedRowCount() > 0) {
+                showPopup(e);
+            }
         }
 
-        private void maybeShowPopup(MouseEvent e) {
+        private void showPopup(MouseEvent e) {
             JPopupMenu popup = new JPopupMenu();
-            if (tableEntities.getSelectedRowCount() == 0) {
-                return;
-            }
             int[] rows = tableEntities.getSelectedRows();
             int row = tableEntities.getSelectedRow();
             boolean oneSelected = tableEntities.getSelectedRowCount() == 1;
@@ -3729,6 +3767,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
             boolean isSearchlight = clientgui.getClient().getGame().getPlanetaryConditions()
                     .getLight() > PlanetaryConditions.L_DUSK;
+
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
@@ -3788,462 +3827,436 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 prevEntity = en;
             }
-            if (e.isPopupTrigger()) {
-                // This menu uses the following Mnemonics:
-                // B, C, D, E, I, O, R, V
-                JMenuItem menuItem;
-                if (oneSelected) {
-                    menuItem = new JMenuItem("View...");
-                    menuItem.setActionCommand("VIEW");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(isOwner || !blindDrop);
-                    menuItem.setMnemonic(KeyEvent.VK_V);
-                    popup.add(menuItem);
-                }
-
-                if (oneSelected) {
-                    menuItem = new JMenuItem("Configure...");
-                    menuItem.setActionCommand("CONFIGURE");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(isOwner || isBot);
-                } else {
-                    menuItem = new JMenuItem("Configure all");
-                    menuItem.setActionCommand("CONFIGURE_ALL");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(canConfigureAll(entities));
-                }
-                menuItem.setMnemonic(KeyEvent.VK_C);
+            // This menu uses the following Mnemonics:
+            // B, C, D, E, I, O, R, V
+            JMenuItem menuItem;
+            if (oneSelected) {
+                menuItem = new JMenuItem("View...");
+                menuItem.setActionCommand("VIEW");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || !blindDrop);
+                menuItem.setMnemonic(KeyEvent.VK_V);
                 popup.add(menuItem);
+            }
 
-                if (oneSelected) {
-                    menuItem = new JMenuItem("Edit Damage...");
-                    menuItem.setActionCommand("DAMAGE");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(isOwner || isBot);
-                    menuItem.setMnemonic(KeyEvent.VK_E);
-                    popup.add(menuItem);
-                }
-
-
-                menuItem = new JMenuItem("Set individual camo");
-                menuItem.setActionCommand("INDI_CAMO");
+            if (oneSelected) {
+                menuItem = new JMenuItem("Configure...");
+                menuItem.setActionCommand("CONFIGURE");
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_I);
+            } else {
+                menuItem = new JMenuItem("Configure all");
+                menuItem.setActionCommand("CONFIGURE_ALL");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(canConfigureAll(entities));
+            }
+            menuItem.setMnemonic(KeyEvent.VK_C);
+            popup.add(menuItem);
+
+            if (oneSelected) {
+                menuItem = new JMenuItem("Edit Damage...");
+                menuItem.setActionCommand("DAMAGE");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_E);
                 popup.add(menuItem);
+            }
 
-                if (oneSelected) {
-                    menuItem = new JMenuItem("View BV Calculation...");
-                    menuItem.setActionCommand("BV");
-                    menuItem.addActionListener(this);
-                    menuItem.setMnemonic(KeyEvent.VK_B);
-                    popup.add(menuItem);
-                }
 
-                menuItem = new JMenuItem("Delete...");
-                menuItem.setActionCommand("DELETE");
+            menuItem = new JMenuItem("Set individual camo");
+            menuItem.setActionCommand("INDI_CAMO");
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(isOwner || isBot);
+            menuItem.setMnemonic(KeyEvent.VK_I);
+            popup.add(menuItem);
+
+            if (oneSelected) {
+                menuItem = new JMenuItem("View BV Calculation...");
+                menuItem.setActionCommand("BV");
                 menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_D);
+                menuItem.setMnemonic(KeyEvent.VK_B);
                 popup.add(menuItem);
+            }
 
-                //region Randomize Submenu
-                // This menu uses the following Mnemonic Keys:
-                // C, N, S
-                JMenu menu = new JMenu("Randomize");
-                menu.setMnemonic(KeyEvent.VK_R);
+            menuItem = new JMenuItem("Delete...");
+            menuItem.setActionCommand("DELETE");
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(isOwner || isBot);
+            menuItem.setMnemonic(KeyEvent.VK_D);
+            popup.add(menuItem);
 
-                menuItem = new JMenuItem("Name");
-                menuItem.setActionCommand(NAME_COMMAND);
+            //region Randomize Submenu
+            // This menu uses the following Mnemonic Keys:
+            // C, N, S
+            JMenu menu = new JMenu("Randomize");
+            menu.setMnemonic(KeyEvent.VK_R);
+
+            menuItem = new JMenuItem("Name");
+            menuItem.setActionCommand(NAME_COMMAND);
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(isOwner || isBot);
+            menuItem.setMnemonic(KeyEvent.VK_N);
+            menu.add(menuItem);
+
+            menuItem = new JMenuItem("Callsign");
+            menuItem.setActionCommand(CALLSIGN_COMMAND);
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(isOwner || isBot);
+            menuItem.setMnemonic(KeyEvent.VK_C);
+            menu.add(menuItem);
+
+            menuItem = new JMenuItem("Skills");
+            menuItem.setActionCommand("SKILLS");
+            menuItem.addActionListener(this);
+            menuItem.setEnabled(isOwner || isBot);
+            menuItem.setMnemonic(KeyEvent.VK_S);
+            menu.add(menuItem);
+            popup.add(menu);
+            //endregion Randomize Submenu
+
+            // Change Owner Menu Item
+            menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
+            menu.setEnabled(isOwner || isBot);
+            menu.setMnemonic(KeyEvent.VK_O);
+            Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
+            while (players.hasMoreElements() && (isOwner || isBot)) {
+                IPlayer p = players.nextElement();
+                //
+                if (!entity.getOwner().equals(p)) {
+                    menuItem = new JMenuItem(p.getName());
+                    menuItem.setActionCommand("CHANGE_OWNER|" + p.getId());
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled((isOwner || isBot));
+                    menu.add(menuItem);
+                }
+            }
+            popup.add(menu);
+
+            if (allUnloaded) {
+                menu = new JMenu("Load...");
+                JMenu menuDocking = new JMenu("Dock With...");
+                JMenu menuSquadrons = new JMenu("Join...");
+                JMenu menuMounting = new JMenu("Mount...");
+                JMenu menuClamp = new JMenu("Mag Clamp...");
+                JMenu menuLoadAll = new JMenu("Load All Into");
+                boolean canLoad = false;
+                boolean allHaveMagClamp = true;
+                for (Entity b : entities) {
+                    if (b.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
+                            || b.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                        allHaveMagClamp &= b.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
+                    }
+                }
+                for (Entity loader : clientgui.getClient().getGame().getEntitiesVector()) {
+                    // TODO don't allow capital fighters to load one another
+                    // at the moment
+                    if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
+                        continue;
+                    }
+                    boolean loadable = true;
+                    for (Entity en : entities) {
+                        if (!loader.canLoad(en, false)
+                                || (loader.getId() == en.getId())
+                                //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
+                                || (loader.canTow(en.getId()))) {
+                            loadable = false;
+                            break;
+                        }
+                    }
+                    if (loadable) {
+                        canLoad = true;
+                        menuItem = new JMenuItem(loader.getShortName());
+                        menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                        menuLoadAll.add(menuItem);
+                        JMenu subMenu = new JMenu(loader.getShortName());
+                        if ((loader instanceof FighterSquadron) && allCapFighter) {
+                            menuItem = new JMenuItem("Join " + loader.getShortName());
+                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                            menuItem.addActionListener(this);
+                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                            menuSquadrons.add(menuItem);
+                        } else if ((loader instanceof Jumpship) && allDropships) {
+                            int freeCollars = 0;
+                            for (Transporter t : loader.getTransports()) {
+                                if (t instanceof DockingCollar) {
+                                    freeCollars += t.getUnused();
+                                }
+                            }
+                            menuItem = new JMenuItem(
+                                    loader.getShortName() + " (Free Collars: " + freeCollars + ")");
+                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                            menuItem.addActionListener(this);
+                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                            menuDocking.add(menuItem);
+                        } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()
+                                // Only load magclamps if applicable
+                                && loader.hasUnloadedClampMount()
+                                // Only choose MagClamps as last option
+                                && (loader.getUnused(entities.get(0)) < 2)) {
+                            for (Transporter t : loader.getTransports()) {
+                                if ((t instanceof ClampMountMech) || (t instanceof ClampMountTank)) {
+                                    menuItem = new JMenuItem("Onto " + loader.getShortName());
+                                    menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                                    menuItem.addActionListener(this);
+                                    menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                    menuClamp.add(menuItem);
+                                }
+                            }
+                        } else if (allProtomechs && allHaveMagClamp
+                                && loader.hasETypeFlag(Entity.ETYPE_MECH)) {
+                            Transporter front = null;
+                            Transporter rear = null;
+                            for (Transporter t : loader.getTransports()) {
+                                if (t instanceof ProtomechClampMount) {
+                                    if (((ProtomechClampMount) t).isRear()) {
+                                        rear = t;
+                                    } else {
+                                        front = t;
+                                    }
+                                }
+                            }
+                            Entity en = entities.firstElement();
+                            if ((front != null) && front.canLoad(en)
+                                    && ((en.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
+                                            || (rear == null) || rear.getLoadedUnits().isEmpty())) {
+                                menuItem = new JMenuItem("Onto Front");
+                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":0");
+                                menuItem.addActionListener(this);
+                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                subMenu.add(menuItem);
+                            }
+                            boolean frontUltra = (front != null)
+                                    && front.getLoadedUnits().stream()
+                                    .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+                            if ((rear != null) && rear.canLoad(en) && !frontUltra) {
+                                menuItem = new JMenuItem("Onto Rear");
+                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":1");
+                                menuItem.addActionListener(this);
+                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                subMenu.add(menuItem);
+                            }
+                            if (subMenu.getItemCount() > 0) {
+                                menuClamp.add(subMenu);
+                            }
+                        } else if (allInfantry) {
+                            menuItem = new JMenuItem(loader.getShortName());
+                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+                            menuItem.addActionListener(this);
+                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                            menuMounting.add(menuItem);
+                        }
+                        Entity en = entities.firstElement();
+                        if (allSameEntityType && !allDropships) {
+                            for (Transporter t : loader.getTransports()) {
+                                if (t.canLoad(en)) {
+                                    if (t instanceof Bay) {
+                                        Bay bay = (Bay) t;
+                                        menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
+                                                + "Slots: "
+                                                + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
+                                                + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
+                                                + ")");
+                                        menuItem.setActionCommand(
+                                                "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
+                                        /*
+                                         * } else { menuItem = new
+                                         * JMenuItem(
+                                         * t.getClass().getName()+
+                                         * "Transporter" );
+                                         * menuItem.setActionCommand("LOAD|"
+                                         * + loader.getId() + ":-1"); }
+                                         */
+                                        menuItem.addActionListener(this);
+                                        menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+                                        subMenu.add(menuItem);
+                                    }
+                                }
+                            }
+                            if (subMenu.getMenuComponentCount() > 0) {
+                                menu.add(subMenu);
+                            }
+                        }
+                    }
+                }
+                if (canLoad) {
+                    if (menu.getMenuComponentCount() > 0) {
+                        menu.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menu);
+                        popup.add(menu);
+                    }
+                    if (menuDocking.getMenuComponentCount() > 0) {
+                        menuDocking.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menuDocking);
+                        popup.add(menuDocking);
+                    }
+                    if (menuSquadrons.getMenuComponentCount() > 0) {
+                        menuSquadrons.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menuSquadrons);
+                        popup.add(menuSquadrons);
+                    }
+                    if (menuMounting.getMenuComponentCount() > 0) {
+                        menuMounting.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menuMounting);
+                        popup.add(menuMounting);
+                    }
+                    if (menuClamp.getMenuComponentCount() > 0) {
+                        menuClamp.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menuClamp);
+                        popup.add(menuClamp);
+                    }
+                    boolean hasMounting = menuMounting.getMenuComponentCount() > 0;
+                    boolean hasSquadrons = menuSquadrons.getMenuComponentCount() > 0;
+                    boolean hasDocking = menuDocking.getMenuComponentCount() > 0;
+                    boolean hasLoad = menu.getMenuComponentCount() > 0;
+                    boolean hasClamp = menuClamp.getMenuComponentCount() > 0;
+                    if ((menuLoadAll.getMenuComponentCount() > 0)
+                            && !(hasMounting || hasSquadrons || hasDocking || hasLoad || hasClamp)) {
+                        menuLoadAll.setEnabled((isOwner || isBot) && allUnloaded);
+                        MenuScroller.createScrollBarsOnMenus(menuLoadAll);
+                        popup.add(menuLoadAll);
+                    }
+                }
+            } else if (allLoaded) {
+                menuItem = new JMenuItem("Unload");
+                menuItem.setActionCommand("UNLOAD");
                 menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_N);
-                menu.add(menuItem);
-
-                menuItem = new JMenuItem("Callsign");
-                menuItem.setActionCommand(CALLSIGN_COMMAND);
+                menuItem.setEnabled((isOwner || isBot) && allLoaded);
+                popup.add(menuItem);
+            }
+            if (oneSelected && (entity.getLoadedUnits().size() > 0)) {
+                menuItem = new JMenuItem("Unload All Carried Units");
+                menuItem.setActionCommand("UNLOADALL");
                 menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_C);
-                menu.add(menuItem);
-
-                menuItem = new JMenuItem("Skills");
-                menuItem.setActionCommand("SKILLS");
+                menuItem.setEnabled((isOwner || isBot));
+                popup.add(menuItem);
+                JMenu subMenu = new JMenu("Unload All From...");
+                for (Bay bay : entity.getTransportBays()) {
+                    if (bay.getLoadedUnits().size() > 0) {
+                        menuItem = new JMenuItem(
+                                "Bay # " + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)");
+                        menuItem.setActionCommand("UNLOADALLFROMBAY|" + bay.getBayNumber());
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled((isOwner || isBot));
+                        subMenu.add(menuItem);
+                    }
+                }
+                if (subMenu.getItemCount() > 0) {
+                    subMenu.setEnabled((isOwner || isBot));
+                    popup.add(subMenu);
+                }
+            }
+            if (allCapFighter && allUnloaded && sameSide) {
+                menuItem = new JMenuItem("Start Fighter Squadron");
+                menuItem.setActionCommand("SQUADRON");
                 menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_S);
-                menu.add(menuItem);
-                popup.add(menu);
-                //endregion Randomize Submenu
-
-                // Change Owner Menu Item
-                menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
-                menu.setEnabled(isOwner || isBot);
-                menu.setMnemonic(KeyEvent.VK_O);
-                Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
-                while (players.hasMoreElements() && (isOwner || isBot)) {
-                    IPlayer p = players.nextElement();
-                    //
-                    if (!entity.getOwner().equals(p)) {
-                        menuItem = new JMenuItem(p.getName());
-                        menuItem.setActionCommand("CHANGE_OWNER|" + p.getId());
+                menuItem.setEnabled((isOwner || isBot) && allCapFighter);
+                popup.add(menuItem);
+            }
+            if (oneSelected) {
+                menu = new JMenu("Swap pilots with");
+                boolean canSwap = false;
+                for (Entity swapper : clientgui.getClient().getGame().getEntitiesVector()) {
+                    if (swapper.isCapitalFighter()) {
+                        continue;
+                    }
+                    // only swap your own pilots and with the same unit and crew type
+                    if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
+                            && (swapper.getUnitType() == entity.getUnitType())
+                            && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
+                        canSwap = true;
+                        menuItem = new JMenuItem(swapper.getShortName());
+                        menuItem.setActionCommand("SWAP|" + swapper.getId());
                         menuItem.addActionListener(this);
                         menuItem.setEnabled((isOwner || isBot));
                         menu.add(menuItem);
                     }
                 }
-                popup.add(menu);
-
-                if (allUnloaded) {
-                    menu = new JMenu("Load...");
-                    JMenu menuDocking = new JMenu("Dock With...");
-                    JMenu menuSquadrons = new JMenu("Join...");
-                    JMenu menuMounting = new JMenu("Mount...");
-                    JMenu menuClamp = new JMenu("Mag Clamp...");
-                    JMenu menuLoadAll = new JMenu("Load All Into");
-                    boolean canLoad = false;
-                    boolean allHaveMagClamp = true;
-                    for (Entity b : entities) {
-                        if (b.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                                || b.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                            allHaveMagClamp &= b.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
-                        }
-                    }
-                    for (Entity loader : clientgui.getClient().getGame().getEntitiesVector()) {
-                        // TODO don't allow capital fighters to load one another
-                        // at the moment
-                        if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
-                            continue;
-                        }
-                        boolean loadable = true;
-                        for (Entity en : entities) {
-                            if (!loader.canLoad(en, false)
-                                    || (loader.getId() == en.getId())
-                                    //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
-                                    || (loader.canTow(en.getId()))) {
-                                loadable = false;
-                                break;
-                            }
-                        }
-                        if (loadable) {
-                            canLoad = true;
-                            menuItem = new JMenuItem(loader.getShortName());
-                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-                            menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                            menuLoadAll.add(menuItem);
-                            JMenu subMenu = new JMenu(loader.getShortName());
-                            if ((loader instanceof FighterSquadron) && allCapFighter) {
-                                menuItem = new JMenuItem("Join " + loader.getShortName());
-                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-                                menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                menuSquadrons.add(menuItem);
-                            } else if ((loader instanceof Jumpship) && allDropships) {
-                                int freeCollars = 0;
-                                for (Transporter t : loader.getTransports()) {
-                                    if (t instanceof DockingCollar) {
-                                        freeCollars += t.getUnused();
-                                    }
-                                }
-                                menuItem = new JMenuItem(
-                                        loader.getShortName() + " (Free Collars: " + freeCollars + ")");
-                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-                                menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                menuDocking.add(menuItem);
-                            } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()
-                                    // Only load magclamps if applicable
-                                    && loader.hasUnloadedClampMount()
-                                    // Only choose MagClamps as last option
-                                    && (loader.getUnused(entities.get(0)) < 2)) {
-                                for (Transporter t : loader.getTransports()) {
-                                    if ((t instanceof ClampMountMech) || (t instanceof ClampMountTank)) {
-                                        menuItem = new JMenuItem("Onto " + loader.getShortName());
-                                        menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-                                        menuItem.addActionListener(this);
-                                        menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                        menuClamp.add(menuItem);
-                                    }
-                                }
-                            } else if (allProtomechs && allHaveMagClamp
-                                    && loader.hasETypeFlag(Entity.ETYPE_MECH)) {
-                                Transporter front = null;
-                                Transporter rear = null;
-                                for (Transporter t : loader.getTransports()) {
-                                    if (t instanceof ProtomechClampMount) {
-                                        if (((ProtomechClampMount) t).isRear()) {
-                                            rear = t;
-                                        } else {
-                                            front = t;
-                                        }
-                                    }
-                                }
-                                Entity en = entities.firstElement();
-                                if ((front != null) && front.canLoad(en)
-                                        && ((en.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
-                                        || (rear == null) || rear.getLoadedUnits().isEmpty())) {
-                                    menuItem = new JMenuItem("Onto Front");
-                                    menuItem.setActionCommand("LOAD|" + loader.getId() + ":0");
-                                    menuItem.addActionListener(this);
-                                    menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                    subMenu.add(menuItem);
-                                }
-                                boolean frontUltra = (front != null)
-                                        && front.getLoadedUnits().stream()
-                                        .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
-                                if ((rear != null) && rear.canLoad(en) && !frontUltra) {
-                                    menuItem = new JMenuItem("Onto Rear");
-                                    menuItem.setActionCommand("LOAD|" + loader.getId() + ":1");
-                                    menuItem.addActionListener(this);
-                                    menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                    subMenu.add(menuItem);
-                                }
-                                if (subMenu.getItemCount() > 0) {
-                                    menuClamp.add(subMenu);
-                                }
-                            } else if (allInfantry) {
-                                menuItem = new JMenuItem(loader.getShortName());
-                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-                                menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                menuMounting.add(menuItem);
-                            }
-                            Entity en = entities.firstElement();
-                            if (allSameEntityType && !allDropships) {
-                                for (Transporter t : loader.getTransports()) {
-                                    if (t.canLoad(en)) {
-                                        if (t instanceof Bay) {
-                                            Bay bay = (Bay) t;
-                                            menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
-                                                    + "Slots: "
-                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
-                                                    + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
-                                                    + ")");
-                                            menuItem.setActionCommand(
-                                                    "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
-                                            /*
-                                             * } else { menuItem = new
-                                             * JMenuItem(
-                                             * t.getClass().getName()+
-                                             * "Transporter" );
-                                             * menuItem.setActionCommand("LOAD|"
-                                             * + loader.getId() + ":-1"); }
-                                             */
-                                            menuItem.addActionListener(this);
-                                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
-                                            subMenu.add(menuItem);
-                                        }
-                                    }
-                                }
-                                if (subMenu.getMenuComponentCount() > 0) {
-                                    menu.add(subMenu);
-                                }
-                            }
-                        }
-                    }
-                    if (canLoad) {
-                        if (menu.getMenuComponentCount() > 0) {
-                            menu.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menu);
-                            popup.add(menu);
-                        }
-                        if (menuDocking.getMenuComponentCount() > 0) {
-                            menuDocking.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menuDocking);
-                            popup.add(menuDocking);
-                        }
-                        if (menuSquadrons.getMenuComponentCount() > 0) {
-                            menuSquadrons.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menuSquadrons);
-                            popup.add(menuSquadrons);
-                        }
-                        if (menuMounting.getMenuComponentCount() > 0) {
-                            menuMounting.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menuMounting);
-                            popup.add(menuMounting);
-                        }
-                        if (menuClamp.getMenuComponentCount() > 0) {
-                            menuClamp.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menuClamp);
-                            popup.add(menuClamp);
-                        }
-                        boolean hasMounting = menuMounting.getMenuComponentCount() > 0;
-                        boolean hasSquadrons = menuSquadrons.getMenuComponentCount() > 0;
-                        boolean hasDocking = menuDocking.getMenuComponentCount() > 0;
-                        boolean hasLoad = menu.getMenuComponentCount() > 0;
-                        boolean hasClamp = menuClamp.getMenuComponentCount() > 0;
-                        if ((menuLoadAll.getMenuComponentCount() > 0)
-                                && !(hasMounting || hasSquadrons || hasDocking || hasLoad || hasClamp)) {
-                            menuLoadAll.setEnabled((isOwner || isBot) && allUnloaded);
-                            MenuScroller.createScrollBarsOnMenus(menuLoadAll);
-                            popup.add(menuLoadAll);
-                        }
-                    }
-                } else if (allLoaded) {
-                    menuItem = new JMenuItem("Unload");
-                    menuItem.setActionCommand("UNLOAD");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot) && allLoaded);
-                    popup.add(menuItem);
+                if (canSwap) {
+                    menu.setEnabled((isOwner || isBot) && canSwap);
+                    popup.add(menu);
                 }
-                if (oneSelected && (entity.getLoadedUnits().size() > 0)) {
-                    menuItem = new JMenuItem("Unload All Carried Units");
-                    menuItem.setActionCommand("UNLOADALL");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot));
-                    popup.add(menuItem);
-                    JMenu subMenu = new JMenu("Unload All From...");
-                    for (Bay bay : entity.getTransportBays()) {
-                        if (bay.getLoadedUnits().size() > 0) {
-                            menuItem = new JMenuItem(
-                                    "Bay # " + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)");
-                            menuItem.setActionCommand("UNLOADALLFROMBAY|" + bay.getBayNumber());
-                            menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot));
-                            subMenu.add(menuItem);
-                        }
-                    }
-                    if (subMenu.getItemCount() > 0) {
-                        subMenu.setEnabled((isOwner || isBot));
-                        popup.add(subMenu);
-                    }
-                }
-                if (allCapFighter && allUnloaded && sameSide) {
-                    menuItem = new JMenuItem("Start Fighter Squadron");
-                    menuItem.setActionCommand("SQUADRON");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot) && allCapFighter);
-                    popup.add(menuItem);
-                }
-                if (oneSelected) {
-                    menu = new JMenu("Swap pilots with");
-                    boolean canSwap = false;
-                    for (Entity swapper : clientgui.getClient().getGame().getEntitiesVector()) {
-                        if (swapper.isCapitalFighter()) {
-                            continue;
-                        }
-                        // only swap your own pilots and with the same unit and crew type
-                        if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
-                                && (swapper.getUnitType() == entity.getUnitType())
-                                && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
-                            canSwap = true;
-                            menuItem = new JMenuItem(swapper.getShortName());
-                            menuItem.setActionCommand("SWAP|" + swapper.getId());
-                            menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot));
-                            menu.add(menuItem);
-                        }
-                    }
-                    if (canSwap) {
-                        menu.setEnabled((isOwner || isBot) && canSwap);
-                        popup.add(menu);
-                    }
-                }
-
-                // Set Rapid Fire MGs
-                if (isRapidFireMG || isHotLoad || isSearchlight) {
-                    menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
-                    if (isRapidFireMG && hasMGs) {
-                        if (hasRapidFireMG) {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOff"));
-                            menuItem.setActionCommand("RAPIDFIREMG_OFF");
-                        } else {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOn"));
-                            menuItem.setActionCommand("RAPIDFIREMG_ON");
-                        }
-                        menuItem.addActionListener(this);
-                        menuItem.setEnabled(isOwner || isBot);
-                        menu.add(menuItem);
-                    }
-                    if (isHotLoad && hasLRMS) {
-                        if (hasHotLoad) {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOff"));
-                            menuItem.setActionCommand("HOTLOAD_OFF");
-                        } else {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOn"));
-                            menuItem.setActionCommand("HOTLOAD_ON");
-                        }
-                        menuItem.addActionListener(this);
-                        menuItem.setEnabled(isOwner || isBot);
-                        menu.add(menuItem);
-                    }
-                    if (isSearchlight) {
-                        if (hasSearchlight) {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOff"));
-                            menuItem.setActionCommand("SEARCHLIGHT_OFF");
-                        } else {
-                            menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOn"));
-                            menuItem.setActionCommand("SEARCHLIGHT_ON");
-                        }
-                        menuItem.addActionListener(this);
-                        boolean loneEntityWithQuirk = oneSelected && isQuirksEnabled
-                                && entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
-                        menuItem.setEnabled((isOwner || isBot) && !loneEntityWithQuirk);
-                        menu.add(menuItem);
-                    }
-                    if (menu.getMenuComponentCount() > 0) {
-                        popup.add(menu);
-                    }
-                }
-
-                if (isQuirksEnabled) {
-                    menuItem = new JMenuItem("Save Quirks for Chassis");
-                    menuItem.setActionCommand("SAVE_QUIRKS_ALL");
-                    menuItem.addActionListener(this);
-                    popup.add(menuItem);
-                    menuItem = new JMenuItem("Save Quirks for Chassis/Model");
-                    menuItem.setActionCommand("SAVE_QUIRKS_MODEL");
-                    menuItem.addActionListener(this);
-                    popup.add(menuItem);
-                }
-
-                popup.show(e.getComponent(), e.getX(), e.getY());
             }
-        }
 
+            // Set Rapid Fire MGs
+            if (isRapidFireMG || isHotLoad || isSearchlight) {
+                menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
+                if (isRapidFireMG && hasMGs) {
+                    if (hasRapidFireMG) {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOff"));
+                        menuItem.setActionCommand("RAPIDFIREMG_OFF");
+                    } else {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOn"));
+                        menuItem.setActionCommand("RAPIDFIREMG_ON");
+                    }
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled(isOwner || isBot);
+                    menu.add(menuItem);
+                }
+                if (isHotLoad && hasLRMS) {
+                    if (hasHotLoad) {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOff"));
+                        menuItem.setActionCommand("HOTLOAD_OFF");
+                    } else {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOn"));
+                        menuItem.setActionCommand("HOTLOAD_ON");
+                    }
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled(isOwner || isBot);
+                    menu.add(menuItem);
+                }
+                if (isSearchlight) {
+                    if (hasSearchlight) {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOff"));
+                        menuItem.setActionCommand("SEARCHLIGHT_OFF");
+                    } else {
+                        menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOn"));
+                        menuItem.setActionCommand("SEARCHLIGHT_ON");
+                    }
+                    menuItem.addActionListener(this);
+                    boolean loneEntityWithQuirk = oneSelected && isQuirksEnabled
+                            && entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                    menuItem.setEnabled((isOwner || isBot) && !loneEntityWithQuirk);
+                    menu.add(menuItem);
+                }
+                if (menu.getMenuComponentCount() > 0) {
+                    popup.add(menu);
+                }
+            }
+
+            if (isQuirksEnabled) {
+                menuItem = new JMenuItem("Save Quirks for Chassis");
+                menuItem.setActionCommand("SAVE_QUIRKS_ALL");
+                menuItem.addActionListener(this);
+                popup.add(menuItem);
+                menuItem = new JMenuItem("Save Quirks for Chassis/Model");
+                menuItem.setActionCommand("SAVE_QUIRKS_MODEL");
+                menuItem.addActionListener(this);
+                popup.add(menuItem);
+            }
+
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
     }
 
+    /** The panel that displays each entry in the Unit table */
     public static class MekInfo extends JPanel {
         private static final long serialVersionUID = -7337823041775639463L;
 
         private JLabel lblImage;
-        private JLabel lblLoad;
 
         public MekInfo() {
-
-            lblImage = new JLabel();
-            lblLoad = new JLabel();
-
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints c = new GridBagConstraints();
             setLayout(gridbag);
-
-            c.fill = GridBagConstraints.NONE;
-            c.insets = new Insets(1, 1, 1, 1);
-            c.gridx = 0;
-            c.gridy = 0;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            c.gridwidth = 1;
-            c.gridheight = 1;
-            c.anchor = GridBagConstraints.CENTER;
-            gridbag.setConstraints(lblLoad, c);
-            add(lblLoad);
-
             c.fill = GridBagConstraints.BOTH;
-            c.insets = new Insets(1, 1, 1, 1);
-            c.gridx = 1;
-            c.gridy = 0;
+            c.insets = new Insets(1, 5, 1, 1);
             c.weightx = 1.0;
-            c.weighty = 1.0;
-            c.gridwidth = 1;
-            c.gridheight = 1;
             c.anchor = GridBagConstraints.NORTHWEST;
-            gridbag.setConstraints(lblImage, c);
-            add(lblImage);
-
+            lblImage = new JLabel();
             lblImage.setBorder(BorderFactory.createEmptyBorder());
+            add(lblImage, c);
         }
 
         public void setText(String s, boolean isSelected) {
@@ -4261,25 +4274,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public JLabel getLabel() {
             return lblImage;
         }
-
-        public void setLoad(boolean load) {
-            // if this is a loaded unit then do something with lblLoad to make
-            // it show up
-            // otherwise clear lblLoad
-            if (load) {
-                lblLoad.setText(" +");
-            } else {
-                lblLoad.setText("");
-            }
-        }
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            // Makes the tooltip appear immediately rescaled
+            updateTableHeaders();
+            setEntityTableRowHeight();
+            refreshEntities();
+            
+            // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)
             ToolTipManager manager = ToolTipManager.sharedInstance();
-            // Trigger immediately
             long time = System.currentTimeMillis() - manager.getInitialDelay() + 1;
             Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
             Point locationOnComponent = new Point(locationOnScreen);
@@ -4288,5 +4293,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     locationOnComponent.x, locationOnComponent.y, 0, 0, 1, false, 0);
             manager.mouseMoved(event);
         }
+    }
+    
+    /** Sets the row height of the Unit table according to compact mode and GUI scale */
+    private void setEntityTableRowHeight() {
+        int rowbaseHeight = butCompact.isSelected() ? 20 : 80;
+        int rowHeight = (int)(rowbaseHeight * GUIPreferences.getInstance().getGUIScale());
+        tableEntities.setRowHeight(rowHeight);
+    }
+    
+    /** Renews the table headers of the Unit table */
+    private void updateTableHeaders() {
+        JTableHeader header = tableEntities.getTableHeader();
+        TableColumnModel colMod = header.getColumnModel();
+        for (int i = 0; i < colMod.getColumnCount(); i++) {
+            TableColumn tabCol = colMod.getColumn(i);
+            tabCol.setHeaderValue(mekModel.getColumnName(i));
+        }
+        header.revalidate();
     }
 }

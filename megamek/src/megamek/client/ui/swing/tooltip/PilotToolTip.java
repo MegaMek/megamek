@@ -25,13 +25,14 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.options.*;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class PilotToolTip {
     
     // CONTROL
 
     /** The color of the pilot nickname */
-    private final static Color NICK_COLOR = new Color(40, 170, 40);
+    public final static Color NICK_COLOR = new Color(40, 170, 40);
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
 
@@ -65,7 +66,7 @@ public final class PilotToolTip {
         result.append(TABLE_END);
         
         // The crew advantages and MD
-        result.append(getScaledHTMLSpacer(8));
+//        result.append(getScaledHTMLSpacer(8));
         result.append(crewAdvs(entity, detailed));
         return result.toString();
     }
@@ -104,7 +105,7 @@ public final class PilotToolTip {
         }
         
         // Effective entity skill for the whole crew
-        result.append(getScaledHTMLSpacer(8));
+//        result.append(getScaledHTMLSpacer(8));
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result.append("Gunnery/Piloting: " + crew.getSkillsAsString(rpg_skills));
         

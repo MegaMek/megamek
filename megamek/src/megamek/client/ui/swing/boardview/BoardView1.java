@@ -654,6 +654,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
                     setToolTipText(getHexTooltip(e));
+                } else if (!game.getBoard().contains(mcoords)) {
+                    setToolTipText(null);
                 } else {
                     if (prevTipX > 0 && prevTipY > 0) {
                         int deltaX = point.x - prevTipX;
@@ -6004,7 +6006,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append(" width=6></TD><TD>"); //$NON-NLS-1$
 
                     // Entity tooltip
-                    txt.append(UnitToolTip.getEntityTooltip(eSprite.entity, getLocalPlayer()));
+                    txt.append(UnitToolTip.getEntityTipGame(eSprite.entity, getLocalPlayer()));
 
                     // ECM and ECCM source
                     if (eSprite.entity.hasActiveECM()) {

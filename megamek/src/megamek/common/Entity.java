@@ -7721,6 +7721,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
             roll.addModifier(4, "superheavy mech moving in building");
         }
+        
+        if (this.hasQuirk(OptionsConstants.QUIRK_NEG_OVERSIZED)) {
+            roll.addModifier(1, "oversized unit");
+        }
 
         int mod = 0;
         String desc;

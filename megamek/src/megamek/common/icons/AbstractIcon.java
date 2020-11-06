@@ -77,7 +77,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     public boolean hasDefaultCategory() {
-        return ROOT_CATEGORY.equals(getCategory());
+        // TODO : Java 11 : Swap to using isBlank()
+        return ROOT_CATEGORY.equals(getCategory()) || getCategory().trim().isEmpty();
     }
 
     public boolean hasDefaultFilename() {
@@ -196,7 +197,9 @@ public abstract class AbstractIcon implements Serializable {
 
     @Override
     public String toString() {
-        return getCategory() + "/" + getFilename();
+        return hasDefaultCategory() ? getFilename()
+                : (getCategory().endsWith("/") ? getCategory() + getFilename()
+                : getCategory() + "/" + getFilename());
     }
 
     @Override

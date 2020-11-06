@@ -28,6 +28,7 @@ VERSION HISTORY:
 + Issue #2267: Units are no longer able to fire ammo-based weapons that don't actually have any ammo (thus locking up the game)
 + Issue #1955: Mechs can deploy hidden in water as long as they are completely submerged
 + Issue #2377: Fuel Air Bombs size wrong
++ PR #2380: Implement "Oversized" quirk
 
 0.47.11 (2020-10-04 2100 UTC)
 + Data: Fixing missing ProtoMek Sprites

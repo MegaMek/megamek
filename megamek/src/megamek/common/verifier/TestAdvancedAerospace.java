@@ -1140,34 +1140,26 @@ public class TestAdvancedAerospace extends TestAero {
     
     @Override
     public String printLocations() {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         for (int i = 0; i < getEntity().locations(); i++) {
             String locationName = getEntity().getLocationName(i);
-            buff.append(locationName + ":");
-            buff.append("\n");
+            buff.append(locationName).append(":").append("\n");
             for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
                     j = getEntity().getNumberOfCriticals(i);                    
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        buff.append(Integer.toString(j)
-                                + ". UNKNOWN SYSTEM NAME");
+                        buff.append(j).append(". UNKNOWN SYSTEM NAME");
                         buff.append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     EquipmentType e = getEntity().getEquipmentType(slot);
-                    buff.append(Integer.toString(j) + ". "
-                            + e.getInternalName());
+                    buff.append(j).append(". ").append(e.getInternalName());
                     buff.append("\n");
                 }
             }
         }
-        return buff.toString();
-    }
-    
-    @Override
-    public boolean correctCriticals(StringBuffer buff) {
+
         double[] extra = extraSlotCost(vessel);
-        
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {
@@ -1178,7 +1170,8 @@ public class TestAdvancedAerospace extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return super.correctCriticals(buff);
+
+        return buff.toString();
     }
     
     @Override

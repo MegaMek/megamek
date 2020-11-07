@@ -862,13 +862,8 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
-        return buff.toString();
-    }
 
-    @Override
-    public boolean correctCriticals(StringBuffer buff) {
         double[] extra = extraSlotCost(getSmallCraft());
-        
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {
@@ -879,9 +874,9 @@ public class TestSmallCraft extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return super.correctCriticals(buff);
+        return buff.toString();
     }
-    
+
     @Override
     public String getName() {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {

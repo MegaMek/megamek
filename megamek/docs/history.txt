@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-0.47.12-SNAPSHOT 
+0.47.12 (2020-11-08 2230 UTC) 
 + PR #2310: Implement "Static Ammo Feed" quirk 
 + PR #2315: Prevent bot freeze when bot attempts to counter-battery fire using an on-board unit vs off-board artillery
 + PR #2308: Normalizes Data Files

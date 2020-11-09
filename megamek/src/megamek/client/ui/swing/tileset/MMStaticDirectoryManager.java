@@ -20,18 +20,10 @@ package megamek.client.ui.swing.tileset;
 
 import megamek.MegaMek;
 import megamek.common.util.fileUtils.ImageFileFactory;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
-import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
-import megamek.common.icons.AbstractIcon;
-import megamek.common.icons.Camouflage;
-import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.DirectoryItems;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class MMStaticDirectoryManager {
     //region Variable Declarations
@@ -191,90 +183,4 @@ public class MMStaticDirectoryManager {
         return getMechTileset();
     }
     //endregion Refreshers
-
-    //region Camouflage
-    /**
-     * Returns an Image of the camo pattern given
-     * by its category (aka directory) and name (aka filename).
-     * Will try to return an image if the category indicates
-     * that a color was selected.
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    @Deprecated
-    public static Image getCamoImage(String category, String name) {
-        // Return a fail image when parameters are null
-        if ((category == null) || (name == null)) {
-            return ImageUtil.failStandardImage();
-        }
-
-        // Make sure the camoDirectory has been initialized
-        // If the camoDirectory is still null, there's an error
-        // loading it which has been logged already
-        initializeCamouflage();
-        if (camouflageDirectory == null) {
-            return ImageUtil.failStandardImage();
-        }
-
-        // Try to get the camo image
-        try {
-            // A color was selected
-            if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
-                return colorCamoImage(PlayerColors.getColor(name));
-            }
-
-            // Translate the root camo directory name.
-            // This could be improved by translating before saving it
-            if (AbstractIcon.ROOT_CATEGORY.equals(category)) {
-                category = "";
-            }
-
-            Image image = (Image) camouflageDirectory.getItem(category, name);
-            // When getItem() doesn't find the category+name, it returns null
-            if (image != null) {
-                return image;
-            }
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
-        }
-
-        // An error must have occurred, fall back to the fail image
-        MegaMek.getLogger().error("Could not create camo image! Category: " + category + "; Name: " + name);
-        return ImageUtil.failStandardImage();
-    }
-
-    /**
-     * Returns an Image of the camo pattern or player color
-     * for the given entity.
-     * When the camo image cannot be created, a placeholder
-     * "fail" image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    @Deprecated
-    public static Image getEntityCamoImage(Entity entity) {
-        return getCamoImage(entity.getCamoCategory(), entity.getCamoFileName());
-    }
-
-    /**
-     * Returns a standard size (84x72) image of a single color.
-     * When color is null, a "fail" standard image is returned.
-     *
-     * @see ImageUtil#failStandardImage()
-     */
-    @Deprecated
-    public static BufferedImage colorCamoImage(Color color) {
-        if (color == null) {
-            MegaMek.getLogger().error("A null color was passed.");
-            return ImageUtil.failStandardImage();
-        }
-        BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = result.createGraphics();
-        graphics.setColor(color);
-        graphics.fillRect(0, 0, 84, 72);
-        return result;
-    }
-    //endregion Camouflage
 }

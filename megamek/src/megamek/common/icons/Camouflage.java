@@ -44,8 +44,7 @@ public class Camouflage extends AbstractIcon {
 
     @Override
     public Image getBaseImage() {
-        if ((MMStaticDirectoryManager.getCamouflage() == null) || (getCategory() == null)
-                || (getFilename() == null)) {
+        if (MMStaticDirectoryManager.getCamouflage() == null) {
             return null;
         } else if (Camouflage.NO_CAMOUFLAGE.equals(getCategory())) {
             return getColourCamouflageImage(PlayerColors.getColor(getFilename()));

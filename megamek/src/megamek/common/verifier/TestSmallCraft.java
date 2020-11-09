@@ -291,9 +291,9 @@ public class TestSmallCraft extends TestAero {
     public static double dropshipEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
-        } else if (year >= 2400) {
-            return 0.0715;
         } else if (year >= 2351) {
+            return 0.0715;
+        } else if (year >= 2300) {
             return 0.0845;
         } else if (year >= 2251) {
             return 0.091;
@@ -309,9 +309,9 @@ public class TestSmallCraft extends TestAero {
     public static double dropshipControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
-        } else if (year >= 2400) {
-            return 0.009;
         } else if (year >= 2351) {
+            return 0.009;
+        } else if (year >= 2300) {
             return 0.00975;
         } else if (year >= 2251) {
             return 0.0105;

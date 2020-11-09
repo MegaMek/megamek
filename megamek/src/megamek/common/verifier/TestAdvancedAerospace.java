@@ -770,17 +770,20 @@ public class TestAdvancedAerospace extends TestAero {
         // ten shots of ammo for each ammo-using weapon in the bay.
         for (Mounted bay : vessel.getWeaponBayList()) {
             if (bay.getBayWeapons().size() == 0) {
-                buff.append("Bay " + bay.getName() + " has no weapons\n");
+                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
             Map<Integer,Integer> ammoWeaponCount = new HashMap<>();
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = vessel.getEquipment(wNum);
+                if (w.isOneShotWeapon()) {
+                    continue;
+                }
                 if (w.getType() instanceof WeaponType) {
                     ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {
-                    buff.append(w.getName() + " in bay " + bay.getName() + " is not a weapon\n");
+                    buff.append(w.getName()).append(" in bay ").append(bay.getName()).append(" is not a weapon\n");
                     illegal = true;
                 }
             }
@@ -790,7 +793,7 @@ public class TestAdvancedAerospace extends TestAero {
                     ammoTypeCount.merge(((AmmoType)a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);
                 } else {
-                    buff.append(a.getName() + " in bay " + bay.getName() + " is not ammo\n");
+                    buff.append(a.getName()).append(" in bay ").append(bay.getName()).append(" is not ammo\n");
                     illegal = true;
                 }
             }
@@ -804,7 +807,7 @@ public class TestAdvancedAerospace extends TestAero {
                     }
                     if (!ammoTypeCount.containsKey(at)
                             || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay " + bay.getName() + " does not have the minimum 10 shots of ammo for each weapon\n");
+                        buff.append("Bay ").append(bay.getName()).append(" does not have the minimum 10 shots of ammo for each weapon\n");
                         illegal = true;
                         break;
                     }
@@ -812,7 +815,7 @@ public class TestAdvancedAerospace extends TestAero {
             }
             for (Integer at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
-                    buff.append("Bay " + bay.getName() + " has ammo for a weapon not in the bay\n");
+                    buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
                     illegal = true;
                     break;
                 }

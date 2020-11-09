@@ -613,6 +613,9 @@ public class TestSmallCraft extends TestAero {
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = smallCraft.getEquipment(wNum);
+                if (w.isOneShotWeapon()) {
+                    continue;
+                }
                 if (w.getType() instanceof WeaponType) {
                     ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {

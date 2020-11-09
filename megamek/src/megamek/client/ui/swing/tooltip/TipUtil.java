@@ -33,6 +33,28 @@ public final class TipUtil {
     final static String TABLE_END = "</TR></TBODY></TABLE>";
     
     /** 
+     * Returns a List wherein each element consists of an option group of the given 
+     * optGroups, which is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups()
+     * as well as the count of active options within that group, e.g. "Manei Domini (2)".
+     * A counter function for the options of a group must be supplied, in the form of
+     * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
+     * A namer function for the group names must be supplied, e.g. (e) -> weapon.getDesc().
+     */
+    public static List<String> getOptionListArray(Enumeration<IOptionGroup> optGroups, 
+            Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
+        
+        List<String> result = new ArrayList<String>();
+        while (optGroups.hasMoreElements()) {
+            IOptionGroup advGroup = optGroups.nextElement();
+            int numOpts = counter.apply(advGroup.getKey());
+            if (numOpts > 0) {
+                result.add(namer.apply(advGroup) + " (" + numOpts + ")");
+            }
+        }
+        return result;
+    }
+
+    /** 
      * Returns an HTML String listing the options given as optGroups, which
      * is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups().
      * A counter function for the options of a group must be supplied, in the form of
@@ -41,7 +63,7 @@ public final class TipUtil {
      * The group names are italicized.
      * The list is 40 characters wide with \u2B1D as option separator.
      */
-    static String getOptionList(Enumeration<IOptionGroup> optGroups, Function<String, Integer> counter, 
+    public static String getOptionList(Enumeration<IOptionGroup> optGroups, Function<String, Integer> counter, 
             Function<IOptionGroup, String> namer, boolean detailed) {
         if (detailed) {
             return optionListFull(optGroups, counter, namer);
@@ -57,7 +79,7 @@ public final class TipUtil {
      * e.g. e -> crew.countOptions(e) or e -> entity.countQuirks(e).
      * The list is 40 characters wide with \u2B1D as option separator.
      */
-    static String getOptionList(Enumeration<IOptionGroup> optGroups, 
+    public static String getOptionList(Enumeration<IOptionGroup> optGroups, 
             Function<String, Integer> counter, boolean detailed) {
         if (detailed) {
             return optionListFull(optGroups, counter, e -> e.getDisplayableName());
@@ -66,7 +88,7 @@ public final class TipUtil {
         }
     }
 
-    static String getScaledHTMLSpacer(final int unscaledSize) {
+    static String scaledHTMLSpacer(final int unscaledSize) {
         int scaledSize = (int)(GUIPreferences.getInstance().getGUIScale() * unscaledSize);  
         return "<P><IMG SRC=FILE:" + Configuration.widgetsDir() + "/Tooltip/TT_Spacer.png "
                 + "WIDTH=" + scaledSize + " HEIGHT=" + scaledSize + "></P>";
@@ -78,14 +100,9 @@ public final class TipUtil {
             Function<String, Integer> counter, Function<IOptionGroup, String> namer) {
         StringBuilder result = new StringBuilder();
         
-//        boolean firstGroup = true;
         while (advGroups.hasMoreElements()) {
             IOptionGroup advGroup = advGroups.nextElement();
             if (counter.apply(advGroup.getKey()) > 0) {
-                // Add a <BR> before each group but the first
-//                result.append(firstGroup ? "" : "<BR>");
-//                firstGroup = false;
-
                 // Group title
                 result.append("<I>" + namer.apply(advGroup) + ":</I><BR>");
                 

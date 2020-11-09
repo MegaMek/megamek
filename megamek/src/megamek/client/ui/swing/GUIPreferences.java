@@ -109,7 +109,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOFTCENTER = "SoftCenter";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
-    public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
     public static final String DISPLAY_POS_X = "DisplayPosX";
@@ -140,6 +139,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String IMAGE_CHOOSER_SIZE_HEIGHT = "ImageChooserSizeHeight";
     public static final String IMAGE_CHOOSER_SIZE_WIDTH = "ImageChooserSizeWidth";
     public static final String IMAGE_CHOOSER_SPLIT_POS = "ImageChooserSplitPos";
+    public static final String LOBBY_MEKTABLE_UNIT_WIDTH = "LobbyMektableUnitWidth";
+    public static final String LOBBY_MEKTABLE_PILOT_WIDTH = "LobbyMektablePilotWidth";
+    public static final String LOBBY_MEKTABLE_PLAYER_WIDTH = "LobbyMektablePlayerWidth";
+    public static final String LOBBY_MEKTABLE_BV_WIDTH = "LobbyMektableBVWidth";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -325,7 +328,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LEVELHIGHLIGHT, false);
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
-        store.setDefault(CHAT_LOUNGE_TABS, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
@@ -346,6 +348,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
         store.setDefault(IMAGE_CHOOSER_SIZE_HEIGHT, 400);
         store.setDefault(IMAGE_CHOOSER_SPLIT_POS, 50);
+        store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
+        store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
+        store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
+        store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -494,10 +500,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(AUTO_DECLARE_SEARCHLIGHT);
     }
 
-    public boolean getChatLoungeTabs() {
-        return store.getBoolean(CHAT_LOUNGE_TABS);
-    }
-    
     public int getCustomUnitHeight() {
         return store.getInt(CUSTOM_UNIT_HEIGHT);
     }
@@ -977,10 +979,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAutoDeclareSearchlight(boolean state) {
         store.setValue(AUTO_DECLARE_SEARCHLIGHT, state);
-    }
-
-    public void setChatloungeTabs(boolean state) {
-        store.setValue(CHAT_LOUNGE_TABS, state);
     }
 
     public void setCustomUnitHeight(int state) {

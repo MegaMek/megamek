@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ChatLounge;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
@@ -49,7 +50,7 @@ public final class UnitToolTip {
     // test board editor names (clifftop, bldgs)
     // GUIScale to 0.7..2.4, 1 middle
     // Pilot: only 1 G/P for all, arrange portraits in 1 row
-    //TODO: Summary of Quirks in game
+    // Summary of Quirks in game
     // wps / armor 1 size smaller?
     // blind drop tooltips!
     // compact mode: partial repairs/damaged, C3 complete, 
@@ -58,6 +59,13 @@ public final class UnitToolTip {
     // show doomed status in lobby
     // show doomed status explicit in tooltip #2322
     //TODO: better ECM source
+    //TODO: portraits after loading a mul are there in the mektable but not in the TT
+    // reduce portrait and unit image to make the lines smaller in full mode
+    // save column width
+    //TODO: blind drop should not hide clients bots
+    // make gameyearlabels etc. follow the guiScale
+    // remove the button "DeleteAll"
+    //TODO: remove the lobby font size advanced setting from guip
     
     
     public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
@@ -68,6 +76,9 @@ public final class UnitToolTip {
     public static StringBuilder getEntityTipGame(Entity entity, IPlayer localPlayer) {
         return getEntityTip(entity, localPlayer, false, null);
     }
+    
+    /** The font size reduction for Quirks */
+    final static float QUIRKS_FONTDELTA = -0.2f;
 
     // PRIVATE
     
@@ -84,14 +95,13 @@ public final class UnitToolTip {
         
         // Unit Chassis and Player
         IPlayer owner = game.getPlayer(entity.getOwnerId());
-        result.append(getFontHTML(PlayerColors.getColor(owner.getColorIndex())));
+        result.append(guiScaledFontHTML(PlayerColors.getColor(owner.getColorIndex())));
         result.append(addToTT("ChassisPlayer", NOBR, entity.getChassis(), owner.getName()));
         result.append("</FONT>");
 
         // Pilot; in the lounge the pilot is separate so don't add it there
         if (inLobby && (mapSettings != null)) {
             result.append(deploymentWarnings(entity, localPlayer, mapSettings));
-            result.append(deploymentInfo(entity));
             result.append("<BR>");
         } else {
             result.append(inGameValues(entity, localPlayer));
@@ -99,25 +109,28 @@ public final class UnitToolTip {
         }
 
         // Static entity values like move capability
-        result.append(getFontHTML());
+        result.append(guiScaledFontHTML());
         result.append(entityValues(entity));
         result.append("</FONT>");
 
         // Status bar visual representation of armor and IS 
         if (guip.getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
+            result.append(scaledHTMLSpacer(3));
             result.append(addArmorMiniVisToTT(entity));
         }
 
         // Weapon List
         if (guip.getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
-            result.append(getSmallFontHTML());
+            result.append(scaledHTMLSpacer(3));
+            result.append(guiScaledFontHTML());
             result.append(weaponList(entity));
             result.append("</FONT>");
         }
 
         // StratOps quirks, chassis and weapon
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            result.append(getSmallFontHTML());
+            result.append(scaledHTMLSpacer(3));
+            result.append(guiScaledFontHTML(UIUtil.uiQuirksColor(), QUIRKS_FONTDELTA));
             String quirksList = getOptionList(entity.getQuirks().getGroups(), 
                     grp -> entity.countQuirks(grp), inLobby);
             if (!quirksList.isEmpty()) {
@@ -137,11 +150,11 @@ public final class UnitToolTip {
         String partialList = getOptionList(entity.getPartialRepairs().getGroups(), 
                 grp -> entity.countPartialRepairs(), inLobby);
         if (!partialList.isEmpty()) {
-            result.append(getSmallFontHTML());
-            result.append(partialList + "<BR>");
+            result.append(scaledHTMLSpacer(3));
+            result.append(guiScaledFontHTML(UIUtil.uiPartialRepairColor(), QUIRKS_FONTDELTA));
+            result.append(partialList);
             result.append("</FONT>");
         }
-        
 
         return result;
     }
@@ -315,10 +328,10 @@ public final class UnitToolTip {
                 nameStr = nameStr.concat(" <I>(Firing)</I>");
             }
 
-            // normal coloring 
-            result.append("<FONT COLOR=#8080FF>");
-            // but: color gray and strikethrough when weapon destroyed
-            if (wpDest) result.append("<FONT COLOR=#a0a0a0><S>");
+            result.append(guiScaledFontHTML(uiTTWeaponColor()));
+            if (wpDest) {
+                result.append("<S>");
+            }
 
             String clanStr = "";
             if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
@@ -335,7 +348,9 @@ public final class UnitToolTip {
                 }
             }
             // Weapon destroyed? End strikethrough
-            if (wpDest) result.append("</S>");
+            if (wpDest) {
+                result.append("</S>");
+            }
             result.append("</FONT>"); 
         }
         result.append("<BR>");
@@ -348,7 +363,7 @@ public final class UnitToolTip {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         
         // Coloring and italic to make these transient entries stand out
-        result.append(getFontHTML(UIUtil.uiLightViolet()) + "<I>");
+        result.append(guiScaledFontHTML(UIUtil.uiLightViolet()) + "<I>");
         
         // BV Info
         // Hidden for invisible units when in double blind and hide enemy bv is selected
@@ -367,10 +382,10 @@ public final class UnitToolTip {
         // Heat, not shown in the lobby and for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
             if (entity.heat == 0) {
-                result.append(getFontHTML(UIUtil.uiGreen()));
+                result.append(guiScaledFontHTML(UIUtil.uiGreen()));
                 result.append(addToTT("Heat0", BR));
             } else { 
-                result.append(getFontHTML(UIUtil.uiLightRed()));
+                result.append(guiScaledFontHTML(UIUtil.uiLightRed()));
                 result.append(addToTT("Heat", BR, entity.heat));
             }
             result.append("</FONT>");
@@ -411,7 +426,7 @@ public final class UnitToolTip {
 
         // Velocity, Altitude, Elevation
         if (entity.isAero()) {
-            result.append(getFontHTML(UIUtil.uiLightViolet()));
+            result.append(guiScaledFontHTML(UIUtil.uiLightViolet()));
             Aero aero = (Aero) entity;
 //            if (inLounge) {
 //                addToTT("AeroStartingVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude());
@@ -420,7 +435,7 @@ public final class UnitToolTip {
             result.append("</FONT>");
 //            }
         } else if (entity.getElevation() != 0) {
-            result.append(getFontHTML(UIUtil.uiLightViolet()));
+            result.append(guiScaledFontHTML(UIUtil.uiLightViolet()));
 //            if (inLounge) {
 //                addToTT("StartingElev", BR, entity.getElevation());
 //            } else {
@@ -433,7 +448,7 @@ public final class UnitToolTip {
         if (isGunEmplacement) {
             GunEmplacement emp = (GunEmplacement) entity; 
             if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
-                result.append(getFontHTML(GUIPreferences.getInstance().getWarningColor()));
+                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
                 result.append(addToTT("TurretLocked", BR));
                 result.append("</FONT>");
             }
@@ -441,7 +456,7 @@ public final class UnitToolTip {
 
         // Unit Immobile
         if (!isGunEmplacement && (entity.isImmobile())) {
-            result.append(getFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
         }
@@ -515,6 +530,9 @@ public final class UnitToolTip {
             if (entity.getJumpMP() > 0) {
                 result.append("/" + entity.getJumpMP());
             }
+            if (entity instanceof Tank) {
+                result.append(ChatLounge.DOT_SPACER + entity.getMovementModeAsString());
+            }
         }
         
         // Infantry specialization like SCUBA
@@ -538,12 +556,8 @@ public final class UnitToolTip {
     private static StringBuilder deploymentWarnings(Entity entity, IPlayer localPlayer,
             MapSettings mapSettings) {
         StringBuilder result = new StringBuilder();
-        // Warning sign
-        result.append(UIUtil.getFontHTML(GUIPreferences.getInstance().getWarningColor())); 
-        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())) {
-            result.append("<BR>Unconnected C3 Computer");
-        }
+        // Critical (red) warnings
+        result.append(UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
         if (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null) {
             result.append("<BR>Cannot survive " + entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()));
         }
@@ -557,48 +571,17 @@ public final class UnitToolTip {
             result.append("<BR>Cannot survive in space!");
         }
         result.append("</FONT>");
-        return result;
-    }
-    
-    /** Returns information about deployment settings. */
-    private static StringBuilder deploymentInfo(Entity entity) {
-        StringBuilder result = new StringBuilder();
-        result.append(UIUtil.getFontHTML(UIUtil.uiGreen()));
         
-        // Loaded onto another unit
-        if (entity.getTransportId() != Entity.NONE) {
-            Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            result.append("<BR>Deploys aboard " + loader.getShortName());
+        // Non-critical (yellow) warnings
+        result.append(UIUtil.guiScaledFontHTML(UIUtil.uiYellow())); 
+        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                || ((entity.getC3Master() == null) && entity.hasC3S())) {
+            result.append("<BR>Unconnected C3 Computer");
         }
-
-        // Hidden deployment
-        if (entity.isHidden()) {
-            result.append("<BR>Deploys hidden");
-        }
-        
-        if (entity.isHullDown()) {
-            result.append("<BR>Deploys hull down");
-        }
-        
-        if (entity.isProne()) {
-            result.append("<BR>Deploys prone");
-        }
-        
-        // Offboard deployment
-        if (entity.isOffBoard()) {
-            result.append("<BR>" + Messages.getString("ChatLounge.deploysOffBoard"));
-        } else if (entity.getDeployRound() > 0) {
-            result.append("<BR>" + Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound());
-            if (entity.getStartingPos(false) != Board.START_NONE) {
-                result.append(Messages.getString("ChatLounge.deploysAfterZone"));
-                result.append(IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]);
-            }
-        }
-    
         result.append("</FONT>");
         return result;
     }
-
+    
     /** Helper method to shorten repetitive calls. */
     private static StringBuilder addToTT(String tipName, boolean startBR, Object... ttO) {
         StringBuilder result = new StringBuilder();

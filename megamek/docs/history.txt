@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.14-SNAPSHOT
+
 0.47.13 (2020-11-09 1600 UTC) 
 + Data #2345: Infantry force assignment tables
 + Data #2365: Incorrect battle armor manipulator location  

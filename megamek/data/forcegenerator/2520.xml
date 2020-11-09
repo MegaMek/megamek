@@ -728,6 +728,14 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser Marine)'>
+      <roles>marine</roles>
+      <availability>General:2</availability>
+    </model>
+    <model name='(Laser XCT)'>
+      <roles>xct,marine</roles>
+      <availability>General:1</availability>
+    </model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
@@ -740,14 +748,18 @@
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
-	<chassis name='Frogmen' unitType='Infantry'>
-		<availability>IS:1,FS:3,Periphery:1</availability>
-		<model name='Blue Water Marine Response Teams (Frogmen)'>
-			<roles>specops</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
+    <model name='(Light Scout)'>
+      <roles>recon</roles>
+      <availability>IS:8</availability>
+    </model>
+    <model name='(Rifle Light)'>
+      <availability>IS:7</availability>
+    </model>
+    <model name='(Rifle Paratrooper)'>
+      <roles>paratrooper</roles>
+      <availability>IS:3,Periphery:2</availability>
+    </model>
+  </chassis>
 	<chassis name='Gazelle' unitType='Dropship'>
 		<availability>TH:4,IS:6,Periphery.Deep:6,Periphery:6</availability>
 		<model name='(2531)'>
@@ -904,12 +916,6 @@
 			<availability>General:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Hover Assault Infantry' unitType='Infantry'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='Johnston Industries Rapid Response Force'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Hurricane Conventional Fighter' unitType='Conventional Fighter'>
 		<availability>TH:8,IS:6</availability>
 		<model name='(Standard)'>
@@ -974,12 +980,9 @@
 		<model name='(MG)'>
 			<availability>General:7</availability>
 		</model>
-	</chassis>
-	<chassis name='Jump Support Infantry' unitType='Infantry'>
-		<availability>IS:2,Periphery:2</availability>
-		<model name='Star Corps Jump Assault Infantry'>
-			<availability>General:8</availability>
-		</model>
+    <model name='(GL)'>
+      <availability>IS:2,Periphery:2</availability>
+    </model>
 	</chassis>
 	<chassis name='Korvin Tank' unitType='Tank'>
 		<availability>CC:7</availability>
@@ -1248,12 +1251,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Motorized Heavy Infantry' unitType='Infantry'>
-		<availability>IS:3,Periphery:3</availability>
-		<model name='Motstand/Mimir Troop'>
-			<availability>IS:8,Periphery:8</availability>
-		</model>
-	</chassis>
+  <chassis name='Motorized Heavy Infantry' unitType='Infantry'>
+    <availability>DC.PR:3</availability>
+    <model name='Motstand/Mimir Troop'>
+      <availability>DC.PR:8</availability>
+    </model>
+  </chassis>
 	<chassis name='Motorized Platoon' unitType='Infantry'>
 		<availability>IS:9,Periphery.Deep:9,Periphery:9</availability>
 		<model name='(Flamer)'>
@@ -1274,8 +1277,23 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-	</chassis>
-	<chassis name='Mustang Fighter' unitType='Conventional Fighter'>
+    <model name='(Fieldworks)'>
+      <roles>engineer</roles>
+      <availability>IS:2,Periphery:1</availability>
+    </model>
+    <model name='(Nonlethal)'>
+      <roles>anti_infantry,urban</roles>
+      <availability>General:3</availability>
+    </model>
+  </chassis>
+  <chassis name='Motorized Sub Platoon' unitType='Infantry'>
+    <availability>IS:1,FS:3,Periphery:1</availability>
+    <model name='(Laser SCUBA)'>
+      <roles>specops,marine</roles>
+      <availability>IS:9</availability>
+    </model>
+  </chassis>
+  <chassis name='Mustang Fighter' unitType='Conventional Fighter'>
 		<availability>FS:6</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
@@ -1461,13 +1479,6 @@
 		<availability>DC.AL:10</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Scout Infantry' unitType='Infantry'>
-		<availability>IS:2</availability>
-		<model name='The Battle Corps - Baker Street Irregulars'>
-			<roles>recon</roles>
-			<availability>IS:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>

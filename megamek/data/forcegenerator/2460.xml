@@ -456,6 +456,14 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser Marine)'>
+      <roles>marine</roles>
+      <availability>General:2</availability>
+    </model>
+    <model name='(Laser XCT)'>
+      <roles>xct,marine</roles>
+      <availability>General:1</availability>
+    </model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
@@ -468,6 +476,13 @@
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
+    <model name='(Rifle Light)'>
+      <availability>IS:8</availability>
+    </model>
+    <model name='(Rifle Paratrooper)'>
+      <roles>paratrooper</roles>
+      <availability>IS:3,Periphery:2</availability>
+    </model>
 	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>DC:1</availability>
@@ -763,7 +778,15 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-	</chassis>
+    <model name='(Fieldworks)'>
+      <roles>engineer</roles>
+      <availability>IS:2,Periphery:1</availability>
+    </model>
+    <model name='(Nonlethal)'>
+      <roles>anti_infantry,urban</roles>
+      <availability>General:3</availability>
+    </model>
+  </chassis>
 	<chassis name='Mustang Fighter' unitType='Conventional Fighter'>
 		<availability>FS:4</availability>
 		<model name='(Standard)'>

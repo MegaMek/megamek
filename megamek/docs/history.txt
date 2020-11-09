@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
 0.47.13-SNAPSHOT
++ Data #2345: Infantry force assignment tables
++ Data #2365: Incorrect battle armor manipulator location  
 
 0.47.12 (2020-11-08 2230 UTC) 
 + PR #2310: Implement "Static Ammo Feed" quirk 

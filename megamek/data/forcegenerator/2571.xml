@@ -281,9 +281,9 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Anti-&apos;Mech Jump Infantry' unitType='Infantry'>
+	<chassis name='Jump Platoon (Anti-Mech)' unitType='Infantry'>
 		<availability>IS:2</availability>
-		<model name='Third Ueda Infantry'>
+		<model name='(Laser)'>
 			<roles>anti_mek</roles>
 			<availability>IS:8</availability>
 		</model>
@@ -993,6 +993,14 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser Marine)'>
+      <roles>marine</roles>
+      <availability>General:2,OA:3,SL:4</availability>
+    </model>
+    <model name='(Laser XCT)'>
+      <roles>xct,marine</roles>
+      <availability>General:2</availability>
+    </model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
@@ -1005,18 +1013,36 @@
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
+    <model name='(Light Scout)'>
+      <roles>recon</roles>
+      <availability>IS:8</availability>
+    </model>
+    <model name='(Rifle Light)'>
+      <availability>IS:5</availability>
+    </model>
+    <model name='(Rifle Paratrooper)'>
+      <roles>paratrooper</roles>
+      <availability>IS:3,Periphery:2</availability>
+    </model>
+  </chassis>
+  <chassis name='Foot Stealth Platoon' unitType='Infantry'>
+    <availability>IS:1+</availability>
+    <model name='(Rifle Paratrooper)'>
+      <roles>recon,specops,paratrooper</roles>
+      <availability>General:8</availability>
+    </model>
+  </chassis>
+  <chassis name='Foot Stealth Squad' unitType='Infantry'>
+    <availability>General:1+</availability>
+    <model name='(Sniper Paratrooper)'>
+      <roles>recon,specops,paratrooper</roles>
+      <availability>General:8</availability>
+    </model>
+  </chassis>
 	<chassis name='Fortress' unitType='Dropship'>
 		<availability>LA:3,SL:5,IS:3,RWR:2,FS:3</availability>
 		<model name='(2613)'>
 			<roles>artillery,assault,mech_carrier,vee_carrier</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Frogmen' unitType='Infantry'>
-		<availability>IS:1,FS:3,Periphery:1</availability>
-		<model name='Blue Water Marine Response Teams (Frogmen)'>
-			<roles>specops</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -1218,12 +1244,6 @@
 			<availability>MOC:8,OA:8,SL:8,FS:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Hover Assault Infantry' unitType='Infantry'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='Johnston Industries Rapid Response Force'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Hunchback' unitType='Mek'>
 		<availability>CC:4,MOC:2,IS:4,RWR:2,FS:4,Periphery:2,TC:2,OA:2,LA:4,Periphery.MW:4,SL:5,Periphery.ME:4,FWL:4,DC:4</availability>
 		<model name='HBK-4G'>
@@ -1316,12 +1336,9 @@
 		<model name='(MG)'>
 			<availability>General:7</availability>
 		</model>
-	</chassis>
-	<chassis name='Jump Support Infantry' unitType='Infantry'>
-		<availability>IS:2,Periphery:2</availability>
-		<model name='Star Corps Jump Assault Infantry'>
-			<availability>General:8</availability>
-		</model>
+    <model name='(GL)'>
+      <availability>IS:2,Periphery:2</availability>
+    </model>
 	</chassis>
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
 		<availability>PIR:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
@@ -1719,9 +1736,9 @@
 		</model>
 	</chassis>
 	<chassis name='Motorized Heavy Infantry' unitType='Infantry'>
-		<availability>IS:3,Periphery:3</availability>
+		<availability>DC.PR:3</availability>
 		<model name='Motstand/Mimir Troop'>
-			<availability>IS:8,Periphery:8</availability>
+			<availability>DC.PR:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Motorized Platoon' unitType='Infantry'>
@@ -1744,8 +1761,27 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-	</chassis>
-	<chassis name='Mustang Fighter' unitType='Conventional Fighter'>
+    <model name='(Laser XCT)'>
+      <roles>xct</roles>
+      <availability>IS:2,SL:4</availability>
+    </model>
+    <model name='(Fieldworks)'>
+      <roles>engineer</roles>
+      <availability>IS:2,Periphery:1</availability>
+    </model>
+    <model name='(Nonlethal)'>
+      <roles>anti_infantry,urban</roles>
+      <availability>General:3</availability>
+    </model>
+  </chassis>
+  <chassis name='Motorized Sub Platoon' unitType='Infantry'>
+    <availability>IS:1,FS:3,Periphery:1</availability>
+    <model name='(Laser SCUBA)'>
+      <roles>specops,marine</roles>
+      <availability>IS:9</availability>
+    </model>
+  </chassis>
+  <chassis name='Mustang Fighter' unitType='Conventional Fighter'>
 		<availability>FS:4</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
@@ -2053,13 +2089,6 @@
 		<availability>CC:4-,LA:4-,FWL:4-,MERC:4-,DC:4-,Periphery:2-</availability>
 		<model name='SCP-1N'>
 			<availability>LA:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Scout Infantry' unitType='Infantry'>
-		<availability>IS:2</availability>
-		<model name='The Battle Corps - Baker Street Irregulars'>
-			<roles>recon</roles>
-			<availability>IS:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>
@@ -2418,13 +2447,13 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
-	<chassis name='Xenoplanetary Infantry' unitType='Infantry'>
-		<availability>MOC:1,OA:1,IS:1</availability>
-		<model name='Eagle Corps Eyrie Defense Force'>
-			<roles>xct</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
+  <chassis name='Xenoplanetary Infantry' unitType='Infantry'>
+    <availability>FWL:1</availability>
+    <model name='Eagle Corps Eyrie Defense Force'>
+      <roles>xct</roles>
+      <availability>FWL:5</availability>
+    </model>
+  </chassis>
 	<chassis name='Ymir' unitType='Mek'>
 		<availability>LA:5</availability>
 		<model name='BWP-2E'>

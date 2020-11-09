@@ -94,11 +94,13 @@ public abstract class AbstractIcon implements Serializable {
      * @return the ImageIcon for the Image stored by the AbstractIcon
      */
     public ImageIcon getImageIcon() {
-        return new ImageIcon(getImage());
+        Image image = getImage();
+        return (image == null) ? null : new ImageIcon(image);
     }
 
     public ImageIcon getImageIcon(int size) {
-        return new ImageIcon(getImage(size));
+        Image image = getImage(size);
+        return (image == null) ? null : new ImageIcon(image);
     }
 
     public Image getImage() {
@@ -109,14 +111,16 @@ public abstract class AbstractIcon implements Serializable {
         return getImage(size, -1);
     }
 
+    public Image getImage(int width, int height) {
+        return getImage(getBaseImage(), width, height);
+    }
+
     /**
      * This is used to create the proper image and scale it if required. It also handles null protection
      * by creating a blank image if required.
      * @return the created image
      */
-    public Image getImage(int width, int height) {
-        Image image = getBaseImage();
-
+    protected Image getImage(Image image, int width, int height) {
         if (image == null) {
             return ImageUtil.failStandardImage();
         } else if (isScaled(width, height)) {

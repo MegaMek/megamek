@@ -37,6 +37,6 @@ public abstract class ItemFile {
 
     protected boolean isNullOrEmpty() {
         return (item == null) || ((item instanceof Image)
-                && (((Image) item).getWidth(null) == -1) || (((Image) item).getHeight(null) == -1));
+                && (((Image) item).getWidth(null) < 0) || (((Image) item).getHeight(null) < 0));
     }
 }

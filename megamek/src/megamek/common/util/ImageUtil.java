@@ -211,7 +211,7 @@ public final class ImageUtil {
                 return null;
             }
             final boolean isAnimated = waitUntilLoaded(result);
-            if ((result.getWidth(null) == -1) || (result.getHeight(null) == -1)) {
+            if ((result.getWidth(null) < 0) || (result.getHeight(null) < 0)) {
                 return null;
             }
             return isAnimated ? result : ImageUtil.createAcceleratedImage(result);

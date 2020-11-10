@@ -1123,7 +1123,7 @@
 </factions>
 <units>
 	<chassis name='AA Jump Infantry' unitType='Infantry'>
-		<availability>MOC:2,FWL:4,IS:2,MH:2,RA:2</availability>
+		<availability>FWL:2</availability>
 		<model name='292nd League Regulars'>
 			<roles>anti_aircraft</roles>
 			<availability>General:8</availability>
@@ -1372,18 +1372,11 @@
 			<availability>MERC.WD:5,CLAN:6,IS:3,BAN:1</availability>
 		</model>
 	</chassis>
-	<chassis name='Anti-&apos;Mech Jump Infantry' unitType='Infantry'>
+	<chassis name='Jump Platoon (Anti-Mech)' unitType='Infantry'>
 		<availability>IS:2</availability>
-		<model name='Third Ueda Infantry'>
+		<model name='(Laser)'>
 			<roles>anti_mek</roles>
 			<availability>IS:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Anti-Infantry Unit' unitType='Infantry'>
-		<availability>LA:3,IS:2,FS:2,Periphery:2</availability>
-		<model name='Second Lyran Armored Infantry'>
-			<roles>incendiary,anti_infantry</roles>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Anubis' unitType='Mek'>
@@ -3957,13 +3950,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Combat Engineer' unitType='Infantry'>
-		<availability>IS:4,Periphery:2</availability>
-		<model name='Royal Engineers, 1st Lyran Royal Guards RCT'>
-			<roles>engineer</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Comitatus JumpShip' unitType='Jumpship'>
 		<availability>CSA:5,CSR:3,CW:4,CBS:5,CLAN:5,CJF:3,RA:4,CWIE:4</availability>
 		<model name='(2995)'>
@@ -5548,8 +5534,8 @@
 		<availability>HL:2,IS:3,Periphery:3</availability>
 		<model name='(Arrow IV)'>
 			<roles>missile_artillery</roles>
-			<availability>CC:5,IS:4</availability>
-		</model>
+			<availability>CC:5,IS:4,MOC:3,RA.OA:1,PIR:2,MH:2</availability>
+    </model>
 		<model name='(Sniper)'>
 			<roles>artillery</roles>
 			<availability>General:6</availability>
@@ -5705,13 +5691,6 @@
 		</model>
 		<model name='FRB-3E'>
 			<availability>CC:3,MOC:3</availability>
-		</model>
-	</chassis>
-	<chassis name='Firefighter' unitType='Infantry'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars'>
-			<roles>engineer</roles>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Firestarter' unitType='Mek'>
@@ -5877,19 +5856,67 @@
 		<model name='(Laser)'>
 			<availability>HL:3,General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser Marine)'>
+      <roles>marine</roles>
+      <availability>IS:4,OA:4,Periphery:2,CS.EC:2</availability>
+    </model>
+    <model name='(Laser TAG)'>
+      <roles>spotter</roles>
+      <availability>IS:2+,CC:3+,FWL:3+</availability>
+    </model>
+    <model name='(Laser XCT)'>
+      <roles>xct,marine</roles>
+      <availability>IS:2,Periphery:1,TC:3,CS.EC:2</availability>
+    </model>
+    <model name='(Laser Heavy XCT)'>
+      <roles>xct</roles>
+      <availability>IS:1,TC:1+,OA:1+,CS.EC:1+</availability>
+    </model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
+    <model name='(LRM Heavy)'>
+      <availability>IS:2,MERC:3</availability>
+    </model>
 		<model name='(SRM)'>
 			<availability>General:5</availability>
 		</model>
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
+    <model name='(Light Scout)'>
+      <roles>recon</roles>
+      <availability>IS:8</availability>
+    </model>
+    <model name='(Rifle Light)'>
+      <availability>IS:5</availability>
+    </model>
+    <model name='(Rifle Paratrooper)'>
+      <roles>paratrooper</roles>
+      <availability>IS:3,Periphery:2</availability>
+    </model>
+    <model name='(Rifle Mountain)'>
+      <roles>mountaineer</roles>
+      <availability>IS:3,Periphery:3</availability>
+    </model>
+  </chassis>
+  <chassis name='Foot Stealth Platoon' unitType='Infantry'>
+    <availability>IS:2+,Periphery:1+</availability>
+    <model name='(Rifle Paratrooper)'>
+      <roles>recon,specops,paratrooper</roles>
+      <availability>General:8</availability>
+    </model>
+  </chassis>
+  <chassis name='Foot Stealth Squad' unitType='Infantry'>
+    <availability>IS:2+,Periphery:1+,HL:2</availability>
+    <model name='(Sniper Paratrooper)'>
+      <roles>recon,specops,paratrooper</roles>
+      <availability>General:8</availability>
+    </model>
+  </chassis>
 	<chassis name='Fortress' unitType='Dropship'>
 		<availability>LA:4,NIOPS:4,FS:4,Periphery:1</availability>
 		<model name='(3058)'>
@@ -5946,13 +5973,6 @@
 		<availability>CSA:2,CCC:2,CDS:1,CSR:1,CNC:1,CJF:1,RA:1</availability>
 		<model name='(2962)'>
 			<roles>corvette</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Frogmen' unitType='Infantry'>
-		<availability>IS:1,FS:3,Periphery:1</availability>
-		<model name='Blue Water Marine Response Teams (Frogmen)'>
-			<roles>specops</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -6685,13 +6705,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='HALO Paratrooper' unitType='Infantry'>
-		<availability>IS:4,Periphery:3</availability>
-		<model name='Lyran Paratrooper Corps'>
-			<roles>paratrooper</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Ha Otoko' unitType='Mek'>
 		<availability>CHH:3,CDS:5,LA:4,CBS:3,CNC:5,IS:3,DC:4,CWIE:3</availability>
 		<model name='(Standard)'>
@@ -6988,12 +7001,6 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Heavy Foot LRM Infantry' unitType='Infantry'>
-		<availability>MERC:3</availability>
-		<model name='Stalwart Support - Heavy LRM Infantry'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Heavy Hover APC' unitType='Tank'>
 		<availability>CHH:6,HL:4,CLAN:4,IS:6,Periphery.Deep:5,TC:6,Periphery:5</availability>
 		<model name='(MG)'>
@@ -7017,22 +7024,15 @@
 			<availability>PIR:5-,Periphery.Deep:5-,IS.pm:4,Periphery:5-</availability>
 		</model>
 	</chassis>
-	<chassis name='Heavy Infantry' unitType='Infantry'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='Heavy Urban Response Platoon'>
-			<roles>urban</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Heavy Jump Infantry' unitType='Infantry'>
-		<availability>MOC:2+,RA.OA:2+,OA:2+,FWL:4+,IS:2+,DC:3+</availability>
-		<model name='Royal Gurkha Battalion'>
-			<availability>General:8,DC:4</availability>
-		</model>
-		<model name='DEST Heavy Response Platoon'>
-			<availability>DC:8</availability>
-		</model>
-	</chassis>
+  <chassis name='Heavy Jump Infantry' unitType='Infantry'>
+    <availability>FWL:4+,DC:3+</availability>
+    <model name='Royal Gurkha Battalion'>
+      <availability>FWL:8</availability>
+    </model>
+    <model name='DEST Heavy Response Platoon'>
+      <availability>DC:8</availability>
+    </model>
+  </chassis>
 	<chassis name='Heavy LRM Carrier' unitType='Tank'>
 		<availability>CC:2,MOC:5,HL:4,MERC:3,Periphery.OS:4,FS:3,TC:5,Periphery:5,RA.OA:5,OA:5,Periphery.CM:7,Periphery.MW:5,Periphery.HR:7,Periphery.ME:7,FWL:3,MH:5</availability>
 		<model name='(Standard)'>
@@ -7078,12 +7078,6 @@
 		</model>
 		<model name='Inseki'>
 			<availability>DC:2</availability>
-		</model>
-	</chassis>
-	<chassis name='Heavy Support Infantry' unitType='Infantry'>
-		<availability>IS:3,Periphery:3</availability>
-		<model name='Irian Technologies SWAT Team'>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Heavy Tracked APC' unitType='Tank'>
@@ -7500,12 +7494,6 @@
 		<model name='HNT-151'>
 			<roles>recon,urban</roles>
 			<availability>General:2-</availability>
-		</model>
-	</chassis>
-	<chassis name='Hover Assault Infantry' unitType='Infantry'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='Johnston Industries Rapid Response Force'>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Hover Scout' unitType='Tank'>
@@ -8266,8 +8254,8 @@
 		</model>
 		<model name='(Rifle AA)'>
 			<roles>anti_aircraft</roles>
-			<availability>IS:6</availability>
-		</model>
+			<availability>MOC:2,IS:4,MH:2,RA:2</availability>
+    </model>
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
@@ -8277,20 +8265,31 @@
 		<model name='(Laser)'>
 			<availability>HL:3,General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser Heavy)'>
+      <availability>IS:4,Periphery:2+</availability>
+    </model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
 		<model name='(MG)'>
 			<availability>General:7</availability>
 		</model>
+    <model name='(GL)'>
+      <availability>IS:2,Periphery:2</availability>
+    </model>
 	</chassis>
-	<chassis name='Jump Support Infantry' unitType='Infantry'>
-		<availability>IS:2,Periphery:2</availability>
-		<model name='Star Corps Jump Assault Infantry'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
-	<chassis name='Jupiter' unitType='Mek'>
+  <chassis name='Jump Stealth Platoon' unitType='Infantry'>
+    <availability>IS:2</availability>
+    <model name='(Needler Demolition)'>
+      <roles>specops,incindiary,anti_infantry</roles>
+      <availability>IS:5,CC:7</availability>
+    </model>
+    <model name='(Laser)'>
+      <roles>specops</roles>
+      <availability>IS:5,DC:7</availability>
+    </model>
+  </chassis>
+  <chassis name='Jupiter' unitType='Mek'>
 		<availability>CHH:3,ROS:1,CJF:4</availability>
 		<model name='2'>
 			<availability>CJF:4</availability>
@@ -9950,6 +9949,10 @@
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
+    <model name='(Demolition)'>
+      <roles>recon,engineer</roles>
+      <availability>General:3</availability>
+    </model>
 	</chassis>
 	<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
 		<availability>HL:6,IS:7,Periphery.Deep:6,Periphery:7</availability>
@@ -9991,6 +9994,10 @@
 		<model name='(Laser)'>
 			<availability>HL:3,General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+    <model name='(Laser XCT)'>
+      <roles>xct</roles>
+      <availability>IS:3+,CS:3,WOB:5</availability>
+    </model>
 		<model name='(MG)'>
 			<availability>General:7</availability>
 		</model>
@@ -10174,7 +10181,7 @@
 		</model>
 	</chassis>
 	<chassis name='Missile Artillery Infantry' unitType='Infantry'>
-		<availability>CC:4,MOC:3,RA.OA:2,OA:2,PIR:2,IS:2,MH:2</availability>
+		<availability>CC:4</availability>
 		<model name='Kommando Special Forces'>
 			<roles>missile_artillery</roles>
 			<availability>General:8</availability>
@@ -10354,14 +10361,14 @@
 		</model>
 	</chassis>
 	<chassis name='Motorized Heavy Infantry' unitType='Infantry'>
-		<availability>IS:3,Periphery:3</availability>
+		<availability>FRR:3</availability>
 		<model name='Motstand/Mimir Troop'>
-			<availability>IS:8,Periphery:8</availability>
+			<availability>FRR:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Motorized Infantry' unitType='Infantry'>
+	<chassis name='Bandit Motorized Point' unitType='Infantry'>
 		<availability>BAN:8</availability>
-		<model name='Dark Caste Bandits'>
+		<model name='(Rifle)'>
 			<availability>BAN:8</availability>
 		</model>
 	</chassis>
@@ -10395,8 +10402,42 @@
 		<model name='(Laser)'>
 			<availability>HL:3,General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-	</chassis>
-	<chassis name='Mountaineer' unitType='Infantry'>
+    <model name='(Laser XCT)'>
+      <roles>xct</roles>
+      <availability>IS:3+</availability>
+    </model>
+    <model name='(Needler Heavy)'>
+      <roles>incendiary,anti_infantry</roles>
+      <availability>LA:3,FS:2,IS:2,Periphery:2</availability>
+    </model>
+    <model name='(Fieldworks)'>
+      <roles>engineer</roles>
+      <availability>IS:4,Periphery:2</availability>
+    </model>
+    <model name='(Firefighters)'>
+      <roles>engineer</roles>
+      <availability>IS:2</availability>
+    </model>
+    <model name='(Plasma Heavy)'>
+      <roles>urban</roles>
+      <availability>IS:2+,CC:3</availability>
+    </model>
+    <model name='(Gauss Heavy)'>
+      <availability>IS:3,MOC:3,Periphery:2+</availability>
+    </model>
+    <model name='(Nonlethal)'>
+      <roles>anti_infantry,urban</roles>
+      <availability>IS:4,Periphery:2,Clan.IS:4,WOB.PM:4</availability>
+    </model>
+  </chassis>
+  <chassis name='Motorized Sub Platoon' unitType='Infantry'>
+    <availability>IS:1,FS:3,Periphery:1</availability>
+    <model name='(Laser SCUBA)'>
+      <roles>specops,marine</roles>
+      <availability>IS:9</availability>
+    </model>
+  </chassis>
+  <chassis name='Mountaineer' unitType='Infantry'>
 		<availability>IS:4,Periphery:4</availability>
 		<model name='45th Cerulean Mountain Infantry, 3rd Davion Guards'>
 			<roles>mountaineer</roles>
@@ -13014,13 +13055,6 @@
 		</model>
 		<model name='SCP-10M'>
 			<availability>CC:4,MOC:3,CGB.FRR:4,ROS:4,FWL:6,MERC:4,DC:4</availability>
-		</model>
-	</chassis>
-	<chassis name='Scout Infantry' unitType='Infantry'>
-		<availability>IS:2</availability>
-		<model name='The Battle Corps - Baker Street Irregulars'>
-			<roles>recon</roles>
-			<availability>IS:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Scout JumpShip' unitType='Jumpship'>
@@ -16120,13 +16154,13 @@
 			<availability>CC:5,MOC:5,LA:5,ROS:5,MERC:5</availability>
 		</model>
 	</chassis>
-	<chassis name='Xenoplanetary Infantry' unitType='Infantry'>
-		<availability>MOC:1,OA:1,IS:1</availability>
-		<model name='Eagle Corps Eyrie Defense Force'>
-			<roles>xct</roles>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
+  <chassis name='Xenoplanetary Infantry' unitType='Infantry'>
+    <availability>FWL:1</availability>
+    <model name='Eagle Corps Eyrie Defense Force'>
+      <roles>xct</roles>
+      <availability>FWL:5</availability>
+    </model>
+  </chassis>
 	<chassis name='Xerxes' unitType='Aero'>
 		<availability>CHH:7,CSR:3,CLAN:5,RA:4</availability>
 		<model name='2'>

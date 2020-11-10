@@ -68,7 +68,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -177,7 +177,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     };
 
-    private CamoChooser camoDialog;
+    private CamoChooserDialog camoDialog;
 
     //region Action Commands
     private static final String NAME_COMMAND = "NAME";
@@ -458,7 +458,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo");
         butCamo.addActionListener(e -> {
-            // Show the CamoChooser for the selected player
+            // Show the CamoChooserDialog for the selected player
             IPlayer player = getPlayerSelected().getLocalPlayer();
             int result = camoDialog.showDialog(player);
 
@@ -477,7 +477,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             butCamo.setIcon(player.getCamouflage().getImageIcon());
             getPlayerSelected().sendPlayerInfo();
         });
-        camoDialog = new CamoChooser(clientgui.getFrame());
+        camoDialog = new CamoChooserDialog(clientgui.getFrame());
         refreshCamos();
 
         butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart"));
@@ -2341,7 +2341,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     /** 
-     * Displays a CamoChooser to choose an individual camo for 
+     * Displays a CamoChooserDialog to choose an individual camo for
      * the given vector of entities. The camo will only be applied
      * to units configurable by the local player, i.e. his own units
      * or those of his bots.
@@ -2351,9 +2351,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return;
         }
 
-        // Display the CamoChooser and await the result
+        // Display the CamoChooserDialog and await the result
         // The dialog is preset to the first selected unit's settings
-        CamoChooser mcd = new CamoChooser(clientgui.getFrame());
+        CamoChooserDialog mcd = new CamoChooserDialog(clientgui.getFrame());
         int result = mcd.showDialog(entities.get(0));
 
         // If the dialog was canceled or nothing was selected, do nothing

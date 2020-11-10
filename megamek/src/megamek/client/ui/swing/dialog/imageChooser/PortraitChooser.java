@@ -18,35 +18,25 @@
  */
 package megamek.client.ui.swing.dialog.imageChooser;
 
-import java.awt.Window;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.common.Configuration;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.DirectoryItems;
 
-/**
- * This dialog allows players to select a portrait
- * It automatically fills itself with the portraits
- * in the {@link Configuration#portraitImagesDir()} directory tree.
- * Should be shown by using showDialog(). This method
- * returns either JOptionPane.OK_OPTION or .CANCEL_OPTION.
- *
- * @see AbstractIconChooser
- */
-public class PortraitChooser extends AbstractIconChooser {
-    private static final long serialVersionUID = 6487684461690549139L;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-    /** Creates a dialog that allows players to choose a portrait. */
-    public PortraitChooser(Window parent, AbstractIcon icon) {
-        super(parent, icon, Messages.getString("PortraitChoiceDialog.select_portrait"),
-                new AbstractIconRenderer(), new PortraitChooserTree());
+public class PortraitChooser extends AbstractIconChooser {
+    //region Constructors
+    public PortraitChooser() {
+        this(null);
     }
+
+    public PortraitChooser(AbstractIcon icon) {
+        super(new PortraitChooserTree(), icon);
+    }
+    //endregion Constructors
 
     @Override
     protected DirectoryItems getDirectory() {

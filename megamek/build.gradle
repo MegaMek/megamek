@@ -36,7 +36,7 @@ dependencies {
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'
 
-    compile 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 
     jarbundler 'com.ultramixer.jarbundler:jarbundler-core:3.3.0'
@@ -236,7 +236,7 @@ task createOSXBundle (dependsOn: jar) {
 distributions {
     // Creates tasks which package distribution with MM jar and startup script in root directory
     unix {
-        baseName = 'megamek'
+        distributionBaseName = 'megamek'
         contents {
             from fileStagingDir
             from(createStartScripts.outputs.files) {

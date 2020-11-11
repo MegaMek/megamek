@@ -3387,12 +3387,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
                 return this;
             }
-
-            public void setPortrait(Crew pilot) {
-//                Image image = MMStaticDirectoryManager.getPortraitImage(pilot, 0);
-//                int size = (int)(GUIPreferences.getInstance().getGUIScale() * (MEKTABLE_IMGHEIGHT));
-//                setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
-            }
         }
     }
 

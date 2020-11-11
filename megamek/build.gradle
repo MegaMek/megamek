@@ -23,10 +23,6 @@ sourceSets {
     }
 }
 
-configurations {
-    jarbundler
-}
-
 dependencies {
     implementation 'com.thoughtworks.xstream:xstream:1.4.14'
     implementation 'org.freemarker:freemarker:2.3.28'
@@ -38,8 +34,6 @@ dependencies {
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
-
-    jarbundler 'com.ultramixer.jarbundler:jarbundler-core:3.3.0'
 
     testImplementation 'junit:junit:4.12' 
     testImplementation 'org.mockito:mockito-core:2.20.1'
@@ -63,8 +57,6 @@ ext {
     mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
-    osxApplicationStub = "${scriptsDir}/universalJavaApplicationStub"
-    osxBundleDir = "${buildDir}/osxBundle"
 }
 
 jar {
@@ -201,38 +193,6 @@ task createStartScripts (type: CreateStartScripts) {
     }
 }
 
-task createOSXBundle (dependsOn: jar) {
-    ext.appName = 'MegaMek'
-    // The jar directory is hard coded into jarbundler and has no public accessor
-    ext.jarSubdir = "${appName}.app/Contents/Resources/Java"
-    doLast {
-        mkdir osxBundleDir
-        ant.taskdef(name: 'jarbundler',
-            classname: 'com.ultramixer.jarbundler.JarBundler',
-            classpath: configurations.jarbundler.asPath)
-        ant.jarbundler (
-                name: ext.appName,
-                shortName: 'MegaMek',
-                build: rootProject.version,
-                version: rootProject.version.replace('-SNAPSHOT', ''),
-                bundleid: 'org.megamek.MegaMek',
-                mainClass: project.mainClassName,
-                stubfile: osxApplicationStub,
-                dir: osxBundleDir,
-                jar: "${jar.destinationDirectory.get()}/${jar.archiveFileName.get()}",
-                jvmversion: '1.8+',
-                icon: "${projectDir}/${data}/images/misc/megamek.icns",
-                useJavaXKey: 'true',
-                workingdirectory: '$APP_PACKAGE/../',
-                extraclasspath: files(project.sourceSets.main.runtimeClasspath.files)
-                    .filter { it.name.endsWith(".jar") }.collect { '$JAVAROOT/lib/' + it.name}.join(","),
-                vmoptions: '-Xmx1024m') {
-            javaproperty (name: 'apple.awt.brushMetal', value: 'true')
-            javaproperty (name: 'apple.laf.useScreenMenuBar', value: 'true')
-        }
-    }
-}
-
 distributions {
     // Creates tasks which package distribution with MM jar and startup script in root directory
     unix {
@@ -260,16 +220,6 @@ distributions {
             from (project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
-            }
-        }
-    }
-    mac {
-        contents {
-            from osxBundleDir
-            from fileStagingDir
-            from (project.sourceSets.main.runtimeClasspath.files
-                    .findAll { it.name.endsWith(".jar") }) {
-                into "${createOSXBundle.jarSubdir}/${lib}" 
             }
         }
     }
@@ -304,14 +254,6 @@ unixDistTar {
     dependsOn createStartScripts
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
-}
-
-macDistTar {
-    description = 'Creates mac OSX distribution'
-    dependsOn stageFiles
-    dependsOn createOSXBundle
-    archiveExtension = 'tar.bz2'
-    compression = Compression.BZIP2
 }
 
 // The repository can only be cloned into an empty directory so we need to delete anything left over
@@ -362,7 +304,6 @@ task assembleDist(overwrite: true) {
     dependsOn test
     dependsOn unixDistTar
     dependsOn windowsDistZip
-//    dependsOn macDistTar
 }
 
 task buildFromRepo (type: GradleBuild) {

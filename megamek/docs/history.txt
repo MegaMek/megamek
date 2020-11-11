@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 0.47.14-SNAPSHOT
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there
++ Issue #2392: MMLs can switch between LRM and SRM ammo
 
 0.47.13 (2020-11-09 1600 UTC) 
 + Data #2345: Infantry force assignment tables

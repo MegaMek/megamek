@@ -56,10 +56,17 @@ import megamek.common.TripodMech;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A very basic pathranker
+ * A very "basic" pathranker
  */
 public class BasicPathRanker extends PathRanker implements IPathRanker {
 
+    // this is a value used to indicate how much we value the unit being at its destination
+    private final int ARRIVED_AT_DESTINATION_FACTOR = 250;
+    
+    // this is a value used to indicate how much we dis-value the unit being destroyed as a result of
+    // what it's doing
+    private final int UNIT_DESTRUCTION_FACTOR = 1000;
+    
     protected final DecimalFormat LOG_DECIMAL =
             new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
@@ -222,7 +229,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     StringBuilder formula) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
-        double fallMod = pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
+        double fallMod = pilotingFailure * (pilotingFailure == 1 ? -UNIT_DESTRUCTION_FACTOR : fallShame);
         formula.append("fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
                .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
                .append("]");
@@ -478,7 +485,17 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                        game);
             double selfPreservation = getOwner().getBehaviorSettings()
                                                 .getSelfPreservationValue();
-            double selfPreservationMod = newDistanceToHome * selfPreservation;
+            
+            double selfPreservationMod = 0;
+            
+            // normally, we favor being closer to the edge we're trying to get to
+            if (newDistanceToHome > 0) {
+                selfPreservationMod = newDistanceToHome * selfPreservation;
+            // if this path gets us to the edge, we value it considerably more than we do paths that don't get us there    
+            } else {
+                selfPreservationMod = -ARRIVED_AT_DESTINATION_FACTOR;
+            }
+            
             formula.append(" - selfPreservationMod [")
                    .append(LOG_DECIMAL.format(selfPreservationMod))
                    .append(" = ").append(LOG_DECIMAL.format(newDistanceToHome))
@@ -633,10 +650,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return new RankedPath(facingMod, pathCopy, formula.toString());
         }
         utility -= facingMod;
-
+        
         // If I need to flee the board, I want to get closer to my home edge.
-        utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
-                                                formula);
+        utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game, formula);
         
         // if we're an aircraft, we want to de-value paths that will force us off the board
         // on the subsequent turn.
@@ -1041,13 +1057,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech ||
               movingUnit instanceof BattleArmor)) {
             logMsg.append("Ill drown (1000).");
-            return 1000;
+            return UNIT_DESTRUCTION_FACTOR;
         }
 
         // Unsealed unit will drown.
         if (movingUnit instanceof Mech && ((Mech) movingUnit).isIndustrial()) {
             logMsg.append("Industrial mechs drown too (1000).");
-            return 1000;
+            return UNIT_DESTRUCTION_FACTOR;
         }
 
         // Find the submerged locations.
@@ -1097,7 +1113,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 (!(movingUnit instanceof Mech) &&
                  !(movingUnit instanceof Protomech))) {
                 logMsg.append(" breached and critical (1000).");
-                return 1000;
+                return UNIT_DESTRUCTION_FACTOR;
             }
 
             // Add 50 points per potential breach location.
@@ -1136,7 +1152,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // Infantry and BA risk total destruction.
         if (movingUnit instanceof Infantry) {
             logMsg.append(("Possible unit destruction (1000)."));
-            return 1000;
+            return UNIT_DESTRUCTION_FACTOR;
         }
 
         // If this unit tracks heat, add the heat gain to the hazard value.
@@ -1205,7 +1221,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // Non-mech units auto-destroyed.
         if (!(movingUnit instanceof Mech)) {
             logMsg.append("Non-mech instant destruction (1000).");
-            return 1000;
+            return UNIT_DESTRUCTION_FACTOR;
         }
 
         double hazardValue = 0;

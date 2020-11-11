@@ -1,11 +1,27 @@
 package megamek.client.ui.swing.util;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -233,6 +249,42 @@ public final class UIUtil {
     
     public static float scaleForGUI(float value) {
         return GUIPreferences.getInstance().getGUIScale() * value;
+    }
+    
+    public static void adjustDialog(Container contentPane) {
+        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        Component[] allComps = contentPane.getComponents();
+        for (Component comp: allComps) {
+            if ((comp instanceof JButton) || (comp instanceof JLabel)
+                    || (comp instanceof JComboBox<?>) || (comp instanceof JCheckBox)
+                    || (comp instanceof JTextField) || (comp instanceof JSlider)
+                    || (comp instanceof JSpinner) || (comp instanceof JRadioButton)) {
+                comp.setFont(scaledFont);
+            }
+            if (comp instanceof JScrollPane 
+                    && ((JScrollPane)comp).getViewport().getView() instanceof JPanel) {
+                adjustDialog((JPanel)((JScrollPane)comp).getViewport().getView());
+            }
+            if (comp instanceof JPanel) {
+                JPanel panel = (JPanel)comp;
+                Border border = panel.getBorder();
+                if ((border != null) && (border instanceof TitledBorder)) {
+                    ((TitledBorder)border).setTitleFont(scaledFont);
+                }
+                adjustDialog((JPanel)comp);
+            }
+            if (comp instanceof JTabbedPane) {
+                comp.setFont(scaledFont);
+                JTabbedPane tpane = (JTabbedPane)comp;
+                for (int i=0; i<tpane.getTabCount();i++) {
+                    Component sc = tpane.getTabComponentAt(i);
+                    if (sc instanceof JPanel) {
+                        adjustDialog((JPanel)sc);
+                    }
+                }
+                adjustDialog((JTabbedPane)comp);
+            }
+        }
     }
     
     // PRIVATE 

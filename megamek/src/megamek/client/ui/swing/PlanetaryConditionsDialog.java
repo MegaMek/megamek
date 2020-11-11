@@ -41,6 +41,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.PlanetaryConditions;
 
 /**
@@ -559,5 +560,14 @@ public class PlanetaryConditionsDialog extends JDialog implements
             refreshConditions();
             setVisible(false);
         }
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            UIUtil.adjustDialog(getContentPane());
+            pack();
+        }
+        super.setVisible(b);
     }
 }

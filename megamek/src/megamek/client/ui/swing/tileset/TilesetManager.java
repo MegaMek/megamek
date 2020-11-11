@@ -40,6 +40,7 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
 import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -616,10 +617,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         IPlayer player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
-        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
-            camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
-        }
+        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
+                ? entity.getCamouflage() : player.getCamouflage()).getImage();
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded

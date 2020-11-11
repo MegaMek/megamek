@@ -297,6 +297,13 @@
 	Copied image three times and arrange into a 1600x1200 image, pixelated by 3 px, applied the make seemless map function, and then shrank to 800x600 adjusting brightness and contrast for depths.
 	data/images/hexes/largeTextures/BigWater.jpg
 	
+   Megamek Portrait Pack
+     Base images purchased from Generated Photos (https://generated.photos/). Generated Photos carry no additional likeness rights. 
+     All images have been generated without human intervention through machine learning processes. Any perceived resemblance of our 
+     materials to an existing person is not intentional.
+     
+     Base portraits modified by Saxarba (https://www.deviantart.com/quellion). Additional images used in portraits provided with permission by SpOoKy777 (https://www.deviantart.com/spooky777/gallery) 	
+	
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of
      BattleTech, a source of fun and inspiration to us all.

@@ -35,6 +35,7 @@
         <regexp>java\.util\.Hashtable$</regexp>
         <regexp>java\.util\.LinkedHashSet$</regexp>
         <regexp>java\.util\.LinkedList$</regexp>
+        <regexp>java\.util\.TreeMap$</regexp>
         <regexp>java\.util\.TreeSet$</regexp>
         <regexp>java\.util\.Vector$</regexp>
         <regexp>\[Ljava\.lang\.Object;$</regexp>

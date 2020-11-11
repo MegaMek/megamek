@@ -1,41 +1,42 @@
-Version:1.0
+Version:1.2
 Wolfhound
 WLF-2
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3052
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3052
+source:TRO 3050 - Clan Invasion
+rules level:3
 
-Mass:35
-Engine:210 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:35
+engine:210 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:0
+heat sinks:10 Double
+walk mp:6
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:12
-RA Armor:12
-LT Armor:11
-RT Armor:11
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:5
-1 ISERLargeLaser, Right Arm
-1 ISMediumLaser, Right Torso
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Center Torso (R)
-1 ISMediumLaser, Center Torso
+ER Large Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -66,10 +67,10 @@ ISERLargeLaser
 -Empty-
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +81,10 @@ ISMediumLaser
 -Empty-
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser (R)
-ISMediumLaser
+Medium Laser (R)
+Medium Laser
 
 Head:
 Life Support
@@ -148,4 +149,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

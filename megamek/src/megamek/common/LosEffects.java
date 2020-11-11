@@ -99,6 +99,7 @@ public class LosEffects {
     boolean deadZone = false;
     boolean infProtected = false;
     boolean hasLoS = true;
+    boolean targetIsOversized = false;
     int plantedFields = 0;
     int heavyIndustrial = 0;
     int lightWoods = 0;
@@ -512,6 +513,9 @@ public class LosEffects {
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
         
         finalLoS.targetLoc = target.getPosition();
+        
+        finalLoS.targetIsOversized = ai.targetEntity && ((Entity) target).hasQuirk(OptionsConstants.QUIRK_NEG_OVERSIZED);
+        
         return finalLoS;
     }
 
@@ -687,7 +691,8 @@ public class LosEffects {
             }
         }
 
-        if (targetCover != COVER_NONE) {
+        // partial cover modifiers apply unless the target is oversized
+        if ((targetCover != COVER_NONE) && !targetIsOversized) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
                 if ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)) {
                     modifiers.addModifier(1, "target has 75% cover");

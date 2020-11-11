@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2014-2020 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
@@ -34,7 +52,7 @@ class EntitySprite extends Sprite {
     private static final Color LABEL_SPACE_BACK = new Color(0,0,200,200);
     private static final Color LABEL_GROUND_BACK = new Color(50,50,50,200);
     private static Color LABEL_BACK;
-    enum Positioning { LEFT, RIGHT };
+    enum Positioning { LEFT, RIGHT }
     
     // Individuals
     final Entity entity;
@@ -505,7 +523,7 @@ class EntitySprite extends Sprite {
 
                 // Draw a label border with player colors or team coloring
                 if (guip.getUnitLabelBorder()) {
-                    if (guip.getUnitLabelBorderTeam()) {
+                    if (guip.getTeamColoring()) {
                         boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
                         boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
                         if (isLocalPlayer) {

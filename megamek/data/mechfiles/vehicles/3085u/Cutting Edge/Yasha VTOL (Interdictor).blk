@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Yasha VTOL
 3085
 </year>
 
+<originalBuildYear>
+3085
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 7
@@ -41,11 +48,11 @@ VTOL
 </engine_type>
 
 <armor_type>
-1
+6
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -69,6 +76,7 @@ ISCASE
 ISMML7
 ISMML7
 ISArtemisIV
+ISArtemisIV
 </Front Equipment>
 
 <Right Equipment>
@@ -90,3 +98,4 @@ Dark Age
 <tonnage>
 30.0
 </tonnage>
+

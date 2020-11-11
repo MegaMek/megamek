@@ -5321,10 +5321,10 @@ Griffin GRF-1DS:MISSILE_BOAT
 Griffin GRF-2N:SKIRMISHER
 Griffin GRF-3M:SNIPER
 Griffin GRF-3N:SNIPER
-Hellbringer (Loki) F:STRIKER
-Hellbringer (Loki) G:STRIKER
-Hellbringer (Loki) J:SCOUT
-Hellbringer (Loki) T:SNIPER
+Loki (Hellbringer) F:STRIKER
+Loki (Hellbringer) G:STRIKER
+Loki (Hellbringer) J:SCOUT
+Loki (Hellbringer) T:SNIPER
 Dominator:SKIRMISHER
 Dominator 2:SNIPER
 Grasshopper GHR-8K:SKIRMISHER
@@ -5334,12 +5334,12 @@ UrbanMech UM-R96:AMBUSHER
 Ostscout OTT-7K:SCOUT
 Ostscout OTT-8J:SCOUT
 Ostscout OTT-12R:SCOUT
-Grendal T:STRIKER
-Grendal F:STRIKER
-Grendal G:SCOUT
-Grendal I:STRIKER
-Grendal J:STRIKER
-Grendal M:SNIPER
+Grendel (Mongrel) T:STRIKER
+Grendel (Mongrel) F:STRIKER
+Grendel (Mongrel) G:SCOUT
+Grendel (Mongrel) I:STRIKER
+Grendel (Mongrel) J:STRIKER
+Grendel (Mongrel) M:SNIPER
 Bushwacker BSW-X4:SKIRMISHER
 Sojourner Prime:SNIPER
 Sojourner A:BRAWLER
@@ -5347,18 +5347,18 @@ Sojourner B:BRAWLER
 Sojourner C:MISSILE_BOAT
 Sojourner D:BRAWLER
 Zeus ZEU-11S:SNIPER
-Stone Rhino (Behemoth):SNIPER
-Stone Rhino (Behemoth) 4:JUGGERNAUT
-Stone Rhino (Behemoth) 5:JUGGERNAUT
-Stone Rhino (Behemoth) 6:BRAWLER
-Stone Rhino (Behemoth) 7:SNIPER
-Stone Rhino (Behemoth) 8:SNIPER
+Behemoth (Stone Rhino):SNIPER
+Behemoth (Stone Rhino) 4:JUGGERNAUT
+Behemoth (Stone Rhino) 5:JUGGERNAUT
+Behemoth (Stone Rhino) 6:BRAWLER
+Behemoth (Stone Rhino) 7:SNIPER
+Behemoth (Stone Rhino) 8:SNIPER
 #ilClan Rec Guide 3
-Adder (Puma) I:STRIKER
-Adder (Puma) K:SNIPER
-Adder (Puma) L:STRIKER
-Adder (Puma) S:SCOUT
-Adder (Puma) T:SNIPER
+Puma (Adder) I:STRIKER
+Puma (Adder) K:SNIPER
+Puma (Adder) L:STRIKER
+Puma (Adder) S:SCOUT
+Puma (Adder) T:SNIPER
 Hierofalcon Prime:STRIKER
 Hierofalcon A:STRIKER
 Hierofalcon B:STRIKER
@@ -5368,11 +5368,11 @@ Shadow Cat III Prime:STRIKER
 Shadow Cat III A:STRIKER
 Shadow Cat III B:STRIKER
 Shadow Cat III C:STRIKER
-Summoner (Thor) T:SNIPER
-Summoner (Thor) AA:SNIPER
-Summoner (Thor) F:SKIRMISHER
-Summoner (Thor) J:SKIRMISHER
-Summoner (Thor) Q:SKIRMISHER
+Thor (Summoner) T:SNIPER
+Thor (Summoner) AA:SNIPER
+Thor (Summoner) F:SKIRMISHER
+Thor (Summoner) J:SKIRMISHER
+Thor (Summoner) Q:SKIRMISHER
 BattleMaster BLR-2C:BRAWLER
 BattleMaster BLR-3M:BRAWLER
 BattleMaster BLR-3M-DC:BRAWLER
@@ -5380,17 +5380,109 @@ BattleMaster BLR-3S:BRAWLER
 BattleMaster BLR-6C:JUGGERNAUT
 BattleMaster BLR-6G:BRAWLER
 BattleMaster C 3:JUGGERNAUT
+#ilClan Rec Guide 4
+Awesome AWS-11H:SNIPER
+Blackjack BJ-5:SNIPER
+Ice Ferret (Fenris) F:SNIPER
+Ice Ferret (Fenris) G:STRIKER
+Ice Ferret (Fenris) I:SCOUT
+Ice Ferret (Fenris) J:STRIKER
+Ice Ferret (Fenris) K:STRIKER
+Ice Ferret (Fenris) T:SCOUT
+Thresher II (Standard):SKIRMISHER
+Trebuchet TBT-9N:MISSILE BOAT
+Warhammer IIC 13:BRAWLER
+#Warhammer WHM-8R:UNDETERMINED
+#Warhammer WHM-9K:UNDETERMINED
+Wasp C:SNIPER
+Wasp WSP-4W:SCOUT
+Wasp WSP-5A:SCOUT
+#ilClan Rec Guide 5
+#Catapult CPLT-6K:UNDETERMINED
+Catapult CPLT-K6:MISSILE BOAT
+Conjurer (Hellhound) 7:SKIRMISHER
+Conjurer (Hellhound) 8:SKIRMISHER
+Conjurer (Hellhound):SKIRMISHER
+Crab CRB-54:SKIRMISHER
+Hammerhead (Standard):SKIRMISHER
+King Crab KGC-011:JUGGERNAUT
+Marauder II MAD-10D:SNIPER
+Marauder II MAD-6A:SNIPER
+Marauder II MAD-6C:SNIPER
+Marauder II MAD-8K:SNIPER
+Marauder MAD-11D:SNIPER
+Marauder MAD-7R:SNIPER
+Timber Wolf (Mad Cat) M:MISSILE BOAT
+Timber Wolf (Mad Cat) N:MISSILE BOAT
+Timber Wolf (Mad Cat) T:MISSILE BOAT
+Timber Wolf (Mad Cat) W:MISSILE BOAT
+#ilClan Rec Guide 6
+Cataphract CTF-5L:SNIPER
+Cricket RWN-01:SCOUT
+Linebacker I:SCOUT
+Linebacker T:SKIRMISHER
+Marauder Bounty Hunter 3015:JUGGERNAUT
+Marauder Bounty Hunter 3044:SNIPER
+Marauder Bounty Hunter 3138:SNIPER
+Marauder IIC 10:SKIRMISHER
+Marauder IIC 9:SNIPER
+Marauder IIC:BRAWLER
+Marauder MAD-11D:SNIPER
+Marauder MAD-2T:SNIPER
+Marauder MAD-5D-DC:BRAWLER
+Marauder MAD-7C:SNIPER
+Marauder MAD-7M:BRAWLER
+Marauder MAD-7R:SNIPER
+Marauder MAD-7S:SNIPER
+#Marauder Red Hunter 3146:UNDETERMINED
+#Marauder Red Hunter:UNDETERMINED
+Nightstar NSR-10D:SNIPER
+Raven RVN-5L:SCOUT
+#ilClan Rec Guide 7
+Incubus (Vixen) 2:STRIKER
+Incubus (Vixen) 3:STRIKER
+Incubus (Vixen) 7:STRIKER
+Incubus (Vixen) 8:STRIKER
+Incubus (Vixen) 9:STRIKER
+Incubus (Vixen):STRIKER
+Mist Lynx (Koshi) I:STRIKER
+Mist Lynx (Koshi) J:SNIPER
+Mist Lynx (Koshi) K:SCOUT
+Mist Lynx (Koshi) L:SCOUT
+Mist Lynx (Koshi) M:STRIKER
+Mist Lynx (Koshi) N:MISSILE BOAT
+Mist Lynx (Koshi) T:SCOUT
+Stormcrow (Ryoken) I:SNIPER
+Stormcrow (Ryoken) J:STRIKER
+Stormcrow (Ryoken) K:STRIKER
+Stormcrow (Ryoken) P:STRIKER
+Stormcrow (Ryoken) T:STRIKER
+War Crow A:SKIRMISHER
+War Crow B:SKIRMISHER
+War Crow C:SNIPER
+War Crow Prime:BRAWLER
+Warhammer C 2:BRAWLER
+Warhammer C 3:BRAWLER
+Warhammer C:BRAWLER
+Warhammer WHM-10K:BRAWLER
+Warhammer WHM-7A:BRAWLER
+Warhammer WHM-7K:BRAWLER
+Warhammer WHM-7M-DC:BRAWLER
+Warhammer WHM-7M:BRAWLER
+Warhammer WHM-7S:BRAWLER
+Warhammer WHM-8R:BRAWLER
+Warhammer WHM-9K:BRAWLER
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER
 Drift Shag:STRIKER
 Night Hawk NTK-2Q-EC:STRIKER
-Talon TLN-5W-EC:STRIKER 
+Talon TLN-5W-EC:STRIKER
 Coyotl B:STRIKER
 Coyotl C:STRIKER
 Coyotl D:STRIKER
-Phoenix Hawk PXH-1-EC:SKIRMISHER 
-Enfield END-6J-EC:SKIRMISHER 
+Phoenix Hawk PXH-1-EC:SKIRMISHER
+Enfield END-6J-EC:SKIRMISHER
 Fox CS-1:MISSILE_BOAT
 Fox:MISSILE_BOAT
 Omni-Corvis Prime:SNIPER
@@ -5413,7 +5505,7 @@ Lupus D:BRAWLER
 Vision Quest VQ-1NC:SNIPER
 Vision Quest:BRAWLER
 Vision Quest 2:SNIPER
-Cestus CTS-6Y-EC:BRAWLER 
+Cestus CTS-6Y-EC:BRAWLER
 Exterminator EXT-4Db-EC:SKIRMISHER
 Excalibur EXC-B2b-EC:MISSILE_BOAT
 Minsk MNK-101:BRAWLER
@@ -5499,7 +5591,7 @@ Dig Lord RCL-4M-B MiningMech MOD:JUGGERNAUT
 MuckRaker GMMM-2M MiningMech MOD:AMBUSHER
 #MuckRaker GMMM-2 MiningMech:NONE
 MuckRaker GMMM-2M-B MiningMech MOD:MISSILE_BOAT
-St. Florian FLN-366-M FireMech MOD:JUGGERNAUT    
+St. Florian FLN-366-M FireMech MOD:JUGGERNAUT
 #St. Florian FLN-366 FireMech:NONE
 #OTP Hanseatic League
 Cazador:STRIKER
@@ -5514,7 +5606,7 @@ Reconquista:BRAWLER
 #Shrapnel
 Centurion CN10-J:BRAWLER
 Centurion CN10-W:SNIPER
-#tukayyid
+#Tukayyid
 Adder (Puma) TC:STRIKER
 Shadow Cat TC:SCOUT
 Stormcrow (Ryoken) TC:SKIRMISHER

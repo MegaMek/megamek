@@ -11488,6 +11488,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 2;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 0.5;
                 ammo.bv = 47;
                 ammo.cost = 10000;
                 ammo.ammoRatio = 2;
@@ -11548,6 +11549,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 7;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 2;
                 ammo.bv = 124;
                 ammo.cost = 25000;
                 ammo.ammoRatio = 0.5;
@@ -15821,17 +15823,21 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         
-        Mounted currentAmmoBin = weapon.getLinked();
+        AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
         
-        boolean ammoOfSameType = weapon.getLinked().getType().equals(otherAmmo);
+        boolean ammoOfSameType = currentAmmoType.equals(otherAmmo);
         
-        boolean caselessLoaded = ((AmmoType) currentAmmoBin.getType()).getMunitionType() == AmmoType.M_CASELESS;
+        // MMLs can swap between different specific ammo types, so we have a special case check here
+        boolean mmlAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_MML &&
+                currentAmmoType.getRackSize() == otherAmmo.getRackSize();        
+        
+        boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
         boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
         boolean caselessMismatch = caselessLoaded != otherBinCaseless;
         
         boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
-        boolean staticFeedMismatch = hasStaticFeed && (((AmmoType) currentAmmoBin.getType()).getMunitionType() != otherAmmo.getMunitionType());
+        boolean staticFeedMismatch = hasStaticFeed && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
         
-        return ammoOfSameType && !caselessMismatch && !staticFeedMismatch;
+        return (ammoOfSameType || mmlAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
     }
 }

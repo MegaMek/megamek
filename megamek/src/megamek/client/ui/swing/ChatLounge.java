@@ -1,17 +1,17 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -51,7 +51,6 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.MenuScroller;
@@ -64,9 +63,11 @@ import megamek.common.event.*;
 import megamek.common.options.*;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
+import megamek.common.icons.Portrait;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CrewSkillSummaryUtil;
-import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
@@ -377,28 +378,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCamo = new JButton();
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo");
-        butCamo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Show the CamoChooser for the selected player
-                IPlayer player = getSelectedPlayer().getLocalPlayer();
-                int result = camoDialog.showDialog(player);
-                
-                // If the dialog was canceled or nothing selected, do nothing
-                if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
-                    return; 
-                }
-                
-                // Update the player from the camo selection
-                DirectoryItem selectedItem = camoDialog.getSelectedItem();
-                if (selectedItem.getCategory().equals(IPlayer.NO_CAMO)) {
-                    player.setColorIndex(camoDialog.getSelectedIndex());
-                }
-                player.setCamoCategory(selectedItem.getCategory());
-                player.setCamoFileName(selectedItem.getItem());
-                butCamo.setIcon(MMStaticDirectoryManager.getPlayerCamoIcon(player));
-                getSelectedPlayer().sendPlayerInfo();
+        butCamo.addActionListener(e -> {
+            // Show the CamoChooser for the selected player
+            IPlayer player = getSelectedPlayer().getLocalPlayer();
+            int result = camoDialog.showDialog(player);
+
+            // If the dialog was canceled or nothing selected, do nothing
+            if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
+                return;
             }
+
+            // Update the player from the camo selection
+            AbstractIcon selectedItem = camoDialog.getSelectedItem();
+            if (Camouflage.NO_CAMOUFLAGE.equals(selectedItem.getCategory())) {
+                player.setColorIndex(camoDialog.getSelectedIndex());
+            }
+            player.setCamoCategory(selectedItem.getCategory());
+            player.setCamoFileName(selectedItem.getFilename());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
+            getSelectedPlayer().sendPlayerInfo();
         });
         camoDialog = new CamoChooser(clientgui.getFrame());
         refreshCamos();
@@ -1792,9 +1790,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(getSelectedPlayer().getLocalPlayer());
-        int size = (int)(GUIPreferences.getInstance().getGUIScale() * (MEKTABLE_IMGHEIGHT));
-        butCamo.setIcon(new ImageIcon(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+//        Image camo = MMStaticDirectoryManager.getPlayerCamoImage(getSelectedPlayer().getLocalPlayer());
+//        Image camo = getSelectedPlayer().getLocalPlayer().getCamouflage();
+//        int size = (int)(GUIPreferences.getInstance().getGUIScale() * (MEKTABLE_IMGHEIGHT));
+//        butCamo.setIcon(new ImageIcon(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+        butCamo.setIcon(getSelectedPlayer().getLocalPlayer().getCamouflage().getImageIcon());
     }
 
     /**
@@ -2220,9 +2220,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         // Choosing the player camo resets the units to have no 
         // individual camo.
-        DirectoryItem selectedItem = mcd.getSelectedItem();
+        AbstractIcon selectedItem = mcd.getSelectedItem();
         IPlayer owner = entities.get(0).getOwner();
-        DirectoryItem ownerCamo = new DirectoryItem(owner.getCamoCategory(), owner.getCamoFileName());
+        AbstractIcon ownerCamo = owner.getCamouflage();
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
         
         // Update all allowed entities with the camo
@@ -2233,7 +2233,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     ent.setCamoFileName(null);
                 } else {
                     ent.setCamoCategory(selectedItem.getCategory());
-                    ent.setCamoFileName(selectedItem.getItem());
+                    ent.setCamoFileName(selectedItem.getFilename());
                 }
                 getLocalClient(ent).sendUpdateEntity(ent);
             }
@@ -2828,7 +2828,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            ArrayList<String> players = new ArrayList<String>();
+            List<String> players = new ArrayList<>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
@@ -3305,28 +3305,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 setScaledIconGap();
                 setText(value.toString(), isSelected);
-                boolean isOwner = ownerOf(entity).equals(clientgui.getClient().getLocalPlayer());
-                boolean blindDrop = clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.BASE_BLIND_DROP);
                 boolean compact = butCompact.isSelected();
                 if (compact) {
                     clearImage();
                 }
+                boolean isOwner = ownerOf(entity).equals(clientgui.getClient().getLocalPlayer());
+                boolean blindDrop = clientgui.getClient().getGame().getOptions()
+                        .booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
                 if (!isOwner && blindDrop) {
                     if (column == COL_UNIT) {
                         if (!compact) {
                             Image image = getToolkit().getImage(
                                     new MegaMekFile(Configuration.miscImagesDir(),
                                             FILENAME_UNKNOWN_UNIT).toString());
-                            int size = (int)(GUIPreferences.getInstance().getGUIScale() * MEKTABLE_IMGHEIGHT);
                             image = image.getScaledInstance(-1, size, Image.SCALE_SMOOTH);
                             setImage(image);
                         }
                         setToolTipText(null);
                     } else if (column == COL_PILOT) {
                         if (!compact) {
-                            Image image = MMStaticDirectoryManager.getDefaultPortrait();
-                            int size = (int)(GUIPreferences.getInstance().getGUIScale() * MEKTABLE_IMGHEIGHT);
+                            Image image = getToolkit().getImage(
+                                    new MegaMekFile(Configuration.portraitImagesDir(),
+                                            Portrait.DEFAULT_PORTRAIT_FILENAME)
+                                            .toString());
                             setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
                         }
                         setToolTipText(null);
@@ -3334,18 +3336,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 } else {
                     if (column == COL_UNIT) {
                         if (!compact) {
-                            Image camo = MMStaticDirectoryManager.getPlayerCamoImage(ownerOf(entity));
-                            if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
-                                camo = MMStaticDirectoryManager.getEntityCamoImage(entity);
-                            }
+                            Image camo = ownerOf(entity).getCamouflage().getImage();
+                            if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
+                                camo = entity.getCamouflage().getImage();
+                            } 
                             Image image = clientgui.bv.getTilesetManager().loadPreviewImage(entity, camo, 0, getLabel());
-                            int size = (int)(GUIPreferences.getInstance().getGUIScale() * MEKTABLE_IMGHEIGHT);
                             setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
                         }
                         setToolTipText(formatUnitTooltip(entity));
                     } else if (column == COL_PILOT) {
                         if (!compact) {
-                            setPortrait(entity.getCrew());
+                            setImage(entity.getCrew().getPortrait(0).getImage(size));
                         }
                         setToolTipText("<HTML>" + PilotToolTip.getPilotTipDetailed(entity) + "</HTML>");
                     }
@@ -3388,11 +3389,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             public void setPortrait(Crew pilot) {
-                Image image = MMStaticDirectoryManager.getPortraitImage(pilot, 0);
-                int size = (int)(GUIPreferences.getInstance().getGUIScale() * (MEKTABLE_IMGHEIGHT));
-                setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
+//                Image image = MMStaticDirectoryManager.getPortraitImage(pilot, 0);
+//                int size = (int)(GUIPreferences.getInstance().getGUIScale() * (MEKTABLE_IMGHEIGHT));
+//                setImage(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
             }
-
         }
     }
 

@@ -475,6 +475,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu.add(viewGameOptions);
         viewClientSettings = new JMenuItem(Messages.getString("CommonMenuBar.viewClientSettings")); //$NON-NLS-1$
         viewClientSettings.setActionCommand(ClientGUI.VIEW_CLIENT_SETTINGS);
+        viewClientSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
         viewClientSettings.addActionListener(this);
         menu.add(viewClientSettings);
         viewLOSSetting = new JMenuItem(Messages.getString("CommonMenuBar.viewLOSSetting")); //$NON-NLS-1$
@@ -978,6 +979,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewLOSSetting.setEnabled(false);
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
+            viewChangeTheme.setEnabled(true);
         }
         // We're in-game.
         else if ((phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
@@ -994,6 +996,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(true);
             viewUnitOverview.setEnabled(true);
             viewPlayerList.setEnabled(true);
+            viewChangeTheme.setEnabled(false);
         }
         // We're in-game, but not in a phase with map functions.
         else {
@@ -1003,6 +1006,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(false);
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
+            viewChangeTheme.setEnabled(false);
         }
 
         // We can only view the round report in certain phases.

@@ -1081,8 +1081,8 @@ public abstract class Mech extends Entity {
             return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2)
                     - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return Math.max(0, super.getRunMP(gravity, ignoreheat, ignoremodulararmor)
+                - (hasMPReducingHardenedArmor() ? 1 : 0));
     }
 
     /*
@@ -6545,8 +6545,8 @@ public abstract class Mech extends Entity {
                     && hex.containsTerrain(Terrains.BRIDGE)) {
                 return true;
             }
-            // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+            // mechs can deploy in water if the water covers them entirely
+            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) < (height() + 1))) {
                 return true;
             }
             // Can't deploy in clear hex
@@ -7246,6 +7246,38 @@ public abstract class Mech extends Entity {
             }
         }
         return success;
+    }
+    
+    /**
+     * Convenience function that returns the critical slot containing the cockpit
+     * @return
+     */
+    public List<CriticalSlot> getCockpit() {
+        List<CriticalSlot> retVal = new ArrayList<>();
+        
+        switch (cockpitType) {
+        // these always occupy slots 2 and 3 in the head
+        case Mech.COCKPIT_COMMAND_CONSOLE:
+        case Mech.COCKPIT_DUAL:
+        case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+        case Mech.COCKPIT_INTERFACE:
+        case Mech.COCKPIT_QUADVEE:
+        case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            retVal.add(getCritical(Mech.LOC_HEAD, 2));
+            retVal.add(getCritical(Mech.LOC_HEAD, 3));
+            break;
+        case Mech.COCKPIT_TORSO_MOUNTED:
+            for (int critIndex = 0; critIndex < getNumberOfCriticals(Mech.LOC_CT); critIndex++) {
+                CriticalSlot slot = getCritical(Mech.LOC_CT, critIndex);
+                if (slot.getIndex() == SYSTEM_COCKPIT) {
+                    retVal.add(slot);
+                }
+            }
+        default:
+            retVal.add(getCritical(Mech.LOC_HEAD, 2));
+        }
+        
+        return retVal;
     }
 
     /**

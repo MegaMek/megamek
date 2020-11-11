@@ -2219,7 +2219,7 @@ public class FireControl {
         // than what we currently have as the best plan then use that. Start with "no twist" as default.
         FiringPlan bestFiringPlan = noTwistPlan;
         for (final int currentTwist : validFacingChanges) {
-            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
 
             FiringPlan twistPlan = null;
             switch (params.getCalculationType()) {
@@ -2242,7 +2242,7 @@ public class FireControl {
         }
 
         // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
+        shooter.setSecondaryFacing(originalFacing, false);
 
         return bestFiringPlan;
     }
@@ -3210,12 +3210,10 @@ public class FireControl {
 
     /**
      * Given a firing plan, calculate the best target to light up with a searchlight
-     * @param plan
-     * @return
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
-        // no search light if it's not on
-        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight()) {
+        // no search light if it's not on, unit doesn't have one, or is hidden
+        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight() || shooter.isHidden()) {
             return null;
         }
         

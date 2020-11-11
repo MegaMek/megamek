@@ -25,7 +25,7 @@ import java.util.Iterator;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.ImageUtil;
@@ -72,8 +72,7 @@ public class EntityImage {
     
     static {
         try {
-            DecalImages = new DirectoryItems(DECAL_PATH, "",  
-                    ImageFileFactory.getInstance());
+            DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
             MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());

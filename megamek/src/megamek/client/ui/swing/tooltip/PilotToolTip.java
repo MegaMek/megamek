@@ -14,15 +14,14 @@
 package megamek.client.ui.swing.tooltip;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import megamek.client.ui.Messages;
+import javax.imageio.ImageIO;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.util.CrewSkillSummaryUtil;
-
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -118,24 +117,24 @@ public final class PilotToolTip {
             if ((category == null) || (file == null)) {
                 continue;
             }
-            String imagePath = Configuration.portraitImagesDir() + "/" + category + file;
-            File f = new File(imagePath);
-            if (f.exists()) {
-                // HACK: Get the real portrait to find the size of the image
-                // and scale the tooltip HTML IMG accordingly
-                Image portrait = MMStaticDirectoryManager.getUnscaledPortraitImage(category, file);
-                // adjust the size to the GUI scale and number of pilots
-                float base = GUIPreferences.getInstance().getGUIScale() * PORTRAIT_BASESIZE;
-                base /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                if (portrait.getWidth(null) > portrait.getHeight(null)) {
-                    float h = base * portrait.getHeight(null) / portrait.getWidth(null);
-                    addToTT(result, "PilotPortrait", NOBR, imagePath, (int) base, (int) h);
-                } else {
-                    float w = base * portrait.getWidth(null) / portrait.getHeight(null);
-                    addToTT(result, "PilotPortrait", NOBR, imagePath, (int) w, (int) base);
-                }
-                result.append("<TD WIDTH=3></TD>");
+            try {
+                // Adjust the portrait size to the GUI scale and number of pilots
+                float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
+                imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
+                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int)imgSize, Image.SCALE_SMOOTH);
+                // Write the scaled portrait to file
+                // This is done to avoid using HTML rescaling on the portrait which does
+                // not do any smoothing and has extremely ugly results
+                String tempPath = Configuration.dataDir() + "/images/temp/TT_Portrait_" + i + ".png";
+                File tempFile = new File(tempPath);
+                BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
+                ImageIO.write(bufferedImage, "PNG", tempFile);
+                result.append("<TD VALIGN=TOP><IMG SRC=file:" + tempPath + "></TD>");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            result.append("<TD WIDTH=3></TD>");
         }
         return result.toString();
     }
@@ -153,18 +152,5 @@ public final class PilotToolTip {
         result.append("</FONT>");
         return result.toString(); 
     }
-    
-    /** Helper method to shorten repetitive calls. */
-    private static void addToTT(StringBuilder tip, String tipName, boolean startBR, Object... ttO) {
-        if (startBR == BR) {
-            tip.append("<BR>");
-        }
-        if (ttO != null) {
-            tip.append(Messages.getString("BoardView1.Tooltip." + tipName, ttO));
-        } else {
-            tip.append(Messages.getString("BoardView1.Tooltip." + tipName));
-        }
-    }
-    
     
 }

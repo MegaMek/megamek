@@ -88,7 +88,7 @@ Example: You can define quirks that affect all units of a given chassis and then
     </unit>
 -->
 
-<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsl">
+<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsd">
     <unit> <!-- Placeholder that is exactly the same as in canon file because we need to have at least one entry. -->
         <chassis>Atlas</chassis>
         <model>all</model>

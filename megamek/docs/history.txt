@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.15-SNAPSHOT
++ PR #2402: Upgrade to XStream 1.4.14 (Removes warning about illegal reflective operation)
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

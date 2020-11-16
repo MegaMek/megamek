@@ -7704,7 +7704,7 @@ public class Server implements Runnable {
                             continueTurnFromFishtail = true;
                         }
                         curFacing = entity.getFacing();
-                        entity.setPosition(curPos);
+                        curPos = entity.getPosition();
                         entity.setSecondaryFacing(curFacing);
                         break;
                     }

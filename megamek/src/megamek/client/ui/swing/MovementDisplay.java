@@ -2134,12 +2134,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void updateSearchlightButton() {
         final Entity ce = ce();
-        if (null == ce) {
-            return;
-        }
+        if (ce != null) {
+        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
         setSearchlightEnabled(
-                ce.hasSpotlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
-                ce().isUsingSpotlight());
+                isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
+                ce.isUsingSearchlight());
+        }
     }
 
     private synchronized void updateElevationButtons() {

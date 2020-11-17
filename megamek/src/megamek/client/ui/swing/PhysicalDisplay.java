@@ -1513,7 +1513,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             setVibroEnabled(false);
         }
         setSearchlightEnabled((ce() != null) && (target != null)
-                && ce().isUsingSpotlight());
+                && ce().isUsingSearchlight());
     }
 
     /**

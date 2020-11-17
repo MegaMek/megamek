@@ -301,15 +301,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
     protected boolean selfDestructedThisTurn = false;
-    /**
-     * Variable to store the state of a possible externally mounted searchlight.
-     * True if an operable searchlight is externally mounted, false if one isn't
-     * mounted or if it is destroyed. Other searchlights may be mounted as
-     * equipment on the entity.
+
+    /** 
+     * True when the entity has an undestroyed searchlight that is neither a 
+     * Quirk searchlight nor a mounted (0.5t / 1slot) searchlight.
      */
-    protected boolean hasExternalSpotlight = false;
+    protected boolean hasExternalSearchlight = false;
     protected boolean illuminated = false;
-    protected boolean spotlightIsActive = false;
+    protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
@@ -2490,10 +2489,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void generateShortName() {
         StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis);
-        if ((model != null) && (model.length() > 0)) {
-            nbuf.append(" ").append(model);
-        }
+        nbuf.append(getShortNameRaw());
         // if show unit id is on, append the id
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             nbuf.append(" ID:").append(getId());
@@ -9813,7 +9809,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         // If we have a searchlight, we can use it to assist
-        if (isUsingSpotlight()) {
+        if (isUsingSearchlight()) {
             return true;
         }
         return false;
@@ -10274,48 +10270,48 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         captured = arg;
     }
 
-    public void setExternalSpotlight(boolean arg) {
-        hasExternalSpotlight = arg;
+    public void setExternalSearchlight(boolean arg) {
+        hasExternalSearchlight = arg;
     }
 
     /**
-     * Returns state of hasExternalSpotlight, does not consider mounted
-     * spotlights.
+     * Returns state of hasExternalSearchlight, does not consider mounted
+     * searchlights.
      *
      * @return
      */
-    public boolean hasExternaSpotlight() {
-        return hasExternalSpotlight;
+    public boolean hasExternalSearchlight() {
+        return hasExternalSearchlight;
     }
 
     /**
-     * Returns true if the unit has a usable spotlight. It considers both
-     * externally mounted spotlights as well as internally mounted ones.
+     * Returns true if the unit has a usable searchlight. It considers both
+     * externally mounted searchlights as well as internally mounted ones.
      *
      * @return
      */
-    public boolean hasSpotlight() {
+    public boolean hasSearchlight() {
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)
                 && !m.isInoperable()) {
                 return true;
             }
         }
-        return hasExternalSpotlight;
+        return hasExternalSearchlight;
     }
 
     /**
-     * Method to destroy a single spotlight on an entity. Spotlights can be
+     * Method to destroy a single searchlight on an entity. Searchlights can be
      * destroyed on a roll of 7+ on a torso hit on a mek or on a front/side hit
      * on a combat vehicle.
      */
-    public void destroyOneSpotlight() {
-        if (!hasSpotlight()) {
+    public void destroyOneSearchlight() {
+        if (!hasSearchlight()) {
             return;
         }
-        // A random spotlight should be destroyed, but this is easier...
-        if (hasExternalSpotlight) {
-            hasExternalSpotlight = false;
+        // A random searchlight should be destroyed, but this is easier...
+        if (hasExternalSearchlight) {
+            hasExternalSearchlight = false;
         }
 
         for (Mounted m : getMisc()) {
@@ -10327,35 +10323,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // Turn off the light all spot lights were destroyed
-        if (!hasSpotlight()) {
-            setSpotlightState(false);
+        if (!hasSearchlight()) {
+            setSearchlightState(false);
         }
 
     }
 
-    public void setSpotlightState(boolean arg) {
-        if (hasSpotlight()) {
-            spotlightIsActive = arg;
+    public void setSearchlightState(boolean arg) {
+        if (hasSearchlight()) {
+            searchlightIsActive = arg;
             if (arg) {
                 illuminated = true;
             }
         } else {
-            spotlightIsActive = false;
+            searchlightIsActive = false;
         }
     }
 
     public boolean isIlluminated() {
-        // Regardless of illuminated state, if we have a spotlight active we
+        // Regardless of illuminated state, if we have a searchlight active we
         //  are illuminated
-        return illuminated || spotlightIsActive;
+        return illuminated || searchlightIsActive;
     }
 
     public void setIlluminated(boolean arg) {
-        illuminated = spotlightIsActive || arg;
+        illuminated = searchlightIsActive || arg;
     }
 
-    public boolean isUsingSpotlight() {
-        return hasSpotlight() && spotlightIsActive;
+    public boolean isUsingSearchlight() {
+        return hasSearchlight() && searchlightIsActive;
     }
 
     public void setUsedSearchlight(boolean arg) {
@@ -12080,7 +12076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // ignore
             }
         }
-
+        
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());

@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.CrewSkillSummaryUtil;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
@@ -27,24 +29,20 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class PilotToolTip {
     
-    // CONTROL
-
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
 
-    // PUBLIC
-    
-    public static String getPilotTipDetailed(Entity entity) {
+    public static StringBuilder getPilotTipDetailed(Entity entity) {
         return getPilotTip(entity, true);
     }
     
-    public static String getPilotTipShort(Entity entity) {
+    public static StringBuilder getPilotTipShort(Entity entity) {
         return getPilotTip(entity, false);
     }
     
     // PRIVATE
 
-    private static String getPilotTip(Entity entity, boolean detailed) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed) {
         StringBuilder result = new StringBuilder();
         
         // The crew info (names etc.) and portraits, if shown, are placed
@@ -63,11 +61,11 @@ public final class PilotToolTip {
         // The crew advantages and MD
         result.append(scaledHTMLSpacer(3));
         result.append(crewAdvs(entity, detailed));
-        return result.toString();
+        return result;
     }
     
     /** Returns a tooltip part with names and skills of the crew. */
-    private static String crewInfo(Entity entity) {
+    private static StringBuilder crewInfo(final Entity entity) {
         Crew crew = entity.getCrew();
         IGame game = entity.getGame();
         StringBuilder result = new StringBuilder();
@@ -104,22 +102,24 @@ public final class PilotToolTip {
         result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills));
         
         result.append("</FONT>");
-        return result.toString();
+        return result;
     }
     
     /** Returns a tooltip part with crew portraits. */
-    private static String crewPortraits(Entity entity) {
+    private static StringBuilder crewPortraits(final Entity entity) {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < crew.getSlotCount(); i++) {
             String category = crew.getPortraitCategory(i);
             String file = crew.getPortraitFileName(i);
-            if ((category == null) || (file == null)) {
+            if ((category == null) || (file == null) 
+                    || (file.equals(AbstractIcon.DEFAULT_ICON_FILENAME))
+                    || (file.equals(Portrait.DEFAULT_PORTRAIT_FILENAME))) {
                 continue;
             }
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
-                float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
+                float imgSize = scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                 Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int)imgSize, Image.SCALE_SMOOTH);
                 // Write the scaled portrait to file
@@ -136,7 +136,7 @@ public final class PilotToolTip {
             }
             result.append("<TD WIDTH=3></TD>");
         }
-        return result.toString();
+        return result;
     }
     
     /** 
@@ -144,13 +144,13 @@ public final class PilotToolTip {
      * true, the advantages will be fully listed, otherwise only the
      * groups and number of advantages per group are given.
      */
-    private static String crewAdvs(Entity entity, boolean detailed) {
+    private static StringBuilder crewAdvs(final Entity entity, boolean detailed) {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
-        result.append(guiScaledFontHTML(UIUtil.uiQuirksColor(), UnitToolTip.QUIRKS_FONTDELTA));
+        result.append(guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA));
         result.append(getOptionList(crew.getOptions().getGroups(), grp -> crew.countOptions(grp), detailed));
         result.append("</FONT>");
-        return result.toString(); 
+        return result; 
     }
     
 }

@@ -247,6 +247,16 @@ public class PlanetaryConditions implements Serializable {
 
         return penalty;
     }
+    
+    /** 
+     * Returns true when the light conditions give a hit penalty and
+     * the hit penalty can be offset by a searchlight, i.e. in full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isSearchlightEffective() {
+        return (lightConditions == L_FULL_MOON) || (lightConditions == L_MOONLESS)
+                || (lightConditions == L_PITCH_BLACK);
+    }
 
     /**
      * heat bonus to hit for being overheated in darkness
@@ -644,7 +654,7 @@ public class PlanetaryConditions implements Serializable {
             isMechVee = true;
             Spotlight = targetIlluminated;
         }else {
-            Spotlight = en.isUsingSpotlight();
+            Spotlight = en.isUsingSearchlight();
             isMechVee = (en instanceof Mech && !en.isAero()) || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship) || (en instanceof Jumpship);
             isAero = (en.isAero()) && !isLargeCraft;

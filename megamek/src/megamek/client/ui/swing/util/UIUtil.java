@@ -1,3 +1,16 @@
+/*  
+* MegaMek - Copyright (C) 2020 - The MegaMek Team  
+*  
+* This program is free software; you can redistribute it and/or modify it under  
+* the terms of the GNU General Public License as published by the Free Software  
+* Foundation; either version 2 of the License, or (at your option) any later  
+* version.  
+*  
+* This program is distributed in the hope that it will be useful, but WITHOUT  
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
+* details.  
+*/ 
 package megamek.client.ui.swing.util;
 
 import java.awt.Color;
@@ -12,7 +25,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -61,22 +77,6 @@ public final class UIUtil {
      */
     public static String guiScaledFontHTML(Color col, float deltaScale) {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + colorString(col) + ">";
-    }
-    
-    /** 
-     * Returns an HTML FONT tag setting the font face to Dialog 
-     * and the font size 1 step smaller than GUIScale. 
-     */
-    public static String getSmallFontHTML() {
-        return "<FONT FACE=Dialog " + smallSizeString() + ">";
-    }
-    
-    /** 
-     * Returns an HTML FONT tag setting the color to the given col,
-     * the font face to Dialog and the font size 1 step smaller than GUIScale. 
-     */
-    public static String getSmallFontHTML(Color col) {
-        return "<FONT FACE=Dialog " + smallSizeString() + colorString(col) + ">";
     }
     
     /** 
@@ -286,10 +286,19 @@ public final class UIUtil {
             }
         }
     }
+
+    /** Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been added. */
+    public static void scaleJPopup(final JPopupMenu popup) {
+        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        for (Component comp: popup.getComponents()) {
+            if ((comp instanceof JMenuItem)) {
+                comp.setFont(scaledFont);
+                scaleJMenuItem((JMenuItem)comp);
+            } 
+        }
+    }
     
     // PRIVATE 
-    
-    
     
     private final static Color LIGHTUI_GREEN = new Color(20, 140, 20);
     private final static Color DARKUI_GREEN = new Color(40, 180, 40);
@@ -334,13 +343,6 @@ public final class UIUtil {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
     }
     
-    /** Returns an HTML FONT Size String, e.g. SIZE=+2, 1 step smaller than GUIScale, */
-    private static String smallSizeString() {
-        float smallerScale = Math.max(ClientGUI.MIN_GUISCALE, GUIPreferences.getInstance().getGUIScale() - 0.2f);
-        int fontSize = (int)(smallerScale * FONT_SCALE1);
-        return " style=font-size:" + fontSize + " ";
-    }
-    
     private static int uiBgBrightness() {
         Color bgColor = UIManager.getColor("Table.background");
         if (bgColor == null) {
@@ -357,4 +359,20 @@ public final class UIUtil {
     private static int colorBrightness(final Color color) {
         return (color.getRed() + color.getGreen() + color.getBlue()) / 3;
     }
+    
+    /** Internal helper method to adapt items in a JPopupmenu to the GUI scaling. */
+    private static void scaleJMenuItem(final JMenuItem menuItem) {
+        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        if (menuItem instanceof JMenu) {
+            JMenu menu = (JMenu)menuItem;
+            menu.setFont(scaledFont);
+            for (int i = 0; i < menu.getItemCount(); i++) {
+                scaleJMenuItem(menu.getItem(i));
+            }
+        } else if (menuItem instanceof JMenuItem) {
+            menuItem.setFont(scaledFont);
+        } 
+    }
+    
+
 }

@@ -102,7 +102,6 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.icons.Camouflage;
-import megamek.common.logging.MMLogger;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -135,12 +134,8 @@ import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.defensivepods.BPodWeapon;
-import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
-import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
@@ -2731,8 +2726,9 @@ public class Server implements Runnable {
                 }
             }
             // Give the unit a spotlight, if it has the spotlight quirk
-            entity.setExternalSpotlight(entity.hasExternaSpotlight()
-                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+            if (entity instanceof Mech || entity instanceof Tank) {
+                entity.setExternalSearchlight(true);
+            }
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
@@ -7443,9 +7439,9 @@ public class Server implements Runnable {
             }
 
             if ((step.getType() == MoveStepType.SEARCHLIGHT)
-                    && entity.hasSpotlight()) {
-                final boolean SearchOn = !entity.isUsingSpotlight();
-                entity.setSpotlightState(SearchOn);
+                    && entity.hasSearchlight()) {
+                final boolean SearchOn = !entity.isUsingSearchlight();
+                entity.setSearchlightState(SearchOn);
                 if (doBlind()) { // if double blind, we may need to filter the
                     // players that receive this message
                     Vector<IPlayer> playersVector = game.getPlayersVector();
@@ -22369,7 +22365,7 @@ public class Server implements Runnable {
             }
 
             // Destroy searchlights on 7+ (torso hits on mechs)
-            if (te.hasSpotlight()) {
+            if (te.hasSearchlight()) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
                 if (te instanceof Mech) {
@@ -22416,7 +22412,7 @@ public class Server implements Runnable {
                         r.indent(2);
                         r.add("Searchlight");
                         vDesc.addElement(r);
-                        te.destroyOneSpotlight();
+                        te.destroyOneSearchlight();
                     }
                 }
             }
@@ -29961,7 +29957,7 @@ public class Server implements Runnable {
                 }
             }
             // Give the unit a spotlight, if it has the spotlight quirk
-            entity.setExternalSpotlight(entity.hasExternaSpotlight()
+            entity.setExternalSearchlight(entity.hasExternalSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
 

@@ -332,18 +332,23 @@ public class RandomMapPanelAdvanced extends JPanel {
         // Let each tab have it's own scroll bar.
 
         JScrollPane civilizedFeaturesPanel = setupCivilizedPanel();
+        civilizedFeaturesPanel.getVerticalScrollBar().setUnitIncrement(16);
         tabbedPane.addTab(Messages.getString("RandomMapDialog.tabCivilization"), civilizedFeaturesPanel);
 
         JScrollPane elevationPanel = setupElevationPanel();
+        elevationPanel.getVerticalScrollBar().setUnitIncrement(16);
         tabbedPane.addTab(Messages.getString("RandomMapDialog.tabElevation"), elevationPanel);
 
         JScrollPane naturalFeaturesPanel = setupNaturalFeaturesPanel();
+        naturalFeaturesPanel.getVerticalScrollBar().setUnitIncrement(16);
         tabbedPane.addTab(Messages.getString("RandomMapDialog.tabNatural"), naturalFeaturesPanel);
 
         JScrollPane effectsPanel = setupEffectsPanel();
+        effectsPanel.getVerticalScrollBar().setUnitIncrement(16);
         tabbedPane.addTab(Messages.getString("RandomMapDialog.tabEffects"), effectsPanel);
 
         JScrollPane waterPanel = setupWaterPanel();
+        waterPanel.getVerticalScrollBar().setUnitIncrement(16);
         tabbedPane.addTab(Messages.getString("RandomMapDialog.tabWater"), waterPanel);
 
         tabbedPane.setSelectedComponent(civilizedFeaturesPanel);

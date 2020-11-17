@@ -1293,7 +1293,7 @@ public class Game implements Serializable, IGame {
                 && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());
         }
-
+        
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
             // resetting a UUID that

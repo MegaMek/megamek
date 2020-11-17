@@ -1553,7 +1553,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
                         .getGame(), cen, target, null));

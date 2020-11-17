@@ -23,7 +23,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChatLounge;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
@@ -62,11 +61,28 @@ public final class UnitToolTip {
     //TODO: portraits after loading a mul are there in the mektable but not in the TT
     // reduce portrait and unit image to make the lines smaller in full mode
     // save column width
-    //TODO: blind drop should not hide clients bots
+    // blind drop should not hide clients bots
+    //TODO: real blind drop should not hide clinet bots
     // make gameyearlabels etc. follow the guiScale
     // remove the button "DeleteAll"
-    //TODO: remove the lobby font size advanced setting from guip
+    //TODO: Externalize strings
+    //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
+    //TODO: is hidden exclusive with late deploy?
+    // Add toggle button show ID
+    // Dont show Altitude in space
+    //TODO: Loaded units have altitude?? Altitude in space?
+    //TODO: Add searchlight to entitysprite name label
+    // add searchlights automatically - add searchlights always, remove popup menu, add note in PlanetryC
+    // make the randommapdialog scrolling more responsive
+    // gui scale various dialogs: connect/host/planetary conditions/randommap/mapsize
+    // gui scale popups: player list, mek list
+    //TODO: Player tooltip keyboard this is a bot controlled by you
+    //TODO: same team should see through blind drop???
+    //TODO: renew the TT when mouseing over the same units...
+    // in the unit selector, the text filter gets cursor directly and content is marked
     
+    /** The font size reduction for Quirks */
+    final static float TT_SMALLFONT_DELTA = -0.2f;
     
     public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
             MapSettings mapSettings) {
@@ -76,14 +92,12 @@ public final class UnitToolTip {
     public static StringBuilder getEntityTipGame(Entity entity, IPlayer localPlayer) {
         return getEntityTip(entity, localPlayer, false, null);
     }
-    
-    /** The font size reduction for Quirks */
-    final static float QUIRKS_FONTDELTA = -0.2f;
 
     // PRIVATE
     
     private static StringBuilder getEntityTip(Entity entity, IPlayer localPlayer, 
             boolean inLobby, @Nullable MapSettings mapSettings) {
+        
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             return new StringBuilder(Messages.getString("BoardView1.sensorReturn"));
@@ -130,7 +144,7 @@ public final class UnitToolTip {
         // StratOps quirks, chassis and weapon
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             result.append(scaledHTMLSpacer(3));
-            result.append(guiScaledFontHTML(UIUtil.uiQuirksColor(), QUIRKS_FONTDELTA));
+            result.append(guiScaledFontHTML(uiQuirksColor(), TT_SMALLFONT_DELTA));
             String quirksList = getOptionList(entity.getQuirks().getGroups(), 
                     grp -> entity.countQuirks(grp), inLobby);
             if (!quirksList.isEmpty()) {
@@ -151,7 +165,7 @@ public final class UnitToolTip {
                 grp -> entity.countPartialRepairs(), inLobby);
         if (!partialList.isEmpty()) {
             result.append(scaledHTMLSpacer(3));
-            result.append(guiScaledFontHTML(UIUtil.uiPartialRepairColor(), QUIRKS_FONTDELTA));
+            result.append(guiScaledFontHTML(uiPartialRepairColor(), TT_SMALLFONT_DELTA));
             result.append(partialList);
             result.append("</FONT>");
         }
@@ -166,9 +180,7 @@ public final class UnitToolTip {
             armorChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_CAP_ARMOR_CHAR);
         }
         String internalChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
-        String destroyedChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
         Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
-        int visUnit = guip.getInt(GUIPreferences.ADVANCED_ARMORMINI_UNITS_PER_BLOCK);
         StringBuilder result = new StringBuilder();
         result.append("<TABLE CELLSPACING=0 CELLPADDING=0><TBODY>");
         for (int loc = 0 ; loc < entity.locations(); loc++) {
@@ -181,40 +193,58 @@ public final class UnitToolTip {
                     entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
                 // Destroyed location
                 result.append("</TD><TD></TD><TD>");
-                result.append(getSmallFontHTML());
+                result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                 result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ ":&nbsp;");
                 result.append("</FONT></TD><TD>");
-                result.append(getSmallFontHTML(colorDamaged));
-                int origIS = (entity.getOInternal(loc) - 1) / visUnit + 1;
-                result.append(destroyedChar.repeat(origIS));
+                result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
+                result.append(destroyedLocBar(entity.getOArmor(loc, true)));
                 result.append("</FONT>");
             } else {
-                // Put rear armor blocks first, with some spacing, if unit has any.
+                // Rear armor
                 if (entity.hasRearArmor(loc)) {
-                    result.append(getSmallFontHTML());
+                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                     result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ "R:&nbsp;");
                     result.append("</FONT></TD><TD>");
-                    result.append(buildAMP(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar));
+                    result.append(intactLocBar(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar));
                     result.append("</TD><TD>");
                 } else {
-                    // Add empty table cells instead
+                    // No rear armor: empty table cells instead
                     // At small font sizes, writing one character at the correct font size is 
                     // necessary to prevent the table rows from being spaced non-beautifully
-                    result.append(getSmallFontHTML() + "&nbsp;</FONT></TD><TD>");
-                    result.append(getSmallFontHTML() + "&nbsp;</FONT></TD><TD>");
+                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT></TD><TD>");
+                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT></TD><TD>");
                 }
-                result.append(getSmallFontHTML());
+                // Front armor
+                result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                 result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ ":&nbsp;");
                 result.append("</FONT></TD><TD>");
-                // Add IS shade blocks.
-                result.append(buildAMP(entity.getOInternal(loc), entity.getInternal(loc), internalChar));
-                // Add main armor blocks.
-                result.append(buildAMP(entity.getOArmor(loc), entity.getArmor(loc), armorChar));
+                result.append(intactLocBar(entity.getOInternal(loc), entity.getInternal(loc), internalChar));
+                result.append(intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar));
                 result.append("</TD></TR>");
             }
         }
         result.append("</TBODY></TABLE>");
         return result;
+    }
+    
+    /** 
+     * Used for destroyed locations.
+     * Returns a string representing armor or internal structure of the location.
+     * The location has the given orig original Armor/IS. 
+     */
+    private static StringBuilder destroyedLocBar(int orig) {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        String destroyedChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
+        return locBar(orig, orig, destroyedChar, true);
+    }
+    
+    /** 
+     * Used for intact locations.
+     * Returns a string representing armor or internal structure of the location.
+     * The location has the given orig original Armor/IS. 
+     */
+    private static StringBuilder intactLocBar(int orig, int curr, String dChar) {
+        return locBar(orig, orig, dChar, false);
     }
     
     /** 
@@ -224,10 +254,10 @@ public final class UnitToolTip {
      * on the value of curr, orig and the static visUnit which gives the amount of 
      * Armor/IS per single character. 
      */
-    private static String buildAMP(int orig, int curr, String dChar) {
+    private static StringBuilder locBar(int orig, int curr, String dChar, boolean destroyed) {
         // Internal Structure can be zero, e.g. in Aero
         if (orig == 0) {
-            return "";
+            return new StringBuilder("");
         }
         
         StringBuilder result = new StringBuilder();
@@ -236,25 +266,28 @@ public final class UnitToolTip {
         Color colorPartialDmg = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG);
         Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
         int visUnit = guip.getInt(GUIPreferences.ADVANCED_ARMORMINI_UNITS_PER_BLOCK);
+        
+        if (destroyed) {
+            colorIntact = colorDamaged;
+            colorPartialDmg = colorDamaged;
+        }
+        
         int numPartial = ((curr != orig) && (curr % visUnit) > 0) ? 1 : 0;
         int numIntact = (curr - 1) / visUnit + 1 - numPartial;
         int numDmgd = (orig - 1) / visUnit + 1 - numPartial - numIntact;
         if (numIntact > 0) {
-            result.append(getSmallFontHTML(colorIntact));
-            result.append(dChar.repeat(numIntact));
-            result.append("</FONT>");
+            result.append(guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA));
+            result.append(dChar.repeat(numIntact) + "</FONT>");
         }
         if (numPartial > 0) {
-            result.append(getSmallFontHTML(colorPartialDmg));
-            result.append(dChar.repeat(numPartial));
-            result.append("</FONT>");
+            result.append(guiScaledFontHTML(colorPartialDmg, TT_SMALLFONT_DELTA));
+            result.append(dChar.repeat(numPartial) + "</FONT>");
         }
         if (numDmgd > 0) {
-            result.append(getSmallFontHTML(colorDamaged));
-            result.append(dChar.repeat(numDmgd));
-            result.append("</FONT>");
+            result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
+            result.append(dChar.repeat(numDmgd) + "</FONT>");
         }
-        return result.toString();
+        return result;
     }
     
     private static StringBuilder weaponList(Entity entity) {
@@ -334,7 +367,9 @@ public final class UnitToolTip {
             }
 
             String clanStr = "";
-            if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+            if (entry.getValue() < 0) { 
+                clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+            }
 
             // when more than 5 weapons are present, they will be grouped
             // and listed with a multiplier
@@ -363,7 +398,7 @@ public final class UnitToolTip {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         
         // Coloring and italic to make these transient entries stand out
-        result.append(guiScaledFontHTML(UIUtil.uiLightViolet()) + "<I>");
+        result.append(guiScaledFontHTML(uiLightViolet()) + "<I>");
         
         // BV Info
         // Hidden for invisible units when in double blind and hide enemy bv is selected
@@ -379,13 +414,13 @@ public final class UnitToolTip {
             result.append(addToTT("BV", BR, currentBV, initialBV, percentage));
         }
 
-        // Heat, not shown in the lobby and for units with 999 heat sinks (vehicles)
+        // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
             if (entity.heat == 0) {
-                result.append(guiScaledFontHTML(UIUtil.uiGreen()));
+                result.append(guiScaledFontHTML(uiGreen()));
                 result.append(addToTT("Heat0", BR));
             } else { 
-                result.append(guiScaledFontHTML(UIUtil.uiLightRed()));
+                result.append(guiScaledFontHTML(uiLightRed()));
                 result.append(addToTT("Heat", BR, entity.heat));
             }
             result.append("</FONT>");
@@ -426,7 +461,7 @@ public final class UnitToolTip {
 
         // Velocity, Altitude, Elevation
         if (entity.isAero()) {
-            result.append(guiScaledFontHTML(UIUtil.uiLightViolet()));
+            result.append(guiScaledFontHTML(uiLightViolet()));
             Aero aero = (Aero) entity;
 //            if (inLounge) {
 //                addToTT("AeroStartingVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude());
@@ -435,7 +470,7 @@ public final class UnitToolTip {
             result.append("</FONT>");
 //            }
         } else if (entity.getElevation() != 0) {
-            result.append(guiScaledFontHTML(UIUtil.uiLightViolet()));
+            result.append(guiScaledFontHTML(uiLightViolet()));
 //            if (inLounge) {
 //                addToTT("StartingElev", BR, entity.getElevation());
 //            } else {
@@ -557,7 +592,7 @@ public final class UnitToolTip {
             MapSettings mapSettings) {
         StringBuilder result = new StringBuilder();
         // Critical (red) warnings
-        result.append(UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+        result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
         if (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null) {
             result.append("<BR>Cannot survive " + entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()));
         }
@@ -573,7 +608,7 @@ public final class UnitToolTip {
         result.append("</FONT>");
         
         // Non-critical (yellow) warnings
-        result.append(UIUtil.guiScaledFontHTML(UIUtil.uiYellow())); 
+        result.append(guiScaledFontHTML(uiYellow())); 
         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
                 || ((entity.getC3Master() == null) && entity.hasC3S())) {
             result.append("<BR>Unconnected C3 Computer");

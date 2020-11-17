@@ -193,6 +193,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
+        // Set the cursor in the text filter and mark the content so it can be directly replaced
+        textFilter.grabFocus();
+        textFilter.select(0, textFilter.getText().length());
         super.setVisible(visible);
         updatePlayerChoice();
     }

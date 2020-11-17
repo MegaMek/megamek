@@ -763,7 +763,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
             
             mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
-            mouseWheelZoomFlip.setSelected(gs.getMouseWheelFlip());
+            mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
             // Select the correct char set (give a nice default to start).
             unitStartChar.setSelectedIndex(0);
@@ -986,7 +986,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .charAt(0));
         
         gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
-        gs.setMouseWheelFlip(mouseWheelZoomFlip.isSelected());
+        gs.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 

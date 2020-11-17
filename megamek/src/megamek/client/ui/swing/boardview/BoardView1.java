@@ -571,7 +571,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int oldzoomIndex = zoomIndex;
                 
                 boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
-                boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelFlip();
+                boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelZoomFlip();
                 boolean zoomIn = (we.getWheelRotation() > 0) ^ wheelFlip; // = XOR
                 boolean doZoom = ZoomNoCtrl ^ we.isControlDown(); // = XOR
                 boolean horizontalScroll = !doZoom && we.isShiftDown();

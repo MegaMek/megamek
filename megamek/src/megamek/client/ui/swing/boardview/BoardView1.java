@@ -586,11 +586,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
                     }
                 } else { // SCROLL
-                    int notches = we.getWheelRotation() * (wheelFlip ? -1 : 1);
                     if (horizontalScroll) {
-                        hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (notches))));
+                        hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
                     } else {
-                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (notches))));
+                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
                     }
                     stopSoftCentering();
                 }

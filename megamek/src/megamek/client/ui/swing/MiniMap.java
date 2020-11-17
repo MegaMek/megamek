@@ -1704,7 +1704,7 @@ public class MiniMap extends JPanel {
                 initializeMap();
             } else {
                 if (x < 14) {
-                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                    if (GUIPreferences.getInstance().getMouseWheelFlip()) {
                         zoomIn();
                     } else {
                         zoomOut();
@@ -1713,7 +1713,7 @@ public class MiniMap extends JPanel {
                     heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
-                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                    if (GUIPreferences.getInstance().getMouseWheelFlip()) {
                         zoomOut();
                     } else {
                         zoomIn();

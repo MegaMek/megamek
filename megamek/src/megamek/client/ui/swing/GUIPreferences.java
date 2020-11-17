@@ -167,7 +167,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
-    public static final String MOUSE_WHEEL_ZOOM_FLIP = "MouseWheelZoomFlip";
+    public static final String MOUSE_WHEEL_FLIP = "MouseWheelFlip";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
     public static final String NAG_FOR_CRUSHING_BUILDINGS = "NagForCrushingBuildings";
     public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
@@ -373,7 +373,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
         
         store.setDefault(MOUSE_WHEEL_ZOOM, true);
-        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
+        store.setDefault(MOUSE_WHEEL_FLIP, true);
         
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
@@ -738,8 +738,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MOUSE_WHEEL_ZOOM);
     }
 
-    public boolean getMouseWheelZoomFlip(){
-        return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
+    public boolean getMouseWheelFlip(){
+        return store.getBoolean(MOUSE_WHEEL_FLIP);
     }
 
     public boolean getNagForBotReadme() {
@@ -1179,8 +1179,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MOUSE_WHEEL_ZOOM, b);
     }
 
-    public void setMouseWheelZoomFlip(boolean b){
-        store.setValue(MOUSE_WHEEL_ZOOM_FLIP,b);
+    public void setMouseWheelFlip(boolean b){
+        store.setValue(MOUSE_WHEEL_FLIP,b);
     }
 
     public void setNagForBotReadme(boolean b) {

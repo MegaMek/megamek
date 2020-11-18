@@ -3758,6 +3758,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getTotalAmmoOfType(EquipmentType et) {
         int totalShotsLeft = 0;
         for (Mounted amounted : getAmmo()) {
+            // FIXME: Consider new AmmoType::equals / BombType::equals
             if (amounted.getType().equals(et) && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
@@ -4047,9 +4048,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         AmmoType atype = (AmmoType) mountedAmmo.getType();
         Mounted oldammo = mounted.getLinked();
 
-        if ((oldammo != null)
-            && (!((AmmoType) oldammo.getType()).equals(atype) || (((AmmoType) oldammo
-                .getType()).getMunitionType() != atype.getMunitionType()))) {
+        if ((oldammo != null) && (oldammo.getType() instanceof AmmoType)
+                && !((AmmoType) oldammo.getType()).equals(atype)) {
             return false;
         }
 
@@ -4124,6 +4124,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         EquipmentType altBomb = EquipmentType.get(IBomber.ALT_BOMB_ATTACK);
         EquipmentType diveBomb = EquipmentType.get(IBomber.DIVE_BOMB_ATTACK);
         for (Mounted eq : equipmentList) {
+            // FIXME: Consider new BombType::equals
             if (eq.getType().equals(spaceBomb) || eq.getType().equals(altBomb)
                     || eq.getType().equals(diveBomb)) {
                 bombAttacksToRemove.add(eq);

@@ -1617,6 +1617,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // subtract for explosive ammo
         double explosivePenalty = 0;
+        // FIXME: Consider new AmmoType::equals / BombType::equals
         Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();

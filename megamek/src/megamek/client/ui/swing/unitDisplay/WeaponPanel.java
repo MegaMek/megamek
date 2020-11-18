@@ -2666,6 +2666,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // this ammo
                 for (int wid : mWeap.getBayWeapons()) {
                     Mounted bWeap = entity.getEquipment(wid);
+                    // FIXME: Consider new AmmoType::equals / BombType::equals
                     if (bWeap.getType().equals(sWeap.getType())) {
                         entity.loadWeapon(bWeap, mAmmo);
                         // Alert the server of the update.

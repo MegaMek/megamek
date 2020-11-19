@@ -1375,25 +1375,28 @@ public class Aero extends Entity implements IAero, IBomber {
             // total armor points
 
             switch (getArmorType(loc)) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-            case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                armorMultiplier = 1.2;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+            if (hasBARArmor(loc)) {
+                armorMultiplier *= getBARRating(loc) / 10.0;
             }
 
             if (blueShield) {

@@ -3710,7 +3710,6 @@ public abstract class Mech extends Entity {
                 continue;
             }
 
-            // CASE II means no subtraction
             if (!hasExplosiveEquipmentPenalty(loc)) {
                 continue;
             }
@@ -3781,7 +3780,24 @@ public abstract class Mech extends Entity {
             }
 
             // we subtract per critical slot
-            toSubtract *= mounted.getCriticals();
+            int criticals;
+            if (mounted.isSplit()) {
+                criticals = 0;
+                for (int l = 0; l < locations(); l++) {
+                    if (((l == mounted.getLocation()) || (l == mounted.getSecondLocation()))
+                            && hasExplosiveEquipmentPenalty(l)) {
+                        for (int i = 0; i < getNumberOfCriticals(l); i++) {
+                            CriticalSlot slot = getCritical(l, i);
+                            if ((slot != null) && mounted.equals(slot.getMount())) {
+                                criticals++;
+                            }
+                        }
+                    }
+                }
+            } else {
+                criticals = mounted.getCriticals();
+            }
+            toSubtract *= criticals;
             ammoPenalty += toSubtract;
         }
         // special case for blueshield, need to check each non-head location

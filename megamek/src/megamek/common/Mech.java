@@ -3364,6 +3364,28 @@ public abstract class Mech extends Entity {
     }
 
     /**
+     * Used in BV calculations. Any equipment that will destroy the unit or leg it if it explodes
+     * decreases the defensive battle rating. This is anything in the head, CT, or leg,
+     * or side torso if it has >= 3 engine crits, or any location that can transfer damage to that
+     * location.
+     *
+     * @param loc The location index
+     * @return    Whether explosive equipment in the location should decrease BV
+     */
+    private boolean hasExplosiveEquipmentPenalty(int loc) {
+        if (hasCASEII(loc)) {
+            return false;
+        }
+        if (!entityIsQuad() && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))) {
+            return !locationHasCase(loc) && hasExplosiveEquipmentPenalty(getTransferLocation(loc));
+        } else if ((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) {
+            return !locationHasCase(loc) || (getEngine().getSideTorsoCriticalSlots().length >= 3);
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Calculates the battle value of this mech
      */
     @Override
@@ -3689,42 +3711,8 @@ public abstract class Mech extends Entity {
             }
 
             // CASE II means no subtraction
-            if (hasCASEII(loc)) {
+            if (!hasExplosiveEquipmentPenalty(loc)) {
                 continue;
-            }
-
-            if (isClan()) {
-                // Clan mechs only count ammo in ct, legs or head (per BMRr).
-                // Also count ammo in side torsos if mech has xxl engine
-                // (extrapolated from rule intent - not covered in rules)
-                if (((loc != LOC_CT) && (loc != LOC_RLEG) && (loc != LOC_LLEG) && (loc != LOC_HEAD))
-                        && !(((loc == LOC_RT) || (loc == LOC_LT)) && hasEngine() && (getEngine()
-                                .getSideTorsoCriticalSlots().length > 2))) {
-                    continue;
-                }
-            } else {
-                if (((loc == LOC_LARM) || (loc == LOC_LLEG))
-                        && (hasCASEII(LOC_LT))) {
-                    continue;
-                } else if (((loc == LOC_RARM) || (loc == LOC_RLEG))
-                        && (hasCASEII(LOC_RT))) {
-                    continue;
-                }
-                // inner sphere with XL or XXL counts everywhere
-                if (hasEngine() && (getEngine().getSideTorsoCriticalSlots().length <= 2)) {
-                    // without XL or XXL, only count torsos if not CASEed,
-                    // and arms if arm & torso not CASEed
-                    if (((loc == LOC_RT) || (loc == LOC_LT))
-                            && locationHasCase(loc)) {
-                        continue;
-                    } else if ((loc == LOC_LARM)
-                            && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(LOC_LT))) {
-                        continue;
-                    } else if ((loc == LOC_RARM)
-                            && (locationHasCase(loc) || locationHasCase(LOC_RT) || hasCASEII(LOC_RT))) {
-                        continue;
-                    }
-                }
             }
 
             // gauss rifles only subtract 1 point per slot, same for HVACs and

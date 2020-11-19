@@ -1990,6 +1990,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
         misc.subType |= S_PROTOTYPE | S_IMPROVED;
         misc.bv = 0;
+        misc.rulesRefs = "17,XTRO:SW1";
         // Not included in IO Progression data based on original source.
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3020, DATE_NONE, DATE_NONE, 3069)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)

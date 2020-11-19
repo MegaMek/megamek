@@ -1595,8 +1595,7 @@ public class TestMech extends TestEntity {
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_HARJEL)|| eq.hasFlag(MiscType.F_HARJEL_II)
-                    || eq.hasFlag(MiscType.F_HARJEL_III)) && mech.hasSystem(Mech.SYSTEM_COCKPIT, location)) {
+            if (eq.hasFlag(MiscType.F_HARJEL) && mech.hasSystem(Mech.SYSTEM_COCKPIT, location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be placed in the same location as the cockpit.\n");
                 }

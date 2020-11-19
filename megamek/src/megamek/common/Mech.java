@@ -3750,7 +3750,8 @@ public abstract class Mech extends Entity {
             if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
                             || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                            || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
+                            || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+                            || etype.hasFlag(MiscType.F_JUMP_JET))) {
                 toSubtract = 1;
             }
 
@@ -3794,9 +3795,6 @@ public abstract class Mech extends Entity {
             // we subtract per critical slot
             toSubtract *= mounted.getCriticals();
             ammoPenalty += toSubtract;
-        }
-        if (getJumpType() == JUMP_PROTOTYPE_IMPROVED) {
-            ammoPenalty += this.getJumpMP(false, true);
         }
         // special case for blueshield, need to check each non-head location
         // seperately for CASE

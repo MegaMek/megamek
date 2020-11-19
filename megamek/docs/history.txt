@@ -4,6 +4,7 @@ VERSION HISTORY:
 + PR #2402: Upgrade to XStream 1.4.14 (Removes warning about illegal reflective operation)
 + Issue #2398: Final position of vehicle after skid (and fall) reported in Round Report but not applied to unit
 + Issue #1803: Configure view changes Clan unit BV due to AmmoType switching
++ Issue #2302: fix Map Size in lobby when decreasing map size
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -48,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -123,6 +125,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JToggleButton butUnofficial = new JToggleButton("Unofficial Opts");
+    private JToggleButton butLegacy = new JToggleButton("Legacy Opts");
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -197,6 +201,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
+        butUnofficial.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL));
+        butLegacy.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_LEGACY));
+        toggleOptions(butUnofficial.isSelected(), "Unofficial");
+        toggleOptions(butLegacy.isSelected(), "Legacy");
     }
 
     private void send() {
@@ -269,6 +277,27 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         setSize(Math.max(getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
 
         validate();
+    }
+    
+    /** 
+     * When show is true, options that contain the given String str are shown.
+     * When show is false, these options are hidden and deselected. 
+     * Used to show/hide unofficial and legcy options.
+     */
+    private void toggleOptions(boolean show, String str) {
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            // Each option in the list should have the same value, so picking the first is fine
+            if (comps.size() > 0) {
+                DialogOptionComponent comp = comps.get(0);
+                if (comp.getOption().getDisplayableName().contains(str)) {
+                    comp.setVisible(show);
+                    // Disable hidden options
+                    if (!show && comp.getOption().getType() == IOption.BOOLEAN) {
+                        comp.setSelected(false);
+                    }
+                }
+            }
+        }
     }
 
     private void refreshSearchPanel() {
@@ -771,7 +800,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         butDefaults.addActionListener(this);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
-
+        butUnofficial.addActionListener(this);
+        butLegacy.addActionListener(this);
+        
+        panButtons.add(butUnofficial);
+        panButtons.add(butLegacy);
+        panButtons.add(Box.createHorizontalStrut(30));
         panButtons.add(butOkay);
         panButtons.add(butCancel);
         panButtons.add(butDefaults);
@@ -781,7 +815,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
     private void setupPassword() {
         panPassword.setLayout(new BorderLayout());
-	labPass.setLabelFor(texPass);
+        labPass.setLabelFor(texPass);
         panPassword.add(labPass, BorderLayout.WEST);
         panPassword.add(texPass, BorderLayout.CENTER);
     }
@@ -833,6 +867,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             return;
         } else if (e.getSource().equals(butCancel)) {
             cancelled = true;
+        } else if (e.getSource().equals(butUnofficial)) {
+            toggleOptions(butUnofficial.isSelected(), "Unofficial");
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL, butUnofficial.isSelected());
+            return;
+        } else if (e.getSource().equals(butLegacy)) {
+            toggleOptions(butLegacy.isSelected(), "Legacy");
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_LEGACY, butLegacy.isSelected());
+            return;
         }
         setVisible(false);
     }
@@ -906,6 +948,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
         butDefaults.setEnabled(editable);
+        butUnofficial.setEnabled(editable);
+        butLegacy.setEnabled(editable);
 
         // Update our data element.
         this.editable = editable;

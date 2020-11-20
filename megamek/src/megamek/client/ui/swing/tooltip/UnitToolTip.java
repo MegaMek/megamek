@@ -39,7 +39,6 @@ public final class UnitToolTip {
     // Mark capital armor
     // line break after name
     // pilot table
-    //TODO: multi units horizontal stacking?
     // boardv use settooltip?
     // remove armor locs on aero that have no armor
     // make quirks multi per line
@@ -55,14 +54,13 @@ public final class UnitToolTip {
     // compact mode: partial repairs/damaged, C3 complete, 
     // remove load label from lobby
     //TODO: allow disconnecting C3 in lobby
+    //TODO: config dialog de-crap
     // show doomed status in lobby
     // show doomed status explicit in tooltip #2322
     //TODO: better ECM source
     //TODO: portraits after loading a mul are there in the mektable but not in the TT
     // reduce portrait and unit image to make the lines smaller in full mode
     // save column width
-    // blind drop should not hide clients bots
-    //TODO: real blind drop should not hide clinet bots
     // make gameyearlabels etc. follow the guiScale
     // remove the button "DeleteAll"
     //TODO: Externalize strings
@@ -70,16 +68,22 @@ public final class UnitToolTip {
     //TODO: is hidden exclusive with late deploy?
     // Add toggle button show ID
     // Dont show Altitude in space
-    //TODO: Loaded units have altitude?? Altitude in space?
+    //TODO: Loaded units have altitude?? Dont show alt/vel for loaded
+    //TODO: Show Hidden only when hidden rule active
+    // Allow hiding unofficial and legacy options in Game options
+    // No Altitude in space
+    // No hidden in space
     //TODO: Add searchlight to entitysprite name label
     // add searchlights automatically - add searchlights always, remove popup menu, add note in PlanetryC
     // make the randommapdialog scrolling more responsive
     // gui scale various dialogs: connect/host/planetary conditions/randommap/mapsize
     // gui scale popups: player list, mek list
-    //TODO: Player tooltip keyboard this is a bot controlled by you
+    // Player toolrip notes You and Your Bot
     //TODO: same team should see through blind drop???
     //TODO: renew the TT when mouseing over the same units...
     // in the unit selector, the text filter gets cursor directly and content is marked
+    //TODO: constant tooltip recalc calling BV() all the time in the mek list -> bad
+    // tables no line breaks
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

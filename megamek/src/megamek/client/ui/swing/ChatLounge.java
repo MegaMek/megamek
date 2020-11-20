@@ -30,20 +30,15 @@ import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.*;
 
 import megamek.client.Client;
@@ -1213,23 +1208,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } 
 
         if (pilot.getSlotCount() > 1) {
-            result.append("<I>Multiple&nbsp;Crewmembers</I>");
-        } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isBlank()) {
+            result.append("<I>Multiple Crewmembers</I>");
+        } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
             result.append(guiScaledFontHTML(uiNickColor()) + "<B>'"); 
-            result.append(pilot.getNickname(0).toUpperCase().replace(" ", "&nbsp;") + "'</B></FONT>");
-            if (!pilot.getStatusDesc(0).isBlank()) {
-                result.append("&nbsp;(" + pilot.getStatusDesc(0).replace(" ", "&nbsp;") + ")");
+            result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
+            if (!pilot.getStatusDesc(0).isEmpty()) {
+                result.append(" (" + pilot.getStatusDesc(0) + ")");
             }
         } else {
-            result.append(pilot.getDesc(0).replace(" ", "&nbsp;"));
+            result.append(pilot.getDesc(0));
         }
 
-        result.append("&nbsp;(" + pilot.getSkillsAsString(rpgSkills) + ")");
+        result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
         int advs = pilot.countOptions();
         if (advs > 0) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
             String msg = "ChatLounge.compact." + (advs == 1 ? "advantage" : "advantages");
-            result.append(pilot.countOptions() + Messages.getString(msg).replace(" ", "&nbsp;"));
+            result.append(pilot.countOptions() + Messages.getString(msg));
         }
 
         result.append("</FONT>");
@@ -1253,28 +1248,28 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         
         if (crew.getSlotCount() == 1) { // Single-person crew
             if (crew.isMissing(0)) {
-                result.append("<B>No&nbsp;" + crew.getCrewType().getRoleName(0) + "</B>");
+                result.append("<B>No " + crew.getCrewType().getRoleName(0) + "</B>");
             } else {
-                if ((crew.getNickname(0) != null) && !crew.getNickname(0).isBlank()) {
+                if ((crew.getNickname(0) != null) && !crew.getNickname(0).isEmpty()) {
                     result.append(UIUtil.guiScaledFontHTML(UIUtil.uiNickColor(), overallScale)); 
-                    result.append("<B>'" + crew.getNickname(0).toUpperCase().replace(" ", "&nbsp;") + "'</B></FONT>");
+                    result.append("<B>'" + crew.getNickname(0).toUpperCase() + "'</B></FONT>");
                 } else {
-                    result.append("<B>" + crew.getDesc(0).replace(" ", "&nbsp;" + "</B>"));
+                    result.append("<B>" + crew.getDesc(0) + "</B>");
                 }
             }
             result.append("<BR>");
         } else { // Multi-person crew
-            result.append("<I><B>Multiple&nbsp;Crewmembers</B></I>");
+            result.append("<I><B>Multiple Crewmembers</B></I>");
             result.append("<BR>");
         }
-        result.append(CrewSkillSummaryUtil.getSkillNames(entity).replace(" ", "&nbsp;") + ":&nbsp;");
+        result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": ");
         result.append("<B>" + crew.getSkillsAsString(rpgSkills) + "</B><BR>");
         
         // Advantages, MD, Edge
         if (crew.countOptions() > 0) {
             result.append(UIUtil.guiScaledFontHTML(UIUtil.uiQuirksColor(), overallScale));
-            result.append(Messages.getString("ChatLounge.abilities").replace(" ", "&nbsp;"));
-            result.append("&nbsp;" + crew.countOptions());
+            result.append(Messages.getString("ChatLounge.abilities"));
+            result.append(" " + crew.countOptions());
             result.append("</FONT>");
         }
         result.append("</FONT>");
@@ -1287,39 +1282,38 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 clientgui.getClient().getLocalPlayer(), mapSettings) + "</HTML>";
     }
 
-    public static final String DOT_SPACER = "&nbsp;\u2B1D&nbsp;";
-    private static final String LOADED_SIGN = "&nbsp;\u26DF&nbsp;";
-    private static final String UNCONNECTED_SIGN = "&nbsp;\u26AC&nbsp;";
-    private static final String CONNECTED_SIGN = "&nbsp;\u26AF&nbsp;";
-    private static final String WARNING_SIGN = "&nbsp;\u26A0&nbsp;";
+    public static final String DOT_SPACER = " \u2B1D ";
+    private static final String LOADED_SIGN = " \u26DF ";
+    private static final String UNCONNECTED_SIGN = " \u26AC";
+    private static final String CONNECTED_SIGN = " \u26AF ";
+    private static final String WARNING_SIGN = " \u26A0 ";
     
     public static String formatUnitCompact(Entity entity, boolean blindDrop, int mapType) {
-        String value = UIUtil.guiScaledFontHTML();
         
         if (blindDrop) {
-            value += DOT_SPACER;
+            String value;
             if (entity instanceof Infantry) {
-                value += Messages.getString("ChatLounge.0");
+                value = Messages.getString("ChatLounge.0");
             } else if (entity instanceof Protomech) {
-                value += Messages.getString("ChatLounge.1");
+                value = Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
-                value += Messages.getString("ChatLounge.2");
+                value = Messages.getString("ChatLounge.2");
             } else {
-                value += entity.getWeightClassName();
+                value = entity.getWeightClassName();
                 if (entity instanceof Tank) {
                     value += Messages.getString("ChatLounge.6");
                 }
             }
-            value += DOT_SPACER;
-            return value;
+            return UIUtil.guiScaledFontHTML() + DOT_SPACER + value + DOT_SPACER;
         }
         
-        // Signs before the unit name
+        StringBuilder result = new StringBuilder(UIUtil.guiScaledFontHTML());
         
+        // Signs before the unit name
         // ID
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGray());
-            value += "[" + entity.getId() + "] </FONT>";
+            result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
+            result.append(MessageFormat.format("[{0}] </FONT>", entity.getId()));
         }
 
         // Critical (Red) Warnings
@@ -1329,136 +1323,138 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
                 || (!entity.isDesignValid())
                 ) {
-            value += UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()); 
-            value += WARNING_SIGN + "</FONT>";
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+            result.append(WARNING_SIGN + "</FONT>");
         }
         
         // General (Yellow) Warnings
         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
                 || ((entity.getC3Master() == null) && entity.hasC3S())
                 ) {
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiYellow()); 
-            value += WARNING_SIGN + "</FONT>";
+            result.append(guiScaledFontHTML(uiYellow())); 
+            result.append(WARNING_SIGN + "</FONT>");
         }
         
         // Loaded unit
         if (entity.getTransportId() != Entity.NONE) {
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + LOADED_SIGN + "</FONT>";
+            result.append(guiScaledFontHTML(uiGreen()) + LOADED_SIGN + "</FONT>");
         }
         
         // Unit name
-        value += entity.getShortNameRaw();
+        result.append(entity.getShortNameRaw());
 
         // Invalid unit design
         if (!entity.isDesignValid()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
-            value += Messages.getString("ChatLounge.invalidDesign");
-            value += "</FONT>";
+            result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(Messages.getString("ChatLounge.invalidDesign"));
+            result.append("</FONT>");
         }
         
         // Quirk Count
         int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
         if (quirkCount > 0) {
-            value += DOT_SPACER;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiQuirksColor());
-            value += Messages.getString("ChatLounge.Quirks") + quirkCount;
-            value += "</FONT>";
+            result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
+            result.append(Messages.getString("BT.Quirks") + ": ");
+            result.append(quirkCount + "</FONT>");
         }
         
         // C3 ...
         if (entity.hasC3i() || entity.hasNavalC3()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiC3Color());
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiC3Color()));
             String c3Name = entity.hasC3i() ? "C3i" : "NC3";
             if (entity.calculateFreeC3Nodes() >= 5) {
-                value += c3Name + UNCONNECTED_SIGN;
+                result.append(c3Name + UNCONNECTED_SIGN);
             } else {
-                value += c3Name + CONNECTED_SIGN + entity.getC3NetId();
+                result.append(c3Name + CONNECTED_SIGN + entity.getC3NetId());
             }
-            value += "</FONT>";
+            result.append("</FONT>");
         } 
 
         if (entity.hasC3()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiC3Color());
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiC3Color()));
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
-                    value += "C3S" + UNCONNECTED_SIGN; 
+                    result.append("C3S" + UNCONNECTED_SIGN); 
                 }  
                 if (entity.hasC3M()) {
-                    value += "C3M"; 
+                    result.append("C3M"); 
                 }
             } else if (entity.C3MasterIs(entity)) {
-                value += "C3M (CC)";
+                result.append("C3M (CC)");
             } else {
                 if (entity.hasC3S()) {
-                    value += "C3S" + CONNECTED_SIGN; 
+                    result.append("C3S" + CONNECTED_SIGN); 
                 } else {
-                    value += "C3M" + CONNECTED_SIGN; 
+                    result.append("C3M" + CONNECTED_SIGN); 
                 }
-                value += entity.getC3Master().getChassis();
+                result.append(entity.getC3Master().getChassis());
             }
-            value += "</FONT>";
+            result.append("</FONT>");
         }
         
         // Loaded onto another unit
         if (entity.getTransportId() != Entity.NONE) {
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) +  "<I>(";
-            value += loader.getChassis() + ")</I></FONT>";
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) +  "<I>(");
+            result.append(loader.getChassis() + ")</I></FONT>");
         }
 
         // Hidden deployment
-        if (entity.isHidden()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>";
+        if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+            result.append(Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>");
         }
         
         if (entity.isHullDown()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>";
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+            result.append(Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>");
         }
         
         if (entity.isProne()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.prone") + "</I></FONT>";
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+            result.append(Messages.getString("ChatLounge.compact.prone") + "</I></FONT>");
         }
         
         if (entity.countPartialRepairs() > 0) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiLightRed());
-            value += "Partial Repairs" + "</FONT>";
+            result.append(DOT_SPACER + guiScaledFontHTML(uiLightRed()));
+            result.append("Partial Repairs</FONT>");
         }
 
         // Offboard deployment
         if (entity.isOffBoard()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
-            value += Messages.getString("ChatLounge.compact.deploysOffBoard") + "</I></FONT>";
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"); 
+            result.append(Messages.getString("ChatLounge.compact.deploysOffBoard") + "</I></FONT>");
         } else if (entity.getDeployRound() > 0) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound());
+            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+            result.append(Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound()));
             if (entity.getStartingPos(false) != Board.START_NONE) {
-                value += Messages.getString("ChatLounge.compact.deployZone", 
-                        IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]);
+                result.append(Messages.getString("ChatLounge.compact.deployZone", 
+                        IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
             }
-            value += "</I></FONT>";
+            result.append("</I></FONT>");
         }
 
         // Starting values for Altitude / Velocity / Elevation
         if (entity.isAero()) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
+            result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
             Aero aero = (Aero) entity;
-            value += Messages.getString("ChatLounge.compact.velo", aero.getCurrentVelocity());
+            result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
+            result.append(aero.getCurrentVelocity());
             if (mapType != MapSettings.MEDIUM_SPACE) {
-                value += Messages.getString("ChatLounge.compact.alti", aero.getAltitude());
+                result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
+                result.append(aero.getAltitude());
             } 
             if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                value += Messages.getString("ChatLounge.compact.fuel", aero.getCurrentFuel());
+                result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
+                result.append(aero.getCurrentFuel());
             }
-            value += "</I></FONT>";
-        } else if (entity.getElevation() != 0) {
-            value += DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.elev", entity.getElevation());
-            value += "</I></FONT>";
+            result.append("</I></FONT>");
+        } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
+            result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>");
+            result.append(Messages.getString("ChatLounge.compact.elevation") + ": ");
+            result.append(entity.getElevation() + "</I></FONT>");
         }
-        return value;
+        return result.toString(); 
     }
 
     public static String formatUnitFull(Entity entity, boolean blindDrop, int mapType) {
@@ -1539,7 +1535,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         if (quirkCount > 0) {
             value += DOT_SPACER;
             value += UIUtil.guiScaledFontHTML(UIUtil.uiQuirksColor());
-            value += Messages.getString("ChatLounge.Quirks");
+            value += Messages.getString("ChatLounge.Quirks") + ": ";
             
             int posQuirks = entity.countQuirks(Quirks.POS_QUIRKS);
             String pos = posQuirks > 0 ? "+" + posQuirks : ""; 
@@ -1675,7 +1671,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             value += "<I> aboard " + loader.getChassis() + "</I></FONT>";
         }
         
-        if (entity.isHidden()) {
+        if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
             if (subsequentElement) {
                 value += DOT_SPACER;
             }
@@ -1731,12 +1727,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             subsequentElement = true;
             value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
             Aero aero = (Aero) entity;
-            value += Messages.getString("ChatLounge.compact.velo", aero.getCurrentVelocity());
+            value += Messages.getString("ChatLounge.compact.velocity") + ": ";
+            value += aero.getCurrentVelocity();
             if (mapType != MapSettings.MEDIUM_SPACE) {
-                value += Messages.getString("ChatLounge.compact.alti", aero.getAltitude());
+                value += ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
+                value += aero.getAltitude();
             } 
             if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                value += Messages.getString("ChatLounge.compact.fuel", aero.getCurrentFuel());
+                value += ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
+                value += aero.getCurrentFuel();
             }
             value += "</I></FONT>";
         } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
@@ -1744,11 +1743,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 value += DOT_SPACER;
             }
             subsequentElement = true;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.elev", entity.getElevation());
-            value += "</I></FONT>";
+            value += guiScaledFontHTML(uiGreen()) + "<I>";
+            value += Messages.getString("ChatLounge.compact.elevation") + ": ";
+            value += entity.getElevation() + "</I></FONT>";
         }
-
+        
         return value;
     }
 
@@ -3124,7 +3123,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         @Override
         public Object getValueAt(int row, int col) {
-            StringBuilder result = new StringBuilder("<HTML>" + UIUtil.guiScaledFontHTML());
+            StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             IPlayer player = getPlayerAt(row);
             boolean realBlindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) 
                     && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
@@ -3135,26 +3134,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 } else {
                     double ton = tons.get(row);
                     if (ton < 10) {
-                        result.append(String.format("%.2f", ton) + "&nbsp;Tons");
+                        result.append(String.format("%.2f", ton) + " Tons");
                     } else {
-                        result.append(String.format("%,d", Math.round(ton)) + "&nbsp;Tons");
+                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
                     }
                     if (costs.get(row) < 10000000) {
-                        result.append("<BR>" + String.format("%,d", costs.get(row)) + "&nbsp;C-Bills");
+                        result.append("<BR>" + String.format("%,d", costs.get(row)) + " C-Bills");
                     } else {
-                        result.append("<BR>" + String.format("%,d", costs.get(row) / 1000000) + "\u00B7M&nbsp;C-Bills");
+                        result.append("<BR>" + String.format("%,d", costs.get(row) / 1000000) + "\u00B7M C-Bills");
                     }
-                    result.append("<BR>" + String.format("%,d", bvs.get(row)) + "&nbsp;BV");
+                    result.append("<BR>" + String.format("%,d", bvs.get(row)) + " BV");
                 }
             } else {
                 result.append(guiScaledFontHTML(0.1f));
-                result.append(player.getName().replace(" ", "&nbsp;") + "</FONT>");
+                result.append(player.getName() + "</FONT>");
                 boolean isEnemy = clientgui.getClient().getLocalPlayer().isEnemyOf(player);
                 result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen()));
-                result.append("<BR>" + IPlayer.teamNames[player.getTeam()].replace(" ", "&nbsp;") + "</FONT>");
+                result.append("<BR>" + IPlayer.teamNames[player.getTeam()] + "</FONT>");
                 result.append(guiScaledFontHTML());
-                result.append("<BR>" + "Start:&nbsp;"); 
-                result.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
             }
             return result.toString();
         }
@@ -3196,7 +3194,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         private void showPopup(MouseEvent e) {
-//            JPopupMenu popup = new JPopupMenu();
             ScalingPopup popup = new ScalingPopup();
             int row = tablePlayers.rowAtPoint(e.getPoint());
             IPlayer player = playerModel.getPlayerAt(row);
@@ -3216,7 +3213,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 popup.add(botConfig);
             }
 
-//            UIUtil.scaleJPopup(popup);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
 
@@ -3262,6 +3258,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         private static final int COL_PLAYER = 2;
         private static final int COL_BV = 3;
         private static final int N_COL = 4;
+        
+        
 
         private ArrayList<Entity> data;
 
@@ -3317,6 +3315,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         @Override
         public Object getValueAt(int row, int col) {
+            System.out.println(counter++);
             final Entity entity = getEntityAt(row);
             if (entity == null) {
                 return "Error: Unit not found";
@@ -3338,10 +3337,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else if (col == COL_PLAYER) {
                 String sep = compact ? DOT_SPACER : "<BR>";
                 result.append(guiScaledFontHTML(PlayerColors.getColor(owner.getColorIndex()), size));
-                result.append(owner.getName().replace(" ", "&nbsp;"));
+                result.append(owner.getName());
                 result.append("</FONT>" + guiScaledFontHTML(size) + sep + "</FONT>");
                 result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen(), size));
-                result.append(IPlayer.teamNames[owner.getTeam()].replace(" ", "&nbsp;"));
+                result.append(IPlayer.teamNames[owner.getTeam()]);
                 result.append(cellDistinction(row));
             } else if (col == COL_PILOT) {
                 final boolean rpgSkills = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
@@ -3466,7 +3465,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 return this;
             }
         }
-    }
+    } static int counter;
     
     /** 
      * Java does strange things when table cells are exactly equal - the &nbsp; spacers stop working
@@ -3886,15 +3885,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            if (e.isPopupTrigger() && mekTable.getSelectedRowCount() > 0) {
-                showPopup(e);
-            }
-        }
+        public void mousePressed(MouseEvent e) { }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() && mekTable.getSelectedRowCount() > 0) {
+            if (e.isPopupTrigger()) {
+                // If the right mouse button is pressed over an unselected entity,
+                // clear the selection and select that entity instead
+                int row = mekTable.rowAtPoint(e.getPoint());
+                if (!mekTable.isRowSelected(row)) {
+                    mekTable.changeSelection(row, row, false, false);
+                }
                 showPopup(e);
             }
         }
@@ -4402,7 +4403,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         public void setText(String s, boolean isSelected) {
-            lblImage.setText(String.format("<html>%s</html>", s));
+            lblImage.setText("<HTML><NOBR>" + s + "</HTML>");
         }
 
         public void clearImage() {

@@ -232,6 +232,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
+    public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
+    public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -465,6 +467,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TEAM_COLORING, true);
         
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
+        setDefault(OPTIONS_SHOW_UNOFFICIAL, true);
+        setDefault(OPTIONS_SHOW_LEGACY, true);
         
     }
 

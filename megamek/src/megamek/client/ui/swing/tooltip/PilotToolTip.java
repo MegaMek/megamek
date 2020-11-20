@@ -90,7 +90,7 @@ public final class PilotToolTip {
                 result.append(" \u2B1D " + crew.getCrewType().getRoleName(i));
             }
             
-            if (!crew.getStatusDesc(i).isBlank()) {
+            if (!crew.getStatusDesc(i).isEmpty()) {
                 result.append("<BR>" + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
                 result.append(" (" + crew.getStatusDesc(i) + ")</FONT>");
             }

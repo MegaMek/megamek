@@ -281,15 +281,15 @@ public final class UnitToolTip {
         int numDmgd = (orig - 1) / visUnit + 1 - numPartial - numIntact;
         if (numIntact > 0) {
             result.append(guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA));
-            result.append(dChar.repeat(numIntact) + "</FONT>");
+            result.append(repeat(dChar, numIntact) + "</FONT>");
         }
         if (numPartial > 0) {
             result.append(guiScaledFontHTML(colorPartialDmg, TT_SMALLFONT_DELTA));
-            result.append(dChar.repeat(numPartial) + "</FONT>");
+            result.append(repeat(dChar, numPartial) + "</FONT>");
         }
         if (numDmgd > 0) {
             result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
-            result.append(dChar.repeat(numDmgd) + "</FONT>");
+            result.append(repeat(dChar, numDmgd) + "</FONT>");
         }
         return result;
     }

@@ -3474,7 +3474,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * invisible HTML string to attach after cell content to make cell content unique.
      */
     private String cellDistinction(int nr) {
-        return "&nbsp;".repeat(nr);
+        return repeat("&nbsp;", nr);
     }
 
     public class MekTableKeyAdapter extends KeyAdapter {

@@ -47,6 +47,14 @@ public final class UIUtil {
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
     
+    public static String repeat(String str, int count) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            result.append(str);
+        }
+        return result.toString();
+    }
+    
     /** 
      * Returns an HTML FONT tag setting the font face to Dialog 
      * and the font size according to GUIScale. 
@@ -95,7 +103,7 @@ public final class UIUtil {
         String currLine = "";
         for (String curr: origList) {
             // Skip empty strings to avoid double separators
-            if (curr.isBlank()) {
+            if (curr.isEmpty()) {
                 continue;
             }
             

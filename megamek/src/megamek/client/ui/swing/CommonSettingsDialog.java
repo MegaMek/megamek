@@ -873,11 +873,11 @@ public class CommonSettingsDialog extends ClientDialog implements
             uiThemes.setSelectedItem(new UITheme(GUIPreferences.getInstance().getUITheme()));
 
             fovInsideEnabled.setSelected(gs.getFovHighlight());
-            fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
+            fovHighlightAlpha.setValue(gs.getFovHighlightAlpha());
             fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
             fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
             fovOutsideEnabled.setSelected(gs.getFovDarken());
-            fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
+            fovDarkenAlpha.setValue(gs.getFovDarkenAlpha());
             numStripesSlider.setValue(gs.getFovStripes());
             fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
 
@@ -1431,13 +1431,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
 
         // Inside Opaqueness slider
-        fovHighlightAlpha = new JSlider();
-        fovHighlightAlpha.setMajorTickSpacing(20);
+        fovHighlightAlpha = new JSlider(0, 255);
+        fovHighlightAlpha.setMajorTickSpacing(25);
         fovHighlightAlpha.setMinorTickSpacing(5);
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
-        fovHighlightAlpha.setMaximumSize(new Dimension(250, 100));
+        fovHighlightAlpha.setMaximumSize(new Dimension(400, 100));
         fovHighlightAlpha.addChangeListener(this);
+        fovHighlightAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         // Label
         highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -1532,13 +1533,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(Box.createVerticalStrut(1));
         comps.add(row);
 
-        fovDarkenAlpha = new JSlider();
-        fovDarkenAlpha.setMajorTickSpacing(20);
+        fovDarkenAlpha = new JSlider(0, 255);
+        fovDarkenAlpha.setMajorTickSpacing(25);
         fovDarkenAlpha.setMinorTickSpacing(5);
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
-        fovDarkenAlpha.setMaximumSize(new Dimension(250, 100));
+        fovDarkenAlpha.setMaximumSize(new Dimension(400, 100));
         fovDarkenAlpha.addChangeListener(this);
+        fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
@@ -1886,11 +1888,9 @@ public class CommonSettingsDialog extends ClientDialog implements
     public void stateChanged(ChangeEvent evt) {
         GUIPreferences guip = GUIPreferences.getInstance();
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
+            guip.setFovHighlightAlpha(Math.max(0, Math.min(255, (int) fovHighlightAlpha.getValue())));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
+            guip.setFovDarkenAlpha(Math.max(0, Math.min(255, (int) fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
             guip.setFovStripes(numStripesSlider.getValue());
         }

@@ -940,7 +940,7 @@ public class Infantry extends Entity {
         bvText.append(endRow);
 
         if(hasDEST()) {
-            tmmFactor += 0.1;
+            tmmFactor += 0.2;
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("DEST:");
@@ -948,7 +948,7 @@ public class Infantry extends Entity {
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append("+0.1");
+            bvText.append("+0.2");
             bvText.append(endColumn);
             bvText.append(endRow);
         }

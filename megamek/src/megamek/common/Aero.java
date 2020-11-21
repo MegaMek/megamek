@@ -1363,8 +1363,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        // For Aeros other than SmallCraft ignore their Wings and Fuselage for armor in BV calcs
-        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 2)); loc++) {
+        // Ignore any hull/fuselage or capital fighter wing locations
+        for (int loc = 0; loc < locations() - ((this instanceof SmallCraft) ? 1 : 2); loc++) {
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
                 if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)

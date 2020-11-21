@@ -3735,7 +3735,9 @@ public abstract class Mech extends Entity {
                     || (etype instanceof CLImprovedHeavyLaserSmall)
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
-                    || (etype instanceof ISMekTaser)) {
+                    || (etype instanceof ISMekTaser)
+                    || (etype.hasFlag(WeaponType.F_B_POD)
+                    || (etype.hasFlag(WeaponType.F_M_POD)))) {
                 toSubtract = 1;
             }
 
@@ -3783,13 +3785,6 @@ public abstract class Mech extends Entity {
             if ((etype instanceof AmmoType)
                     && (mounted.getUsableShotsLeft() == 0)) {
                 continue;
-            }
-
-            // B- and M-Pods shouldn't subtract
-            if ((etype instanceof WeaponType)
-                    && (etype.hasFlag(WeaponType.F_B_POD) || etype
-                            .hasFlag(WeaponType.F_M_POD))) {
-                toSubtract = 0;
             }
 
             // we subtract per critical slot

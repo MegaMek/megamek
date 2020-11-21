@@ -3373,7 +3373,7 @@ public abstract class Mech extends Entity {
      * @return    Whether explosive equipment in the location should decrease BV
      */
     private boolean hasExplosiveEquipmentPenalty(int loc) {
-        if (hasCASEII(loc)) {
+        if ((loc == Entity.LOC_NONE) || hasCASEII(loc)) {
             return false;
         }
         if (!entityIsQuad() && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))) {
@@ -3710,7 +3710,7 @@ public abstract class Mech extends Entity {
                 continue;
             }
 
-            if (!hasExplosiveEquipmentPenalty(loc)) {
+            if (!hasExplosiveEquipmentPenalty(loc) && !hasExplosiveEquipmentPenalty(mounted.getSecondLocation())) {
                 continue;
             }
 

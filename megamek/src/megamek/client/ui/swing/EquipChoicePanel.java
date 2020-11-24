@@ -1204,7 +1204,12 @@ public class EquipChoicePanel extends JPanel {
                 }
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
-                m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                
+                // set # shots only for non-one shot weapons
+                if (m_mounted.getLocation() != Entity.LOC_NONE) {
+                    m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                }
+                
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }

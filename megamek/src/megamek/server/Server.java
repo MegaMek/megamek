@@ -102,7 +102,6 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.icons.Camouflage;
-import megamek.common.logging.MMLogger;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -135,12 +134,8 @@ import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.defensivepods.BPodWeapon;
-import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
-import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
@@ -32178,13 +32173,14 @@ public class Server implements Runnable {
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
             boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
-        if (!bldg.hasCFIn(coords)) {
-            return;
-        }
+        // sometimes, buildings that reach CF 0 decide against collapsing
+        // but we want them to go away anyway, as a building with CF 0 cannot stand
+        final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
+
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
         Report r;
-        final int phaseCF = bldg.getPhaseCF(coords);
+        
         // Get the Vector of Entities at these coordinates.
         final Vector<Entity> vector = positionMap.get(coords);
 

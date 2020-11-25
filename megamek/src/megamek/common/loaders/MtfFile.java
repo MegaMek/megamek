@@ -112,6 +112,10 @@ public class MtfFile implements IMechLoader {
     public static final String RULES_LEVEL = "rules level:";
     public static final String HEAT_SINKS = "heat sinks:";
     public static final String BASE_CHASSIS_HEAT_SINKS = "base chassis heat sinks:";
+    public static final String HS_SINGLE = "Single";
+    public static final String HS_DOUBLE = "Double";
+    public static final String HS_LASER = "Laser";
+    public static final String HS_COMPACT = "Compact";
     public static final String WALK_MP = "walk mp:";
     public static final String JUMP_MP = "jump mp:";
     public static final String ARMOR = "armor:";
@@ -297,11 +301,11 @@ public class MtfFile implements IMechLoader {
 
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
-            boolean dblSinks = heatSinks.contains("Double");
+            boolean dblSinks = heatSinks.contains(HS_DOUBLE);
 
-            boolean laserSinks = heatSinks.contains("Laser");
+            boolean laserSinks = heatSinks.contains(HS_LASER);
 
-            boolean compactSinks = heatSinks.contains("Compact");
+            boolean compactSinks = heatSinks.contains(HS_COMPACT);
 
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
 

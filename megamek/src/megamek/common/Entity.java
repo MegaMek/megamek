@@ -1481,7 +1481,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the player that "owns" this entity.
      */
     public IPlayer getOwner() {
-        return owner;
+        // Replaced 24 NOV 2020
+        // Server and other central classes already used game.getplayer(entity.getownerID())
+        // instead of entity.getowner() and it is noted that getOwner is not reliable. 
+        // The entity owner object would have to be replaced whenever a player is updated 
+        // which does not happen. The player ID on the other hand stays the same and the game
+        // object is not usually replaced. I expect entity.game to be up to date much more than owner.
+        // Unfortunately, entities freshly created may not have the game set. Therefore, fall
+        // back to the old version when game == null
+        if (game != null) {
+            return game.getPlayer(ownerId);
+        } else {
+            return owner;
+        }
+        // FORMERLY:
+        // return owner;
     }
 
     public void setOwner(IPlayer player) {

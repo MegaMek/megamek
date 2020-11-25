@@ -14,6 +14,7 @@
 package megamek.client.ui.swing.tooltip;
 
 import java.awt.Color;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -23,6 +24,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChatLounge;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
@@ -69,7 +71,7 @@ public final class UnitToolTip {
     // Add toggle button show ID
     // Dont show Altitude in space
     //TODO: Loaded units have altitude?? Dont show alt/vel for loaded
-    //TODO: Show Hidden only when hidden rule active
+    //TODO: Show Hidden only when hidden rule active -- no, remove hidden when inactive
     // Allow hiding unofficial and legacy options in Game options
     // No Altitude in space
     // No hidden in space
@@ -79,11 +81,13 @@ public final class UnitToolTip {
     // gui scale various dialogs: connect/host/planetary conditions/randommap/mapsize
     // gui scale popups: player list, mek list
     // Player toolrip notes You and Your Bot
-    //TODO: same team should see through blind drop???
-    //TODO: renew the TT when mouseing over the same units...
+    //TODO: same team should see through blind drop
+    // renew the TT when mouseing over the same units... -> shows ID in unit TT
     // in the unit selector, the text filter gets cursor directly and content is marked
-    //TODO: constant tooltip recalc calling BV() all the time in the mek list -> bad
+    // constant tooltip recalc calling BV() all the time in the mek list -> bad
     // tables no line breaks
+    //TODO: Show ID for loader
+    //TODO: When resizing table columns, dont switch sorter
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
@@ -115,6 +119,8 @@ public final class UnitToolTip {
         IPlayer owner = game.getPlayer(entity.getOwnerId());
         result.append(guiScaledFontHTML(PlayerColors.getColor(owner.getColorIndex())));
         result.append(addToTT("ChassisPlayer", NOBR, entity.getChassis(), owner.getName()));
+        result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
+        result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));
         result.append("</FONT>");
 
         // Pilot; in the lounge the pilot is separate so don't add it there

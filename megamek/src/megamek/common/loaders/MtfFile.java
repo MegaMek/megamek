@@ -297,11 +297,11 @@ public class MtfFile implements IMechLoader {
 
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
-            boolean dblSinks = heatSinks.endsWith("Double");
+            boolean dblSinks = heatSinks.contains("Double");
 
-            boolean laserSinks = heatSinks.endsWith("Laser");
+            boolean laserSinks = heatSinks.contains("Laser");
 
-            boolean compactSinks = heatSinks.endsWith("Compact");
+            boolean compactSinks = heatSinks.contains("Compact");
 
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
 

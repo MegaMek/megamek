@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Issue #2415: Fix Client Settings truncating certain FOV alpha values on Save/Load
 + Issue #2424: Changing ammo type on one-shot weapons no longer secretly sets their ammo count to 1 ton's worth of ammo
 + Data: IS Tag restricted from Aerospace Fighters.
++ PR #2433: Fix for weird edge case where a collapsed building would remain on the board.
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

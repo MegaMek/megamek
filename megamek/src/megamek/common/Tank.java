@@ -4060,7 +4060,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
+        if (((double) getWalkMP(false, true) / getOriginalWalkMP()) <= 0.5) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
@@ -4115,7 +4115,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        if (getWalkMP() < getOriginalWalkMP()) {
+        if (getWalkMP(false, true) < getOriginalWalkMP()) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;

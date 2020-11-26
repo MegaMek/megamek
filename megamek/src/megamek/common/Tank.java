@@ -4061,7 +4061,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        // when checking if MP has been reduced, we want to ignore damage and weather effects
+        // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
@@ -4117,7 +4117,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        // when checking if MP has been reduced, we want to ignore gravity and various weather effects
+        // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (getMotiveDamage() > 0) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");

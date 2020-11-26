@@ -6703,13 +6703,13 @@ public abstract class Mech extends Entity {
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
         if (hasCompactHeatSinks()) {
-            sb.append("Compact");
+            sb.append(MtfFile.HS_COMPACT);
         } else if (hasLaserHeatSinks()) {
-            sb.append("Laser");
+            sb.append(MtfFile.HS_LASER);
         } else if (hasDoubleHeatSinks()) {
-            sb.append("Double");
+            sb.append(MtfFile.HS_DOUBLE);
         } else {
-            sb.append("Single");
+            sb.append(MtfFile.HS_SINGLE);
         }
         sb.append(newLine);
 

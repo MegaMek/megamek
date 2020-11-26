@@ -3484,6 +3484,7 @@ public class Tank extends Entity {
         minorMovementDamage = false;
         moderateMovementDamage = false;
         heavyMovementDamage = false;
+        m_bImmobileHit = false;
     }
 
     public void unlockTurret() {
@@ -4060,7 +4061,8 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        if (((double) getWalkMP(false, true) / getOriginalWalkMP()) <= 0.5) {
+        // when checking if MP has been reduced, we want to ignore damage and weather effects
+        if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
@@ -4115,7 +4117,8 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        if (getWalkMP(false, true) < getOriginalWalkMP()) {
+        // when checking if MP has been reduced, we want to ignore gravity and various weather effects
+        if (getMotiveDamage() > 0) {
             MegaMek.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;

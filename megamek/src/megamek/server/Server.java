@@ -12798,6 +12798,8 @@ public class Server implements Runnable {
             MovePath stepBackwards = new MovePath(game, violation);
             stepForward.addStep(MoveStepType.FORWARDS);
             stepBackwards.addStep(MoveStepType.BACKWARDS);
+            stepForward.compile(getGame(), violation, false);
+            stepBackwards.compile(getGame(), violation, false);
             if ((direction != violation.getFacing())
                     && (direction != ((violation.getFacing() + 3) % 6))
                     && !entity.getIsJumpingNow()

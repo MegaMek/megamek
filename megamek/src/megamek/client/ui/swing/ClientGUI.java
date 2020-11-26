@@ -2053,8 +2053,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     MovePath stepBackward = new MovePath(client.getGame(), e);
                     stepForward.addStep(MoveStepType.FORWARDS);
                     stepBackward.addStep(MoveStepType.BACKWARDS);
-                    stepForward.compile(client.getGame(), e);
-                    stepBackward.compile(client.getGame(), e);
+                    stepForward.compile(client.getGame(), e, false);
+                    stepBackward.compile(client.getGame(), e, false);
                     
                     String title = Messages.getString("CFRDomino.Title");
                     String msg = Messages.getString("CFRDomino.Message",

@@ -869,7 +869,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
-            return 80 * primitiveFuelFactor();
+            return 80 / primitiveFuelFactor();
         }
         return 80;
     }

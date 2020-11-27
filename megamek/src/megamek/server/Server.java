@@ -12793,6 +12793,8 @@ public class Server implements Runnable {
             MovePath stepBackwards = new MovePath(game, violation);
             stepForward.addStep(MoveStepType.FORWARDS);
             stepBackwards.addStep(MoveStepType.BACKWARDS);
+            stepForward.compile(getGame(), violation, false);
+            stepBackwards.compile(getGame(), violation, false);
             if ((direction != violation.getFacing())
                     && (direction != ((violation.getFacing() + 3) % 6))
                     && !entity.getIsJumpingNow()
@@ -12840,6 +12842,8 @@ public class Server implements Runnable {
                             MovePath mp = (MovePath) rp.packet.getData()[1];
                             // Move based on the feedback
                             if (mp != null) {
+                                mp.setGame(getGame());
+                                mp.setEntity(violation);
                                 // Report
                                 r = new Report(2352);
                                 r.indent(3);

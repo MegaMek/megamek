@@ -12,6 +12,7 @@ VERSION HISTORY:
 + Data: IS Tag restricted from Aerospace Fighters.
 + PR #2433: Fix for weird edge case where a collapsed building would remain on the board.
 + Issue #2426: Old language for double heat sinks in mtfs no longer read by Megamek 
++ Issue #2309: Tanks no longer display as damaged when in pristine condition but have had MP reduced by non-damaging conditions (e.g. gravity, temperature)
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

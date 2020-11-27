@@ -2353,6 +2353,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * mapsheets), draws the hexes onto it, and returns that image.
      */
     public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+    	// Set zoom to base, so we get a consist board image
+
+    	int oldZoom = zoomIndex;
+    	zoomIndex = BASE_ZOOM_INDEX;
+    	zoom();
+
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
         boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
@@ -2458,8 +2464,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-
         boardGraph.dispose();
+
+        // Restore the zoom setting
+        zoomIndex = oldZoom;
+    	zoom();
+
         return (BufferedImage) entireBoard;
     }
 

@@ -2360,6 +2360,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
+
+        if (shadowMap == null) {
+            updateShadowMap();
+        }
+
         // Draw hexes
         drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
 

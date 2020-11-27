@@ -5341,8 +5341,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                File imgFile = new File(dir,
-                        "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + ".png");
+				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
                     ImageIO.write(getEntireBoardImage(false), "png", imgFile);
                 } catch (IOException e1) {

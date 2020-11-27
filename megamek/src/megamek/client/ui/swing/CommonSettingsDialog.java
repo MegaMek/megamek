@@ -1390,6 +1390,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         gameSummaryMM.addItemListener(this);
         row.add(gameSummaryMM);
+        comps.add(row);
 
         // UI Theme
         uiThemes = new JComboBox<UITheme>();

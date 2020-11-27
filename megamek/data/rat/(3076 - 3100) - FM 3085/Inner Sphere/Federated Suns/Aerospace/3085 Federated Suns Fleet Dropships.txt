@@ -3,10 +3,10 @@ Leopard CV (3054),1
 Conquistador (3063),2
 Vengeance (3056),3
 Arondight Pocket Warship (SCC),4
-Claymore (Standard),5
+Claymore (3054),5
 Avenger (3048),6
 Arondight Pocket Warship (Standard),5
 Arondight Pocket Warship (Refit),4
 Avenger (3048),3
-Excalibur (Pocket Warship),2
+Excalibur 'Pocket Warship',2
 Overlord A3,1

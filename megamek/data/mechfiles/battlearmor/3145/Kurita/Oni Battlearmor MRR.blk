@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -49,7 +49,7 @@ ISBAMediumRecoillessRifle:RA
 BAHeavyBattleClawVibro:LA
 BABasicManipulator:RA
 IS BA ECM:Body
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
@@ -96,4 +96,3 @@ biped
 <weightclass>
 2
 </weightclass>
-

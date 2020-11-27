@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Nuberu Anti Aircraft Tank 2
+Nuberu Anti Aircraft Tank
 </Name>
 
 <Model>
-'Numantia'
+2 'Numantia'
 </Model>
 
 <year>
@@ -106,4 +106,3 @@ TRO:Prototypes
 <tonnage>
 60.0
 </tonnage>
-

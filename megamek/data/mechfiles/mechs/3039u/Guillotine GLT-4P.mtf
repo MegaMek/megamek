@@ -3,32 +3,34 @@ Guillotine
 GLT-4P
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2833
-Source:TRO 3039 - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:2833
+source:TRO 3039 - Succession Wars
+rules level:1
 
-Mass:70
-Engine:280 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:22 Single
-Walk MP:4
-Jump MP:4
+heat sinks:22 Single
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:4
+jump mp:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:17
-RT Armor:17
-CT Armor:25
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:17
+RT armor:17
+CT armor:25
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:6
 PPC, Left Arm
@@ -112,9 +114,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-

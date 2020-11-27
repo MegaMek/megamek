@@ -4,7 +4,7 @@ Name=THE TAKING OF WOTAN (EPISODE 3)
 Description=The Falcon's Claws battles the command group of the Wotan Tamar March Militia (TMM).
 BoardWidth=1
 BoardHeight=2
-Maps=battletech,scenarios/citytech(Wotan)
+Maps=MapSet2/16x17 BattleTech,scenarios/citytech(Wotan)
 # Place Medium Elevation 2 buildings in the following six hexes: 0727, 0729, 0731, 0926, 0928, 0930
 Factions=FalconsClaws,WotanTMM
 Location_FalconsClaws=N

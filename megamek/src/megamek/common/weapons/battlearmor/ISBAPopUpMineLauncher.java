@@ -20,7 +20,6 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -42,7 +41,6 @@ public class ISBAPopUpMineLauncher extends Weapon {
      */
     public ISBAPopUpMineLauncher() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Pop-up Mine";
         setInternalName(BattleArmor.MINE_LAUNCHER);
         addLookupName("ISMine Launcher");
@@ -54,17 +52,23 @@ public class ISBAPopUpMineLauncher extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.2f;
+        tonnage = 0.2;
         criticals = 1;
         cost = 2500;
         bv = 6;
-        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         setModes(modeStrings);
-        flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON).or(F_ONESHOT).or(F_BA_INDIVIDUAL);
+        rulesRefs = "267,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_F)
+        .setISAdvancement(DATE_NONE, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FS,F_LC);
     }
 
     /*

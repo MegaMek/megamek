@@ -11,7 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common;
 
 import java.util.Enumeration;
@@ -19,20 +18,19 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
 /**
  * Represents a player in the game.
  */
 public final class Player extends TurnOrdered implements IPlayer {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6828849559007455760L;
 
     private transient IGame game;
 
-    private String name = "unnamed";
+    private String name;
     private int id;
 
     private int team = TEAM_NONE;
@@ -58,7 +56,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     private int num_mf_inferno = 0;
 
     // hexes that are automatically hit by artillery
-    private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
+    private Vector<Coords> artyAutoHitHexes = new Vector<>();
 
     private int initialBV;
 
@@ -68,11 +66,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     private int constantInitBonus = 0;
     private int streakCompensationBonus = 0;
 
-    private String camoCategory = IPlayer.NO_CAMO;
+    private String camoCategory = Camouflage.NO_CAMOUFLAGE;
 
     private String camoFileName = null;
 
-    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
+    private Vector<Minefield> visibleMinefields = new Vector<>();
 
     private boolean admitsDefeat = false;
     
@@ -172,6 +170,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getNbrMFInferno() {
         return num_mf_inferno;
+    }
+
+    @Override
+    public AbstractIcon getCamouflage() {
+        return new Camouflage(getCamoCategory(), getCamoFileName());
     }
 
     @Override
@@ -281,6 +284,9 @@ public final class Player extends TurnOrdered implements IPlayer {
         // If not an observer, clear the set see all flag
         if (!observer) {
             setSeeAll(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObversverStatus();
         }
     }
 
@@ -447,17 +453,22 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
+    public void increaseInitialBV(int bv) {
+        initialBV += bv;
+    }
+
+    @Override
     public int getInitialBV() {
         return initialBV;
     }
 
     @Override
-    public void setCompensationInitBonus(int newBonus) {
+    public void setInitCompensationBonus(int newBonus) {
         streakCompensationBonus = newBonus;
     }
 
     @Override
-    public int getCompensationInitBonus() {
+    public int getInitCompensationBonus() {
         return streakCompensationBonus;
     }
 
@@ -517,9 +528,13 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-            for (Entity entity : game.getEntitiesVector()) {
-                if ((null != entity.getOwner())
+        
+        if (game == null) {
+            return 0;
+        }
+        
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
                     && !entity.isDestroyed()
                     && entity.isDeployed()
@@ -527,9 +542,20 @@ public final class Player extends TurnOrdered implements IPlayer {
                     && entity.getCrew().isActive()
                     && !entity.isCaptured()
                     && !(entity instanceof MechWarrior)) {
-                    if (entity.getCrew().getCommandBonus() > commandb) {
-                        commandb = entity.getCrew().getCommandBonus();
-                    }
+                int bonus = 0;
+                if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                    bonus = entity.getCrew().getCommandBonus();
+                }
+                //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
+                //Since we are not designating a single force commander at this point, we assume a superheavy tripod
+                //is the force commander if that gives the highest bonus.
+                if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
+                    bonus += 2;
+                }
+                //Once we've gotten the status of the command console (if any), reset the flag that tracks
+                //the previous turn's action.
+                if (bonus > commandb) {
+                    commandb = bonus;
                 }
             }
         }

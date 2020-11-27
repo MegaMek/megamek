@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,44 +20,33 @@ Intrepid Assault Craft
 (2331)
 </Model>
 
-<Tonnage>
-150
-</Tonnage>
+<year>
+2331
+</year>
+
+<originalBuildYear>
+2331
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:1.0:2:1:Foot
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:25.0:0
+</transporters>
 
 <SafeThrust>
 5
 </SafeThrust>
-
-<Armor>
-73
-65
-65
-35
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-</Nose Equipment>
-
-<Left Side Equipment>
-ISLargeLaser
-ISMediumLaser
-</Left Side Equipment>
-
-<Right Side Equipment>
-ISLargeLaser
-ISMediumLaser
-</Right Side Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-10
-</structural_integrity>
 
 <heatsinks>
 22
@@ -68,50 +57,99 @@ ISMediumLaser
 </sink_type>
 
 <fuel>
-400
+560
 </fuel>
 
-<type>
-IS Level 5
-</type>
-
-<year>
-2331
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
-1
-</designtype>
-
-<armor_type>
-17
-</armor_type>
-
 <engine_type>
-0
+1
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor_type>
+40
+</armor_type>
 
-<crew>
-5
-</crew>
+<armor_tech>
+7
+</armor_tech>
 
-<passengers>
-0
-</passengers>
+<armor>
+73
+64
+64
+34
+</armor>
 
-<transporters>
-infantrybay:1:2
-</transporters>
+<Nose Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+Large Laser
+Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+Large Laser
+Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
 
 <source>
 XTRO Primitives IV - Age of War
 </source>
 
+<tonnage>
+150.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+33
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Motorized Platoon
 </Model>
 
 <year>
-2400
+3057
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -62,4 +62,3 @@ LRM Launcher (FarShot)
 <antimek>
 6
 </antimek>
-

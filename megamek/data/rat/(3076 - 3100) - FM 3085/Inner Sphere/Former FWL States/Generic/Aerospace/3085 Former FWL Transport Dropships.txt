@@ -5,8 +5,8 @@ Condor (3054),3
 Union (3055),4
 Gazelle (2531),5
 Leopard (3056),6
-Hannibal (Standard),5
+Hannibal (3055),5
 Fury (3056),4
 Leopard CV (3054),3
 Vengeance (3056),2
-Hamilcar (Standard),1
+Hamilcar (3054),1

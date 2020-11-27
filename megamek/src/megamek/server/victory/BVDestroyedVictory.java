@@ -13,9 +13,8 @@
  */
 package megamek.server.victory;
 
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -27,9 +26,7 @@ import megamek.common.Report;
  * more than required amount
  */
 public class BVDestroyedVictory extends AbstractBVVictory {
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = -1807333576570154144L;
     protected int destroyedPercent;
 
@@ -37,13 +34,12 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         this.destroyedPercent = destroyedPercent;
     }
 
-    public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {
+    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<Integer>();
-        for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements();) {
-            IPlayer player = e.nextElement();
+        for (IPlayer player : game.getPlayersVector()) {
             if (player.isObserver())
                 continue;
             int ebv = 0;
@@ -73,6 +69,6 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         }// end for
         if (victory)
             return vr;
-        return new SimpleNoResult();
+        return VictoryResult.noResult();
     }
 }

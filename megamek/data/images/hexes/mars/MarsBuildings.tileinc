@@ -1,4 +1,4 @@
-# Theme Lunar Buildings
+# Theme Mars Buildings
 
 super * "building:4;bldg_elev:1;bldg_cf:*" "mars" "lunar/Sml_Tower_5.gif"
 super * "building:4;bldg_elev:2;bldg_cf:*" "mars" "lunar/Sml_Tower_6.gif"

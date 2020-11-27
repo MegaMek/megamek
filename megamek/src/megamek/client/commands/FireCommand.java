@@ -24,6 +24,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IAimingModes;
+import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -35,6 +36,7 @@ import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * @author dirk
@@ -227,15 +229,16 @@ public class FireCommand extends ClientCommand {
         WeaponAttackAction waa = new WeaponAttackAction(cen, target
                 .getTargetType(), target.getTargetId(), weaponNum);
 
-        if (mounted.getLinked() != null
-            && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
+        if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && (ammoType
-                                                                                          .getAmmoType() == AmmoType
-                                                                                          .T_LRM || ammoType.getAmmoType() == AmmoType.T_MML))
-                || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            waa.setAmmoCarrier(ammoMount.getEntity().getId());
+            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                    && (ammoType.getAmmoType() == AmmoType.T_LRM 
+                    || ammoType.getAmmoType() == AmmoType.T_MML
+                    || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
+                    || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
 
                 waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
                 // now.
@@ -290,9 +293,14 @@ public class FireCommand extends ClientCommand {
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
+            			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
+            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
+                        && m.isInBearingsOnlyMode()) {
+                str += " Can't shoot: "
+                        + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {
@@ -300,8 +308,7 @@ public class FireCommand extends ClientCommand {
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                        + Compute.oddsAbove(toHit.getValue(),
-                                           ce().getCrew().getOptions()
-                                               .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
+                                           ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

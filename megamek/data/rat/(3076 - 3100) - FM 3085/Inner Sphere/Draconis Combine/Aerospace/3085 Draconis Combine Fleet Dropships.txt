@@ -1,9 +1,9 @@
 3085 Draconis Combine Fleet Dropships
-Okinawa (Standard),1
+Okinawa (3055),1
 Vengeance (2682),2
 Intruder (3056),3
-Rose (Bara no Ryu) (Standard),4
-Nagumo (Standard),5
+Rose (Bara no Ryu) (3054),4
+Nagumo (3056),5
 Achilles (3055),6
 Nekohono'o (Standard),5
 Nekohono'o (SCL),4

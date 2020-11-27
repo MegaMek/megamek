@@ -3,44 +3,44 @@ BattleMaster
 BLR-1G
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2633
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2633
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:85
-Engine:340 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:340 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Single
-Walk MP:4
-Jump MP:0
+heat sinks:18 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:28
-RT Armor:28
-CT Armor:40
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:10
-Medium Laser, Left Torso
-Medium Laser, Left Torso
-Medium Laser, Left Torso
-Medium Laser, Right Torso
-Medium Laser, Right Torso
-Medium Laser, Right Torso
+Machine Gun, Left Arm
+Machine Gun, Left Arm
 PPC, Right Arm
 SRM 6, Left Torso
-Machine Gun, Left Arm
-Machine Gun, Left Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -76,9 +76,9 @@ SRM 6
 Medium Laser
 Medium Laser
 Medium Laser (R)
+IS Ammo SRM-6
+IS Ammo SRM-6
 IS Ammo MG - Full
-IS Ammo SRM-6
-IS Ammo SRM-6
 -Empty-
 -Empty-
 -Empty-
@@ -154,4 +154,17 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview: A storied and well-regarded assault 'Mech, the BattleMaster is likely one of the most recognizable command vehicles to be found in the armies of the Inner Sphere. Durable and reliable, the design has served in many key line regiments since its inception in 2633. Though nearly every MechWarrior is familiar with its abilities, few are able to use their knowledge to their advantage when facing this formidable BattleMech.
+capabilities: The BattleMaster's combination of long-ranged, short-ranged, and anti-infantry firepower give it an intimidating and flexible damage profile. Even flankers have to take care, as the BattleMaster is one of the rare designs to mount rear-facing lasers on the base variant. Additionally, the large cockpit lends itself well to the needs of commanding officers. Spacious and well-equipped, it is often modified into a dedicated command console, though the large viewport makes the head slightly more vulnerable to enemy fire than other more armored designs.
+deployment: Although never produced in great numbers, the BattleMaster remains common due to the efforts of commands to keep each machine functional. Due to their production lines, Houses Steiner and Marik fielded the greatest concentrations of the design during the Succession Wars, though every Great House could lay claim to more than a few. The BLR-1G, as the base variant of the BattleMaster, is also the most common. While produced in small numbers within Lyran space, the Free Worlds League exclusively produces this variant and therefore fields the greatest concentration within their regiments. However, it has always been a presence in nearly every military force, which even current conflicts seem unlikely to change any time soon.<br/>
+systemmanufacturer:CHASSIS:Hollis
+systemmode:CHASSIS:Mark X
+systemmanufacturer:ENGINE:VOX
+systemmode:ENGINE:340
+systemmanufacturer:ARMOR:StarGuard
+systemmode:ARMOR:IV
+systemmanufacturer:COMMUNICATIONS:HarfordCo
+systemmode:COMMUNICATIONS:COM 4000
+systemmanufacturer:TARGETING:HarfordCo
+systemmode:TARGETING:XKZ 1
 

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Issus
 3065
 </year>
 
+<originalBuildYear>
+3065
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -74,10 +81,6 @@ Aerodyne
 <Nose Equipment>
 CLERSmallLaser
 CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,6 +94,14 @@ CLERLargeLaser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak SRM 6 Ammo
+CLCASE
+</Fuselage Equipment>
+
 <source>
 RS Unique Fighters - Civil War
 </source>
@@ -98,4 +109,3 @@ RS Unique Fighters - Civil War
 <tonnage>
 40.0
 </tonnage>
-

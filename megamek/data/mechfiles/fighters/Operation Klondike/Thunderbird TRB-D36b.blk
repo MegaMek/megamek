@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ TRB-D36b
 2715
 </year>
 
+<originalBuildYear>
+2715
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -79,16 +86,12 @@ Medium Laser
 
 <Left Wing Equipment>
 ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
 ISERLargeLaser
 Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
 ISERLargeLaser
 Medium Laser
 </Right Wing Equipment>
@@ -98,6 +101,16 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+</Fuselage Equipment>
+
 <source>
 H:Operation Klondyke - Star League
 </source>
@@ -105,4 +118,3 @@ H:Operation Klondyke - Star League
 <tonnage>
 100.0
 </tonnage>
-

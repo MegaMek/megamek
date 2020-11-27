@@ -1,10 +1,11 @@
 3145 Clan Sea Fox Keshik Dropships
 Nagasawa (Standard),1
-Union C,2
-Broadsword (Standard),3
+Union C (2829),1
+Union C (2840) (Cargo),1
+Broadsword (2979),3
 Isegrim Assault DropShip (Standard),4
 Nagasawa (Standard),5
-Noruff (Standard),6
+Noruff (3056),6
 Claymore V3,5
 Vanir Assault Dropship (Standard),4
 Aesir Assault Dropship (Standard),3

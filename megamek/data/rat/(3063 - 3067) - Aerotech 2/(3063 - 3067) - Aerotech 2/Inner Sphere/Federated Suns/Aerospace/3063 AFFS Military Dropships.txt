@@ -1,6 +1,6 @@
 3063 Federated Suns Military Dropships
 Vengeance (3056),1
-Excalibur (3056),2
+Excalibur 'Pocket Warship',2
 Triumph (3057),3
 Overlord (3056),4
 Leopard CV (3054),5

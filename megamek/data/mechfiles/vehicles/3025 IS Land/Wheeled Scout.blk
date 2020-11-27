@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -70,4 +70,3 @@ Medium Laser
 <tonnage>
 20.0
 </tonnage>
-

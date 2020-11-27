@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.MRMWeapon;
+import megamek.common.weapons.missiles.MRMWeapon;
 
 
 /**
@@ -32,7 +31,6 @@ public class ISBAMRM1 extends MRMWeapon {
      */
     public ISBAMRM1() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "MRM 1";
         this.setInternalName("ISBAMRM1");
         this.addLookupName("BA MRM-1");
@@ -44,12 +42,18 @@ public class ISBAMRM1 extends MRMWeapon {
         this.extremeRange = 16;
         this.bv = 9;
         cost = 5000;
-        tonnage = .06f;
+        tonnage = .06;
         criticals = 1;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
-        techRating = RATING_D;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "261,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+        .setISAdvancement(3058, 3060, 3067, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
     }
 }

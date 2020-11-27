@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CRX-OR
 3076
 </year>
 
+<originalBuildYear>
+3076
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Experimental
 </type>
@@ -31,6 +35,9 @@ Mixed (IS Chassis) Experimental
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -71,7 +78,6 @@ Aerodyne
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
-Clan Streak SRM 4 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,6 +92,13 @@ CLStreakSRM4:OMNI
 CLTargeting Computer:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak SRM 4 Ammo:OMNI
+</Fuselage Equipment>
+
 <source>
 TRO 3067 - Jihad
 </source>
@@ -93,4 +106,3 @@ TRO 3067 - Jihad
 <tonnage>
 30.0
 </tonnage>
-

@@ -20,9 +20,9 @@
 package megamek.common.verifier;
 
 public interface TestEntityOption {
-    public final static int CEIL_TARGCOMP_CRITS = 0;
-    public final static int ROUND_TARGCOMP_CRITS = 1;
-    public final static int FLOOR_TARGCOMP_CRITS = 2;
+    public static final int CEIL_TARGCOMP_CRITS = 0;
+    public static final int ROUND_TARGCOMP_CRITS = 1;
+    public static final int FLOOR_TARGCOMP_CRITS = 2;
 
     public TestEntity.Ceil getWeightCeilingEngine();
 
@@ -55,6 +55,10 @@ public interface TestEntityOption {
     public boolean showCorrectCritical();
 
     public boolean showFailedEquip();
+    
+    public boolean showIncorrectIntroYear();
+    
+    public int getIntroYearMargin();
 
     public double getMinUnderweight();
 

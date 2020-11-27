@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Sebastian Brocks This class describes a MechWarrior that has ejected
  *         from its ride.
@@ -24,7 +26,7 @@ public class MechWarrior extends EjectedCrew {
     private int pickedUpById = Entity.NONE;
     private String pickedUpByExternalId = "-1";
     private boolean landed = true;
-
+    
     /**
      * Create a new MechWarrior
      *
@@ -33,12 +35,12 @@ public class MechWarrior extends EjectedCrew {
      */
     public MechWarrior(Entity originalRide) {
         super(originalRide);
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
     
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {
         super(crew, owner, game);
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
 
     /**
@@ -46,7 +48,7 @@ public class MechWarrior extends EjectedCrew {
      */
     public MechWarrior() {
         super();
-        setChassis(EjectedCrew.MW_EJECT_NAME);
+        setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
     
     /*
@@ -123,11 +125,21 @@ public class MechWarrior extends EjectedCrew {
 
     @Override
     public boolean isCrippled() {
-        return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
+        return true; //Ejected mechwarriors should always attempt to flee according to Forced Withdrawal.
     }
     
-    
+    @Override
+    //Aero pilots have parachutes and can thus survive being airborne
+    public boolean doomedInAtmosphere() {
+        return (game.getEntity(getOriginalRideId()) != null && !game.getEntity(getOriginalRideId()).isAero());
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
+    }
+    
+    @Override
+    public boolean canSpot() {
+    	return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
     }
 }

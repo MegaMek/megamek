@@ -1,12 +1,12 @@
 WoB Dropships B
-Hannibal (Standard),1
+Hannibal (3055),1
 Leopard 'Pocket Warship',2
-Mule (Pocket Warship),3
+Mule 'Pocket Warship',3
 Dictator (Standard),4
 Leopard CV (3054),5
 Union (3055),6
 Assault Triumph (3062), 5
 Leopard (3056),4
-Excalibur (3056),3
+Excalibur 'Pocket Warship',3
 Union 'Pocket Warship',2
-Hamilcar (Standard),1
+Hamilcar (3054),1

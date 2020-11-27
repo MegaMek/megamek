@@ -65,7 +65,7 @@ Searchlight
 
 <Body Equipment>
 Trailer
-Environmental Sealed Chassis
+Environmental Sealing
 MASH core component
 MASH Operation Theater
 MASH Operation Theater
@@ -80,7 +80,7 @@ MASH Operation Theater
 </Body Equipment>
 
 <transporters>
-liquidcargobay:20:1
+liquidcargobay:18:1
 troopspace:5
 </transporters>
 

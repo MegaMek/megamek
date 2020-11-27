@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -45,16 +45,16 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
-Clan BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
 BACLERMediumPulseLaser:DWP
-CLAdvancedSRM3:Body
-BA-Advanced SRM-3 Ammo:Body:Shots4#
-BA-Advanced SRM-3 Ammo:Body:Shots4#
-CLDetachableWeaponPack:Body
+CLAdvancedSRM3:TU
+BA-Advanced SRM-3 Ammo:TU:Shots4#
+BA-Advanced SRM-3 Ammo:TU:Shots4#
+ISDetachableWeaponPack:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -77,6 +77,10 @@ XTRO Republic II - Dark Ages
 quad
 </chassis>
 
+<turret>
+Modular:5
+</turret>
+
 <jumpingMP>
 0
 </jumpingMP>
@@ -92,4 +96,3 @@ quad
 <weightclass>
 4
 </weightclass>
-

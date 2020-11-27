@@ -39,10 +39,14 @@ quad
 5
 </Armor>
 
+<Turret>
+Modular:3
+</Turret>
+
 <Squad Equipment>
-BA Machine Gun:Body
-BA Machine Gun:Body
-BA Machine Gun:Body
+BA Machine Gun:TU
+BA Machine Gun:TU
+BA Machine Gun:TU
 </Squad Equipment>
 
 <type>

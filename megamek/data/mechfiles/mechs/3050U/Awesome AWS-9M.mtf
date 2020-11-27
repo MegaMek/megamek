@@ -151,3 +151,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+
+Overview: Tasked by the SLDF to replace their aging fleet of Strikers, Technicron Manufacturing would present their Awesome in 2665. Few at the time realized that the design would quickly become one of the most coveted Assault 'Mechs of the Succession Wars to come. Nearly always tasked with the heaviest attacks, the Awesome and its PPC-based armament would come to be regarded as the quintessential "zombie" design. Durable, reliable, and near unstoppable, officers jump at any opportunity to field the design within their commands.
+
+Capabilities: The PPCs of most Awesomes give it intimidating firepower over long ranges. Its thick armor plating, intelligent system placement, and lack of explosive components makes disabling one a challenging task; indeed, even flaking 'Mechs will find their attempts thwarted by the Awesome's unusually heavy rear armor. Careful heat management is a must when at the helm of an Awesome. A standard "2-3-2" volley became the norm for most MechWarriors, giving the 'Mech the greatest damage output without compromizing its accuracy. Its slow speed and targeting trouble with the PPCs at short range does give it some weaknesses, however, and it always fares best when well supported by a larger formation.
+
+Deployment: The discovery of the Helm Memory Core put a wealth of technical data into the hands of House Marik. Applying this technological renaissance to their premier assault BattleMech, the Awesome, would lead to the appearance of the AWS-9M. While still built around a trio of PPCs, the 'Mechs role was heavily altered, and reception of the design was mixed. Even so, the 'Mech was wildly sold throughout the Inner Sphere, and may still be found in the armed forces of every Successor State.
+
+systemmanufacturer:CHASSIS:Technicron
+systemmode:CHASSIS:Type G
+systemmanufacturer:ENGINE:Pitban
+systemmode:ENGINE:320 XL
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett
+systemmode:COMMUNICATIONS:T19-G
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:2780

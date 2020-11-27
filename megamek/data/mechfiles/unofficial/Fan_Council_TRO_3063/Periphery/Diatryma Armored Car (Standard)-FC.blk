@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Diatryma Armored Car
+</Name>
+
+<Model>
+(Standard)-FC
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+13
+10
+10
+8
+12
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-2
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISSmallPulseLaser
+SRM 2
+</Turret Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+10.0
+</tonnage>

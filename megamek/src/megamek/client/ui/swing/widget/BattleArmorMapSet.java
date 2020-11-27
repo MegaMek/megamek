@@ -29,7 +29,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Battle Armor unit in
@@ -106,7 +106,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
         int armor = 0;
         int internal = 0;
         // int men = 5;
-        int men = Math.round(ba.getTroopers());
+        int men = ba.getTroopers();
 
         for (int x = 0; x < men; x++) {
             armorAreas[x].setVisible(true);

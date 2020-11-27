@@ -36,6 +36,7 @@ public class SupportVTOL extends VTOL {
         barRating[loc] = rating;
     }
 
+    @Override
     public void setBARRating(int rating) {
         for (int i = 0; i < locations(); i++) {
             barRating[i] = rating;
@@ -74,7 +75,32 @@ public class SupportVTOL extends VTOL {
         }
         return false;
     }
+    
+    private static final TechAdvancement TA_VTOL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
+    private static final TechAdvancement TA_VTOL_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return getConstructionTechAdvancement(getWeightClass());
+    }
+
+    public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
+        /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
+         * be the same as Clan invasion era. */
+        if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            return TA_VTOL_LARGE;
+        } else {
+            return TA_VTOL;
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
@@ -122,6 +148,7 @@ public class SupportVTOL extends VTOL {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }

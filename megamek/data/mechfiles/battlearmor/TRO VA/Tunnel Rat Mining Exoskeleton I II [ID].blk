@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -45,7 +45,7 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
@@ -90,4 +90,3 @@ biped
 <weightclass>
 0
 </weightclass>
-

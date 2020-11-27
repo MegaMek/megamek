@@ -1,47 +1,50 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-3F (Austin)
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3039
-Source:Starterbook: Sword and Dragon - Succession Wars
-Rules Level:5
+techbase:Inner Sphere
+era:3039
+source:Starterbook: Sword and Dragon - Succession Wars
+rules level:4
 
-Mass:45
-Engine:180 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:11 Single
-Walk MP:4
-Jump MP:4
+heat sinks:11 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard Armor
-LA Armor:11
-RA Armor:11
-LT Armor:14
-RT Armor:14
-CT Armor:14
-HD Armor:6
-LL Armor:11
-RL Armor:11
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:14
+RT armor:14
+CT armor:14
+HD armor:6
+LL armor:11
+RL armor:11
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
-Weapons:2
-1 ISLBXAC10Prototype, Right Torso, Ammo:20
-3 ISMediumLaser, Left Arm
+Weapons:4
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Prototype LB 10-X Autocannon, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -101,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X AC Ammo
 
 Head:
 Life Support
@@ -145,4 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

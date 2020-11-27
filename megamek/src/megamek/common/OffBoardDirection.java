@@ -42,4 +42,40 @@ public enum OffBoardDirection {
         }
         return NONE;
     }
+    
+    /**
+     * Translate a "START_X" constant from Board.java into one of these values if possible.
+     */
+    public static OffBoardDirection translateBoardStart(int value) {
+        switch(value) {
+        case Board.START_N:
+            return NORTH;
+        case Board.START_S:
+            return SOUTH;
+        case Board.START_E:
+            return EAST;
+        case Board.START_W:
+            return WEST;
+        default: 
+            return NONE;
+        }
+    }
+    
+    /**
+     * Gets the opposite direction of the given direction.
+     */
+    public static OffBoardDirection getOpposite(OffBoardDirection value) {
+        switch(value) {
+        case SOUTH:
+            return NORTH;
+        case NORTH:
+            return SOUTH;
+        case WEST:
+            return EAST;
+        case EAST:
+            return WEST;
+        default: 
+            return NONE;
+        }
+    }
 }

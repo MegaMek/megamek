@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
@@ -95,8 +96,6 @@ public interface IBoard {
      */
     public abstract IHex getHexInDir(Coords c, int dir);
 
-    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
-
     /**
      * Gets the hex in the specified direction from the specified starting
      * coordinates. Avoids calls to Coords.translated, and thus, object
@@ -117,6 +116,11 @@ public interface IBoard {
      * Initialize a hex and the hexes around it
      */
     public abstract void initializeAround(int x, int y);
+    
+    /**
+     * Initialize a hex 
+     */
+    public abstract void initializeHex(int x, int y);
 
     /**
      * Determines whether this Board "contains" the specified Coords.
@@ -209,6 +213,14 @@ public interface IBoard {
      */
     public abstract boolean isLegalDeployment(Coords c, int nDir);
 
+    /**
+     * Determine the opposite edge from the given edge
+     * Returns START_NONE for non-cardinal edges (North, South, West, East)
+     * @param cardinalEdge The edge to return the opposite off
+     * @return Constant representing the opposite edge
+     */
+    public abstract int getOppositeEdge(int cardinalEdge);
+    
     /**
      * Record that the given coordinates have recieved a hit from an inferno.
      *
@@ -520,13 +532,66 @@ public interface IBoard {
 
     public void setSubBoardHeight(int height);
 
-    public abstract void setNumBoardsWidth(int width);
+    public void setNumBoardsWidth(int width);
 
-    public abstract void setNumBoardsHeight(int height);
+    public void setNumBoardsHeight(int height);
 
-    public abstract void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
+    public void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
 
-    public abstract boolean hasBoardBackground();
+    public boolean hasBoardBackground();
 
-    public abstract boolean isValid();
+    public boolean isValid();
+
+    public boolean isValid(StringBuffer errBuff);
+
+
+    /**
+     * Gets the description of the map.
+     * @return The description of the map, if one exists, otherwise null.
+     */
+    @Nullable
+    public String getDescription();
+
+    /**
+     * Sets the description of the map.
+     * @param s The description of the map; may be null.
+     */
+    public void setDescription(@Nullable String s);
+
+    /**
+     * Gets every annotations on the map.
+     * @return A read-only map of per-hex annotations.
+     */
+    public Map<Coords, Collection<String>> getAnnotations();
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param x The X-Coordinate of the hex.
+     * @param y The Y-Coordinate of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public Collection<String> getAnnotations(int x, int y);
+
+    /**
+     * Gets the annotations associated with a hex.
+     * @param c Coordinates of the hex.
+     * @return A collection of annotations for the hex.
+     */
+    public Collection<String> getAnnotations(Coords c);
+
+    /**
+     * Sets annotations on a given hex.
+     * @param c Coordinates of the hex to apply the annotations to.
+     * @param a A collection of annotations to assign to the hex. This may be null.
+     */
+    public void setAnnotations(Coords c, @Nullable Collection<String> a);
+    
+    /** Sets a tileset theme for all hexes of the board. */ 
+    public void setTheme(String newTheme);
+    
+    /** Rebuilds automatic terrains for the whole board. */
+    public void initializeAllAutomaticTerrain();
+    
+    /** Returns true when the given Coord c is on the edge of the board. */
+    public boolean isOnBoardEdge(Coords c);
 }

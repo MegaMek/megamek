@@ -25,7 +25,7 @@ import megamek.common.Report;
  * quick implementation of a Victory.Result stores player scores and a flag if
  * game-ending victory is achieved or not
  */
-public class VictoryResult implements Victory.Result {
+public class VictoryResult implements IResult {
     protected boolean victory;
     protected Throwable tr;
     protected ArrayList<Report> reports = new ArrayList<Report>();
@@ -33,9 +33,28 @@ public class VictoryResult implements Victory.Result {
     protected HashMap<Integer, Double> teamScore = new HashMap<Integer, Double>();
     protected double hiScore = 0;
 
-    public VictoryResult(boolean win) {
+    protected VictoryResult(boolean win) {
         this.victory = win;
         tr = new Throwable();
+    }
+    
+    protected VictoryResult(boolean win, int player, int team) {
+    	this.victory = win;
+    	tr = new Throwable();
+        if (player != IPlayer.PLAYER_NONE) {
+            addPlayerScore(player, 1.0);
+        }
+        if (team != IPlayer.TEAM_NONE) {
+            addTeamScore(team, 1.0);
+        }
+    }
+    
+    protected static VictoryResult noResult() {
+    	return new VictoryResult(false, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
+    }
+    
+    protected static VictoryResult drawResult() {
+        return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
 
     public int getWinningPlayer() {

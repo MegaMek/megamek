@@ -26,10 +26,10 @@ import java.util.Vector;
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
 
-    protected final static String GROUP_SUFFIX = ".group."; //$NON-NLS-1$
-    protected final static String OPTION_SUFFIX = ".option."; //$NON-NLS-1$
-    protected final static String DISPLAYABLE_NAME_SUFFIX = ".displayableName"; //$NON-NLS-1$
-    protected final static String DESCRIPTION_SUFFIX = ".description"; //$NON-NLS-1$
+    protected static final String GROUP_SUFFIX = ".group."; //$NON-NLS-1$
+    protected static final String OPTION_SUFFIX = ".option."; //$NON-NLS-1$
+    protected static final String DISPLAYABLE_NAME_SUFFIX = ".displayableName"; //$NON-NLS-1$
+    protected static final String DESCRIPTION_SUFFIX = ".description"; //$NON-NLS-1$
 
     /**
      * The OptionsInfo name that must be unique. Every instance of the

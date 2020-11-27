@@ -54,6 +54,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
@@ -382,7 +384,6 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (clientgui.bv.getChatterBoxActive()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -610,6 +611,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -642,6 +644,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -704,7 +707,9 @@ public class PointblankShotDisplay extends FiringDisplay implements
         }
 
         WeaponAttackAction waa;
-        if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                || (mounted.getType() instanceof CapitalMissileWeapon
+                        && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum);
         } else {
@@ -717,15 +722,18 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 && (mounted.getLinked().getType() instanceof AmmoType)) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && ((ammoType
-                    .getAmmoType() == AmmoType.T_LRM) || (ammoType
-                    .getAmmoType() == AmmoType.T_MML)))
+            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            waa.setAmmoCarrier(ammoMount.getEntity().getId());
+            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) 
+                    && ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                            || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                            || (ammoType.getAmmoType() == AmmoType.T_MML)))
                     || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
+                waa.setHomingShot(ammoType.getMunitionType() == AmmoType.M_HOMING && ammoMount.curMode().equals("Homing"));
             }
         }
 
@@ -865,7 +873,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$
@@ -877,8 +885,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = ce().getCrew().getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString()
                         + " ("
                         + Compute.oddsAbove(toHit.getValue(), natAptGunnery)

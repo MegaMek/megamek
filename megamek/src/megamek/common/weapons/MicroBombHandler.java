@@ -67,7 +67,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
         } else {
             int moF = -toHit.getMoS();
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+            if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                 if ((-toHit.getMoS() - 2) < 1) {
                     moF = 0;
                 } else {

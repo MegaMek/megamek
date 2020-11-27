@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,20 @@ SB-26
 2314
 </year>
 
+<originalBuildYear>
+2314
+</originalBuildYear>
+
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -57,7 +64,7 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <armor_tech>
@@ -86,6 +93,12 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Age of War
 </source>
@@ -93,4 +106,3 @@ TRO 3075 - Age of War
 <tonnage>
 25.0
 </tonnage>
-

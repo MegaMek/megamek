@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Battlefield Infiltration Units
 </Model>
 
 <year>
-3071
+2500
 </year>
 
 <type>
@@ -58,4 +58,3 @@ ISSneakSuitCamoIRECM
 <source>
 TRO 3085 - Age of War
 </source>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Tyre
 2912
 </year>
 
+<originalBuildYear>
+2912
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -65,13 +72,9 @@ Aerodyne
 
 <Nose Equipment>
 CLUltraAC10
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
 CLMediumPulseLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -86,6 +89,16 @@ CLERLargeLaser
 CLERSmallLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3067 - Succession Wars
 </source>
@@ -93,4 +106,3 @@ TRO 3067 - Succession Wars
 <tonnage>
 55.0
 </tonnage>
-

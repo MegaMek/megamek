@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -76,7 +76,6 @@ ISSmallPulseLaser
 </Left Equipment>
 
 <Rear Equipment>
-Hitch
 </Rear Equipment>
 
 <Turret Equipment>
@@ -92,4 +91,3 @@ Hist LOT II
 <tonnage>
 75.0
 </tonnage>
-

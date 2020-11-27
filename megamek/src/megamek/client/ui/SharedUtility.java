@@ -19,13 +19,15 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
-import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EjectedCrew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EscapePods;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -35,9 +37,11 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.options.OptionsConstants;
@@ -51,9 +55,124 @@ public class SharedUtility {
 
     @SuppressWarnings("unchecked")
     public static List<TargetRoll> getPSRList(MovePath md) {
-        return (List<TargetRoll>) doPSRCheck(md, false);
+        // certain types of entities, such as airborne aero units, do not require many of the checks
+        // carried out in the full PSR Check. So, we call a method that skips most of those.
+        if(md.getEntity().isAirborne() && md.getEntity().isAero()) {
+            return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
+        } else {
+            return (List<TargetRoll>) doPSRCheck(md, false);
+        }
     }
 
+    /**
+     * Function that carries out PSR checks specific only to airborne aero units
+     * @param md The path to check
+     * @param stringResult Whether to return the report as a string
+     * @return Collection of PSRs that will be required for this activity
+     */
+    private static Object getAeroSpecificPSRList(MovePath md, boolean stringResult) {
+        StringBuffer nagReport = new StringBuffer();
+        List<TargetRoll> psrList = new ArrayList<TargetRoll>();
+
+        final Entity entity = md.getEntity();
+        final IGame game = entity.getGame();
+        // okay, proceed with movement calculations
+        Coords curPos = entity.getPosition();
+        int curFacing = entity.getFacing();
+        EntityMovementType moveType = EntityMovementType.MOVE_NONE;
+        EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
+        
+        PilotingRollData rollTarget;
+
+        // Compile the move
+        md.clipToPossible();
+
+        overallMoveType = md.getLastStepMovementType();
+
+        // iterate through steps
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            
+            // stop for illegal movement
+            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
+                break;
+            }
+
+            // check for more than one roll
+            IAero a = (IAero) entity;
+            rollTarget = a.checkRolls(step, overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            rollTarget = a.checkManeuver(step, overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // set most step parameters
+            moveType = step.getMovementType(md.isEndStep(step));
+
+            // set last step parameters
+            curPos = step.getPosition();
+            curFacing = step.getFacing();
+
+            //check for vertical takeoff
+            if (step.getType() == MoveStepType.VTAKEOFF) {
+                rollTarget = ((IAero)entity).checkVerticalTakeOff();
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            //check for landing
+            if (step.getType() == MoveStepType.LAND) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, false);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+            
+            if (step.getType() == MoveStepType.VLAND) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, true);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Check for Ejecting
+            if (step.getType() == MoveStepType.EJECT 
+                    && (entity.isFighter())) {
+                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+        }
+
+        // check to see if thrust exceeded SI
+        IAero a = (IAero) entity;
+        int thrust = md.getMpUsed();
+        rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+        checkNag(rollTarget, nagReport, psrList);
+
+        // Atmospheric checks
+        if (!game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)
+                && !md.contains(MoveStepType.VLAND)) {
+            // check to see if velocity is 2x thrust
+            rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
+                    overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // check to see if descended more than two hexes
+            rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // stalling out
+            rollTarget = a.checkStall(md);
+            checkNag(rollTarget, nagReport, psrList);
+
+            // check for hovering
+            rollTarget = a.checkHover(md);
+            checkNag(rollTarget, nagReport, psrList);
+        }
+
+        if (stringResult) {
+            return nagReport.toString();
+        }
+        return psrList;
+    }
+    
     /**
      * Checks to see if piloting skill rolls are needed for the currently
      * selected movement. This code is basically a simplified version of
@@ -102,9 +221,9 @@ public class SharedUtility {
                 break;
             }
 
-            if (entity.isAirborne() && (entity instanceof Aero)) {
+            if (entity.isAirborne() && entity.isAero()) {
                 // check for more than one roll
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
                 rollTarget = a.checkRolls(step, overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);
 
@@ -129,27 +248,28 @@ public class SharedUtility {
 
             //check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero)entity).checkVerticalTakeOff();
+                    && entity.isAero()) {
+                rollTarget = ((IAero)entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             //check for landing
             if ((step.getType() == MoveStepType.LAND)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero) entity).checkLanding(moveType,
+                    && entity.isAero()) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
             if ((step.getType() == MoveStepType.VLAND)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero) entity).checkLanding(moveType,
+                    && entity.isAero()) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             // check for leap
             if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
@@ -176,6 +296,8 @@ public class SharedUtility {
             rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
                     lastPos, curPos, isLastStep, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
+            
+            
 
             int lightPenalty = entity.getGame().getPlanetaryConditions()
                     .getLightPilotPenalty();
@@ -216,12 +338,13 @@ public class SharedUtility {
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString(
                         "MovementDisplay.FireMoving",
-                        new Object[] { new Integer(8) }));
+                        new Object[] { Integer.valueOf(8) }));
             }
 
             // check for magma
             int level = curHex.terrainLevel(Terrains.MAGMA);
             if ((level == 1) && (step.getElevation() == 0)
+                    && (entity.getMovementMode() != EntityMovementMode.HOVER)
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages
@@ -238,7 +361,8 @@ public class SharedUtility {
             // check for sideslip
             if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)
-                    || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                    || (entity.getMovementMode() == EntityMovementMode.WIGE
+                            && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
                         overallMoveType, prevStep, prevFacing, curFacing,
                         lastPos, curPos, distance);
@@ -256,7 +380,7 @@ public class SharedUtility {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                             || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                             || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                            || (moveType == EntityMovementType  .MOVE_VTOL_RUN)) {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
@@ -284,7 +408,8 @@ public class SharedUtility {
                             SharedUtility.checkNag(rollTarget, nagReport,
                                     psrList);
                         }
-                    } else if (moveType == EntityMovementType.MOVE_SPRINT) {
+                    } else if (moveType == EntityMovementType.MOVE_SPRINT
+                            || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
@@ -314,6 +439,49 @@ public class SharedUtility {
                         }
                     }
                 }
+            }
+            
+            // Sheer Cliffs, TO p.39
+            // Roads over cliffs cancel the cliff effects for units that move on roads
+            boolean vehicleAffectedByCliff = entity instanceof Tank 
+                    && !entity.isAirborneVTOLorWIGE();
+            boolean quadveeVehMode = entity instanceof QuadVee
+                    && ((QuadVee)entity).getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
+            boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
+                    && moveType != EntityMovementType.MOVE_JUMP
+                    && !entity.isAero();
+            // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
+            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+            int stepHeight = curElevation + curHex.getLevel() 
+                    - (lastElevation + prevHex.getLevel());
+            boolean isUpCliff = !lastPos.equals(curPos) 
+                    && curHex.hasCliffTopTowards(prevHex)
+                    && (stepHeight == 1 || stepHeight == 2);
+            boolean isDownCliff = !lastPos.equals(curPos) 
+                    && prevHex.hasCliffTopTowards(curHex)
+                    && (stepHeight == -1 || stepHeight == -2);
+
+            // Vehicles (exc. WIGE/VTOL) moving down a cliff
+            if (vehicleAffectedByCliff && isDownCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), 0, "moving down a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Mechs moving down a cliff
+            // Quadvees in vee mode ignore PSRs to avoid falls, IO p.133
+            // Protomechs as Meks
+            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
+            }
+
+            // Mechs moving up a cliff
+            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+                rollTarget = entity.getBasePilotingRoll(moveType);
+                rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
+                checkNag(rollTarget, nagReport, psrList);
             }
 
             // Handle non-infantry moving into a building.
@@ -366,7 +534,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
                     && (entity instanceof Mech)) {
-                rollTarget = Server.getEjectModifiers(game, entity, false);
+                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
             
@@ -378,7 +546,7 @@ public class SharedUtility {
                         && (targ instanceof Infantry)
                         && (((Entity)targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
-                    rollTarget = Server.getEjectModifiers(game, (Entity) targ,
+                    rollTarget = Server.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
                     // Factor in Elevation
                     if (entity.getElevation() > 0) {
@@ -387,12 +555,25 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }
+            
+            if (step.isTurning()) {
+                rollTarget = entity.checkTurnModeFailure(overallMoveType,
+                        prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+            
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+                entity.addPilotingModifierForTerrain(rollTarget);
+                rollTarget.addModifier(0, "bootlegger maneuver");
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // update lastPos, prevStep, prevFacing & prevHex
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
-            lastPos = new Coords(curPos);
+            lastPos = curPos;
             prevStep = step;
             prevHex = curHex;
             lastElevation = step.getElevation();
@@ -409,6 +590,12 @@ public class SharedUtility {
         checkNag(rollTarget, nagReport, psrList);
 
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
+        checkNag(rollTarget, nagReport, psrList);
+
+        rollTarget = entity.checkUsingOverdrive(overallMoveType);
+        checkNag(rollTarget, nagReport, psrList);
+            
+        rollTarget = entity.checkGunningIt(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
         // but the danger isn't over yet! landing from a jump can be risky!
@@ -439,12 +626,20 @@ public class SharedUtility {
                 }
 
             }
+            
+            // check for magma
+            int level = hex.terrainLevel(Terrains.MAGMA);
+            if ((level == 1) && (lastElevation == 0)) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaCrustJumpLanding"));
+            } else if ((level == 2) && (lastElevation == 0)) {
+                nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
+            }
 
         }
 
-        if (entity.isAirborne() && (entity instanceof Aero)) {
+        if (entity.isAirborne() && entity.isAero()) {
             // check to see if thrust exceeded SI
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
             int thrust = md.getMpUsed();
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
@@ -508,12 +703,12 @@ public class SharedUtility {
         }
 
         final Entity entity = md.getEntity();
-        if(!(entity instanceof Aero)) {
+        if(!entity.isAero()) {
             return nagReport.toString();
         }
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
 
-        Aero a = (Aero) entity;
+        IAero a = (IAero) entity;
 
         PilotingRollData rollTarget;
 
@@ -566,10 +761,16 @@ public class SharedUtility {
     public static MovePath moveAero(MovePath md, Client client) {
         final Entity entity = md.getEntity();
         final IGame game = entity.getGame();
-        if (!(entity instanceof Aero)) {
+        // Don't process further unless the entity belongs in space
+        if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
             return md;
         }
-        Aero a = (Aero) entity;
+        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move steps and be done with it
+        if (entity instanceof EjectedCrew || (entity instanceof EscapePods && (entity.getOriginalWalkMP() <= 0))) {
+            md = addSteps(md, client);
+            return md;
+        }
+        IAero a = (IAero) entity;
 
         // need to check and see
         // if the units current velocity is zero
@@ -599,14 +800,20 @@ public class SharedUtility {
                 if(game.getBoard().onGround()) {
                     steps = 16;
                 }
-                while(steps > 0) {
+                while(steps > 0 &&
+                        game.getBoard().contains(md.getFinalCoords())) {
                     md.addStep(MoveStepType.FORWARDS);
                     steps--;
                 }
-                if (!game.getBoard().contains(md.getLastStep().getPosition())) {
+                if (!game.getBoard().contains(md.getFinalCoords())) {
                     md.removeLastStep();
                     if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                        md.addStep(MoveStepType.RETURN);
+                        //Telemissiles shouldn't get a return option
+                        if (entity instanceof TeleMissile) {
+                            md.addStep(MoveStepType.OFF);
+                        } else {
+                            md.addStep(MoveStepType.RETURN);
+                        }
                     } else {
                         md.addStep(MoveStepType.OFF);
                     }
@@ -716,7 +923,9 @@ public class SharedUtility {
                 // for purposes of bombing
                 en.addPassedThrough(right);
                 en.addPassedThrough(left);
-                client.sendUpdateEntity(en);
+                if(client !=  null) {
+                    client.sendUpdateEntity(en);
+                }
 
                 // if the left is preferred, increment i so next one is skipped
                 if ((leftTonnage < rightTonnage)
@@ -729,7 +938,12 @@ public class SharedUtility {
 
             if(!game.getBoard().contains(c)) {
                 if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
-                    md.addStep(MoveStepType.RETURN);
+                    //Telemissiles shouldn't get a return option
+                    if (en instanceof TeleMissile) {
+                        md.addStep(MoveStepType.OFF);
+                    } else {
+                        md.addStep(MoveStepType.RETURN);
+                    }
                 } else {
                     md.addStep(MoveStepType.OFF);
                 }

@@ -1,17 +1,19 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.client.ui.swing.skinEditor;
 
@@ -36,16 +38,16 @@ import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
 
 /**
- * Panel with elements for viewing and adjusting a specific 
+ * Panel with elements for viewing and adjusting a specific
  * UnitDisplaySkinSpecification.
- * 
+ *
  * @author arlith
  */
 public class UnitDisplaySpecPanel extends JPanel {
 
     /**
      * A UI widget for displaying path information
-     * 
+     *
      * @author arlith
      *
      */
@@ -53,7 +55,7 @@ public class UnitDisplaySpecPanel extends JPanel {
             DocumentListener {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -2004313765932049794L;
 
@@ -117,9 +119,9 @@ public class UnitDisplaySpecPanel extends JPanel {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             add(path, gbc);
             gbc.gridy++;
-            
+
         }
-        
+
         public String getPath() {
             return path.getText();
         }
@@ -144,8 +146,6 @@ public class UnitDisplaySpecPanel extends JPanel {
         /**
          * Handles the pressing of a pathLbl button: display the file chooser
          * and update the path if a file is selected
-         *
-         * @param pathIdx
          */
         private void chooseFile() {
             int returnVal = fileChooser.showOpenDialog(this);
@@ -179,10 +179,10 @@ public class UnitDisplaySpecPanel extends JPanel {
     }
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -37452332974426228L;
-    
+
     private BorderElement generalTabIdle;
     private BorderElement pilotTabIdle;
     private BorderElement armorTabIdle;
@@ -209,7 +209,7 @@ public class UnitDisplaySpecPanel extends JPanel {
     private BorderElement bottomRightCorner;
 
     private BorderElement mechOutline;
-    
+
     SkinSpecEditor skinEditor;
 
     /**
@@ -224,7 +224,7 @@ public class UnitDisplaySpecPanel extends JPanel {
      * Update the given UnitDisplaySkinSpecification based on the state of the
      * UI elements.
      *
-     * @param skinSpec
+     * @param udSpec
      * @return
      */
     public void updateSkinSpec(UnitDisplaySkinSpecification udSpec) {
@@ -253,7 +253,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         udSpec.setBottomLeftCorner(bottomLeftCorner.getPath());
         udSpec.setTopRightCorner(topRightCorner.getPath());
         udSpec.setBottomRightCorner(bottomRightCorner.getPath());
-        
+
         udSpec.setMechOutline(mechOutline.getPath());
     }
 
@@ -302,7 +302,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         tabsPanel.add(pilotTabActive, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
-        
+
         // Pilot Tab
         armorTabIdle = new BorderElement(this,
                 Messages.getString("SkinEditor.armorTabIdle"), //$NON-NLS-1$
@@ -314,7 +314,7 @@ public class UnitDisplaySpecPanel extends JPanel {
                 udSpec.getArmorTabActive());
         tabsPanel.add(armorTabActive, gbc);
         gbc.gridx = 0;
-        gbc.gridy++;        
+        gbc.gridy++;
 
         // Systems Tab
         systemsTabIdle = new BorderElement(this,
@@ -415,7 +415,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         borderPanel.add(bottomLine, gbc);
         gbc.gridx = 0;
         gbc.gridy++;
-        
+
         // Left/Right Lines
         leftLine = new BorderElement(this,
                 Messages.getString("SkinEditor.leftLine"), //$NON-NLS-1$
@@ -437,7 +437,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         borderPanel.add(backgroundTile, gbc);
         gbc.gridwidth = 1;
         gbc.gridy++;
-        
+
         // Mech Outline
         gbc.gridwidth = 2;
         mechOutline = new BorderElement(this,
@@ -484,7 +484,7 @@ public class UnitDisplaySpecPanel extends JPanel {
         bottomLeftCorner.setEnabled(enabled);
         topRightCorner.setEnabled(enabled);
         bottomRightCorner.setEnabled(enabled);
-        
+
         mechOutline.setEnabled(enabled);
     }
 

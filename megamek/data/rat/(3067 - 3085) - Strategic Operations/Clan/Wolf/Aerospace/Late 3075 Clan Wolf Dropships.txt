@@ -1,12 +1,11 @@
 Clan Wolf Dropships Late 3075
-Lion (Clan),1
-Titan (Clan),2
-Union C,3
-Overlord C,4
-Union C,5
-Union C,6
-Broadsword (Standard),5
-Overlord C,4
-Titan (Clan),3
-Overlord C,2
-Carrier (Standard),1
+Lion (2835),1
+Titan (2953),2
+Broadsword (2979),5
+Titan (2953),3
+Carrier (2882),1
+Union C (2829),10
+Union C (2829) (Tank),2
+Union C (2840) (Cargo),2
+Overlord C (2818),7
+Overlord C (2818) (Tank),3

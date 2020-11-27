@@ -3,41 +3,43 @@ Waneta
 S-WN-2LAM
 
 Config:LAM
-TechBase:Mixed (IS Chassis)
-Era:3078
-Source:J:FR
-Rules Level:4
-History: LAM's not coded into MegaMek for play. Unit included for completeness.
+techbase:Mixed (IS Chassis)
+era:3078
+source:J:FR
+rules level:4
 
-Mass:55
-Engine:220 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:55
+engine:220 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+lam:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:6
+heat sinks:10 Double
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:4
+jump mp:6
 
-Armor:Standard(IS/Clan)
-LA Armor:13
-RA Armor:13
-LT Armor:15
-RT Armor:15
-CT Armor:15
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+armor:Standard(Clan)
+LA armor:13
+RA armor:13
+LT armor:15
+RT armor:15
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:4
 ER Large Laser, Right Arm
 ER Small Laser, Right Arm
-LRM 15, Right Torso
 LRM 15, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -73,12 +75,12 @@ Avionics
 CLLRM15
 CLLRM15
 Clan Ammo LRM-15
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 
 Right Torso:
@@ -87,12 +89,12 @@ Avionics
 CLLRM15
 CLLRM15
 Clan Ammo LRM-15
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
-IS Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 
 Center Torso:

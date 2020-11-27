@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ MR-1SD
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -89,15 +96,11 @@ ISArtemisIV:OMNI
 <Left Wing Equipment>
 ISMML7:OMNI
 ISArtemisIV:OMNI
-IS Ammo MML-7 LRM Artemis-capable:OMNI
-IS Ammo MML-7 SRM Artemis-capable:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISMML7:OMNI
 ISArtemisIV:OMNI
-IS Ammo MML-7 LRM Artemis-capable:OMNI
-IS Ammo MML-7 SRM Artemis-capable:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -106,6 +109,16 @@ Small Laser:OMNI
 ISTargeting Computer:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-7 LRM Artemis-capable:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
+IS Ammo MML-7 LRM Artemis-capable:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
+</Fuselage Equipment>
+
 <source>
 TRO 3085 - Early Republic
 </source>
@@ -113,4 +126,3 @@ TRO 3085 - Early Republic
 <tonnage>
 70.0
 </tonnage>
-

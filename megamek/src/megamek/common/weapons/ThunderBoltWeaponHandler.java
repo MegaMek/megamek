@@ -18,12 +18,16 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -77,7 +81,63 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         return (int) Math.ceil(toReturn);
     }
+    
+    /**
+     * Calculate the attack value based on range
+     *
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    @Override
+    protected int calcAttackValue() {
+        int av = 0;
+        double counterAV = calcCounterAV();
+        int armor = wtype.getMissileArmor();
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        if (range == WeaponType.RANGE_SHORT) {
+            av = wtype.getRoundShortAV();
+        } else if (range == WeaponType.RANGE_MED) {
+            av = wtype.getRoundMedAV();
+        } else if (range == WeaponType.RANGE_LONG) {
+            av = wtype.getRoundLongAV();
+        } else if (range == WeaponType.RANGE_EXT) {
+            av = wtype.getRoundExtAV();
+        }
+        
+        // For squadrons, total the missile armor for the launched volley
+        if (ae.isCapitalFighter()) {
+            armor = armor * nweapons;
+        }
+        CapMissileArmor = armor - (int) counterAV;
+        CapMissileAMSMod = calcCapMissileAMSMod();
+                        
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+        }
 
+        av = applyGlancingBlowModifier(av, false);
+
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        return (av);
+    }
+    
+    @Override
+    protected int calcCapMissileAMSMod() {
+        CapMissileAMSMod = (int) Math.ceil(CounterAV / 10.0);
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    protected int getCapMissileAMSMod() {
+        return CapMissileAMSMod;
+    }
+    
+    @Override
+    //Thunderbolts apply damage all in one block.
+    //This was referenced incorrectly for Aero damage.
+    protected boolean usesClusterTable() {
+        return false;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -86,9 +146,35 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
+        // Activate single AMS
         getAMSHitsMod(vPhaseReport);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            // Or bay AMS if Aero Sanity is on
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                if (getParentBayHandler() != null) {
+                    WeaponHandler bayHandler = getParentBayHandler();
+                    amsBayEngagedCap = bayHandler.amsBayEngagedCap;
+                    pdBayEngagedCap = bayHandler.pdBayEngagedCap;
+                }
+            }
+        }
         bSalvo = true;
-        if (amsEngaged) {
+        // Report AMS/Pointdefense failure due to Overheating.
+        if (pdOverheated 
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            Report r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } 
+        if (amsEngaged || apdsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -112,6 +198,31 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
         }
         return 1;
+    }
+    
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
+    protected void setAMSBayReportingFlag() {
+        amsBayEngagedCap = true;
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    protected void setPDBayReportingFlag() {
+        pdBayEngagedCap = true;
+    }
+    
+    @Override
+    // For AntiShip missiles, which behave more like Thunderbolts than capital missiles except for this
+    // All other thunderbolt type large missiles should be unable to score a critical hit here
+    protected int getCapMisMod() {
+        if (wtype.hasFlag(WeaponType.F_ANTI_SHIP)) {
+            return 11;
+        } else {
+            return 0;
+        }
     }
 
 }

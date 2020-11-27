@@ -76,7 +76,7 @@ package megamek.common;
     }
 
     @Override
-    public int getCargoMpReduction() {
+    public int getCargoMpReduction(Entity carrier) {
         return getLoadedUnits().size();
     }
 

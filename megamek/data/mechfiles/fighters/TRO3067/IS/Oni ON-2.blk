@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ ON-2
 3078
 </year>
 
+<originalBuildYear>
+3078
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -74,8 +81,6 @@ Aerodyne
 <Nose Equipment>
 MRM 40
 ISApollo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,6 +99,14 @@ ISERMediumLaser
 ISGuardianECMSuite
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+</Fuselage Equipment>
+
 <source>
 TRO 3067 - Jihad
 </source>
@@ -101,4 +114,3 @@ TRO 3067 - Jihad
 <tonnage>
 55.0
 </tonnage>
-

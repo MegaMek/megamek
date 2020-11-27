@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ AHB-MD
 3061
 </year>
 
+<originalBuildYear>
+3061
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -72,18 +79,24 @@ ISTargeting Computer
 
 <Left Wing Equipment>
 MRM 40
-IS MRM 40 Ammo
-IS MRM 40 Ammo
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 MRM 40
-IS MRM 40 Ammo
-IS MRM 40 Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+</Fuselage Equipment>
 
 <source>
 TRO 3050u - Clan Invasion
@@ -92,4 +105,3 @@ TRO 3050u - Clan Invasion
 <tonnage>
 90.0
 </tonnage>
-

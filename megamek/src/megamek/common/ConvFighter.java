@@ -19,6 +19,7 @@ package megamek.common;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -29,6 +30,11 @@ public class ConvFighter extends Aero {
      *
      */
     private static final long serialVersionUID = 6297668284292929409L;
+
+    @Override
+    public int getUnitType() {
+        return UnitType.CONV_FIGHTER;
+    }
 
     @Override
     public boolean doomedInVacuum() {
@@ -42,7 +48,17 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
+    }
+    
+    @Override
+    public boolean tracksHeat() {
+        return false;
+    }
+
+    @Override
+    public double getFuelPointsPerTon() {
+        return 160;
     }
 
     @Override
@@ -62,11 +78,18 @@ public class ConvFighter extends Aero {
         return used;
     }
 
+    protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_CONV_FIGHTER;
+    }
+    
     @Override
     public double getBVTypeModifier() {
-        if (hasStealth()) {
-            return 1.4;
-        }
         return 1.1;
     }
 
@@ -111,7 +134,7 @@ public class ConvFighter extends Aero {
         // heat sinks
         int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
-        cost += sinkCost * getHeatSinks();
+        cost += sinkCost * TestEntity.calcHeatNeutralHSRequirement(this);
 
         // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
@@ -119,18 +142,19 @@ public class ConvFighter extends Aero {
         // power amplifiers, if any
         cost += 20000 * getPowerAmplifierWeight();
 
-        // omni multiplier (leaving this in for now even though conventional
-        // fighters
-        // don't make for legal omnis)
-        double omniMultiplier = 1;
+        return Math.round(cost * getPriceMultiplier());
+
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+        // omni multiplier (leaving this in for now even though conventional fighters don't make for legal omnis)
         if (isOmni()) {
-            omniMultiplier = 1.25f;
+            priceMultiplier *= 1.25f;
         }
-
-        double weightMultiplier = 1 + (weight / 200.0);
-
-        return Math.round(cost * omniMultiplier * weightMultiplier);
-
+        priceMultiplier *= 1 + (weight / 200.0); // weight multiplier
+        return priceMultiplier;
     }
 
     @Override

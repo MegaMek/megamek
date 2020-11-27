@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ F-77A
 3073
 </year>
 
+<originalBuildYear>
+3073
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -65,8 +72,6 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC10
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -85,6 +90,14 @@ Medium Laser
 ISERSmallLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Jihad
 </source>
@@ -92,4 +105,3 @@ TRO 3075 - Jihad
 <tonnage>
 80.0
 </tonnage>
-

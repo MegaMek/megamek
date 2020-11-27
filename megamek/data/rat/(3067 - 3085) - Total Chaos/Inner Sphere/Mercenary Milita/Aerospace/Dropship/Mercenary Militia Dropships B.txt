@@ -2,11 +2,11 @@ Mercenary/Militia Dropships B
 Seeker (2815),1
 Overlord (3056),2
 Leopard CV (3054),3
-Hamilcar (Standard),4
+Hamilcar (3054),4
 Vengeance (2682),5
-Kuan Ti (Standard),6
+Kuan Ti (3055),6
 Merlin (3063),5
 Assault Triumph (3062),4
-Kuan Ti (Standard),3
+Kuan Ti (3055),3
 Merlin (3063),2
 Leopard 'Pocket Warship',1

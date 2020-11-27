@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -70,4 +70,3 @@ WobKit
 <history>
 The full Level unit is 36 troopers but for play has to be divided into an 18 man squad. Which this unit represents.
 </history>
-

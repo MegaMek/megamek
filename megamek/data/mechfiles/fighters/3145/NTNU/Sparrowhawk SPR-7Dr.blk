@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ SPR-7Dr
 3130
 </year>
 
+<originalBuildYear>
+3130
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -87,6 +94,12 @@ ISERSmallLaser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3145 NTNU - Late Republic
 </source>
@@ -94,4 +107,3 @@ TRO 3145 NTNU - Late Republic
 <tonnage>
 30.0
 </tonnage>
-

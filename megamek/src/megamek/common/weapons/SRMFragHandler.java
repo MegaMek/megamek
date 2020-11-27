@@ -57,7 +57,7 @@ public class SRMFragHandler extends SRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = 2;
+        double toReturn = 2;
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
@@ -66,14 +66,13 @@ public class SRMFragHandler extends SRMHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn *= wtype.getRackSize();
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3;
             }
-            if (bGlancing) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            
+            toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
         if (((target instanceof Entity) && !(target instanceof Infantry))

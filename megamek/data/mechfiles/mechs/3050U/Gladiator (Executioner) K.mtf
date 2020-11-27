@@ -3,33 +3,34 @@ Gladiator (Executioner)
 K
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3068
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Clan
+era:3068
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:95
-Engine:380 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:95
+engine:380 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Double
-Base Chassis Heat Sinks:15
-Walk MP:4
-Jump MP:4
+heat sinks:18 Double
+base chassis heat sinks:15
+nocrit:Standard:None
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:32
-RA Armor:32
-LT Armor:20
-RT Armor:20
-CT Armor:37
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:9
+armor:Ferro-Fibrous(Clan)
+LA armor:32
+RA armor:32
+LT armor:20
+RT armor:20
+CT armor:37
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:9
 
 Weapons:6
 HAG/20, Left Arm
@@ -48,9 +49,9 @@ CLHAG20 (omnipod)
 CLHAG20 (omnipod)
 CLHAG20 (omnipod)
 CLHAG20 (omnipod)
-HAG/20 Ammo (omnipod)
-HAG/20 Ammo (omnipod)
-HAG/20 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/20 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/20 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/20 Ammo (omnipod)
 Clan Ferro-Fibrous
 
 Right Arm:
@@ -111,8 +112,8 @@ Clan Ferro-Fibrous
 
 Head:
 Life Support
-Cockpit
 Sensors
+Cockpit
 Clan Ferro-Fibrous
 Sensors
 Life Support

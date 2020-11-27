@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,20 @@ Shen Long Battle Armor
 3092
 </year>
 
+<originalBuildYear>
+3092
+</originalBuildYear>
+
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -45,10 +52,9 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBAHeavyGrenadeLauncher:Body
-ISBAHeavyGrenadeLauncher:Body
-BAMineLauncher:Body
-BA-Mine Launcher Ammo:Body:Shots4#
+CLBAHeavyGrenadeLauncher:TU
+CLBAHeavyGrenadeLauncher:TU
+BAMineLauncher:TU
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -71,6 +77,10 @@ TRO 3145 Capellan Confederation - Early Republic
 quad
 </chassis>
 
+<turret>
+Modular:4
+</turret>
+
 <jumpingMP>
 0
 </jumpingMP>
@@ -86,4 +96,3 @@ quad
 <weightclass>
 3
 </weightclass>
-

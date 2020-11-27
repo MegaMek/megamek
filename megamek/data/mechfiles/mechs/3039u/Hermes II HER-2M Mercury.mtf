@@ -151,3 +151,19 @@ Foot Actuator
 -Empty-
 
 
+Overview: The original Hermes scout 'Mech rapidly developed a poor reputation. Plagued by electronic glitches and oft-criticized for its lack of firepower or armor, manufacturing for the 'Mech ceased, and Irian's lines fell silent. The start of the Succession Wars, however, would create a massive demand for BattleMechs of any sort; Irian, instead of restarting their Hermes line as-is, would rework the chassis into the heavier, slower, and tougher Hermes II. Though early tests involving an advanced torso-mounted autocannon failed, Irian quickly redesigned the Hermes II to use a more reliable Oriente autocannon placed in one of the arms. The reliable 'Mech would rapidly become one of the main heavy scouts of the FWLM, serving in numbers that few other designs could match.
+
+Capabilities: With enough speed to stay ahead of most Free Worlds formations, the Hermes II carries decent firepower for its role. Seven and a half tons of armor keep the Hermes II well-protected, and it can outlast many other scouts on the field. The Hermes II uses many reliable and well-made systems; its E.A.R communications system is extremely advanced, able to connect to communications satellites and hard to track by enemy monitoring systems. The autocannon is durable and rarely malfunctions, and the flamer serves well as a utily weapon and as a means for the Hermes II to break visual contact with enemy forces.
+
+Deployment: As an Irian design, the Hermes II mostly serves within FWLM forces. It has served there for centuries, and massive production lines ensure large numbers of the 'Mech enter service every year. The HER-2M, dubbed the "Mercury" (and not to be confused with the Star League-era 'Mech of the same name), is a radical rebuilt of the design. A much deadly infighter, this faster variant is exclusively fielded by Free Worlds Forces; even then, most are concentrated within SAFE's Dark Shadow units.
+
+systemmanufacturer:CHASSIS:Irian Chassis
+systemmode:CHASSIS:Class 40
+systemmanufacturer:ENGINE:VOX
+systemmode:ENGINE:280
+systemmanufacturer:ARMOR:Riese
+systemmode:ARMOR:456
+systemmanufacturer:COMMUNICATIONS:Irian
+systemmode:COMMUNICATIONS:E.A.R.
+systemmanufacturer:TARGETING:Wasat
+systemmode:TARGETING:Aggressor

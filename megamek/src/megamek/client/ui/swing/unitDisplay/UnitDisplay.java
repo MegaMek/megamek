@@ -84,7 +84,7 @@ public class UnitDisplay extends JPanel {
         displayP = new JPanel(new CardLayout());
         mPan = new MovementPanel();
         displayP.add("movement", mPan); //$NON-NLS-1$
-        pPan = new PilotPanel();
+        pPan = new PilotPanel(this);
         displayP.add("pilot", pPan); //$NON-NLS-1$
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
         displayP.add("armor", aPan); //$NON-NLS-1$

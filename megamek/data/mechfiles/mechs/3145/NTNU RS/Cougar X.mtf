@@ -40,9 +40,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -54,9 +54,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -67,30 +67,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-CLStreakLRM10 (omnipod)
-CLStreakLRM10 (omnipod)
-Clan Streak LRM 10 Ammo (omnipod)
-Clan Streak LRM 10 Ammo (omnipod)
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLStreakLRM10
+CLStreakLRM10
+Clan Streak LRM 10 Ammo
+Clan Streak LRM 10 Ammo
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-CLStreakLRM10 (omnipod)
-CLStreakLRM10 (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLStreakLRM10
+CLStreakLRM10
 
 Center Torso:
 Fusion Engine
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet
+Clan Improved Jump Jet
 
 Head:
 Life Support

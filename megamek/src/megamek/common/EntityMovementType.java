@@ -27,6 +27,7 @@ public enum EntityMovementType {
     MOVE_JUMP,
     MOVE_VTOL_WALK,
     MOVE_VTOL_RUN,
+    MOVE_VTOL_SPRINT,
     MOVE_SUBMARINE_WALK,
     MOVE_SUBMARINE_RUN,
     MOVE_FLYING,

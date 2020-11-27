@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ PGD-R3
 3085
 </year>
 
+<originalBuildYear>
+3085
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -92,6 +99,12 @@ ISSmallPulseLaser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3085 - Jihad
 </source>
@@ -99,4 +112,3 @@ TRO 3085 - Jihad
 <tonnage>
 35.0
 </tonnage>
-

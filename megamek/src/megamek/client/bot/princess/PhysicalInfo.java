@@ -26,8 +26,6 @@ import megamek.common.TripodMech;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
-import megamek.common.logging.LogLevel;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -101,7 +99,7 @@ public class PhysicalInfo {
     protected PhysicalAttackAction buildAction(PhysicalAttackType attackType, int shooterId, Targetable target) {
         if (attackType.isPunch()) {
             int armId = PhysicalAttackType.RIGHT_PUNCH == attackType ? PunchAttackAction.RIGHT : PunchAttackAction.LEFT;
-            return new PunchAttackAction(shooterId, target.getTargetType(), target.getTargetId(), armId, false, false);
+            return new PunchAttackAction(shooterId, target.getTargetType(), target.getTargetId(), armId, false, false, false);
         } else if (attackType.isKick()) {
             int legId = PhysicalAttackType.RIGHT_KICK == attackType ? KickAttackAction.RIGHT : KickAttackAction.LEFT;
             return new KickAttackAction(shooterId, target.getTargetType(), target.getTargetId(), legId);
@@ -131,8 +129,6 @@ public class PhysicalInfo {
      */
     protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
                               boolean guess, IGame game) {
-        final String METHOD_NAME = "initDamage(PhysicalAttackType, EntityState, EntityState, boolean, IGame)";
-
         StringBuilder msg =
                 new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" ").append(physicalAttackType.toString())
@@ -141,7 +137,7 @@ public class PhysicalInfo {
 
         // Only mechs do physical attacks.
         if (!(getShooter() instanceof Mech)) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg.append("\n\tNot a mech!").toString());
+            owner.getLogger().warning(msg.append("\n\tNot a mech!").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -159,7 +155,7 @@ public class PhysicalInfo {
 
         // Build the to hit data.
         if (guess) {
-            setHitData(owner.getFireControl().guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
+            setHitData(owner.getFireControl(getShooter()).guessToHitModifierPhysical(getShooter(), shooterState, getTarget(),
                                                                          targetState, getAttackType(), game));
         } else {
             PhysicalAttackAction action = buildAction(physicalAttackType, getShooter().getId(), getTarget());
@@ -174,8 +170,7 @@ public class PhysicalInfo {
 
         // If we can't hit, set all values to 0 and return.
         if (getHitData().getValue() > 12) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, msg.append("\n\tImpossible toHit: ")
-                                                                 .append(getHitData().getValue()).toString());
+            owner.getLogger().info(msg.append("\n\tImpossible toHit: ").append(getHitData().getValue()).toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -190,8 +185,7 @@ public class PhysicalInfo {
                 setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
             } else {
                 // Only bipeds & tripods can punch.
-                owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                          msg.append("\n\tnon-biped/tripod trying to punch!").toString());
+                owner.getLogger().warning(msg.append("\n\tnon-biped/tripod trying to punch!").toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setExpectedCriticals(0);

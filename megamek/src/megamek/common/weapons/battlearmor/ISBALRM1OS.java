@@ -13,8 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.LRMWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
 
 
 /**
@@ -32,7 +31,6 @@ public class ISBALRM1OS extends LRMWeapon {
      */
     public ISBALRM1OS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "LRM 1 (OS)";
         setInternalName("ISBALRM1OS");
         addLookupName("IS BA LRM1 OS");
@@ -40,12 +38,18 @@ public class ISBALRM1OS extends LRMWeapon {
         minimumRange = 6;
         bv = 3;
         cost = 3000;
-        tonnage = .04f;
+        tonnage = .04;
         criticals = 3;
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "261,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3055, 3057, 3060, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
     }
 }

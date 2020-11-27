@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Prime
 3019
 </year>
 
+<originalBuildYear>
+3019
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -81,13 +88,6 @@ Aerodyne
 
 <Nose Equipment>
 CLLRM20:OMNI
-Clan Ammo LRM-20:OMNI
-Clan Ammo LRM-20:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -104,6 +104,15 @@ CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+CLCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3055u - Succession Wars
 </source>
@@ -111,4 +120,3 @@ TRO 3055u - Succession Wars
 <tonnage>
 70.0
 </tonnage>
-

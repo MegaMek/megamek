@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -65,7 +65,6 @@ IS Ammo HVAC/5
 </Body Equipment>
 
 <Front Equipment>
-Hitch
 </Front Equipment>
 
 <Right Equipment>
@@ -75,7 +74,6 @@ Hitch
 </Left Equipment>
 
 <Rear Equipment>
-Hitch
 </Rear Equipment>
 
 <Turret Equipment>
@@ -88,10 +86,9 @@ XTRO Periphery - Jihad
 </source>
 
 <transporters>
-livestockcargobay:20:1
+livestockcargobay:16.6:1
 </transporters>
 
 <tonnage>
 50.0
 </tonnage>
-

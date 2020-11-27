@@ -28,6 +28,7 @@ import megamek.common.Mech;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.TechConstants;
+import megamek.common.UnitRoleHandler;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
@@ -42,7 +43,7 @@ public class MechCacheCSVTool {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         BufferedWriter fout;
         try{
-            fout = new BufferedWriter(new PrintWriter("mechs.csv"));
+            fout = new BufferedWriter(new PrintWriter("Units.csv"));
         } catch (FileNotFoundException e){
             System.out.println("Could not open file for output!");
             return;
@@ -51,37 +52,67 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Weight,Intro Date,Unit Type,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
-                if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
+                if (mech.getUnitType().equals("Gun Emplacement")){
                     continue;
                 }
                 
                 csvLine = new StringBuffer();
-                // Chasis Name
+                // Chassis Name
                 csvLine.append(mech.getChassis() + ",");
                 // Model Name
                 csvLine.append(mech.getModel() + ",");
                 
+                //Combined Name
+                csvLine.append(mech.getChassis() + " " + mech.getModel()+ ",");
+                
+                //Source Book
+                csvLine.append(mech.getSourceFile() + ",");
                 
                 //if (mech.getModel().equals("")){
                 //    csvLine.append("(Standard),");
                 //} else {                    
                 //    csvLine.append(mech.getModel() + ",");
                 //}
-                
+
                 //Weight
                 csvLine.append(mech.getTons() + ",");
                 
                 // IntroDate
                 csvLine.append(mech.getYear() + ",");
                 
+                //Experimental Tech Year
+                if(mech.getAdvancedTechYear() <= mech.getYear()) {
+                    csvLine.append(",");
+                } else {
+                    csvLine.append(mech.getYear() + ",");
+                }
+                         
+
+                //Advanced Tech Year
+                if(mech.getAdvancedTechYear()>0) {
+                    csvLine.append(mech.getAdvancedTechYear()).append(",");
+                    } else {
+                        csvLine.append(",");
+                    }
+
+                //Standard Tech Year
+                if(mech.getStandardTechYear()>0) {
+                    csvLine.append(mech.getStandardTechYear()).append(",");
+                    } else {
+                        csvLine.append(",");
+                    }
+
                 //Unit Type
                 csvLine.append(mech.getUnitType()  + "-" + (mech.getUnitSubType() + ","));
+                
+                //Role
+                csvLine.append(UnitRoleHandler.getRoleFor(mech) + ",");
                 
                 // BV
                 csvLine.append(mech.getBV()  + ",");
@@ -159,13 +190,13 @@ public class MechCacheCSVTool {
                 // Equipment Names
                 for (String name : mech.getEquipmentNames()){
                     boolean ignore = false;
-                    // Ignore armor criticals
+                    // Ignore armor critical
                     for (String armorName : EquipmentType.armorNames){
                         if (name.contains(armorName.trim())){
                             ignore = true;
                         }
                     }
-                    // Ignore internal structure criticals
+                    // Ignore internal structure critical
                     for (String isName : EquipmentType.structureNames){
                         if (name.contains(isName.trim())){
                             ignore = true;

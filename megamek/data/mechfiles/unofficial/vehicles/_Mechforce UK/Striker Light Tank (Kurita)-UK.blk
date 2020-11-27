@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ Striker Light Tank
 </year>
 
 <type>
-IS Level 2
+IS Level 5
 </type>
 
 <motion_type>
@@ -83,4 +83,3 @@ MRM 30:OMNI
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-

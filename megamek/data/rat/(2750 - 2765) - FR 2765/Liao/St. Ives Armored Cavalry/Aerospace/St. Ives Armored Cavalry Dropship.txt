@@ -1,6 +1,7 @@
 St. Ives Armored Cavalry Dropship
 Fury (2638),1
-Confederate (2703),2
+Confederate (2602),1
+Confederate (2602) (Mech),1
 Gazelle (2531),3
 Dictator (Standard),4
 Triumph (2593),5

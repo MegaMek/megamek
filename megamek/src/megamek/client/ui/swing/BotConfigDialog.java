@@ -31,16 +31,17 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.Logger;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties
@@ -59,10 +60,10 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JList<String> playersToReplace;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
-    private BehaviorSettings princessBehavior;
+    protected BehaviorSettings princessBehavior;
 
     // Items for princess config here
-    private JComboBox<String> verbosityCombo;
+    protected JComboBox<String> verbosityCombo;
     private JTextField targetId;
     private JComboBox<String> targetTypeCombo;
     private JButton addTargetButton;
@@ -70,18 +71,18 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JButton princessHelpButton;
     private JList<String> targetsList;
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
-    private JCheckBox forcedWithdrawalCheck;
-    private JCheckBox goHomeCheck;
-    private JCheckBox autoFleeCheck;
-    private JComboBox<String> homeEdgeCombo; //The board edge to be used in a forced withdrawal.
-    private JSlider aggressionSlidebar;
-    private JSlider fallShameSlidebar;
-    private JSlider herdingSlidebar;
-    private JSlider selfPreservationSlidebar;
-    private JSlider braverySlidebar;
+    protected JCheckBox forcedWithdrawalCheck;
+    protected JCheckBox autoFleeCheck;
+    protected JComboBox<String> destinationEdgeCombo; // The board edge to to which the bot will attempt to move.
+    protected JComboBox<String> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
+    protected JSlider aggressionSlidebar;
+    protected JSlider fallShameSlidebar;
+    protected JSlider herdingSlidebar;
+    protected JSlider selfPreservationSlidebar;
+    protected JSlider braverySlidebar;
     private JComboBox<String> princessBehaviorNames;
 
-    private JTextField nameField;
+    protected JTextField nameField;
     private boolean customName = false; // did user not use default name?
     public boolean dialogAborted = true; // did user not click Ok button?
 
@@ -89,18 +90,27 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private final Set<IPlayer> ghostPlayers = new HashSet<>();
     private final boolean replacePlayer;
 
-    private final JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    protected final JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
     private final JPanel botSpecificCardsPanel;
 
     public BotConfigDialog(JFrame parent) {
-        this(parent, null);
+        this(parent, new HashSet<>());
+    }
+    
+    public BotConfigDialog(JFrame parent, BotClient existingBot) {
+        this(parent, new HashSet<>());
+        
+        if (existingBot instanceof Princess) {
+            this.princessBehavior = ((Princess) existingBot).getBehaviorSettings();
+            nameField.setText(existingBot.getName());
+            setPrincessFields();
+        }
     }
 
     public BotConfigDialog(JFrame parent, Set<IPlayer> ghostPlayers) {
         super(parent, "Configure Bot", true);
 
-        //        setLocationRelativeTo(parent);
         if (ghostPlayers != null) {
             this.ghostPlayers.addAll(ghostPlayers);
         }
@@ -155,7 +165,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
                                                TitledBorder.LEFT,
                                                TitledBorder.DEFAULT_POSITION);
         panel.setBorder(border);
-        panel.setBackground(Color.white);
         String longestEntry = title;
 
         Vector<String> playerList = new Vector<>(ghostPlayers.size());
@@ -179,7 +188,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         return panel;
     }
 
-    private boolean getPrincessBehavior() {
+    private boolean getPresetPrincessBehavior() {
         princessBehavior = behaviorSettingsFactory.getBehavior((String) princessBehaviorNames.getSelectedItem());
         if (princessBehavior == null) {
             princessBehavior = new BehaviorSettings();
@@ -187,19 +196,20 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         }
         return true;
     }
+    
+    public BehaviorSettings getBehaviorSettings() {
+        return princessBehavior;
+    }
 
-    private void setPrincessFields() {
-        if (!getPrincessBehavior()) {
-            return;
-        }
+    protected void setPrincessFields() {
         verbosityCombo.setSelectedIndex(0);
         forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
-        goHomeCheck.setSelected(princessBehavior.shouldGoHome());
         autoFleeCheck.setSelected(princessBehavior.shouldAutoFlee());
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        homeEdgeCombo.setSelectedIndex(princessBehavior.getHomeEdge().getIndex());
+        destinationEdgeCombo.setSelectedIndex(princessBehavior.getDestinationEdge().getIndex());
+        retreatEdgeCombo.setSelectedIndex(princessBehavior.getRetreatEdge().getIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         targetsListModel.clear();
@@ -376,13 +386,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
         panel.add(forcedWithdrawalCheck, constraints);
 
-        //Row 3 Column 2.
-        constraints.gridx++;
-        goHomeCheck = new JCheckBox(Messages.getString("BotConfigDialog.goHomeCheck"));
-        goHomeCheck.setToolTipText(Messages.getString("BotConfigDialog.goHomeTooltip"));
-        goHomeCheck.addActionListener(this);
-        panel.add(goHomeCheck, constraints);
-
         //Row 3 Column 3.
         constraints.gridx++;
         autoFleeCheck = new JCheckBox(Messages.getString("BotConfigDialog.autoFleeCheck"));
@@ -400,13 +403,33 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         //Row 4 Column 2.
         constraints.gridx++;
-        homeEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+        destinationEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
                                                            Messages.getString("BotConfigDialog.southEdge"),
                                                            Messages.getString("BotConfigDialog.westEdge"),
-                                                           Messages.getString("BotConfigDialog.eastEdge")});
-        homeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
-        homeEdgeCombo.setSelectedIndex(0);
-        panel.add(homeEdgeCombo, constraints);
+                                                           Messages.getString("BotConfigDialog.eastEdge"),
+                                                           Messages.getString("BotConfigDialog.noEdge")});
+        destinationEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
+        destinationEdgeCombo.setSelectedIndex(0);
+        destinationEdgeCombo.addActionListener(this);
+        panel.add(destinationEdgeCombo, constraints);
+        
+        //Row 4.1 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+        JLabel retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
+        layout.setConstraints(retreatEdgeLabel, constraints);
+        panel.add(retreatEdgeLabel);
+
+        //Row 4 Column 2.
+        constraints.gridx++;
+        retreatEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
+                                                           Messages.getString("BotConfigDialog.southEdge"),
+                                                           Messages.getString("BotConfigDialog.westEdge"),
+                                                           Messages.getString("BotConfigDialog.eastEdge"),
+                                                           Messages.getString("BotConfigDialog.nearestEdge")});
+        retreatEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
+        retreatEdgeCombo.setSelectedIndex(0);
+        panel.add(retreatEdgeCombo, constraints);
 
         //Row 5.
         constraints.gridx = 0;
@@ -464,6 +487,12 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         princessHelpButton.addActionListener(this);
         panel.add(princessHelpButton, constraints);
 
+        // if we don't have a behavior already selected when initializing this panel
+        // then set a default one
+        if(princessBehavior == null) {
+            getPresetPrincessBehavior();
+        }
+        
         setPrincessFields();
         panel.validate();
         return panel;
@@ -499,7 +528,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             HelpDialog helpDialog = new HelpDialog(Messages.getString("BotConfigDialog.princessHelp.title"), helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            handleError("launchPrincessHelp", e);
+            handleError(e);
         }
     }
 
@@ -530,21 +559,24 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             targetsListModel.removeElementAt(targetsList.getSelectedIndex());
 
         } else if (princessBehaviorNames.equals(e.getSource())) {
+            getPresetPrincessBehavior();
             setPrincessFields();
-
-        } else if (goHomeCheck.equals(e.getSource())) {
-            if (!goHomeCheck.isSelected()) {
+        } else if (destinationEdgeCombo.equals(e.getSource())) {
+            if (CardinalEdge.getCardinalEdge(destinationEdgeCombo.getSelectedIndex()) == CardinalEdge.NEAREST_OR_NONE) {
                 autoFleeCheck.setSelected(false);
+                autoFleeCheck.setEnabled(false);
+            } else {
+                autoFleeCheck.setEnabled(true);
+                autoFleeCheck.setSelected(true);
             }
-            autoFleeCheck.setEnabled(goHomeCheck.isSelected());
         } else if (princessHelpButton.equals(e.getSource())) {
             launchPrincessHelp();
         }
     }
 
-    private void handleError(String method, Throwable t) {
+    private void handleError(Throwable t) {
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        new Logger().log(getClass(), method, t);
+        MegaMek.getLogger().error(t);
     }
 
     private void savePrincessProperties() {
@@ -553,13 +585,13 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         try {
             tempBehavior.setDescription((String) princessBehaviorNames.getSelectedItem());
         } catch (PrincessException e) {
-            handleError("savePrincessProperties", e);
+            handleError(e);
         }
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setGoHome(goHomeCheck.isSelected());
-        tempBehavior.setHomeEdge(homeEdgeCombo.getSelectedIndex());
+        tempBehavior.setDestinationEdge(destinationEdgeCombo.getSelectedIndex());
+        tempBehavior.setRetreatEdge(retreatEdgeCombo.getSelectedIndex());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
@@ -613,16 +645,15 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         } else if (princessRadiobutton.isSelected()) {
             Princess toReturn = new Princess(getBotName(), host, port,
-                                             LogLevel.getLogLevel(verbosityCombo.getSelectedIndex()));
+                                             LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
             toReturn.setBehaviorSettings(princessBehavior);
-            toReturn.log(getClass(), "getSelectedBot(String, int)", LogLevel.DEBUG,
-                         toReturn.getBehaviorSettings().toLog());
+            toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
             return toReturn;
         }
         return null; // shouldn't happen
     }
 
-    String getBotName() {
+    public String getBotName() {
         if (replacePlayer) {
             return playersToReplace.getSelectedValuesList().get(0);
         }

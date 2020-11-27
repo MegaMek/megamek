@@ -23,6 +23,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,9 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -66,6 +71,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
     private final Client CLIENT;
+    private final GUIPreferences guip = GUIPreferences.getInstance();
 
     // How the map will be set up.
     private MapSettings mapSettings;
@@ -84,12 +90,17 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
     private final VerifiableTextField mapWidthField = new VerifiableTextField(4);
     private final VerifiableTextField mapHeightField = new VerifiableTextField(4);
-    private final VerifiableTextField mapThemeField = new VerifiableTextField(10);
+    private final JComboBox<String> choTheme = new JComboBox<>();
 
     // Control buttons
     private final JButton okayButton = new JButton(Messages.getString("Okay"));
     private final JButton loadButton = new JButton(Messages.getString("RandomMapDialog.Load"));
     private final JButton saveButton = new JButton(Messages.getString("RandomMapDialog.Save"));
+    private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
+    private final JCheckBox showAtStartButton = new JCheckBox(Messages.getString("RandomMapDialog.ShowAtStart"));
+    
+    // Return value
+    private boolean userCancel;
 
     /**
      * Constructor for this dialog.
@@ -128,6 +139,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         initGUI();
         setResizable(true);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
+        });
 
         pack();
         validate();
@@ -251,17 +266,30 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Row 3, Column 2.
         constraints.gridx++;
         constraints.gridwidth = 3;
-        mapThemeField.setSelectAllTextOnGotFocus(true);
-        mapThemeField.setText(mapSettings.getTheme());
-        mapThemeField.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
-        panel.add(mapThemeField, constraints);
+        choTheme.addActionListener(this);
+        choTheme.setToolTipText(Messages.getString("RandomMapDialog.mapThemeField.toolTip"));
+        panel.add(choTheme, constraints);
 
         return panel;
     }
 
     private JPanel setupControlsPanel() {
+        JPanel outerpanel = new JPanel(new BorderLayout());
+        
+        // The left-side panel contains only the Show on startup option
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+       
+        // Add the option only when in the Map Editor
+        if (CLIENT == null) {
+            showAtStartButton.addActionListener(this);
+            showAtStartButton.setMnemonic(showAtStartButton.getText().charAt(0));
+            showAtStartButton.setSelected(guip.getBoardEdRndStart());
+            leftPanel.add(showAtStartButton);
+        }
+        
+        // The main panel with the Okay, Cancel etc. buttons
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-
+        
         loadButton.addActionListener(this);
         loadButton.setMnemonic(loadButton.getText().charAt(0));
         panel.add(loadButton);
@@ -273,8 +301,15 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         okayButton.addActionListener(this);
         okayButton.setMnemonic(okayButton.getText().charAt(0));
         panel.add(okayButton);
+        
+        cancelButton.addActionListener(this);
+        cancelButton.setMnemonic(cancelButton.getText().charAt(0));
+        panel.add(cancelButton);
 
-        return panel;
+        outerpanel.add(leftPanel, BorderLayout.LINE_START);
+        outerpanel.add(panel, BorderLayout.CENTER);
+
+        return outerpanel;
     }
 
     private File fileBrowser(String title, String targetDir, String fileName, final String extension,
@@ -334,7 +369,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the user-selected file.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "mapgen", null, ".xml", "(*.xml)", false);
 
         // If we don't have a file, there's nothing to load.
         if (selectedFile == null) {
@@ -367,7 +402,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(
                 Messages.getString("RandomMapDialog.FileSaveDialog"), "data"
-                        + File.separator + "boards", null, ".xml", "(*.xml)",
+                        + File.separator + "mapgen", null, ".xml", "(*.xml)",
                 true);
 
         // If no file was selected, we're done.
@@ -403,7 +438,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
-        newMapSettings.setTheme(mapThemeField.getText());
+        newMapSettings.setTheme((String)choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.
@@ -413,6 +448,19 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
         MAP_SETTINGS_OBSERVER.updateMapSettings(newMapSettings);
         return true;
+    }
+    
+    public boolean activateDialog(Set<String> themeList) {
+        for (String s: themeList) choTheme.addItem(s);
+        choTheme.setSelectedItem(mapSettings.getTheme());
+        userCancel = false;
+        setVisible(true);
+        return userCancel;
+    }
+    
+    private void closeWithoutNewMap() {
+        userCancel = true;
+        setVisible(false);
     }
 
     @Override
@@ -431,6 +479,47 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             if (doApply()) {
                 setVisible(false);
             }
+        } else if (cancelButton.equals(e.getSource())) {
+            closeWithoutNewMap();
+        } else if (showAtStartButton.equals(e.getSource())) {
+            guip.setBoardEdRndStart(showAtStartButton.isSelected());
         }
     }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            loadWindowSettings();
+        } else {
+            saveWindowSettings();
+        }
+        super.setVisible(b);
+    }
+
+    /** Saves the position, size and split of the dialog. */
+    private void saveWindowSettings() {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        guip.setValue(GUIPreferences.RND_MAP_POS_X, getLocation().x);
+        guip.setValue(GUIPreferences.RND_MAP_POS_Y, getLocation().y);
+        guip.setValue(GUIPreferences.RND_MAP_SIZE_WIDTH, getSize().width);
+        guip.setValue(GUIPreferences.RND_MAP_SIZE_HEIGHT, getSize().height);
+        guip.setValue(GUIPreferences.RND_MAP_ADVANCED, advancedButton.isSelected());
+    }
+    
+    private void loadWindowSettings() {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        setSize(guip.getInt(GUIPreferences.RND_MAP_SIZE_WIDTH), 
+                guip.getInt(GUIPreferences.RND_MAP_SIZE_HEIGHT));
+        setLocation(guip.getInt(GUIPreferences.RND_MAP_POS_X), 
+                guip.getInt(GUIPreferences.RND_MAP_POS_Y));
+        // Restore the advanced view if it was used last
+        if (guip.getBoolean(GUIPreferences.RND_MAP_ADVANCED)) {
+            switchView(VIEW_ADVANCED, false);
+            advancedButton.setSelected(true);
+        } else {
+            switchView(VIEW_BASIC, false);
+            basicButton.setSelected(true);
+        }
+    }
+    
 }

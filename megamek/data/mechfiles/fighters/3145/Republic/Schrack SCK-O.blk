@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ SCK-O
 3097
 </year>
 
+<originalBuildYear>
+3097
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -80,10 +87,6 @@ ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 ISERMediumLaser:OMNI
 ISImprovedHeavyGaussRifle:OMNI
-IS Streak SRM 2 Ammo:OMNI
-ISImprovedHeavyGauss Ammo:OMNI
-ISImprovedHeavyGauss Ammo:OMNI
-ISImprovedHeavyGauss Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,6 +100,16 @@ ISStreakSRM2:OMNI
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Streak SRM 2 Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+</Fuselage Equipment>
+
 <source>
 TRO 3145 Republic of the Sphere - Early Republic
 </source>
@@ -104,4 +117,3 @@ TRO 3145 Republic of the Sphere - Early Republic
 <tonnage>
 60.0
 </tonnage>
-

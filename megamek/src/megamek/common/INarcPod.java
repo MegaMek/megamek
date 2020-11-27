@@ -1,16 +1,19 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common;
 
 import java.io.Serializable;
@@ -64,7 +67,7 @@ public class INarcPod implements Serializable, Targetable {
      * Determine if the other object is an equivalent INarc pod. <p/> Overrides
      * <code>Object#equals(Object)</code>.
      *
-     * @param other the other <code>Object</code> which may be an equivalent
+     * @param obj the other <code>Object</code> which may be an equivalent
      *            INarc pod.
      * @return <code>true</code> if the other object matches this one,
      *         <code>false</code> otherwise.
@@ -80,7 +83,7 @@ public class INarcPod implements Serializable, Targetable {
         final INarcPod other = (INarcPod) obj;
         return (type == other.type) && (team == other.team);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(type, team);
@@ -142,13 +145,13 @@ public class INarcPod implements Serializable, Targetable {
         throw new IllegalStateException(
                 "Never ask for the coords of an INarcPod.");
     }
-    
+
     public Map<Integer, Coords> getSecondaryPositions() {
         // Hopefully, this will **never** get called.
         throw new IllegalStateException(
                 "Never ask for the coords of an INarcPod.");
     }
-    
+
 
     public int relHeight() {
         return 0;
@@ -174,7 +177,7 @@ public class INarcPod implements Serializable, Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
-    
+
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -186,7 +189,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -194,7 +197,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
@@ -202,7 +205,7 @@ public class INarcPod implements Serializable, Targetable {
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
-    
+
     public int getAltitude() {
         return 0;
     }

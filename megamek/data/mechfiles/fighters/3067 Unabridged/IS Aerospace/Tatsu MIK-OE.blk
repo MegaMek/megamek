@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ MIK-OE
 3075
 </year>
 
+<originalBuildYear>
+3075
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -73,13 +80,8 @@ Aerodyne
 
 <Nose Equipment>
 ISAntiMissileSystem:OMNI
-ISAMS Ammo:OMNI
 ISPlasmaRifle:OMNI
 ISPlasmaRifle:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
-ISPlasmaRifleAmmo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -96,6 +98,17 @@ ISSNPPC:OMNI
 ISGuardianECMSuite:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISAMS Ammo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+</Fuselage Equipment>
+
 <source>
 TRO 3067 - Jihad
 </source>
@@ -103,4 +116,3 @@ TRO 3067 - Jihad
 <tonnage>
 70.0
 </tonnage>
-

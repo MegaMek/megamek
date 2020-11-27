@@ -3,7 +3,7 @@ Vengeance (2682),1
 Fortress (2613),2
 Intruder (2655),3
 Dictator (Standard),4
-Mule (Standard),5
+Mule (2737),5
 Overlord (2762),6
 Union (2708),5
 Triumph (2593),4

@@ -13,10 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.AdvancedSRMWeapon;
-
-
 /**
  * @author Sebastian Brocks
  */
@@ -32,7 +28,6 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
      */
     public CLAdvancedSRM1() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Advanced SRM 1";
         setInternalName("CLAdvancedSRM1");
         addLookupName("Clan Advanced SRM-1");
@@ -44,12 +39,20 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 15;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .06f;
+        tonnage = .06;
         criticals = 2;
         cost = 15000;
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
+        rulesRefs = "261,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+            .setClanAdvancement(3052, 3056, 3066, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false, false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH);
     }
 }
+
+

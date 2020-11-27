@@ -7,6 +7,7 @@ Name=Trial of Position
 Description=A Jade Falcon Mechwarrior take his trial of position. Adjust skill levels as needed. Works good against a bot.
 BoardWidth=1
 BoardHeight=2
+RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
 Maps=RANDOM
 Factions=Jade_Falcon,Jade_Falcon_ToP
 Location_Jade_Falcon_ToP=N

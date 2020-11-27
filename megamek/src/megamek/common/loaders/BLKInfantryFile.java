@@ -76,7 +76,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         t.autoSetInternal();
 
         if (dataFile.exists("InfantryArmor")) {
-            t.setDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
+            t.setArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
         }
 
         if (!dataFile.exists("motion_type")) {
@@ -179,7 +179,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setSneakECM(true);
         }
         if (dataFile.exists("armordivisor")) {
-            t.setDamageDivisor(Double.valueOf(dataFile.getDataAsString("armordivisor")[0]));
+            t.setArmorDamageDivisor(Double.valueOf(dataFile.getDataAsString("armordivisor")[0]));
         }
         // get field guns
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
@@ -231,7 +231,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         		}
         	}
         }
-        
+        t.recalculateTechAdvancement();
+
         return t;
     }
 }

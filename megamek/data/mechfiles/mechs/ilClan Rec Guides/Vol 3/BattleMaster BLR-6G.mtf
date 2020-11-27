@@ -1,0 +1,164 @@
+Version:1.0
+BattleMaster
+BLR-6G
+
+Config:Biped
+techbase:Inner Sphere
+era:3088
+source:ilClan Vol 3 - Dark Age
+rules level:2
+
+mass:85
+engine:340 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:16 Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:27
+RA armor:27
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:10
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Heavy PPC, Right Arm
+Streak SRM 6, Left Torso
+Light PPC, Left Torso
+Light PPC, Left Torso
+ER Small Laser, Left Torso
+Light PPC, Right Torso
+Light PPC, Right Torso
+ER Small Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSmallXPulseLaser
+ISSmallXPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISStreakSRM6
+ISStreakSRM6
+Light PPC
+Light PPC
+Light PPC
+Light PPC
+IS Streak SRM 6 Ammo
+ISERSmallLaser (R)
+ISCASEII
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+Light PPC
+Light PPC
+ISERSmallLaser (R)
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:General Motors
+primaryfactory:El Dorado
+systemmanufacturer:CHASSIS:Hollis Mark X Endo Steel
+systemmanufacturer:ENGINE:GM 340 Light
+systemmanufacturer:ARMOR:Starshield Special Heavy with CASE II
+systemmanufacturer:COMMUNICATIONS:Sony MSF-31
+systemmanufacturer:TARGETING:Federated Stalker
+

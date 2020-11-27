@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ F
 3138
 </year>
 
+<originalBuildYear>
+3138
+</originalBuildYear>
+
 <type>
 Clan Level 3
 </type>
@@ -31,6 +35,9 @@ Clan Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -84,17 +91,6 @@ CLImprovedHeavyLargeLaser:OMNI
 CLImprovedHeavyLargeLaser:OMNI
 CLUltraAC20:OMNI
 CLStreakSRM6:OMNI
-Clan Streak SRM 6 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-Clan Ultra AC/20 Ammo:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -109,6 +105,20 @@ CLTargeting Computer:OMNI
 WatchdogECMSuite:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Streak SRM 6 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3145 NTNU - Late Republic
 </source>
@@ -116,4 +126,3 @@ TRO 3145 NTNU - Late Republic
 <tonnage>
 90.0
 </tonnage>
-

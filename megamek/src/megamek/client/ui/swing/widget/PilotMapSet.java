@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -27,21 +26,17 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Configuration;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Set of elements to reperesent pilot information in MechDisplay
+ * Set of elements to represent pilot information in MechDisplay
  */
-
 public class PilotMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***"; //$NON-NLS-1$
@@ -59,20 +54,11 @@ public class PilotMapSet implements DisplayMapSet {
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 
-    // keep track of portrait images
-    private DirectoryItems portraits;
-
     /**
-     * This constructor have to be called anly from addNotify() method
+     * This constructor have to be called only from addNotify() method
      */
     public PilotMapSet(JComponent c) {
         comp = c;
-        try {
-            portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
-        } catch (Exception e) {
-            portraits = null;
-        }
         setAreas();
         setBackGround();
     }
@@ -150,7 +136,7 @@ public class PilotMapSet implements DisplayMapSet {
         getNewYCoord();
         advantagesR = new PMSimpleLabel[N_ADV];
         for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10, getNewYCoord());
+            advantagesR[i] = createLabel(Integer.valueOf(i).toString(), fm, 10, getNewYCoord());
             content.addArea(advantagesR[i]);
         }
         // DO NOT PLACE ANY MORE LABELS BELOW HERE. They will get
@@ -163,81 +149,109 @@ public class PilotMapSet implements DisplayMapSet {
     /**
      * updates fields for the unit
      */
+    @Override
     public void setEntity(Entity en) {
-
+        setEntity(en, 0);
+    }
+    
+    public void setEntity(Entity en, int slot) {
         if (en instanceof Infantry) {
             pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));
         } else {
             pilotL.setString(Messages.getString("PilotMapSet.pilotL"));
         }
-        nameL.setString(en.getCrew().getName());
-        nickL.setString(en.getCrew().getNickname());
-        pilotR.setString(Integer.toString(en.getCrew().getPiloting()));
-        gunneryR.setString(Integer.toString(en.getCrew().getGunnery()));
-
-        if (null != getPortrait(en.getCrew())) {
-            portraitArea.setIdleImage(getPortrait(en.getCrew()));
-        }
-
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL()));
-            gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM()));
-            gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB()));
+        if (en.getCrew().isMissing(slot)) {
+            nameL.setString(Messages.getString("PilotMapSet.empty"));
+            nickL.setString("");
+            pilotL.setVisible(false);
+            pilotR.setVisible(false);
             gunneryL.setVisible(false);
             gunneryR.setVisible(false);
-            gunneryLL.setVisible(true);
-            gunneryLR.setVisible(true);
-            gunneryML.setVisible(true);
-            gunneryMR.setVisible(true);
-            gunneryBL.setVisible(true);
-            gunneryBR.setVisible(true);
-        } else {
             gunneryLL.setVisible(false);
             gunneryLR.setVisible(false);
             gunneryML.setVisible(false);
             gunneryMR.setVisible(false);
             gunneryBL.setVisible(false);
             gunneryBR.setVisible(false);
-            gunneryL.setVisible(true);
-            gunneryR.setVisible(true);
+        } else {
+            nameL.setString(en.getCrew().getName(slot));
+            nickL.setString(en.getCrew().getNickname(slot));
+            pilotR.setString(Integer.toString(en.getCrew().getPiloting(slot)));
+            gunneryR.setString(Integer.toString(en.getCrew().getGunnery(slot)));
+            pilotL.setVisible(true);
+            pilotR.setVisible(true);
+
+            portraitArea.setIdleImage(en.getCrew().getPortrait(slot).getImage());
+
+            if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));
+                gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM(slot)));
+                gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB(slot)));
+                gunneryL.setVisible(false);
+                gunneryR.setVisible(false);
+                gunneryLL.setVisible(true);
+                gunneryLR.setVisible(true);
+                gunneryML.setVisible(true);
+                gunneryMR.setVisible(true);
+                gunneryBL.setVisible(true);
+                gunneryBR.setVisible(true);
+            } else {
+                gunneryLL.setVisible(false);
+                gunneryLR.setVisible(false);
+                gunneryML.setVisible(false);
+                gunneryMR.setVisible(false);
+                gunneryBL.setVisible(false);
+                gunneryBR.setVisible(false);
+                gunneryL.setVisible(true);
+                gunneryR.setVisible(true);
+            }
         }
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            toughBR.setString(Integer.toString(en.getCrew().getToughness()));
+
+        if ((en.getGame() != null)
+                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)
+                && !en.getCrew().isMissing(slot)) {
+            toughBR.setString(Integer.toString(en.getCrew().getToughness(slot)));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
         if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
+                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
+                && !en.getCrew().isMissing(slot)) {
             initBR.setString(Integer.toString(en.getCrew().getInitBonus()));
         } else {
             initBL.setVisible(false);
             initBR.setVisible(false);
         }
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)
+                && !en.getCrew().isMissing(slot)) {
             commandBR.setString(Integer.toString(en.getCrew().getCommandBonus()));
         } else {
             commandBL.setVisible(false);
             commandBR.setVisible(false);
         }
-        hitsR.setString(en.getCrew().getStatusDesc());
+        if (en.getCrew().isMissing(slot)) {
+            hitsR.setString("");
+        } else {
+            hitsR.setString(en.getCrew().getStatusDesc(slot));
+        }
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups
                 .hasMoreElements();) {
-            if (i >= (N_ADV - 1)) {
-                advantagesR[i++].setString(Messages.getString("PilotMapSet.more"));
+            if (i >= advantagesR.length - 1) {
+                advantagesR[advantagesR.length - 1].setString(Messages.getString("PilotMapSet.more"));
                 break;
             }
             IOptionGroup advGroup = advGroups.nextElement();
             if (en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                    if (i >= (N_ADV - 1)) {
-                        advantagesR[i++].setString("  " + Messages.getString("PilotMapSet.more"));
-                        break;
+                    if (i >= advantagesR.length - 1) {
+                        advantagesR[advantagesR.length - 1].setString("  " + Messages.getString("PilotMapSet.more"));
+                        return;
                     }
                     IOption adv = advs.nextElement();
                     if ((adv != null) && adv.booleanValue()) {
@@ -312,51 +326,6 @@ public class PilotMapSet implements DisplayMapSet {
         PMSimpleLabel l = new PMSimpleLabel(s, fm, Color.white);
         l.moveTo(x, y);
         return l;
-    }
-
-    /**
-     * Get the portrait for the given pilot.
-     *
-     * @return The <code>Image</code> of the pilot's portrait. This value will
-     *         be <code>null</code> if no portrait was selected or if there was
-     *         an error loading it.
-     */
-    public Image getPortrait(Crew pilot) {
-
-        String category = pilot.getPortraitCategory();
-        String file = pilot.getPortraitFileName();
-
-        // Return a null if the player has selected no portrait file.
-        if ((null == category) || (null == file) || (null == portraits)) {
-            return null;
-        }
-
-        if (Crew.PORTRAIT_NONE.equals(file)) {
-            file = "default.gif"; //$NON-NLS-1$
-        }
-
-        if (Crew.ROOT_PORTRAIT.equals(category)) {
-            category = "";
-        }
-
-        // Try to get the player's portrait file.
-        Image portrait = null;
-        try {
-            portrait = (Image) portraits.getItem(category, file);
-            if (null == portrait) {
-                // the image could not be found so switch to default one
-                category = "";
-                file = "default.gif";
-                portrait = (Image) portraits.getItem(category, file);
-            }
-            // make sure no images are longer than 72 pixels
-            if (null != portrait) {
-                portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return portrait;
     }
 
 }

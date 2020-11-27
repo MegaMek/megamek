@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -66,13 +66,13 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISGuardianECMSuite:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
-Jump Jet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
+VehicleJumpJet:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -104,4 +104,3 @@ TRO 3145 Republic of the Sphere - Late Republic
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
-

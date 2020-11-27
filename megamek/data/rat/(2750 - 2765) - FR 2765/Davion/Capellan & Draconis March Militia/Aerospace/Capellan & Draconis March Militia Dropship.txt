@@ -1,6 +1,7 @@
 Capellan & Draconis March Militia Dropship
 Fortress (2613),1
-Confederate (2703),2
+Confederate (2602),1
+Confederate (2602) (Mech),1
 Colossus Mk I,3
 Vampire (Standard),4
 Leopard (2537),5

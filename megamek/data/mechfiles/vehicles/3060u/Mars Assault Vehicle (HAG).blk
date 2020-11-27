@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -99,10 +99,9 @@ CLAPGaussRifle
 </Turret Equipment>
 
 <source>
-Jihad
+TRO 3060 - Jihad
 </source>
 
 <tonnage>
 100.0
 </tonnage>
-

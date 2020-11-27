@@ -1,12 +1,12 @@
 3085 Former Free Worlds League States Fleet Dropships
 Leopard CV (3054),1
 Vengeance (3056),2
-Hamilcar (Standard),3
-Kuan Ti (Standard),4
+Hamilcar (3054),3
+Kuan Ti (3055),4
 Achilles (3055),5
 Merlin (3063),6
 Leopard 'Pocket Warship',5
 Union 'Pocket Warship',4
 Merlin (3063),3
 Vengeance (3056),2
-Mule (Pocket Warship),1
+Mule 'Pocket Warship',1

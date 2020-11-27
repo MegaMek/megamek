@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ TR-13G
 3081
 </year>
 
+<originalBuildYear>
+3081
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -65,9 +72,6 @@ Aerodyne
 
 <Nose Equipment>
 ISLongTomCannon
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
 ISERMediumLaser
 ISERMediumLaser
 </Nose Equipment>
@@ -83,6 +87,15 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+</Fuselage Equipment>
+
 <source>
 TRO Prototypes - Jihad
 </source>
@@ -90,4 +103,3 @@ TRO Prototypes - Jihad
 <tonnage>
 50.0
 </tonnage>
-

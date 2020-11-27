@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -31,8 +31,8 @@ public class AltitudeBombAttack extends Weapon {
     private static final long serialVersionUID = 1837670588683382376L;
 
     public AltitudeBombAttack() {
-        name = "Altiude Bomb";
-        setInternalName(Aero.ALT_BOMB_ATTACK);
+        name = "Altitude Bomb";
+        setInternalName(IBomber.ALT_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
         ammoType = AmmoType.T_NA;
@@ -41,7 +41,8 @@ public class AltitudeBombAttack extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.0f;
+        maxRange = 0;
+        tonnage = 0.0;
         criticals = 0;
         bv = 0;
         cost = 0;

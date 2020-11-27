@@ -75,6 +75,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -100,9 +101,8 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -120,21 +120,21 @@ public class MiniMap extends JPanel {
      *
      */
     private static final long serialVersionUID = 6964529682842424060L;
-    private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
+    private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color ULTRA_HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
 
-    private final static int SHOW_NO_HEIGHT = 0;
-    private final static int SHOW_GROUND_HEIGHT = 1;
-    private final static int SHOW_BUILDING_HEIGHT = 2;
-    private final static int SHOW_TOTAL_HEIGHT = 3;
-    private final static int NBR_MODES = 3;
+    private static final int SHOW_NO_HEIGHT = 0;
+    private static final int SHOW_GROUND_HEIGHT = 1;
+    private static final int SHOW_BUILDING_HEIGHT = 2;
+    private static final int SHOW_TOTAL_HEIGHT = 3;
+    private static final int NBR_MODES = 3;
 
-    private final static int SCROLL_PANE_WIDTH = 160;
-    private final static int SCROLL_PANE_HEIGHT = 200;
+    private static final int SCROLL_PANE_WIDTH = 160;
+    private static final int SCROLL_PANE_HEIGHT = 200;
 
     private BufferedImage m_mapImage;
     private IBoardView m_bview;
@@ -178,19 +178,19 @@ public class MiniMap extends JPanel {
     
     // Here come the Strat Ops / NATO unit symbols
     Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
-    private final static Path2D STRAT_BASERECT;
-    private final static Path2D STRAT_INFANTRY;
-    private final static Path2D STRAT_MECH;
-    private final static Path2D STRAT_VTOL;
-    private final static Path2D STRAT_TANKTRACKED;
-    private final static Path2D STRAT_AERO;
-    private final static Path2D STRAT_SPHEROID;
-    private final static Path2D STRAT_HOVER;
-    private final static Path2D STRAT_WHEELED;
-    private final static Path2D STRAT_NAVAL;
-    private final static Dimension SYMBOLSIZE = new Dimension(167,103);
-    private final static String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
-    private final static double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
+    private static final Path2D STRAT_BASERECT;
+    private static final Path2D STRAT_INFANTRY;
+    private static final Path2D STRAT_MECH;
+    private static final Path2D STRAT_VTOL;
+    private static final Path2D STRAT_TANKTRACKED;
+    private static final Path2D STRAT_AERO;
+    private static final Path2D STRAT_SPHEROID;
+    private static final Path2D STRAT_HOVER;
+    private static final Path2D STRAT_WHEELED;
+    private static final Path2D STRAT_NAVAL;
+    private static final Dimension SYMBOLSIZE = new Dimension(167,103);
+    private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
+    private static final double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
     
     static {
         // Base rectangle for all units
@@ -712,8 +712,6 @@ public class MiniMap extends JPanel {
         }
         
         Color oldColor = g.getColor();
-        // g.setColor(BACKGROUND);
-        // g.fillRect(0, 0, getSize().width, getSize().height);
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
@@ -732,6 +730,13 @@ public class MiniMap extends JPanel {
                         paintCoord(gg, j, k, true);
                     }
                     addRoadElements(h, j, k);
+                    // Color invalid hexes red when in the Map Editor
+                    if ((m_game != null) && 
+                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
+                            && !h.isValid(null)) {
+                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        paintCoord(gg, j, k, true);
+                    }
                 }
             }
             // draw backbuffer
@@ -952,19 +957,19 @@ public class MiniMap extends JPanel {
                 String label;
                 switch (heightDisplayMode) {
                     case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.NoHeightLabel"); 
                         break;
                     case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.GroundHeightLabel");
                         break;
                     case SHOW_BUILDING_HEIGHT:
-                        label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.BuildingHeightLabel"); 
                         break;
                     case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.TotalHeightLabel"); 
                         break;
                     default:
-                        label = ""; //$NON-NLS-1$
+                        label = "";
                 }
                 g.drawString(label, 17, (getSize().height - 14) + 12);
             }
@@ -1147,15 +1152,6 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity) {
-        boolean sensors = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
-        boolean sensorsDetectAll = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = m_game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
-        boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
-        
         int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
                 + leftMargin + hexSide[zoom];
         int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
@@ -1163,8 +1159,7 @@ public class MiniMap extends JPanel {
         int[] xPoints;
         int[] yPoints;
 
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && hasDetected && !hasVisual) { // Sensor Return
+        if (EntityVisibilityUtils.onlyDetectedBySensors(m_bview.getLocalPlayer(), entity)) { // Sensor Return
             String sensorReturn = "?";           
             Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
@@ -1173,7 +1168,7 @@ public class MiniMap extends JPanel {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (doubleBlind && !hasVisual) { // Unseen Unit
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(m_bview.getLocalPlayer(), m_game, entity)) { // Unseen Unit
             // Do nothing
             return;
         } else if (entity instanceof Mech) {
@@ -1260,6 +1255,20 @@ public class MiniMap extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
         Stroke svStroke = g2.getStroke();
+        
+        // Choose player or team color depending on preferences
+        Color iconColor = PlayerColors.getColor(entity.getOwner().getColorIndex(), false);
+        if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
+            boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
+            boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());
+            if (isLocalPlayer) {
+                iconColor = GUIPreferences.getInstance().getMyUnitColor();
+            } else if (isLocalTeam) {
+                iconColor = GUIPreferences.getInstance().getAllyUnitColor();
+            } else {
+                iconColor = GUIPreferences.getInstance().getEnemyUnitColor();
+            }
+        }
 
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.MMSYMBOL)) {
             AffineTransform svTransform = g2.getTransform();
@@ -1309,8 +1318,8 @@ public class MiniMap extends JPanel {
                 } else {
                     form = STRAT_TANKTRACKED;
                 }
-            } else if (entity instanceof Aero) {
-                if (((Aero) entity).isFighter()) {
+            } else if (entity.isAero()) {
+                if (entity.isFighter()) {
                     form = STRAT_AERO;
                 } else {
                     form = STRAT_SPHEROID;
@@ -1320,9 +1329,8 @@ public class MiniMap extends JPanel {
                 form = STRAT_INFANTRY;
             }
 
-            // Fill the form in player color
-            g2.setColor(new Color(PlayerColors.getColorRGB(
-                    entity.getOwner().getColorIndex())));
+            // Fill the form in player color / team color
+            g.setColor(iconColor);
             g2.fill(form);
 
             // Add the weight class or other lettering for certain units
@@ -1363,10 +1371,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawOval(baseX - radius, baseY - radius, dia, dia);
 
-                // Fill the icon according to player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillOval(baseX - radius, baseY - radius, dia, dia);
 
                 // Draw a white border to better show the player color
@@ -1379,10 +1385,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawPolygon(xPoints, yPoints, xPoints.length);
 
-                // Fill the icon according to the player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillPolygon(xPoints, yPoints, xPoints.length);
 
                 // Draw a white border to better show the player color
@@ -1704,17 +1708,25 @@ public class MiniMap extends JPanel {
                 initializeMap();
             } else {
                 if (x < 14) {
-                    zoomIn();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 } else if ((x < 28) && (zoom > 2)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-                            : heightDisplayMode;
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
-                    zoomOut();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomOut();
+                    } else {
+                        zoomIn();
+                    }
                 } else {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
+
                     m_mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
 
                     minimized = true;
@@ -1728,8 +1740,7 @@ public class MiniMap extends JPanel {
                 return;
             }
             if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                m_bview
-                        .checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),

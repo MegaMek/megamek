@@ -8,5 +8,5 @@ Trojan (Blockade Runner),6
 Avenger (2816),5
 Union 'Pocket Warship',4
 Achilles (3055),3
-Kuan Ti (Standard),2
-Mule (Pocket Warship),1
+Kuan Ti (3055),2
+Mule 'Pocket Warship',1

@@ -17,13 +17,13 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -69,7 +69,7 @@ public class BombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if (!(ae instanceof Aero) || (null == payload)) {
+        if (!ae.isBomber() || (null == payload)) {
             return;
         }
         for (int type = 0; type < payload.length; type++) {
@@ -206,7 +206,7 @@ public class BombAttackHandler extends WeaponHandler {
                     vPhaseReport.add(r);
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
-                    if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                    if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                         if ((-typeModifiedToHit.getMoS() - 2) < 1) {
                             moF = 0;
                         } else {
@@ -254,11 +254,13 @@ public class BombAttackHandler extends WeaponHandler {
                 } else if (type == BombType.B_THUNDER) {
                     server.deliverThunderMinefield(drop, ae.getOwner().getId(),
                             20, ae.getId());
-                    ArrayList<Coords> hexes = Compute.coordsAtRange(drop, 1);
+                    List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {
                         server.deliverThunderMinefield(c,
                                 ae.getOwner().getId(), 20, ae.getId());
                     }
+                } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+                    AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, server);
                 } else {
                     server.deliverBombDamage(drop, type, subjectId, ae,
                             vPhaseReport);

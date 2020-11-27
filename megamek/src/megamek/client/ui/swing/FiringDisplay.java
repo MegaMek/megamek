@@ -15,29 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -46,53 +23,25 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.HexTarget;
-import megamek.common.IAimingModes;
-import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.IdealHex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.client.ui.swing.util.TurnTimer;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.*;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -100,6 +49,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      *
      */
     private static final long serialVersionUID = -5586388490027013723L;
+
+    /**
+     * timer that ends turn if time limit set in options is over
+     */
+    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -761,15 +715,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             } // End ce()-not-on-board
 
-            int lastTarget = ce().getLastTarget();
-            if (ce() instanceof Mech) {
-                int grapple = ((Mech) ce()).getGrappled();
-                if (grapple != Entity.NONE) {
-                    lastTarget = grapple;
+            if (ce().isMakingVTOLGroundAttack()) {
+                this.updateVTOLGroundTarget();
+            } else {
+                // Need to clear attacks again in case previous en was making VTOL ground attack
+                clearAttacks();
+                int lastTarget = ce().getLastTarget();
+                if (ce() instanceof Mech) {
+                    int grapple = ((Mech) ce()).getGrappled();
+                    if (grapple != Entity.NONE) {
+                        lastTarget = grapple;
+                    }
                 }
+                Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
+                target(t);
             }
-            Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
-            target(t);
 
             if (!ce().isOffBoard()) {
                 clientgui.getBoardView().highlight(ce().getPosition());
@@ -850,8 +810,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
-                && (!enemyTarget || target.hasSeenEntity(localPlayer)
-                    || target.hasDetectedEntity(localPlayer))
+                && (!enemyTarget || EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, target))
                 && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
@@ -908,12 +867,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
+        //check if there should be a turn timer running
+        tt = TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
      * Does end turn stuff.
      */
     protected void endMyTurn() {
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
         // end my turn, then.
         IGame game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
@@ -982,6 +948,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // send change to the server
         int nMode = m.switchMode(forward);
+        // BattleArmor can fire popup-mine launchers individually. The mode determines
+        // how many will be fired, but we don't want to set the mode higher than the
+        // number of troopers in the squad.
+        if ((ce() instanceof BattleArmor)
+                && (m.getType() instanceof WeaponType)
+                && ((WeaponType)m.getType()).hasFlag(WeaponType.F_BA_INDIVIDUAL)
+                && (m.curMode().getName().contains("-shot"))
+                && (Integer.parseInt(m.curMode().getName().replace("-shot", "")) > ce().getTotalInternal())) {
+            m.setMode(0);
+        }
         clientgui.getClient().sendModeChange(cen, wn, nMode);
 
         // notify the player
@@ -1226,6 +1202,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -1257,6 +1234,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -1433,7 +1411,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private int[] getBombPayload(boolean isSpace, int limit) {
         int[] payload = new int[BombType.B_NUM];
-        if (!(ce() instanceof Aero)) {
+        if (!ce().isBomber()) {
             return payload;
         }
         int[] loadout = ce().getBombLoadout();
@@ -1551,7 +1529,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         for (Targetable t : targets) {
         
             WeaponAttackAction waa;
-            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    || (mounted.getType() instanceof CapitalMissileWeapon
+                            && Compute.isGroundToGround(ce(), t)))){
                 waa = new WeaponAttackAction(cen, t.getTargetType(),
                         t.getTargetId(), weaponNum);
             } else {
@@ -1577,10 +1557,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     && (mounted.getLinked().getType() instanceof AmmoType)) {
                 Mounted ammoMount = mounted.getLinked();
                 AmmoType ammoType = (AmmoType) ammoMount.getType();
-                waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-                if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && ((ammoType
-                        .getAmmoType() == AmmoType.T_LRM) || (ammoType
-                        .getAmmoType() == AmmoType.T_MML)))
+                waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+                waa.setAmmoCarrier(ammoMount.getEntity().getId());
+                if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && 
+                        ((ammoType.getAmmoType() == AmmoType.T_LRM)
+                        || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
+                        || (ammoType.getAmmoType() == AmmoType.T_MML)))
                         || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.frame);
@@ -1647,18 +1629,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
+        clientgui.mechD.wPan.selectNextWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
         updateTarget();
     }
 
@@ -1669,18 +1645,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
+
+        clientgui.mechD.wPan.selectPrevWeapon();
 
         if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
             clientgui.mechD.wPan.displayMech(ce());
         }
 
-        if (weaponId == -1) {
-            setFireModeEnabled(false);
-        } else {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
         updateTarget();
     }
 
@@ -1745,7 +1716,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-
+        
         // remove attacks, set weapons available again
         Enumeration<AbstractEntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
@@ -1803,6 +1774,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectFirstWeapon();
+        if (ce().isMakingVTOLGroundAttack()) {
+            this.updateVTOLGroundTarget();
+        }
         updateTarget();
     }
 
@@ -1862,12 +1836,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setFireEnabled(false);
         IGame game = clientgui.getClient().getGame();
         // allow spotting
-        if ((ce() != null) && ce().canSpot() && (target != null)
+        if ((ce() != null) && !ce().isSpotting() && ce().canSpot() && (target != null)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+            if (hasLos
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, ce(), target)
                     && !Compute.inSensorRange(game, ce(), target, null)) {
                 hasLos = false;
@@ -1924,9 +1899,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.alreadyFired")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
+            			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("FiringDisplay.autoFiringWeapon"));
+                //$NON-NLS-1$
+                setFireEnabled(false);
+            } else if (m.isInBearingsOnlyMode()) {
+                clientgui.mechD.wPan.wToHitR.setText(Messages
+                        .getString("FiringDisplay.bearingsOnlyWrongPhase"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -1936,8 +1917,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = ce().getCrew().getOptions()
-                        .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString()
                         + " ("
                         + Compute.oddsAbove(toHit.getValue(), natAptGunnery)
@@ -1955,9 +1935,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
-            Mounted m = ce().getEquipment(weaponId);
-            setFireModeEnabled(m.isModeSwitchable());
-        }
+            adaptFireModeEnabled(ce().getEquipment(weaponId));
+        } else {
+            setFireModeEnabled(false);
+        } 
 
         updateSearchlight();
 
@@ -1973,6 +1954,25 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    /**
+     * A VTOL or LAM in airmech mode making a bombing or strafing attack already has the target set
+     * during the movement phase. 
+     */
+    void updateVTOLGroundTarget() {
+        clientgui.bv.clearStrafingCoords();
+        target(null);
+        isStrafing = false;
+        strafingCoords.clear();
+        if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
+            target(((IBomber)ce()).getVTOLBombTarget());
+            clientgui.bv.addStrafingCoords(target.getPosition());
+        } else if ((ce() instanceof VTOL) && ((VTOL)ce()).getStrafingCoords().size() > 0) {
+            strafingCoords.addAll(((VTOL)ce()).getStrafingCoords());
+            strafingCoords.forEach(c -> clientgui.bv.addStrafingCoords(c));
+            isStrafing = true;
+        }
+    }
+    
     /**
      * Torso twist in the proper direction.
      */
@@ -2090,7 +2090,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (shiftheld) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
-                } else if (targ != null) {
+                } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
                     if ((targ instanceof Entity) 
                             && Compute.isGroundToAir(ce(), targ)) {
                         Entity entTarg = (Entity)targ;
@@ -2126,7 +2126,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-
+        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // We want to ignore turns from other players and only listen to events we generated
+        // Except on the first turn
+        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+            return;
+        }
+        
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
@@ -2271,23 +2279,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret()) || ((Tank) ce())
-                        .isTurretJammed(((Tank) ce()).getLocTurret2()))
-                && (attacks.size() == 0)
-                && !(((Tank) ce()).getStunnedTurns() > 0));
+                && ((Tank) ce()).canClearTurret()
+                && (attacks.size() == 0));
     }
 
     private void updateClearWeaponJam() {
         setFireClearWeaponJamEnabled((ce() instanceof Tank)
-                && (((Tank) ce()).getJammedWeapons().size() != 0)
-                && (attacks.size() == 0)
-                && !(((Tank) ce()).getStunnedTurns() > 0));
+                && ((Tank) ce()).canUnjamWeapon()
+                && (attacks.size() == 0));
     }
 
     private void updateStrafe() {
-        if (ce() instanceof Aero) {
-            Aero a = (Aero) ce();
-            setStrafeEnabled(a.getAltitude() <= 3 && !a.isSpheroid());
+        if (ce().isAero()) {
+            setStrafeEnabled(ce().getAltitude() <= 3 && !((IAero)ce()).isSpheroid());
         } else {
             setStrafeEnabled(false);
         }
@@ -2337,6 +2341,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
+    
+    /**
+     * Enables the mode button when mode switching is allowed
+     * (always true except for LAMs with certain weapons) and
+     * the weapon has modes. Disables otherwise.
+     *  
+     * @param m The active weapon
+     */
+    protected void adaptFireModeEnabled(Mounted m) {
+        setFireModeEnabled(m.isModeSwitchable() & m.getType().hasModes());
+    }
 
     protected void setFireCalledEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
@@ -2374,7 +2389,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && Compute.isGroundToAir(ce(), target)) {
             ((Entity)target).setPlayerPickedPassThrough(cen, null);
         }
-        target(null);
+        if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
+            target(null);
+        }
         clearAttacks();        
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
@@ -2476,8 +2493,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     && (munitionType == AmmoType.M_FLARE)) {
                 return new HexTarget(pos, game.getBoard(),
                         Targetable.TYPE_FLARE_DELIVER);
-            // Certain mek mortar types should target hexes
-            } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+            // Certain mek mortar types and LRMs should target hexes
+            } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                    || (aType.getAmmoType() == AmmoType.T_LRM)
+                    || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType == AmmoType.M_AIRBURST) 
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
                 return new HexTarget(pos, game.getBoard(),
@@ -2501,11 +2520,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             Targetable t = choices.next();
             boolean isSensorReturn = false;
             boolean isVisible = true;
+            boolean isHidden = false;
             if (t instanceof Entity) {
                 isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
                 isVisible = ((Entity) t).hasSeenEntity(localPlayer);
+                isHidden = ((Entity) t).isHidden();
             }
-            if (!ce().equals(t) && !isSensorReturn && isVisible) {
+            if (!ce().equals(t) && !isSensorReturn && isVisible && !isHidden) {
                 targets.add(t);
             }
         }
@@ -2572,10 +2593,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     
     private boolean validStrafingCoord(Coords newCoord) {
         // Only Aeros can strafe...
-        if (ce() == null || !(ce() instanceof Aero)) {
+        if (ce() == null || !ce().isAero()) {
             return false;
         }
-        Aero a = (Aero)ce();
         
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
@@ -2584,7 +2604,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         
         // Can only strafe hexes that were flown over
-        if (!a.passedThrough(newCoord)) {
+        if (!ce().passedThrough(newCoord)) {
             return false;
         }
         

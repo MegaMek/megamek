@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,17 +24,28 @@ BAM-1A1
 3078
 </year>
 
+<originalBuildYear>
+3078
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
 </SafeThrust>
+
+<cockpit_type>
+3
+</cockpit_type>
 
 <heatsinks>
 10
@@ -53,11 +64,11 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -69,12 +80,9 @@ Aerodyne
 
 <Nose Equipment>
 ISMML5
-ISArtemisIV
 ISMML5
 ISArtemisIV
-IS Ammo MML-5 LRM Artemis-capable
-IS Ammo MML-5 LRM Artemis-capable
-IS Ammo MML-5 SRM Artemis-capable
+ISArtemisIV
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -87,6 +95,15 @@ IS Ammo MML-5 SRM Artemis-capable
 ISERSmallLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
+</Fuselage Equipment>
+
 <source>
 XTRO RetroTech - Jihad
 </source>
@@ -94,4 +111,3 @@ XTRO RetroTech - Jihad
 <tonnage>
 50.0
 </tonnage>
-

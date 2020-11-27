@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ DFC-OB
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -72,18 +79,24 @@ Aerodyne
 
 <Left Wing Equipment>
 ISLBXAC10:OMNI
-IS LB 10-X Cluster Ammo:OMNI
-IS LB 10-X Cluster Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISLBXAC10:OMNI
-IS LB 10-X Cluster Ammo:OMNI
-IS LB 10-X Cluster Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War
@@ -92,4 +105,3 @@ TRO 3067 - Civil War
 <tonnage>
 55.0
 </tonnage>
-

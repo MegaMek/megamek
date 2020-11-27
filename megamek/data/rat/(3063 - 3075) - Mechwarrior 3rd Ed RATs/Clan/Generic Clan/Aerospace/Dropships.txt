@@ -1,12 +1,14 @@
 Generic Clan Dropships- 3063
-Miraborg (Standard),1
-Titan (Clan),2
-Broadsword (Standard),3
-Union C,4
-Confederate (Clan),5
-Broadsword (Standard),6
-Confederate (Clan),5
-Carrier (Standard),4
-Sassanid (Standard),3
-Lion (Clan),2
-Overlord C,1
+Miraborg (3053),1
+Titan (2953),2
+Broadsword (2979),3
+Confederate C (3048),5
+Broadsword (2979),6
+Confederate C (3048),5
+Carrier (2882),4
+Sassanid (2875),3
+Lion (2835),2
+Overlord C (2818),1
+Union C (2829),2
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

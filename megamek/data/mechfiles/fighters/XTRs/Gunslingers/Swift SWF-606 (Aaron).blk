@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ SWF-606 (Aaron)
 2756
 </year>
 
+<originalBuildYear>
+2756
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 12
@@ -89,6 +96,12 @@ ISLaserInsulator
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 XTRO Gunslingers - Star League
 </source>
@@ -96,4 +109,3 @@ XTRO Gunslingers - Star League
 <tonnage>
 25.0
 </tonnage>
-

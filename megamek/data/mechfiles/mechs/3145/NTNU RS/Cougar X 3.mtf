@@ -42,12 +42,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Clan Ferro-Fibrous
 -Empty-
 
@@ -55,22 +55,22 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
 Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakLRM10 (omnipod)
-CLStreakLRM10 (omnipod)
-Clan Streak LRM 10 Ammo (omnipod)
+CLStreakLRM10
+CLStreakLRM10
+Clan Streak LRM 10 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -82,10 +82,10 @@ Clan Streak LRM 10 Ammo (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLTargeting Computer (omnipod)
-CLTargeting Computer (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer
+CLTargeting Computer
 -Empty-
 -Empty-
 -Empty-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Prime
 2941
 </year>
 
+<originalBuildYear>
+2941
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 14
@@ -90,6 +97,12 @@ CLActiveProbe:OMNI
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3055u - Succession Wars
 </source>
@@ -97,4 +110,3 @@ TRO 3055u - Succession Wars
 <tonnage>
 30.0
 </tonnage>
-

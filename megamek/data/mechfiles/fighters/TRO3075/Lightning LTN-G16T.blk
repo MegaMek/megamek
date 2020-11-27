@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ LTN-G16T
 3069
 </year>
 
+<originalBuildYear>
+3069
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -74,9 +81,6 @@ Aerodyne
 <Nose Equipment>
 Medium Laser
 Autocannon/20
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
 ISTargeting Computer
 </Nose Equipment>
 
@@ -92,6 +96,15 @@ ISERMediumLaser
 ISERMediumLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Jihad
 </source>
@@ -99,4 +112,3 @@ TRO 3075 - Jihad
 <tonnage>
 50.0
 </tonnage>
-

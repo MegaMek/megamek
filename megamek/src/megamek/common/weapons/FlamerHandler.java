@@ -21,7 +21,10 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.EquipmentMode;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
@@ -48,8 +51,50 @@ public class FlamerHandler extends WeaponHandler {
     public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
+    @Override
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
+        
+        boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
+        EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
+        
+        boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
+        boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
+        
+        if(bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            
+            if(bmmFlamerDamage && entityTarget.tracksHeat()) {
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+            }
+        } else if(flamerDoesHeatOnlyDamage) {
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(),
+                    waa.getAimingMode(), toHit.getCover());
+            hit.setAttackerId(getAttackerId());
+
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget,
+                            weapon.getCalledShot().getCall()))) {
+                // Weapon strikes Partial Cover.
+                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
+                        hits, nCluster, bldgAbsorbs);
+                return;
+            }
+            Report r = new Report(3405);
+            r.subject = subjectId;
+            r.add(toHit.getTableDesc());
+            r.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.addElement(r);
+            
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -60,8 +105,7 @@ public class FlamerHandler extends WeaponHandler {
         int toReturn = super.calcDamagePerHit();
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             // pain shunted infantry get half damage
-            if (((Entity) target).getCrew().getOptions()
-                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
         } else if ((target instanceof BattleArmor)

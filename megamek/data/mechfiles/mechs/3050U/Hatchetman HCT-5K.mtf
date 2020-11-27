@@ -1,50 +1,50 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-5K
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3075
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3075
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:45
-Engine:180 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
+heat sinks:10 Double
+walk mp:4
+jump mp:4
 
-Armor:Standard
-LA Armor:13
-RA Armor:13
-LT Armor:16
-RT Armor:16
-CT Armor:19
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:13
+RA armor:13
+LT armor:16
+RT armor:16
+CT armor:19
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
-Weapons:5
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISMRM30, Right Torso, Ammo:16
-1 ISERMediumLaser, Left Torso
-1 ISC3SlaveUnit, Head
+Weapons:4
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+MRM 30, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumPulseLaser
 -Empty-
 -Empty-
@@ -69,12 +69,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 -Empty-
 -Empty-
@@ -83,13 +83,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30 Ammo
-ISMRM30 Ammo
+MRM 30
+MRM 30
+MRM 30
+MRM 30
+MRM 30
+IS MRM 30 Ammo
+IS MRM 30 Ammo
 ISCASE
 -Empty-
 
@@ -148,3 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+

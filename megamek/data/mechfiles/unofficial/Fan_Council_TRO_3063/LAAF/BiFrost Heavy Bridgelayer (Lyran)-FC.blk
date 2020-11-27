@@ -1,0 +1,87 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+BiFrost Heavy Bridgelayer
+</Name>
+
+<Model>
+(Lyran)-FC
+</Model>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:3.0
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
+30
+30
+30
+30
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+Cargo (1 ton)
+</Body Equipment>
+
+<Front Equipment>
+HeavyBridgeLayer
+ISERMediumLaser
+</Front Equipment>
+
+<Right Equipment>
+ISSponsonTurret
+ISSmallPulseLaser
+</Right Equipment>
+
+<Left Equipment>
+ISSponsonTurret
+ISSmallPulseLaser
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+RS 3063 - Civil War
+</source>
+
+<tonnage>
+40.0
+</tonnage>

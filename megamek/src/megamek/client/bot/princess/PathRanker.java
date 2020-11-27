@@ -22,9 +22,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
-import megamek.common.Aero;
-import megamek.common.Infantry;
+import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -39,8 +39,22 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
-public abstract class PathRanker {
+public abstract class PathRanker implements IPathRanker {
 
+    //TODO: Introduce PathRankerCacheHelper class that contains "global" path ranker state
+    //TODO: Introduce FireControlCacheHelpr class that contains "global" Fire Control state
+    //PathRanker classes should be pretty stateless, except pointers to princess and such
+    
+    /**
+     * The possible path ranker types.
+     * If you're adding a new one, add it here then make sure to add it to Princess.InitializePathRankers
+     */
+    public enum PathRankerType {
+        Basic,
+        Infantry,
+        NewtonianAerospace
+    }
+    
     private Princess owner;
 
     public PathRanker(Princess princess) {
@@ -54,7 +68,7 @@ public abstract class PathRanker {
     RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(), game);
+        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
@@ -66,50 +80,68 @@ public abstract class PathRanker {
     abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords);
 
-    ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                    double fallTollerance, int startingHomeDistance,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
+                                    double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
-        final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            // No point in ranking an empty list.
-            if (movePaths.isEmpty()) {
-                return new ArrayList<>();
-            }
-
-            // Let's try to whittle down this list.
-            List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
-                                                               movePaths.size() + " possible paths.");
-
-            Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
-
-            ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
-            final BigDecimal numberPaths = new BigDecimal(validPaths.size());
-            BigDecimal count = BigDecimal.ZERO;
-            BigDecimal interval = new BigDecimal(5);
-            for (MovePath path : validPaths) {
-                count = count.add(BigDecimal.ONE);
-                returnPaths.add(rankPath(path, game, maxRange, fallTollerance, startingHomeDistance, enemies,
-                                         allyCenter));
-                BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
-                                          .round(new MathContext(0, RoundingMode.DOWN));
-                if ((percent.compareTo(interval) >= 0)
-                    && (LogLevel.INFO.getLevel() <= getOwner().getVerbosity().getLevel())) {
-                    getOwner().sendChat("... " + percent.intValue() + "% complete.");
-                    interval = percent.add(new BigDecimal(5));
-                }
-            }
-            return returnPaths;
-        } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+        // No point in ranking an empty list.
+        if (movePaths.isEmpty()) {
+            return new ArrayList<>();
         }
+
+        // the cached path probability data is really only relevant for one iteration through this method
+        getPathRankerState().getPathSuccessProbabilities().clear();
+        
+        // Let's try to whittle down this list.
+        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
+        getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
+                movePaths.size() + " possible paths.");
+
+        Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+
+        ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
+        final BigDecimal numberPaths = new BigDecimal(validPaths.size());
+        BigDecimal count = BigDecimal.ZERO;
+        BigDecimal interval = new BigDecimal(5);
+        
+        boolean pathsHaveExpectedDamage = false;
+        
+        for (MovePath path : validPaths) {
+            count = count.add(BigDecimal.ONE);
+            
+            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+                    allyCenter);
+            
+            returnPaths.add(rankedPath);
+            
+            // we want to keep track of if any of the paths we've considered have some kind of damage potential
+            pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
+            
+            BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
+                                      .round(new MathContext(0, RoundingMode.DOWN));
+            if (percent.compareTo(interval) >= 0) {
+                getOwner().sendChat("... " + percent.intValue() + "% complete.", LogLevel.INFO);
+                interval = percent.add(new BigDecimal(5));
+            }
+        }
+        
+        Entity mover = movePaths.get(0).getEntity();
+        UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+        boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
+        
+        // if we're trying to fight, but aren't going to be doing any damage no matter how we move
+        // then let's try to get closer
+        if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+            
+            behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
+            return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
+                    startingHomeDistance, enemies, friends);
+        }
+        
+        return returnPaths;
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
-        final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -120,11 +152,6 @@ public abstract class PathRanker {
 
         Entity mover = startingPathList.get(0).getEntity();
 
-        // No support yet for Aero units.
-        if (mover instanceof Aero) {
-            return startingPathList;
-        }
-
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null ?
                                       Integer.MAX_VALUE :
@@ -132,33 +159,43 @@ public abstract class PathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        HomeEdge homeEdge = getOwner().getHomeEdge();
-        boolean fleeing = getOwner().isFallingBack(mover);
-        //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
-        boolean isZeroMoveInfantry = mover instanceof Infantry && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
-        if (isZeroMoveInfantry) {
-            startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
-        }
-
+        
+        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
+        boolean needToUnjamRAC = mover.canUnjamRAC();
+        int walkMP = mover.getWalkMP();
+        
         for (MovePath path : startingPathList) {
+            // just in case
+            if((path == null) || !path.isMoveLegal()) {
+                continue;
+            }
+
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
+                // if we are an aero unit on the ground map, we want to discard paths that keep us at altitude 1 with no bombs
+            	if(isAirborneAeroOnGroundMap) {
+            		// if we have no bombs, we want to make sure our altitude is above 1
+            		// if we do have bombs, we may consider altitude bombing (in the future)
+            		if((path.getEntity().getBombs(BombType.F_GROUND_BOMB).size() == 0) &&
+            		        (path.getFinalAltitude() < 2)) {
+            		    msg.append("\n\tNo bombs but at altitude 1. No way.");
+            		    continue;
+            		}
+            	}
+            	
                 Coords finalCoords = path.getFinalCoords();
 
-                // If fleeing, skip any paths that don't get me closer to home.
-                if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    logLevel = LogLevel.INFO;
-                    msg.append("\n\tINVALID: Running away in wrong direction.");
-                    continue;
-                }
-
                 // Make sure I'm trying to get/stay in range of a target.
-                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                if (!StringUtil.isNullOrEmpty(validation)) {
-                    msg.append("\n\t").append(validation);
-                    continue;
+                // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
+                // also skip this part if I'm attempting to retreat, as engagement is not the point here
+                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
+                    Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
+                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
+                    if (!StringUtil.isNullOrEmpty(validation)) {
+                        msg.append("\n\t").append(validation);
+                        continue;
+                    }
                 }
 
                 // Don't move on/through buildings that will not support our weight.
@@ -176,35 +213,40 @@ public abstract class PathRanker {
                     continue;
                 }
 
+                // first crack at logic involving unjamming RACs: just do it
+                if(needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+                    logLevel = LogLevel.INFO;
+                    msg.append("\n\tINADVISABLE: Want to unjam autocannon but path involves running or jumping");
+                    continue;
+                }
+                
                 // If all the above checks have passed, this is a valid path.
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
-
             } finally {
-                getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
+                getOwner().getLogger().log(logLevel, msg.toString(), null);
             }
         }
 
-        // If we've eliminated all valid paths, we'll just have to pick from the best of the invalid paths.
+        // If we've eliminated all valid paths, let's try to pick out a long range path instead
         if (returnPaths.isEmpty()) {
-            return startingPathList;
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
         }
 
         return returnPaths;
     }
 
-    RankedPath getBestPath(List<RankedPath> ps) {
-        final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
-
-        try {
-            if (ps.size() == 0) {
-                return null;
-            }
-            return Collections.max(ps);
-        } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+    /**
+     * Returns the best path of a list of ranked paths.
+     * 
+     * @param ps The list of ranked paths to process
+     * @return "Best" out of those paths
+     */
+    public RankedPath getBestPath(List<RankedPath> ps) {
+        if (ps.size() == 0) {
+            return null;
         }
+        return Collections.max(ps);
     }
 
 
@@ -216,44 +258,61 @@ public abstract class PathRanker {
     public void initUnitTurn(Entity unit, IGame game) {
     }
 
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game) {
+        return findClosestEnemy(me, position, game, true);
+    }
+    
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(Entity me, Coords position, IGame game) {
-        final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
+    public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
+        int range = 9999;
+        Targetable closest = null;
+        List<Entity> enemies = getOwner().getEnemyEntities();
+        for (Entity e : enemies) {
+            // Skip airborne aero units as they're further away than they seem and hard to catch.
+            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
+            if (e.isAirborneAeroOnGroundMap() || 
+                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                continue;
+            }
 
-        try {
-            int range = 9999;
-            Entity closest = null;
-            List<Entity> enemies = getOwner().getEnemyEntities();
-            for (Entity e : enemies) {
-                // Skip airborne aero units as they're further away than they seem and hard to catch.
-                if (e instanceof Aero && e.isAirborne()) {
-                    continue;
-                }
+            // If a unit has not moved, assume it will move away from me.
+            int unmovedDistMod = 0;
+            if (e.isSelectableThisTurn() && !e.isImmobile()) {
+                unmovedDistMod = e.getWalkMP(true, false, false);
+            }
 
-                // If a unit has not moved, assume it will move away from me.
-                int unmovedDistMod = 0;
-                if (e.isSelectableThisTurn() && !e.isImmobile()) {
-                    unmovedDistMod = e.getWalkMP(true, false, false);
-                }
-
-                if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
-                    range = position.distance(e.getPosition());
-                    closest = e;
+            int distance = position.distance(e.getPosition());
+            if ((distance + unmovedDistMod) < range) {
+                range = distance;
+                closest = e;
+            }
+        }
+        
+        // if specified, we also consider strategic targets
+        if(includeStrategicTargets) {
+            for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+                int distance = position.distance(t.getPosition());
+                if(distance < range) {
+                    range = distance;
+                    closest = t;
                 }
             }
-            return closest;
-        } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
         }
+        
+        return closest;
     }
 
     /**
-     * Returns the probability of success of a movepath
+     * Returns the probability of success of a move path
      */
-    public double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+        // introduced a caching mechanism, as the success probability was being calculated at least twice
+        if(getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
+            return getPathRankerState().getPathSuccessProbabilities().get(movePath.getKey());
+        }
+        
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
@@ -267,8 +326,7 @@ public abstract class PathRanker {
             if (roll.getDesc().toLowerCase().contains("careful stand")) {
                 continue;
             }
-            boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions()
-                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            boolean naturalAptPilot = movePath.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
             if (naturalAptPilot) {
                 msg.append("\n\t\tPilot has Natural Aptitude Piloting");
             }
@@ -291,6 +349,8 @@ public abstract class PathRanker {
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
+        getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
+        
         return successProbability;
     }
 
@@ -298,42 +358,35 @@ public abstract class PathRanker {
         return SharedUtility.getPSRList(path);
     }
 
-    public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
-        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            Coords edgeCoords;
-            int boardHeight = game.getBoard().getHeight();
-            int boardWidth = game.getBoard().getWidth();
-            StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-            if (HomeEdge.NORTH.equals(homeEdge)) {
-                msg.append("North");
-                edgeCoords = new Coords(position.getX(), 0);
-            } else if (HomeEdge.SOUTH.equals(homeEdge)) {
-                msg.append("South");
-                edgeCoords = new Coords(position.getX(), boardHeight);
-            } else if (HomeEdge.WEST.equals(homeEdge)) {
-                msg.append("West");
-                edgeCoords = new Coords(0, position.getY());
-            } else if (HomeEdge.EAST.equals(homeEdge)) {
-                msg.append("East");
-                edgeCoords = new Coords(boardWidth, position.getY());
-            } else {
-                msg.append("Default");
-                getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-                edgeCoords = new Coords(boardWidth / 2, 0);
-            }
-            msg.append(edgeCoords.toFriendlyString());
-
-            int distance = edgeCoords.distance(position);
-            msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
-
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
-            return distance;
-        } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
+        Coords edgeCoords;
+        int boardHeight = game.getBoard().getHeight();
+        int boardWidth = game.getBoard().getWidth();
+        StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
+        if (CardinalEdge.NORTH.equals(homeEdge)) {
+            msg.append("North");
+            edgeCoords = new Coords(position.getX(), 0);
+        } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
+            msg.append("South");
+            edgeCoords = new Coords(position.getX(), boardHeight);
+        } else if (CardinalEdge.WEST.equals(homeEdge)) {
+            msg.append("West");
+            edgeCoords = new Coords(0, position.getY());
+        } else if (CardinalEdge.EAST.equals(homeEdge)) {
+            msg.append("East");
+            edgeCoords = new Coords(boardWidth, position.getY());
+        } else {
+            msg.append("Default");
+            getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
+            edgeCoords = new Coords(boardWidth / 2, 0);
         }
+        msg.append(edgeCoords.toFriendlyString());
+
+        int distance = edgeCoords.distance(position);
+        msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
+
+        getOwner().getLogger().debug(msg.toString());
+        return distance;
     }
 
     private String validRange(Coords finalCoords, Targetable target, int startingTargetDistance, int maxRange,
@@ -371,6 +424,11 @@ public abstract class PathRanker {
      * @return True if there is a building in our path that might collapse.
      */
     private boolean willBuildingCollapse(MovePath path, IGame game) {
+        // airborne aircraft cannot collapse buildings
+        if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
+            return false;
+        }
+        
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
             final Coords finalCoords = path.getFinalCoords();
@@ -446,8 +504,8 @@ public abstract class PathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR,
-                           "Center of ally group " + center.toFriendlyString() + " not within board boundaries.");
+            getOwner().getLogger().error("Center of ally group " + center.toFriendlyString() 
+                    + " not within board boundaries.");
             return null;
         }
 
@@ -456,5 +514,13 @@ public abstract class PathRanker {
 
     protected Princess getOwner() {
         return owner;
+    }
+    
+    /**
+     * Convenience property to access bot-wide state information.
+     * @return
+     */
+    protected PathRankerState getPathRankerState() {
+        return owner.getPathRankerState();
     }
 }

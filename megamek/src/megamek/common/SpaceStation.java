@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -27,90 +29,216 @@ public class SpaceStation extends Jumpship {
      *
      */
     private static final long serialVersionUID = -3160156173650960985L;
+    
+    // This only affects cost, but may have an effect in a large-scale strategic setting.
+    private boolean modular = false;
+    
+    @Override
+    public int getUnitType() {
+        return UnitType.SPACE_STATION;
+    }
+    
+    public SpaceStation() {
+        super();
+        setDriveCoreType(DRIVE_CORE_NONE);
+        setSail(false);
+    }
+    
+    private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+    private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_RS).setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return modular? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+    }
+    
+    public static TechAdvancement getModularTA() {
+        return TA_SPACE_STATION_MODULAR;
+    }
+    
+    /**
+     * Designates whether this is a modular space station
+     * @param modular
+     */
+    public void setModular(boolean modular) {
+        this.modular = modular;
+    }
+    
+    /**
+     * @return True if this space station has a modular construction, otherwise false.
+     */
+    public boolean isModular() {
+        return modular;
+    }
 
     @Override
     public double getCost(boolean ignoreAmmo) {
+        double[] costs = new double[21];
+        int costIdx = 0;
+        double cost = 0;
 
-        double cost = 0.0f;
+        // Control Systems
+        // Bridge
+        costs[costIdx++] += 200000 + 10 * weight;
+        // Computer
+        costs[costIdx++] += 200000;
+        // Life Support
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
+        // Sensors
+        costs[costIdx++] += 80000;
+        // Fire Control Computer
+        costs[costIdx++] += 100000;
+        // Gunnery Control Systems
+        costs[costIdx++] += 10000 * getArcswGuns();
+        // Structural Integrity
+        costs[costIdx++] += 100000 * getSI();
 
-        // Double.MAX
-        // add in controls
-        // bridge
-        cost += 200000 + 10 * weight;
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        // Station-Keeping Drive
+        // Engine
+        costs[costIdx++] += 1000 * weight * 0.012;
+        // Engine Control Unit
+        costs[costIdx++] += 1000;
 
-        // structural integrity
-        cost += 100000 * getSI();
+        // Additional Ships Systems
+        // Attitude Thrusters
+        costs[costIdx++] += 25000;
+        // Docking Collars
+        costs[costIdx++] += 100000 * getDocks();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000;
+        // Armor
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
-        // docking hard point
-        cost += 100000 * getDocks();
+        // Heat Sinks
+        int sinkCost = 2000 + (4000 * getHeatType());
+        costs[costIdx++] += sinkCost * getHeatSinks();
 
-        double engineWeight = getOriginalWalkMP() * weight * 0.06;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += 500 * getOriginalWalkMP() * weight / 100.0;
-        // control equipment
-        cost += 1000;
+        // Escape Craft
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
-        // HPG
-        if (hasHPG()) {
-            cost += 1000000000;
-        }
+        // Grav Decks
+        double deckCost = 0;
+        deckCost += 5000000 * getGravDeck();
+        deckCost += 10000000 * getGravDeckLarge();
+        deckCost += 40000000 * getGravDeckHuge();
+        costs[costIdx++] += deckCost;
 
-        // fuel tanks
-        cost += 200 * getFuel() / getFuelPerTon();
-
-        // armor
-        cost += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
-                                                   // 2000;
-        cost += sinkCost * getHeatSinks();
-
-        // grav deck
-        cost += 5000000 * getGravDeck();
-        cost += 10000000 * getGravDeckLarge();
-        cost += 40000000 * getGravDeckHuge();
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // get bays
-        // Bay doors are not counted in the AT2r example
+        // Transport Bays
         int baydoors = 0;
-        int bayCost = 0;
+        long bayCost = 0;
+        long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
-                bayCost += 20000 * next.totalSpace;
-            }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
-                bayCost += 20000 * next.totalSpace;
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
+                bayCost += next.getCost();
             }
         }
 
-        cost += bayCost + baydoors * 1000;
+        costs[costIdx++] += bayCost + (baydoors * 1000L);
+        costs[costIdx++] = quartersCost;
 
-        // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        // Weapons and Equipment
+        // HPG
+        if (hasHPG()) {
+            costs[costIdx++] += 1000000000;
+        } else {
+            costs[costIdx++] += 0;
+        }
+        // Weapons and Equipment
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        double weightMultiplier = 5.00f;
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
 
-        return Math.round(cost * weightMultiplier);
+        costs[costIdx++] = -getPriceMultiplier(); // Negative indicates multiplier
+        cost = Math.round(cost * getPriceMultiplier());
+        addCostDetails(cost, costs);
+        return cost;
 
+    }
+
+    @Override
+    public double getPriceMultiplier() {
+        return modular ? 50.0 : 5.0; // weight multiplier
+    }
+
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Engine", "Engine Control Unit",
+                "Attitude Thrusters", "Docking Collars",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
+                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 18) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
     }
 
     /**

@@ -15,17 +15,12 @@
 
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -74,9 +69,10 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
+        
         Coords targetPos = target.getPosition();
-        boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
-        boolean asfFlak = target instanceof Aero;
+        boolean isFlak = (target instanceof VTOL) || target.isAero();
+        boolean asfFlak = target.isAero();
         if (ae == null) {
             System.err.println("Artillery Entity is null!");
             return true;
@@ -216,50 +212,24 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // scatter hex has minefields
         // TODO: Does this apply to arty cannons?
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
-        if (mineClear && game.containsMinefield(targetPos) && !isFlak
-                && !bMissed) {
+        if (mineClear && !isFlak && !bMissed) {
             r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
         server.artilleryDamageArea(targetPos, ae.getPosition(), atype,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak, -1);
+            subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+            asfFlak, -1);
 
         // artillery may unintentionally clear minefields, but only if it wasn't
         // trying to
         // TODO: Does this apply to arty cannons?
-        if (!mineClear && game.containsMinefield(targetPos)) {
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
-                    .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
-            while (minefields.hasMoreElements()) {
-                Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
-                    mfRemoved.add(mf);
-                }
-            }
-            // we have to do it this way to avoid a concurrent error problem
-            for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
-            }
+        if (!mineClear) {
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
         }
 
         return false;
@@ -272,17 +242,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        double toReturn = wtype.getDamage();
         // area effect damage is double
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn /= 0.5;
         }
 
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        // System.err.println("Attack is doing " + toReturn + " damage.");
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         return (int) Math.ceil(toReturn);
     }

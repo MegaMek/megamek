@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,20 @@ Quirinus Battle Armor
 3093
 </year>
 
+<originalBuildYear>
+3093
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
 Jump
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 1
@@ -47,19 +54,19 @@ Jump
 <Squad Equipment>
 BABasicManipulator:RA
 BABattleClawVibro:LA
-ISBALightTAG:Body
+CLBALightTAG:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-ISBAGrenadeLauncher:LA
-IS BA Reactive:Body
-IS BA Reactive:RA
-IS BA Reactive:RA
-IS BA Reactive:RA
-IS BA Reactive:LA
-IS BA Reactive:Body
-IS BA Reactive:LA
+CLBAHeavyGrenadeLauncher:LA
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -97,4 +104,3 @@ biped
 <weightclass>
 2
 </weightclass>
-

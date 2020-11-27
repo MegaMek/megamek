@@ -3,39 +3,42 @@ Helepolis
 HEP-1H
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2460
-Source:XTRO Primitives I - Age of War
-Rules Level:5
+techbase:Inner Sphere
+era:2460
+source:XTRO Primitives I - Age of War
+rules level:4
 
-Mass:75
-Engine:180 Primitive Fusion Engine
-Structure:Standard
-Cockpit:Primitive Cockpit
-Myomer:Standard
+mass:75
+engine:180 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:11 Single
-Walk MP:2
-Jump MP:0
+heat sinks:11 Single
+nocrit:Standard:None
+nocrit:IS Primitive:None
+walk mp:2
+jump mp:0
 
-Armor:Primitive(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:22
-RT Armor:22
-CT Armor:32
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:10
-RTR Armor:10
-RTC Armor:12
+armor:Primitive(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:10
+RTR armor:10
+RTC armor:12
 
 Weapons:4
-1 ISMediumLaser, Head
-1 ISLargeLaser, Left Arm
-1 ISSRM6, Center Torso, Ammo:15
-1 ISSniper, Right Torso, Ammo:20
+Large Laser, Left Arm
+Sniper, Right Torso
+SRM 6, Center Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -44,8 +47,8 @@ Lower Arm Actuator
 Hand Actuator
 Heat Sink
 Heat Sink
-ISLargeLaser
-ISLargeLaser
+Large Laser
+Large Laser
 -Empty-
 -Empty-
 -Empty-
@@ -70,7 +73,7 @@ Heat Sink
 Heat Sink
 ISSniperAmmo
 ISSniperAmmo
-ISSRM6 Ammo
+IS Ammo SRM-6
 -Empty-
 -Empty-
 -Empty-
@@ -94,32 +97,44 @@ ISSniper
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISSRM6
-ISSRM6
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+Medium Laser
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -130,3 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

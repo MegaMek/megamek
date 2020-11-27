@@ -15,10 +15,13 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.Server;
 
 /**
@@ -35,10 +38,11 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.T_IATM; // the Artemis Bonus is Tied to the ATM ammo, but i think i can ignore it in the handler. However, i think i still need a new ammo type since i dont know if the special ammo could get used with regular ATMs if i don#t change it. And i assume bad things will happen.
         atClass = CLASS_ATM; // Do I need to change this? Streak LRMs still use the CLASS_LRM flag... I think I can leave it.
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
-        this.introDate = 3070;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3049, 3070);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability(new int[]{ RATING_X, RATING_X, RATING_F, RATING_E });
         
-        setModes(new String[] { "", "Indirect" }); // iATMS can IDF
     }
 
     /*
@@ -81,5 +85,19 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     @Override
     public boolean hasIndirectFire() {
         return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

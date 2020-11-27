@@ -45,6 +45,7 @@ public class QuadMech extends Mech {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.QUAD;
+        originalMovementMode = EntityMovementMode.QUAD;
 
         setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
         setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
@@ -81,46 +82,59 @@ public class QuadMech extends Mech {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
+
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
 
-        for (int i = 0; i < locations(); i++) {
-            if (locationIsLeg(i)) {
-                if (!isLocationBad(i)) {
-                    if (legHasHipCrit(i)) {
-                        hipHits++;
-                        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                            continue;
+        //A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
+        if (movementMode == EntityMovementMode.TRACKED) {
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                    if (m.isHit() || isLocationBad(m.getLocation())) {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            wmp = (wmp * (4 - legsDestroyed)) / 4;
+        } else {
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                if (legsDestroyed == 1) {
+                    wmp--;
+                } else if (legsDestroyed == 2) {
+                    wmp = 1;
+                } else {
+                    wmp = 0;
+                }
+            }        
+            if (wmp > 0) {
+                if (hipHits > 0) {
+                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = wmp - (2 * hipHits);
+                    } else {
+                        for (int i = 0; i < hipHits; i++) {
+                            wmp = (int) Math.ceil(wmp / 2.0);
                         }
                     }
-                    actuatorHits += countLegActuatorCrits(i);
-                } else {
-                    legsDestroyed++;
                 }
+                wmp -= actuatorHits;
             }
-        }
-        // leg damage effects
-        if (legsDestroyed > 0) {
-            if (legsDestroyed == 1) {
-                wmp--;
-            } else if (legsDestroyed == 2) {
-                wmp = 1;
-            } else {
-                wmp = 0;
-            }
-        }
-        if (wmp > 0) {
-            if (hipHits > 0) {
-                if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                    wmp = wmp - (2 * hipHits);
-                } else {
-                    for (int i = 0; i < hipHits; i++) {
-                        wmp = (int) Math.ceil(wmp / 2.0);
-                    }
-                }
-            }
-            wmp -= actuatorHits;
         }
 
         if (!ignoremodulararmor && hasModularArmor() ) {
@@ -146,8 +160,10 @@ public class QuadMech extends Mech {
             } else {
                 wmp -= (heat / 5);
             }
-            // TSM negates some heat
-            if ((heat >= 9) && hasTSM()) {
+            // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
+            if ((heat >= 9) && hasTSM() && legsDestroyed < 2
+                    && movementMode != EntityMovementMode.TRACKED
+                    && movementMode != EntityMovementMode.WHEELED) {
                 wmp += 2;
             }
         }
@@ -172,7 +188,9 @@ public class QuadMech extends Mech {
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() <= 1) {
+        if (countBadLegs() <= 1
+                || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                && !convertingNow)) {
             return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -183,7 +201,9 @@ public class QuadMech extends Mech {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() <= 1) {
+        if (countBadLegs() <= 1
+                || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                && !convertingNow)) {
             return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat);
@@ -191,8 +211,17 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return false;
+    	return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
+    
+	@Override
+	public boolean isValidSecondaryFacing(int dir) {
+		int rotate = dir - getFacing();
+		if (canChangeSecondaryFacing()) {
+			return (rotate <= 1) || (rotate == 5);
+		} else
+			return rotate == 0;
+	}	 
 
     /**
      * Returns true is the location is a leg
@@ -213,6 +242,10 @@ public class QuadMech extends Mech {
         if ((mounted.getType() instanceof WeaponType) &&
                 mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
+        }
+        // VGLs base arc on their facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         // rear mounted?
         if (mounted.isRearMounted()) {
@@ -270,6 +303,13 @@ public class QuadMech extends Mech {
         }
         return true;
     }
+    
+    public PilotingRollData addQuadPilotingBonus(PilotingRollData roll, int destroyedLegs) {
+        if (destroyedLegs == 0) {
+            roll.addModifier(-2, "Quad bonus");
+        }
+        return roll;
+    }
 
     /**
      * Add in any piloting skill mods
@@ -287,8 +327,13 @@ public class QuadMech extends Mech {
 
         destroyedLegs = countBadLegs();
 
-        if (destroyedLegs == 0) {
+        // QuadVees lose the bonus when converting.
+        if (destroyedLegs == 0 && !convertingNow) {
             roll.addModifier(-2, "Quad bonus");
+        }
+
+        if (hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
+            roll.addModifier(-1, "Animal Mimicry");
         }
 
         if (hasFunctionalLegAES()) {
@@ -439,10 +484,10 @@ public class QuadMech extends Mech {
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, cover, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if
-                        return tac(table, side, Mech.LOC_HEAD, cover, false);
+                        return new HitData(Mech.LOC_HEAD);
                     }
                 } else if (side == ToHitData.SIDE_REAR) {
                     switch (roll) {
@@ -477,10 +522,10 @@ public class QuadMech extends Mech {
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, true));
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                             return result;
                         } // if
-                        return tac(table, side, Mech.LOC_HEAD, cover, true);
+                        return new HitData(Mech.LOC_HEAD, true);
                     }
                 } else if (side == ToHitData.SIDE_LEFT) {
                     switch (roll) {
@@ -515,10 +560,10 @@ public class QuadMech extends Mech {
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if
-                        return tac(table, side, Mech.LOC_HEAD, cover, false);
+                        return new HitData(Mech.LOC_HEAD);
                     }
                 } else if (side == ToHitData.SIDE_RIGHT) {
                     switch (roll) {
@@ -553,10 +598,10 @@ public class QuadMech extends Mech {
                                 && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if
-                        return tac(table, side, Mech.LOC_HEAD, cover, false);
+                        return new HitData(Mech.LOC_HEAD);
                     }
                 }
             }
@@ -881,11 +926,7 @@ public class QuadMech extends Mech {
             return false;
         }
         //check the Gyro
-        int gyroHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-            gyroHits++;
-        }
-        return (gyroHits < 3);
+        return !isGyroDestroyed();
     }
 
     /**

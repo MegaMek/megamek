@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,52 +20,28 @@ Sylph Battle Armor
 (Upgrade)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3065
+</year>
 
-<weightclass>
-1
-</weightclass>
-
-<Trooper Count>
-5
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-5
-</jumpingMP>
-
-<Armor>
-5
-</Armor>
-
-<Point Equipment>
-Clan BA Heavy Machine Gun:RA
-Clan BA Machine Gun:LA
-BABattleClaw:RA
-BASearchlight:Body
-</Point Equipment>
+<originalBuildYear>
+3065
+</originalBuildYear>
 
 <type>
 Clan Level 2
 </type>
 
-<year>
-3065
-</year>
-
 <motion_type>
 VTOL
 </motion_type>
 
-<source>
-TRO 3058U - Civil War
-</source>
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 28
@@ -73,3 +50,54 @@ TRO 3058U - Civil War
 <armor_tech>
 2
 </armor_tech>
+
+<Point Equipment>
+CLBAHeavyMG:RA
+CLBAMG:LA
+BASearchlight:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO 3058U - Civil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+5
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+

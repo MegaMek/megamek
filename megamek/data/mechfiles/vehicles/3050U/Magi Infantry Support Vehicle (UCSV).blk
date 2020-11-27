@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ Magi Infantry Support Vehicle
 <year>
 3068
 </year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -49,7 +53,7 @@ troopspace:6.0
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -60,6 +64,7 @@ troopspace:6.0
 </armor>
 
 <Body Equipment>
+ISCASE
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
@@ -84,7 +89,6 @@ Medium Laser
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 </Rear Equipment>
 
 <source>
@@ -94,4 +98,3 @@ TRO 3050 - Jihad
 <tonnage>
 70.0
 </tonnage>
-

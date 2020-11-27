@@ -14,7 +14,8 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -31,7 +32,7 @@ public class ArtilleryTracker implements Serializable {
      * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers,
      * for all the different coords it's got mods to.
      */
-    private Hashtable<Mounted, Vector<ArtilleryModifier>> weapons;
+    private Map<Mounted, Vector<ArtilleryModifier>> weapons;
     
     private boolean spotterIsForwardObs;
 
@@ -39,7 +40,7 @@ public class ArtilleryTracker implements Serializable {
      * Creates new instance of the tracker
      */
     public ArtilleryTracker() {
-        weapons = new Hashtable<Mounted, Vector<ArtilleryModifier>>();
+        weapons = new HashMap<>();
     }
 
     /**
@@ -49,6 +50,25 @@ public class ArtilleryTracker implements Serializable {
      */
     public void addWeapon(Mounted mounted) {
         weapons.put(mounted, new Vector<ArtilleryModifier>());
+    }
+    
+    /**
+     * Removes a weapon - needed when capital missile bays change modes
+     *
+     * @param mounted - existing weapon
+     */
+    public void removeWeapon(Mounted mounted) {
+        if (weapons.containsKey(mounted)) {
+            weapons.remove(mounted);
+        }
+    }
+    
+    /**
+     * Returns the size of the weapons hashtable
+     *
+     */
+    public int getSize() {
+        return weapons.size();
     }
 
     /**

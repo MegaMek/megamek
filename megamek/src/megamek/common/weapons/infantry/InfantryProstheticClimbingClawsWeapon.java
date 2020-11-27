@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
  * @author Dave Nawton
@@ -32,20 +31,27 @@ public class InfantryProstheticClimbingClawsWeapon extends InfantryWeapon {
 
     public InfantryProstheticClimbingClawsWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Prosthetic Climbing Claws";
         setInternalName(name);
         addLookupName("ClimbingClawsProsthetic");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_CLIMBINGCLAWS);
+        //TODO Add game rules IO pg 84
         infantryDamage = 0.02;
         infantryRange = 0;
-        introDate = 2375;
-        techLevel.put(2375,techLevel.get(3071));
-        availRating = new int[]{RATING_F,RATING_F,RATING_E};
-        techRating = RATING_D;
+        rulesRefs = "84,IO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+            .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false, false, false);
     }
 
 }

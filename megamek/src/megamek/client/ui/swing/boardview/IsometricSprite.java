@@ -14,6 +14,7 @@ import java.awt.Transparency;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -148,11 +149,40 @@ class IsometricSprite extends Sprite {
         } else if (makeTranslucent) {
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
+            
+            drawImmobileElements(g2, x, y, observer);
+            
             g2.drawImage(image, x, y, observer);
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
         } else {
+            drawImmobileElements(g, x, y, observer);
             g.drawImage(image, x, y, observer);
+        }
+    }
+    
+    /**
+     * Worker function that draws "immobile" decals.
+     */
+    public void drawImmobileElements(Graphics graph, int x, int y, ImageObserver observer) {
+        // draw the 'fuel leak' decal where appropriate
+        boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
+        
+        if(drawFuelLeak) {
+            Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
+            if (null != fuelLeak) {
+                graph.drawImage(fuelLeak, x, y, observer);
+            }
+        }
+        
+        // draw the 'tires' or 'tracks' decal where appropriate
+        boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
+        
+        if(drawMotiveWreckage) {
+            Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
+            if (null != motiveWreckage) {
+                graph.drawImage(motiveWreckage, x, y, observer);
+            }
         }
     }
 
@@ -209,8 +239,9 @@ class IsometricSprite extends Sprite {
      * @return
      */
     private boolean onlyDetectedBySensors() {
-        boolean sensors = bv.game.getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean sensors = (bv.game.getOptions().booleanOption(
+                OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || bv.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(

@@ -59,6 +59,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.HexTarget;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -74,7 +75,10 @@ import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
-import megamek.common.weapons.ArtilleryWeapon;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -866,15 +870,40 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         WeaponAttackAction waa = new WeaponAttackAction(cen,
                 target.getTargetType(), target.getTargetId(), weaponNum);
-        if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        IGame game = clientgui.getClient().getGame();
+        int distance = Compute.effectiveDistance(game, waa.getEntity(game),
+                waa.getTarget(game));
+        if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
+                || (mounted.isInBearingsOnlyMode()
+                            && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
+                || (mounted.getType() instanceof CapitalMissileWeapon
+                                && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getTargetId(), weaponNum, clientgui.getClient()
                             .getGame());
+            // Get the launch velocity for bearings-only telemissiles
+            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
+                TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
+                tsd.setVisible(true);
+                waa.setLaunchVelocity(tsd.getSetting());
+                waa.updateTurnsTilHit(clientgui.getClient().getGame());
+            } 
         }
+        
+        updateDisplayForPendingAttack(mounted, waa);
+    }
+    
+    /**
+     * Worker function that handles setting associated ammo and other bookkeeping/UI updates
+     * for a pending weapon attack action.
+     */
+    public void updateDisplayForPendingAttack(Mounted mounted, WeaponAttackAction waa) {
+        // put this and the rest of the method into a separate function for access externally.
         if ((null != mounted.getLinked())
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
             Mounted ammoMount = mounted.getLinked();
-            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+            waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            waa.setAmmoCarrier(ammoMount.getEntity().getId());
             if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);
@@ -906,7 +935,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
-
     }
 
     /**
@@ -1043,20 +1071,39 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         if ((target != null) && (weaponId != -1)) {
             ToHitData toHit;
+            Mounted m = ce().getEquipment(weaponId);
 
+            int targetDistance = ce().getPosition().distance(target.getPosition()); 
+            boolean isArtilleryAttack = ((WeaponType) m.getType()).hasFlag(WeaponType.F_ARTILLERY)
+                    // For other weapons that can make artillery attacks
+                    || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
+            
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, 0, false);
+            
+            String flightTimeText = ""; 
+            if(isArtilleryAttack) {
+                ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
+                        target.getTargetId(), weaponId, clientgui.getClient().getGame());
+                flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
+            }
+            
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-
             clientgui.mechD.wPan.wRangeR
-                    .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
-            Mounted m = ce().getEquipment(weaponId);
+                    .setText(String.format("%d %s", targetDistance, flightTimeText)); //$NON-NLS-1$
+            
+            IGame game = clientgui.getClient().getGame();
+            int distance = Compute.effectiveDistance(game, ce(),
+                    target);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.alreadyFired"));
                 //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
+            } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
+                setFireEnabled(false);
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 //$NON-NLS-1$
@@ -1073,10 +1120,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                                 + " ("
                                 + Compute.oddsAbove(
                                         toHit.getValue(),
-                                        ce().getCrew()
-                                                .getOptions()
-                                                .booleanOption(
-                                                        OptionsConstants.PILOT_APTITUDE_GUNNERY))
+                                        ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
                                 + "%)"); //$NON-NLS-1$ //$NON-NLS-2$
                 setFireEnabled(true);
             }
@@ -1397,6 +1441,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
             endMyTurn();
+        }
+        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // We want to ignore turns from other players and only listen to events we generated
+        // Except on the first turn
+        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
+                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+            return;
         }
 
         // Are we ignoring events?

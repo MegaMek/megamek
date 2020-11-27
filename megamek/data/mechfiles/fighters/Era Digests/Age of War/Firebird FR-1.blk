@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,20 @@ FR-1
 2400
 </year>
 
+<originalBuildYear>
+2400
+</originalBuildYear>
+
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -57,7 +64,7 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <armor_tech>
@@ -73,21 +80,27 @@ Aerodyne
 
 <Nose Equipment>
 Autocannon/2
-IS Ammo AC/2
 </Nose Equipment>
 
 <Left Wing Equipment>
 LRM 10
-IS Ammo LRM-10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 LRM 10
-IS Ammo LRM-10
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/2
+IS Ammo LRM-10
+IS Ammo LRM-10
+</Fuselage Equipment>
 
 <source>
 ED: Age of War - Age of War
@@ -96,4 +109,3 @@ ED: Age of War - Age of War
 <tonnage>
 45.0
 </tonnage>
-

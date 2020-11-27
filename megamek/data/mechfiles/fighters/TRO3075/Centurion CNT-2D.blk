@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CNT-2D
 2837
 </year>
 
+<originalBuildYear>
+2837
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -66,7 +73,6 @@ Aerodyne
 <Nose Equipment>
 Medium Laser
 SRM 6
-IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -80,6 +86,13 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Succession Wars
 </source>
@@ -87,4 +100,3 @@ TRO 3075 - Succession Wars
 <tonnage>
 30.0
 </tonnage>
-

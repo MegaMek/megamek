@@ -70,7 +70,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if ((total > 1) && !weapon.curMode().equals("Single")) {
+        if ((total > 1) && !weapon.curMode().equals(Weapon.MODE_AC_SINGLE)) {
             howManyShots = 2;
         } else {
             howManyShots = 1;
@@ -157,6 +157,10 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+        
         if ((roll == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             Report r = new Report();
             r.subject = subjectId;
@@ -206,8 +210,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing && (howManyShots == 1 || twoRollsUltra)) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
+        if (howManyShots == 1 || twoRollsUltra) {
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)

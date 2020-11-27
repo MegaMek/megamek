@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -73,7 +73,7 @@ Trailer
 </Rear Equipment>
 
 <transporters>
-liquidcargobay:67:4
+liquidcargobay:60.5:4
 </transporters>
 
 <source>

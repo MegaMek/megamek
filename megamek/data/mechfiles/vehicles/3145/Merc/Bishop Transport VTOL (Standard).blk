@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -62,7 +62,7 @@ VTOL
 
 <Body Equipment>
 Cargo Container (10 tons)
-Environmental Sealed Chassis
+Environmental Sealing
 </Body Equipment>
 
 <Front Equipment>
@@ -87,4 +87,3 @@ TRO 3145 Mercenaries - Early Republic
 <tonnage>
 45.0
 </tonnage>
-

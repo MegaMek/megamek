@@ -134,19 +134,8 @@ public class LRMSwarmHandler extends LRMHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -294,6 +283,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
+                newWaa.setAmmoCarrier(waa.getAmmoCarrier());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
@@ -340,7 +330,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
                     : wtype.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
@@ -348,10 +338,9 @@ public class LRMSwarmHandler extends LRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            return (int) Math.floor(toReturn);
+            
+            toReturn = applyGlancingBlowModifier(toReturn, true);
+            return (int) toReturn;
         }
         return 1;
     }
@@ -398,6 +387,7 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
+            newWaa.setAmmoCarrier(waa.getAmmoCarrier());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use
@@ -448,13 +438,23 @@ public class LRMSwarmHandler extends LRMHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         // add AMS mods
-        nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        int amsMod = getAMSHitsMod(vPhaseReport);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                amsMod = (int) -getAeroSanityAMSHitsMod();
+            }
+        }
+        nMissilesModifier += amsMod;
+        
+        
 
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
             if (allShotsHit()) {
-                missilesHit = swarmMissilesLeft;
+                missilesHit = (swarmMissilesLeft - amsMod);
             } else {
                 missilesHit = Compute.missilesHit(swarmMissilesLeft,
                         nMissilesModifier, weapon.isHotLoaded(), false,

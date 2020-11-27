@@ -70,10 +70,17 @@ public abstract class UnitStatusFormatter {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("Model: ").append(e.getChassis()).append(" - ")
                 .append(e.getModel()).append(CommonConstants.NL);
-        sb.append("Pilot: ").append(e.getCrew().getName());
-        sb.append(" (").append(e.getCrew().getGunnery()).append("/");
-        sb.append(e.getCrew().getPiloting()).append(")")
-                .append(CommonConstants.NL);
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+            if (e.getCrew().isMissing(i)) {
+                sb.append("No ").append(e.getCrew().getCrewType().getRoleName(i));
+            } else {
+                sb.append(e.getCrew().getCrewType().getRoleName(i)).append(": ")
+                    .append(e.getCrew().getName(i));
+                sb.append(" (").append(e.getCrew().getGunnery(i)).append("/")
+                    .append(e.getCrew().getPiloting(i)).append(")");
+            }
+            sb.append(CommonConstants.NL);
+        }
         if (e.isCaptured()) {
             sb.append("  *** CAPTURED BY THE ENEMY ***");
             sb.append(CommonConstants.NL);

@@ -40,7 +40,7 @@ public class PiranhaHandler extends AmmoWeaponHandler {
 
     @Override
     protected int getCapMisMod() {
-        return 13;
+        return 0;
     }
 
 }

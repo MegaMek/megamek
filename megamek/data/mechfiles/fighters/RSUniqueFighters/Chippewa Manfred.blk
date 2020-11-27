@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CHP-W7 (Manfred)
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -77,14 +84,6 @@ LRM 15
 Medium Laser
 Medium Laser
 SRM 6
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo SRM-6
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -100,6 +99,20 @@ ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-6
+</Fuselage Equipment>
+
 <source>
 RS Unique Fighters - Jihad
 </source>
@@ -107,4 +120,3 @@ RS Unique Fighters - Jihad
 <tonnage>
 90.0
 </tonnage>
-

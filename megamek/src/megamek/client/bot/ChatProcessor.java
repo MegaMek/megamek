@@ -201,8 +201,6 @@ public class ChatProcessor {
     }
 
     void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
-        final String METHOD_NAME = "additionalPrincessCommands(GamePlayerChatEvent, Princess, IPlayer)";
-
         // Commands should be sent in this format:
         //   <botName>: <command> : <arguments>
 
@@ -212,7 +210,7 @@ public class ChatProcessor {
         }
 
         String msg = "Received message: \"" + chatEvent.getMessage() + "\".\tMessage Type: " + chatEvent.getEventName();
-        princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        princess.getLogger().info(msg);
 
         // First token should be who sent the message.
         String from = tokenizer.nextToken().trim();
@@ -221,7 +219,7 @@ public class ChatProcessor {
         String sentTo = tokenizer.nextToken().trim();
         IPlayer princessPlayer = princess.getLocalPlayer();
         if (princessPlayer == null) {
-            princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Princess Player is NULL.");
+            princess.getLogger().error("Princess Player is NULL.");
             return;
         }
         String princessName = princessPlayer.getName(); // Make sure the command is directed at the Princess player.
@@ -246,7 +244,7 @@ public class ChatProcessor {
         if (speakerPlayer == null) {
             speakerPlayer = getPlayer(princess.getGame(), from);
             if (speakerPlayer == null) {
-                princess.log(getClass(), METHOD_NAME, LogLevel.ERROR, "speakerPlayer is NULL.");
+                princess.getLogger().error("speakerPlayer is NULL.");
                 return;
             }
         }
@@ -255,20 +253,20 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.VERBOSE.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "No log level specified.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
             LogLevel newLevel = LogLevel.getLogLevel(arguments[0].trim());
             if (newLevel == null) {
                 msg = "Invalid verbosity specified: " + arguments[0];
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
+                princess.getLogger().warning(msg);
                 princess.sendChat(msg);
                 return;
             }
             princess.setVerbosity(newLevel);
             msg = "Verbosity set to " + princess.getVerbosity().toString();
-            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
+            princess.getLogger().debug(msg);
             princess.sendChat(msg);
             return;
         }
@@ -277,7 +275,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
             msg = "Current Behavior: " + princess.getBehaviorSettings().getDescription();
             princess.sendChat(msg);
-            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            princess.getLogger().info(msg);
         }
 
         // List the available commands.
@@ -295,14 +293,14 @@ public class ChatProcessor {
         if (princessTeam != speakerTeam) {
             msg = "You are not my boss. [wrong team]";
             princess.sendChat(msg);
-            princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
+            princess.getLogger().warning(msg);
             return;
         }
 
         // If instructed to, flee.
         if (command.toLowerCase().startsWith(ChatCommands.FLEE.getAbbreviation())) {
             msg = "Received flee order!";
-            princess.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
+            princess.getLogger().debug(msg);
             princess.sendChat("Run Away!");
             princess.setFallBack(true, msg);
             return;
@@ -312,7 +310,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.BEHAVIOR.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "No new behavior specified.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -320,7 +318,7 @@ public class ChatProcessor {
             BehaviorSettings newBehavior = BehaviorSettingsFactory.getInstance().getBehavior(behaviorName);
             if (newBehavior == null) {
                 msg = "Behavior '" + behaviorName + "' does not exist.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
+                princess.getLogger().warning(msg);
                 princess.sendChat(msg);
                 return;
             }
@@ -334,7 +332,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.CAUTION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : caution : <+/->'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -353,7 +351,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.AVOID.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : avoid : <+/->'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -372,7 +370,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.AGGRESSION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : aggression : <+/->'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -385,13 +383,14 @@ public class ChatProcessor {
             msg = "Aggression changed from " + currentAggression + " to " +
                   princess.getBehaviorSettings().getHyperAggressionIndex();
             princess.sendChat(msg);
+            princess.resetSpinupThreshold();
         }
 
         // Adjust herd mentality.
         if (command.toLowerCase().startsWith(ChatCommands.HERDING.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : herding : <+/->'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -410,7 +409,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.BRAVERY.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid Syntax.  Should be 'princessName : brave : <+/->'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -429,7 +428,7 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.TARGET.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid syntax.  Should be 'princessName : target : hexNumber'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -437,7 +436,7 @@ public class ChatProcessor {
             String hex = arguments[0];
             if (hex.length() != 4 || !StringUtil.isPositiveInteger(hex)) {
                 msg = "Invalid hex number: " + hex;
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -447,7 +446,7 @@ public class ChatProcessor {
             Coords coords = new Coords(x, y);
             if (!princess.getGame().getBoard().contains(coords)) {
                 msg = "Board does not have hex " + hex;
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
@@ -461,14 +460,14 @@ public class ChatProcessor {
         if (command.toLowerCase().startsWith(ChatCommands.PRIORITIZE.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
                 msg = "Invalid syntax.  Should be 'princessName : priority : unitId'.";
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
             String id = arguments[0];
             if (!StringUtil.isPositiveInteger(id)) {
                 msg = "Invalid unit id number: " + id;
-                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.getLogger().warning(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }

@@ -3,39 +3,41 @@ Grand Titan
 T-IT-N14R 'Vengeance'
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3075
-Source:XTRO Phantoms - Jihad
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3075
+source:XTRO Phantoms - Jihad
+rules level:4
 
-Mass:100
-Engine:300 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:Compact Gyro
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:2
+heat sinks:10 Double
+nocrit:Standard:None
+nocrit:IS Hardened:None
+walk mp:3
+jump mp:2
 
-Armor:Hardened(Inner Sphere)
-LA Armor:32
-RA Armor:32
-LT Armor:31
-RT Armor:30
-CT Armor:47
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:10
-RTR Armor:10
-RTC Armor:11
+armor:Hardened(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:31
+RT armor:30
+CT armor:47
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:10
+RTR armor:10
+RTC armor:11
 
 Weapons:3
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
-Thumper, Right Torso
+Thumper, Center Torso
 
 Left Arm:
 Shoulder

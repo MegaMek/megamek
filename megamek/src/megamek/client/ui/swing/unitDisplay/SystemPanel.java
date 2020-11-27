@@ -51,7 +51,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * This class shows the critical hits and systems for a mech
@@ -284,6 +284,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
             return null;
         }
+        if ((cs.getMount().getType() instanceof MiscType)
+                && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+            Mounted m = cs.getMount();
+            while (m.getLinked() != null) {
+                m = m.getLinked();
+            }
+            return m;
+        }
         if (cs.getMount2() != null) {
             ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().frame,
                     Messages.getString("MechDisplay.SelectMulti.title"),
@@ -485,29 +493,24 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                 && (clientgui.getClient().getGame()
                                         .getPhase() != IGame.Phase.PHASE_FIRING)) {
                             clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
+                                    "MechDisplay.ShieldModePhase"));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().getGame().getPhase() 
-                                        != IGame.Phase.PHASE_PHYSICAL)) {
+                                && (clientgui.getClient().getGame().getPhase()
+                                != IGame.Phase.PHASE_PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
+                                    "MechDisplay.VibrobladeModePhase"));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType())
-                                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame()
-                                        .getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                            clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.RetractableBladeModePhase",
-                                                    null));//$NON-NLS-1$
+                                && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                            clientgui.systemMessage(Messages.getString(
+                                                    "MechDisplay.RetractableBladeModePhase"));//$NON-NLS-1$
                             return;
                         }
 
@@ -520,50 +523,28 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                 && m.getLinked().isUsedThisRound()
                                 && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
+                                    "MechDisplay.CapacitorCharging"));//$NON-NLS-1$
                             return;
                         }
                         m.setMode(nMode);
                         // send the event to the server
-                        clientgui.getClient().sendModeChange(en.getId(),
-                                en.getEquipmentNum(m), nMode);
+                        clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
 
                         // notify the player
                         if (m.canInstantSwitch(nMode)) {
-                            clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.switched",
-                                                    new Object[] {
-                                                            m.getName(),
-                                                            m.curMode()
-                                                                    .getDisplayableName() }));//$NON-NLS-1$
+                            clientgui.systemMessage(Messages.getString("MechDisplay.switched",
+                                    m.getName(), m.curMode().getDisplayableName()));
                             int weap = this.unitDisplay.wPan.getSelectedWeaponNum();
                             this.unitDisplay.wPan.displayMech(en);
                             this.unitDisplay.wPan.selectWeapon(weap);
                             // displaySlots();
                         } else {
-                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
-                                    .getClient().getGame().getPhase()) {
-                                clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtStart",
-                                                        new Object[] {
-                                                                m.getName(),
-                                                                m.pendingMode()
-                                                                        .getDisplayableName() }));
-                                //$NON-NLS-1$
+                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
+                                clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",
+                                        m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
-                                clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd",
-                                                        new Object[] {
-                                                                m.getName(),
-                                                                m.pendingMode()
-                                                                        .getDisplayableName() }));
-                                //$NON-NLS-1$
+                                clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd",
+                                        m.getName(), m.pendingMode().getDisplayableName()));
                             }
                         }
                         int loc = slotList.getSelectedIndex();
@@ -907,7 +888,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
                             m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(new Integer(
+                            m_chMode.setSelectedItem(Integer.valueOf(
                                     ((Mech) en).getCockpitStatusNextRound()));
                         }
                     }

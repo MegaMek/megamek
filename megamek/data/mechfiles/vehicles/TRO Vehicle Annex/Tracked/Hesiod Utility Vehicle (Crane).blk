@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ C (Crane)
 <year>
 3060
 </year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -57,10 +61,11 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISOffRoadChassis
+OmniChassisMod
 </Body Equipment>
 
 <Front Equipment>
-Lift Hoist:OMNI
+Lift Hoist/Arresting Hoist:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -88,3 +93,14 @@ TRO VAr - Clan Invasion
 7.0
 </tonnage>
 
+<baseChassisFireConWeight>
+0.0
+</baseChassisFireConWeight>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+ALCOHOL
+</fuelType>

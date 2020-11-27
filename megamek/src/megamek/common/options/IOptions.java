@@ -86,4 +86,17 @@ public interface IOptions {
      * @return the value of the desired option as the <code>String</code>
      */
     public abstract String stringOption(String name);
+    
+    /**
+     * Returns a count of all options in the current IOptions instance.
+     * @return Option count.
+     */
+    public abstract int count();
+    
+    /**
+     * Returns a count of all options in the current IOptions instance with the given group key
+     * @param groupKey The key to look for.
+     * @return Option count.
+     */
+    public abstract int count(String groupKey);
 }

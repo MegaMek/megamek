@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -92,7 +92,7 @@ CLStreakSRM6:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO 3058 - Early Succession War
 </source>
 
 <tonnage>
@@ -102,4 +102,3 @@ Succession Wars
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-

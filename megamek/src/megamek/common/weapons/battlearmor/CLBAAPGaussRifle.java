@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -35,8 +34,7 @@ public class CLBAAPGaussRifle extends Weapon {
      */
     public CLBAAPGaussRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "AP Gauss Rifle";
+        name = "Gauss Rifle [Anti-personnel Gauss Rifle]";
         setInternalName("CLBAAPGaussRifle");
         heat = 1;
         damage = 3;
@@ -45,7 +43,7 @@ public class CLBAAPGaussRifle extends Weapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 0.2f;
+        tonnage = 0.2;
         criticals = 1;
         bv = 21;
         cost = 10000;
@@ -53,10 +51,16 @@ public class CLBAAPGaussRifle extends Weapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
         flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE).or(F_BALLISTIC).or(F_NO_FIRES).or(F_DIRECT_FIRE);
-        introDate = 3069;
-        techLevel.put(3069, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
+        rulesRefs = "255,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setClanAdvancement(3066, 3069, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CJF)
+        .setProductionFactions(F_CJF);
     }
 
 }

@@ -30,7 +30,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
      *
      */
     private static final long serialVersionUID = 6406883135074654379L;
-    private Hashtable<String, IOption> optionsHash = new Hashtable<String, IOption>();
+    private Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
     protected AbstractOptions() {
         initialize();
@@ -39,6 +39,89 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     protected abstract void initialize();
 
+    /**
+     * Returns a count of all options in this object.
+     * @return Option count.
+     */
+    public int count() { 
+        return count(null);
+    }
+    
+    /**
+     * Returns a count of all options in this object with the given group key.
+     * @param groupKey the group key to filter on. Null signifies to return all options indiscriminately.
+     * @return Option count.
+     */
+    public int count(String groupKey) {
+        int count = 0;
+        
+        for (Enumeration<IOptionGroup> i = getGroups(); i
+                .hasMoreElements(); ) {
+            IOptionGroup group = i.nextElement();
+            if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
+                continue;
+            }
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements(); ) {
+                IOption option = j.nextElement();
+
+                if (null != option && option.booleanValue()) {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+    
+    /**
+     * Returns a string of all the quirk "codes" for this entity, using sep as
+     * the separator
+     * @param separator The separator to insert between codes, in addition to a space
+     */
+    public String getOptionList(String separator) {
+        return getOptionListString(separator, null);
+    }
+    
+    /**
+     * Returns a string of all the quirk "codes" for this entity, using sep as
+     * the separator, filtering on a specific group key.
+     * @param separator The separator to insert between codes, in addition to a space
+     * @param groupKey The group key to use to filter options. Null signifies to return all options indiscriminately.
+     */
+    public String getOptionListString(String separator, String groupKey) {
+        StringBuilder listBuilder = new StringBuilder();
+        
+        if (null == separator) {
+            separator = "";
+        }
+
+        for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            
+            if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
+                continue;
+            }
+            
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+                if (option != null && option.booleanValue()) {
+                    if (listBuilder.length() > 0) {
+                        listBuilder.append(separator);
+                    }
+                    listBuilder.append(option.getName());
+                    if ((option.getType() == IOption.STRING)
+                            || (option.getType() == IOption.CHOICE)
+                            || (option.getType() == IOption.INTEGER)) {
+                        listBuilder.append(" ").append(option.stringValue());
+                    }
+                }
+            }
+        }
+        return listBuilder.toString();
+    }
+    
     public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }
@@ -107,17 +190,17 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     protected void addOption(IBasicOptionGroup group, String name,
             boolean defaultValue) {
-        addOption(group, name, IOption.BOOLEAN, new Boolean(defaultValue));
+        addOption(group, name, IOption.BOOLEAN, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
             int defaultValue) {
-        addOption(group, name, IOption.INTEGER, new Integer(defaultValue));
+        addOption(group, name, IOption.INTEGER, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
             float defaultValue) {
-        addOption(group, name, IOption.FLOAT, new Float(defaultValue));
+        addOption(group, name, IOption.FLOAT, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name, Vector<String> defaultValue) {

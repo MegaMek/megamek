@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ D
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -62,8 +62,8 @@ BattleArmorHandles - troopers:-1
 
 <armor>
 40
-39
-39
+40
+40
 20
 32
 </armor>
@@ -92,7 +92,7 @@ CLLBXAC2:OMNI
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO 3058 - Early Succession War
 </source>
 
 <tonnage>
@@ -102,4 +102,3 @@ Succession Wars
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-

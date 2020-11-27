@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Triskelion
 TRK-4V
 
@@ -12,6 +12,8 @@ Mass:75
 Engine:375 XL (Clan) Engine
 Structure:IS Endo-Composite
 Myomer:Standard
+Cockpit:Tripod Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:15 Double
 Walk MP:5
@@ -33,11 +35,11 @@ RTC Armor:10
 
 Weapons:6
 ER Medium Laser, Left Arm
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
-LRM 15, Right Torso
+ER Medium Laser, Right Arm
 LRM 15, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -46,7 +48,7 @@ Lower Arm Actuator
 Hand Actuator
 CLERMediumLaser
 CLERMediumLaser
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -60,7 +62,7 @@ Lower Arm Actuator
 Hand Actuator
 CLERMediumLaser
 CLERMediumLaser
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -77,7 +79,7 @@ CLArtemisV
 Clan Ammo LRM-15 (Clan) Artemis V-capable
 Clan Ammo LRM-15 (Clan) Artemis V-capable
 ISCASEII
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 
@@ -91,7 +93,7 @@ CLArtemisV
 Clan Ammo LRM-15 (Clan) Artemis V-capable
 Clan Ammo LRM-15 (Clan) Artemis V-capable
 ISCASEII
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 
@@ -128,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -142,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -156,7 +158,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Composite
+Endo-Composite
 Clan Ferro-Fibrous
 -Empty-
 -Empty-

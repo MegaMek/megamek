@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+NOTE: saving quirks for units within MM will cause this file to get re-written and all changes will be lost!
+
 This file allows users to customize the default cannon quirks list.  Any quirk assignments in this file will override
   the cannon quirk entries entirely.  Changes to this file will not take effect until the next time megamek is launched.
 

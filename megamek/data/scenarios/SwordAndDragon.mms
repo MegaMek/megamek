@@ -4,6 +4,7 @@ Name=The Sword and The Dragon
 Description=A DCMS Support Lance is engaged by FedCom defenders during a Planetary Assault
 BoardWidth=2
 BoardHeight=2
+RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
 Maps=RANDOM,RANDOM,RANDOM,RANDOM
 Factions=Kurita,Davion
 Location_Kurita=SE

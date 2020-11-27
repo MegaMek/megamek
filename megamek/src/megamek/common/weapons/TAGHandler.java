@@ -88,6 +88,11 @@ public class TAGHandler extends WeaponHandler {
                     entityTarget, priority, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
+            
+            // per errata, being painted by a TAG also spots the target for indirect fire
+            ae.setSpotting(true);
+            ae.setSpotTargetId(entityTarget.getId());
+            
             Report r = new Report(3188);
             r.subject = subjectId;
             vPhaseReport.addElement(r);

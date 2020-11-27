@@ -2,8 +2,8 @@
 Leopard CV (3054),1
 Overlord (3056),2
 Achilles (3055),3
-Lung Wang (Standard),4
-Kuan Ti (Standard),5
+Lung Wang (3055),4
+Kuan Ti (3055),5
 Lung Wang P2,6
 Union (3055),5
 Overlord A3,4

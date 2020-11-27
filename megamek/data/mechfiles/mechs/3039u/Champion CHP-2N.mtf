@@ -151,3 +151,19 @@ Foot Actuator
 -Empty-
 
 
+Overview: The Champion was, if anything, the product of an intense and effective lobbying campaign. Beating out Earthwerk's bid to modify their Griffin BattleMech to similar specifications, the Champion would come to serve as one of the most popular 'Mechs of its era within the SLDF. Even the Succession Wars and the successive decline in the Champion's capabilities would do little to reduce the 'Mech's reputation.
+
+Capabilities: Serving as a multi-role generalist BattleMech, the Champion is able to accomplish a wide variety of tasks with its armament. Able to engage vehicles, fighters, or other 'Mechs in direct combat, MechWarriors enjoy the flexibily of the somewhat rare machine. If the 'Mech has a flaw, it's that Bergan Industries cut corners with the heat dissipation system. Low-efficiency heat sinks, installed to save on costs, result in a BattleMech that often overheats when its full weapons array is brought forth. The Champion also has armor coverage  similar to lighter 'Mechs such as the Whitworth, forcing MechWarriors to remain light on their toes when piloting the Champion.
+
+Deployment: Its fall from the peak of cutting edge technology saw the Terran Hegemony sell the Champion to every Great House. The Capellan Confederation fielded the highest concentration of the design during the Succession Wars, but the unveiling of the ComGuard and formation of the Word of Blake would reveal large numbers of Champions within their Armies. The Champion's -2N downgrade was well-scattered throughout the Inner Sphere, and even served within notable mercenary commands such as the Kell Hounds or Wolf's Dragoons. Steadily upgraded after the discovery of the Helm Core, few -2N's remained in service by the Jihad, and none remained once the fires of that conflict finally burnt out.
+
+systemmanufacturer:CHASSIS:Bergan
+systemmode:CHASSIS:XI
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:StarSlab
+systemmode:ARMOR:/2
+systemmanufacturer:COMMUNICATIONS:Garret
+systemmode:COMMUNICATIONS:T-11C
+systemmanufacturer:TARGETING:Mercury
+systemmode:TARGETING:IV

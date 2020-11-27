@@ -84,8 +84,8 @@ public class DialogOptionComponent extends JPanel implements
                 if (!editable) {
                     checkbox.setEnabled(false);
                 }
-
                 label = new JLabel(option.getDisplayableName());
+		label.setLabelFor(checkbox);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 label.addMouseListener(new MouseListener(){
                     public void mouseClicked(MouseEvent evt) {
@@ -112,6 +112,7 @@ public class DialogOptionComponent extends JPanel implements
             case IOption.CHOICE:
                 choice = new JComboBox<String>();
                 label = new JLabel(option.getDisplayableName());
+		label.setLabelFor(choice);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 if (!editable) {
                     choice.setEnabled(false);
@@ -137,6 +138,7 @@ public class DialogOptionComponent extends JPanel implements
                 textField.setHorizontalAlignment(JTextField.CENTER);
                 label = new JLabel(option.getDisplayableName());
                 label.setToolTipText(convertToHtml(option.getDescription()));
+		label.setLabelFor(textField);
                 label.addMouseListener(new MouseListener(){
                     public void mouseClicked(MouseEvent evt) {
                         if (textField.isEnabled()) {

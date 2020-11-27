@@ -1,0 +1,170 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mule
+</Name>
+
+<Model>
+(Decendant of Prometheus)-FC
+</Model>
+
+<year>
+3048
+</year>
+
+<originalBuildYear>
+2737
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+mechbay:6.0:2
+1stclassquarters:40.0:0
+2ndclassquarters:105.0:0
+crewquarters:126.0:0
+cargobay:5500.0:2:7
+cargobay:131.0:0:8
+mechbay:3.0:1
+mechbay:6.0:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+121
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+11970
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+176
+154
+154
+132
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:40
+(B) Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(B) SRM 6
+IS Ammo SRM-6:15
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+(B) SRM 6
+IS Ammo SRM-6:15
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<source>
+TRO 3048 - Succession Wars
+</source>
+
+<tonnage>
+11200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+48
+</crew>
+
+<officers>
+4
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+15
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+5
+</life_boat>
+
+<escape_pod>
+5
+</escape_pod>
+
+<history>
+Second cargo bay is for spare parts (1% of mass) and food and water.
+</history>

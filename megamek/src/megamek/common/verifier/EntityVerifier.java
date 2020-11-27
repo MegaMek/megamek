@@ -16,26 +16,37 @@
 package megamek.common.verifier;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.Protomech;
+import megamek.common.SmallCraft;
 import megamek.common.Tank;
+import megamek.common.UnitType;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Performs verification of the validity of different types of 
@@ -53,6 +64,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
     @XmlElement(name = "mech")
     public TestXMLOption mechOption = new TestXMLOption();
+    @XmlElement(name = "protomech")
+    public TestXMLOption protomechOption = new TestXMLOption();
     @XmlElement(name = "tank")
     public TestXMLOption tankOption = new TestXMLOption();
     @XmlElement(name = "aero")
@@ -78,17 +91,17 @@ public class EntityVerifier implements MechSummaryCache.Listener {
      * @return an EntityVerifier with the configuration loaded from XML
      */
     public static EntityVerifier getInstance(final File config) {
-        EntityVerifier ev = null;
+        EntityVerifier ev;
         
         try {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
-            ev = (EntityVerifier) um.unmarshal(config);
-        } catch (JAXBException ex) {
-            System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
-            
+            InputStream is = new FileInputStream(config);
+            ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
+
             ev = new EntityVerifier();
         }
         
@@ -106,34 +119,29 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
+        final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
-        TestEntity testEntity = null;
+        TestEntity testEntity;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
+        } else if (entity instanceof Protomech) {
+            testEntity = new TestProtomech((Protomech) entity, protomechOption, fileString);
+        } else if (entity.isSupportVehicle()) {
+            testEntity = new TestSupportVehicle(entity, tankOption, null);
         } else if ((entity instanceof Tank) && 
                 !(entity instanceof GunEmplacement)) {
-            if (entity.isSupportVehicle()) {
-                testEntity = new TestSupportVehicle((Tank) entity, tankOption,
-                        null);
-            } else {
-                testEntity = new TestTank((Tank) entity, tankOption, null);
-            }
-        } else if (entity.getEntityType() == Entity.ETYPE_AERO
-                && entity.getEntityType() != 
-                        Entity.ETYPE_DROPSHIP
-                && entity.getEntityType() != 
-                        Entity.ETYPE_SMALL_CRAFT
-                && entity.getEntityType() != 
-                        Entity.ETYPE_FIGHTER_SQUADRON
-                && entity.getEntityType() != 
-                        Entity.ETYPE_JUMPSHIP
-                && entity.getEntityType() != 
-                        Entity.ETYPE_SPACE_STATION) {
-            testEntity = new TestAero((Aero)entity, aeroOption, fileString);
-        } else if (entity instanceof BattleArmor){
+            testEntity = new TestTank((Tank) entity, tankOption, null);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            testEntity = new TestSmallCraft((SmallCraft) entity, aeroOption, fileString);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            testEntity = new TestAdvancedAerospace((Jumpship) entity, aeroOption, fileString);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)
+                && !entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
+            testEntity = new TestAero((Aero) entity, aeroOption, fileString);
+        } else if (entity instanceof BattleArmor) {
             testEntity = new TestBattleArmor((BattleArmor) entity, baOption,
                     fileString);
-        } else if (entity instanceof Infantry){
+        } else if (entity instanceof Infantry) {
             testEntity = new TestInfantry((Infantry) entity, infOption,
                     fileString);
         } else {
@@ -145,7 +153,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         if (verbose) {
             StringBuffer buff = new StringBuffer();
             boolean valid = testEntity.correctEntity(buff, ammoTechLvl);
-            if (!valid || !failsOnly){
+            if (!valid || !failsOnly) {
                 if (valid) {
                     System.out.println("---Entity is valid---");
                 } else {
@@ -153,7 +161,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 }
                 System.out.print(testEntity.printEntity());                        
                 System.out.println("BV: " + entity.calculateBattleValue()
-                        + "    Cost: " + entity.getCost(false));
+                        + "    Cost: " + FMT.format(entity.getCost(false)));
             }
         } else {
             StringBuffer buff = new StringBuffer();
@@ -162,7 +170,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             } else {
                 System.out.println(testEntity.getName());
                 System.out.println("Found in: " + testEntity.fileString);
+                System.out.println("Intro year: " + entity.getYear());
+                System.out.println("BV: " + entity.calculateBattleValue()
+                + "    Cost: " + FMT.format(entity.getCost(false)));
                 System.out.println(buff);
+
             }
         }
 
@@ -191,6 +203,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
         System.out.println("Mech Options:");
         System.out.println(mechOption.printOptions());
+        System.out.println("Protomech Options:");
+        System.out.println(protomechOption.printOptions());
         System.out.println("\nTank Options:");
         System.out.println(tankOption.printOptions());
         System.out.println("\nAero Options:");
@@ -201,14 +215,10 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(infOption.printOptions());
 
         int failures = 0;
-        int failedMek, failedTank, failedAero, failedBA, failedInfantry;
-        failedMek = failedTank = failedAero = failedBA = failedInfantry = 0;
+        Map<Integer,Integer> failedByType = new HashMap<>();
         for (int i = 0; i < ms.length; i++) {
-            if (ms[i].getUnitType().equals("Mek")
-                    || ms[i].getUnitType().equals("Tank")
-                    || ms[i].getUnitType().equals("Aero")
-                    || ms[i].getUnitType().equals("BattleArmor")
-            		|| ms[i].getUnitType().equals("Infantry")) {
+            int unitType = UnitType.determineUnitTypeCode(ms[i].getUnitType());
+            if (unitType != UnitType.GUN_EMPLACEMENT) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
@@ -217,26 +227,25 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
                         loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;
-                    if (ms[i].getUnitType().equals("Mek")) {
-                        failedMek++;
-                    } else if (ms[i].getUnitType().equals("Tank")) {
-                        failedTank++;
-                    } else if (ms[i].getUnitType().equals("Aero")) {
-                        failedAero++;
-                    } else if (ms[i].getUnitType().equals("BattleArmor")) {
-                        failedBA++;
-                    } else if (ms[i].getUnitType().equals("Infantry")) {
-                        failedInfantry++;
-                    }
+                    failedByType.merge(unitType, 1, Integer::sum);
                 }
             }
         }
         System.out.println("Total Failures: " + failures);
-        System.out.println("\t Failed Meks: " + failedMek);
-        System.out.println("\t Failed Tanks: " + failedTank);
-        System.out.println("\t Failed Aeros: " + failedAero);
-        System.out.println("\t Failed BA: " + failedBA);
-        System.out.println("\t Failed Infantry: " + failedInfantry);
+        System.out.println("\t Failed Meks: " + failedByType.getOrDefault(UnitType.MEK, 0));
+        System.out.println("\t Failed Protomeks: " + failedByType.getOrDefault(UnitType.PROTOMEK, 0));
+        System.out.println("\t Failed Tanks: " + failedByType.getOrDefault(UnitType.TANK, 0));
+        System.out.println("\t Failed VTOLs: " + failedByType.getOrDefault(UnitType.VTOL, 0));
+        System.out.println("\t Failed Naval: " + failedByType.getOrDefault(UnitType.NAVAL, 0));
+        System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AERO, 0));
+        System.out.println("\t Failed CFs: " + failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0));
+        System.out.println("\t Failed Small Craft: " + failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0));
+        System.out.println("\t Failed Dropships: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
+        System.out.println("\t Failed Jumpships: " + failedByType.getOrDefault(UnitType.JUMPSHIP, 0));
+        System.out.println("\t Failed Warships: " + failedByType.getOrDefault(UnitType.WARSHIP, 0));
+        System.out.println("\t Failed Space Stations: " + failedByType.getOrDefault(UnitType.SPACE_STATION, 0));
+        System.out.println("\t Failed BA: " + failedByType.getOrDefault(UnitType.BATTLE_ARMOR, 0));
+        System.out.println("\t Failed Infantry: " + failedByType.getOrDefault(UnitType.INFANTRY, 0));
     }
 
     public static void main(String[] args) {
@@ -248,29 +257,29 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         boolean failsOnly = true;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-file")) {
-                if (args.length <= i) {
+                i++;
+                if (i >= args.length) {
                     System.out.println("Missing argument filename!");
                     return;
                 }
-                i++;
                 f = new File(args[i]);
                 if (!f.exists()) {
                     System.out.println("Can't find: " + args[i] + "!");
                     return;
                 }
                 if (args[i].endsWith(".zip")) {
-                    if (args.length <= i + 1) {
+                    i++;
+                    if (i >= args.length) {
                         System.out.println("Missing Entity Name!");
                         return;
                     }
-                    i++;
                     entityName = args[i];
                 }
-            } else if (args[i].equals("-v") || args[i].equals("-verbose")){
+            } else if (args[i].equals("-v") || args[i].equals("-verbose")) {
                 verbose = true;
-            } else if (args[i].equals("-valid")){
+            } else if (args[i].equals("-valid")) {
                 failsOnly = false;
-            } else if (args[i].equals("-unofficial")){
+            } else if (args[i].equals("-unofficial")) {
                 ignoreUnofficial = false;
             } else {
                 System.err.println("Error: Invalid argument.\n");
@@ -286,7 +295,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         }
 
         if (f != null) {
-            Entity entity = null;
+            Entity entity;
             try {
                 entity = new MechFileParser(f, entityName).getEntity();
             } catch (megamek.common.loaders.EntityLoadingException e) {

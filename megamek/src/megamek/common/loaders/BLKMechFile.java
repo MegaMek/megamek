@@ -186,6 +186,8 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         mech.initializeRearArmor(armor[BLKMechFile.LB], Mech.LOC_LT);
         mech.initializeRearArmor(armor[BLKMechFile.RB], Mech.LOC_RT);
 
+        mech.recalculateTechAdvancement();
+
         if (!dataFile.exists("internal armor")) {
             // try to guess...
             mech.setInternal(3, (armor[CF] + armor[CB]) / 2, (armor[LF] + armor[LB]) / 2, (armor[LA] / 2), (armor[LL] / 2));
@@ -256,7 +258,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 }
                 
                 boolean isOmniMounted = critName.endsWith(":OMNI");
-                critName.replace(":OMNI", "");
+                critName = critName.replace(":OMNI", "");
                 int facing = -1;
                 if (critName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;

@@ -5,9 +5,9 @@ DroST IIa Transport (2470),4
 DroST IIb Transport (2470),4
 Triumph (2593),5
 Jumbo (Standard),6
-Buccaneer (Standard),7
 Gazelle (2531),6
 Lion (2595),5
-Buccaneer (Standard),4
 Dictator (Standard),3
 Leopard CV (2581),2
+Buccaneer (2708),7
+Buccaneer (2709) (Vehicle),4

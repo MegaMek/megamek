@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Djinn Battle Armor (Reflective)
+Djinn Battle Armor
 </Name>
 
 <Model>
-'Terrorizer' (Flamer)
+(Reflective)'Terrorizer' (Flamer)
 </Model>
 
 <year>
@@ -102,4 +102,3 @@ biped
 <weightclass>
 1
 </weightclass>
-

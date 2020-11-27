@@ -36,26 +36,26 @@ import megamek.common.actions.PushAttackAction;
  * are the conditions for multiple physical attacks?
  */
 public class PhysicalOption {
-    public final static int NONE = 0;
-    public final static int PUNCH_LEFT = 1;
-    public final static int PUNCH_RIGHT = 2;
-    public final static int PUNCH_BOTH = 3;
-    public final static int KICK_LEFT = 4;
-    public final static int KICK_RIGHT = 5;
-    public final static int USE_CLUB = 6; // Includes sword, hatchet, mace,
+    public static final int NONE = 0;
+    public static final int PUNCH_LEFT = 1;
+    public static final int PUNCH_RIGHT = 2;
+    public static final int PUNCH_BOTH = 3;
+    public static final int KICK_LEFT = 4;
+    public static final int KICK_RIGHT = 5;
+    public static final int USE_CLUB = 6; // Includes sword, hatchet, mace,
                                             // and found clubs
-    public final static int USE_CLAW = 7; // Level 3 rules, not incorporated
+    public static final int USE_CLAW = 7; // Level 3 rules, not incorporated
                                             // yet
-    public final static int PUSH_ATTACK = 8;
-    public final static int TRIP_ATTACK = 9; // Level 3 rules, not
+    public static final int PUSH_ATTACK = 8;
+    public static final int TRIP_ATTACK = 9; // Level 3 rules, not
                                                 // incorporated yet
-    public final static int BRUSH_LEFT = 10;
-    public final static int BRUSH_RIGHT = 11;
-    public final static int BRUSH_BOTH = 12;
-    public final static int THRASH_INF = 13;
+    public static final int BRUSH_LEFT = 10;
+    public static final int BRUSH_RIGHT = 11;
+    public static final int BRUSH_BOTH = 12;
+    public static final int THRASH_INF = 13;
 
     Entity attacker;
-    Entity target;
+    Targetable target;
     INarcPod i_target;
     double expectedDmg;
     int type;
@@ -69,9 +69,8 @@ public class PhysicalOption {
     public PhysicalOption(Entity attacker, Targetable target, double dmg,
             int type, Mounted club) {
         this.attacker = attacker;
-        if (target instanceof Entity) {
-            this.target = (Entity) target;
-        }
+        this.target = target;
+        
         if (target instanceof INarcPod) {
             this.i_target = (INarcPod) target;
         }
@@ -83,28 +82,28 @@ public class PhysicalOption {
     public AbstractAttackAction toAction() {
         switch (type) {
             case PUNCH_LEFT:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.LEFT);
             case PUNCH_RIGHT:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.RIGHT);
             case PUNCH_BOTH:
-                return new PunchAttackAction(attacker.getId(), target.getId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         PunchAttackAction.BOTH);
             case KICK_LEFT:
-                return new KickAttackAction(attacker.getId(), target.getId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         KickAttackAction.LEFT);
             case KICK_RIGHT:
-                return new KickAttackAction(attacker.getId(), target.getId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
                         KickAttackAction.RIGHT);
             case USE_CLUB:
                 if (club != null) {
-                    return new ClubAttackAction(attacker.getId(), target
-                            .getId(), club, ToHitData.HIT_NORMAL);
+                    return new ClubAttackAction(attacker.getId(), target.getTargetType(), target
+                            .getTargetId(), club, ToHitData.HIT_NORMAL, false);
                 }
                 return null;
             case PUSH_ATTACK:
-                return new PushAttackAction(attacker.getId(), target.getId(),
+                return new PushAttackAction(attacker.getId(), target.getTargetId(),
                         target.getPosition());
             case TRIP_ATTACK:
                 return null; // Trip attack not implemented yet
@@ -115,7 +114,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.LEFT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.LEFT);
             case BRUSH_RIGHT:
                 if (target == null) {
@@ -124,7 +123,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.RIGHT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.RIGHT);
             case BRUSH_BOTH:
                 if (target == null) {
@@ -133,7 +132,7 @@ public class PhysicalOption {
                             BrushOffAttackAction.BOTH);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getId(),
+                        .getTargetType(), target.getTargetId(),
                         BrushOffAttackAction.BOTH);
                 /*
                  * case THRASH_INF : return new

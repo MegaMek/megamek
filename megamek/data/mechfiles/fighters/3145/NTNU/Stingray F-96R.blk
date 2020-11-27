@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ F-96R
 3132
 </year>
 
+<originalBuildYear>
+3132
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -86,6 +93,12 @@ Large Re-engineered Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3145 NTNU - Late Republic
 </source>
@@ -93,4 +106,3 @@ TRO 3145 NTNU - Late Republic
 <tonnage>
 60.0
 </tonnage>
-

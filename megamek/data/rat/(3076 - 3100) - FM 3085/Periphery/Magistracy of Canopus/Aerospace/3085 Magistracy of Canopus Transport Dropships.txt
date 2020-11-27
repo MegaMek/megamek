@@ -7,6 +7,6 @@ Seeker (3054),5
 Leopard (3056),6
 Triumph (2593),5
 Intruder (2655),4
-Lung Wang (Standard),3
+Lung Wang (3055),3
 Leopard CV (2581),2
 Achilles (3055),1

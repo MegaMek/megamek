@@ -1,12 +1,14 @@
 3145 Clan Hell's Horses Fleet Dropships
-Overlord C,1
-Titan (Clan),2
-Broadsword (Standard),3
+Titan (2953),2
+Broadsword (2979),3
 Nagasawa (Standard),4
 Vanir Assault Dropship (Standard),5
-Union C,6
+Union C (2829),4
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1
 Outpost (Defender),5
 Vanir Assault Dropship (Standard),4
 Nagasawa (Standard),3
-Noruff (Standard),2
-Overlord C,1
+Noruff (3056),2
+Overlord C (2818),1
+Overlord C (2818) (Tank),1

@@ -2,62 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Partisan Heavy Tank
 </Name>
+
 <Model>
 (C3)
 </Model>
-<Tonnage>
-80
-</Tonnage>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 22
 18
 18
 16
 22
-</Armor>
-<Turret Equipment>
-Auto Cannon/5
-Auto Cannon/5
-Auto Cannon/5
-Auto Cannon/5
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-IS Ammo AC/5
-IS Ammo AC/5
-ISC3SlaveUnit
 ISCASE
+ISC3SlaveUnit
+IS Ammo AC/5
+IS Ammo AC/5
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3062
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+</Turret Equipment>
+
 <source>
-Civil War
+TRO 3058 - Civil War
 </source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

@@ -2,11 +2,11 @@
 Intruder (3056),1
 Condor (3054),2
 Gazelle (2531),3
-Kuan Ti (Standard),4
+Kuan Ti (3055),4
 Merlin (3063),5
-Hamilcar (Standard),6
+Hamilcar (3054),6
 Leopard CV (3054),5
 Union (3055),4
 Seleucus Infantry Transport (Standard),3
-Hannibal (Standard),2
+Hannibal (3055),2
 Vengeance (3056),1

@@ -115,7 +115,7 @@ public class MMRoll extends Roll {
         // Store the result for later processing.
         int result = rng.randomInt(this.faces) + this.min;
 
-        all.addElement(new Integer(result));
+        all.addElement(Integer.valueOf(result));
 
         // Add the current virtual die's roll to the running total.
         this.total += result;

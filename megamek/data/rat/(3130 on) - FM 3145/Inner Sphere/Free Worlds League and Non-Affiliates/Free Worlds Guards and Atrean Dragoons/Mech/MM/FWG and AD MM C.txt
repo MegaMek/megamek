@@ -8,5 +8,5 @@ Wolverine WVR-9M,6
 Ghost GST-10,5
 Strider SR1-O,4
 Phoenix Hawk PXH-1c (Special),3
-Apollo APL-4M,2
+Scorpion SCP-10M,2
 Griffin GRF-4R,1

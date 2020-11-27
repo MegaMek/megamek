@@ -3,48 +3,48 @@ Crab
 CRB-27sl
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2719
-Source:ER 2750
-Rules Level:4
+techbase:Inner Sphere
+era:2719
+source:ER 2750
+rules level:4
 
-Mass:50
-Engine:250 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:50
+engine:250 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:5
-Jump MP:5
+heat sinks:14 Double
+walk mp:5
+jump mp:5
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:20
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:20
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:4
-Medium Laser, Head
-Large Pulse Laser, Right Arm
 Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
 Medium Pulse Laser, Center Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISLargePulseLaser
 ISLargePulseLaser
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 IS Ferro-Fibrous
 -Empty-
 -Empty-
@@ -54,13 +54,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISLargePulseLaser
 ISLargePulseLaser
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 IS Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 
@@ -68,28 +68,28 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
-IS Ferro-Fibrous
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 IS Ferro-Fibrous
 
 Center Torso:

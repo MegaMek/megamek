@@ -149,3 +149,19 @@ Foot Actuator
 -Empty-
 
 
+Overview: Republican forces fought tooth and nail to defend the Terran Hegemony worlds they had taken over. Close-quarters fighting in urban environments allowed their infantry to shine the brightest, and scores of Star League Defense Force 'Mechs were disabled or destroyed by ambushes and assaults. An anti-infantry platform was quickly commissioned in response, and the Vulcan entered SLDF forces only shorty before the end of the way. With its original designer, MartherTechno Inc, facing destruction just a matter of months after the fall of the Star League, the Vulcan spread throughout the Sphere with schematics for the design falling into Lyran and Free Worlds hands.
+
+Capabilities: Above all an urban combatant, the Vulcan is highly maneuverable and built around anti-infantry firepower. Commonly fielding a longer-ranged ballistic weapon as well, this larger gun is commonly used as an anti-'Mech or anti-building weapon. While its armor is underwhelming for a 'Mech of its size, its protection is more than adequate for its role.
+
+Deployment: The Lyran Commonwealth and Free Worlds League are the primary users of the Vulcan. As they control both primary manufacturing plants for the design, their Vulcans are commonly in better repair than those fielded by other interstellar powers. Even so, the design remains in use throughout all of human space, with its speed and specialist role ensuring that many remain in relatively good condition.
+
+systemmanufacturer:CHASSIS:Mather Tech
+systemmode:CHASSIS:500
+systemmanufacturer:ENGINE:Pitban
+systemmode:ENGINE:240
+systemmanufacturer:ARMOR:StarGuard
+systemmode:ARMOR:I
+systemmanufacturer:COMMUNICATIONS:Hartford
+systemmode:COMMUNICATIONS:200S
+systemmanufacturer:TARGETING:Hartford
+systemmode:TARGETING:TA10

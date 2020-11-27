@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ LTN-G16L
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -73,8 +80,6 @@ Aerodyne
 
 <Nose Equipment>
 ISUltraAC20
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
 ISERMediumLaser
 </Nose Equipment>
 
@@ -90,6 +95,14 @@ ISERMediumLaser
 Medium Laser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Civil War
 </source>
@@ -97,4 +110,3 @@ TRO 3075 - Civil War
 <tonnage>
 50.0
 </tonnage>
-

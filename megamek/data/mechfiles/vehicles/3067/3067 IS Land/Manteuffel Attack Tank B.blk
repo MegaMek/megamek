@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ B
 <year>
 3062
 </year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -49,7 +53,7 @@ BattleArmorHandles - troopers:-1
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <omni>
@@ -86,9 +90,16 @@ ISHeavyGaussRifle:OMNI
 </Rear Equipment>
 
 <Turret Equipment>
-Medium Laser:OMNI
 ISERSmallLaser:OMNI
+ISERSmallLaser
+ISERSmallLaser
 </Turret Equipment>
+
+<notes>
+Errata
+Manteuffel, p. 21
+Configuration B - change Turret weaponry from 1 ML & 1 ERSL to 3 ERSL
+</notes>
 
 <tonnage>
 70.0
@@ -97,4 +108,3 @@ ISERSmallLaser:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
-

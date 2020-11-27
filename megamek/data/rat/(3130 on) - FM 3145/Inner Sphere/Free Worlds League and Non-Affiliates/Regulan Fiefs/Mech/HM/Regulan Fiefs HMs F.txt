@@ -9,4 +9,4 @@ Rifleman RFL-7M,5
 Thunderbolt TDR-10M,4
 Marauder MAD-9M2,3
 Archer ARC-9M,2
-Koschei KSC-5MC,1
+Ostwar OWR-3M,1

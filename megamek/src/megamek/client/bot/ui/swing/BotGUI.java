@@ -48,7 +48,6 @@ import megamek.common.event.GameVictoryEvent;
 public class BotGUI implements GameListener {
 
     private BotClient bot;
-    private JFrame frame = new JFrame();
     private static boolean WarningShown;
 
     public BotGUI(BotClient bot) {
@@ -70,6 +69,8 @@ public class BotGUI implements GameListener {
     public void notifyOfBot() {
         if (GUIPreferences.getInstance().getNagForBotReadme() && !WarningShown) {
             WarningShown = true;
+            
+            JFrame frame = new JFrame();
             String title = Messages.getString("BotGUI.notifyOfBot.title"); //$NON-NLS-1$
             String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
             frame.pack();
@@ -82,9 +83,10 @@ public class BotGUI implements GameListener {
             }
 
             if (confirm.getAnswer()) {
-                File helpfile = new File("docs/ai-readme.txt"); //$NON-NLS-1$
+                File helpfile = new File("docs/Bot Stuff/ai-readme.txt"); //$NON-NLS-1$
                 new CommonHelpDialog(frame, helpfile).setVisible(true);
             }
+            frame.dispose();
         }
     }
 
@@ -137,7 +139,7 @@ public class BotGUI implements GameListener {
     }
     
     @Override
-    public void gameClientFeedbackRquest(GameCFREvent evt) {
+    public void gameClientFeedbackRequest(GameCFREvent evt) {
     }
 
     @Override

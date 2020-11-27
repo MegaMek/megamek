@@ -74,3 +74,7 @@ TRO 3075 - Jihad
 <armor_tech>
 3
 </armor_tech>
+
+<history>
+The TRO3075 entry lists a 4-slot configurable turret with a weight of 70 kg. The correct weight of 90 kg would exceed the maximum 2000 kg.
+</history>

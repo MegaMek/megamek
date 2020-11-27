@@ -32,7 +32,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for

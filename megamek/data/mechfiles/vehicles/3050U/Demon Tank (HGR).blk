@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Demon Tank
 3070
 </year>
 
+<originalBuildYear>
+3070
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -56,6 +63,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
+ISCASE
 ISC3iUnit
 ISTargeting Computer
 IS Streak SRM 6 Ammo
@@ -78,7 +86,6 @@ ISERMediumLaser
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 </Rear Equipment>
 
 <source>
@@ -88,4 +95,3 @@ TRO 3050 - Jihad
 <tonnage>
 60.0
 </tonnage>
-

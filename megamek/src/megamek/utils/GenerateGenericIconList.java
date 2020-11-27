@@ -15,17 +15,15 @@
 package megamek.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.client.ui.swing.MechTileset;
-import megamek.client.ui.swing.MechTileset.MechEntry;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
-import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -73,12 +71,6 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
     @Override
     public void doneLoading() {
         MechSummary[] ms = mechSummaryCache.getAllMechs();
-        MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
-        try {
-            mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         int genericCount = 0;
         Map<String, List<String>> typeNameMap = new HashMap<>();
         
@@ -88,8 +80,8 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         for (int i = 0; i < ms.length; i++) {
             Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                     .getEntryName());
-            MechEntry entry = mechTileset.entryFor(entity, -1);
-            MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
+            MechEntry entry = MMStaticDirectoryManager.getMechTileset().entryFor(entity, -1);
+            MechEntry defaultEntry = MMStaticDirectoryManager.getMechTileset().genericFor(entity, -1);
             if (entry.equals(defaultEntry)) {
                 String name = entity.getChassis() + " " + entity.getModel();
                 String type = "Unknown:";
@@ -105,10 +97,10 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                     type = "Infantry:";
                 } else if (entity instanceof SpaceStation) {
                     type = "SpaceStations:";
-                } else if (entity instanceof Jumpship) {
-                    type = "Jumpships:";
                 } else if (entity instanceof Warship) {
                     type = "Warships:";
+                } else if (entity instanceof Jumpship) {
+                    type = "Jumpships:";
                 } else if (entity instanceof SmallCraft) {
                     type = "Dropships:";
                 } else if (entity instanceof Aero) {
@@ -121,7 +113,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
                     names = new ArrayList<>();
                     typeNameMap.put(type, names);
                 }
-                names.add(name);       
+                names.add(name);
                 genericCount++;        
             }
         }

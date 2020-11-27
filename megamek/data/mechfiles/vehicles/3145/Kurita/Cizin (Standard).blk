@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Cizin
+Cizin Hover Tank
 </Name>
 
 <Model>
@@ -89,4 +89,3 @@ TRO 3145 Draconis Combine - Early Republic
 <tonnage>
 45.0
 </tonnage>
-

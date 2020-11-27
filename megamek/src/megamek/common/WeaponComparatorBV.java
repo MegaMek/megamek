@@ -50,7 +50,7 @@ public class WeaponComparatorBV implements Comparator<Mounted> {
             if (weap1.bv == weap2.bv)
                 return weap1.heat - weap2.heat;
             // otherwise, higher BV first
-            return new Double(weap2.bv - weap1.bv).intValue();
+            return Double.valueOf(weap2.bv - weap1.bv).intValue();
         }
         throw new ClassCastException("Passed Mounteds are not Weapons");
     }

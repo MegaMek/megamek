@@ -3,33 +3,33 @@ Wasp
 WSP-3L
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO Project Pheonix - Civil War
+rules level:2
 
-Mass:20
-Engine:120 Fusion Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
-Ejection:Full Head Ejection System
+mass:20
+engine:120 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:6
+heat sinks:10 Single
+walk mp:6
+jump mp:6
 
-Armor:Stealth(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:7
-RT Armor:7
-CT Armor:8
-HD Armor:9
-LL Armor:7
-RL Armor:7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+armor:Stealth(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:7
+RT armor:7
+CT armor:8
+HD armor:9
+LL armor:7
+RL armor:7
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:2
 ER Medium Laser, Right Arm
@@ -40,14 +40,14 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Arm:
 Shoulder
@@ -56,10 +56,10 @@ Lower Arm Actuator
 Heat Sink
 Heat Sink
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -70,11 +70,11 @@ Jump Jet
 Jump Jet
 ISGuardianECMSuite
 ISGuardianECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 
 Right Torso:
@@ -83,11 +83,11 @@ Heat Sink
 Jump Jet
 Jump Jet
 RL10
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-

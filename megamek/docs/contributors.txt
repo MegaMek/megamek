@@ -7,16 +7,18 @@
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
   Lead Developers:
-     Sebastian Brocks <beerockxs@users.sourceforge.net>
-	 Dave Nawton <hammer-gs@users.sourceforge.net>
-	 Nicholas Walczak <arlith@users.sourceforge.net>
-	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
-     Dylan Myers <https://github.com/Dylan-M>
+	 Carl "Neoancient" Spain
+	 NickAragua
+	 Christopher Watford
+	 Juliez
 
+  Data Lead
+	 Dave Nawton <hammer-gs@users.sourceforge.net>
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
      Michael Hanson <hanson@cs.stanford.edu>
+     NickAragua
 
   More Code:
      John Uckele <btzealot55@yahoo.com>
@@ -98,6 +100,8 @@
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
+	 Justin "Windchild" Bowen
+	 Graysho
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -120,6 +124,9 @@
 	 Mike V
      Dervishx5 (Jihad MapPack and Derv MapPack)
 	 DancefloorLandmine
+	 arekP64
+	 Ask
+	 Keyl Seuhy
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -143,6 +150,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
      Phoenixstorm
 	 Greekfire
+	 SuperStucco
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -157,8 +165,11 @@
      Doug Moore
      Solarmech (MekTek Development Team)
      #player2player on Sorcery
+     
+  Lead Sprite Artist
+     Alex "Deadborder" Fauth
 
-  Various Images:
+  Various Images(including Sprites):
      Nehal Mistry
      Paolo D'Inca <paolodinca@hotmail.com>
      Ian Hamilton <jabberwocky@planethalflife.com>
@@ -199,7 +210,6 @@
      walter@nebulastation.net
      Julio Prina <jjj.ladob@gmail.com>
      N.|.B.
-     Alex "Deadborder" Fauth
      Sebastian "Demos" Seiml
      Swiftsure
      Stingr4y
@@ -212,10 +222,17 @@
      Michael Rehrig
      Bloodwolf
      SirMegaV
+	 Saxarba
+	 Ahne
+	 AskAgain
 
   Camo Pack
   	 SeaVea
      Colonel Sanders Light (Folders noted with CSL)
+     Teerayne
+	 
+  Splash Screen
+ 	 Florian "SpOoKy777" Mellies (https://www.deviantart.com/spooky777)
 	 
   Princess Behaviours
 	 Peter Farland
@@ -227,6 +244,8 @@
      Netzilla and Xotl (Classic Battletech Forums)
      Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Greekfire.
+	 Bloodwolf
+	 SLDF_gunslinger
 
   Translations
      Jörg Harder <joergharder@t-online.de>
@@ -235,6 +254,10 @@
 
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>
+     Sebastian Brocks <beerockxs@users.sourceforge.net>
+ 	 Nicholas Walczak <arlith@users.sourceforge.net>
+	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
+     Dylan Myers <https://github.com/Dylan-M>
 
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)
@@ -260,7 +283,7 @@
 	Pixilated the image by three pixels then applied the Gimp "make seemless" map function for tiling, sized to 800x600
 	data/images/hexes/largeTextures/BigSpace.jpg
 	- textureLunar (https://commons.wikimedia.org/wiki/File:M115693540_Jenner.png)
-	This file is in the public domain in the United States because it was solely created by NASA. NASA copyright policy states 		that "NASA material is not protected by copyright unless noted". (See Template:PD-USGov, NASA copyright policy page or JPL 		Image Use Policy.)
+	This file is in the public domain in the United States because it was solely created by NASA. NASA copyright policy states that "NASA material is not protected by copyright unless noted". (See Template:PD-USGov, NASA copyright policy page or JPL 		Image Use Policy.)
 	data/images/hexes/largeTextures/textureLunar.jpg
 	- textureVolcano (https://pixabay.com/en/rock-pumus-volcanic-rock-1044181/)
 	 Creative Commons CC0
@@ -274,11 +297,18 @@
 	Copied image three times and arrange into a 1600x1200 image, pixelated by 3 px, applied the make seemless map function, and then shrank to 800x600 adjusting brightness and contrast for depths.
 	data/images/hexes/largeTextures/BigWater.jpg
 	
+   Megamek Portrait Pack
+     Base images purchased from Generated Photos (https://generated.photos/). Generated Photos carry no additional likeness rights. 
+     All images have been generated without human intervention through machine learning processes. Any perceived resemblance of our 
+     materials to an existing person is not intentional.
+     
+     Base portraits modified by Saxarba (https://www.deviantart.com/quellion). Additional images used in portraits provided with permission by SpOoKy777 (https://www.deviantart.com/spooky777/gallery) 	
+	
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of
      BattleTech, a source of fun and inspiration to us all.
 
 
   If I've missed anyone or details have changed, please accept apologies and
-  contact the author(s) (above.)
+  contact megamekteam at gmail.com or any of the lead developers
 

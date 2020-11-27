@@ -237,6 +237,7 @@ public class MoveOption extends MovePath {
             move = 2;
             break;
         case MOVE_SPRINT:
+        case MOVE_VTOL_SPRINT:
             move = 3;
             break;
         case MOVE_JUMP:
@@ -449,8 +450,7 @@ public class MoveOption extends MovePath {
         double retVal = temp_threat - temp_damage;
 
         List<TargetRoll> psrList = SharedUtility.getPSRList(this);
-        boolean aptPiloting = getEntity().getCrew().getOptions().booleanOption(OptionsConstants
-                                                                                       .PILOT_APTITUDE_PILOTING);
+        boolean aptPiloting = getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         for (TargetRoll roll : psrList) {
             double multiple = Compute.oddsAbove(roll.getValue(), aptPiloting) / 100;
             retVal *= (multiple > 0) ? multiple : 0.01;
@@ -480,8 +480,7 @@ public class MoveOption extends MovePath {
                 mod = .9;
             }
         }
-        boolean aptGunnery = enemy.getEntity().getCrew().getOptions()
-                                  .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean aptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         int enemy_firing_arcs[] = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
@@ -523,8 +522,7 @@ public class MoveOption extends MovePath {
                                 : .05)
                         * centity.entity.getWeight()
                         * Compute.oddsAbove(3 + modifier,
-                                            getEntity().getCrew().getOptions()
-                                                       .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)))
+                                            getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))
                         / 100)
                         + (((1 - enemy.centity.base_psr_odds)
                             * enemy.getEntity().getWeight()) / 10.0);

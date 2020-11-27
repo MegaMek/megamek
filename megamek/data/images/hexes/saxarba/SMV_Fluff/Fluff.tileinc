@@ -1,0 +1,64 @@
+# ----------------------------------------------------
+# --------------- SirMegaV Custom  -------------------
+# --------------- General Fluff ---------------
+# ----------------------------------------------------
+
+# Swimming Pools, Glass Roofs, Gardens
+# Should be included late so they draw on top of other stuff
+
+# fluff:90:1-9 is Glass Roofs
+# fluff:91:1-12 is Sports Courts
+# fluff:92:1-5 is Swimming Pools
+# fluff:93:1-14 is Gardens
+
+#Glass Roof
+
+super * "fluff:90:1" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-1-01.gif"
+super * "fluff:90:2" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-1-02.gif"
+super * "fluff:90:3" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-1-03.gif"
+super * "fluff:90:4" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-1-04.gif"
+super * "fluff:90:5" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-2-01.gif"
+super * "fluff:90:6" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-2-02.gif"
+super * "fluff:90:7" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-2-03.gif"
+super * "fluff:90:8" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-2-04.gif"
+super * "fluff:90:9" "" "saxarba/SMV_Fluff/FluffSystem-01-Building-07-GlassRoof-3-01.gif"
+
+# Tennis and Basketball Courts
+
+super * "fluff:91:1" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-1-01.png"
+super * "fluff:91:2" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-1-02.png"
+super * "fluff:91:3" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-1-03.png"
+super * "fluff:91:4" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-2-01.png"
+super * "fluff:91:5" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-2-02.png"
+super * "fluff:91:6" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-01-TennisCourt-2-03.png"
+super * "fluff:91:7" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-1-01.png"
+super * "fluff:91:8" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-1-02.png"
+super * "fluff:91:9" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-1-03.png"
+super * "fluff:91:10" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-2-01.png"
+super * "fluff:91:11" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-2-02.png"
+super * "fluff:91:12" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-02-BasketBallCourt-2-03.png"
+
+# Swimming Pool
+
+super * "fluff:92:1" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-03-SwimmingPool-1-01.png"
+super * "fluff:92:2" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-03-SwimmingPool-1-02.png"
+super * "fluff:92:3" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-03-SwimmingPool-1-03.png"
+super * "fluff:92:4" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-03-SwimmingPool-1-04.png"
+super * "fluff:92:5" "" "saxarba/SMV_Fluff/FluffSystem-02-Sport-03-SwimmingPool-1-05.png"
+
+# Garden
+
+super * "fluff:93:1" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-01-Tree-1-01.png"
+super * "fluff:93:2" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-01-Tree-1-02.png"
+super * "fluff:93:3" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-01-Tree-1-03.png"
+super * "fluff:93:4" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-01-Tree-1-04.png"
+super * "fluff:93:5" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-01-Tree-1-05.png"
+super * "fluff:93:6" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-02-Table-1-01.png"
+super * "fluff:93:7" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-02-Table-1-02.png"
+super * "fluff:93:8" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-02-Table-1-03.png"
+super * "fluff:93:9" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-02-Table-1-04.png"
+super * "fluff:93:10" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-02-Table-1-05.png"
+super * "fluff:93:11" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-03-Landscape-1-01.png"
+super * "fluff:93:12" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-03-Landscape-1-02.png"
+super * "fluff:93:13" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-03-Landscape-1-03.png"
+super * "fluff:93:14" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-03-Landscape-1-04.png"

@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -32,7 +32,7 @@ public class SpaceBombAttack extends Weapon {
 
     public SpaceBombAttack() {
         name = "Space Bomb";
-        setInternalName(Aero.SPACE_BOMB_ATTACK);
+        setInternalName(IBomber.SPACE_BOMB_ATTACK);
         heat = 0;
         damage = DAMAGE_SPECIAL;
         ammoType = AmmoType.T_NA;
@@ -41,7 +41,7 @@ public class SpaceBombAttack extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.0f;
+        tonnage = 0.0;
         criticals = 0;
         bv = 0;
         cost = 0;

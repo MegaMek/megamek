@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -45,7 +45,7 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 Mauser 960 Assault System:APM
@@ -95,4 +95,3 @@ biped
 <weightclass>
 0
 </weightclass>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ HSCL-1-OC
 3064
 </year>
 
+<originalBuildYear>
+3064
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -78,22 +85,28 @@ ISMediumPulseLaser:OMNI
 
 <Left Wing Equipment>
 ISUltraAC20:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISUltraAC20:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
-IS Ultra AC/20 Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+</Fuselage Equipment>
 
 <source>
 TRO 3067 - Civil War
@@ -102,4 +115,3 @@ TRO 3067 - Civil War
 <tonnage>
 75.0
 </tonnage>
-

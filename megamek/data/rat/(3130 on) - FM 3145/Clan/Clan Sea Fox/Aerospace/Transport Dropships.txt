@@ -1,12 +1,14 @@
 3145 Clan Sea Fox Transport Dropships
 Aqueduct Liquid Carrier (Standard),1
-Mule (Standard),2
+Mule (2737),2
 Danais (Standard),3
-Union C,4
-Broadsword (Standard),5
-Union C,6
+Broadsword (2979),5
 Model 96 'Elephant' (Standard),5
-Overlord C,4
-Broadsword (Standard),3
-Titan (Clan),2
+Broadsword (2979),3
+Titan (2953),2
 Nagasawa (Standard),1
+Union C (2829),4
+Union C (2829) (Tank),2
+Union C (2840) (Cargo),4
+Overlord C (2818),2
+Overlord C (2818) (Tank),2

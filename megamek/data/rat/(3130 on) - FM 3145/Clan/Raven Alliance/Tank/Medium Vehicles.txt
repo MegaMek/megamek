@@ -1,7 +1,7 @@
 3145 Raven Alliance Medium Vehicles
 Ku Wheeled Assault Tank (Standard), 1
 Vedette Medium Tank (Standard), 2
-Cizin (Standard), 3
+Cizin Hover Tank (Standard), 3
 Tyr Infantry Support Tank (Standard), 4
 Hachiman Fire Support Tank (Standard), 5
 Ares Medium Tank (Standard), 6

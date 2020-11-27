@@ -26,8 +26,10 @@ import megamek.common.Mech;
 import megamek.common.NarcPod;
 import megamek.common.Protomech;
 import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -59,7 +61,34 @@ public class NarcHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         getAMSHitsMod(vPhaseReport);
-        if (amsEngaged) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            // Or bay AMS if Aero Sanity is on
+            Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                    : null;
+            if (entityTarget != null && entityTarget.isLargeCraft()) {
+                if (getParentBayHandler() != null) {
+                    WeaponHandler bayHandler = getParentBayHandler();
+                    amsBayEngagedMissile = bayHandler.amsBayEngagedMissile;
+                    pdBayEngagedMissile = bayHandler.pdBayEngagedMissile;
+                }
+            }
+        } else {
+            calcCounterAV();
+        }
+        // Report AMS/Pointdefense failure due to Overheating.
+        if (pdOverheated 
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            Report r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } 
+        if (amsEngaged || apdsEngaged || amsBayEngagedMissile || pdBayEngagedMissile) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -84,6 +113,20 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         return 1;
     }
+    
+    /**
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     */
+    protected void setAMSBayReportingFlag() {
+        amsBayEngagedMissile = true;
+    }
+    
+    /**
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     */
+    protected void setPDBayReportingFlag() {
+        pdBayEngagedMissile = true;
+    }
 
     /*
      * (non-Javadoc)
@@ -93,6 +136,15 @@ public class NarcHandler extends MissileWeaponHandler {
     @Override
     protected int calcnCluster() {
         return 1;
+    }
+    
+    @Override
+    /**
+     * Narcs apply "damage" all in one block for AMS purposes
+     * This was referenced incorrectly for Aero damage.
+     */
+    protected boolean usesClusterTable() {
+        return false;
     }
 
     /*
@@ -133,8 +185,10 @@ public class NarcHandler extends MissileWeaponHandler {
         hit.setAttackerId(getAttackerId());
         
         // Catch Protomech near-misses here.
+        // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof Protomech
-            && hit.getLocation() == Protomech.LOC_NMISS) {
+                && hit.getLocation() == Protomech.LOC_NMISS
+                && !((Protomech)entityTarget).isGlider()) {
             Report r = new Report(6035);
             r.subject = entityTarget.getId();
             vPhaseReport.add(r);

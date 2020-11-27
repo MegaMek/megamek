@@ -5,7 +5,7 @@ Overlord A3,3
 Duat Military Transport (Standard),4
 Dragau II Assault Interceptor (Standard),5
 Interdictor Pocket Warship (Standard),6
-Interdictor Pocket Warship (Anti-Ship),5
+Interdictor Pocket Warship (Sub-Capital),5
 Arcadia (3080),4
 Isegrim Assault DropShip (Standard),3
 Interdictor Pocket Warship (SCC),2

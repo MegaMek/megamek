@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 /**
  * IHex represents a single hex on the board.
  */
@@ -318,6 +320,16 @@ public interface IHex extends Cloneable {
     public abstract Coords getCoords();
 
     public abstract void setCoords(Coords c);
+    
+    public abstract boolean hasCliffTopTowards(IHex otherHex); 
 
-    public abstract boolean isValid(StringBuffer errBuff);
+    /**
+     * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report of why the hex is
+     * valid.  If errBuff is null, isValid shortcircuits on the first failure, otherwise it checks for all failures
+     * and logs them.
+     * 
+     * @param errBuff  Buffer to contain error messages.  If null, method returns on first failure.
+     * @return
+     */
+    public abstract boolean isValid(@Nullable StringBuffer errBuff);
 }

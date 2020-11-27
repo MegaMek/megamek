@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-SturmFeur “Kalki” Cruise Missile Launcher
+SturmFeur 'Kalki' Cruise Missile Launcher
 </Name>
 
 <Model>
@@ -24,6 +24,10 @@ SturmFeur “Kalki” Cruise Missile Launcher
 3068
 </year>
 
+<originalBuildYear>
+3068
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
@@ -51,12 +58,12 @@ Tracked
 </armor>
 
 <Body Equipment>
+ISCruiseMissile50Ammo
 IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
 ISCruiseMissile50
-ISCruiseMissile50Ammo
 </Front Equipment>
 
 <Front Right Equipment>
@@ -79,6 +86,10 @@ Machine Gun
 Machine Gun
 </Turret Equipment>
 
+<history>
+The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
+</history>
+
 <source>
 XTR Corporations
 </source>
@@ -86,8 +97,3 @@ XTR Corporations
 <tonnage>
 125.0
 </tonnage>
-
-<history>
-The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
-</history>
-

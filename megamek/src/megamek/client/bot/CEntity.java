@@ -40,10 +40,10 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ISIHGaussRifle;
-import megamek.common.weapons.ISSnubNosePPC;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 public class CEntity {
 
@@ -65,7 +65,7 @@ public class CEntity {
 
         public CEntity get(Entity es) {
             CEntity result = null;
-            if ((result = super.get(new Integer(es.getId()))) == null) {
+            if ((result = super.get(Integer.valueOf(es.getId()))) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -73,7 +73,7 @@ public class CEntity {
         }
 
         public CEntity get(int id) {
-            return get(new Integer(id));
+            return get(Integer.valueOf(id));
         }
     }
 
@@ -83,36 +83,36 @@ public class CEntity {
     // table
 
     // Tank armor is either the side hit or the turret
-    final static double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
+    static final double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
             { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
-    final static double TANK_WT_ARMOR[][] = {
+    static final double TANK_WT_ARMOR[][] = {
             { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
             { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
             { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
             { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
 
     // Infantry don't have a facing. In fact, they don't have armor...
-    final static double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
+    static final double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
             { 1.0 } };
 
     // Battle armor units have multiple suits
-    final static double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
+    static final double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
             { 0.25, 0.25, 0.25, 0.25 } };
-    final static double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
+    static final double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
             { 0.2, 0.2, 0.2, 0.2, 0.2 } };
-    final static double PROTOMECH_ARMOR[][] = {
+    static final double PROTOMECH_ARMOR[][] = {
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
             { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
-    final static double PROTOMECH_MG_ARMOR[][] = {
+    static final double PROTOMECH_MG_ARMOR[][] = {
             { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
             { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
-    final static double MECH_ARMOR[][] = {
+    static final double MECH_ARMOR[][] = {
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
                     4.0 / 36, 4.0 / 36 },
             { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
@@ -121,9 +121,9 @@ public class CEntity {
                     2.0 / 36, 8.0 / 36 },
             { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
                     8.0 / 36, 2.0 / 36 } };
-    final static double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
+    static final double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
             { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
-    final static double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
+    static final double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
             { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
 
@@ -311,9 +311,7 @@ public class CEntity {
 
         overall_armor_percent = entity.getArmorRemainingPercent();
         base_psr_odds = Compute.oddsAbove(entity.getBasePilotingRoll()
-                .getValue(),
-                                          entity.getCrew().getOptions().booleanOption(OptionsConstants
-                                                                                              .PILOT_APTITUDE_PILOTING)) / 100;
+                .getValue(), entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100;
 
         // Heat characterisation - how badly will a Mech overheat this round
         int heat_capacity = entity.getHeatCapacity();
@@ -389,8 +387,7 @@ public class CEntity {
                 cur_weapon_damage[1] = (tsm_offset ? 1.0 : 0.5)
                         * (entity.getWeight() / 10)
                         * (Compute.oddsAbove(entity.getCrew().getPiloting(),
-                                             entity.getCrew().getOptions()
-                                                   .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100);
+                                             entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100);
 
                 // Either a kick or double-punch to the front
                 overall_damage[Compute.ARC_FORWARD][1] = 2.0 * cur_weapon_damage[1];
@@ -408,8 +405,7 @@ public class CEntity {
                 overall_damage[Compute.ARC_360][0] = (hits_by_racksize[number_of_shooters]
                         * ((BattleArmor) entity).getVibroClaws()
                         * Compute.oddsAbove(gunnery,
-                                            entity.getCrew().getOptions()
-                                                  .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY))) / 100.0;
+                                            entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))) / 100.0;
             }
 
             // Iterate over each weapon, calculating average damage
@@ -431,10 +427,10 @@ public class CEntity {
                 // Anti-Mech attacks are difficult to set up and have bad
                 // odds most of the time. This means they have little
                 // strategic impact.
-                if ((weapon.getInternalName() == Infantry.SWARM_MEK)
-                        || (weapon.getInternalName() == Infantry.LEG_ATTACK)
-                        || (weapon.getInternalName() == Infantry.SWARM_MEK)
-                        || (weapon.getInternalName() == Infantry.STOP_SWARM)) {
+                if (weapon.getInternalName().equals(Infantry.SWARM_MEK)
+                        || weapon.getInternalName().equals(Infantry.LEG_ATTACK)
+                        || weapon.getInternalName().equals(Infantry.SWARM_MEK)
+                        || weapon.getInternalName().equals(Infantry.STOP_SWARM)) {
                     continue;
                 }
 
@@ -449,8 +445,7 @@ public class CEntity {
                 ammo_ranges = getAmmoRanges(weapon, ammo_list);
                 cur_weapon_damage = getRawDamage(cur_weapon, ammo_ranges);
 
-                boolean aptGunnery = entity.getCrew().getOptions()
-                                           .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
 
                 // Apply to-hit modifiers to the damage values
                 cur_weapon_damage = getExpectedDamage(weapon, gunnery,
@@ -572,8 +567,7 @@ public class CEntity {
                     continue;
                 }
 
-                boolean aptGunnery = entity.getCrew().getOptions()
-                                           .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+                boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
 
                 cur_weapon_damage = CEntity.getRawDamage(cur_weapon, null);
                 cur_weapon_damage = CEntity.getExpectedDamage(weapon, gunnery,
@@ -1062,7 +1056,7 @@ public class CEntity {
     }
 
     public Integer getKey() {
-        return new Integer(entity.getId());
+        return Integer.valueOf(entity.getId());
     }
 
     public MoveOption.Table getAllMoves(Client client) {
@@ -1436,6 +1430,8 @@ public class CEntity {
 
             // LRMs, SRMs, which may have Artemis
             if ((linked_ammo == AmmoType.T_SRM)
+                    || (linked_ammo == AmmoType.T_SRM_IMP) 
+                    || (linked_ammo == AmmoType.T_LRM_IMP)
                     || (linked_ammo == AmmoType.T_LRM)) {
 
                 damage_value = hits_by_racksize[rack_size];
@@ -1456,7 +1452,7 @@ public class CEntity {
 
                 }
 
-                if (linked_ammo == AmmoType.T_SRM) {
+                if ((linked_ammo == AmmoType.T_SRM) || (linked_ammo == AmmoType.T_SRM_IMP)) {
                     damage_value *= 2.0;
                 }
 
@@ -1539,7 +1535,7 @@ public class CEntity {
 
             // Heavy Gauss, Snubnose PPC, variable speed lasers change
             // damage with range
-            if ((wt instanceof ISIHGaussRifle) || (wt instanceof ISSnubNosePPC)
+            if ((wt instanceof ISImpHGaussRifle) || (wt instanceof ISSnubNosePPC)
                     || (wt instanceof VariableSpeedPulseLaserWeapon)) {
                 raw_damage_array[0] = wt.getDamage(wt.getShortRange());
                 raw_damage_array[1] = wt.getDamage(wt.getShortRange());
@@ -1548,7 +1544,7 @@ public class CEntity {
             }
 
             // IS plasma rifle
-            if (wt.getInternalName() == "ISPlasmaRifle") {
+            if (wt.getInternalName().equals("ISPlasmaRifle")) {
 
                 damage_value = 12.0;
 
@@ -1559,7 +1555,7 @@ public class CEntity {
             }
 
             // Clan plasma cannon
-            if (wt.getInternalName() == "CLPlasmaCannon") {
+            if (wt.getInternalName().equals("CLPlasmaCannon")) {
 
                 damage_value = 10.5;
 
@@ -1908,7 +1904,7 @@ public class CEntity {
                 total_mod += 4;
             }
 
-            boolean aptGunnery = attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            boolean aptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
             modified_damages[cur_range] = (raw_damage
                                            * Compute.oddsAbove(total_mod, aptGunnery)) / 100.0;
 
@@ -1962,8 +1958,11 @@ public class CEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if ((obj instanceof Entity) || (obj instanceof CEntity)) {
-            return obj.hashCode() == hashCode();
+        if (obj instanceof Entity) {
+            return ((Entity)obj).getId() == entity.getId();
+        }
+        if (obj instanceof CEntity) {
+            return ((CEntity)obj).entity.getId() == entity.getId();
         }
         return false;
     }

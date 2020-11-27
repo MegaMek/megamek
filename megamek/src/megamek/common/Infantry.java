@@ -1,16 +1,18 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 
 package megamek.common;
 
@@ -24,9 +26,9 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -65,8 +67,9 @@ public class Infantry extends Entity {
     public static int PARAMEDICS        = 1 << 8;
     public static int PARATROOPS        = 1 << 9;
     public static int TAG_TROOPS        = 1 << 10;
-    public static int SCUBA             = 1 << 11;
-    public static int NUM_SPECIALIZATIONS = 12;
+    public static int XCT               = 1 << 11;
+    public static int SCUBA             = 1 << 12;
+    public static int NUM_SPECIALIZATIONS = 13;
     public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
             | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
             | TRENCH_ENGINEERS;
@@ -121,12 +124,12 @@ public class Infantry extends Entity {
      * Stores which infantry specializations are active.
      */
     private int infSpecs = 0;
-    
+
     /**
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops,
      * which need to enter a hex every turn to remain in flight.
      */
-    
+
     private boolean microlite = false;
 
     /**
@@ -152,7 +155,7 @@ public class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't
     // attack
     private int dugIn = DUG_IN_NONE;
-    
+
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
     private boolean isCallingSupport = false;
@@ -171,7 +174,7 @@ public class Infantry extends Entity {
     public static final String SWARM_MEK = "SwarmMek";
     public static final String SWARM_WEAPON_MEK = "SwarmWeaponMek";
     public static final String STOP_SWARM = "StopSwarm";
-    
+
     public static final int ANTI_MECH_SKILL_UNTRAINED = 8;
     public static final int ANTI_MECH_SKILL_FOOT = 5;
     public static final int ANTI_MECH_SKILL_JUMP = 6;
@@ -208,6 +211,158 @@ public class Infantry extends Entity {
         setMovementMode(EntityMovementMode.INF_LEG);
         // Determine the number of MPs.
         setOriginalWalkMP(1);
+    }
+
+    @Override
+    public int getUnitType() {
+        return UnitType.INFANTRY;
+    }
+
+    public CrewType defaultCrewType() {
+        return CrewType.CREW;
+    }
+
+    public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
+        TechAdvancement techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        switch(movementMode) {
+            case INF_MOTORIZED:
+                techAdvancement.setTechRating(RATING_B)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            case INF_JUMP:
+                techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+                    .setTechRating(RATING_D).setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            case INF_UMU:
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_B)
+                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                break;
+            case WHEELED:
+                techAdvancement.setTechRating(RATING_A)
+                    .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            case TRACKED:
+                techAdvancement.setTechRating(RATING_B)
+                    .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            case HOVER:
+                techAdvancement.setTechRating(RATING_C)
+                    .setAvailability(RATING_A, RATING_B, RATING_A, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            case VTOL:
+                techAdvancement.setAdvancement(DATE_ES, DATE_ES).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                break;
+            case SUBMARINE:
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_C)
+                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                break;
+            case INF_LEG:
+            default:
+                techAdvancement.setTechRating(RATING_A)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                break;
+            }
+        return techAdvancement;
+    }
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    public static TechAdvancement getCombatEngineerTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getMarineTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getMountainTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getParatrooperTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getParamedicTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getTAGTroopsTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
+                .setClanAdvancement(2585, 2600)
+                .setApproximate(true, false, false, false, false).setTechRating(RATING_E)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)
+                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    public static TechAdvancement getAntiMekTA() {
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2456, 2460, 2500).setApproximate(true, false, false)
+                .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+        super.addSystemTechAdvancement(ctl);
+        ctl.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+            ctl.addComponent(Infantry.getCombatEngineerTA());
+        }
+        if (hasSpecialization(MARINES)) {
+            ctl.addComponent(Infantry.getMarineTA());
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+            ctl.addComponent(Infantry.getMountainTA());
+        }
+        if (hasSpecialization(PARATROOPS)) {
+            ctl.addComponent(Infantry.getParatrooperTA());
+        }
+        if (hasSpecialization(PARAMEDICS)) {
+            ctl.addComponent(Infantry.getParamedicTA());
+        }
+        if (hasSpecialization(TAG_TROOPS)) {
+            ctl.addComponent(Infantry.getTAGTroopsTA());
+        }
+        if (isAntiMekTrained()) {
+            ctl.addComponent(Infantry.getAntiMekTA());
+        }
     }
 
     /**
@@ -263,20 +418,20 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-                && getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
+                && hasAbility(OptionsConstants.MD_PL_MASC)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
-        if ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+        if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                         || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
@@ -333,8 +488,8 @@ public class Infantry extends Entity {
             mp = getOriginalJumpMP();
         }
         if ((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
+                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
@@ -356,6 +511,26 @@ public class Infantry extends Entity {
         }
         mp = Math.max(mp - windP, 0);
         return mp;
+    }
+
+    @Override
+    public boolean hasUMU() {
+        return getMovementMode().equals(EntityMovementMode.INF_UMU)
+                || getMovementMode().equals(EntityMovementMode.SUBMARINE);
+    }
+
+    @Override
+    public int getActiveUMUCount() {
+        return getAllUMUCount();
+    }
+
+    @Override
+    public int getAllUMUCount() {
+        if (hasUMU()) {
+            return jumpMP;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -387,8 +562,10 @@ public class Infantry extends Entity {
         // Additional restrictions for hidden units
         if (isHidden()) {
             // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
+            if ((hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD))
+                    && (!hex.containsTerrain(Terrains.BUILDING)
+                            && !hex.containsTerrain(Terrains.RUBBLE))){
                 return true;
             }
             // Can't deploy on a bridge
@@ -434,12 +611,12 @@ public class Infantry extends Entity {
                 return true;
             }
         }
-        
+
         if (hex.terrainLevel(Terrains.WATER) <= 0
         		&& getMovementMode() == EntityMovementMode.SUBMARINE) {
         	return true;
         }
-        
+
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
             if ((getMovementMode() == EntityMovementMode.HOVER)
@@ -668,8 +845,8 @@ public class Infantry extends Entity {
      * Infantry build no heat.
      */
     @Override
-    public int getHeatCapacity() {
-        return 999;
+    public int getHeatCapacity(boolean radicalHeatSinks) {
+        return DOES_NOT_TRACK_HEAT;
     }
 
     /**
@@ -732,7 +909,7 @@ public class Infantry extends Entity {
 
         double dbr = 0; //defensive battle rating
 
-        dbr = men * 1.5 * getDamageDivisor();
+        dbr = men * 1.5 * calcDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
                 .getValue();
 
@@ -763,7 +940,7 @@ public class Infantry extends Entity {
         bvText.append(endRow);
 
         if(hasDEST()) {
-            tmmFactor += 0.1;
+            tmmFactor += 0.2;
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("DEST:");
@@ -771,7 +948,7 @@ public class Infantry extends Entity {
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append("+0.1");
+            bvText.append("+0.2");
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -844,7 +1021,7 @@ public class Infantry extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
-        bvText.append(df.format(getDamageDivisor()));
+        bvText.append(df.format(calcDamageDivisor()));
         bvText.append(endColumn);
         bvText.append(endRow);
 
@@ -856,7 +1033,7 @@ public class Infantry extends Entity {
         bvText.append(" x 1.5 x ");
         bvText.append(tmmFactor);
         bvText.append(" x ");
-        bvText.append(getDamageDivisor());
+        bvText.append(calcDamageDivisor());
         bvText.append(endColumn);
         bvText.append(startColumn);
 
@@ -864,10 +1041,10 @@ public class Infantry extends Entity {
         bvText.append(df.format(dbr));
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         // double weaponbv;
         double obr; //offensive battle rating
-        
+
         // adjust further for speed factor
         // this is a bit weird, because the formula gives
         // a different result than the table, because MASC/TSM
@@ -904,7 +1081,7 @@ public class Infantry extends Entity {
         	}
             ambv *= men/squadsize;
         }
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("<b>Offensive Battle Rating Calculation:</b>");
@@ -1030,10 +1207,10 @@ public class Infantry extends Entity {
         bvText.append(df.format(obr));
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
-        
+
         double bv;
         if (useGeometricMeanBV()) {
             bv = 2 * Math.sqrt(obr * dbr);
@@ -1058,7 +1235,7 @@ public class Infantry extends Entity {
         bvText.append(df.format(bv));
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         double utm; //unit type modifier
         switch (getMovementMode()) {
         case INF_MOTORIZED:
@@ -1079,7 +1256,7 @@ public class Infantry extends Entity {
         	utm = 1.0;
         	break;
         }
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Base Unit Type Modifier:");
@@ -1090,7 +1267,7 @@ public class Infantry extends Entity {
         bvText.append(df.format(utm));
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         if (hasSpecialization(COMBAT_ENGINEERS)) {
         	utm += 0.1;
             bvText.append(startRow);
@@ -1156,9 +1333,21 @@ public class Infantry extends Entity {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        
-        //TODO: add + 0.1 for XCT
-        
+
+        if (hasSpecialization(XCT)) {
+            utm += 0.1;
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("XCT:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("0.1");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1189,7 +1378,7 @@ public class Infantry extends Entity {
         bvText.append(" x ");
         bvText.append(df.format(utm));
         bvText.append(endColumn);
-        
+
         bv *= utm;
         bvText.append(startColumn);
         bvText.append((int)Math.round(bv));
@@ -1300,9 +1489,15 @@ public class Infantry extends Entity {
      * roll for the piloting skill check. now includes the level 3 terains which
      * can bog down
      */
+    public PilotingRollData checkBogDown(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, int lastElev, boolean isPavementStep) {
+        return checkBogDown(step, curHex, lastPos, curPos, isPavementStep);
+    }
+
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
-        PilotingRollData roll = new PilotingRollData(getId(), 5,
+        PilotingRollData roll = new PilotingRollData(getId(), 4,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0)
@@ -1328,34 +1523,33 @@ public class Infantry extends Entity {
     }
 
   /**
-  * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.  
-    *this better considers AntiMek training and Weapons and armor costs.  
+  * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.
+    *this better considers AntiMek training and Weapons and armor costs.
   */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double multiplier = 1;     //Cost Multiplier per TM
         double pweaponCost = 0;  //Primary Weapon Cost
         double sweaponCost = 0; // Secondary Weapon Cost
         double armorcost = 0; //Armor Cost
         double cost = 0; //Total Final Cost of Platoon or Squad.
         double primarySquad = 0; //Number of Troopers with Primary Weapon Only
         double secondSquad = 0; //Number oif Troopers with Secondary Weapon Only.
-        
+
         //Weapon Cost Calculation
         if(null != primaryW) {
             pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
         }
         if(null != secondW) {
-            sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;  
+            sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;
         }
-       
+
         //Determining Break down of who would have primary and secondary weapons.
         primarySquad = (squadsize - secondn) * squadn;
         secondSquad = menStarting - primarySquad;
-        
+
         //Squad Cost with just the weapons.
         cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
-        
+
         /* Check whether the unit has an armor kit. If not, calculate value for custom
          * armor settings.
          */
@@ -1381,7 +1575,7 @@ public class Infantry extends Entity {
 	        if(hasSneakIR()) {
 	            nSneak++;
 	        }
-	
+
 	        if(hasDEST()) {
 	            armorcost += 50000;
 	        }
@@ -1394,71 +1588,17 @@ public class Infantry extends Entity {
 	        else if(nSneak == 3) {
 	            armorcost += 28000;
 	        }
-	
+
 	        if(hasSpaceSuit()) {
 	            armorcost += 5000;
 	        }
         }
-        
+
         //Cost of armor on a per man basis added
         cost += (armorcost * menStarting);
-        
 
-        //Anti-Mek Trained Multiplier
-        if (isAntiMekTrained()) {
-            multiplier = 1;
-        }
-
-        //Add in motive type costs
-        switch (getMovementMode()){
-            case INF_UMU:
-            	multiplier *= getAllUMUCount() > 1? 2.5 : 2;
-            	break;
-            case INF_LEG:
-                multiplier *= 1.0;
-                break;
-            case INF_MOTORIZED:
-                multiplier *= 1.6;
-                break;
-            case INF_JUMP:
-                multiplier *= 2.6;
-                break;
-            case HOVER:
-                multiplier *= 3.2;
-                break;
-            case WHEELED:
-                multiplier *= 3.2;
-                break;
-            case TRACKED:
-                multiplier *= 3.2;
-                break;
-            case VTOL:
-                multiplier *= hasMicrolite()? 4 : 4.5;
-                break;
-            case SUBMARINE:
-            	/* No cost given in TacOps, using basic mechanized cost for now */ 
-                multiplier *= 3.2;
-            	break;
-            default:
-                break;
-        }
-        
-        //add in specialization costs
-        if (hasSpecialization(COMBAT_ENGINEERS)) {
-        	multiplier *= 5;
-        }
-        if (hasSpecialization(MARINES)) {
-        	multiplier *= 3;
-        }
-        if (hasSpecialization(MOUNTAIN_TROOPS)) {
-        	multiplier *= 2;
-        }
-        if (hasSpecialization(PARATROOPS)) {
-        	multiplier *= 3;
-        }
-        /* TODO: paramedics cost an addition x0.375 per paramedic */
-
-        cost = cost * multiplier;
+        // Price multiplier includes anti-mech training, motive type, and specializations
+        cost = cost * getPriceMultiplier();
 
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
@@ -1468,9 +1608,72 @@ public class Infantry extends Entity {
         }
         return cost;
     }
-    
+
+    @Override
+    public double getPriceMultiplier() {
+        double priceMultiplier = 1.0;
+
+        //Anti-Mek Trained Multiplier
+        if (isAntiMekTrained()) {
+            priceMultiplier *= 5.0;
+        }
+
+        // Motive type costs
+        switch (getMovementMode()){
+            case INF_UMU:
+                priceMultiplier *= getAllUMUCount() > 1? 2.5 : 2;
+                break;
+            case INF_LEG:
+                priceMultiplier *= 1.0;
+                break;
+            case INF_MOTORIZED:
+                priceMultiplier *= 1.6;
+                break;
+            case INF_JUMP:
+                priceMultiplier *= 2.6;
+                break;
+            case HOVER:
+                priceMultiplier *= 3.2;
+                break;
+            case WHEELED:
+                priceMultiplier *= 3.2;
+                break;
+            case TRACKED:
+                priceMultiplier *= 3.2;
+                break;
+            case VTOL:
+                priceMultiplier *= hasMicrolite()? 4 : 4.5;
+                break;
+            case SUBMARINE:
+                /* No cost given in TacOps, using basic mechanized cost for now */
+                priceMultiplier *= 3.2;
+                break;
+            default:
+                break;
+        }
+
+        // Specialization costs
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+            priceMultiplier *= 5;
+        }
+        if (hasSpecialization(MARINES)) {
+            priceMultiplier *= 3;
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+            priceMultiplier *= 2;
+        }
+        if (hasSpecialization(PARATROOPS)) {
+            priceMultiplier *= 3;
+        }
+        if (hasSpecialization(XCT)) {
+            priceMultiplier *= 5;
+        }
+        // TODO: paramedics cost an addition x0.375 per paramedic
+        return priceMultiplier;
+    }
+
     /**
-     * The alternate cost here is used by MekHQ to create costs that reflect just the cost of 
+     * The alternate cost here is used by MekHQ to create costs that reflect just the cost of
      * equipment. The motive costs here are based on the costs associated with an auto-rifle
      * platoon.
      */
@@ -1489,7 +1692,7 @@ public class Infantry extends Entity {
         if (armor != null) {
         	cost += armor.getCost(this, false, LOC_INFANTRY);
         }
-        
+
         //Add in motive type costs
         switch (getMovementMode()){
             case INF_UMU:
@@ -1530,6 +1733,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        if (getArmorKit() != null) {
+            if (getArmorKit().hasSubType(MiscType.S_XCT_VACUUM)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_COLD_WEATHER) && (game.getPlanetaryConditions().getTemperature() < -30)) {
+                return false;
+            } else if (getArmorKit().hasSubType(MiscType.S_HOT_WEATHER) && (game.getPlanetaryConditions().getTemperature() > 50)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         if (hasSpaceSuit() || isMechanized()) {
             return false;
         }
@@ -1538,7 +1752,11 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInVacuum() {
-        return !hasSpaceSuit();
+        if (getMovementMode() == EntityMovementMode.VTOL) {
+            return true;
+        } else {
+            return !hasSpaceSuit();
+        }
     }
 
     @Override
@@ -1555,8 +1773,8 @@ public class Infantry extends Entity {
     public boolean doomedInSpace() {
         return true;
     }
-    
-    
+
+
     @Override
     public boolean canAssaultDrop() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
@@ -1598,7 +1816,7 @@ public class Infantry extends Entity {
                 dugIn = DUG_IN_NONE;
             }
         }
-        
+
         setTakingCover(false);
         super.newRound(roundNumber);
     }
@@ -1634,7 +1852,7 @@ public class Infantry extends Entity {
      * whether or not they have anti-mek training.  If the input is false, the
      * anti-mek skill is set to the default untrained value, otherwise it's
      * set to the default value based on motive type.
-     * 
+     *
      * @param amTraining
      */
     public void setAntiMekSkill(boolean amTraining) {
@@ -1644,15 +1862,15 @@ public class Infantry extends Entity {
         if (amTraining) {
             if ((getMovementMode() == EntityMovementMode.INF_MOTORIZED)
                     || getMovementMode() == EntityMovementMode.INF_JUMP) {
-                getCrew().setPiloting(ANTI_MECH_SKILL_JUMP);
+                getCrew().setPiloting(ANTI_MECH_SKILL_JUMP, 0);
             } else {
-                getCrew().setPiloting(ANTI_MECH_SKILL_FOOT);
+                getCrew().setPiloting(ANTI_MECH_SKILL_FOOT, 0);
             }
         } else {
-            getCrew().setPiloting(ANTI_MECH_SKILL_UNTRAINED);            
+            getCrew().setPiloting(ANTI_MECH_SKILL_UNTRAINED, 0);
         }
     }
-    
+
     /**
      * Set the anti-mek skill for this unit.  Since Infantry don't have piloting
      * the crew's piloting skill is treated as the anti-mek skill.  This is
@@ -1663,12 +1881,12 @@ public class Infantry extends Entity {
         if (getCrew() == null) {
             return;
         }
-        getCrew().setPiloting(amSkill);
+        getCrew().setPiloting(amSkill, 0);
     }
-    
+
     /**
-     * Returns the anti-mek skill for this unit.  Since Infantry don't have 
-     * piloting the crew's piloting skill is treated as the anti-mek skill.  
+     * Returns the anti-mek skill for this unit.  Since Infantry don't have
+     * piloting the crew's piloting skill is treated as the anti-mek skill.
      * This is largely just a convenience method for setting the Crew's piloting
      * skill.
      * @return
@@ -1703,6 +1921,10 @@ public class Infantry extends Entity {
                 (getMovementMode() == EntityMovementMode.VTOL);
     }
 
+    public boolean isXCT() {
+        return hasSpecialization(XCT);
+    }
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()
@@ -1711,7 +1933,7 @@ public class Infantry extends Entity {
     public int getTotalCommGearTons() {
         return 0;
     }
-    
+
     public EquipmentType getArmorKit() {
     	Optional<Mounted> kit = getEquipment().stream()
     			.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
@@ -1722,7 +1944,7 @@ public class Infantry extends Entity {
     		return null;
     	}
     }
-    
+
     public void setArmorKit(EquipmentType armorKit) {
     	List<Mounted> toRemove = getEquipment().stream()
     			.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
@@ -1744,12 +1966,25 @@ public class Infantry extends Entity {
     		sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
     	}
     }
-    
-    public double getDamageDivisor() {
+
+    public double calcDamageDivisor() {
+        double divisor = damageDivisor;
+        // TSM implant reduces divisor to 0.5 if no other armor is worn
+        if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            divisor = 0.5;
+        }
+        // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
+        if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
+            divisor += 1.0;
+        }
+        return divisor;
+    }
+
+    public double getArmorDamageDivisor() {
     	return damageDivisor;
     }
 
-    public void setDamageDivisor(double d) {
+    public void setArmorDamageDivisor(double d) {
         damageDivisor = d;
     }
 
@@ -1780,7 +2015,11 @@ public class Infantry extends Entity {
     public void setDEST(boolean b) {
         dest = b;
     }
-    
+
+    public boolean hasSpecialization() {
+        return infSpecs != 0;
+    }
+
     public boolean hasSpecialization(int spec) {
         return (infSpecs & spec) > 0;
     }
@@ -1794,7 +2033,7 @@ public class Infantry extends Entity {
         if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
             // Need to add vibro shovels
             try {
-                EquipmentType shovels = EquipmentType.get("Vibro-Shovel");
+                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.VIBRO_SHOVEL);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
                 e.printStackTrace();
@@ -1816,7 +2055,7 @@ public class Infantry extends Entity {
         if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
             // Need to add vibro shovels
             try {
-                EquipmentType shovels = EquipmentType.get("Demolition Charge");
+                EquipmentType shovels = EquipmentType.get(EquipmentTypeLookup.DEMOLITION_CHARGE);
                 addEquipment(shovels, Infantry.LOC_INFANTRY);
             } catch (LocationFullException e) {
                 e.printStackTrace();
@@ -1836,9 +2075,8 @@ public class Infantry extends Entity {
             getMisc().removeAll(eqToRemove);
         }
         infSpecs = spec;
-        
     }
-    
+
     public static String getSpecializationName(int spec) {
         StringBuilder name = new StringBuilder();
         for (int i = 0; i < NUM_SPECIALIZATIONS; i++) {
@@ -1970,19 +2208,19 @@ public class Infantry extends Entity {
     public boolean isStealthy() {
        return  dest || sneak_camo || sneak_ir || sneak_ecm;
     }
-    
+
     public boolean hasMicrolite() {
     	return microlite;
     }
-    
+
     public void setMicrolite(boolean microlite) {
     	this.microlite = microlite;
     }
-    
+
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum
      * depth of 2.
-     * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization 
+     * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
      */
     public boolean isNonMechSCUBA() {
     	if (this instanceof BattleArmor) {
@@ -2103,6 +2341,7 @@ public class Infantry extends Entity {
                 default:
                     setOriginalWalkMP(1);
             }
+            addTechComponent(Infantry.getMotiveTechAdvancement(movementMode));
         }
     }
 
@@ -2115,15 +2354,17 @@ public class Infantry extends Entity {
     	setMovementMode(EntityMovementMode.INF_UMU);
     	setOriginalJumpMP(2);
     }
-    
+
     @Override
     public String getMovementModeAsString() {
-    	if (getMovementMode().equals(EntityMovementMode.VTOL)) {
-    		return hasMicrolite()? "Microlite" : "Microcopter";
-    	}
-    	if (getMovementMode() == EntityMovementMode.INF_UMU) {
-    		return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
-    	}
+        if (!hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            if (getMovementMode().equals(EntityMovementMode.VTOL)) {
+                return hasMicrolite()? "Microlite" : "Microcopter";
+            }
+            if (getMovementMode() == EntityMovementMode.INF_UMU) {
+                return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
+            }
+        }
     	return super.getMovementModeAsString();
     }
 
@@ -2163,7 +2404,7 @@ public class Infantry extends Entity {
             default:
                 mult = 0.085;
         }
-        
+
         if (hasSpecialization(COMBAT_ENGINEERS)) {
         	mult += 0.1;
         }
@@ -2173,40 +2414,27 @@ public class Infantry extends Entity {
         if (hasSpecialization(PARAMEDICS)) {
         	mult += 0.05;
         }
-            
-        double ton = men * mult;
-        
-        if(isAntiMekTrained()) {
-            ton += men * .015;
+        if(isAntiMekTrained()){
+        	mult +=.015;
         }
-        
+
+        double ton = men * mult;
+
+
         //add in field gun weight
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                ton += mounted.getType().getTonnage(this);
+                ton += mounted.getTonnage();
             }
         }
-        
-        return TestEntity.round(ton, TestEntity.Ceil.QUARTERTON);
+
+        return RoundWeight.nearestHalfTon(ton);
 
     }
-    
+
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
-        double divisor = getDamageDivisor();
-        if (getCrew() != null) {
-	    	// TSM reduces divisor to 0.5 if no other armor is worn.
-	    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
-	    		if (getArmorKit() == null) {
-	    			divisor = 0.5;
-	    		}
-	    	}
-	    	// Dermal armor adds one, cumulative with TSM (which gives a total of 1.5 if unarmored).
-	    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
-	    		divisor++;
-	    	}
-        }
-        sArmor.append(divisor);
+        sArmor.append(calcDamageDivisor());
         if(isArmorEncumbering()) {
             sArmor.append("E");
         }
@@ -2221,7 +2449,7 @@ public class Infantry extends Entity {
 
         if(hasSneakCamo() ||
         		(getCrew() != null
-        			&& getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
+        			&& hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
             sArmor.append(" (Camo) ");
         }
 
@@ -2262,8 +2490,8 @@ public class Infantry extends Entity {
             }
             if(wpn.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 hasArtillery = true;
-                if(wpn.getType().getTonnage(this) < smallestGun) {
-                    smallestGun = wpn.getType().getTonnage(this);
+                if(wpn.getTonnage() < smallestGun) {
+                    smallestGun = wpn.getTonnage();
                 }
             }
         }
@@ -2288,7 +2516,7 @@ public class Infantry extends Entity {
         moves.put(getMovementModeAsBattleForceString(),
                 Math.max(getWalkMP(), getJumpMP()) * 2);
     }
-    
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
@@ -2308,7 +2536,7 @@ public class Infantry extends Entity {
     public int getBattleForceStructurePoints() {
         return 1;
     }
-    
+
     @Override
     public int getNumBattleForceWeaponsLocations() {
         if (hasFieldGun()) {
@@ -2316,7 +2544,7 @@ public class Infantry extends Entity {
         }
         return 1;
     }
-    
+
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (index == location) {
@@ -2324,7 +2552,7 @@ public class Infantry extends Entity {
         }
         return 0;
     }
-    
+
     @Override
     public String getBattleForceLocationName(int index) {
         if (index == 0) {
@@ -2332,7 +2560,7 @@ public class Infantry extends Entity {
         }
         return LOCATION_ABBRS[index];
     }
-    
+
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
@@ -2358,11 +2586,11 @@ public class Infantry extends Entity {
         if (hasSpecialization(TRENCH_ENGINEERS)) {
             specialAbilities.put(BattleForceSPA.TRN, null);
         }
-        if (getCrew().getOptions().booleanOption("tsm_implant")) {
+        if (hasAbility("tsm_implant")) {
             specialAbilities.put(BattleForceSPA.TSI, null);
         }
     }
-    
+
     @Override
     public int getEngineHits() {
         return 0;
@@ -2375,19 +2603,16 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
+        double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: only "
-                        + NumberFormat.getPercentInstance().format(
-                                activeTroopPercent) + " troops remaining.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();
@@ -2395,17 +2620,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
     }
 
     @Override
     public boolean isDmgModerate() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
     }
 
     @Override
     public boolean isDmgLight() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
     }
 
     public boolean hasFieldGun() {
@@ -2435,12 +2660,16 @@ public class Infantry extends Entity {
         addCritical(loc, new CriticalSlot(mounted));
 
     }
+    
+    public boolean isConventionalInfantry() {
+        return true;
+    }
 
     @Override
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY;
     }
-    
+
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, IHex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -2448,12 +2677,13 @@ public class Infantry extends Entity {
                          "Infantry cannot fall");
         return roll;
     }
-    
+
     /**
      * Determines if there is valid cover for an infantry unit to utilize the
      * Using Non-Infantry as Cover rules (TO pg 108).
      * @param game
-     * @param position
+     * @param pos
+     * @param elevation
      * @return
      */
     public static boolean hasValidCover(IGame game, Coords pos, int elevation) {
@@ -2466,7 +2696,7 @@ public class Infantry extends Entity {
         boolean hasMovedEntity = false;
         // First, look for ground untis in the same hex that have already moved
         for (Entity e : game.getEntitiesVector(pos)) {
-            if (e.isDone() && !(e instanceof Infantry) 
+            if (e.isDone() && !(e instanceof Infantry)
                     && (e.getElevation() == elevation)) {
                 hasMovedEntity = true;
                 break;
@@ -2478,7 +2708,7 @@ public class Infantry extends Entity {
             Enumeration<Entity> wrecks = game.getWreckedEntities();
             while (wrecks.hasMoreElements()) {
                 Entity e = wrecks.nextElement();
-                if (pos.equals(e.getPosition()) 
+                if (pos.equals(e.getPosition())
                         && !(e instanceof Infantry)) {
                     hasMovedEntity = true;
                 }
@@ -2493,6 +2723,11 @@ public class Infantry extends Entity {
 
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
+    }
+
+    @Override
+    protected boolean hasViableWeapons() {
+        return !isCrippled();
     }
 
     /**

@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying crew or passengers in more luxury than standard quarters.
  */
 
 public final class FirstClassQuartersCargoBay extends Bay {
@@ -42,14 +42,24 @@ public final class FirstClassQuartersCargoBay extends Bay {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
+     * @param weight
      *            - The weight of troops (in tons) this space can carry.
      */
-    public FirstClassQuartersCargoBay(double space, int doors) {
-        totalSpace = (int)space/10;
-        weight = space;
-        currentSpace = (int)space/10;
+    public FirstClassQuartersCargoBay(double weight, int doors) {
+        totalSpace = (int) weight/10;
+        this.weight = weight;
+        currentSpace = (int) weight/10;
         this.doors = doors;
+        currentdoors = doors;
+    }
+
+    /**
+     * Create space for certain number of crew/passengers
+     *
+     * @param space The number of crew or passengers to accomodate
+     */
+    public FirstClassQuartersCargoBay(int space) {
+        this(space * 10, 0);
     }
 
     /**
@@ -64,15 +74,13 @@ public final class FirstClassQuartersCargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("1st Class Quarters ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }
@@ -88,8 +96,18 @@ public final class FirstClassQuartersCargoBay extends Bay {
     }
 
     @Override
+    public boolean isQuarters() {
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "1stclassquarters:" + totalSpace + ":" + doors;
+        return "1stclassquarters:" + weight + ":" + doors;
+    }
+
+    @Override
+    public long getCost() {
+        return 30000L * (long) totalSpace;
     }
 
 }

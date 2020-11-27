@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ S-2B
 2571
 </year>
 
+<originalBuildYear>
+2571
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 10
@@ -66,7 +73,6 @@ Aerodyne
 <Nose Equipment>
 Medium Laser
 Medium Laser
-IS Ammo MG - Full
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -81,6 +87,13 @@ Machine Gun
 Machine Gun
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MG - Full
+</Fuselage Equipment>
+
 <source>
 Field Report 2765 DCMS - Age of War
 </source>
@@ -88,4 +101,3 @@ Field Report 2765 DCMS - Age of War
 <tonnage>
 30.0
 </tonnage>
-

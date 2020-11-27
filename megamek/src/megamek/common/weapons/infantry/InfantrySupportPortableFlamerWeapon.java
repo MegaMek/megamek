@@ -17,37 +17,43 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.TechConstants;
+import megamek.common.AmmoType;
 
 /**
  * @author Sebastian Brocks
  */
 public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5741978934100309295L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5741978934100309295L;
 
-    public InfantrySupportPortableFlamerWeapon() {
-        super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
-        name = "Flamer (Man-Pack)";
-        setInternalName(name);
-        addLookupName("InfantryPortableFlamer");
-        addLookupName("Portable Flamer");
-        addLookupName("Flamer (man-portable)");
-        cost = 100;
-        bv = 0.50;
-        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.55;
-        infantryRange = 0;
-        crew = 1;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_C;
-    }
+	public InfantrySupportPortableFlamerWeapon() {
+		super();
+
+		name = "Flamer (Man-Portable)";
+		setInternalName(name);
+		addLookupName("InfantryPortableFlamer");
+		addLookupName("Portable Flamer");
+		addLookupName("Flamer (man-portable)");
+		addLookupName("Flamer (Man-Pack)");
+		ammoType = AmmoType.T_INFANTRY;
+		cost = 100;
+		bv = 0.50;
+        tonnage = .015;
+		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
+		infantryDamage = 0.55;
+		infantryRange = 0;
+		crew = 1;
+		ammoWeight = 0.0084;
+		ammoCost = 2;
+		shots = 12;
+		rulesRefs = " 273,TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setTechRating(RATING_C)
+		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

@@ -5,6 +5,7 @@ Description=A Lance of Strike Mechs must take down a heavily damaged Assault and
 BoardWidth=2
 BoardHeight=1
 BridgeCF=100
+RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
 Maps=RANDOM
 Factions=Strike,Assault
 Location_Strike=W

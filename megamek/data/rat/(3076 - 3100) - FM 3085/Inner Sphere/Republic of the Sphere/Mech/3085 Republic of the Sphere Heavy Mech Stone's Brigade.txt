@@ -5,7 +5,7 @@ Rifleman IIC 7,3
 Mangonel MNL-3L,4
 Arcas (Standard),5
 Avatar AV1-O,6
-Vulture (Standard),5
+Vulture (Mad Dog) Prime,5
 Arcas 2, 4
 Tundra Wolf 4,3
 Mad Cat (Timber Wolf) Prime,2

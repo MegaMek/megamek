@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import megamek.MegaMek;
+
 /**
  * This class provides a skeletal implementation of path finder algorithm in a
  * given directed graph.
@@ -107,7 +109,7 @@ public class AbstractPathFinder<N, C, E> {
          * @param collection collection to be filtered
          * @return filtered collection
          */
-        final public Collection<T> doFilter(Collection<T> collection) {
+        public Collection<T> doFilter(Collection<T> collection) {
             List<T> filteredMoves = new ArrayList<>();
             for (T e : collection) {
                 if (shouldStay(e))
@@ -301,18 +303,13 @@ public class AbstractPathFinder<N, C, E> {
                     break;
             }
         } catch (OutOfMemoryError e) {
-            /*
-             * Some implementations can run out of memory if they consider and
-             * save in memory too many paths. Usually we can recover from this
-             * by ending prematurely while preserving already computed results.
-             */
-
-            candidates = null;
-            candidates = new PriorityQueue<E>(100, comparator);
-            e.printStackTrace();
-            System.err.println("Not enough memory to analyse all options."//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
-                    + "increase java memory limit.");//$NON-NLS-1$
+                    + "increase java memory limit.";
+            
+            MegaMek.getLogger().error(memoryMessage, e);
+        } catch(Exception e) {
+            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
 
@@ -359,6 +356,10 @@ public class AbstractPathFinder<N, C, E> {
             throw new NullPointerException();
         this.adjacencyMap = edgeNeighborsFactory;
     }
+    
+    public AdjacencyMap<E> getAdjacencyMap() {
+        return adjacencyMap;
+    }
 
     /**
      * Sets comparator.
@@ -381,6 +382,10 @@ public class AbstractPathFinder<N, C, E> {
         if (nodeFactory == null)
             throw new NullPointerException();
         this.destinationMap = nodeFactory;
+    }
+    
+    protected DestinationMap<N, E> getDestinationMap() {
+        return destinationMap;
     }
 
     /**

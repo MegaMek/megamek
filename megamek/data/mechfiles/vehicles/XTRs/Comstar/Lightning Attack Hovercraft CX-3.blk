@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CX-3
 3069
 </year>
 
+<originalBuildYear>
+3069
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 11
@@ -56,7 +63,8 @@ Hover
 </armor>
 
 <Body Equipment>
-ISSponsonTurret
+IS Vehicular Stealth
+SponsonTurret
 ISGuardianECMSuite
 </Body Equipment>
 
@@ -79,6 +87,10 @@ RL15(ST)
 <Rear Equipment>
 </Rear Equipment>
 
+<notes>
+Vehicle overweight and Heat wrong in TRO. No errata at this time.
+</notes>
+
 <source>
 XTRO ComStar - Jihad
 </source>
@@ -86,4 +98,3 @@ XTRO ComStar - Jihad
 <tonnage>
 35.0
 </tonnage>
-

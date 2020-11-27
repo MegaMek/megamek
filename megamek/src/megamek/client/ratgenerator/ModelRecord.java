@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Set;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
-import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
@@ -54,7 +54,6 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean starLeague;
 	private int weightClass;
 	private EntityMovementMode movementMode;
-	private UnitRole unitRole = UnitRole.UNDETERMINED;
 	private EnumSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
@@ -68,6 +67,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
 	
 	private boolean mechanizedBA;
+	private boolean magClamp;
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
@@ -98,6 +98,14 @@ public class ModelRecord extends AbstractUnitRecord {
     	double ammoBV = 0.0;
     	boolean losTech = false;
     	for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+    	    //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
+    	    //is that there is a null equipment name.
+    	    if (null == ms.getEquipmentNames().get(i)) {
+    	        MegaMek.getLogger().error(
+    	                "RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+    	                + ms.getName() + ", index " + i);
+    	        continue;
+    	    }
     		EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
     		if (eq == null) {
     			continue;
@@ -124,10 +132,11 @@ public class ModelRecord extends AbstractUnitRecord {
         			apWeapons = true;
         		}
         		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
+        		        || ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM_IMP
         				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
         		
-        		if (eq instanceof megamek.common.weapons.MGWeapon ||
-        				eq instanceof megamek.common.weapons.BPodWeapon) {
+        		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
+        				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
         			apWeapons = true;
         		}
         		if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {
@@ -151,16 +160,20 @@ public class ModelRecord extends AbstractUnitRecord {
    						networkMask |= NETWORK_COMPANY_COMMAND;
     				}        			
         		}
-    		} else if (eq.hasFlag(MiscType.F_UMU)){
+    		} else if (eq instanceof MiscType) {
+    		    if (eq.hasFlag(MiscType.F_UMU)) {
    				movementMode = EntityMovementMode.BIPED_SWIM;
-    		} else if (eq.hasFlag(MiscType.F_C3S)) {
-    			networkMask |= NETWORK_C3_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_C3I)) {
-    			networkMask |= NETWORK_C3I;
-    		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
-    			networkMask |= NETWORK_BOOSTED_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_NOVA)) {
-    			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_C3S)) {
+        			networkMask |= NETWORK_C3_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_C3I)) {
+        			networkMask |= NETWORK_C3I;
+        		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
+        			networkMask |= NETWORK_BOOSTED_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_NOVA)) {
+        			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+        		    magClamp = true;
+        		}
     		}
     	}
 		if (totalBV > 0 &&
@@ -222,18 +235,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		return starLeague;
 	}
 	
-	public UnitRole getUnitRole() {
-	    return unitRole;
-	}
-	
-	public void setUnitRole (UnitRole role) {
-	    if (role == null) {
-	        unitRole = UnitRole.UNDETERMINED;
-	    } else {
-	        unitRole = role;
-	    }
-	}
-	
 	public Set<MissionRole> getRoles() {
 		return roles;
 	}
@@ -290,7 +291,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			if (mr != null) {
 				roles.add(mr);
 			} else {
-				System.err.println("Could not parse mission role for "
+			    MegaMek.getLogger().error("Could not parse mission role for "
 						+ getChassis() + " " + getModel() + ": " + role);
 			}
 		}
@@ -338,6 +339,14 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	public void setMechanizedBA(boolean mech) {
 		mechanizedBA = mech;
+	}
+	
+	public boolean hasMagClamp() {
+	    return magClamp;
+	}
+	
+	public void setMagClamp(boolean magClamp) {
+	    this.magClamp = magClamp;
 	}
 }
 

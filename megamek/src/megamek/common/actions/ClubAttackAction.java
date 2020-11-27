@@ -49,6 +49,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
     private static final long serialVersionUID = -8744665286254604559L;
     private Mounted club;
     private int aiming;
+    private boolean zweihandering;
 
     /**
      * Creates new ClubAttackAction
@@ -59,19 +60,35 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.club = club;
         aiming = aimTable;
     }
-
+    
+    /**
+     * Creates a new club attack
+     * @param entityId - id of entity performing the attack
+     * @param targetType - type of target
+     * @param targetId - id of targeet
+     * @param club - The <code>Mounted</code> of the weapon doing the attack
+     * @param aimTable
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     */
     public ClubAttackAction(int entityId, int targetType, int targetId,
-                            Mounted club, int aimTable) {
+                            Mounted club, int aimTable, boolean zweihandering) {
         super(entityId, targetType, targetId);
         this.club = club;
         aiming = aimTable;
+        this.zweihandering = zweihandering;
+        
     }
 
     /**
-     * Damage that the specified mech does with a club attack
+     * Damage for the club attack
+     * @param entity - the entity performing the attack
+     * @param club - The <code>Mounted</code> of the weapon doing the attack
+     * @param targetInfantry - whether this attack targets infantry
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     * @return an integer of the damage dealt
      */
     public static int getDamageFor(Entity entity, Mounted club,
-            boolean targetInfantry) {
+            boolean targetInfantry, boolean zweihandering) {
         MiscType mType = (MiscType) (club.getType());
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
@@ -142,9 +159,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
             nDamage = 5;
         }
+        
+        //SMASH! CamOps, pg. 82
+        if(zweihandering) {
+            nDamage += (int) Math.floor(entity.getWeight() / 10.0);
+        }
 
         // TSM doesn't apply to some weapons, including Saws.
-        if ((entity.heat >= 9)
+        if (entity instanceof Mech && ((((entity.heat >= 9) && ((Mech) entity).hasTSM()) || ((Mech) entity).hasIndustrialTSM())
             && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                  || mType.hasSubType(MiscType.S_CHAINSAW)
                  || mType.hasSubType(MiscType.S_PILE_DRIVER)
@@ -159,7 +181,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                  || mType.hasSubType(MiscType.S_SPOT_WELDER)
                  || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
                 .hasSubType(MiscType.S_COMBINE))
-            && ((Mech) entity).hasTSM()) {
+            )) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();
@@ -175,20 +197,75 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         return nDamage
-               + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+               + entity.modifyPhysicalDamageForMeleeSpecialist();
     }
 
+    /**
+     * Modifiers to the to-hit roll for specific weapons
+     *
+     * @param clubType A physical weapon
+     * @return         The modifier to hit with the weapon
+     */
+    public static int getHitModFor(MiscType clubType) {
+        if (clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+            return 2;
+        } else if (clubType.hasSubType(MiscType.S_BACKHOE)
+                || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
+                || clubType.hasSubType(MiscType.S_WRECKING_BALL)
+                || clubType.hasSubType(MiscType.S_LANCE)
+                || clubType.hasSubType(MiscType.S_MACE)
+                || clubType.hasSubType(MiscType.S_MACE_THB)) {
+            return 1;
+        } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
+                || clubType.hasSubType(MiscType.S_DUAL_SAW)
+                || clubType.hasSubType(MiscType.S_FLAIL)) {
+            return 0;
+        } else if (clubType.hasSubType(MiscType.S_HATCHET)
+                || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
+            return -1;
+        } else if (clubType.hasSubType(MiscType.S_COMBINE)
+                || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                || clubType.hasSubType(MiscType.S_SWORD)
+                || clubType.hasSubType(MiscType.S_CHAIN_WHIP)
+                || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
+                || clubType.isVibroblade()
+                || clubType.hasSubType(MiscType.S_COMBINE)) {
+            return -2;
+        } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+            return -3;
+        } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
+            return -4;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * 
+     * @return true if the entity is zweihandering (attacking with both hands)
+     */
+    public boolean isZweihandering() {
+        return zweihandering;
+    }
+    
     public ToHitData toHit(IGame game) {
         return ClubAttackAction.toHit(game, getEntityId(),
                                       game.getTarget(getTargetType(), getTargetId()), getClub(),
-                                      aiming);
+                                      aiming, zweihandering);
     }
 
     /**
      * To-hit number for the specified club to hit
+     * @param game
+     * @param attackerId - attacker id
+     * @param target <code>Targetable</code> of the target
+     * @param club - <code>Mounted</code> of the weapon
+     * @param aimTable
+     * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
+     * @return
      */
     public static ToHitData toHit(IGame game, int attackerId,
-                                  Targetable target, Mounted club, int aimTable) {
+                                  Targetable target, Mounted club, int aimTable, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         MiscType clubType;
         // arguments legal?
@@ -255,7 +332,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                                     + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
-                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB));
+                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB)) 
+                    || zweihandering;
         // Cast is safe because non-'Mechs never even get here.
         final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM)
                                  || ((Mech) ae).hasClaw(Mech.LOC_LARM);
@@ -401,38 +479,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Various versions of physical weapons have different base bonuses and
         // penalties.
-        if (clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
-            base += 2;
-        } else if (clubType.hasSubType(MiscType.S_BACKHOE)
-                   || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
-                   || clubType.hasSubType(MiscType.S_WRECKING_BALL)
-                   || clubType.hasSubType(MiscType.S_LANCE)
-                   || clubType.hasSubType(MiscType.S_MACE)
-                   || clubType.hasSubType(MiscType.S_MACE_THB)) {
-            base += 1;
-        } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
-                   || clubType.hasSubType(MiscType.S_DUAL_SAW)
-                   || clubType.hasSubType(MiscType.S_FLAIL)) {
-            base += 0;
-        } else if (clubType.hasSubType(MiscType.S_HATCHET)
-                   || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
-            base -= 1;
-        } else if (clubType.hasSubType(MiscType.S_COMBINE)
-                   || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                   || clubType.hasSubType(MiscType.S_SWORD)
-                   || clubType.hasSubType(MiscType.S_CHAIN_WHIP)
-                   || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
-                   || clubType.isVibroblade()
-                   || clubType.hasSubType(MiscType.S_COMBINE)) {
-            base -= 2;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
-            base -= 3;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
-            base -= 4;
-        } else {
-            base -= 1;
-        }
-
+        base += getHitModFor(clubType);
         toHit = new ToHitData(base, "base");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);

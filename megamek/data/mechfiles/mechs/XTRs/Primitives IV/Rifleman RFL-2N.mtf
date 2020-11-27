@@ -6,18 +6,18 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2556
 Source:XTRO Primitives IV - Age of War
-Rules Level:5
+Rules Level:1
 
 Mass:50
-Engine:200 Fusion Engine(IS)
-Structure:IS Standard
+Engine:200 Fusion Engine
+Structure:Standard
 Myomer:Standard
 
 Heat Sinks:16 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Inner Sphere)
 LA Armor:15
 RA Armor:15
 LT Armor:15

@@ -30,7 +30,7 @@ public class SupportTank extends Tank {
     private int[] barRating;
     private double fuelTonnage = 0;
     
-    public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66}; 
+    public static final double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66};
 
     public SupportTank() {
         super();
@@ -41,6 +41,7 @@ public class SupportTank extends Tank {
         barRating[loc] = rating;
     }
 
+    @Override
     public void setBARRating(int rating) {
         for (int i = 0; i < locations(); i++) {
             barRating[i] = rating;
@@ -81,6 +82,114 @@ public class SupportTank extends Tank {
             }
         }
         return false;
+    }
+    
+    private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
+            .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_HOVER_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_NAVAL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_NAVAL_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_TRACKED = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_TRACKED_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_WHEELED_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_WIGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_RAIL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    private static final TechAdvancement TA_RAIL_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_D, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return getConstructionTechAdvancement(getMovementMode(), getWeightClass());
+    }
+
+    public static TechAdvancement getConstructionTechAdvancement(EntityMovementMode movementMode, int weightClass) {
+        /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
+         * be the same as Clan invasion era. */
+        switch(movementMode) {
+            case HOVER:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_HOVER_LARGE;
+                } else {
+                    return TA_HOVER;
+                }
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_NAVAL_LARGE;
+                } else {
+                    return TA_NAVAL;
+                }
+            case TRACKED:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_TRACKED_LARGE;
+                } else {
+                    return TA_TRACKED;
+                }
+            case WHEELED:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_WHEELED_LARGE;
+                } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                    return TA_WHEELED_MEDIUM;
+                } else {
+                    return TA_WHEELED_SMALL;
+                }
+            case WIGE:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_WIGE_LARGE;
+                } else {
+                    return TA_WIGE;
+                }
+            case RAIL:
+            case MAGLEV:
+                if (weightClass == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                    return TA_RAIL_LARGE;
+                } else {
+                    return TA_RAIL;
+                }
+            default:
+                return TA_TRACKED; // average
+        }
     }
 
     /**
@@ -165,18 +274,67 @@ public class SupportTank extends Tank {
         return getExtraCommGearTons();
     }
 
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat,
+                         boolean ignoremodulararmor) {
+        int mp = getOriginalWalkMP();
+        if (engineHit || isImmobile()) {
+            return 0;
+        }
+        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
+            mp = (int) Math.round(mp * 1.25);
+        }
+        mp = Math.max(0, mp - motiveDamage);
+        mp = Math.max(0, mp - getCargoMpReduction(this));
+        if (null != game) {
+            int weatherMod = game.getPlanetaryConditions()
+                    .getMovementMods(this);
+            if (weatherMod != 0) {
+                mp = Math.max(mp + weatherMod, 0);
+            }
+        }
 
+        if (!ignoremodulararmor && hasModularArmor()) {
+            mp--;
+        }
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
+            mp--;
+        }
+
+        if (gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
+
+        //If the unit is towing trailers, adjust its walkMP, TW p205
+        if ((null != game) && !getAllTowedUnits().isEmpty()) {
+            double trainWeight = getWeight();
+            int lowestSuspensionFactor = getSuspensionFactor();
+            //Add up the trailers
+            for (int id : getAllTowedUnits()) {
+                Entity tr = game.getEntity(id);
+                if (tr == null) {
+                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
+                    continue;
+                }
+                if (tr instanceof Tank) {
+                    Tank trailer = (Tank) tr;
+                    if (trailer.getSuspensionFactor() < lowestSuspensionFactor) {
+                        lowestSuspensionFactor = trailer.getSuspensionFactor();
+                    }
+                }
+                trainWeight += tr.getWeight();
+            }
+            mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
+        }
+
+        return mp;
+
+    }
     
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
     public double getBaseChassisValue() {
         switch (movementMode) {
-            /*case AIRSHIP:
-                if (getWeight() < 5) {
-                    return 0.2f;
-                } else {
-                    return 0.25f;
-                }*/
             case HOVER:
                 if (getWeight() < 5) {
                     return 0.2;
@@ -186,17 +344,7 @@ public class SupportTank extends Tank {
                     return 0.3;
                 }
             case NAVAL:
-                if (getWeight() < 5) {
-                    return 0.12;
-                } else {
-                    return 0.15;
-                }
             case HYDROFOIL:
-                if (getWeight() < 5) {
-                    return 0.12;
-                } else {
-                    return 0.15;
-                }
             case SUBMARINE:
                 if (getWeight() < 5) {
                     return 0.12;
@@ -235,12 +383,12 @@ public class SupportTank extends Tank {
     //Support Vee Engine Information
     public double getBaseEngineValue() {
         switch (movementMode) {
-            /*case AIRSHIP:
+            case AIRSHIP:
                 if (getWeight() < 5) {
-                    return 0.005f;
+                    return 0.005;
                 } else {
-                    return 0.008f;
-                }*/
+                    return 0.008;
+                }
             case HOVER:
                 if (getWeight() < 5) {
                     return 0.0025;
@@ -250,17 +398,7 @@ public class SupportTank extends Tank {
                     return 0.008;
                 }
             case NAVAL:
-                if (getWeight() <5) {
-                    return 0.004;
-                } else {
-                    return 0.007;
-                }
             case HYDROFOIL:
-                if (getWeight() <5) {
-                    return 0.004;
-                } else {
-                    return 0.007;
-                }
             case SUBMARINE:
                 if (getWeight() < 5) {
                     return 0.004;
@@ -291,6 +429,15 @@ public class SupportTank extends Tank {
                 } else {
                     return 0.006;
                 }
+            case RAIL:
+            case MAGLEV:
+                if (getWeight() < 5) {
+                    return 0.003;
+                } else if (!isSuperHeavy()) {
+                    return 0.004;
+                } else {
+                    return 0.005;
+                }
            default:
                return 0;
         }
@@ -302,6 +449,7 @@ public class SupportTank extends Tank {
         return fuelTonnage;
     }
 
+    @Override
     public void setFuelTonnage(double fuel) {
         fuelTonnage = fuel;
     }
@@ -424,6 +572,16 @@ public class SupportTank extends Tank {
     
     public boolean isSupportVehicle() {
         return true;
+    }
+
+    @Override
+    public boolean isTractor() {
+        return hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION);
+    }
+
+    @Override
+    public boolean isTrailer() {
+        return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
     }
 
 }

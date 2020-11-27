@@ -335,7 +335,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     private void setArtyEnabled(int nbr) {
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setText(Messages.getString(
         "SelectArtyAutoHitHexDisplay." +ArtyAutoHitCommand.SET_HIT_HEX.getCmd(), 
-        new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(ArtyAutoHitCommand.SET_HIT_HEX).setEnabled(nbr > 0);
         // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }

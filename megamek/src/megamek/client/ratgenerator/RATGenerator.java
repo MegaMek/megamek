@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -18,31 +18,26 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.DoubleSummaryStatistics;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.io.PrintWriter;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.UnitRole;
 import megamek.common.UnitType;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -53,18 +48,16 @@ import megamek.common.util.MegaMekFile;
  *
  */
 public class RATGenerator {
-	
-	private HashMap<String, ModelRecord> models = new HashMap<String,ModelRecord>();
-	private HashMap<String, ChassisRecord> chassis = new HashMap<String,ChassisRecord>();
-	private HashMap<String, FactionRecord> factions = new HashMap<String,FactionRecord>();
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex =
-			new HashMap<>();
-	private HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex =
-			new HashMap<>();
+    
+    private final HashMap<String, ModelRecord> models;
+    private final HashMap<String, ChassisRecord> chassis;
+    private final HashMap<String, FactionRecord> factions;
+    private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> modelIndex;
+    private final HashMap<Integer, HashMap<String, HashMap<String, AvailabilityRating>>> chassisIndex;
 
-	private TreeSet<Integer> eraSet = new TreeSet<Integer>();
+    private final TreeSet<Integer> eraSet;
 
-	private static RATGenerator rg = null;
+    private static RATGenerator rg = null;
     private static boolean interrupted = false;
     private static boolean dispose = false;
     private Thread loader;
@@ -74,640 +67,745 @@ public class RATGenerator {
     private ArrayList<ActionListener> listeners;
     
     protected RATGenerator() {
-    	models = new HashMap<String,ModelRecord>();
-    	chassis = new HashMap<String,ChassisRecord>();
-    	factions = new HashMap<String,FactionRecord>();
-    	modelIndex = new HashMap<>();
-    	chassisIndex = new HashMap<>();
-    	eraSet = new TreeSet<Integer>();
-    	
-    	listeners = new ArrayList<ActionListener>();
+        models = new HashMap<>();
+        chassis = new HashMap<>();
+        factions = new HashMap<>();
+        modelIndex = new HashMap<>();
+        chassisIndex = new HashMap<>();
+        eraSet = new TreeSet<>();
+        
+        listeners = new ArrayList<>();
     }
 
-	public static RATGenerator getInstance() {
-		if (rg == null) {
-			rg = new RATGenerator();
-		}
+    public static RATGenerator getInstance() {
+        if (rg == null) {
+            rg = new RATGenerator();
+        }
         if (!rg.initialized && !rg.initializing) {
             rg.initializing = true;
             interrupted = false;
             dispose = false;
-            rg.loader = new Thread(new Runnable() {
-                public void run() {
-                    rg.initialize();
-                }
-            }, "RAT Generator unit populator");
+            rg.loader = new Thread(() -> rg.initialize(Configuration.forceGeneratorDir()),
+                    "RAT Generator unit populator");
             rg.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rg.loader.start();
         }
-		return rg;
-	}
+        return rg;
+    }
 
     public boolean isInitialized() {
         return initialized;
     }
 
-	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
-			int year) {
-		if (factions.containsKey(faction)) {
-			return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
-		}
-		if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
-			AvailabilityRating av = chassisIndex.get(era).get(unit).get("General");
-			if (av != null && year >= av.getStartYear()) {
-				return av;
-			}
-		}
-		return null;
-	}
+    /**
+     * Clears all data and loads from the given directory
+     * @param dir The directory to load from
+     */
+    public void reloadFromDir(File dir) {
+        models.clear();
+        chassis.clear();
+        factions.clear();
+        chassisIndex.clear();
+        modelIndex.clear();
+        eraSet.clear();
+        initialized = false;
+        initializing = false;
+        initialize(dir);
+        rg.getEraSet().forEach(e -> rg.loadEra(e, dir));
+    }
 
-	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, FactionRecord fRec,
-			int year) {
-		if (fRec == null) {
-			return null;
-		}
-		AvailabilityRating retVal = null;
-		if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
-			if (chassisIndex.get(era).get(unit).containsKey(fRec.getKey())) {
-				retVal = chassisIndex.get(era).get(unit).get(fRec.getKey());
-			} else if (fRec.getParentFactions().size() == 1) {
-				retVal = findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0), year);
-			} else if (fRec.getParentFactions().size() > 0) {
-				ArrayList<AvailabilityRating> list = new ArrayList<>();
-				for (String alt : fRec.getParentFactions()) {
-					AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt, year);
-					if (ar != null) {
-						list.add(ar);
-					}
-				}
-				retVal = mergeFactionAvailability(fRec.getKey(), list);
-			} else {
-				retVal = chassisIndex.get(era).get(unit).get("General");
-			}
-		}
-		if (retVal != null && year >= retVal.getStartYear()) {
-			return retVal;
-		}
-		return null;
-	}
+    public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
+            int year) {
+        if (factions.containsKey(faction)) {
+            return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
+        }
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            AvailabilityRating av = chassisIndex.get(era).get(unit).get("General");
+            if (av != null && year >= av.getStartYear()) {
+                return av;
+            }
+        }
+        return null;
+    }
 
-	public AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
-		if (factions.containsKey(faction)) {
-			return findModelAvailabilityRecord(era, unit, factions.get(faction));
-		}
-		if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
-			return modelIndex.get(era).get(unit).get("General");
-		}
-		return null;
-	}
+    public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, FactionRecord fRec,
+            int year) {
+        if (fRec == null) {
+            return null;
+        }
+        AvailabilityRating retVal = null;
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            if (chassisIndex.get(era).get(unit).containsKey(fRec.getKey())) {
+                retVal = chassisIndex.get(era).get(unit).get(fRec.getKey());
+            } else if (fRec.getParentFactions().size() == 1) {
+                retVal = findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0), year);
+            } else if (fRec.getParentFactions().size() > 0) {
+                ArrayList<AvailabilityRating> list = new ArrayList<>();
+                for (String alt : fRec.getParentFactions()) {
+                    AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt, year);
+                    if (ar != null) {
+                        list.add(ar);
+                    }
+                }
+                retVal = mergeFactionAvailability(fRec.getKey(), list);
+            } else {
+                retVal = chassisIndex.get(era).get(unit).get("General");
+            }
+        }
+        if (retVal != null && year >= retVal.getStartYear()) {
+            return retVal;
+        }
+        return null;
+    }
 
-	public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
-		if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
-			return null;
-		}
-		if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
-			if (modelIndex.get(era).get(unit).containsKey(fRec.getKey())) {
-				return modelIndex.get(era).get(unit).get(fRec.getKey());
-			}
-			if (fRec.getParentFactions().size() == 1) {
-				return findModelAvailabilityRecord(era, unit, fRec.getParentFactions().get(0));
-			} else if (fRec.getParentFactions().size() > 0) {
-				ArrayList<AvailabilityRating> list = new ArrayList<>();
-				for (String alt : fRec.getParentFactions()) {
-					AvailabilityRating ar = findModelAvailabilityRecord(era, unit, alt);
-					if (ar != null) {
-						list.add(ar);
-					}
-				}
-				return mergeFactionAvailability(fRec.getKey(), list);
-			}
-			return modelIndex.get(era).get(unit).get("General");
-		}
-		return null;
-	}
+    public AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
+        if (factions.containsKey(faction)) {
+            return findModelAvailabilityRecord(era, unit, factions.get(faction));
+        }
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            return modelIndex.get(era).get(unit).get("General");
+        }
+        return null;
+    }
 
-	public TreeSet<Integer> getEraSet() {
-		return eraSet;
-	}
-	
-	public Collection<ModelRecord> getModelList() {
-		return models.values();
-	}
+    public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
+        if (null == models.get(unit)) {
+            MegaMek.getLogger().error("Trying to find record for unknown model " + unit);
+            return null;
+        }
+        if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
+            return null;
+        }
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            if (modelIndex.get(era).get(unit).containsKey(fRec.getKey())) {
+                return modelIndex.get(era).get(unit).get(fRec.getKey());
+            }
+            if (fRec.getParentFactions().size() == 1) {
+                return findModelAvailabilityRecord(era, unit, fRec.getParentFactions().get(0));
+            } else if (fRec.getParentFactions().size() > 0) {
+                ArrayList<AvailabilityRating> list = new ArrayList<>();
+                for (String alt : fRec.getParentFactions()) {
+                    AvailabilityRating ar = findModelAvailabilityRecord(era, unit, alt);
+                    if (ar != null) {
+                        list.add(ar);
+                    }
+                }
+                return mergeFactionAvailability(fRec.getKey(), list);
+            }
+            return modelIndex.get(era).get(unit).get("General");
+        }
+        return null;
+    }
 
-	public ModelRecord getModelRecord(String key) {
-		return models.get(key);
-	}
+    /**
+     * Provides a list of availability ratings for a unit in a given era. Used in editing and reporting.
+     * 
+     * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+     * @param unit The lookup name of the unit to find records for.
+     * @return     A <code>Collection</code> of all the availability ratings for the unit in the era,
+     *             or null if there are no records for that era.
+     */
+    public Collection<AvailabilityRating> getModelFactionRatings(int era, String unit) {
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            return modelIndex.get(era).get(unit).values();
+        }
+        return null;
+    }
 
-	public Collection<ChassisRecord> getChassisList() {
-		return chassis.values();
-	}
+    /**
+     * Adds or changes an availability rating entry for a model.
+     * 
+     * @param era  The year of the record to change
+     * @param unitKey The model key for the unit which is having its model record updated
+     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
+     *             faction.
+     */
+    public void setModelFactionRating(int era, String unitKey, AvailabilityRating ar) {
+        modelIndex.get(era).computeIfAbsent(unitKey, k -> new HashMap<>());
+        modelIndex.get(era).get(unitKey).put(ar.getFactionCode(), ar);
+        models.get(unitKey).getIncludedFactions().add(ar.getFactionCode());
+    }
 
-	public ChassisRecord getChassisRecord(String key) {
-		return chassis.get(key);
-	}
+    /**
+     * Removes the availability rating entry.
+     * 
+     * @param era      The year of the record to remove.
+     * @param unit     The model to remove the record for.
+     * @param faction  The faction to remove the record for.
+     */
+    public void removeModelFactionRating(int era, String unit, String faction) {
+        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+            modelIndex.get(era).get(unit).remove(faction);
+        }
+        for (int e : eraSet) {
+            if (modelIndex.get(e).containsKey(unit) &&
+                    modelIndex.get(e).get(unit).containsKey(faction)) {
+                return;
+            }
+        }
+        models.get(unit).getIncludedFactions().remove(faction);
+    }
 
-	public Collection<FactionRecord> getFactionList() {
-		return factions.values();
-	}
-	
-	public FactionRecord getFaction(String key) {
-		return factions.get(key);
-	}
+    /**
+     * Provides a list of availability ratings for a chassis in a given era. Used in editing and reporting.
+     * 
+     * @param era  The year of the record. This must be one of the years in the <code>eraSet</code>.
+     * @param chassisKey The chassis name to find records for.
+     * @return     A <code>Collection</code> of all the availability ratings for the chassis in the era,
+     *             or null if there are no records for that era.
+     */
+    public Collection<AvailabilityRating> getChassisFactionRatings(int era, String chassisKey) {
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassisKey)) {
+            return chassisIndex.get(era).get(chassisKey).values();
+        }
+        return null;
+    }
 
-	public void addFaction(FactionRecord rec) {
-		factions.put(rec.getKey(), rec);
-	}
+    /**
+     * Adds or changes an availability rating entry for a chassis.
+     * 
+     * @param era  The year of the record to change
+     * @param unit The name of the chassis for which to change the record
+     * @param ar   The new <code>AvailabilityRating</code> for the unit in the era. This provides the
+     *             faction.
+     */
+    public void setChassisFactionRating(int era, String unit, AvailabilityRating ar) {
+        chassisIndex.get(era).computeIfAbsent(unit, k -> new HashMap<>());
+        chassisIndex.get(era).get(unit).put(ar.getFactionCode(), ar);
+        chassis.get(unit).getIncludedFactions().add(ar.getFactionCode());
+    }
 
-	public void removeFaction(FactionRecord rec) {
-		factions.remove(rec.getKey());
-	}
+    /**
+     * Removes the availability rating entry.
+     * 
+     * @param era      The year of the record to remove.
+     * @param unit     The chassis to remove the record for.
+     * @param faction  The faction to remove the record for.
+     */
+    public void removeChassisFactionRating(int era, String unit, String faction) {
+        if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+            chassisIndex.get(era).get(unit).remove(faction);
+        }
+        for (int e : eraSet) {
+            if (chassisIndex.get(e).containsKey(unit) &&
+                    chassisIndex.get(e).get(unit).containsKey(faction)) {
+                return;
+            }
+        }
+        chassis.get(unit).getIncludedFactions().remove(faction);
+    }
 
-	public void removeFaction(String key) {
-		factions.remove(key);
-	}
+    public TreeSet<Integer> getEraSet() {
+        return eraSet;
+    }
+    
+    public Collection<ModelRecord> getModelList() {
+        return models.values();
+    }
 
-	public Collection<String> getFactionKeySet() {
-		return factions.keySet();
-	}
-	
-	public int eraForYear(int year) {
-		if (year < eraSet.first()) {
-			return eraSet.first();
-		}
-		return eraSet.floor(year);
-	}
-	
-	public boolean eraIsLoaded(int era) {
-		return chassisIndex.containsKey(era);
-	}
+    public ModelRecord getModelRecord(String key) {
+        return models.get(key);
+    }
 
-	/**
-	 * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find the average
-	 * availability among the parents. Based on average weight rather than av rating.
-	 * 
-	 * @param faction The faction code to use for the new AvailabilityRecord
-	 * @param list A list of ARs for the various parent factions
-	 * @return A new AR with the average availability code from the various factions.
-	 */
-	private AvailabilityRating mergeFactionAvailability(String faction, List<AvailabilityRating> list) {
-		if (list.size() == 0) {
-			return null;
-		}
-		double totalWt = 0;
-		int totalAdj = 0;
-		for (AvailabilityRating ar : list) {
-			totalWt += AvailabilityRating.calcWeight(ar.availability);
-			totalAdj += ar.ratingAdjustment;
-		}
-		AvailabilityRating retVal = list.get(0).makeCopy(faction);
-		
-		retVal.availability = (int)(AvailabilityRating.calcAvRating(totalWt / list.size()));
-		if (totalAdj < 0) {
-			retVal.ratingAdjustment = (int)((totalAdj - 1)/ list.size());			
-		} else {
-			retVal.ratingAdjustment = (int)((totalAdj + 1)/ list.size());
-		}
-		return retVal;
-	}
-	
-	/**
-	 * Given values for two years, interpolates or extrapolates value for another given year.
-	 * If one of the two values is null, it is treated as 0.
-	 * 
-	 * @param av1 The first value.
-	 * @param av2 The second value.
-	 * @param year1 The year for the first value.
-	 * @param year2 The year for the second value.
-	 * @param now The year for which to calculate a value.
-	 * @return The value for the year in question. Returns null if av1 and av2 are both null.
-	 */
-	
-	private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
-		if (av1 == null && av2 == null) {
-			return null;
-		}
-		if (av1 == null) {
-			av1 = 0.0;
-		}
-		if (av2 == null) {
-			av2 = 0.0;
-		}
-		if (year1 == year2) {
-			return av1.doubleValue();
-		}
-		return av1.doubleValue()
-				+ (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
-	}
-	
-	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
-			String rating, Collection<Integer> weightClasses, int networkMask,
-			Collection<EntityMovementMode> movementModes,
-			Collection<MissionRole> roles, int roleStrictness,
-			FactionRecord user) {
-		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
-		HashMap<FactionRecord, Double> salvageWeights = new HashMap<FactionRecord, Double>();
-		
-		loadYear(year);
-		
-		if (fRec == null) {
-			fRec = new FactionRecord();
-		}
-		
-		Integer early = eraSet.floor(year);
-		if (early == null) {
-			early = eraSet.first();
-		}
-		Integer late = null;
-		if (!eraSet.contains(year)) {
-			late = eraSet.ceiling(year);
-		}
-		if (late == null) {
-			late = early;
-		}
-		
-		/* Adjustments for unit rating require knowing both how many ratings are available
-		 * to the faction and where the rating falls within the whole. If a faction does
-		 * not have designated rating levels, it inherits those of the parent faction;
-		 * if there are multiple parent factions the first match is used. Some very minor
-		 * or generic factions do not use rating adjustments, indicated by a rating level
-		 * of -1. A faction that has one rating level is a special case that always has
-		 * the indicated rating within the parent faction's system.
-		 */
-		
-		int ratingLevel = -1;
-		ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
-		int numRatingLevels = factionRatings.size();
-		if (rating == null && fRec.getRatingLevels().size() == 1) {
-			ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
-		}
-		if (rating != null && numRatingLevels > 1) {
-			ratingLevel = factionRatings.indexOf(rating);
-		}
-		
-		for (String chassisKey : chassisIndex.get(early).keySet()) {
-			ChassisRecord cRec = chassis.get(chassisKey);
-			if (cRec == null) {
-				System.err.println("Could not locate chassis " + chassisKey);
-				continue;
-			}
-			
-			if (cRec.getUnitType() != unitType &&
-					!(unitType == UnitType.TANK
-						&& cRec.getUnitType() == UnitType.VTOL
-						&& movementModes.contains(EntityMovementMode.VTOL))) {
-				continue;
-			}
+    public Collection<ChassisRecord> getChassisList() {
+        return chassis.values();
+    }
 
-			AvailabilityRating ar = findChassisAvailabilityRecord(early,
-						cRec.getChassisKey(), fRec, year);
-			if (ar == null) {
-				continue;
-			}
-			double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
-			cAv = interpolate(cAv,
-					cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-					Math.max(early, cRec.getIntroYear()), late, year);
-			if (cAv > 0) {
-				double totalModelWeight = cRec.totalModelWeight(early,
-						cRec.isOmni()?user : fRec);
-				for (ModelRecord mRec : cRec.getModels()) {
-					if (mRec.getIntroYear() >= year
-							|| (weightClasses.size() > 0
-									&& !weightClasses.contains(mRec.getWeightClass()))
-							|| (networkMask & mRec.getNetworkMask()) != networkMask) {
-						continue;
-					}
-					if (movementModes.size() > 0 && !movementModes.contains(mRec.getMovementMode())) {
-						continue;
-					}
-					ar = findModelAvailabilityRecord(early,
-							mRec.getKey(), fRec);
-					if (ar == null || ar.getAvailability() == 0) {
-						continue;
-					}
-					double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
-					mAv = interpolate(mAv,
-							mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-							Math.max(early, mRec.getIntroYear()), late, year);
-					Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
-					if (adjMAv != null) {
-						double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
-								* AvailabilityRating.calcWeight(cAv);
+    public ChassisRecord getChassisRecord(String key) {
+        return chassis.get(key);
+    }
 
-						if (mWt > 0) {
-							unitWeights.put(mRec, mWt);
-						}
-					}
-				}
-			}						
-		}
+    public Collection<FactionRecord> getFactionList() {
+        return factions.values();
+    }
+    
+    public FactionRecord getFaction(String key) {
+        return factions.get(key);
+    }
 
-		if (unitWeights.size() == 0) {
-			return new ArrayList<UnitTable.TableEntry>();
-		}
-		
-		/* If there is more than one weight class and the faction record (or parent)
-		 * indicates a certain distribution of weight classes, adjust the weight value
-		 * to conform to the given ratio.
-		 */
+    public void addFaction(FactionRecord rec) {
+        factions.put(rec.getKey(), rec);
+    }
 
-		if (weightClasses.size() > 1) {
-			// Get standard weight class distribution for faction
-			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
-			
-			if (wcd != null && wcd.size() > 0) {
-				/* Ultra-light and superheavy are too rare to warrant their own values and
-				 * for weight class distribution purposes are grouped with light and
-				 * assault, respectively.
-				 */
-				final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
-				//Find the totals of the weight for the generated table 
-				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-				//Find the sum of the weight distribution values for all weight classes in use.
-				int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
-				        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
-				
-				if (totalWCDWeights > 0) {
-					//Group all the models of the generated table by weight class.
-					java.util.function.Function<ModelRecord,Integer> grouper =
-							mr -> wcdIndex[mr.getWeightClass()];
-					Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
-							.collect(Collectors.groupingBy(grouper));
-					
-					/* Go through the weight class groups and adjust the table weights so the
-					 * total of each group corresponds to the distribution for this faction. */
-					for (int i : weightGroups.keySet()) {
-						double totalWeight = weightGroups.get(i).stream()
-								.mapToDouble(mr->unitWeights.get(mr)).sum();
-						if (totalWeight > 0) {
-							double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
-							weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
-						}
-					}
-				}
-			}
-		}
-		
-		double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+    public void removeFaction(FactionRecord rec) {
+        factions.remove(rec.getKey());
+    }
 
-		if (fRec.getPctSalvage(early) != null) {
-			HashMap<String,Double> salvageEntries = new HashMap<String,Double>();
-			for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
-				salvageEntries.put(entry.getKey(),
-						interpolate(entry.getValue(),
-								fRec.getSalvage(late).get(entry.getKey()),
-										early, late, year));
-			}
-			if (late != early) {
-				for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
-					if (!salvageEntries.containsKey(entry.getKey())) {
-						salvageEntries.put(entry.getKey(), interpolate(0.0,
-								entry.getValue(), early, late, year));
-					}
-				}
-			}			
-			
-			double salvage = fRec.getPctSalvage(early);
-			if (salvage >= 100) {
-				salvage = total;
-				unitWeights.clear();
-			} else {
-				salvage = salvage * total / (100 - salvage);
-			}
-			double totalFactionWeight = salvageEntries.values().stream()
-					.mapToDouble(Double::doubleValue).sum();
-			for (String fKey : salvageEntries.keySet()) {
-				FactionRecord salvageFaction = factions.get(fKey);
-				if (salvageFaction == null) {
-					System.err.println("Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
-				} else {
-					double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
-					salvageWeights.put(salvageFaction, wt);
-				}
-			}
-		}
-		
-		if (ratingLevel >= 0) {
-			adjustForRating(fRec, unitType, year, ratingLevel,
-					unitWeights, salvageWeights, early, late);
-		}
-		
-		
-		/* Increase weights if necessary to keep smallest from rounding down to zero */
-		
-		double adj = 1.0;
-		DoubleSummaryStatistics stats = Stream.concat(salvageWeights.values().stream(),
-				unitWeights.values().stream())
-				.mapToDouble(Double::doubleValue)
-				.filter(d -> d > 0)
-				.summaryStatistics();
-		if (stats.getMin() < 0.5 || stats.getMax() > 1000) {
-			adj = 0.5 / stats.getMin();
-			if (stats.getMax() * adj > 1000.0) {
-				adj = 1000.0 / stats.getMax();
-			}
-		}
-		
-		List<UnitTable.TableEntry> retVal = new ArrayList<UnitTable.TableEntry>();
-		for (FactionRecord faction : salvageWeights.keySet()) {
-			int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
-			if (wt > 0) {
-				retVal.add(new UnitTable.TableEntry(wt, faction));
-			}
-		}
-		for (ModelRecord mRec : unitWeights.keySet()) {
-			int wt = (int)(unitWeights.get(mRec) * adj + 0.5);
-			if (wt > 0) {
-				retVal.add(new UnitTable.TableEntry(wt, mRec.getMechSummary()));
-			}
-		}
-		return retVal;
-	}
+    public void removeFaction(String key) {
+        factions.remove(key);
+    }
 
-	private void adjustForRating(FactionRecord fRec, int unitType, int year,
-			int rating, HashMap<ModelRecord, Double> unitWeights,
-			HashMap<FactionRecord, Double> salvageWeights, Integer early,
-			Integer late) {
-		double total = 0.0;
-		double totalOmni = 0.0;
-		double totalClan = 0.0;
-		double totalSL = 0.0;
-		for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
-			total += entry.getValue();
-			if (entry.getKey().isOmni()) {
-				totalOmni += entry.getValue();
-			}
-			if (entry.getKey().isClan()) {
-				totalClan += entry.getValue();
-			} else if (entry.getKey().isSL()) {
-				totalSL += entry.getValue();
-			}
-		}
-		Double pctOmni = null;
-		Double pctNonOmni = null;
-		Double pctSL = null;
-		Double pctClan = null;
-		Double pctOther = null;
-		if (unitType == UnitType.MEK) {
-			pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.OMNI, late, rating), early, late, year);
-			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.CLAN, late, rating), early, late, year);
-			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, late, rating), early, late, year);
-		}
-		if (unitType == UnitType.AERO) {
-			pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, late, rating), early, late, year);
-			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, late, rating), early, late, year);
-			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
-		}
-		if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
-			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, late, rating), early, late, year);
-			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, early, rating),
-					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
-		}
-		/* Adjust for lack of precision in post-FM:Updates extrapolations */
-		if (pctSL != null || pctClan != null) {
-			pctOther = 100.0;
-			if (pctSL != null) {
-				pctOther -= pctSL;
-			}
-			if (pctClan != null) {
-				pctOther -= pctClan;
-			}
-			Double techMargin = interpolate(fRec.getTechMargin(early),
-					fRec.getTechMargin(late),
-					early, late, year);
-			if (techMargin != null && techMargin > 0) {
-				if (pctClan != null) {
-					double pct = 100.0 * totalClan / total;
-					if (pct < pctClan - techMargin) {
-						pctClan -= techMargin;
-					} else if (pct > pctClan + techMargin) {
-						pctClan += techMargin;
-					}
-				}
-				if (pctSL != null) {
-					double pct = 100.0 * totalSL / total;
-					if (pct < pctSL - techMargin) {
-						pctSL -= techMargin;
-					} else if (pct > pctSL + techMargin) {
-						pctSL += techMargin;
-					}
-				}					
-			}
-			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
-					fRec.getUpgradeMargin(late),
-					early, late, year);
-			if (upgradeMargin != null && upgradeMargin > 0) {
-				double pct = 100.0 * (total - totalClan - totalSL) / total;
-				if (pct < pctOther - upgradeMargin) {
-					pctOther -= upgradeMargin;
-				} else if (pct > pctOther + upgradeMargin) {
-					pctOther += upgradeMargin;
-				}
-				/* If clan, sl, and other are all adjusted, the values probably
-				 * don't add up to 100, which is fine unless the upgradeMargin is
-				 * <= techMargin. Then pctOther is more certain, and we adjust 
-				 * the values of clan and sl to keep the value of "other" equal to
-				 * a percentage. 
-				 */
-				if (techMargin != null) {
-					if (upgradeMargin <= techMargin) {
-						if (pctClan == null || pctClan == 0) {
-							pctSL = 100.0 - pctOther;
-						} else if (pctSL == null || pctSL == 0) {
-							pctClan = 100.0 - pctOther;
-						} else {
-							pctSL = (100.0 - pctOther) * pctSL / (pctSL + pctClan);
-							pctClan = 100.0 - pctOther - pctSL;
-						}
-					}
-				}
-			}
-		}
-		if (pctOmni != null) {
-			Double omniMargin = interpolate(fRec.getOmniMargin(early),
-					fRec.getOmniMargin(late),
-					early, late, year);
-			if (omniMargin != null && omniMargin > 0) {
-				double pct = 100.0 * totalOmni / total;
-				if (pct < pctOmni - omniMargin) {
-					pctOmni -= omniMargin;
-				} else if (pct > pctOmni + omniMargin) {
-					pctOmni += omniMargin;
-				}
-			}
-			pctNonOmni = 100.0 - pctOmni;
-		}			
-				
-		/* For non-Clan factions, the amount of salvage from Clan factions is
-		 * part of the overall Clan percentage.
-		 */
-		if (!fRec.isClan() && pctClan != null && totalClan > 0) {
-			double clanSalvage = salvageWeights.keySet().stream().filter(fr -> fr.isClan())
-					.mapToDouble(fr -> salvageWeights.get(fr)).sum();
-			total += clanSalvage;
-			totalClan += clanSalvage;
-			for (FactionRecord fr : salvageWeights.keySet()) {
-				if (fr.isClan()) {
-					salvageWeights.put(fr, salvageWeights.get(fr)
-							* (pctClan / 100.0) * (total / totalClan));
-				}
-			}
-		}
-		double totalOther = total - totalClan - totalSL;
-		for (ModelRecord mRec : unitWeights.keySet()) {
-			if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
-			}
-			if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
-			}
-			if (pctSL != null && mRec.isSL()
-					&& totalSL > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
-			}
-			if (pctClan != null && mRec.isClan()
-					&& totalClan > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
-			}
-			if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
-						* (total / totalOther));
-			}
-		}
-		double multiplier = total / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-		for (ModelRecord mRec : unitWeights.keySet()) {
-			unitWeights.merge(mRec, multiplier, (a, b) -> a * b);
-		}
-	}
+    public Collection<String> getFactionKeySet() {
+        return factions.keySet();
+    }
+    
+    public int eraForYear(int year) {
+        if (year < eraSet.first()) {
+            return eraSet.first();
+        }
+        return eraSet.floor(year);
+    }
+    
+    public boolean eraIsLoaded(int era) {
+        return chassisIndex.containsKey(era);
+    }
+
+    /**
+     * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find the average
+     * availability among the parents. Based on average weight rather than av rating.
+     * 
+     * @param faction The faction code to use for the new AvailabilityRecord
+     * @param list A list of ARs for the various parent factions
+     * @return A new AR with the average availability code from the various factions.
+     */
+    private AvailabilityRating mergeFactionAvailability(String faction, List<AvailabilityRating> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        double totalWt = 0;
+        int totalAdj = 0;
+        for (AvailabilityRating ar : list) {
+            totalWt += AvailabilityRating.calcWeight(ar.availability);
+            totalAdj += ar.ratingAdjustment;
+        }
+        AvailabilityRating retVal = list.get(0).makeCopy(faction);
+        
+        retVal.availability = (int)(AvailabilityRating.calcAvRating(totalWt / list.size()));
+        if (totalAdj < 0) {
+            retVal.ratingAdjustment = (totalAdj - 1)/ list.size();
+        } else {
+            retVal.ratingAdjustment = (totalAdj + 1)/ list.size();
+        }
+        return retVal;
+    }
+    
+    /**
+     * Given values for two years, interpolates or extrapolates value for another given year.
+     * If one of the two values is null, it is treated as 0.
+     * 
+     * @param av1 The first value.
+     * @param av2 The second value.
+     * @param year1 The year for the first value.
+     * @param year2 The year for the second value.
+     * @param now The year for which to calculate a value.
+     * @return The value for the year in question. Returns null if av1 and av2 are both null.
+     */
+    
+    private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
+        if (av1 == null && av2 == null) {
+            return null;
+        }
+        if (av1 == null) {
+            av1 = 0.0;
+        }
+        if (av2 == null) {
+            av2 = 0.0;
+        }
+        if (year1 == year2) {
+            return av1.doubleValue();
+        }
+        return av1.doubleValue()
+                + (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
+    }
+    
+    public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
+            String rating, Collection<Integer> weightClasses, int networkMask,
+            Collection<EntityMovementMode> movementModes,
+            Collection<MissionRole> roles, int roleStrictness,
+            FactionRecord user) {
+        HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
+        HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
+        
+        loadYear(year);
+        
+        if (fRec == null) {
+            fRec = new FactionRecord();
+        }
+        
+        Integer early = eraSet.floor(year);
+        if (early == null) {
+            early = eraSet.first();
+        }
+        Integer late = null;
+        if (!eraSet.contains(year)) {
+            late = eraSet.ceiling(year);
+        }
+        if (late == null) {
+            late = early;
+        }
+        
+        /* Adjustments for unit rating require knowing both how many ratings are available
+         * to the faction and where the rating falls within the whole. If a faction does
+         * not have designated rating levels, it inherits those of the parent faction;
+         * if there are multiple parent factions the first match is used. Some very minor
+         * or generic factions do not use rating adjustments, indicated by a rating level
+         * of -1. A faction that has one rating level is a special case that always has
+         * the indicated rating within the parent faction's system.
+         */
+        
+        int ratingLevel = -1;
+        ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
+        int numRatingLevels = factionRatings.size();
+        if (rating == null && fRec.getRatingLevels().size() == 1) {
+            ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+        }
+        if (rating != null && numRatingLevels > 1) {
+            ratingLevel = factionRatings.indexOf(rating);
+        }
+        
+        for (String chassisKey : chassisIndex.get(early).keySet()) {
+            ChassisRecord cRec = chassis.get(chassisKey);
+            if (cRec == null) {
+                MegaMek.getLogger().error("Could not locate chassis " + chassisKey);
+                continue;
+            }
+            
+            if (cRec.getUnitType() != unitType &&
+                    !(unitType == UnitType.TANK
+                        && cRec.getUnitType() == UnitType.VTOL
+                        && movementModes.contains(EntityMovementMode.VTOL))) {
+                continue;
+            }
+
+            AvailabilityRating ar = findChassisAvailabilityRecord(early,
+                        cRec.getChassisKey(), fRec, year);
+            if (ar == null) {
+                continue;
+            }
+            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+            cAv = interpolate(cAv,
+                    cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
+                    Math.max(early, cRec.getIntroYear()), late, year);
+            if (cAv > 0) {
+                double totalModelWeight = cRec.totalModelWeight(early,
+                        cRec.isOmni()?user : fRec);
+                for (ModelRecord mRec : cRec.getModels()) {
+                    if (mRec.getIntroYear() >= year
+                            || (weightClasses.size() > 0
+                                    && !weightClasses.contains(mRec.getWeightClass()))
+                            || (networkMask & mRec.getNetworkMask()) != networkMask) {
+                        continue;
+                    }
+                    if (movementModes.size() > 0 && !movementModes.contains(mRec.getMovementMode())) {
+                        continue;
+                    }
+                    ar = findModelAvailabilityRecord(early,
+                            mRec.getKey(), fRec);
+                    if (ar == null || ar.getAvailability() == 0) {
+                        continue;
+                    }
+                    double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+                    mAv = interpolate(mAv,
+                            mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
+                            Math.max(early, mRec.getIntroYear()), late, year);
+                    Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
+                    if (adjMAv != null) {
+                        double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
+                                * AvailabilityRating.calcWeight(cAv);
+
+                        if (mWt > 0) {
+                            unitWeights.put(mRec, mWt);
+                        }
+                    }
+                }
+            }                        
+        }
+
+        if (unitWeights.size() == 0) {
+            return new ArrayList<>();
+        }
+        
+        /* If there is more than one weight class and the faction record (or parent)
+         * indicates a certain distribution of weight classes, adjust the weight value
+         * to conform to the given ratio.
+         */
+
+        if (weightClasses.size() > 1) {
+            // Get standard weight class distribution for faction
+            ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
+            
+            if (wcd != null && wcd.size() > 0) {
+                /* Ultra-light and superheavy are too rare to warrant their own values and
+                 * for weight class distribution purposes are grouped with light and
+                 * assault, respectively.
+                 */
+                final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
+                //Find the totals of the weight for the generated table 
+                double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+                //Find the sum of the weight distribution values for all weight classes in use.
+                int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
+                        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+                
+                if (totalWCDWeights > 0) {
+                    //Group all the models of the generated table by weight class.
+                    java.util.function.Function<ModelRecord,Integer> grouper =
+                            mr -> wcdIndex[mr.getWeightClass()];
+                    Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
+                            .collect(Collectors.groupingBy(grouper));
+                    
+                    /* Go through the weight class groups and adjust the table weights so the
+                     * total of each group corresponds to the distribution for this faction. */
+                    for (int i : weightGroups.keySet()) {
+                        double totalWeight = weightGroups.get(i).stream()
+                                .mapToDouble(unitWeights::get).sum();
+                        if (totalWeight > 0) {
+                            double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
+                            weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
+                        }
+                    }
+                }
+            }
+        }
+        
+        double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        if (fRec.getPctSalvage(early) != null) {
+            HashMap<String,Double> salvageEntries = new HashMap<>();
+            for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
+                salvageEntries.put(entry.getKey(),
+                        interpolate(entry.getValue(),
+                                fRec.getSalvage(late).get(entry.getKey()),
+                                        early, late, year));
+            }
+            if (!late.equals(early)) {
+                for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
+                    if (!salvageEntries.containsKey(entry.getKey())) {
+                        salvageEntries.put(entry.getKey(), interpolate(0.0,
+                                entry.getValue(), early, late, year));
+                    }
+                }
+            }            
+            
+            double salvage = fRec.getPctSalvage(early);
+            if (salvage >= 100) {
+                salvage = total;
+                unitWeights.clear();
+            } else {
+                salvage = salvage * total / (100 - salvage);
+            }
+            double totalFactionWeight = salvageEntries.values().stream()
+                    .mapToDouble(Double::doubleValue).sum();
+            for (String fKey : salvageEntries.keySet()) {
+                FactionRecord salvageFaction = factions.get(fKey);
+                if (salvageFaction == null) {
+                    MegaMek.getLogger().debug("Could not locate faction " + fKey 
+                            + " for " + fRec.getKey() + " salvage");
+                } else {
+                    double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
+                    salvageWeights.put(salvageFaction, wt);
+                }
+            }
+        }
+        
+        if (ratingLevel >= 0) {
+            adjustForRating(fRec, unitType, year, ratingLevel,
+                    unitWeights, salvageWeights, early, late);
+        }
+        
+        
+        /* Increase weights if necessary to keep smallest from rounding down to zero */
+        
+        double adj = 1.0;
+        DoubleSummaryStatistics stats = Stream.concat(salvageWeights.values().stream(),
+                unitWeights.values().stream())
+                .mapToDouble(Double::doubleValue)
+                .filter(d -> d > 0)
+                .summaryStatistics();
+        if (stats.getMin() < 0.5 || stats.getMax() > 1000) {
+            adj = 0.5 / stats.getMin();
+            if (stats.getMax() * adj > 1000.0) {
+                adj = 1000.0 / stats.getMax();
+            }
+        }
+        
+        List<UnitTable.TableEntry> retVal = new ArrayList<>();
+        for (FactionRecord faction : salvageWeights.keySet()) {
+            int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
+            if (wt > 0) {
+                retVal.add(new UnitTable.TableEntry(wt, faction));
+            }
+        }
+        for (ModelRecord mRec : unitWeights.keySet()) {
+            int wt = (int)(unitWeights.get(mRec) * adj + 0.5);
+            if (wt > 0) {
+                retVal.add(new UnitTable.TableEntry(wt, mRec.getMechSummary()));
+            }
+        }
+        return retVal;
+    }
+
+    private void adjustForRating(FactionRecord fRec, int unitType, int year,
+            int rating, HashMap<ModelRecord, Double> unitWeights,
+            HashMap<FactionRecord, Double> salvageWeights, Integer early,
+            Integer late) {
+        double total = 0.0;
+        double totalOmni = 0.0;
+        double totalClan = 0.0;
+        double totalSL = 0.0;
+        for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
+            total += entry.getValue();
+            if (entry.getKey().isOmni()) {
+                totalOmni += entry.getValue();
+            }
+            if (entry.getKey().isClan()) {
+                totalClan += entry.getValue();
+            } else if (entry.getKey().isSL()) {
+                totalSL += entry.getValue();
+            }
+        }
+        Double pctOmni = null;
+        Double pctNonOmni = null;
+        Double pctSL = null;
+        Double pctClan = null;
+        Double pctOther = null;
+        if (unitType == UnitType.MEK) {
+            pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.OMNI, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.CLAN, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, late, rating), early, late, year);
+        }
+        if (unitType == UnitType.AERO) {
+            pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
+        }
+        if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
+            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, early, rating),
+                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
+        }
+        /* Adjust for lack of precision in post-FM:Updates extrapolations */
+        if (pctSL != null || pctClan != null) {
+            pctOther = 100.0;
+            if (pctSL != null) {
+                pctOther -= pctSL;
+            }
+            if (pctClan != null) {
+                pctOther -= pctClan;
+            }
+            Double techMargin = interpolate(fRec.getTechMargin(early),
+                    fRec.getTechMargin(late),
+                    early, late, year);
+            if (techMargin != null && techMargin > 0) {
+                if (pctClan != null) {
+                    double pct = 100.0 * totalClan / total;
+                    if (pct < pctClan - techMargin) {
+                        pctClan -= techMargin;
+                    } else if (pct > pctClan + techMargin) {
+                        pctClan += techMargin;
+                    }
+                }
+                if (pctSL != null) {
+                    double pct = 100.0 * totalSL / total;
+                    if (pct < pctSL - techMargin) {
+                        pctSL -= techMargin;
+                    } else if (pct > pctSL + techMargin) {
+                        pctSL += techMargin;
+                    }
+                }                    
+            }
+            Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
+                    fRec.getUpgradeMargin(late),
+                    early, late, year);
+            if (upgradeMargin != null && upgradeMargin > 0) {
+                double pct = 100.0 * (total - totalClan - totalSL) / total;
+                if (pct < pctOther - upgradeMargin) {
+                    pctOther -= upgradeMargin;
+                } else if (pct > pctOther + upgradeMargin) {
+                    pctOther += upgradeMargin;
+                }
+                /* If clan, sl, and other are all adjusted, the values probably
+                 * don't add up to 100, which is fine unless the upgradeMargin is
+                 * <= techMargin. Then pctOther is more certain, and we adjust 
+                 * the values of clan and sl to keep the value of "other" equal to
+                 * a percentage. 
+                 */
+                if (techMargin != null) {
+                    if (upgradeMargin <= techMargin) {
+                        if (pctClan == null || pctClan == 0) {
+                            pctSL = 100.0 - pctOther;
+                        } else if (pctSL == null || pctSL == 0) {
+                            pctClan = 100.0 - pctOther;
+                        } else {
+                            pctSL = (100.0 - pctOther) * pctSL / (pctSL + pctClan);
+                            pctClan = 100.0 - pctOther - pctSL;
+                        }
+                    }
+                }
+            }
+        }
+        if (pctOmni != null) {
+            Double omniMargin = interpolate(fRec.getOmniMargin(early),
+                    fRec.getOmniMargin(late),
+                    early, late, year);
+            if (omniMargin != null && omniMargin > 0) {
+                double pct = 100.0 * totalOmni / total;
+                if (pct < pctOmni - omniMargin) {
+                    pctOmni -= omniMargin;
+                } else if (pct > pctOmni + omniMargin) {
+                    pctOmni += omniMargin;
+                }
+            }
+            pctNonOmni = 100.0 - pctOmni;
+        }            
+                
+        /* For non-Clan factions, the amount of salvage from Clan factions is
+         * part of the overall Clan percentage.
+         */
+        if (!fRec.isClan() && pctClan != null && totalClan > 0) {
+            double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
+                    .mapToDouble(salvageWeights::get).sum();
+            total += clanSalvage;
+            totalClan += clanSalvage;
+            for (FactionRecord fr : salvageWeights.keySet()) {
+                if (fr.isClan()) {
+                    salvageWeights.put(fr, salvageWeights.get(fr)
+                            * (pctClan / 100.0) * (total / totalClan));
+                }
+            }
+        }
+        double totalOther = total - totalClan - totalSL;
+        for (ModelRecord mRec : unitWeights.keySet()) {
+            if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
+            }
+            if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));                        
+            }
+            if (pctSL != null && mRec.isSL()
+                    && totalSL > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
+            }
+            if (pctClan != null && mRec.isClan()
+                    && totalClan > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
+            }
+            if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
+                        * (total / totalOther));
+            }
+        }
+        double multiplier = total / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+        for (ModelRecord mRec : unitWeights.keySet()) {
+            unitWeights.merge(mRec, multiplier, (a, b) -> a * b);
+        }
+    }
 
     public void dispose() {
         interrupted = true;
         dispose = true;
         if (initialized){
-            clear();
+            rg = null;
         }
     }
 
-    public void clear() {
-        rg = null;
-        models = null;
-        chassis = null;
-        factions = null;
-        chassisIndex = null;
-        modelIndex = null;
-        eraSet = null;
-        initialized = false;
-        initializing = false;
-    }
-
-	private synchronized void initialize() {
+    private synchronized void initialize(File dir) {
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
@@ -718,14 +816,18 @@ public class RATGenerator {
                 // Ignore
             }
         }
-        
-        loadFactions();
-        
-		for (File f : Configuration.forceGeneratorDir().listFiles()) {
-			if (f.getName().matches("\\d+\\.xml")) {
-				eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
-			}
-		}
+
+        if (!(dir.exists() && dir.isDirectory())) {
+            MegaMek.getLogger().error(dir + " is not a directory");
+        } else {
+            loadFactions(dir);
+
+            for (File f : dir.listFiles()) {
+                if (f.getName().matches("\\d+\\.xml")) {
+                    eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
+                }
+            }
+        }
 
         if (!interrupted) {
             rg.initialized = true;
@@ -733,208 +835,249 @@ public class RATGenerator {
         }
 
         if (dispose) {
-            clear();
+            rg = null;
             dispose = false;
         }
-	}
-	
-	/**
-	 * If year is equal to one of the era marks, loads that era. If it is between,
-	 * loads eras on both sides.
-	 */
-	public void loadYear(int year) {
-		if (eraSet.contains(year)) {
-			loadEra(year);
-		}
-		if (year > eraSet.first()) {
-			loadEra(eraSet.floor(year));
-		}
-		if (year < eraSet.last()) {
-			loadEra(eraSet.ceiling(year));
-		}
-	}
-	
-	private void loadFactions() {
-		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			System.err.println("Unable to read RAT generator factions file"); //$NON-NLS-1$
-			return;
-		}
-
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		Document xmlDoc = null;
-
-		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			xmlDoc = db.parse(fis);
-		} catch (Exception ex) {
-			System.err.println(ex.getMessage());
-		}
-
-		Element element = xmlDoc.getDocumentElement();
-		NodeList nl = element.getChildNodes();
-
-		element.normalize();
-
-		for (int x = 0; x < nl.getLength(); x++) {
-			Node wn = nl.item(x);
-			if (wn.getNodeName().equalsIgnoreCase("faction")) {
-				if (wn.getAttributes().getNamedItem("key") != null) {
-					FactionRecord rec = FactionRecord.createFromXml(wn);
-					factions.put(rec.getKey(), rec);
-				} else {
-					System.err.println("Faction key not found in " + file.getPath());
-				}
-			}			
-		}
-	}
-	
-	private synchronized void loadEra(int era) {
-		if (eraIsLoaded(era)) {
-			return;
-		}
-		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		File file = new MegaMekFile(Configuration.forceGeneratorDir(), era + ".xml").getFile();
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			System.err.println("Unable to read RAT generator file for era " + era); //$NON-NLS-1$
-			return;
-		}
-
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		Document xmlDoc = null;
-
-		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			xmlDoc = db.parse(fis);
-		} catch (Exception ex) {
-			System.err.println(ex.getMessage());
-		}
-
-		Element element = xmlDoc.getDocumentElement();
-		NodeList nl = element.getChildNodes();
-
-		element.normalize();
-
-		for (int x = 0; x < nl.getLength(); x++) {
-			Node mainNode = nl.item(x);
-			if (mainNode.getNodeName().equalsIgnoreCase("factions")) {
-				for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
-					Node wn = mainNode.getChildNodes().item(i);
-					if (wn.getNodeName().equalsIgnoreCase("faction")) {
-						String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
-						if (fKey != null) {
-							FactionRecord rec = factions.get(fKey);
-							if (rec != null) {
-								rec.loadEra(wn, era);
-							} else {
-								System.err.println("Faction " + fKey + " not found in "
-										+ file.getPath());
-							}
-						} else {
-							System.err.println("Faction key not found in " + file.getPath());
-						}
-					}
-				}
-			} else if (mainNode.getNodeName().equalsIgnoreCase("units")) {
-				for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
-					Node wn = mainNode.getChildNodes().item(i);
-					if (wn.getNodeName().equalsIgnoreCase("chassis")) {
-						parseChassisNode(era, wn);
-					}
-				}
-			}
-		}
-		notifyListenersEraLoaded();
-	}
-
-	private void parseChassisNode(int era, Node wn) {
-		boolean omni = false;
-		String chassisName = wn.getAttributes().getNamedItem("name").getTextContent();
-		String unitType = wn.getAttributes().getNamedItem("unitType").getTextContent();
-		String chassisKey = chassisName + "[" + unitType + "]";
-		if (wn.getAttributes().getNamedItem("omni") != null) {
-			omni = true;
-			if (wn.getAttributes().getNamedItem("omni").getTextContent().equalsIgnoreCase("IS")) {
-				chassisKey += "ISOmni";
-			} else {
-				chassisKey += "ClanOmni";
-			}
-		}
-		ChassisRecord cr = chassis.get(chassisKey);
-		if (cr == null) {
-			cr = new ChassisRecord(chassisName);
-			cr.setOmni(omni);
-			cr.setUnitType(unitType);
-			cr.setClan(chassisKey.endsWith("ClanOmni"));
-			chassis.put(chassisKey, cr);
-		}
-		for (int j = 0; j < wn.getChildNodes().getLength(); j++) {
-			Node wn2 = wn.getChildNodes().item(j);
-			if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-				chassisIndex.get(era).put(chassisKey,
-						new HashMap<String, AvailabilityRating>());
-				String [] codes = wn2.getTextContent().trim().split(",");
-				for (String code : codes) {
-					AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-					cr.getIncludedFactions().add(code.split(":")[0]);
-					chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
-				}
-			} else if (wn2.getNodeName().equalsIgnoreCase("model")) {
-				parseModelNode(era, cr, wn2);
-			}
-		}
-	}
-	
-	private void parseModelNode(int era, ChassisRecord cr, Node wn) {
-		String modelKey = (cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
-		boolean newEntry = false;
-		ModelRecord mr = models.get(modelKey);
-		if (mr == null) {
-			newEntry = true;
-			MechSummary ms = MechSummaryCache.getInstance().getMech(modelKey);
-			if (ms != null) {
-				mr = new ModelRecord(ms);
-				mr.setOmni(cr.isOmni());
-				models.put(modelKey, mr);
-			}
-			if (mr == null) {
-				System.err.println("RATGenerator: " + cr.getChassis() + " "
-						+ wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
-				return;
-			}
-		}
-		cr.addModel(mr);
-        if (wn.getAttributes().getNamedItem("unitRole") != null) {
-            mr.setUnitRole(UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
+    }
+    
+    /**
+     * If year is equal to one of the era marks, loads that era. If it is between,
+     * loads eras on both sides.
+     */
+    public void loadYear(int year) {
+        if (eraSet.contains(year)) {
+            loadEra(year);
         }
+        if (year > eraSet.first()) {
+            loadEra(eraSet.floor(year));
+        }
+        if (year < eraSet.last()) {
+            loadEra(eraSet.ceiling(year));
+        }
+    }
+    
+    private void loadFactions(File dir) {
+        File file = new MegaMekFile(dir, "factions.xml").getFile();
+        FileInputStream fis;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            MegaMek.getLogger().error("Unable to read RAT generator factions file");
+            return;
+        }
+
+        Document xmlDoc;
+
+        try {
+            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            xmlDoc = db.parse(fis);
+        } catch (Exception ex) {
+            MegaMek.getLogger().error(ex);
+            return;
+        }
+
+        Element element = xmlDoc.getDocumentElement();
+        NodeList nl = element.getChildNodes();
+
+        element.normalize();
+
+        for (int x = 0; x < nl.getLength(); x++) {
+            Node wn = nl.item(x);
+            if (wn.getNodeName().equalsIgnoreCase("faction")) {
+                if (wn.getAttributes().getNamedItem("key") != null) {
+                    FactionRecord rec = FactionRecord.createFromXml(wn);
+                    factions.put(rec.getKey(), rec);
+                } else {
+                    MegaMek.getLogger().warning("Faction key not found in " + file.getPath());
+                }
+            }            
+        }
+    }
+
+    private void loadEra(int era) {
+        loadEra(era, Configuration.forceGeneratorDir());
+    }
+    
+    private synchronized void loadEra(int era, File dir) {
+        if (eraIsLoaded(era)) {
+            return;
+        }
+        chassisIndex.put(era, new HashMap<>());
+        modelIndex.put(era, new HashMap<>());
+        File file = new MegaMekFile(dir, era + ".xml").getFile();
+        FileInputStream fis;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            MegaMek.getLogger().error("Unable to read RAT generator file for era " + era);
+            return;
+        }
+        while (!MechSummaryCache.getInstance().isInitialized()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ex) {
+                //do nothing
+            }
+        }
+
+        Document xmlDoc;
+
+        try {
+            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            xmlDoc = db.parse(fis);
+        } catch (Exception ex) {
+            MegaMek.getLogger().error(ex);
+            return;
+        }
+
+        Element element = xmlDoc.getDocumentElement();
+        NodeList nl = element.getChildNodes();
+
+        element.normalize();
+
+        for (int x = 0; x < nl.getLength(); x++) {
+            Node mainNode = nl.item(x);
+            if (mainNode.getNodeName().equalsIgnoreCase("factions")) {
+                for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
+                    Node wn = mainNode.getChildNodes().item(i);
+                    if (wn.getNodeName().equalsIgnoreCase("faction")) {
+                        String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
+                        if (fKey != null) {
+                            FactionRecord rec = factions.get(fKey);
+                            if (rec != null) {
+                                rec.loadEra(wn, era);
+                            } else {
+                                MegaMek.getLogger().error("Faction " + fKey + " not found in "
+                                        + file.getPath());
+                            }
+                        } else {
+                            MegaMek.getLogger().error("Faction key not found in " + file.getPath());
+                        }
+                    }
+                }
+            } else if (mainNode.getNodeName().equalsIgnoreCase("units")) {
+                for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
+                    Node wn = mainNode.getChildNodes().item(i);
+                    if (wn.getNodeName().equalsIgnoreCase("chassis")) {
+                        parseChassisNode(era, wn);
+                    }
+                }
+            }
+        }
+        notifyListenersEraLoaded();
+    }
+    
+    /**
+     * Creates model and chassis records for all units that don't already have entries. This should
+     * only be called after all availability records are loaded, otherwise they will be overwritten.
+     * 
+     * Used for editing.
+     */
+    public void initRemainingUnits() {
+        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
+            if (models.containsKey(ms.getName())) {
+                continue;
+            }
+            ModelRecord mr = new ModelRecord(ms);
+
+            models.put(mr.getKey(), mr);
+            String chassisKey = mr.getChassisKey();
+            if (chassis.containsKey(chassisKey)) {
+                if (chassis.get(chassisKey).getIntroYear() == 0 ||
+                        chassis.get(chassisKey).getIntroYear() > ms.getYear()) {
+                    chassis.get(chassisKey).setIntroYear(ms.getYear());
+                }
+                chassis.get(chassisKey).addModel(mr);
+            } else {
+                ChassisRecord cr = new ChassisRecord(mr.getChassis());
+                cr.setIntroYear(mr.getIntroYear());
+                cr.setOmni(mr.isOmni());
+                cr.setClan(mr.isClan());
+                cr.setUnitType(mr.getUnitType());
+                cr.addModel(mr);
+                chassis.put(chassisKey, cr);
+            }
+        }
+    }
+
+    private void parseChassisNode(int era, Node wn) {
+        boolean omni = false;
+        String chassisName = wn.getAttributes().getNamedItem("name").getTextContent();
+        String unitType = wn.getAttributes().getNamedItem("unitType").getTextContent();
+        String chassisKey = chassisName + "[" + unitType + "]";
+        if (wn.getAttributes().getNamedItem("omni") != null) {
+            omni = true;
+            if (wn.getAttributes().getNamedItem("omni").getTextContent().equalsIgnoreCase("IS")) {
+                chassisKey += "ISOmni";
+            } else {
+                chassisKey += "ClanOmni";
+            }
+        }
+        ChassisRecord cr = chassis.get(chassisKey);
+        if (cr == null) {
+            cr = new ChassisRecord(chassisName);
+            cr.setOmni(omni);
+            cr.setUnitType(unitType);
+            cr.setClan(chassisKey.endsWith("ClanOmni"));
+            chassis.put(chassisKey, cr);
+        }
+        for (int j = 0; j < wn.getChildNodes().getLength(); j++) {
+            Node wn2 = wn.getChildNodes().item(j);
+            if (wn2.getNodeName().equalsIgnoreCase("availability")) {
+                chassisIndex.get(era).put(chassisKey,
+                        new HashMap<>());
+                String [] codes = wn2.getTextContent().trim().split(",");
+                for (String code : codes) {
+                    AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
+                    cr.getIncludedFactions().add(code.split(":")[0]);
+                    chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+                }
+            } else if (wn2.getNodeName().equalsIgnoreCase("model")) {
+                parseModelNode(era, cr, wn2);
+            }
+        }
+    }
+    
+    private void parseModelNode(int era, ChassisRecord cr, Node wn) {
+        String modelKey = (cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent()).trim();
+        boolean newEntry = false;
+        ModelRecord mr = models.get(modelKey);
+        if (mr == null) {
+            newEntry = true;
+            MechSummary ms = MechSummaryCache.getInstance().getMech(modelKey);
+            if (ms != null) {
+                mr = new ModelRecord(ms);
+                mr.setOmni(cr.isOmni());
+                models.put(modelKey, mr);
+            }
+            if (mr == null) {
+                MegaMek.getLogger().error(cr.getChassis() + " " 
+                        + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
+                return;
+            }
+        }
+        cr.addModel(mr);
         if (wn.getAttributes().getNamedItem("mechanized") != null) {
             mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
         }
-		
-		for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
-			Node wn2 = wn.getChildNodes().item(k);
-			if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
-				mr.addRoles(wn2.getTextContent().trim());
-			} else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
-				mr.setRequiredUnits(wn2.getTextContent().trim());            							
-			} else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-				modelIndex.get(era).put(mr.getKey(), new HashMap<String, AvailabilityRating>());
-				String [] codes = wn2.getTextContent().trim().split(",");
-				for (String code : codes) {
-					AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
-					mr.getIncludedFactions().add(code.split(":")[0]);
-					modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
-				}
-			} 
-		}		
-	}
+        
+        for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
+            Node wn2 = wn.getChildNodes().item(k);
+            if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
+                mr.addRoles(wn2.getTextContent().trim());
+            } else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
+                mr.setRequiredUnits(wn2.getTextContent().trim());                                        
+            } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
+                modelIndex.get(era).put(mr.getKey(), new HashMap<>());
+                String [] codes = wn2.getTextContent().trim().split(",");
+                for (String code : codes) {
+                    AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
+                    mr.getIncludedFactions().add(code.split(":")[0]);
+                    modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
+                }
+            } 
+        }        
+    }
 
     public synchronized void registerListener(ActionListener l){
         listeners.add(l);
@@ -968,4 +1111,152 @@ public class RATGenerator {
             }
         }
     }
+    
+    public void exportRATGen(File dir) {
+        File file;
+        PrintWriter pw;
+        
+        FactionRecord[] factionRecs = factions.values().toArray(new FactionRecord[0]);
+        Arrays.sort(factionRecs, (arg0, arg1) -> {
+            if (arg0.getParentFactions() == null && arg1.getParentFactions() != null) {
+                return -1;
+            }
+            if (arg0.getParentFactions() != null && arg1.getParentFactions() == null) {
+                return 1;
+            }
+            if (arg0.getKey().contains(".") && !arg1.getKey().contains(".")) {
+                return 1;
+            }
+            if (!arg0.getKey().contains(".") && arg1.getKey().contains(".")) {
+                return -1;
+            }
+            return arg0.getName().compareTo(arg1.getName());
+        });
+
+        file = new File(dir + "/factions.xml");
+        try {
+            pw = new PrintWriter(file, "UTF-8");
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            return;
+        }
+        pw.println("<?xml version='1.0' encoding='UTF-8'?>");
+        pw.println("<factions>");
+        for (FactionRecord fRec : factionRecs) {
+            fRec.writeToXml(pw);
+        }
+        pw.println("</factions>");
+        pw.close();
+
+        ChassisRecord[] chassisRecs = chassis.values().toArray(new ChassisRecord[0]);
+        Arrays.sort(chassisRecs, Comparator.comparing(AbstractUnitRecord::getKey));
+        ArrayList<String> avFields = new ArrayList<>();
+        
+        final List<Integer> ERAS = new ArrayList<>(eraSet);
+
+        for (int i = 0; i < ERAS.size(); i++) {
+            int era = ERAS.get(i);
+            int nextEra = (i < ERAS.size() - 1)? ERAS.get(i + 1) : era;
+            try {
+                file = new File(dir + "/" + era + ".xml");
+                pw = new PrintWriter(file, "UTF-8");
+                pw.println("<?xml version='1.0' encoding='UTF-8'?>");
+                pw.println("<!-- Era " + era + "-->");
+                pw.println("<ratgen>");
+                pw.println("<factions>");
+                for (FactionRecord fRec : factionRecs) {
+                    if (fRec.isInEra(era)) {
+                        fRec.writeToXml(pw, era);
+                    }
+                }
+                pw.println("</factions>");
+                pw.println("<units>");
+                for (ChassisRecord cr : chassisRecs) {
+                    if (cr.getIntroYear() < nextEra && chassisIndex.get(era).containsKey(cr.getKey())) {
+                        avFields.clear();
+                        for (AvailabilityRating av : chassisIndex.get(era).get(cr.getKey()).values()) {
+                            if (shouldExportAv(av, era)) {
+                                avFields.add(av.toString());
+                            }
+                        }
+                        if (avFields.size() > 0) {
+                            String omni = "";
+                            if (cr.isOmni() && cr.getModels().size() > 0) {
+                                omni = cr.getModels().iterator().next().isClan()?
+                                        "' omni='Clan" : "' omni='IS";
+                            }
+                            pw.println("\t<chassis name='" + cr.getChassis().replaceAll("'", "&apos;")
+                                    + "' unitType='" + UnitType.getTypeName(cr.getUnitType())
+                                    + omni + "'>");
+                            pw.print("\t\t<availability>");
+                            for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
+                                pw.print(iter.next());
+                                if (iter.hasNext()) {
+                                    pw.print(",");
+                                }
+                            }
+                            pw.println("</availability>");
+
+                            for (ModelRecord mr : cr.getModels()) {
+                                if (cr.getIntroYear() < nextEra
+                                        && modelIndex.get(era).containsKey(mr.getKey())) {
+                                    avFields.clear();
+                                    for (AvailabilityRating av : modelIndex.get(era).get(mr.getKey()).values()) {
+                                        if (shouldExportAv(av, era)) {
+                                            avFields.add(av.toString());
+                                        }
+                                    }
+                                    for (String fKey : mr.getExcludedFactions()) {
+                                        avFields.add(fKey + ":0");
+                                    }
+                                    if (avFields.size() > 0) {
+                                        pw.print("\t\t<model name='" + mr.getModel().replaceAll("'", "&apos;"));
+                                        if (mr.getUnitType() == UnitType.BATTLE_ARMOR) {
+                                            pw.print("' mechanized='" + mr.canDoMechanizedBA());
+                                        }
+                                        pw.println("'>");
+                                        if (mr.getRoles().size() > 0) {
+                                            String str = mr.getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
+                                            if (str.length() > 0) {
+                                                pw.println("\t\t\t<roles>" + str + "</roles>");
+                                            }
+                                        }
+                                        if (mr.getDeployedWith().size() > 0 || mr.getRequiredUnits().size() > 0) {
+                                            pw.print("\t\t\t<deployedWith>");
+                                            StringJoiner sj = new StringJoiner(",");
+                                            mr.getDeployedWith().forEach(sj::add);
+                                            mr.getRequiredUnits().forEach(s -> sj.add("req:" + s));
+                                            pw.print(sj.toString());
+                                            pw.println("</deployedWith>");
+                                        }
+                                        pw.print("\t\t\t<availability>");
+                                        for (Iterator<String> iter = avFields.iterator(); iter.hasNext();) {
+                                            pw.print(iter.next());
+                                            if (iter.hasNext()) {
+                                                pw.print(",");
+                                            }
+                                        }
+                                        pw.println("</availability>");
+                                        pw.println("\t\t</model>");                         
+                                    }
+                                }
+                            }
+                            pw.println("\t</chassis>");
+                        }
+                    }
+                }
+                pw.println("</units>");
+                pw.println("</ratgen>");
+                pw.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean shouldExportAv(AvailabilityRating av, int era) {
+        FactionRecord fRec = factions.get(av.getFaction());
+        return fRec == null || fRec.isInEra(era);
+    }
+    
 }

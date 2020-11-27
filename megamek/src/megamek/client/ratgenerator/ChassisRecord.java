@@ -16,6 +16,8 @@ package megamek.client.ratgenerator;
 
 import java.util.HashSet;
 
+import megamek.MegaMek;
+
 /**
  * The ChassisRecord tracks all available variants and determines how much total weight
  * is to be distributed among the various models.
@@ -25,45 +27,45 @@ import java.util.HashSet;
  */
 public class ChassisRecord extends AbstractUnitRecord {
 
-	protected HashSet<ModelRecord> models;
-	
-	public ChassisRecord(String chassis) {
-		super(chassis);
-		models = new HashSet<ModelRecord>();
-	}
-	
-	public void addModel(ModelRecord model) {
-		models.add(model);
-		if (introYear == 0 || model.getIntroYear() < getIntroYear()) {
-			introYear = model.getIntroYear();
-		}
-	}
-	
-	public HashSet<ModelRecord> getModels() {
-		return models;
-	}
-	
-	public int totalModelWeight(int era, String fKey) {
-		FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
-		if (fRec == null) {
-			System.err.println("Attempt to find totalModelWeight for non-existent faction " + fKey);
-			return 0;
-		}
-		return totalModelWeight(era, fRec);
-	}
-	
-	public int totalModelWeight(int era, FactionRecord fRec) {
-		int retVal = 0;
-		RATGenerator rg = RATGenerator.getInstance();
-		
-		for (ModelRecord mr : models) {
-			AvailabilityRating ar = rg.findModelAvailabilityRecord(era,
-					mr.getKey(), fRec);
-			if (ar != null) {
-				retVal += AvailabilityRating.calcWeight(ar.getAvailability());
-			}
-		}
-		
-		return retVal;
-	}
+    protected HashSet<ModelRecord> models;
+    
+    public ChassisRecord(String chassis) {
+        super(chassis);
+        models = new HashSet<ModelRecord>();
+    }
+    
+    public void addModel(ModelRecord model) {
+        models.add(model);
+        if (introYear == 0 || model.getIntroYear() < getIntroYear()) {
+            introYear = model.getIntroYear();
+        }
+    }
+    
+    public HashSet<ModelRecord> getModels() {
+        return models;
+    }
+    
+    public int totalModelWeight(int era, String fKey) {
+        FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
+        if (fRec == null) {
+            MegaMek.getLogger().warning("Attempt to find totalModelWeight for non-existent faction " + fKey);
+            return 0;
+        }
+        return totalModelWeight(era, fRec);
+    }
+    
+    public int totalModelWeight(int era, FactionRecord fRec) {
+        int retVal = 0;
+        RATGenerator rg = RATGenerator.getInstance();
+        
+        for (ModelRecord mr : models) {
+            AvailabilityRating ar = rg.findModelAvailabilityRecord(era,
+                    mr.getKey(), fRec);
+            if (ar != null) {
+                retVal += AvailabilityRating.calcWeight(ar.getAvailability());
+            }
+        }
+        
+        return retVal;
+    }
 }

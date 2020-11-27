@@ -65,8 +65,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed
-                && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
+        if (!missed && entityTarget.tracksHeat()) {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
@@ -111,11 +110,9 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             int toReturn = 10;
-            if (bGlancing) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
@@ -138,7 +135,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             bSalvo = false;
             return 1;
         }
@@ -149,8 +146,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         bSalvo = true;
         // pain shunted infantry get half damage
         if ((target instanceof Infantry)
-                && ((Entity) target).getCrew().getOptions()
-                        .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+                && ((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             toReturn = Math.max(toReturn / 2, 1);
         }
         return toReturn;
@@ -165,7 +161,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
         // against mechs, 1 hit with 10 damage, plus heat
-        if ((target instanceof Mech) || (target instanceof Aero)) {
+        if (target.tracksHeat()) {
             toReturn = 1;
             // otherwise, 10+2d6 damage
             // but fireresistant BA armor gets no damage from heat, and half the
@@ -177,9 +173,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             } else {
                 toReturn = 10 + Compute.d6(2);
             }
-            if (bGlancing) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
         }
         return toReturn;
     }

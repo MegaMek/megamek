@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ S-STR-OE Eminus
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -79,10 +86,6 @@ Aerodyne
 ISLightGaussRifle:OMNI
 ISLightGaussRifle:OMNI
 ISLightGaussRifle:OMNI
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-IS Light Gauss Ammo:OMNI
-ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -98,6 +101,16 @@ ISERMediumLaser:OMNI
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+ISCASE:OMNI
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Jihad
 </source>
@@ -105,4 +118,3 @@ TRO 3075 - Jihad
 <tonnage>
 85.0
 </tonnage>
-

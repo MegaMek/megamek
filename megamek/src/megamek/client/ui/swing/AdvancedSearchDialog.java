@@ -293,8 +293,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
 
         //Setup Weapons Table
-        scrTableWeapons.setMinimumSize(new Dimension(850, 170));
-        scrTableWeapons.setPreferredSize(new Dimension(850, 170));
+        scrTableWeapons.setMinimumSize(new Dimension(850, 150));
+        scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
         tblWeapons = new MegamekTable(weaponsModel,WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
@@ -335,8 +335,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         scrTableWeapons.setViewportView(tblWeapons);
 
         //Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 170));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 170));
+        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
+        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -397,7 +397,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325,75);
+        Dimension size = new Dimension(325,50);
         txtEqExp.setPreferredSize(size);
         expScroller.setPreferredSize(size);
         expScroller.setMaximumSize(size);
@@ -474,7 +474,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
         c.anchor = GridBagConstraints.CENTER;
 
-        c.insets = new Insets(20,0,0,0);
+        c.insets = new Insets(16,0,0,0);
         c.gridx = 0; c.gridy++;
         this.add(lblTableFilters,c);
         c.insets = new Insets(0,0,0,0);
@@ -503,7 +503,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
 
 
         c.gridwidth = 1;
-        c.insets = new Insets(20,0,0,0);
+        c.insets = new Insets(16,0,0,0);
         c.gridx = 0; c.gridy++;
         this.add(lblEquipment,c);
 
@@ -567,7 +567,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         });
 
         pack();
-        setResizable(false);
         int x = Math.max(0,
                 (frame.getLocation().x + (frame.getSize().width / 2)) -
                 (getSize().width / 2));
@@ -822,7 +821,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         switch (unitTypeFilter) {
         case 5: //UnitType.AERO: the aero index is out of order
             if (eq.hasFlag(WeaponType.F_AERO_WEAPON)
-                    || eq.hasFlag(MiscType.F_AERO_EQUIPMENT)) {
+                    || eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT)) {
                 return true;
             }
             break;
@@ -1063,17 +1062,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
          */
         private static final long serialVersionUID = 1L;
 
-        private final static int COL_QTY = 0;
-        private final static int COL_NAME = 1;
-        private final static int COL_DMG = 2;
-        private final static int COL_HEAT = 3;
-        private final static int COL_SHORT = 4;
-        private final static int COL_MED = 5;
-        private final static int COL_LONG = 6;
-        private final static int COL_IS_CLAN = 7;
-        private final static int COL_LEVEL = 8;
-        private final static int N_COL = 9;
-        private final static int COL_INTERNAL_NAME = 9;
+        private static final int COL_QTY = 0;
+        private static final int COL_NAME = 1;
+        private static final int COL_DMG = 2;
+        private static final int COL_HEAT = 3;
+        private static final int COL_SHORT = 4;
+        private static final int COL_MED = 5;
+        private static final int COL_LONG = 6;
+        private static final int COL_IS_CLAN = 7;
+        private static final int COL_LEVEL = 8;
+        private static final int N_COL = 9;
+        private static final int COL_INTERNAL_NAME = 9;
 
 
         private int[] qty;
@@ -1200,13 +1199,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
          */
         private static final long serialVersionUID = 1L;
 
-        private final static int COL_QTY = 0;
-        private final static int COL_NAME = 1;
-        private final static int COL_COST = 2;
-        private final static int COL_IS_CLAN = 3;
-        private final static int COL_LEVEL = 4;
-        private final static int N_COL = 5;
-        private final static int COL_INTERNAL_NAME = 5;
+        private static final int COL_QTY = 0;
+        private static final int COL_NAME = 1;
+        private static final int COL_COST = 2;
+        private static final int COL_IS_CLAN = 3;
+        private static final int COL_LEVEL = 4;
+        private static final int N_COL = 5;
+        private static final int COL_INTERNAL_NAME = 5;
 
         private int[] qty;
         private Vector<EquipmentType> equipment = new Vector<EquipmentType>();

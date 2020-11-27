@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ TR-5
 2571
 </year>
 
+<originalBuildYear>
+2571
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 12
@@ -86,6 +93,12 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 Field Report 2765 Liao - Age of War
 </source>
@@ -93,4 +106,3 @@ Field Report 2765 Liao - Age of War
 <tonnage>
 25.0
 </tonnage>
-

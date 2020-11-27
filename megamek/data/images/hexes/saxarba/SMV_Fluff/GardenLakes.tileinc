@@ -1,0 +1,15 @@
+# ----------------------------------------------------
+# --------------- SirMegaV Custom  -------------------
+# --------------- Garden Lakes ---------------
+# ----------------------------------------------------
+
+# Garden Lakes
+# Must be included before any water:0 or water:*
+
+# water:0;fluff:94:1-5 is Garden Lakes
+
+super * "water:0;fluff:94:1" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-04-Lake-1-01.png"
+super * "water:0;fluff:94:2" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-04-Lake-1-02.png"
+super * "water:0;fluff:94:3" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-04-Lake-1-03.png"
+super * "water:0;fluff:94:4" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-04-Lake-1-04.png"
+super * "water:0;fluff:94:5" "" "saxarba/SMV_Fluff/FluffSystem-07-Garden-04-Lake-1-05.png"

@@ -45,8 +45,8 @@ import megamek.common.Mounted;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
-import megamek.common.weapons.TSEMPWeapon;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
@@ -261,6 +261,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
+        c.insets = new Insets(1, 9, 6, 9);
         gridbag.setConstraints(activateHiddenPhase, c);
         add(activateHidden);
         add(activateHiddenPhase);
@@ -577,12 +578,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             if (m.hasDoubleHeatSinks()) {
                 sinksR.append(Messages.getString(
                         "MechDisplay.activeSinksTextDouble", //$NON-NLS-1$
-                        new Object[]{new Integer(sinks),
-                                     new Integer(sinks * 2)}));
+                        new Object[]{Integer.valueOf(sinks),
+                                     Integer.valueOf(sinks * 2)}));
             } else {
                 sinksR.append(Messages.getString(
                         "MechDisplay.activeSinksTextSingle", //$NON-NLS-1$
-                        new Object[]{new Integer(sinks)}));
+                        new Object[]{Integer.valueOf(sinks)}));
             }
 
             boolean hasTSM = false;

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ KRV-2
 2367
 </year>
 
+<originalBuildYear>
+2367
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -47,10 +54,6 @@ Tracked
 17
 22
 </armor>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
 
 <Body Equipment>
 Advanced Fire Control
@@ -76,6 +79,26 @@ Large Laser
 LRM 5
 </Turret Equipment>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<notes>
+Armor exceeds point limit for 50.0-ton Tracked support vehicle: 105 points > 104.
+</notes>
+
 <source>
 XTRO Primitives III - Age of War
 </source>
@@ -84,7 +107,6 @@ XTRO Primitives III - Age of War
 50.0
 </tonnage>
 
-<barrating>
-6
-</barrating>
-
+<fuel>
+0.0
+</fuel>

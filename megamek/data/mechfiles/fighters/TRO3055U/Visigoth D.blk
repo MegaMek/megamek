@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ D
 3066
 </year>
 
+<originalBuildYear>
+3066
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 7
@@ -78,17 +85,8 @@ Aerodyne
 <Nose Equipment>
 CLUltraAC10:OMNI
 CLUltraAC10:OMNI
-Clan Ultra AC/10 Ammo:OMNI
-Clan Ultra AC/10 Ammo:OMNI
-Clan Ultra AC/10 Ammo:OMNI
-Clan Ultra AC/10 Ammo:OMNI
 CLHeavyMediumLaser:OMNI
 CLHeavyMediumLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -100,6 +98,17 @@ CLCASE
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ultra AC/10 Ammo:OMNI
+Clan Ultra AC/10 Ammo:OMNI
+Clan Ultra AC/10 Ammo:OMNI
+Clan Ultra AC/10 Ammo:OMNI
+CLCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3055u - Civil War
 </source>
@@ -107,4 +116,3 @@ TRO 3055u - Civil War
 <tonnage>
 60.0
 </tonnage>
-

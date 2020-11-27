@@ -77,9 +77,7 @@ public class BAMGHandler extends WeaponHandler {
                 nDamPerHit = Math.min(nDamPerHit + (toHit.getMoS() / 3),
                         nDamPerHit * 2);
             }
-            if (bGlancing) {
-                nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
-            }
+            nDamPerHit = applyGlancingBlowModifier(nDamPerHit, false);
         } else {
             nDamPerHit = super.calcDamagePerHit();
         }

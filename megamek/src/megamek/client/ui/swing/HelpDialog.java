@@ -1,8 +1,19 @@
+/*  
+* MegaMek - Copyright (C) 2013-2020 - The MegaMek Team  
+*  
+* This program is free software; you can redistribute it and/or modify it under  
+* the terms of the GNU General Public License as published by the Free Software  
+* Foundation; either version 2 of the License, or (at your option) any later  
+* version.  
+*  
+* This program is distributed in the hope that it will be useful, but WITHOUT  
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
+* details.  
+*/  
 package megamek.client.ui.swing;
 
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.Logger;
-
+import megamek.MegaMek;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -18,10 +29,8 @@ import java.net.URL;
  */
 public class HelpDialog extends JDialog {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1442198850518387690L;
+    
     private static final int WIDTH = 600;
     private static final int HEIGHT = 400;
 
@@ -63,7 +72,7 @@ public class HelpDialog extends JDialog {
     }
 
     private void handleError(String methName, Throwable t, boolean quiet) {
-        new Logger().log(getClass(), methName, LogLevel.ERROR, t);
+        MegaMek.getLogger().error(t);
 
         if (quiet) return;
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);

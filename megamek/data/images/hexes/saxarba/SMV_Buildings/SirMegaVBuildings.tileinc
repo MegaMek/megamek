@@ -1,0 +1,597 @@
+## SMV_Buildings Special Buildings
+
+#SINGLEHEX
+super * "building:1:00;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/light_a.png"
+super * "building:1:00;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/light_b.png"
+super * "building:1:00;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/light_c.png"
+super * "building:1:00;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/light_d.png"
+
+
+
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-16.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-17.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-18.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-28.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-29.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-30.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-1-40.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-24.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-25.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-26.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-27.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-28.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-29.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-30.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-34.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-35.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-36.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-37.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-38.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-39.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-2-40.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-3-36.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-3-37.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-3-38.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-3-39.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:26" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-3-40.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-02-Medium-4-30.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/medium_a.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/medium_b.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/medium_c.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/medium_d.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/medium_e.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/medium_f.png"
+super * "building:2:00;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/medium_g.png"
+
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-2-46.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-2-47.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-2-48.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-2-49.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-2-50.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-3-48.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-3-49.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-3-50.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-4-67.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-4-68.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-4-69.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-4-70.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-5-70.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-6-69.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-6-70.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-7-88.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-7-89.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-7-90.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-8-89.png"
+super * "building:3:00;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-Heavy-8-90.png"
+
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-1-098.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-1-099.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-1-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-3-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-5-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-7-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-A-098.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-A-099.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-A-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-E-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-G-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-H-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-I-099.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-I-100.png"
+super * "building:4:00;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-02-Intermediate-03-ReinforcedLow-M-110.png"
+                                            
+#MULTIHEX 
+#Medium
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-35-01.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-35-02.png"
+                                       
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-36-01.png"
+super * "building:2:09;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-36-02.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-36-03.png"
+                                     
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-37-01.png"
+super * "building:2:09;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-37-02.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-37-03.png"
+                                      
+super * "building:2:12;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-38-01.png"
+super * "building:2:03;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-38-02.png"
+super * "building:2:48;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-38-03.png"
+                                     
+super * "building:2:06;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-39-01.png"
+super * "building:2:28;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-39-02.png"
+super * "building:2:35;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-39-03.png"
+super * "building:2:48;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-39-04.png"
+                                  
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-40-01.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-2-40-02.png"
+                                
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-37-01.png"
+super * "building:2:09;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-37-02.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-37-03.png"
+                                         
+super * "building:2:12;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-38-01.png"
+super * "building:2:15;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-38-02.png"
+super * "building:2:03;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-38-03.png"
+super * "building:2:56;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-38-04.png"
+super * "building:2:49;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-38-05.png"
+                                          
+super * "building:2:06;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-39-01.png"
+super * "building:2:24;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-39-02.png"
+super * "building:2:33;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-39-03.png"
+                                          
+super * "building:2:12;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-40-01.png"
+super * "building:2:07;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-40-02.png"
+super * "building:2:56;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-40-03.png"
+super * "building:2:33;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-3-40-04.png"
+                                          
+super * "building:2:08;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-4-39-01.png"
+super * "building:2:01;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-4-39-02.png"
+                                          
+super * "building:2:04;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-4-40-01.png"
+super * "building:2:32;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-02-Medium-4-40-02.png"
+
+#Heavy
+super * "building:3:14;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-01.png"
+super * "building:3:07;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-02.png"
+super * "building:3:28;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-03.png"
+super * "building:3:63;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-04.png"
+super * "building:3:35;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-05.png"
+super * "building:3:56;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-06.png"
+super * "building:3:49;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-48-07.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-49-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-49-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-49-03.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-50-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-1-50-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-45-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-45-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-45-03.png"
+                               
+super * "building:3:14;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-01.png"
+super * "building:3:15;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-02.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-03.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-04.png"
+super * "building:3:57;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-05.png"
+super * "building:3:49;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-46-06.png"
+                               
+super * "building:3:04;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-47-01.png"
+super * "building:3:32;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-47-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-48-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-48-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-49-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-49-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-50-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-2-50-02.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-01.png"
+super * "building:3:07;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-02.png"
+super * "building:3:62;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-03.png"
+super * "building:3:35;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-04.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-05.png"
+super * "building:3:49;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-41-06.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-42-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-42-02.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-43-01.png"
+super * "building:3:15;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-43-02.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-43-03.png"
+super * "building:3:56;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-43-04.png"
+super * "building:3:49;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-43-05.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-44-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-44-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-44-03.png"
+                               
+super * "building:3:06;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-45-01.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-45-02.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-45-03.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-46-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-46-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-47-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-47-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-48-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-48-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-49-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-49-02.png"
+                               
+super * "building:3:06;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-50-01.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-50-02.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-3-50-03.png"
+                               
+super * "building:3:06;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-65-01.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-65-02.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-65-03.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-66-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-66-02.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-67-01.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-67-02.png"
+super * "building:3:54;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-67-03.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-67-04.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-67-05.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-68-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-68-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-68-03.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-69-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-69-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-69-03.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-70-01.png"
+super * "building:3:07;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-70-02.png"
+super * "building:3:56;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-70-03.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-4-70-04.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:26" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-67-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:26" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-67-02.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-68-01.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-68-02.png"
+super * "building:3:54;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-68-03.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-68-04.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-68-05.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-69-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-69-02.png"
+                               
+super * "building:3:02;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-70-01.png"
+super * "building:3:16;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-5-70-02.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-6-69-01.png"
+super * "building:3:09;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-6-69-02.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-6-69-03.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-6-70-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-6-70-02.png"
+                               
+super * "building:3:06;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-88-01.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-88-02.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-88-03.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-89-01.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-89-02.png"
+super * "building:3:54;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-89-03.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-89-04.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-89-05.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-90-01.png"
+super * "building:3:07;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-90-02.png"
+super * "building:3:56;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-90-03.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-7-90-04.png"
+                               
+super * "building:3:08;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-8-90-01.png"
+super * "building:3:01;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-8-90-02.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-88-01.png"
+super * "building:3:07;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-88-02.png"
+super * "building:3:56;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-88-03.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-88-04.png"
+                               
+super * "building:3:12;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-89-01.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-89-02.png"
+super * "building:3:54;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-89-03.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-89-04.png"
+super * "building:3:33;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-89-05.png"
+                               
+super * "building:3:14;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-90-01.png"
+super * "building:3:03;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-90-02.png"
+super * "building:3:24;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-90-03.png"
+super * "building:3:49;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-03-Heavy-A-90-04.png"
+
+#Hardened
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-099-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-099-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-099-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:1" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-099-04.png"
+
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-100-01.png"
+super * "building:4:09;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-100-02.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:2" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-1-100-03.png"
+
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-099-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-099-02.png"
+
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-100-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-100-02.png"
+super * "building:4:54;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-100-03.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-100-04.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:3" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-2-100-05.png"
+
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-097-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-097-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-097-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:4" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-097-04.png"
+
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-098-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-098-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-098-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:5" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-098-04.png"
+
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-099-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:6" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-099-02.png"
+
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-02.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-03.png"
+super * "building:4:55;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-04.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-05.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:7" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-3-100-06.png"
+                               
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-5-099-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:8" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-5-099-02.png"
+                               
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-5-100-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:9" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-5-100-02.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-099-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-099-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:10" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-099-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-100-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-100-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-100-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:11" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-7-100-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-8-100-01.png"
+super * "building:4:15;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-8-100-02.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-8-100-03.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-8-100-04.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:12" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-8-100-05.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-099-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-099-03.png"
+super * "building:4:57;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-099-04.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:13" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-099-05.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-100-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-100-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-100-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:14" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-9-100-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-099-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-099-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:15" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-099-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:16" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-A-100-06.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-C-100-01.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-C-100-02.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:17" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-C-100-03.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-098-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-098-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-098-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:18" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-098-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-099-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-099-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:19" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-099-04.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-100-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-100-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-100-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:20" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-E-100-04.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-098-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-098-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-098-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:21" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-098-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-099-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-099-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:22" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-099-04.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-100-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-100-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-100-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:23" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-G-100-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-097-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-097-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-097-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:24" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-097-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-098-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-098-02.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:25" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-098-03.png"
+                               
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:26" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-099-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:26" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-099-02.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-100-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-100-02.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-100-03.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:27" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-H-100-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:28" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-099-06.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-02.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-03.png"
+super * "building:4:55;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-04.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-05.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:29" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-I-100-06.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-J-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-J-110-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-J-110-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:30" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-J-110-04.png"
+                               
+                               
+                               
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-108-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-108-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-108-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:31" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-108-04.png"
+                               
+                               
+                               
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-109-01.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-109-02.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:32" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-109-03.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-110-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-110-02.png"
+super * "building:4:48;bldg_cf:*;bldg_elev:*;bldg_fluff:33" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-K-110-03.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:34" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-L-110-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-M-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-M-110-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-M-110-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:35" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-M-110-04.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-109-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-109-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-109-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:36" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-109-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-110-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-110-02.png"
+super * "building:4:54;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-110-03.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-110-04.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:37" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-N-110-05.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-109-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-109-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-109-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:38" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-109-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:39" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-P-110-06.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:40" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Q-110-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:40" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Q-110-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:40" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Q-110-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:40" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Q-110-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:41" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-R-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:41" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-R-110-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:41" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-R-110-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:41" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-R-110-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:42" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-109-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:42" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-109-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:42" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-109-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:42" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-109-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:43" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-U-110-06.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:44" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-W-110-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:44" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-W-110-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:44" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-W-110-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:44" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-W-110-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:45" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-X-110-06.png"
+                               
+super * "building:4:08;bldg_cf:*;bldg_elev:*;bldg_fluff:46" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-107-01.png"
+super * "building:4:01;bldg_cf:*;bldg_elev:*;bldg_fluff:46" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-107-02.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:47" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-108-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:47" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-108-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:47" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-108-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:47" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-108-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:48" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-109-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:48" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-109-02.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:48" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-109-03.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:48" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-109-04.png"
+                               
+super * "building:4:06;bldg_cf:*;bldg_elev:*;bldg_fluff:49" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-110-01.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:49" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-110-02.png"
+super * "building:4:39;bldg_cf:*;bldg_elev:*;bldg_fluff:49" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-110-03.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:49" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-110-04.png"
+super * "building:4:33;bldg_cf:*;bldg_elev:*;bldg_fluff:49" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedLow-Z-110-05.png"
+
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:50" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-6-120-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:50" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-6-120-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:50" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-6-120-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:50" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-6-120-04.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:51" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-8-120-06.png"
+                               
+super * "building:4:12;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-02.png"
+super * "building:4:62;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-03.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-04.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-05.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:52" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-9-120-06.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:53" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-A-120-01.png"
+super * "building:4:03;bldg_cf:*;bldg_elev:*;bldg_fluff:53" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-A-120-02.png"
+super * "building:4:24;bldg_cf:*;bldg_elev:*;bldg_fluff:53" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-A-120-03.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:53" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-A-120-04.png"
+                               
+super * "building:4:14;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-01.png"
+super * "building:4:07;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-02.png"
+super * "building:4:28;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-03.png"
+super * "building:4:63;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-04.png"
+super * "building:4:35;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-05.png"
+super * "building:4:56;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-06.png"
+super * "building:4:49;bldg_cf:*;bldg_elev:*;bldg_fluff:54" "" "saxarba/SMV_Buildings/BuildingSystem-03-Advance-04-ReinforcedMedium-K-120-07.png"

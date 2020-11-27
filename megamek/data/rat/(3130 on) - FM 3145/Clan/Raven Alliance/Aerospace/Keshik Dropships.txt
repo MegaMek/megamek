@@ -1,12 +1,12 @@
 3145 Raven Alliance Keshik Dropships
-Union C,1
+Union C (2829),1
 Titan (Monitor),2
 Nagasawa (Standard),3
-Broadsword (Standard),4
-Miraborg (Standard),5
+Broadsword (2979),4
+Miraborg (3053),5
 Achilles (3055),6
 Titan (Monitor),5
 Nagasawa (Standard),4
-Titan (Clan),3
+Titan (2953),3
 Vanir Assault Dropship (Standard),2
 Pentagon 'Pocket Warship',1

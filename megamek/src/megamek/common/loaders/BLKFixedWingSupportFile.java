@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2019 The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -12,31 +13,19 @@
  * details.
  */
 
-/*
+package megamek.common.loaders;
+
+import megamek.common.*;
+import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.infantry.InfantryWeapon;
+
+/**
  * BLkFile.java
  *
  * Created on April 6, 2002, 2:06 AM
- */
-
-/**
  *
  * @author taharqa
- * @version
  */
-package megamek.common.loaders;
-
-import megamek.common.Aero;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.FixedWingSupport;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-import megamek.common.util.BuildingBlock;
-
 public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
@@ -94,9 +83,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
         int engineFlags = Engine.SUPPORT_VEE_ENGINE;
-        if (a.isClan()) {
-            engineFlags |= Engine.CLAN_ENGINE;
-        }
         if (!dataFile.exists("SafeThrust")) {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
@@ -170,6 +156,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         }
 
         a.autoSetInternal();
+        a.recalculateTechAdvancement();
         a.autoSetSI();
         // This is not working right for arrays for some reason
         a.autoSetThresh();
@@ -193,6 +180,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // support vees need equipment for this
         a.autoSetMaxBombPoints();
         a.setArmorTonnage(a.getArmorWeight());
+
+        if (dataFile.exists("baseChassisFireConWeight")) {
+            a.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
+        }
+
         return a;
     }
 
@@ -221,6 +213,12 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 boolean omniMounted = equipName.contains(":OMNI");
                 equipName = equipName.replace(":OMNI", "");
 
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
                     equipName = equipName.substring(4);
@@ -253,6 +251,9 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
 
                 if (etype != null) {
                     try {
@@ -261,16 +262,27 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
-                            // If no facing specified, assume front
                             if (facing == -1) {
-                                if (rearMount) {
-                                    mount.setFacing(3);
-                                } else {
-                                    mount.setFacing(0);
-                                }
+                                mount.setFacing(defaultAeroVGLFacing(nLoc, rearMount));
                             } else {
                                 mount.setFacing(facing);
                             }
+                        }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            mount.setSize(size);
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
+                                && size > 1) {
+                            // The ammo bin is created by Entity#addEquipment but the size has not
+                            // been set yet, so if the unit carries multiple clips the number of
+                            // shots needs to be adjusted.
+                            mount.setSize(size);
+                            assert(mount.getLinked() != null);
+                            mount.getLinked().setOriginalShots((int) size
+                                    * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
@@ -280,6 +292,23 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
+                }
+            }
+        }
     }
-
 }

@@ -58,6 +58,12 @@ public class TestXMLOption implements TestEntityOption {
 
     @XmlElement
     private boolean showFailedEquip = true;
+    
+    @XmlElement(name = "showIncorrectIntroYear")
+    private boolean showIncorrectIntroYear = true;
+    
+    @XmlElement(name = "introYearMargin")
+    private int introYearMargin = 5;
 
     @XmlElement
     private int targCompCrits = 0;
@@ -167,6 +173,16 @@ public class TestXMLOption implements TestEntityOption {
     public boolean showFailedEquip() {
         return showFailedEquip;
     }
+    
+    @Override
+    public boolean showIncorrectIntroYear() {
+        return showIncorrectIntroYear;
+    }
+    
+    @Override
+    public int getIntroYearMargin() {
+        return introYearMargin;
+    }
 
     @Override
     public int getTargCompCrits() {
@@ -197,6 +213,8 @@ public class TestXMLOption implements TestEntityOption {
                 + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
                 + "Show bad Critical Allocation: " + showCorrectCritical()
                 + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
+                + "\n" + "Show Incorrect Intro Year: " + showIncorrectIntroYear()
+                + "\n" + "Margin of error for Intro Year: " + getIntroYearMargin()
                 + "\n" + "Weight Ceiling Engine: "
                 + Double.toString(1 / getWeightCeilingEngine().mult) + "\n"
                 + "Weight Ceiling Structure: "

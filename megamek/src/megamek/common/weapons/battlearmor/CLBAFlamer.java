@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -34,10 +34,10 @@ public class CLBAFlamer extends BAFlamerWeapon {
      */
     public CLBAFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Flamer";
+        name = "Flamer [BA]";
         setInternalName("CLBAFlamer");
         addLookupName("Clan BA Flamer");
+        addLookupName("ISBAFlamer");
         heat = 3;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
@@ -45,15 +45,19 @@ public class CLBAFlamer extends BAFlamerWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.15f;
+        tonnage = 0.15;
         criticals = 1;
         bv = 5;
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_C;
+        rulesRefs = "255,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setClanAdvancement(2860, 2868, 3050);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
+        techAdvancement.setIntroLevel(false);
+        techAdvancement.setPrototypeFactions(F_CWF).setProductionFactions(F_CWF);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ RPR-100b
 2743
 </year>
 
+<originalBuildYear>
+2743
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -65,16 +72,10 @@ Aerodyne
 
 <Nose Equipment>
 Autocannon/20
-IS Ammo AC/20
-IS Ammo AC/20
 ISLargePulseLaser
 ISLargePulseLaser
 LRM 20
 ISArtemisIV
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-ISCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -87,6 +88,18 @@ ISCASE
 ISMediumPulseLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+ISCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Star League
 </source>
@@ -94,4 +107,3 @@ TRO 3075 - Star League
 <tonnage>
 85.0
 </tonnage>
-

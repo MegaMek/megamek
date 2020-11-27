@@ -1,12 +1,14 @@
 3145 Raven Alliance Fleet Dropships
 Model 96 'Elephant' (Standard),1
 Arcadia (3080),2
-Union C,3
 Titan (Monitor),4
 Nagasawa (Standard),5
-Broadsword (Standard),6
-Miraborg (Standard),5
+Broadsword (2979),6
+Miraborg (3053),5
 Achilles (3055),4
 Titan (Monitor),3
 Nagasawa (Standard),2
-Titan (Clan),1
+Titan (2953),1
+Union C (2829),1
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1

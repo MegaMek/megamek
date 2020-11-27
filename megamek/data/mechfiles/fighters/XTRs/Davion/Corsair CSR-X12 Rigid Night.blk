@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CSR-X12 Rigid Night
 3074
 </year>
 
+<originalBuildYear>
+3074
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis) Experimental
 </type>
@@ -31,6 +35,9 @@ Mixed (IS Chassis) Experimental
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 9
@@ -83,6 +90,12 @@ CLSmallPulseLaser
 CLSmallPulseLaser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 XTRO Davion - Jihad
 </source>
@@ -90,4 +103,3 @@ XTRO Davion - Jihad
 <tonnage>
 50.0
 </tonnage>
-

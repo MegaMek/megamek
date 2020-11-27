@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ TRN-3T
 2717
 </year>
 
+<originalBuildYear>
+2717
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 12
@@ -87,6 +94,12 @@ Medium Laser
 Small Laser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 TRO 3050u - Star League
 </source>
@@ -94,4 +107,3 @@ TRO 3050u - Star League
 <tonnage>
 20.0
 </tonnage>
-

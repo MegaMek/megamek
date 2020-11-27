@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
-import megamek.common.weapons.TAGWeapon;
+import megamek.common.weapons.tag.TAGWeapon;
 
 
 /**
@@ -33,11 +32,12 @@ public class CLBALightTAG extends TAGWeapon {
 
     public CLBALightTAG() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Light TAG";
+        name = "TAG (Light)";
         setInternalName("CLBALightTAG");
         addLookupName("Clan BA Light TAG");
-        tonnage = 0.035f;
+        addLookupName("ISBALightTAG");
+        addLookupName("IS BA Light TAG");
+        tonnage = 0.035;
         criticals = 1;
         hittable = true;
         spreadable = false;
@@ -49,10 +49,18 @@ public class CLBALightTAG extends TAGWeapon {
         extremeRange = 12;
         bv = 0;
         cost = 40000;
-        introDate = 3054;
-        techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        rulesRefs = "270,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3051, 3053, 3057, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, 3054, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_DC)	
+        .setProductionFactions(F_DC);
     }
 }

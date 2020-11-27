@@ -2,7 +2,7 @@ Periphery (Generic) Dropships Late 3075
 Seeker (3054),1
 Leopard CV (3054),2
 Seeker (3054),3
-Mule (Standard),4
+Mule (2737),4
 Leopard (3056),5
 Union (3055),6
 Condor (3054),5

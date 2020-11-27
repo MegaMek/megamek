@@ -149,3 +149,19 @@ Heat Sink
 -Empty-
 
 
+Overview: The formation of the Free Rasalhague Republic was preceded by intense negotiations between ComStar and the Draconis Combine. As part of the resulting accord-and as the result of one of the greatest Kuritan intelligence coups of all time-the Combine was given hundreds of older SLDF BattleMechs mostly stripped of their LosTech components. A few advanced Thugs "accidentally" sent by ComStar were quickly sent to Luthien Armor Works, where the design was reverse-engineered and eventually duplicated on an existing chassis. In this way, the Hatamoto-Chi replaced the underperforming Charger, and quickly became one of the premier Kuritan Assault 'Mechs.
+
+Capabilities: The Hatamoto, with its roomy and easily modified torsos, went through many incarnations. The original -Chi, mimicking the Thug, was easily the most common design. LAW would experiment with many other variants, though, either in an attempt to replicate other 'Mechs or to reduce supply challenges. This would greatly confuse Federated Suns forces during the War of 3039, and would cause them fits when one of the easily-repared 'Mechs would reapper only days after its supposed destruction.
+
+Deployment: The Hatamoto-Chi is a Kuritan design that has never been sold to other powers. Some might field a few salvaged models, but the durability and deadliness of the Hatamoto makes such cases rare. The original -26T was only produced in limited numbers for field testing, and was rapidly replaced by the more advanced -27T as more and more advanced technology reappeared within Combine space.
+
+systemmanufacturer:CHASSIS:Earthwerks
+systemmode:CHASSIS:VOL
+systemmanufacturer:ENGINE:Pitban
+systemmode:ENGINE:320
+systemmanufacturer:ARMOR:Mitchell
+systemmode:ARMOR:Argon
+systemmanufacturer:COMMUNICATIONS:Colmax
+systemmode:COMMUNICATIONS:90
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:D2j

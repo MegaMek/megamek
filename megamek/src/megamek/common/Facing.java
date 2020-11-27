@@ -73,5 +73,4 @@ public enum Facing {
     public Facing getNextCounterClockwise() {
         return ccw.get(this);
     }
-
 }

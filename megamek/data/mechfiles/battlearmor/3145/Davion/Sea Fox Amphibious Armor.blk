@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -48,7 +48,7 @@ UMU
 BACuttingTorch:RA
 ISBASRM1OS:LA
 ISBALightMachineGun:Body
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 ISMechanicalJumpBooster:Body
 BAArmoredGlove:RA
 BAArmoredGlove:LA
@@ -97,4 +97,3 @@ biped
 <weightclass>
 1
 </weightclass>
-

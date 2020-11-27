@@ -1,18 +1,22 @@
 /*
- * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 package megamek.common.util;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -28,20 +32,13 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-
+import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.common.Configuration;
 import megamek.common.Coords;
-import sun.awt.image.ToolkitImage;
 
 /**
  * Generic utility methods for image data
@@ -51,19 +48,22 @@ public final class ImageUtil {
      * The graphics configuration of the local graphic card/monitor combination,
      * if we aren't running in "headless" mode.
      */
-    private final static GraphicsConfiguration GC;
+    private static final GraphicsConfiguration GC;
     static {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice gd = null;
         try {
             gd = ge.getDefaultScreenDevice();
-        } catch(HeadlessException he) {
+        } catch (HeadlessException ignored) {
         }
         GC = (null != gd) ? gd.getDefaultConfiguration() : null;
     }
 
     public static final int IMAGE_SCALE_BICUBIC = 1;
     public static final int IMAGE_SCALE_AVG_FILTER = 2;
+    
+    /** Holds a drawn "fail" image that can be used when image loading fails. */
+    public static BufferedImage failStandardImage; 
 
     /**
      * @return an image in a format best fitting for hardware acceleration, if
@@ -87,21 +87,35 @@ public final class ImageUtil {
      * @return an image in a format best fitting for hardware acceleration, if possible
      */
     public static BufferedImage createAcceleratedImage(int w, int h) {
-        if(null == GC) {
-            return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        }
-        BufferedImage acceleratedImage = GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
-        return acceleratedImage;
+        return (GC == null) ? new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
+                : GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
-
+    
+    /** 
+     * Returns a standard size (84x72) "fail" image having a red on white cross. 
+     * The image is drawn, not loaded and should therefore work in almost all cases. 
+     */
+    public static BufferedImage failStandardImage() {
+        if (failStandardImage == null) {
+            failStandardImage = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = failStandardImage.createGraphics();
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, 84, 72);
+            graphics.setStroke(new BasicStroke(4f));
+            graphics.setColor(Color.RED);
+            graphics.drawLine(62, 56, 22, 16);
+            graphics.drawLine(62, 16, 22, 56);
+        }
+        return failStandardImage;
+    }
+    
     /**
      * Get a scaled version of the input image.
      *
      * @param img
      * @return
      */
-    public static BufferedImage getScaledImage(Image img, int newWidth,
-            int newHeight) {
+    public static BufferedImage getScaledImage(Image img, int newWidth, int newHeight) {
         return getScaledImage(img, newWidth, newHeight, IMAGE_SCALE_BICUBIC);
     }
 
@@ -128,8 +142,9 @@ public final class ImageUtil {
 
             ImageProducer prod;
             prod = new FilteredImageSource(img.getSource(), filter);
-            return ImageUtil.createAcceleratedImage(
-                    Toolkit.getDefaultToolkit().createImage(prod));
+            Image result = Toolkit.getDefaultToolkit().createImage(prod);
+            waitUntilLoaded(result);
+            return ImageUtil.createAcceleratedImage(result);
         }
     }
 
@@ -141,16 +156,16 @@ public final class ImageUtil {
         IMAGE_LOADERS.add(new TileMapImageLoader());
         IMAGE_LOADERS.add(new AWTImageLoader());
     }
-    
+
     /** Add a new image loader to the first position of the list, if it isn't there already */
     public static void addImageLoader(ImageLoader loader) {
         if (null != loader && !IMAGE_LOADERS.contains(loader)) {
             IMAGE_LOADERS.add(0, loader);
         }
     }
-    
+
     public static Image loadImageFromFile(String fileName) {
-        if(null == fileName) {
+        if (null == fileName) {
             return null;
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
@@ -161,19 +176,18 @@ public final class ImageUtil {
         }
         return null;
     }
-    
+
     private ImageUtil() {}
-    
+
     /**
      * Interface that defines methods for an ImageLoader.
      *
      */
     public interface ImageLoader {
-        
+
         /**
-         * Given a string representation of a file, 
+         * Given a string representation of a file,
          * @param fileName
-         * @param toolkit
          * @return
          */
         Image loadImage(String fileName);
@@ -189,37 +203,23 @@ public final class ImageUtil {
         public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
-                System.out.println("Trying to load image for a non-existant "
-                        + "file! Path: " + fileName);
-            }
-            ToolkitImage result = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(fileName);
-            if(null == result) {
+                System.out.println(String.format("Trying to load image for a non-existent file! Path: %s", fileName));
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = result.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                result.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
+            Image result = Toolkit.getDefaultToolkit().getImage(fileName);
+            if (result == null) {
+                return null;
             }
-            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            final boolean isAnimated = waitUntilLoaded(result);
+            if ((result.getWidth(null) < 0) || (result.getHeight(null) < 0)) {
+                return null;
+            }
+            return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
 
     /**
-     * ImageLoader that loads subregions from a larger atlas file.  The filename is assumed to have the format:
+     * ImageLoader that loads sub-regions from a larger atlas file. The filename is assumed to have the format:
      * <imageFile>(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
      * image tile.
      */
@@ -231,7 +231,7 @@ public final class ImageUtil {
          * @param c
          * @return
          */
-        private Coords parseCoords(String c) {
+        protected Coords parseCoords(String c) {
             if(null == c || c.isEmpty()) {
                 return null;
             }
@@ -247,10 +247,10 @@ public final class ImageUtil {
                 return null;
             }
         }
-        
+
         /**
          * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
-         * subimage within the original image and return that subimage.
+         * sub-image within the original image and return that sub-image.
          *
          */
         @Override
@@ -271,28 +271,16 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseName);
+            File baseFile = new File(baseName);
+            if (!baseFile.exists()) {
+                return null;
+            }
+            System.out.println("Loading atlas: " + baseFile);
+            Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = base.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                base.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
-            }
+            waitUntilLoaded(base);
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
             g2d.drawImage(base, 0, 0, result.getWidth(), result.getHeight(),
@@ -303,8 +291,8 @@ public final class ImageUtil {
     }
 
     /**
-     * ImageLoader that loads subregions from a larger atlas file, but is given
-     * filenames that are mapped into an atlas. When constructed, this class
+     * ImageLoader that loads sub-regions from a larger atlas file, but is given
+     * file names that are mapped into an atlas. When constructed, this class
      * reads in a map that maps image files to an atlas image and offset
      * location. When an image file is requested to be opened, it first looks to
      * see if the map contains that file, and if it does returns an image from
@@ -312,40 +300,98 @@ public final class ImageUtil {
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
 
-        Map<File, String> imgFileToAtlasMap;
+        ImageAtlasMap imgFileToAtlasMap;
 
-        @SuppressWarnings("unchecked")
         public AtlasImageLoader() {
-            if (!Configuration.imageFileAtlasMapFile().exists()) {
-                imgFileToAtlasMap = null;
-                return;
-            }
-
-            try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
-                XStream xstream = new XStream();
-                imgFileToAtlasMap = (Map<File, String>) xstream.fromXML(is);
-            } catch (FileNotFoundException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            } catch (IOException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            }
+            imgFileToAtlasMap = ImageAtlasMap.readFromFile();
         }
 
+        @Override
         public Image loadImage(String fileName) {
-            File fn = new File(fileName);
-            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fn)) {
+            // The tileset could be using the tiling syntax to flip the image
+            // We may still need to look up the base file name in an atlas and then modify the image
+            int tileStart = fileName.indexOf('(');
+            int tileEnd = fileName.indexOf(')');
+
+            String baseName;
+            Coords start, size;
+            start = size = null;
+            boolean tileAdjusting = (tileStart != -1) && (tileEnd != -1) && (tileEnd > tileStart);
+            if (tileAdjusting) {
+                String coords = fileName.substring(tileStart + 1, tileEnd);
+                int coordsSplitter = coords.indexOf('-');
+                // It's possible we have a unit with a paren in the name, we still want to try to load that
+                if(coordsSplitter == -1) {
+                    baseName = fileName;
+                    tileAdjusting = false;
+                } else {
+                    start = parseCoords(coords.substring(0, coordsSplitter));
+                    size = parseCoords(coords.substring(coordsSplitter + 1));
+                    if ((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
+                        return null;
+                    }
+                    // If we don't have any negative values, this entry isn't doing any image manipulation
+                    // therefore, it must be a TileMapImageLoader entry, and we should ignore it
+                    if (size.getX() > 0 && size.getY() > 0) {
+                        return null;
+                    }
+                    baseName = fileName.substring(0, tileStart);
+                }
+            } else {
+                baseName = fileName;
+            }
+
+            // Check to see if the base file is in an atlas
+            File fn = new File(baseName);
+            Path p = fn.toPath();
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(p)) {
                 return null;
             }
-            return super.loadImage(imgFileToAtlasMap.get(fn));
+
+            // Check to see if we need to flip the image
+            if (tileAdjusting) {
+               Image img = super.loadImage(imgFileToAtlasMap.get(p));
+               BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
+               Graphics2D g2d = result.createGraphics();
+               g2d.drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
+                   start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
+               g2d.dispose();
+               return img;
+            } else { // Otherwise just return the image loaded from the atlas
+                return super.loadImage(imgFileToAtlasMap.get(p));
+            }
         }
+    }
+
+    /**
+     * Wait until the given toolkit image is fully loaded and return if the image is animated.
+     *
+     * @param result  Returns true if the given image is animated.
+     * @return
+     */
+    private static boolean waitUntilLoaded(Image result) {
+        FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
+        // Check to see if the image is loaded
+        if (!Toolkit.getDefaultToolkit().prepareImage(result, -1, -1, observer)) {
+            long startTime = System.currentTimeMillis();
+            long maxRuntime = 10000;
+            long runTime = 0;
+            while (!observer.isLoaded() && runTime < maxRuntime) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    // Do nothing
+                }
+                runTime = System.currentTimeMillis() - startTime;
+            }
+        }
+        return observer.isAnimated();
     }
 
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
             = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
-        
+
         private final Thread mainThread;
         private volatile boolean loaded = false;
         private volatile boolean animated = false;
@@ -353,10 +399,10 @@ public final class ImageUtil {
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
         }
-        
+
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 0) {
+            if ((infoflags & DONE) > 0) {
                 loaded = true;
                 animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
@@ -364,11 +410,11 @@ public final class ImageUtil {
             }
             return true;
         }
-        
+
         public boolean isLoaded() {
             return loaded;
         }
-        
+
         public boolean isAnimated() {
             return animated;
         }

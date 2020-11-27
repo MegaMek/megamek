@@ -18,7 +18,8 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Sebastian Brocks
@@ -32,21 +33,40 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
 
     public InfantrySupportLRMWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "LRM Launcher (FarShot)";
-        setInternalName(name);
-        addLookupName("InfantryLRM");
+
+        name = "LRM Launcher (Corean Farshot)";
+        setInternalName("InfantryLRM");
+        addLookupName(name);
         addLookupName("LRM Launcher");
-        ammoType = AmmoType.T_NA;
+        addLookupName("LRM Launcher (FarShot)");
+        ammoType = AmmoType.T_INFANTRY;
         cost = 2000;
         bv = 3.44;
+        tonnage = .03;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        setModes(new String[] { "", "Indirect" });
         infantryDamage = 0.48;
         infantryRange = 3;
-        introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_D;
+        ammoWeight = 0.0083;
+        ammoCost = 1500;
+        shots = 1;
+        rulesRefs = "273,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW, F_CC)
+                .setProductionFactions(F_FW).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

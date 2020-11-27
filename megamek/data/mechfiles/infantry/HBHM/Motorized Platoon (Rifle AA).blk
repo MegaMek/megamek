@@ -39,3 +39,7 @@ IS Level 2
 <motion_type>
 Motorized
 </motion_type>
+
+<armorKit>
+GenericKit
+</armorKit>

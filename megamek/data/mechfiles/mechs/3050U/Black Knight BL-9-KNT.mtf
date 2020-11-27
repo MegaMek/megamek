@@ -45,12 +45,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
 ISMediumPulseLaser
-Hatchet
-Hatchet
-Hatchet
-Hatchet
-Hatchet
 Endo-Steel
 Endo-Steel
 
@@ -152,3 +152,20 @@ Endo-Steel
 -Empty-
 -Empty-
 
+
+Overview: A superbly-designed BattleMech, the Black Knight has seen nothing but success since its introduction. The design, developed and produced by Kong Interstellar Corporation, would mate heavy durability with an energy-based armament, giving the Black Knight lasting ability rivaled by few other designs. Though the devastation of its primary manufacturer during the Succession Wars greatly curtailed its numbers, production began once more in 3065 to the joy of many a MechWarrior.
+
+Capabilities: With no explosive components, a durable engine, and a thick shell of armor, Black Knight BattleMechs can take staggering amounts of damage before finally collapsing. In addition, a fantastic communications suite gives it the ability to link with orbital satellites and coordinate other ground forces. The Beagle Active Probe found in the base design gives it additional scanning capabilities, and the design rapidly found a niche a potent command platform.
+
+Deployment: The Black Knight, with its limited production, was never a common design during the Succession Wars. ComStar would horde the greatest number of the design, with many appearing on Tukayyid during their climactic battle against the Clans. One of the famed "Clanbuster" designs, the -9 first saw usage on Tukayyid itself. Trading some durability for increased firepower and accuracy, the -9 would also carry a hatchet for devastating physical attacks. The variant never spread beyond ComStar or Word of Blake hands, though the Republic of the Sphere would inherit multiple models at the formation of their state.
+
+systemmanufacturer:CHASSIS:Technicron
+systemmode:CHASSIS:1L Endo Steel
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300 XL
+systemmanufacturer:ARMOR:Valiant
+systemmode:ARMOR:Lamellor
+systemmanufacturer:COMMUNICATIONS:TransComm
+systemmode:COMMUNICATIONS:Alpha
+systemmanufacturer:TARGETING:TransComm
+systemmode:TARGETING:Beta

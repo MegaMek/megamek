@@ -15,14 +15,15 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class CriticalSlot implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = -8744251501251495923L;
-    public final static int TYPE_SYSTEM = 0;
-    public final static int TYPE_EQUIPMENT = 1;
+    public static final int TYPE_SYSTEM = 0;
+    public static final int TYPE_EQUIPMENT = 1;
 
     /**
      * Determines what the type of this CriticalSlot is, either system or
@@ -177,6 +178,11 @@ public class CriticalSlot implements Serializable {
         return ((other.getType() == type) && (other.getIndex() == index) && (((other
                 .getMount() != null) && (mount != null) && other.getMount()
                 .equals(mount)) || ((mount == null) && (other.getMount() == null))));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, index, mount);
     }
 
     /**

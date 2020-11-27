@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,50 +20,28 @@ IS Standard Battle Armor
 (Level I) [SRM]
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3052
+</year>
 
-<weightclass>
-2
-</weightclass>
-
-<Trooper Count>
-6
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<Armor>
-9
-</Armor>
-
-<Squad Equipment>
-ISBASRM2OS:RA
-BABattleClaw:RA
-</Squad Equipment>
+<originalBuildYear>
+3052
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
 
-<year>
-3052
-</year>
-
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-TRO 3058U - Clan Invasion
-</source>
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 28
@@ -71,3 +50,55 @@ TRO 3058U - Clan Invasion
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+ISBASRM2OS:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

@@ -5,8 +5,9 @@ Overlord (3056),3
 Union (3055),4
 Condor (2801),5
 Leopard (2537),6
-Nagumo (Standard),5
+Nagumo (3056),5
 Intruder (2655),4
-Okinawa (Standard),3
+Okinawa (3055),2
+Okinawa (3056),1
 Vengeance (2682),2
 Intruder (3056),1

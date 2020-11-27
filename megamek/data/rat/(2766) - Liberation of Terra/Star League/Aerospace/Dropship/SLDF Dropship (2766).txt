@@ -6,7 +6,7 @@ Union (2708),5
 Triumph (2593),6
 Dictator (Standard),7
 Lion (2595),6
-Mule (Standard),5
+Mule (2737),5
 Achilles (2582),4
 Pentagon (Standard),3
 Titan (2647),2

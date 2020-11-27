@@ -3,31 +3,33 @@ Merlin
 MLN-SX
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3075
-Rules Level:4
+techbase:Inner Sphere
+era:3075
+source:XTRO Boondocks - Jihad
+rules level:4
 
-Mass:60
-Engine:240 Light Engine(IS)
-Structure:Endo-Composite
-Myomer:Standard
+mass:60
+engine:240 Light Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:4
+heat sinks:14 Double
+nocrit:Standard:None
+walk mp:4
+jump mp:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:18
-RA Armor:18
-LT Armor:22
-RT Armor:22
-CT Armor:31
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:22
+RT armor:22
+CT armor:31
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:3
 Medium VSP Laser, Left Arm
@@ -38,12 +40,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
 ISLaserInsulator
-Endo-Composite
-Endo-Composite
-Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
 -Empty-
 -Empty-
 -Empty-
@@ -52,19 +54,19 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumVariableSpeedLaser
-ISMediumVariableSpeedLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
 ISLaserInsulator
-Endo-Composite
-Endo-Composite
-Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Fusion Engine (armored)
-Fusion Engine (armored)
+Fusion Engine
+Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
@@ -74,11 +76,11 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo-Composite
+IS Endo-Composite
 
 Right Torso:
-Fusion Engine (armored)
-Fusion Engine (armored)
+Fusion Engine
+Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
@@ -91,16 +93,16 @@ Bombast Laser
 ISLaserInsulator
 
 Center Torso:
-Fusion Engine (armored)
-Fusion Engine (armored)
-Fusion Engine (armored)
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine (armored)
-Fusion Engine (armored)
-Fusion Engine (armored)
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -108,9 +110,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-

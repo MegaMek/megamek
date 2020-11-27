@@ -1,12 +1,12 @@
 3063 Lyran Alliance Military Dropships
-Claymore (Standard),1
+Claymore (3054),1
 Avenger (3048),2
-Excalibur (3056),3
+Excalibur 'Pocket Warship',3
 Seeker (3054),4
 Leopard CV (3054),5
 Union (3055),6
 Leopard (3056),5
 Overlord (3056),4
 Triumph (3057),3
-Hercules (Standard),2
+Hercules (3053),2
 Fortress (3058),1

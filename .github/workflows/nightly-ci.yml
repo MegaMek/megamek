@@ -1,0 +1,64 @@
+#
+# Builds MegaMek for CI each Night
+#
+# Jobs:
+#
+#    - nightly_ci: Build MegaMek for CI across multiple platforms
+#                  and Java versions.
+#
+
+name: MegaMek Nightly CI
+
+on:
+  schedule:
+    # Nightly at Midnight (UTC)
+    # ref: https://crontab.guru/every-night
+    - cron:  '0 0 * * *'
+
+#
+# Setup the Build Scan "VCS" link for all gradle invocations
+#
+env:
+  GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
+
+jobs:
+  nightly_ci:
+    # Run this job once for each combination in the
+    # matrix below.
+    strategy:
+      matrix:
+        os:   [ubuntu-latest, windows-latest]
+        java: [ 8, 11 ]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    name: Nightly MegaMek CI ${{ matrix.os }} on Java ${{ matrix.java }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    #
+    # Setup the requested Java Version from the matrix
+    #
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+
+    # Don't run this for Windows.
+    - name: Grant execute permission for gradlew (*nix or MacOS)
+      run: chmod +x gradlew
+      if: runner.os != 'Windows'
+      
+    # Include --stacktrace to make some build failures easier
+    # to figure out.
+    - name: Build with Gradle
+      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
+
+    - name: Upload Test Logs on Failure
+      uses: actions/upload-artifact@v2-preview
+      if: failure()
+      with:
+        name: ${{ matrix.os }}-jdk${{ matrix.java }}-ci-failure-logs
+        path: megamek/build/reports/

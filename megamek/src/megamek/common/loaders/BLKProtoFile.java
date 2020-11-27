@@ -26,14 +26,9 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Protomech;
-import megamek.common.TechConstants;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import megamek.common.verifier.TestProtomech;
 
 public class BLKProtoFile extends BLKFile implements IMechLoader {
 
@@ -41,6 +36,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         Protomech t = new Protomech();
@@ -55,10 +51,6 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             t.setModel("");
-        }
-
-        if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
-            t.setIsQuad(true);
         }
 
         if (dataFile.exists("source")) {
@@ -85,6 +77,8 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
+        t.setIsQuad(nMotion == EntityMovementMode.QUAD);
+        t.setIsGlider(nMotion == EntityMovementMode.WIGE);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
@@ -94,12 +88,15 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int engineCode = BLKFile.FUSION;
         int engineFlags = Engine.NORMAL_ENGINE;
         engineFlags |= Engine.CLAN_ENGINE;
-
-        int engineRating = (int) Math.round(dataFile.getDataAsInt("cruiseMP")[0] * 1.5) * (int) t.getWeight();
+        int engineRating = TestProtomech.calcEngineRating(t);
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("jumpingMP")) {
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
+        }
+        
+        if (dataFile.exists("interface_cockpit")) {
+            t.setInterfaceCockpit(Boolean.parseBoolean(dataFile.getDataAsString("interface_cockpit")[0]));
         }
 
         if (!dataFile.exists("armor")) {
@@ -109,9 +106,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         int[] armor = dataFile.getDataAsInt("armor");
 
         boolean hasMainGun = false;
-        if (Protomech.NUM_PMECH_LOCATIONS == armor.length) {
+        int armorLocs = armor.length + t.firstArmorIndex();
+        if (Protomech.NUM_PMECH_LOCATIONS == armorLocs) {
             hasMainGun = true;
-        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armor.length) {
+        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armorLocs) {
             hasMainGun = false;
         } else {
             throw new EntityLoadingException("Incorrect armor array length");
@@ -119,12 +117,25 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         t.setHasMainGun(hasMainGun);
 
+        if (dataFile.exists("armor_type")){
+            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        
+        if (dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        } else {
+            t.setArmorTechLevel(TechConstants.T_ALL_CLAN);
+        }
+        
         // add the body to the armor array
         for (int x = 0; x < armor.length; x++) {
-            t.initializeArmor(armor[x], x);
+            t.initializeArmor(armor[x], x + t.firstArmorIndex());
         }
 
         t.autoSetInternal();
+        t.recalculateTechAdvancement();
 
         String[] abbrs = t.getLocationNames();
         for (int loop = 0; loop < t.locations(); loop++) {
@@ -148,17 +159,29 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         } else {
             prefix = "IS ";
         }
+        
+        boolean rearMount = false;
 
         for (String element : saEquip) {
             String equipName = element.trim();
+            double size = 0.0;
+            int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+            if (sizeIndex > 0) {
+                size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                equipName = equipName.substring(0, sizeIndex);
+            }
+            if (equipName.startsWith("(R) ")) {
+                rearMount = true;
+                equipName = equipName.substring(4);
+            }
 
             // ProtoMech Ammo comes in non-standard amounts.
-            int ammoIndex = equipName.indexOf("Ammo (");
+            int ammoIndex = equipName.indexOf(" (");
             int shotsCount = 0;
             if (ammoIndex > 0) {
                 // Try to get the number of shots.
                 try {
-                    String shots = equipName.substring(ammoIndex + 6, equipName.length() - 1);
+                    String shots = equipName.substring(ammoIndex + 2, equipName.length() - 1);
                     shotsCount = Integer.parseInt(shots);
                     if (shotsCount < 0) {
                         throw new EntityLoadingException("Invalid number of shots in: " + equipName + ".");
@@ -168,7 +191,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                 }
 
                 // Strip the shots out of the ammo name.
-                equipName = equipName.substring(0, ammoIndex + 4);
+                equipName = equipName.substring(0, ammoIndex);
             }
             EquipmentType etype = EquipmentType.get(equipName);
 
@@ -181,10 +204,24 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
                 try {
                     // If this is an Ammo slot, only add
                     // the indicated number of shots.
+                    Mounted mount;
                     if (ammoIndex > 0) {
-                        t.addEquipment(etype, nLoc, false, shotsCount);
+                        mount = t.addEquipment(etype, Protomech.LOC_BODY, false, shotsCount);
+                    } else if (TestProtomech.requiresSlot(etype)) {
+                        mount = t.addEquipment(etype, nLoc);
+                        // Need to set facing for VGLs
+                        if ((etype instanceof WeaponType)
+                                && etype.hasFlag(WeaponType.F_VGL)) {
+                            mount.setFacing(defaultVGLFacing(nLoc, rearMount));
+                        }
                     } else {
-                        t.addEquipment(etype, nLoc);
+                        mount = t.addEquipment(etype, Protomech.LOC_BODY);
+                    }
+                    if (etype.isVariableSize()) {
+                        if (size == 0.0) {
+                            size = getLegacyVariableSize(equipName);
+                        }
+                        mount.setSize(size);
                     }
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());

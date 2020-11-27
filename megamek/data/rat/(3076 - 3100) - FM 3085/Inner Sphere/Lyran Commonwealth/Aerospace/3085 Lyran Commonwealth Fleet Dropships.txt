@@ -1,12 +1,12 @@
 3085 Lyran Commonwealth Fleet Dropships
 Leopard CV (3054),1
 Intruder (2655),2
-Excalibur (3056),3
-Claymore (Standard),4
-Claymore (Standard),5
+Excalibur 'Pocket Warship',3
+Claymore (3054),4
+Claymore (3054),5
 Avenger (3048),6
 Union-X (3065),5
 Overlord A3,4
 Union-X (3071),3
 Overlord A3,2
-Excalibur (Pocket Warship),1
+Excalibur 'Pocket Warship',1

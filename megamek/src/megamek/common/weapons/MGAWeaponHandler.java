@@ -229,6 +229,10 @@ public class MGAWeaponHandler extends MGHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
+            
+            if(bLowProfileGlancing) {
+                hit.makeGlancingBlow();
+            }
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget

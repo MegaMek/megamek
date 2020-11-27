@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -82,7 +82,6 @@ ISOffRoadChassis
 </Rear Left Equipment>
 
 <Rear Equipment>
-hitch
 </Rear Equipment>
 
 <transporters>
@@ -97,4 +96,3 @@ TRO VAr - Clan Invasion
 <tonnage>
 90.0
 </tonnage>
-

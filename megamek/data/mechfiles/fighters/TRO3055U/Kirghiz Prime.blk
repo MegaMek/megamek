@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Prime
 2874
 </year>
 
+<originalBuildYear>
+2874
+</originalBuildYear>
+
 <type>
 Clan Level 2
 </type>
@@ -31,6 +35,9 @@ Clan Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 5
@@ -69,36 +76,17 @@ Aerodyne
 
 <Nose Equipment>
 CLLBXAC10:OMNI
-Clan LB 10-X Cluster Ammo:OMNI
-Clan LB 10-X Cluster Ammo:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLGaussRifle:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLGaussRifle:OMNI
-Clan Gauss Ammo:OMNI
-Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 CLCASE
 </Right Wing Equipment>
 
@@ -106,14 +94,22 @@ CLCASE
 CLERSmallLaser:OMNI
 CLStreakSRM6:OMNI
 CLStreakSRM6:OMNI
-Clan Streak SRM 6 Ammo:OMNI
-Clan Streak SRM 6 Ammo:OMNI
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan LB 10-X Cluster Ammo:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+</Fuselage Equipment>
 
 <source>
 TRO 3055u - Succession Wars
@@ -122,4 +118,3 @@ TRO 3055u - Succession Wars
 <tonnage>
 100.0
 </tonnage>
-

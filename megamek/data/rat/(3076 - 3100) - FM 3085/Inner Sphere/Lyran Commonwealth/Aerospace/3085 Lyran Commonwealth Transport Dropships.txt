@@ -1,12 +1,12 @@
 3085 Lyran Commonwealth Transport Dropships
-Excalibur (3056),1
+Excalibur 'Pocket Warship',1
 Fortress (3058),2
 Overlord (3056),3
 Union (3055),4
-Hercules (Standard),5
+Hercules (3053),5
 Leopard (2537),6
 Aurora (Standard),5
 Seeker (2815),4
 Leopard CV (3054),3
 Intruder (2655),2
-Excalibur (3056),1
+Excalibur 'Pocket Warship',1

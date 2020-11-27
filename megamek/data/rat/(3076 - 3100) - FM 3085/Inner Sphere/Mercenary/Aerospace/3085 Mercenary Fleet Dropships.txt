@@ -6,7 +6,7 @@ Union-X (3065),4
 Intruder (3056),5
 Achilles (3055),6
 Avenger (3048),5
-Kuan Ti (Standard),4
-Mule (Pocket Warship),3
+Kuan Ti (3055),4
+Mule 'Pocket Warship',3
 Overlord A3,2
-Excalibur (Pocket Warship),1
+Excalibur 'Pocket Warship',1

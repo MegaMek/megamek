@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Rottweiler Battle Armor
 3070
 </year>
 
+<originalBuildYear>
+3070
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -49,7 +56,8 @@ ISBAKingDavidLightGaussRifle:Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
-BARemoteSensorDispenser:Body
+ISBARemoteSensorDispenser:Body
+Mission Equipment Storage (5kg):Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -87,4 +95,3 @@ quad
 <weightclass>
 2
 </weightclass>
-

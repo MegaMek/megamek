@@ -5,8 +5,8 @@ Rifleman RFL-7M,3
 Thunderbolt TDR-10M,4
 Marauder MAD-9M2,5
 Archer ARC-9M,6
-Koschei KSC-5MC,5
+Ostwar OWR-3M,5
 Hercules HRC-LS-9000,4
 Orion ON3-M,3
-Penthesilea PEN-2H,2
+Patriot PKM-2D,2
 Scourge SCG-WF1,1

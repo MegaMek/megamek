@@ -75,7 +75,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage(nRange);
+        double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && wtype.hasModes()) {
@@ -119,7 +119,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = (int) Math.max(Math.floor(toReturn / 2.0), 1);
         }
 
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
@@ -128,9 +128,8 @@ public class PPCHandler extends EnergyWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         return (int) Math.ceil(toReturn);
     }
@@ -199,7 +198,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 }
                 vPhaseReport.addAll(newReports);
                 // Deal 2 damage to the pilot
-                vPhaseReport.addAll(server.damageCrew(ae, 2));
+                vPhaseReport.addAll(server.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

@@ -55,7 +55,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements 
         BoardViewListener, GameListener, Distractable {
@@ -64,7 +64,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
      *
      */
     private static final long serialVersionUID = 4421205210788230341L;
-
+    
     public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
@@ -301,7 +301,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
     
     @Override
-    public void gameClientFeedbackRquest(GameCFREvent evt) {
+    public void gameClientFeedbackRequest(GameCFREvent evt) {
         //noaction default
     }
     
@@ -311,5 +311,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
 
     public void ready() {
+    }
+    // needed for turn timer to add timer display to GUI
+    public ClientGUI getClientgui() {
+        return clientgui;
     }
 }

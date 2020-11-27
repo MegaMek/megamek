@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,20 @@ S-2
 3077
 </year>
 
+<originalBuildYear>
+3077
+</originalBuildYear>
+
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 8
@@ -57,7 +64,7 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-17
+39
 </armor_type>
 
 <armor_tech>
@@ -74,7 +81,6 @@ Aerodyne
 <Nose Equipment>
 Medium Laser
 Small Laser
-IS Ammo MG - Full
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -89,6 +95,13 @@ Machine Gun
 Machine Gun
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo MG - Full
+</Fuselage Equipment>
+
 <source>
 XTRO RetroTech - Jihad
 </source>
@@ -96,4 +109,3 @@ XTRO RetroTech - Jihad
 <tonnage>
 30.0
 </tonnage>
-

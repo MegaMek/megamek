@@ -17,6 +17,7 @@ package megamek.client.ui.swing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,7 @@ import javax.swing.UIManager;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.event.BoardViewEvent;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
 import megamek.common.Building;
@@ -47,10 +49,12 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.QuadVee;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -64,8 +68,8 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.CLFireExtinguisher;
-import megamek.common.weapons.ISFireExtinguisher;
+import megamek.common.weapons.other.CLFireExtinguisher;
+import megamek.common.weapons.other.ISFireExtinguisher;
 
 /**
  * Context menu for the board.
@@ -163,6 +167,13 @@ public class MapMenu extends JPopupMenu {
                 }
 
                 menu = createStandMenu();
+
+                if (menu.getItemCount() > 0) {
+                    this.add(menu);
+                    itemCount++;
+                }
+
+                menu = createConvertMenu();
 
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
@@ -582,6 +593,24 @@ public class MapMenu extends JPopupMenu {
                         Messages.getString("MovementDisplay.butEvade"));
 
                 item.setActionCommand(MovementDisplay.MoveCommand.MOVE_EVADE
+                                              .getCmd());
+                item.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            ((MovementDisplay) currentPanel).actionPerformed(e);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+                menu.add(item);
+            }
+
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+                item = new JMenuItem(
+                        Messages.getString("MovementDisplay.butEvade"));
+
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BOOTLEGGER
                                               .getCmd());
                 item.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -1135,11 +1164,80 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    private JMenu createConvertMenu() {
+        JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
+        
+        if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
+                    MovementDisplay.MoveCommand.MOVE_MODE_VEE, false));
+        } else if (myEntity instanceof QuadVee) {
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_MECH));
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
+                    MovementDisplay.MoveCommand.MOVE_MODE_VEE,
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));            
+        } else if (myEntity instanceof LandAirMech) {
+            int currentMode = myEntity.getConversionMode();
+            JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                    currentMode == LandAirMech.CONV_MODE_MECH);
+            item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
+                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                            LandAirMech.CONV_MODE_MECH));
+            menu.add(item);
+            if (((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+                item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
+                        MovementDisplay.MoveCommand.MOVE_MODE_VEE,
+                        currentMode == LandAirMech.CONV_MODE_AIRMECH);
+                item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
+                        || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                                LandAirMech.CONV_MODE_AIRMECH));
+                menu.add(item);
+            }
+            item = createConvertMenuItem("MovementDisplay.moveModeFighter",
+                    MovementDisplay.MoveCommand.MOVE_MODE_AIR,
+                    currentMode == LandAirMech.CONV_MODE_FIGHTER);
+            item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
+                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                            LandAirMech.CONV_MODE_FIGHTER));
+            menu.add(item);
+        }
+        return menu;
+    }
+    
+    private JMenuItem createConvertMenuItem(String resourceKey, MovementDisplay.MoveCommand cmd,
+            boolean isCurrent) {
+        String text = Messages.getString(resourceKey);
+        if (isCurrent) {
+            text = "No Conversion";
+        }
+        JMenuItem item = new JMenuItem(text);
+        item.setActionCommand(cmd.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        return item;
+    }
+
     private JMenu createTargetMenu() {
         JMenu menu = new JMenu("Target");
 
         // If we can't target entities, nothing to do
         if (!canTargetEntities()) {
+            return menu;
+        }
+
+        // VTOLs/AirMechs making strafing or bombing attacks already declared the target hex(es)
+        // in the movement phase and cannot change them.
+        if (myEntity.isMakingVTOLGroundAttack()) {
+            menu.setEnabled(false);
             return menu;
         }
 
@@ -1198,7 +1296,9 @@ public class MapMenu extends JPopupMenu {
             if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
                 menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
             } else {
-                if ((hasAmmoType(AmmoType.T_LRM) || hasAmmoType(AmmoType.T_MML))
+                if ((hasAmmoType(AmmoType.T_LRM)
+                        || hasAmmoType(AmmoType.T_LRM_IMP)
+                        || hasAmmoType(AmmoType.T_MML))
                     && (hasMunitionType(AmmoType.M_FASCAM)
                         || hasMunitionType(AmmoType.M_THUNDER)
                         || hasMunitionType(AmmoType.M_THUNDER_ACTIVE)
@@ -1222,12 +1322,13 @@ public class MapMenu extends JPopupMenu {
                 }
 
                 if (hasAmmoType(AmmoType.T_ARROW_IV)
-                    || hasAmmoType(AmmoType.T_SNIPER)
-                    || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
-                    || hasAmmoType(AmmoType.T_ALAMO)
-                    || hasAmmoType(AmmoType.T_KILLER_WHALE)
-                    || hasAmmoType(AmmoType.T_LONG_TOM)
-                    || hasAmmoType(AmmoType.T_THUMPER)) {
+                        || hasAmmoType(AmmoType.T_SNIPER)
+                        || hasAmmoType(AmmoType.T_CRUISE_MISSILE)
+                        || hasAmmoType(AmmoType.T_ALAMO)
+                        || hasAmmoType(AmmoType.T_KILLER_WHALE)
+                        || hasAmmoType(AmmoType.T_LONG_TOM)
+                        || hasAmmoType(AmmoType.T_THUMPER)
+                        || hasAmmoType(AmmoType.T_BA_TUBE)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
                 }
                 if (canStartFires && hasFireExtinguisher()
@@ -1252,7 +1353,8 @@ public class MapMenu extends JPopupMenu {
                 || hasAmmoType(AmmoType.T_ALAMO)
                 || hasAmmoType(AmmoType.T_KILLER_WHALE)
                 || hasAmmoType(AmmoType.T_LONG_TOM)
-                || hasAmmoType(AmmoType.T_THUMPER))) {
+                || hasAmmoType(AmmoType.T_THUMPER)
+                || hasAmmoType(AmmoType.T_BA_TUBE))) {
             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_ARTILLERY)));
         }
         // Check for adding TAG targeting buildings and hexes
@@ -1270,10 +1372,10 @@ public class MapMenu extends JPopupMenu {
     void plotCourse(ActionEvent e) {
         ((MovementDisplay) currentPanel).actionPerformed(e);
 
-        // Drag
-        ((BoardView1) gui.bv).mouseAction(coords, 3, 16);
+        // Cursor over the hex.
+        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_MASK);
         // Click
-        ((BoardView1) gui.bv).mouseAction(coords, 1, 16);
+        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_MASK);
     }
 
     Targetable decodeTargetInfo(String info) {

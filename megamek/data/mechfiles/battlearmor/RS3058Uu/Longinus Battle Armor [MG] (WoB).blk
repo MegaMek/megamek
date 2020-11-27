@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,58 +20,28 @@ Longinus Battle Armor
 [MG] (WoB)
 </Model>
 
-<chassis>
-biped
-</chassis>
+<year>
+3061
+</year>
 
-<weightclass>
-2
-</weightclass>
-
-<Trooper Count>
-6
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<Armor>
-9
-</Armor>
-
-<Squad Equipment>
-BA Machine Gun:RA
-ISBASRM2OS:Body
-BABattleClaw:RA
-BAAPMount:LA
-InfantryAssaultRifle:LA:APM
-IS BA Advanced:RA
-IS BA Advanced:RA
-IS BA Advanced:LA
-IS BA Advanced:LA
-IS BA Advanced:Body
-</Squad Equipment>
+<originalBuildYear>
+3061
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
 
-<year>
-3061
-</year>
-
 <motion_type>
 Jump
 </motion_type>
 
-<source>
-TRO 3058U - Clan Invasion
-</source>
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 30
@@ -79,3 +50,63 @@ TRO 3058U - Clan Invasion
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+CLBAMG:RA
+ISBASRM2OS:Body
+BAAPMount:LA
+InfantryAssaultRifle:APM:LA
+BA Advanced:RA
+BA Advanced:RA
+BA Advanced:LA
+BA Advanced:LA
+BA Advanced:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

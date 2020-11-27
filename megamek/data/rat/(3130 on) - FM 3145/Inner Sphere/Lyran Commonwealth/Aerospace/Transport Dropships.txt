@@ -8,5 +8,5 @@ Avenger (3048),6
 Aurora (Standard),5
 Union (3055),4
 Overlord (3056),3
-Broadsword (Standard),2
+Broadsword (2979),2
 Trutzburg (Standard),1

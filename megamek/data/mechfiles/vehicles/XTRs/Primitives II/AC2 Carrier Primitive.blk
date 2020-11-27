@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ AC/2 Carrier
 </year>
 
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
@@ -88,4 +88,3 @@ XTRO Primitives II - Age of War
 <tonnage>
 55.0
 </tonnage>
-

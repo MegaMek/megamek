@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -45,10 +44,15 @@ public class ISBAAPDS extends Weapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;
-        introDate = 3134;
-        techLevel.put(3132, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3134, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        rulesRefs = "91, IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        .setISAdvancement(3132, 3134, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_RS)
+        .setProductionFactions(F_RS);
     }
 }

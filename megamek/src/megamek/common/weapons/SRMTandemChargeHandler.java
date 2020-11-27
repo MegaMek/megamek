@@ -151,6 +151,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
+            
+            if(bLowProfileGlancing) {
+                hit.makeGlancingBlow();
+            }
+            
             if (bDirect
                     && (!(target instanceof Infantry) || (target instanceof BattleArmor))) {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
@@ -165,8 +170,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }
             } else if ((target instanceof Tank) || (target instanceof Mech)) {
 
-                if (bGlancing) {
-                    hit.setSpecCritmod(-4);
+                if (bGlancing || bLowProfileGlancing) {
+                    // this will be either -4 or -8
+                    hit.setSpecCritmod(-2 * (int) getTotalGlancingBlowFactor());
                 } else if (bDirect) {
                     hit.setSpecCritmod((toHit.getMoS() / 3) - 2);
                 } else {
@@ -189,15 +195,15 @@ public class SRMTandemChargeHandler extends SRMHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            if (bGlancing) {
-                toReturn /= 2;
-            }
+
+            toReturn = applyGlancingBlowModifier(toReturn, true);
+
             return (int) Math.floor(toReturn);
         }
         return 2;

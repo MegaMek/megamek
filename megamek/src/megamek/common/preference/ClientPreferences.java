@@ -31,15 +31,14 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(LAST_CONNECT_ADDR, "localhost");
         store.setDefault(LAST_CONNECT_PORT, 2346);
         store.setDefault(LAST_SERVER_PORT, 2346);
-        store.setDefault(MAP_TILESET, "atmospheric.tileset");
+        store.setDefault(MAP_TILESET, "saxarba.tileset");
         store.setDefault(MAX_PATHFINDER_TIME,
                 MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
                 + File.separator + "mechfiles");
-        store.setDefault(METASERVER_NAME,
-                "http://stormy-light-2818.herokuapp.com/announce");
+        store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
         // store.setDefault(GAMELOG_MAX_SIZE, 1);
@@ -172,7 +171,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public boolean memoryDumpOn() {
         return store.getBoolean(MEMORY_DUMP_ON);
     }
-    
+
     public boolean debugOutputOn() {
         return store.getBoolean(DEBUG_OUTPUT_ON);
     }

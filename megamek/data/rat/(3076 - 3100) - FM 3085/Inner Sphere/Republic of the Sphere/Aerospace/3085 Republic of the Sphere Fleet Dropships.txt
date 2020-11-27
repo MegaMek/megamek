@@ -1,12 +1,13 @@
 3085 Republic of the Sphere Fleet Dropships
-Carrier (Standard),1
-Okinawa (Standard),2
+Carrier (2882),1
+Okinawa (3055),1
+Okinawa (3056),1
 Vengeance (3056),3
 Dragau II Assault Interceptor (Standard),4
-Claymore (Standard),5
+Claymore (3054),5
 Interdictor Pocket Warship (Standard),6
 Union-X (3071),5
 Interdictor Pocket Warship (SCC),4
 Overlord A3,3
-Interdictor Pocket Warship (Anti-Ship),2
+Interdictor Pocket Warship (Sub-Capital),2
 Tiamat Pocket Warship (Standard),1

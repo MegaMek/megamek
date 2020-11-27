@@ -6,7 +6,7 @@ Vedette Medium Tank (Light Gauss), 4
 R10 Mechanized ICV (Prime), 5
 Stygian Strike Tank (Standard), 6
 Condor Heavy Hover Tank (Upgrade) (Standard), 5
-Cizin (Standard), 4
+Cizin Hover Tank (Standard), 4
 Maxim Mk II Transport (Standard), 3
 JES I Tactical Missile Carrier (3082 Upgrade), 2
 Condor Heavy Hover Tank (Upgrade) (Laser), 1

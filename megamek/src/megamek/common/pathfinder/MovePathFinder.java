@@ -1,3 +1,18 @@
+/*
+* MegaMek -
+* Copyright (C) 2014 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
@@ -11,17 +26,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
-import megamek.common.ManeuverType;
-import megamek.common.Tank;
+import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
-import megamek.common.MovePath;
+import megamek.common.Tank;
 
 /**
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
@@ -157,7 +170,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public boolean shouldStay(MovePath edge) {
-            if (edge.getEntity() instanceof Aero) {
+            if (edge.getEntity().isAero()) {
                 /*
                  * isMovemementPossible is currently not working for aero units,
                  * so we have to use a substitute.
@@ -181,7 +194,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 previousPosition = entity.getPosition();
             }
             return (edge.getLastStep().isMovementPossible(
-                    game, previousPosition, previousElevation));
+                    game, previousPosition, previousElevation, edge.getCachedEntityState()));
         }
     }
 
@@ -202,28 +215,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         }
     }
-    
-    /**
-     * This filter removes paths that have spent all of of the Aeros current
-     * velocity.
-     * 
-     * @author arlith
-     *
-     */
-    public static class MovePathVelocityFilter extends Filter<MovePath> {
-
-        public MovePathVelocityFilter() {
-        }
-
-        @Override
-        public boolean shouldStay(MovePath mp) {
-            return mp.getFinalVelocity() >= 0;
-        }
-    }    
 
     /**
      * A MovePath comparator that compares movement points spent.
-     * 
+     *
      * Order paths with fewer used MP first.
      */
     public static class MovePathMPCostComparator implements Comparator<MovePath> {
@@ -234,13 +229,13 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             return firstDist - secondDist;
         }
     }
-    
+
     /**
      * A MovePath comparator that compares number of steps. Generally used for
      * spheroids, which don't have the same velocity expenditure restrictions as
      * Aerodynes, however they can't compare based on MP like ground units.
      * Spheroids should be able to safely compare based upon path length.
-     * 
+     *
      * Order paths with fewer steps first.
      */
     public static class MovePathLengthComparator implements
@@ -250,42 +245,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final int firstSteps = first.getStepVector().size();
             final int secondSteps = second.getStepVector().size();
             return firstSteps - secondSteps;
-        }
-    }
-    
-    /**
-     * A MovePath comparator that compares remaining velocity points.  Aerodynes
-     * need to spend all of their remaining velocity, so should explore
-     * paths that expend the velocity first.
-     * 
-     * Order paths with lower remaining velocities higher.
-     */
-    public static class MovePathVelocityCostComparator implements
-            Comparator<MovePath> {
-        @Override
-        public int compare(final MovePath first, final MovePath second) {
-            boolean firstFlyoff = first.contains(MoveStepType.OFF)
-                    || first.contains(MoveStepType.RETURN);
-            int velFirst = first.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (firstFlyoff) {
-                velFirst = 0;
-            }
-            boolean secondFlyoff = second.contains(MoveStepType.OFF)
-                    || second.contains(MoveStepType.RETURN); 
-            int velSecond = second.getFinalVelocityLeft();
-            // If we are flying off, treat this as 0 remaining velocity
-            if (secondFlyoff) {
-                velSecond = 0;
-            }
-            
-            // If both paths are flying off, compare on number of steps 
-            // Shorter paths are better
-            if (firstFlyoff && secondFlyoff) {
-                return first.length() - second.length();
-            } else {
-                return velFirst - velSecond;
-            }
         }
     }
 
@@ -323,17 +282,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
             final ArrayList<MovePath> result = new ArrayList<MovePath>();
 
-            /*
-             * In case we process Aero lets check if it have flown of the map,
-             * if thats the case no more movements are possible and return empty
-             * list.
-             */
-            if (entity instanceof Aero &&
-                (lType == MoveStepType.OFF || lType == MoveStepType.RETURN)) {
-                return result;
-            }
-
-
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
             }
@@ -360,105 +308,28 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 if (backwardsStep) {
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
-                } else { 
+                } else {
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
                 }
             }
-            
-            if (backwardsStep) {
-                result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
-            } else {
-                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
+
+            if (backwardsStep &&
+                    mp.getGame().getBoard().contains(mp.getFinalCoords().translated((mp.getFinalFacing() + 3) % 6))) {
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.BACKWARDS));
+            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+                MovePath newPath = mp.clone();
+                PathDecorator.AdjustElevationForForwardMovement(newPath);
+                result.add(newPath.addStep(MoveStepType.FORWARDS));
             }
-            
-            Coords pos;
-            int elevation;
-            if (last != null) {
-                pos = last.getPosition();
-                elevation = last.getElevation();
-            } else {
-                pos = entity.getPosition();
-                elevation = entity.getElevation();
-            }                
-             
-            if (entity.canGoUp(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.UP));
-            }
-            if (entity.canGoDown(elevation, pos)) {
-                result.add(mp.clone().addStep(MoveStepType.DOWN));
-            }            
 
             return result;
         }
     }
 
-    /**
-     * Functional Interface for {@link #getAdjacent(MovePath)}
-     */
-    public static class NextStepsExtendedAdjacencyMap extends NextStepsAdjacencyMap {
-        //this class is not tested, yet.
-
-        public NextStepsExtendedAdjacencyMap(MoveStepType stepType) {
-            super(stepType);
-        }
-
-        /**
-         * Extends the result produced by
-         * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
-         * with manoeuvres for Aero
-         *
-         * @see NextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)
-         */
-        @Override
-        public Collection<MovePath> getAdjacent(MovePath mp) {
-            // These steps are terminal, and shouldn't have anything after them
-            if (mp.contains(MoveStepType.RETURN)
-                    || mp.contains(MoveStepType.OFF)) {
-                return new ArrayList<MovePath>();
-            }
-            Collection<MovePath> result = super.getAdjacent(mp);
-            // fly off of edge of board
-            Coords c = mp.getFinalCoords();
-            IGame game = mp.getEntity().getGame();
-            if (((c.getX() == 0) || (c.getY() == 0)
-                    || (c.getX() == (game.getBoard().getWidth() - 1)) 
-                    || (c.getY() == (game.getBoard().getHeight() - 1)))
-                && (mp.getFinalVelocity() > 0)) {
-                result.add(mp.clone().addStep(MoveStepType.RETURN));
-            }
-            if (!mp.contains(MoveStepType.MANEUVER)) {
-                // side slips
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
-                             .addStep(MoveStepType.LATERAL_LEFT, true, true));
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
-                             .addStep(MoveStepType.LATERAL_RIGHT, true, true));
-                boolean has_moved = mp.getHexesMoved() == 0;
-                if (!has_moved) {
-                    //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                    //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
-                    // immelmen
-                    if (mp.getFinalVelocity() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
-                    }
-                    // split s
-                    if (mp.getFinalAltitude() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
-                    }
-                    // loop
-                    if (mp.getFinalVelocity() > 4) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_LOOP)
-                                     .addStep(MoveStepType.LOOP, true, true));
-                    }
-                }
-            }
-            return result;
-        }
-    }
-
-    /**
+     /**
      * Creates a new instance of MovePathFinder. Sets DestinationMap to
      * {@link MovePathDestinationMap} and adds {@link MovePathLegalityFilter}.
      * Rest of the methods needed by AbstractPathFinder have to be passed as a
@@ -496,7 +367,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * are present with different final facings, the one minimal one is chosen.
      * If none paths are present then {@code null} is returned.
      *
-     * @param c
+     * @param coords
      * @param comp - comparator used if multiple paths are present
      * @return shortest path to the hex at c coordinates or {@code null}
      */

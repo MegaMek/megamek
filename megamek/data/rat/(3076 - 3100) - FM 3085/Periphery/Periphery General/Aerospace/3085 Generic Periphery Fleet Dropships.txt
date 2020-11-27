@@ -8,5 +8,5 @@ Avenger (3048),6
 Vengeance (3056),5
 Union-X (3065),4
 Achilles (3055),3
-Mule (Pocket Warship),2
+Mule 'Pocket Warship',2
 Overlord A3,1

@@ -17,6 +17,8 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -62,6 +64,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -70,6 +74,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
@@ -181,23 +186,23 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     private static final long serialVersionUID = 1535370193846895473L;
 
-    private JTabbedPane panTabs;
-
-    private JCheckBox minimapEnabled;
     private JCheckBox autoEndFiring;
     private JCheckBox autoDeclareSearchlight;
     private JCheckBox nagForMASC;
     private JCheckBox nagForPSR;
+    private JCheckBox nagForWiGELanding;
     private JCheckBox nagForNoAction;
     private JCheckBox animateMove;
     private JCheckBox showWrecks;
     private JCheckBox soundMute;
-    private JCheckBox showMapHexPopup;
     private JCheckBox showWpsinTT;
+    private JCheckBox showArmorMiniVisTT;
+    private JCheckBox showPilotPortraitTT;
     private JCheckBox chkAntiAliasing;
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
+    private JTextField tooltipDistSupression;
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
@@ -214,14 +219,17 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox<String> displayLocale;
 
     private JCheckBox showDamageLevel;
+    private JCheckBox showDamageDecal;
     private JCheckBox showMapsheets;
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
     private JCheckBox entityOwnerColor;
+    private JCheckBox teamColoring;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
+    private JCheckBox hexInclines;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
 
@@ -250,10 +258,12 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JComboBox<String> skinFiles;
 
+    private JComboBox<UITheme> uiThemes;
+
     // Avanced Settings
-    private JList<AdvancedOptionData> keys;
-    private int keysIndex = 0;
-    private JTextField value;
+    private JList<AdvancedOptionData> advancedKeys;
+    private int advancedKeyIndex = 0;
+    private JTextField advancedValue;
 
     // Button order
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> movePhaseCommands;
@@ -261,6 +271,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> firingPhaseCommands;
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> physicalPhaseCommands;
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
+    private StatusBarPhaseDisplay.CommandComparator cmdComp = new StatusBarPhaseDisplay.CommandComparator(); 
+    private PhaseCommandListMouseAdapter cmdMouseAdaptor = new PhaseCommandListMouseAdapter();
     
     private JComboBox<String> tileSetChoice;
     private List<File> tileSets;
@@ -292,6 +304,27 @@ public class CommonSettingsDialog extends ClientDialog implements
     
     private static final Dimension LABEL_SPACER = new Dimension(5,0);
     private static final Dimension DEPENDENT_INSET = new Dimension(25,0);
+    
+    // Save some values to restore them when the dialog is canceled
+    private boolean savedFovHighlight;
+    private boolean savedFovDarken;
+    private boolean savedFovGrayscale;
+    private boolean savedAOHexShadows;
+    private boolean savedShadowMap;
+    private boolean savedHexInclines;
+    private boolean savedLevelhighlight;
+    private boolean savedFloatingIso;
+    private boolean savedMmSymbol;
+    private boolean savedTeamColoring;
+    private boolean savedUnitLabelBorder;
+    private boolean savedShowDamageDecal;
+    private boolean savedShowDamageLabel;
+    private String savedFovHighlightRingsRadii;
+    private String savedFovHighlightRingsColors;
+    private int savedFovHighlightAlpha;
+    private int savedFovDarkenAlpha;
+    private int savedNumStripesSlider;
+    HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /**
      * Standard constructor. There is no default constructor for this class.
@@ -309,34 +342,12 @@ public class CommonSettingsDialog extends ClientDialog implements
      * @param owner - the <code>Frame</code> that owns this dialog.
      */
     public CommonSettingsDialog(JFrame owner) {
-        // Initialize our superclass with a title.
-        super(owner, Messages.getString("CommonSettingsDialog.title")); //$NON-NLS-1$
+        super(owner, Messages.getString("CommonSettingsDialog.title"), true);
 
-        panTabs = new JTabbedPane();
-
-        JPanel settingsPanel = getSettingsPanel();
-        JScrollPane settingsPane = new JScrollPane(settingsPanel);
-        panTabs.add("Main", settingsPane);
-
-        JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
-        JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
-        panTabs.add("Graphics", tacticalOverlaySettingsPane);
-
-        JPanel keyBindPanel = getKeyBindPanel();
-        JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
-        panTabs.add("Key Binds", keyBindScrollPane);
-
-        JPanel buttonOrderPanel = getButtonOrderPanel();
-        panTabs.add("Button Order", buttonOrderPanel);
-        
-        JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
-        JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
-        panTabs.add("Advanced", advancedSettingsPane);
-
+        JTabbedPane panTabs = new JTabbedPane();
         setLayout(new BorderLayout());
         getContentPane().add(panTabs, BorderLayout.CENTER);
         getContentPane().add(getButtonsPanel(), BorderLayout.PAGE_END);
-
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
             @Override
@@ -345,15 +356,28 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         });
 
-        // Center this dialog.
-        pack();
+        // Add the tabs
+        JPanel settingsPanel = getSettingsPanel();
+        JScrollPane settingsPane = new JScrollPane(getSettingsPanel());
+        settingsPane.getVerticalScrollBar().setUnitIncrement(16);
+        panTabs.add("Main", settingsPane);
+        
+        JScrollPane graphicsPane = new JScrollPane(getGraphicsPanel());
+        graphicsPane.getVerticalScrollBar().setUnitIncrement(16);
+        panTabs.add("Graphics", graphicsPane);
 
-        // Make the thing wide enough so a horizontal scrollbar isn't
-        // necessary. I'm not sure why the extra hardcoded 10 pixels
-        // is needed, maybe it's a ms windows thing.
-        setLocationAndSize(settingsPanel.getPreferredSize().width
-                + settingsPane.getInsets().right + 20, settingsPanel
-                .getPreferredSize().height);
+        JScrollPane keyBindPane = new JScrollPane(getKeyBindPanel());
+        keyBindPane.getVerticalScrollBar().setUnitIncrement(16);
+        panTabs.add("Key Binds", keyBindPane);
+
+        panTabs.add("Button Order", getButtonOrderPanel());
+        
+        JScrollPane advancedSettingsPane = new JScrollPane(getAdvancedSettingsPanel());
+        advancedSettingsPane.getVerticalScrollBar().setUnitIncrement(16);
+        panTabs.add("Advanced", advancedSettingsPane);
+
+        pack();
+        setLocationAndSize(getPreferredSize().width, settingsPanel.getPreferredSize().height);
     }
 
     private JPanel getButtonsPanel() {
@@ -361,11 +385,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 0, 20, 5));
         JButton update = new JButton(Messages.getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
-        update.setActionCommand(CommonSettingsDialog.UPDATE);
+        update.setActionCommand(UPDATE);
         update.addActionListener(this);
         buttons.add(update);
         JButton cancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-        cancel.setActionCommand(CommonSettingsDialog.CANCEL);
+        cancel.setActionCommand(CANCEL);
         cancel.addActionListener(this);
         buttons.add(cancel);
 
@@ -379,7 +403,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // displayLocale settings
         JLabel displayLocaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale")); //$NON-NLS-1$
-        // displayLocale = new JTextField(8);
         displayLocale = new JComboBox<String>();
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
@@ -405,14 +428,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         // --------------        
 
-        minimapEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(minimapEnabled);
-        comps.add(row);
-        
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
+        showDamageLevel.addItemListener(this);
         row = new ArrayList<>();
         row.add(showDamageLevel);
+        comps.add(row);
+        
+        showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal")); //$NON-NLS-1$
+        showDamageDecal.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(showDamageDecal);
         comps.add(row);
         
         showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
@@ -427,7 +452,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(entityOwnerColor);
         comps.add(row);
-
+        
+        teamColoring = new JCheckBox(Messages.getString("CommonSettingsDialog.teamColoring"));
+        teamColoring.setToolTipText(Messages.getString("CommonSettingsDialog.teamColoringTip"));
+        teamColoring.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(teamColoring);
+        comps.add(row);
+        
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
         useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
         useSoftCenter.addItemListener(this);
@@ -452,12 +484,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // Tooltip Stuff
         //
-        // Show Terrain in the TT
-        showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
-        row = new ArrayList<>();
-        row.add(showMapHexPopup);
-        comps.add(row);
-
         // Popup Delay and Dismiss Delay
         tooltipDelay = new JTextField(4);
         tooltipDelay.setMaximumSize(new Dimension(150,40));
@@ -477,9 +503,30 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDismissDelay);
         comps.add(row);
         
+        tooltipDistSupression = new JTextField(4);
+        tooltipDistSupression.setMaximumSize(new Dimension(150,40));
+        tooltipDistSupression.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        JLabel tooltipDistSupressionLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDistSuppression")); //$NON-NLS-1$
+        tooltipDistSupressionLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDistSuppressionTooltip"));
+        row = new ArrayList<>();
+        row.add(tooltipDistSupressionLabel);
+        row.add(tooltipDistSupression);
+        comps.add(row);
+
         showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showWpsinTT);
+        comps.add(row);
+
+        // copied from showWpsinTT, kept comment as it looks like a relevant compiler/editor flag?
+        showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showArmorMiniVisTT);
+        comps.add(row);
+        
+        showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showPilotPortraitTT);
         comps.add(row);
         
         // Horizontal Line and Spacer
@@ -535,6 +582,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(nagForPSR);
         comps.add(row);
 
+        nagForWiGELanding = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForWiGELanding")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForWiGELanding);
+        comps.add(row);
+
         nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(nagForNoAction);
@@ -544,7 +596,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(getFocus);
         comps.add(row);
-
         mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(mouseWheelZoom);
@@ -554,7 +605,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(mouseWheelZoomFlip);
         comps.add(row);
-        
+
         autoEndFiring = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(autoEndFiring);
@@ -691,163 +742,223 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     @Override
     public void setVisible(boolean visible) {
-        GUIPreferences gs = GUIPreferences.getInstance();
-        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        // Initialize the dialog when it's being shown
+        if (visible) {
+            GUIPreferences gs = GUIPreferences.getInstance();
+            IClientPreferences cs = PreferenceManager.getClientPreferences();
 
-        minimapEnabled.setSelected(gs.getMinimapEnabled());
-        autoEndFiring.setSelected(gs.getAutoEndFiring());
-        autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
-        nagForMASC.setSelected(gs.getNagForMASC());
-        nagForPSR.setSelected(gs.getNagForPSR());
-        nagForNoAction.setSelected(gs.getNagForNoAction());
-        animateMove.setSelected(gs.getShowMoveStep());
-        showWrecks.setSelected(gs.getShowWrecks());
-        soundMute.setSelected(gs.getSoundMute());
-        showMapHexPopup.setSelected(gs.getShowMapHexPopup());
-        tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
-        tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
-        showWpsinTT.setSelected(gs.getShowWpsinTT());
-        
-        defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
+            autoEndFiring.setSelected(gs.getAutoEndFiring());
+            autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
+            nagForMASC.setSelected(gs.getNagForMASC());
+            nagForPSR.setSelected(gs.getNagForPSR());
+            nagForWiGELanding.setSelected(gs.getNagForWiGELanding());
+            nagForNoAction.setSelected(gs.getNagForNoAction());
+            animateMove.setSelected(gs.getShowMoveStep());
+            showWrecks.setSelected(gs.getShowWrecks());
+            soundMute.setSelected(gs.getSoundMute());
+            tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
+            tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
+            tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
+            showWpsinTT.setSelected(gs.getShowWpsinTT());
+            showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
+            showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
 
-        mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
-        mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
+            defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
+            
+            mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
+            mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
-        // Select the correct char set (give a nice default to start).
-        unitStartChar.setSelectedIndex(0);
-        for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-            if (unitStartChar.getItemAt(loop).charAt(0) == PreferenceManager
-                    .getClientPreferences().getUnitStartChar()) {
-                unitStartChar.setSelectedIndex(loop);
-                break;
+            // Select the correct char set (give a nice default to start).
+            unitStartChar.setSelectedIndex(0);
+            for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
+                if (unitStartChar.getItemAt(loop).charAt(0) == PreferenceManager
+                        .getClientPreferences().getUnitStartChar()) {
+                    unitStartChar.setSelectedIndex(loop);
+                    break;
+                }
             }
-        }
 
-        maxPathfinderTime.setText(Integer.toString(cs.getMaxPathfinderTime()));
+            maxPathfinderTime.setText(Integer.toString(cs.getMaxPathfinderTime()));
 
-        keepGameLog.setSelected(cs.keepGameLog());
-        gameLogFilename.setEnabled(keepGameLog.isSelected());
-        gameLogFilename.setText(cs.getGameLogFilename());
-        // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
-        // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
-        stampFilenames.setSelected(cs.stampFilenames());
-        stampFormat.setEnabled(stampFilenames.isSelected());
-        stampFormat.setText(cs.getStampFormat());
+            keepGameLog.setSelected(cs.keepGameLog());
+            gameLogFilename.setEnabled(keepGameLog.isSelected());
+            gameLogFilename.setText(cs.getGameLogFilename());
+            // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
+            // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
+            stampFilenames.setSelected(cs.stampFilenames());
+            stampFormat.setEnabled(stampFilenames.isSelected());
+            stampFormat.setText(cs.getStampFormat());
 
-        defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
-        useAverageSkills.setSelected(cs.useAverageSkills());
-        generateNames.setSelected(cs.generateNames());
-        showUnitId.setSelected(cs.getShowUnitId());
+            defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
+            useAverageSkills.setSelected(cs.useAverageSkills());
+            generateNames.setSelected(cs.generateNames());
+            showUnitId.setSelected(cs.getShowUnitId());
 
-        int index = 0;
-        if (cs.getLocaleString().startsWith("de")) {
-            index = 1;
-        }
-        if (cs.getLocaleString().startsWith("ru")) {
-            index = 2;
-        }
-        displayLocale.setSelectedIndex(index);
-
-        showMapsheets.setSelected(gs.getShowMapsheets());
-        chkAntiAliasing.setSelected(gs.getAntiAliasing());
-        showDamageLevel.setSelected(gs.getShowDamageLevel());
-        aOHexShadows.setSelected(gs.getAOHexShadows());
-        floatingIso.setSelected(gs.getFloatingIso());
-        mmSymbol.setSelected(gs.getMmSymbol());
-        levelhighlight.setSelected(gs.getLevelHighlight());
-        shadowMap.setSelected(gs.getShadowMap());
-        useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
-        entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
-
-
-        File dir = Configuration.hexesDir();
-        tileSets = new ArrayList<>(Arrays.asList(dir.listFiles(new FilenameFilter() {
-            public boolean accept(File direc, String name) {
-                return name.endsWith(".tileset");
+            int index = 0;
+            if (cs.getLocaleString().startsWith("de")) {
+                index = 1;
             }
-        })));
-        dir = new File(Configuration.userdataDir(),
-                Configuration.hexesDir().toString());
-        File[] userDataTilesets = dir.listFiles(new FilenameFilter() {
-            public boolean accept(File direc, String name) {
-                return name.endsWith(".tileset");
+            if (cs.getLocaleString().startsWith("ru")) {
+                index = 2;
             }
-        });
-        if (userDataTilesets != null) {
-            tileSets.addAll(Arrays.asList(userDataTilesets));
-        }
-        tileSetChoice.removeAllItems();
-        for (int i = 0; (tileSets != null) && i < tileSets.size(); i++) {
-            String name = tileSets.get(i).getName();
-            tileSetChoice.addItem(name.substring(0, name.length() - 8));
-            if (name.equals(cs.getMapTileset())) {
-                tileSetChoice.setSelectedIndex(i);
+            displayLocale.setSelectedIndex(index);
+
+            showMapsheets.setSelected(gs.getShowMapsheets());
+            chkAntiAliasing.setSelected(gs.getAntiAliasing());
+            showDamageLevel.setSelected(gs.getShowDamageLevel());
+            showDamageDecal.setSelected(gs.getShowDamageDecal());
+            aOHexShadows.setSelected(gs.getAOHexShadows());
+            floatingIso.setSelected(gs.getFloatingIso());
+            mmSymbol.setSelected(gs.getMmSymbol());
+            levelhighlight.setSelected(gs.getLevelHighlight());
+            shadowMap.setSelected(gs.getShadowMap());
+            hexInclines.setSelected(gs.getHexInclines());
+            useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
+            entityOwnerColor.setSelected(gs.getUnitLabelBorder());
+            teamColoring.setSelected(gs.getTeamColoring());
+
+            File dir = Configuration.hexesDir();
+            tileSets = new ArrayList<>(Arrays.asList(dir.listFiles(new FilenameFilter() {
+                public boolean accept(File direc, String name) {
+                    return name.endsWith(".tileset");
+                }
+            })));
+            dir = new File(Configuration.userdataDir(),
+                    Configuration.hexesDir().toString());
+            File[] userDataTilesets = dir.listFiles(new FilenameFilter() {
+                public boolean accept(File direc, String name) {
+                    return name.endsWith(".tileset");
+                }
+            });
+            if (userDataTilesets != null) {
+                tileSets.addAll(Arrays.asList(userDataTilesets));
             }
-        }
-
-        gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
-        gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
-
-        skinFiles.removeAllItems();
-        List<String> xmlFiles = new ArrayList<>(Arrays
-                .asList(Configuration.skinsDir().list(new FilenameFilter() {
-                    public boolean accept(File directory, String fileName) {
-                        return fileName.endsWith(".xml");
-                    }
-                })));
-        String[] files = new File(Configuration.userdataDir(), Configuration.skinsDir().toString())
-                .list(new FilenameFilter() {
-                    public boolean accept(File directory, String fileName) {
-                        return fileName.endsWith(".xml");
-                    }
-                });
-        if (files != null) {
-            xmlFiles.addAll(Arrays.asList(files));
-        }
-        Collections.sort(xmlFiles);
-        for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(file)) {
-                skinFiles.addItem(file);
+            tileSetChoice.removeAllItems();
+            for (int i = 0; (tileSets != null) && i < tileSets.size(); i++) {
+                String name = tileSets.get(i).getName();
+                tileSetChoice.addItem(name.substring(0, name.length() - 8));
+                if (name.equals(cs.getMapTileset())) {
+                    tileSetChoice.setSelectedIndex(i);
+                }
             }
-        }
-        // Select the default file first
-        skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
-        // If this select fials, the default skin will be selected
-        skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
-        
-        fovInsideEnabled.setSelected(gs.getFovHighlight());
-        fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
-        fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
-        fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
-        fovOutsideEnabled.setSelected(gs.getFovDarken());
-        fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
-        numStripesSlider.setValue(gs.getFovStripes());
-        fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
-        
-        fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
-        fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
-        fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
-        fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
-        numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
-        fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
-        
-        darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
-        numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
-        fovHighlightRingsColorsLabel.setEnabled(fovInsideEnabled.isSelected());
-        fovHighlightRingsRadiiLabel.setEnabled(fovInsideEnabled.isSelected());
-        highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
-        
-        stampFormatLabel.setEnabled(stampFilenames.isSelected());
-        gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
 
-        getFocus.setSelected(gs.getFocus());
+	        gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
+	        gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+
+            skinFiles.removeAllItems();
+            List<String> xmlFiles = new ArrayList<>(Arrays
+                    .asList(Configuration.skinsDir().list(new FilenameFilter() {
+                        public boolean accept(File directory, String fileName) {
+                            return fileName.endsWith(".xml");
+                        }
+                    })));
+            String[] files = new File(Configuration.userdataDir(), Configuration.skinsDir().toString())
+                    .list(new FilenameFilter() {
+                        public boolean accept(File directory, String fileName) {
+                            return fileName.endsWith(".xml");
+                        }
+                    });
+            if (files != null) {
+                xmlFiles.addAll(Arrays.asList(files));
+
+            }
+            Collections.sort(xmlFiles);
+            for (String file : xmlFiles) {
+                if (SkinXMLHandler.validSkinSpecFile(file)) {
+                    skinFiles.addItem(file);
+                }
+            }
+            // Select the default file first
+            skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
+            // If this select fials, the default skin will be selected
+            skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+
+            uiThemes.removeAllItems();
+            for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+                uiThemes.addItem(new UITheme(lafInfo.getClassName(), lafInfo.getName()));
+            }
+            uiThemes.setSelectedItem(new UITheme(GUIPreferences.getInstance().getUITheme()));
+
+            fovInsideEnabled.setSelected(gs.getFovHighlight());
+            fovHighlightAlpha.setValue(gs.getFovHighlightAlpha());
+            fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
+            fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
+            fovOutsideEnabled.setSelected(gs.getFovDarken());
+            fovDarkenAlpha.setValue(gs.getFovDarkenAlpha());
+            numStripesSlider.setValue(gs.getFovStripes());
+            fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
+
+            fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
+            fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
+            numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
+            fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
+
+            darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
+            numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
+            fovHighlightRingsColorsLabel.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsRadiiLabel.setEnabled(fovInsideEnabled.isSelected());
+            highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
+
+            stampFormatLabel.setEnabled(stampFilenames.isSelected());
+            gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
+
+            getFocus.setSelected(gs.getFocus());
+            
+            savedFovHighlight = gs.getFovHighlight();
+            savedFovDarken = gs.getFovDarken();
+            savedFovGrayscale = gs.getFovGrayscale();
+            savedAOHexShadows = gs.getAOHexShadows();
+            savedShadowMap = gs.getShadowMap();
+            savedHexInclines = gs.getHexInclines();
+            savedLevelhighlight = gs.getLevelHighlight();
+            savedFloatingIso = gs.getFloatingIso();
+            savedMmSymbol = gs.getMmSymbol();
+            savedTeamColoring = gs.getTeamColoring();
+            savedUnitLabelBorder = gs.getUnitLabelBorder();
+            savedShowDamageDecal = gs.getShowDamageDecal();
+            savedShowDamageLabel = gs.getShowDamageLevel();
+            savedFovHighlightRingsRadii = gs.getFovHighlightRingsRadii();
+            savedFovHighlightRingsColors = gs.getFovHighlightRingsColorsHsb();
+            savedFovHighlightAlpha = gs.getFovHighlightAlpha();
+            savedFovDarkenAlpha = gs.getFovDarkenAlpha();
+            savedNumStripesSlider = gs.getFovStripes();
+            savedAdvancedOpt.clear();
+            
+            advancedKeys.clearSelection();
+            
+        }   
         super.setVisible(visible);
-    }
-
-    /**
-     * Cancel any updates made in this dialog, and closes it.
-     */
+    }       
+            
+    /** Cancel any updates made in this dialog and close it.  */     
     void cancel() {
+        // Restore values that are immediately updated by player clicks
+        GUIPreferences guip = GUIPreferences.getInstance();
+        guip.setFovHighlight(savedFovHighlight);
+        guip.setFovDarken(savedFovDarken);
+        guip.setFovGrayscale(savedFovGrayscale);
+        guip.setAOHexShadows(savedAOHexShadows);
+        guip.setShadowMap(savedShadowMap);
+        guip.setHexInclines(savedHexInclines);
+        guip.setLevelHighlight(savedLevelhighlight);
+        guip.setFloatingIso(savedFloatingIso);
+        guip.setMmSymbol(savedMmSymbol);
+        guip.setTeamColoring(savedTeamColoring);
+        guip.setUnitLabelBorder(savedUnitLabelBorder);
+        guip.setShowDamageDecal(savedShowDamageDecal);
+        guip.setShowDamageLevel(savedShowDamageLabel);
+        guip.setFovHighlightRingsRadii(savedFovHighlightRingsRadii);
+        guip.setFovHighlightRingsColorsHsb(savedFovHighlightRingsColors);
+        guip.setFovHighlightAlpha(savedFovHighlightAlpha);
+        guip.setFovDarkenAlpha(savedFovDarkenAlpha);
+        guip.setFovStripes(savedNumStripesSlider);
+         
+        for (String option: savedAdvancedOpt.keySet()) {
+            GUIPreferences.getInstance().setValue(option, savedAdvancedOpt.get(option));
+        }
+
         setVisible(false);
     }
 
@@ -859,24 +970,28 @@ public class CommonSettingsDialog extends ClientDialog implements
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
-        gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
-        gs.setMinimapEnabled(minimapEnabled.isSelected());
+        gs.setShowDamageDecal(showDamageDecal.isSelected());
+        gs.setUnitLabelBorder(entityOwnerColor.isSelected());
+        gs.setTeamColoring(teamColoring.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
         gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
         gs.setNagForMASC(nagForMASC.isSelected());
         gs.setNagForPSR(nagForPSR.isSelected());
+        gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
         gs.setNagForNoAction(nagForNoAction.isSelected());
         gs.setShowMoveStep(animateMove.isSelected());
         gs.setShowWrecks(showWrecks.isSelected());
         gs.setSoundMute(soundMute.isSelected());
-        gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setShowWpsinTT(showWpsinTT.isSelected());
+        gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
+        gs.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
+        gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
-
+        
         gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
         gs.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
 
@@ -907,6 +1022,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setMmSymbol(mmSymbol.isSelected());
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
+        gs.setHexInclines(hexInclines.isSelected());
         gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
 
         if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
@@ -919,6 +1035,12 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
         gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
+
+        UITheme newUITheme = (UITheme)uiThemes.getSelectedItem();
+        String oldUITheme = gs.getUITheme();
+        if (!oldUITheme.equals(newUITheme.getClassName())) {
+            gs.setUITheme(newUITheme.getClassName());
+        }
 
         String newSkinFile = (String)skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
@@ -938,20 +1060,17 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
-            if (!cs.getMapTileset().equals(tileSets.get(tileSetChoice.getSelectedIndex())) &&
+            String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex()).getName();
+            if (!cs.getMapTileset().equals(tileSetFileName) &&
                     (clientgui != null) && (clientgui.bv != null))  {
                 clientgui.bv.clearShadowMap();
             }
-            cs.setMapTileset(tileSets.get(tileSetChoice.getSelectedIndex())
-                    .getName());
+            cs.setMapTileset(tileSetFileName);
         }
 
-        ToolTipManager.sharedInstance().setInitialDelay(
-                GUIPreferences.getInstance().getTooltipDelay());
-        if (GUIPreferences.getInstance().getTooltipDismissDelay() > 0)
-        {
-            ToolTipManager.sharedInstance().setDismissDelay(
-                    GUIPreferences.getInstance().getTooltipDismissDelay());
+        ToolTipManager.sharedInstance().setInitialDelay(gs.getTooltipDelay());
+        if (gs.getTooltipDismissDelay() > 0) {
+            ToolTipManager.sharedInstance().setDismissDelay(gs.getTooltipDismissDelay());
         }
 
         // Lets iterate through all of the KeyCommandBinds and see if they've
@@ -1092,19 +1211,14 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     public void actionPerformed(ActionEvent event) {
         String command = event.getActionCommand();
-        if (CommonSettingsDialog.UPDATE.equalsIgnoreCase(command)) {
+        if (command.equals(UPDATE)) {
             update();
-        } else if (CommonSettingsDialog.CANCEL.equalsIgnoreCase(command)) {
+        } else if (command.equals(CANCEL)) {
             cancel();
         }
     }
 
-    /**
-     * Handle the player clicking checkboxes. <p/> Implements the
-     * <code>ItemListener</code> interface.
-     *
-     * @param event - the <code>ItemEvent</code> that initiated this call.
-     */
+    /** Handle some setting changes that directly update e.g. the board. */
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -1118,10 +1232,6 @@ public class CommonSettingsDialog extends ClientDialog implements
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
         } else if (source.equals(fovInsideEnabled)) {
             guip.setFovHighlight(fovInsideEnabled.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
             fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
             fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
             fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
@@ -1130,10 +1240,6 @@ public class CommonSettingsDialog extends ClientDialog implements
             highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
         } else if (source.equals(fovOutsideEnabled)) {
             guip.setFovDarken(fovOutsideEnabled.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
             fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
             numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
             darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
@@ -1141,78 +1247,60 @@ public class CommonSettingsDialog extends ClientDialog implements
             fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
         } else if (source.equals(fovGrayscaleEnabled)) {
             guip.setFovGrayscale(fovGrayscaleEnabled.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
         } else if (source.equals(aOHexShadows)) {
             guip.setAOHexShadows(aOHexShadows.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
         } else if (source.equals(shadowMap)) {
             guip.setShadowMap(shadowMap.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
+        } else if (source.equals(hexInclines)) {
+            guip.setHexInclines(hexInclines.isSelected());
         } else if (source.equals(levelhighlight)) {
             guip.setLevelHighlight(levelhighlight.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
         } else if (source.equals(floatingIso)) {
             guip.setFloatingIso(floatingIso.isSelected());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
         } else if (source.equals(mmSymbol)) {
             guip.setMmSymbol(mmSymbol.isSelected());
             if ((clientgui != null) && (clientgui.minimap != null)) {
                 clientgui.minimap.drawMap();
             }
 
+        } else if (source.equals(teamColoring)) {
+            guip.setTeamColoring(teamColoring.isSelected());
+            if ((clientgui != null) && (clientgui.minimap != null)) {
+                clientgui.minimap.drawMap();
+            }
+
+        } else if (source.equals(entityOwnerColor)) {
+            guip.setUnitLabelBorder(entityOwnerColor.isSelected());
+            
+        } else if (source.equals(showDamageDecal)) {
+            guip.setShowDamageDecal(showDamageDecal.isSelected());
+        } else if (source.equals(showDamageLevel)) {
+            guip.setShowDamageLevel(showDamageLevel.isSelected());
         }
     }
 
-    public void focusGained(FocusEvent e) {
-    }
+    public void focusGained(FocusEvent e) { }
 
     public void focusLost(FocusEvent e) {
         Object src = e.getSource();
         GUIPreferences guip = GUIPreferences.getInstance();          
         if (src.equals(fovHighlightRingsRadii)) {
             guip.setFovHighlightRingsRadii(fovHighlightRingsRadii.getText());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
             return;
         } else if (src.equals(fovHighlightRingsColors)) {
             guip.setFovHighlightRingsColorsHsb(fovHighlightRingsColors.getText());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
             return;
         } 
         // For Advanced options
-        String option = "Advanced" + keys.getModel().getElementAt(keysIndex).option;
-        GUIPreferences.getInstance().setValue(option, value.getText());
-        if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)
-                && (clientgui != null) && (clientgui.bv != null)) {
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
-        }
+        String option = "Advanced" + advancedKeys.getModel().getElementAt(advancedKeyIndex).option;
+        savedAdvancedOpt.put(option, guip.getString(option));        
+        guip.setValue(option, advancedValue.getText());
     }
 
     /** 
      * The Graphics Tab
      */
-    private JPanel getTacticalOverlaySettingsPanel() {
+    private JPanel getGraphicsPanel() {
 
         ArrayList<ArrayList<Component>> comps = new ArrayList<ArrayList<Component>>();
         ArrayList<Component> row;
@@ -1258,6 +1346,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(shadowMap);
         comps.add(row);
         
+        // Use Incline graphics (hex border highlights/shadows)
+        hexInclines = new JCheckBox(Messages.getString("CommonSettingsDialog.useInclines")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        hexInclines.addItemListener(this);
+        row.add(hexInclines);
+        comps.add(row);
+        
         // Level Highlight = borders around level changes
         levelhighlight = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -1295,6 +1390,19 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         gameSummaryMM.addItemListener(this);
         row.add(gameSummaryMM);
+
+        // UI Theme
+        uiThemes = new JComboBox<UITheme>();
+        uiThemes.setMaximumSize(new Dimension(400,uiThemes.getMaximumSize().height));
+        JLabel uiThemesLabel = new JLabel(Messages.getString("CommonSettingsDialog.uiTheme")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(uiThemesLabel);
+        row.add(uiThemes);
+        comps.add(row);   
+        
+        // Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
         comps.add(row);
 
         // Skin
@@ -1350,13 +1458,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
 
         // Inside Opaqueness slider
-        fovHighlightAlpha = new JSlider();
-        fovHighlightAlpha.setMajorTickSpacing(20);
+        fovHighlightAlpha = new JSlider(0, 255);
+        fovHighlightAlpha.setMajorTickSpacing(25);
         fovHighlightAlpha.setMinorTickSpacing(5);
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
-        fovHighlightAlpha.setMaximumSize(new Dimension(250, 100));
+        fovHighlightAlpha.setMaximumSize(new Dimension(400, 100));
         fovHighlightAlpha.addChangeListener(this);
+        fovHighlightAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         // Label
         highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -1451,13 +1560,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(Box.createVerticalStrut(1));
         comps.add(row);
 
-        fovDarkenAlpha = new JSlider();
-        fovDarkenAlpha.setMajorTickSpacing(20);
+        fovDarkenAlpha = new JSlider(0, 255);
+        fovDarkenAlpha.setMajorTickSpacing(25);
         fovDarkenAlpha.setMinorTickSpacing(5);
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
-        fovDarkenAlpha.setMaximumSize(new Dimension(250, 100));
+        fovDarkenAlpha.setMaximumSize(new Dimension(400, 100));
         fovDarkenAlpha.addChangeListener(this);
+        fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
@@ -1520,20 +1630,24 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         return createSettingsPanel(comps);
     }
-
+    
     /**
      * Creates a panel with a box for all of the commands that can be bound to
      * keys.
      *
      * @return
      */
-    private JPanel getKeyBindPanel(){
+    private JPanel getKeyBindPanel() {
         // Create the panel to hold all the components
         // We will have an N x 43 grid, the first column is for labels, the
         //  second column will hold text fields for modifiers, the third
         //  column holds text fields for keys, and the fourth has a checkbox for
         //  isRepeatable.
+        JPanel outer = new JPanel();
+        outer.setLayout(new FlowLayout(FlowLayout.LEFT));
+        
         JPanel keyBinds = new JPanel(new GridBagLayout());
+        outer.add(keyBinds);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.insets = new Insets(0,10,5,10);
@@ -1663,7 +1777,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             key.setFocusTraversalKeysEnabled(false);
             repeatable.setFocusTraversalKeysEnabled(false);
         }
-        return keyBinds;
+        return outer;
     }
     
     /**
@@ -1678,98 +1792,50 @@ public class CommonSettingsDialog extends ClientDialog implements
         JTabbedPane phasePane = new JTabbedPane();
         buttonOrderPanel.add(phasePane);
         
-        StatusBarPhaseDisplay.PhaseCommand commands[];
-        StatusBarPhaseDisplay.CommandComparator cmdComp = 
-                new StatusBarPhaseDisplay.CommandComparator(); 
-        PhaseCommandListMouseAdapter cmdMouseAdaptor = 
-                new PhaseCommandListMouseAdapter();
-
         // MovementPhaseDisplay        
-        JPanel movementPanel = new JPanel();
-        movePhaseCommands = 
-                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
-        commands = MovementDisplay.MoveCommand.values();
-        Arrays.sort(commands, cmdComp);        
-        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
-            movePhaseCommands.addElement(cmd);
-        }
-        JList<StatusBarPhaseDisplay.PhaseCommand> moveList = new JList<>(movePhaseCommands);
-        moveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        moveList.addMouseListener(cmdMouseAdaptor);
-        moveList.addMouseMotionListener(cmdMouseAdaptor);
-        movementPanel.add(moveList);
-        JScrollPane movementScrollPane = new JScrollPane(movementPanel);
-        phasePane.add("Movement", movementScrollPane);
+        movePhaseCommands = new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        phasePane.add("Movement", getButtonOrderPane(movePhaseCommands,
+                MovementDisplay.MoveCommand.values()));
         
         // DeploymentPhaseDisplay
-        JPanel deployPanel = new JPanel();
-        deployPhaseCommands = 
-                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
-        commands = DeploymentDisplay.DeployCommand.values();
-        Arrays.sort(commands, cmdComp);        
-        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
-            deployPhaseCommands.addElement(cmd);
-        }
-        JList<StatusBarPhaseDisplay.PhaseCommand> deployList = new JList<>(deployPhaseCommands);
-        deployList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        deployList.addMouseListener(cmdMouseAdaptor);
-        deployList.addMouseMotionListener(cmdMouseAdaptor);
-        deployPanel.add(deployList);
-        JScrollPane deployScrollPane = new JScrollPane(deployPanel);
-        phasePane.add("Deployment", deployScrollPane);
+        deployPhaseCommands = new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        phasePane.add("Deployment", getButtonOrderPane(deployPhaseCommands,
+                DeploymentDisplay.DeployCommand.values()));
         
         // FiringPhaseDisplay
-        JPanel firingPanel = new JPanel();
-        firingPhaseCommands = 
-                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
-        commands = FiringDisplay.FiringCommand.values();
-        Arrays.sort(commands, cmdComp);        
-        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
-            firingPhaseCommands.addElement(cmd);
-        }
-        JList<StatusBarPhaseDisplay.PhaseCommand> firingList = new JList<>(firingPhaseCommands);
-        firingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        firingList.addMouseListener(cmdMouseAdaptor);
-        firingList.addMouseMotionListener(cmdMouseAdaptor);
-        firingPanel.add(firingList);
-        JScrollPane firingScrollPane = new JScrollPane(firingPanel);
-        phasePane.add("Firing", firingScrollPane);
+        firingPhaseCommands = new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        phasePane.add("Firing", getButtonOrderPane(firingPhaseCommands,
+                FiringDisplay.FiringCommand.values()));
         
         // PhysicalPhaseDisplay
-        JPanel physicalPanel = new JPanel();
-        physicalPhaseCommands = 
-                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
-        commands = PhysicalDisplay.PhysicalCommand.values();
-        Arrays.sort(commands, cmdComp);        
-        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
-            physicalPhaseCommands.addElement(cmd);
-        }
-        JList<StatusBarPhaseDisplay.PhaseCommand> physicalList = new JList<>(physicalPhaseCommands);
-        physicalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        physicalList.addMouseListener(cmdMouseAdaptor);
-        physicalList.addMouseMotionListener(cmdMouseAdaptor);
-        physicalPanel.add(physicalList);
-        JScrollPane physicalScrollPane = new JScrollPane(physicalPanel);
-        phasePane.add("Physical", physicalScrollPane);          
+        physicalPhaseCommands = new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        phasePane.add("Physical", getButtonOrderPane(physicalPhaseCommands,
+                PhysicalDisplay.PhysicalCommand.values()));          
         
         // TargetingPhaseDisplay
-        JPanel targetingPanel = new JPanel();
-        targetingPhaseCommands = 
-                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
-        commands = TargetingPhaseDisplay.TargetingCommand.values();
-        Arrays.sort(commands, cmdComp);        
-        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
-            targetingPhaseCommands.addElement(cmd);
-        }
-        JList<StatusBarPhaseDisplay.PhaseCommand> targetingList = new JList<>(targetingPhaseCommands);
-        targetingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        targetingList.addMouseListener(cmdMouseAdaptor);
-        targetingList.addMouseMotionListener(cmdMouseAdaptor);
-        targetingPanel.add(targetingList);
-        JScrollPane targetingScrollPane = new JScrollPane(targetingPanel);
-        phasePane.add("Targeting", targetingScrollPane);            
+        targetingPhaseCommands = new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        phasePane.add("Targeting", getButtonOrderPane(targetingPhaseCommands,
+                TargetingPhaseDisplay.TargetingCommand.values()));
         
         return buttonOrderPanel;
+    }
+
+    /** Constructs the button ordering panel for one phase. */ 
+    private JScrollPane getButtonOrderPane(DefaultListModel<PhaseCommand> list, 
+            StatusBarPhaseDisplay.PhaseCommand[] commands) {
+        JPanel panel = new JPanel();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            list.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> jlist = new JList<>(list);
+        jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jlist.addMouseListener(cmdMouseAdaptor);
+        jlist.addMouseMotionListener(cmdMouseAdaptor);
+        panel.add(jlist);
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        return scrollPane;
     }
 
     private JPanel createSettingsPanel(ArrayList<ArrayList<Component>> comps) {
@@ -1806,40 +1872,42 @@ public class CommonSettingsDialog extends ClientDialog implements
             opts[i] = new AdvancedOptionData(s[i]);
         }
         Arrays.sort(opts);
-        keys = new JList<>(opts);
-        keys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        keys.addListSelectionListener(this);
-        keys.addMouseMotionListener(new MouseMotionAdapter() {
+        advancedKeys = new JList<>(opts);
+        advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        advancedKeys.addListSelectionListener(this);
+        advancedKeys.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                int index = keys.locationToIndex(e.getPoint());
+                int index = advancedKeys.locationToIndex(e.getPoint());
                 if (index > -1) {
-                    AdvancedOptionData dat = keys.getModel().getElementAt(index);
+                    AdvancedOptionData dat = advancedKeys.getModel().getElementAt(index);
                     if (dat.hasTooltipText()) {
-                        keys.setToolTipText(dat.getTooltipText());
+                        advancedKeys.setToolTipText(dat.getTooltipText());
                     } else {
-                        keys.setToolTipText(null);
+                        advancedKeys.setToolTipText(null);
                     }
                 }
             }
         });
-        p.add(keys);
+        p.add(advancedKeys);
 
-        value = new JTextField(10);
-        value.addFocusListener(this);
-        p.add(value);
+        advancedValue = new JTextField(10);
+        advancedValue.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        advancedValue.addFocusListener(this);
+        p.add(advancedValue);
 
         return p;
     }
 
+    /** Used to note which advanced setting is currently clicked. */  
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
         }
-        if (event.getSource().equals(keys)) {
-            value.setText(GUIPreferences.getInstance().getString(
-                    "Advanced" + keys.getSelectedValue().option));
-            keysIndex = keys.getSelectedIndex();
+        if (event.getSource().equals(advancedKeys)) {
+            advancedValue.setText(GUIPreferences.getInstance().getString(
+                    "Advanced" + advancedKeys.getSelectedValue().option));
+            advancedKeyIndex = advancedKeys.getSelectedIndex();
         }
     }
 
@@ -1847,25 +1915,11 @@ public class CommonSettingsDialog extends ClientDialog implements
     public void stateChanged(ChangeEvent evt) {
         GUIPreferences guip = GUIPreferences.getInstance();
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
+            guip.setFovHighlightAlpha(Math.max(0, Math.min(255, (int) fovHighlightAlpha.getValue())));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
+            guip.setFovDarkenAlpha(Math.max(0, Math.min(255, (int) fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
             guip.setFovStripes(numStripesSlider.getValue());
-            if ((clientgui != null) && (clientgui.bv != null)) {
-                clientgui.bv.clearHexImageCache();
-                clientgui.bv.repaint();
-            }
         }
     }
 }

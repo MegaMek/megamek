@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Z
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 Clan Level 4
 </type>
@@ -31,6 +35,9 @@ Clan Level 4
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 13
@@ -81,11 +88,6 @@ CLImprovedMediumHeavyLaser:OMNI
 CLImprovedMediumHeavyLaser:OMNI
 NovaCEWS:OMNI
 CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
-CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -97,6 +99,12 @@ CLCASE
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 The Wars of Reaving (s) - Jihad
 </source>
@@ -104,4 +112,3 @@ The Wars of Reaving (s) - Jihad
 <tonnage>
 20.0
 </tonnage>
-

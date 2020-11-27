@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
@@ -27,8 +28,8 @@ import megamek.common.MechWarrior;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
-import megamek.common.logging.LogLevel;
-
+import megamek.common.logging.FakeLogger;
+import megamek.common.logging.MMLogger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +38,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -58,12 +57,12 @@ public class PrincessTest {
 
         MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
 
+        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
-                                                   Mockito.any(LogLevel.class), Mockito.anyString());
-        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
-        Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 
     @Test
@@ -114,8 +113,8 @@ public class PrincessTest {
         Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenReturn(false);
 
         Mockito.when(mockPathRanker
-                             .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class),
-                                                     Mockito.any(IGame.class)))
+                             .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.nullable(Coords.class),
+                                                     Mockito.nullable(IGame.class)))
                .thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.
@@ -285,7 +284,8 @@ public class PrincessTest {
         IGame mockGame = Mockito.mock(IGame.class);
         GameTurn mockTurn = Mockito.mock(GameTurn.class);
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
-        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenReturn(true);
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenCallRealMethod();
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class), Mockito.anyBoolean())).thenCallRealMethod();
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         List<Entity> testEntityList = new ArrayList<>();
@@ -378,7 +378,6 @@ public class PrincessTest {
         //Should Fall Back
         Assert.assertTrue(mockPrincess.wantsToFallBack(mockMech));
 
-        //Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(false);
         Mockito.when(mockPrincess.getForcedWithdrawal()).thenReturn(false);
         //Fall Back and Flee Board Disabled, Mech Crippled, Forced Withdrawal Disabled
         //Should Not Fall Back
@@ -389,19 +388,22 @@ public class PrincessTest {
     public void testIsFallingBack() {
         Entity mockMech = Mockito.mock(BipedMech.class);
         Mockito.when(mockMech.isImmobile()).thenReturn(false);
+        Mockito.when(mockMech.isCrippled(Mockito.anyBoolean())).thenReturn(false);
         Mockito.when(mockMech.getId()).thenReturn(1);
 
         Mockito.when(mockPrincess.wantsToFallBack(Mockito.any(Entity.class))).thenReturn(false);
         Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenCallRealMethod();
-
-        Set<Integer> myFleeingEntities = new HashSet<>(1);
-        Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(myFleeingEntities);
-
+       
+        BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
+        Mockito.when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST_OR_NONE);
+        Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(true);
+        Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
+        
         // A normal undamaged mech.
         Assert.assertFalse(mockPrincess.isFallingBack(mockMech));
 
         // A mobile mech that wants to fall back (for any reason).
-        myFleeingEntities.add(mockMech.getId());
+        Mockito.when(mockMech.isCrippled(Mockito.anyBoolean())).thenReturn(true);
         Assert.assertTrue(mockPrincess.isFallingBack(mockMech));
     }
 
@@ -418,14 +420,14 @@ public class PrincessTest {
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = Mockito.mock(BasicPathRanker.class);
-        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
+        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
                                                    Mockito.any(IGame.class))).thenReturn(0);
-        Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockRanker);
+        Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
         Coords mockCoords = Mockito.mock(Coords.class);
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
-        Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
+        Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         IGame mockGame = Mockito.mock(IGame.class);
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
@@ -459,7 +461,7 @@ public class PrincessTest {
 
         // The unit can flee, but is no longer on the board edge.
         Mockito.when(mockMech.canFlee()).thenReturn(true);
-        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(HomeEdge.class),
+        Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
                                                    Mockito.any(IGame.class))).thenReturn(1);
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
     }

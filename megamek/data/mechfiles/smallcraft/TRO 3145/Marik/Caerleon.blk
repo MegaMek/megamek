@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,51 +20,34 @@ Caerleon
 (Standard)
 </Model>
 
-<Tonnage>
-195
-</Tonnage>
+<year>
+3093
+</year>
+
+<originalBuildYear>
+3093
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+battlearmorbay:3.0:1:2
+cargobay:0.5:1:3
+crewquarters:0.0:0
+1stclassquarters:0.0:0
+steeragequarters:20.0:0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
-
-<Armor>
-107
-99
-99
-86
-</Armor>
-
-<Nose Equipment>
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle Ammo
-ISLightGaussRifle Ammo
-ISLRM15
-ISArtemisIV
-ISLRM15
-ISArtemisIV
-ISLRM15 
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-</Nose Equipment>
-
-<Left Side Equipment>
-</Left Side Equipment>
-
-<Right Side Equipment>
-</Right Side Equipment>
-
-<Aft Equipment>
-ISERMediumLaser
-ISERMediumLaser
-</Aft Equipment>
-
-<structural_integrity>
-6
-</structural_integrity>
 
 <heatsinks>
 8
@@ -78,48 +61,102 @@ ISERMediumLaser
 1200
 </fuel>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3093
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<designtype>
+<engine_type>
 1
-</designtype>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+5
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+107
+99
+99
+86
+</armor>
 
-<transporters>
-Battlearmorbay:20:1
-CargoBay:4.5:1
-</transporters>
+<Nose Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+LRM 15
+ISArtemisIV
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Nose Equipment>
 
-<crew>
-4
-</crew>
+<Left Side Equipment>
+</Left Side Equipment>
 
-<passengers>
-0
-</passengers>
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
 
 <source>
 TRO 3145 Free Worlds League - Early Republic
 </source>
 
+<tonnage>
+195.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+22
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+1
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>

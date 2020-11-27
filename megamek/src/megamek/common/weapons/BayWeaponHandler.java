@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -86,13 +87,11 @@ public class BayWeaponHandler extends WeaponHandler {
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if (bGlancing) {
-            av = (int) Math.floor(av / 2.0);
-
-        }
+        av = applyGlancingBlowModifier(av, false);
         av = (int) Math.floor(getBracketingMultiplier() * av);
         return (int) Math.ceil(av);
     }
+    
 
     @Override
     protected void addHeat() {
@@ -139,8 +138,11 @@ public class BayWeaponHandler extends WeaponHandler {
         if ((((null == entityTarget) || entityTarget.isAirborne()) 
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
-                &&  target.getTargetType() != Targetable.TYPE_BUILDING))
-                || game.getBoard().inSpace()) {
+                &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
+        		|| game.getBoard().inSpace()
+        		// Capital missile launchers should return the root handler...
+        		|| (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+        		|| (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -215,19 +217,8 @@ public class BayWeaponHandler extends WeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -356,9 +347,18 @@ public class BayWeaponHandler extends WeaponHandler {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
-        } // Handle the next weapon in the vay
+        } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
+    }
+    
+    /**
+     * Calculate the starting armor value of a flight of Capital Missiles
+     * Used for Aero Sanity. This is done in calcAttackValue() otherwise
+     *
+     */
+    protected int initializeCapMissileArmor() {
+        return 0;
     }
 
     public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
@@ -395,6 +395,42 @@ public class BayWeaponHandler extends WeaponHandler {
             r.add(target.getDisplayName(), true);
         }
         vPhaseReport.addElement(r);
+        
+        // Handle point defense fire. For cluster hit missile launchers, we'll report later.
+        CounterAV = calcCounterAV();
+        
+        //We need this for thunderbolt bays
+        CapMissileAMSMod = calcCapMissileAMSMod();
+        
+        //Set up Capital Missile (thunderbolt) armor
+        CapMissileArmor = initializeCapMissileArmor();
+        
+        //and now damage it
+        CapMissileArmor = (CapMissileArmor - CounterAV);
+        
+        //Only do this if the missile wasn't destroyed
+        if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
+            toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
+            if (roll < toHit.getValue()) {
+                CapMissileMissed = true;
+            }
+        }
+        
+        // Report any AMS bay action against Capital missiles that doesn't destroy them all.
+        if (amsBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3358);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+                    
+        // Report any PD bay action against Capital missiles that doesn't destroy them all.
+        } else if (pdBayEngagedCap && CapMissileArmor > 0) {
+            r = new Report(3357);
+            r.add(CapMissileAMSMod);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+        
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
@@ -433,19 +469,8 @@ public class BayWeaponHandler extends WeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
-                bGlancing = true;
-                r = new Report(3186);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                bGlancing = false;
-            }
-        } else {
-            bGlancing = false;
-        }
+        setGlancingBlowFlags(entityTarget);
+        addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
@@ -458,7 +483,7 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-       //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -474,6 +499,24 @@ public class BayWeaponHandler extends WeaponHandler {
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;
         }
+        
+        //Large missiles
+        //use this if AMS counterfire destroys all the missiles
+        if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3356);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+            return false;
+        }
+        //use this if PD counterfire destroys all the Capital missiles
+        if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
+            r = new Report(3355);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+            return false;
+        }
 
         // We have to adjust the reports on a miss, so they line up
         if (bMissed){
@@ -483,9 +526,47 @@ public class BayWeaponHandler extends WeaponHandler {
                 return false;
             }
         }
+        
+        //Report point defense effects
+        //Set up a cluster hits table modifier
+        double counterAVMod = getCounterAV();
+        //Report a failure due to overheating
+        if (pdOverheated
+                && (!(amsBayEngaged
+                        || amsBayEngagedCap
+                        || amsBayEngagedMissile
+                        || pdBayEngaged
+                        || pdBayEngagedCap
+                        || pdBayEngagedMissile))) {
+            r = new Report (3359);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+        } else if (pdOverheated) {
+            //Report a partial failure
+            r = new Report (3361);
+            r.subject = subjectId;
+            r.indent();
+            vPhaseReport.addElement(r);
+            //Halve the effectiveness of cluster hits modification
+            counterAVMod /= 2.0;
+        }
+        //Now report the effects, if any
+        //Missiles using the cluster hits table
+        if (amsBayEngaged || pdBayEngaged) {
+            r = new Report(3366);
+            r.indent();
+            r.subject = subjectId;
+            r.add((int) counterAVMod);
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
 
         Report.addNewline(vPhaseReport);
-        toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
+        //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+        //data from the 'real' toHit data of this bay handler
+        ToHitData autoHit = new ToHitData();
+        autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
         for (int wId : weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
@@ -494,8 +575,17 @@ public class BayWeaponHandler extends WeaponHandler {
                 if(bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(toHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
+                    // This should always be true
+                    if (bayWHandler instanceof WeaponHandler) {
+                        WeaponHandler wHandler = (WeaponHandler) bayWHandler;
+                        wHandler.setParentBayHandler(this);
+                    } else {
+                        MegaMek.getLogger().error("bayWHandler " +  bayWHandler.getClass() 
+                                + " is not a weapon handler! Cannot set parent bay handler.");
+                        continue;
+                    }
                     bayWHandler.handle(phase, vPhaseReport);
                     if(vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this

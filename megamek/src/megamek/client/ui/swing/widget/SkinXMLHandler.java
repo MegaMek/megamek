@@ -1,17 +1,20 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
- * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
+* MegaMek -
+* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
+* Copyright (C) 2018 The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
+
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -28,26 +31,26 @@ import java.util.Map;
 
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * This class reads in an XML file that specifies different aspects of the 
+ * This class reads in an XML file that specifies different aspects of the
  * visual skin for Megamek.
- * 
+ *
  * @author arlith
  *
  */
 public class SkinXMLHandler {
-    
+
     public static String SKIN_FOOTER = "</skin>";
     public static String SKIN_HEADER;
 
@@ -72,12 +75,12 @@ public class SkinXMLHandler {
         sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsl\">\n");
         SKIN_HEADER = sb.toString();
     }
-    
+
     /**
      * The file name for the default Skin XML file, found in the config dir.
      */
     public static String defaultSkinXML = "defaultSkin.xml";
-    
+
     // General XML Tags
     public static String UI_ELEMENT = "UI_Element";
     public static String NAME = "name";
@@ -103,6 +106,9 @@ public class SkinXMLHandler {
     public static final String LEFT_LINE = "line_left"; //$NON-NLS-1$
     public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
     public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
+    public static final String SHOULD_BOLD = "should_bold_mouseover"; //$NON-NLS-1$
+    public static final String FONT_NAME = "font_name"; //$NON-NLS-1$
+    public static final String FONT_SIZE = "font_size"; //$NON-NLS-1$
 
     // Unit Display Skin Specification XML tags
     public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
@@ -135,12 +141,12 @@ public class SkinXMLHandler {
     private static Map<String, SkinSpecification> skinSpecs;
 
     private static UnitDisplaySkinSpecification udSpec = null;
-    
+
     /**
      * Checks whether the given path points to a file that is a valid skin
      * specification.
-     * 
-     * @param path
+     *
+     * @param fileName
      * @return
      */
     public static boolean validSkinSpecFile(String fileName) {
@@ -148,9 +154,8 @@ public class SkinXMLHandler {
         if (!file.exists() || !file.isFile()) {
             return false;
         }
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             Document doc = builder.parse(file);
             // TODO: Just validate against the XSD
             // Until that's done, just assume anything with UI_ELEMENT tags is
@@ -165,7 +170,7 @@ public class SkinXMLHandler {
             return false;
         }
     }
-    
+
     /**
      * Initializes using the default skin file.
      * @throws IOException
@@ -174,7 +179,7 @@ public class SkinXMLHandler {
         String skinFilePath = GUIPreferences.getInstance().getSkinFile();
         return initSkinXMLHandler(skinFilePath);
     }
-    
+
     /**
      * Initializes using the supplied skin file.
      * @throws IOException
@@ -188,7 +193,7 @@ public class SkinXMLHandler {
                     "null filename!");
             return false;
         }
-        
+
         File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
         if (!file.exists() || !file.isFile()) {
             System.out.println("ERROR: Bad skin specification file: " +
@@ -197,9 +202,8 @@ public class SkinXMLHandler {
         }
 
         // Build the XML document.
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = dbf.newDocumentBuilder();
+            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
             System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
             System.out.println("Parsing finished.");
@@ -214,7 +218,7 @@ public class SkinXMLHandler {
 
                 String name = borderList.getElementsByTagName(NAME).
                         item(0).getTextContent();
-                
+
                 if (name.equals(SkinSpecification.UIComponents.UnitDisplay.getComp())) {
                     parseUnitDisplaySkinSpec(borderList);
                     continue;
@@ -229,30 +233,30 @@ public class SkinXMLHandler {
                     noBorder = Boolean
                             .parseBoolean(noBorderEle.getTextContent());
                 }
-                
+
                 // Get the first element of this node.
-                Element plainTag = (Element) 
+                Element plainTag = (Element)
                         borderList.getElementsByTagName(PLAIN).item(0);
                 // If there is no plain tag, load the icons
                 if (plainTag == null && !noBorder) {
                     // Get the border specs
-                    Element border = (Element) 
+                    Element border = (Element)
                             borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        System.err.println("Missing <" + BORDER +  
+                        System.err.println("Missing <" + BORDER +
                                 "> tag in element #" + comp);
                         continue;
                     }
-                    
-                    skinSpec = parseBorderTag(border);
+
+                    skinSpec = parseBorderTag(name, border);
                 } else { // Plain skin, no icons
-                    skinSpec = new SkinSpecification();
+                    skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
-                
+
                 // Get the background specs
                 if (plainTag == null) {
-                    NodeList backgrounds = 
+                    NodeList backgrounds =
                             borderList.getElementsByTagName(BACKGROUND_IMAGE);
                     if (backgrounds != null){
                         for (int bg = 0; bg < backgrounds.getLength(); bg++){
@@ -261,15 +265,37 @@ public class SkinXMLHandler {
                         }
                     }
                 }
-                
-                // Pase show scroll bars
+
+                // Parse show scroll bars
                 Element showScrollEle = (Element) borderList
                         .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
                 if (showScrollEle != null) {
                     skinSpec.showScrollBars = Boolean
                             .parseBoolean(showScrollEle.getTextContent());
                 }
-                
+
+                // Parse show should bold
+                Element shouldBoldEle = (Element) borderList
+                        .getElementsByTagName(SHOULD_BOLD).item(0);
+                if (shouldBoldEle != null) {
+                    skinSpec.shouldBoldMouseOver = Boolean
+                            .parseBoolean(shouldBoldEle.getTextContent());
+                }
+
+                // Parse font name
+                Element fontNameEle = (Element) borderList
+                        .getElementsByTagName(FONT_NAME).item(0);
+                if (fontNameEle != null) {
+                    skinSpec.fontName = fontNameEle.getTextContent();
+                }
+
+                // Parse font size
+                Element fontSizeEle = (Element) borderList
+                        .getElementsByTagName(FONT_SIZE).item(0);
+                if (fontSizeEle != null) {
+                    skinSpec.fontSize = Integer.parseInt(fontSizeEle.getTextContent());
+                }
+
                 // Parse font colors
                 NodeList fontColors = borderList
                         .getElementsByTagName(FONT_COLOR);
@@ -299,10 +325,10 @@ public class SkinXMLHandler {
                 }
             }
 
-            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp()) 
+            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
                 System.out.println("SKIN ERROR: Bad skin specification file: " +
-                        "file doesn't specify " + UIComponents.DefaultUIElement + 
+                        "file doesn't specify " + UIComponents.DefaultUIElement +
                         " or " + UIComponents.DefaultButton + "!");
                 return false;
             }
@@ -317,7 +343,7 @@ public class SkinXMLHandler {
         }
         return true;
     }
-    
+
     /**
      *  Create a new SkinSpecification and populate it from the supplied border
      *  tag
@@ -325,8 +351,8 @@ public class SkinXMLHandler {
      * @param border
      * @return
      */
-    private static SkinSpecification parseBorderTag(Element border){
-        SkinSpecification skinSpec = new SkinSpecification();
+    private static SkinSpecification parseBorderTag(String compName, Element border){
+        SkinSpecification skinSpec = new SkinSpecification(compName);
 
         // Parse Corner Icons
         skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
@@ -344,7 +370,7 @@ public class SkinXMLHandler {
             // An edge tag will have some number of icons
             ArrayList<String> icons = new ArrayList<String>();
             // And icon can be tiled or static
-            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>(); 
+            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>();
             NodeList edgeIcons = ((Element) edgeNodes.item(i))
                     .getElementsByTagName(EDGE_ICON);
             // Iterate through each icon/tiled pair
@@ -387,8 +413,8 @@ public class SkinXMLHandler {
                 skinSpec.rightEdge = icons;
                 skinSpec.rightShouldTile = shouldTile;
             }
-        }        
-        return skinSpec;        
+        }
+        return skinSpec;
     }
 
     /**
@@ -709,6 +735,25 @@ public class SkinXMLHandler {
         out.write(((Boolean)skinSpec.showScrollBars).toString());
         out.write("</" + SHOW_SCROLL_BARS + ">\n");
 
+        // Write should bold mouseover
+        out.write("\t\t<" + SHOULD_BOLD + ">");
+        out.write(((Boolean)skinSpec.shouldBoldMouseOver).toString());
+        out.write("</" + SHOULD_BOLD + ">\n");
+
+        // Write font name
+        if (skinSpec.fontName != null) {
+            out.write("\t\t<" + FONT_NAME + ">");
+            out.write(skinSpec.fontName);
+            out.write("</" + FONT_NAME + ">\n");
+        }
+
+        // Write font name
+        if (skinSpec.fontName != null) {
+            out.write("\t\t<" + FONT_SIZE + ">");
+            out.write(skinSpec.fontSize);
+            out.write("</" + FONT_SIZE + ">\n");
+        }
+
         // Close UI_ELEMENT tag
         out.write("\t</" + UI_ELEMENT + ">\n\n");
     }
@@ -829,9 +874,12 @@ public class SkinXMLHandler {
         out.write("\t\t</" + BORDER + ">\n");
     }
 
-
     public static SkinSpecification getSkin(String component){
-        return getSkin(component,false);
+        return getSkin(component,false, false);
+    }
+
+    public static SkinSpecification getSkin(String component, boolean defaultToPlain){
+        return getSkin(component, defaultToPlain, false);
     }
 
     /**
@@ -844,24 +892,30 @@ public class SkinXMLHandler {
 
     /**
      * Get a <code>SkinSpecification</code> for a given component.
-     * 
-     * @param component  The name of the component to get skin info for.
-     * @return           
+     *
+     * @param component
+     *            The name of the component to get skin info for.
+     * @param defaultToPlain
+     *            Determines if a default component should be used if no match,
+     *            or a plain component
+     * @return
      */
-    public synchronized static SkinSpecification getSkin(String component, 
-            boolean isBtn){
+    public synchronized static SkinSpecification getSkin(String component,
+            boolean defaultToPlain, boolean isBtn){
         if (skinSpecs == null ){
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 // This will return a blank skin spec file, which will act like
                 // a plain skin.
-                return new SkinSpecification();
+                return new SkinSpecification("Plain");
             }
         }
-        
+
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null){
-            if (isBtn){
+            if (defaultToPlain) {
+                spec = new SkinSpecification("Plain"); //$NON-NLS-1$
+            } else if (isBtn){
                 spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {
                 spec = skinSpecs.get(UIComponents.DefaultUIElement.getComp());
@@ -894,7 +948,7 @@ public class SkinXMLHandler {
                 return ;
             }
         }
-        SkinSpecification newSpec = new SkinSpecification();
+        SkinSpecification newSpec = new SkinSpecification(component);
         skinSpecs.put(component, newSpec);
     }
 

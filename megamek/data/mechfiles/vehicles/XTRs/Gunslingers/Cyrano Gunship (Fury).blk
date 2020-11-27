@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ Cyrano Gunship
 <year>
 2754
 </year>
+
+<originalBuildYear>
+2754
+</originalBuildYear>
 
 <type>
 IS Level 4
@@ -62,13 +66,13 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
+ISAMS Ammo
 ISGuardianECMSuite
 IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
 ISAntiMissileSystem
-ISAMS Ammo
 </Front Equipment>
 
 <Right Equipment>
@@ -97,4 +101,3 @@ XTRO Gunslingers - Star League
 <tonnage>
 30.0
 </tonnage>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -33,7 +33,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:1.0:1
+troopspace:1
 </transporters>
 
 <cruiseMP>
@@ -76,4 +76,3 @@ TRO 3039 - Succession Wars
 <tonnage>
 20.0
 </tonnage>
-

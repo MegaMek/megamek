@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -32,19 +32,24 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
 
     public InfantryShotgunWakazashiWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Shotgun (Wakazashi O-12)";
         setInternalName(name);
         addLookupName("WakazashiO12");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 180;
         bv = 0.35;
+        tonnage = .0052;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.23;
+        infantryDamage = 0.35;
         infantryRange = 0;
-        introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
-        techRating = RATING_D;
+        ammoWeight = 0.0002;
+        ammoCost = 2;
+        shots = 10;
+        bursts = 3;
+        rulesRefs =" 176,HBHK";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

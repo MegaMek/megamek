@@ -28,7 +28,6 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
@@ -76,12 +75,24 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return g.getTarget(getTargetType(), getTargetId());
     }
 
+    /**
+     * Gets the entity associated with this attack action, using the passed-in game object.
+     * Returns the entity even if it was destroyed or fled.
+     */
     public Entity getEntity(IGame g) {
-        Entity e = g.getEntity(getEntityId());
+        return getEntity(g, getEntityId());
+    }
+    
+    /**
+     * Gets an entity with the given ID, using the passed-in game object.
+     * Returns the entity even if it was destroyed or fled.
+     */
+    public Entity getEntity(IGame g, int entityID) {
+        Entity e = g.getEntity(entityID);
         // if we have an artyattack, we might need to get an out-of-game entity
         // if it died or fled
         if (e == null) {
-            e = g.getOutOfGameEntity(getEntityId());
+            e = g.getOutOfGameEntity(entityID);
         }
         return e;
     }
@@ -172,7 +183,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         // Certain ammunitions reduce the penalty
         else if (atype != null) {
             if (((atype.getAmmoType() == AmmoType.T_AC) 
-                    || (atype.getAmmoType() == AmmoType.T_LAC))
+                    || (atype.getAmmoType() == AmmoType.T_LAC)
+                    || (atype.getAmmoType() == AmmoType.T_AC_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_PAC))
                     && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) 
                             || (atype.getMunitionType() 
                                     == AmmoType.M_TRACER))) {
@@ -234,9 +247,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
             }
         }
         
-        PilotOptions pOpts = attacker.getCrew().getOptions();
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
-                && pOpts.booleanOption(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
+                && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }
 

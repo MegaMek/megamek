@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,13 +24,22 @@ HoverPod
 2500
 </year>
 
+<originalBuildYear>
+2500
+</originalBuildYear>
+
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+cargobay:0.04:1:1
+standardseats:1.0:0
+</transporters>
 
 <cruiseMP>
 5
@@ -46,14 +55,6 @@ Hover
 0
 0
 </armor>
-
-<barrating>
-2
-</barrating>
-
-<structural_tech_rating>
-1
-</structural_tech_rating>
 
 <Body Equipment>
 MonocycleChassisMod
@@ -71,23 +72,34 @@ MonocycleChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:.04:1
-standardseats:.025:1
-</transporters>
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<history>
+These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
+</history>
 
 <source>
 AToW Companion
 </source>
 
 <tonnage>
-.25
+0.25
 </tonnage>
 
-<range>
-1000
-</range>
-
-<history>
-These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
-</history>
+<fuel>
+0.052
+</fuel>

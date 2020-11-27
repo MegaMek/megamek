@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ SL-15 (Eric)
 3069
 </year>
 
+<originalBuildYear>
+3069
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -65,7 +72,7 @@ Aerodyne
 </armor_tech>
 
 <armor>
-103
+102
 77
 77
 51
@@ -90,6 +97,12 @@ Medium Laser
 Medium Laser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 RS Unique Fighters - Jihad
 </source>
@@ -97,4 +110,3 @@ RS Unique Fighters - Jihad
 <tonnage>
 80.0
 </tonnage>
-

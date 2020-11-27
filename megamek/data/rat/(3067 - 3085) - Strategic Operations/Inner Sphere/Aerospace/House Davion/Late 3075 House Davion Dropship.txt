@@ -9,4 +9,4 @@ Triumph (3057),5
 Leopard (3056),4
 Leopard CV (3054),3
 Fortress (3058),2
-Hercules (Standard),1
+Hercules (3053),1

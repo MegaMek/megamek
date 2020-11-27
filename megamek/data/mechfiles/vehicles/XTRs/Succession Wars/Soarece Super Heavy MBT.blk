@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Soarece Superheavy MBT
 2881
 </year>
 
+<originalBuildYear>
+2881
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -31,6 +35,9 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
@@ -51,6 +58,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+IS Ammo AC/10
 ISLimitedAmphibiousChassis
 IS Ammo AC/20
 IS Ammo AC/20
@@ -67,7 +75,6 @@ IS Ammo MG - Full
 
 <Front Equipment>
 Machine Gun
-IS Ammo AC/10
 </Front Equipment>
 
 <Front Right Equipment>
@@ -98,4 +105,3 @@ XTRO Succession Wars - Succession Wars
 <tonnage>
 175.0
 </tonnage>
-

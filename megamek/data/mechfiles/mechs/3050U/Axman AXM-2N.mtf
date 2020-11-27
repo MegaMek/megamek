@@ -55,14 +55,14 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
 ISMediumLaser
 ISMediumLaser
 ISMediumLaser
-Hatchet
-Hatchet
-Hatchet
-Hatchet
-Hatchet
 
 Left Torso:
 Fusion Engine
@@ -148,3 +148,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+Overview: If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
+
+Capabilities: A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
+
+Deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. The first production variant to appear, the -2N replaced the massive but short-ranged autocannon with twin LRM racks. Famously used by Adam Steiner, this variant proved more useful against the mysterious Clan invaders and their long ranged weaponry. The design proved more popular in Lyran space as a result, and after the formation of the Rebpulic remained only in their hands and the hands of the small but fiercly patriotic Filtvelt Coalition.
+
+systemmanufacturer:CHASSIS:Dorwinion
+systemmode:CHASSIS:AXM Standard
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260 XL
+systemmanufacturer:ARMOR:Kallon
+systemmode:ARMOR:Unity Weave Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Johnston
+systemmode:COMMUNICATIONS:Wide Band
+systemmanufacturer:TARGETING:Rander
+systemmode:TARGETING:Pinpoint-HY

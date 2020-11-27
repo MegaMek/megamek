@@ -44,11 +44,11 @@ public class Option implements IOption, Serializable {
     }
 
     public Option(IOptions owner, String name, int defaultValue) {
-        this(owner, name, INTEGER, new Integer(defaultValue));
+        this(owner, name, INTEGER, Integer.valueOf(defaultValue));
     }
 
     public Option(IOptions owner, String name, float defaultValue) {
-        this(owner, name, FLOAT, new Float(defaultValue));
+        this(owner, name, FLOAT, Float.valueOf(defaultValue));
     }
 
     public Option(IOptions owner, String name, Vector<String> defaultValue) {

@@ -1,12 +1,13 @@
 Snow Raven Dropships (FMU)
-Lion (Clan),1
-Sassanid (Standard),2
-Union C,3
-Broadsword (Standard),4
-Carrier (Standard),5
-Union C,6
-Titan (Clan),5
-Miraborg (Standard),4
-Overlord C,3
-Overlord C,2
-Confederate (Clan),1
+Lion (2835),1
+Sassanid (2875),2
+Broadsword (2979),4
+Carrier (2882),5
+Titan (2953),5
+Miraborg (3053),4
+Overlord C (2818),3
+Overlord C (2818) (Tank),2
+Confederate C (3048),1
+Union C (2829),5
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),2

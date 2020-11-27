@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -23,38 +24,85 @@ import megamek.common.options.OptionsConstants;
  */
 public class SmallCraft extends Aero {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6708788176436555036L;
+    
+    public static final int LOC_HULL = 4;
+    
     private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT" };
+        { "NOS", "LS", "RS", "AFT", "HULL" };
     private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft" };
+        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
+    private int nOfficers = 0;
+    private int nGunners = 0;
     private int nBattleArmor = 0;
-    private int nMarines = 0;
     private int nOtherPassenger = 0;
+    
+    // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
+    private Map<String,Integer> nOtherCrew = new HashMap<>();
+    private Map<String,Integer> passengers = new HashMap<>();
+    private Map<Integer,Integer> nOtherMarines = new HashMap<>();
+    
+    // escape pods and lifeboats
+    private int escapePods = 0;
+    private int lifeBoats = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
+    
+    private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2400)
+            .setISApproximate(false, true, false, false)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
-    // Is it Civilian or Military
-    public static final int CIVILIAN = 0;
-    public static final int MILITARY = 1;
-    private int designType = 0;
-
-    public void setDesignType(int design) {
-        designType = design;
+    @Override
+    public int getUnitType() {
+        return UnitType.SMALL_CRAFT;
     }
 
-    public int getDesignType() {
-        return designType;
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        if (isPrimitive()) {
+            return TA_SM_CRAFT_PRIMITIVE;
+        } else {
+            return TA_SM_CRAFT;
+        }
     }
+    
+    /**
+     * @return Returns the autoEject setting (always off for large craft)
+     */
+    @Override
+    public boolean isAutoEject() {
+        return false;
+    }
+    
+    @Override
+    public boolean isPrimitive() {
+        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
+    }
+    
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
-
+    
+    public void setNOfficers(int officer) {
+        nOfficers = officer;
+    }
+    
+    public void setNGunners(int gunners) {
+        nGunners = gunners;
+    }
+    
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -63,6 +111,7 @@ public class SmallCraft extends Aero {
         nBattleArmor = ba;
     }
 
+    @Override
     public void setNMarines(int marines) {
         nMarines = marines;
     }
@@ -80,17 +129,175 @@ public class SmallCraft extends Aero {
     public int getNPassenger() {
         return nPassenger;
     }
-
+    
+    @Override
+    public int getNOfficers() {
+        return nOfficers;
+    }
+    
+    @Override
+    public int getNGunners() {
+        return nGunners;
+    }
+    
+    @Override
     public int getNBattleArmor() {
         return nBattleArmor;
     }
 
+    @Override
     public int getNMarines() {
         return nMarines;
     }
 
     public int getNOtherPassenger() {
         return nOtherPassenger;
+    }
+    
+    /**
+     * Returns a mapping of how many crewmembers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getNOtherCrew() {
+        return nOtherCrew;
+    }
+    
+    /**
+     * Convenience method to return all crew from other craft aboard from the above Map
+     * @return
+     */
+    public int getTotalOtherCrew() {
+        int toReturn = 0;
+        for (String name : getNOtherCrew().keySet()) {
+            toReturn += getNOtherCrew().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these crew came from
+     * @param n The number to add
+     */
+    public void addNOtherCrew(String id, int n) {
+       if (nOtherCrew.containsKey(id)) {
+           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+       } else {
+           nOtherCrew.put(id, n);
+       }
+    }
+    
+    /**
+     * Returns a mapping of how many passengers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getPassengers() {
+        return passengers;
+    }
+    
+    /**
+     * Convenience method to return all passengers aboard from the above Map
+     * @return
+     */
+    public int getTotalPassengers() {
+        int toReturn = 0;
+        for (String name : getPassengers().keySet()) {
+            toReturn += getPassengers().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of passengers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these passengers came from
+     * @param n The number to add
+     */
+    public void addPassengers(String id, int n) {
+       if (passengers.containsKey(id)) {
+           passengers.replace(id, passengers.get(id) + n);
+       } else {
+           passengers.put(id, n);
+       }
+    }
+    
+    public void setEscapePods(int n) {
+        escapePods = n;
+    }
+
+    @Override
+    public int getEscapePods() {
+        return escapePods;
+    }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
+    }
+
+    public void setLifeBoats(int n) {
+        lifeBoats = n;
+    }
+
+    @Override
+    public int getLifeBoats() {
+        return lifeBoats;
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
+    }
+    
+    @Override
+    public double getStrategicFuelUse() {
+        if (isPrimitive()) {
+            return 1.84 * primitiveFuelFactor();
+        }
+    	return 1.84;
+    }
+
+    @Override
+    public double primitiveFuelFactor() {
+        int year = getOriginalBuildYear();
+        if (year >= 2500) {
+            return 1.0;
+        } else if (year >= 2400) {
+            return 1.2;
+        } else if (year >= 2300) {
+            return 1.4;
+        } else if (year >= 2251) {
+            return 1.5;
+        } else if (year >= 2201) {
+            return 1.7;
+        } else if (year >= 2151) {
+            return 1.9;
+        } else {
+            return 2.2;
+        }
     }
 
     @Override
@@ -105,7 +312,12 @@ public class SmallCraft extends Aero {
 
     @Override
     public int locations() {
-        return 4;
+        return 5;
+    }
+
+    @Override
+    public int getBodyLocation() {
+        return LOC_HULL;
     }
 
     // what is different - hit table is about it
@@ -221,6 +433,11 @@ public class SmallCraft extends Aero {
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
                 case 12:
                     setPotCrit(CRIT_KF_BOOM);
+                    // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
+                    if ((this instanceof Dropship)
+                            && (((Dropship)this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
+                        setPotCrit(CRIT_AVIONICS);
+                    }
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
@@ -347,23 +564,47 @@ public class SmallCraft extends Aero {
         if (!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_NOSE_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_NOSE;
                     break;
                 case LOC_RWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_RWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_RWING;
                     }
                     break;
                 case LOC_LWING:
                     if (mounted.isRearMounted()) {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWINGA_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWINGA;
                     } else {
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_LWING_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_LWING;
                     }
                     break;
                 case LOC_AFT:
+                    if (mounted.isInWaypointLaunchMode()) {
+                        arc = Compute.ARC_AFT_WPL;
+                        break;
+                    }
                     arc = Compute.ARC_AFT;
                     break;
                 default:
@@ -373,23 +614,47 @@ public class SmallCraft extends Aero {
             if ((game != null) && game.getBoard().inSpace()) {
                 switch (mounted.getLocation()) {
                     case LOC_NOSE:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_NOSE_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_NOSE;
                         break;
                     case LOC_RWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_RIGHTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_RIGHTSIDE_SPHERE;
                         }
                         break;
                     case LOC_LWING:
                         if (mounted.isRearMounted()) {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDEA_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDEA_SPHERE;
                         } else {
+                            if (mounted.isInWaypointLaunchMode()) {
+                                arc = Compute.ARC_LEFTSIDE_SPHERE_WPL;
+                                break;
+                            }
                             arc = Compute.ARC_LEFTSIDE_SPHERE;
                         }
                         break;
                     case LOC_AFT:
+                        if (mounted.isInWaypointLaunchMode()) {
+                            arc = Compute.ARC_AFT_WPL;
+                            break;
+                        }
                         arc = Compute.ARC_AFT;
                         break;
                     default:
@@ -447,79 +712,61 @@ public class SmallCraft extends Aero {
 
     @Override
     public double getArmorWeight() {
-        // first I need to subtract SI bonus from total armor
-        int armorPoints = getTotalOArmor();
-        armorPoints -= getSI() * locations();
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
-
-        double baseArmor = 16.0;
-        if (isClan()) {
-            baseArmor = 20.0;
+        // first I need to subtract SI bonus from total armor. We need to retain the fractional part
+        //  for primitive craft because the primitive multiplier is applied to both before rounding.
+        double armorPoints = getTotalOArmor();
+        int freeSI = getSI() * (locations() - 1); // no armor in hull location
+        if (isPrimitive()) {
+            armorPoints -= freeSI * 0.66;
+        } else {
+            armorPoints -= freeSI;
         }
-        if (isSpheroid()) {
-            if (weight >= 12500) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 20000) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 35000) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 50000) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 65000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+        double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
+                getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
+
+        return RoundWeight.nextHalfTon(armorPoints / armorPerTon);
+    }
+    
+    public static double armorPointsPerTon(double craftWeight, boolean spheroid, int at, boolean isClan) {
+        double base = 16.0;
+        if (spheroid) {
+            if (craftWeight >= 65000) {
+                base = 6.0;
+            } else if (craftWeight >= 50000) {
+                base = 8.0;
+            } else if (craftWeight >= 35000) {
+                base = 10.0;
+            } else if (craftWeight >= 20000) {
+                base = 12.0;
+            } else if (craftWeight >= 12500) {
+                base = 14.0;
             }
         } else {
-            if (weight >= 6000) {
-                baseArmor = 14.0;
-                if (isClan()) {
-                    baseArmor = 17.0;
-                }
-            } else if (weight >= 9500) {
-                baseArmor = 12.0;
-                if (isClan()) {
-                    baseArmor = 14.0;
-                }
-            } else if (weight >= 12500) {
-                baseArmor = 10.0;
-                if (isClan()) {
-                    baseArmor = 12.0;
-                }
-            } else if (weight >= 17500) {
-                baseArmor = 8.0;
-                if (isClan()) {
-                    baseArmor = 10.0;
-                }
-            } else if (weight >= 25000) {
-                baseArmor = 6.0;
-                if (isClan()) {
-                    baseArmor = 7.0;
-                }
+            if (craftWeight >= 25000) {
+                base = 6.0;
+            } else if (craftWeight >= 17500) {
+                base = 8.0;
+            } else if (craftWeight >= 12500) {
+                base = 10.0;
+            } else if (craftWeight >= 9500) {
+                base = 12.0;
+            } else if (craftWeight >= 6000) {
+                base = 14.0;
+            }
+        }
+        if (isClan) {
+            if (base > 14) {
+                base += 4;
+            } else if (base > 12) {
+                base += 3;
+            } else if (base > 6) {
+                base += 2;
+            } else {
+                base += 1;
             }
         }
 
-        double armorPerTon = baseArmor * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
-        double armWeight = 0.0;
-        for (; ((int) Math.round(armWeight * armorPerTon)) < armorPoints; armWeight += .5) {
-            // add armor weight in discrete batches
-        }
-        return armWeight;
+        return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
     /**
@@ -563,7 +810,7 @@ public class SmallCraft extends Aero {
         cost += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // fuel tanks
-        cost += (200 * getFuel()) / 80.0;
+        cost += (200 * getFuel()) / 80.0 * 1.02;
 
         // armor
         cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
@@ -576,10 +823,13 @@ public class SmallCraft extends Aero {
         // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        double weightMultiplier = 1 + (weight / 50f);
+        return Math.round(cost * getPriceMultiplier());
 
-        return Math.round(cost * weightMultiplier);
+    }
 
+    @Override
+    public double getPriceMultiplier() {
+        return 1 + (weight / 50f);
     }
 
     @Override
@@ -754,6 +1004,11 @@ public class SmallCraft extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
     
+    @Override
+    public boolean isFighter() {
+        return false;
+    }
+
     /**
      * Do not recalculate walkMP when adding engine.
      */

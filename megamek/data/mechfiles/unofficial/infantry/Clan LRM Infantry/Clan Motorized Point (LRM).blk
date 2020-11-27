@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Clan Motorized Point
+</Name>
+
+<Model>
+(LRM)
+</Model>
+
+<year>
+3057
+</year>
+
+<type>
+Clan Level 5
+</type>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+5
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<Secondary>
+LRM Launcher (FarShot)
+</Secondary>
+
+<antimek>
+6
+</antimek>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ IRN-SD1b
 2760
 </year>
 
+<originalBuildYear>
+2760
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -67,9 +74,6 @@ Aerodyne
 ISERPPC
 ISERPPC
 SRM 6
-IS Ammo SRM-6
-IS Ammo SRM-6
-ISCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -87,6 +91,15 @@ Medium Laser
 <Aft Equipment>
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo SRM-6
+IS Ammo SRM-6
+ISCASE
+</Fuselage Equipment>
+
 <source>
 TRO 3075 - Star League
 </source>
@@ -94,4 +107,3 @@ TRO 3075 - Star League
 <tonnage>
 65.0
 </tonnage>
-

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ CSR-V12b
 2780
 </year>
 
+<originalBuildYear>
+2780
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Aerodyne
 </motion_type>
+
+<transporters>
+</transporters>
 
 <SafeThrust>
 6
@@ -90,6 +97,12 @@ Small Laser
 Small Laser
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
 <source>
 H:Operation Klondyke - Star League
 </source>
@@ -97,4 +110,3 @@ H:Operation Klondyke - Star League
 <tonnage>
 50.0
 </tonnage>
-

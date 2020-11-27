@@ -16,31 +16,22 @@
 
 package megamek.client;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.awt.*;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import javax.swing.SwingUtilities;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.bot.BotClient;
 import megamek.client.commands.AddBotCommand;
 import megamek.client.commands.AssignNovaNetworkCommand;
 import megamek.client.commands.ClientCommand;
@@ -51,35 +42,14 @@ import megamek.client.commands.MoveCommand;
 import megamek.client.commands.RulerCommand;
 import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
+import megamek.client.commands.SitrepCommand;
+import megamek.client.generator.RandomSkillsGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
-import megamek.common.Board;
-import megamek.common.BoardDimensions;
-import megamek.common.Building;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.Coords;
-import megamek.common.QuirksHandler;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
-import megamek.common.Flare;
-import megamek.common.Game;
-import megamek.common.GameLog;
-import megamek.common.GameTurn;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.MapSettings;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TagInfo;
-import megamek.common.UnitLocation;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -105,10 +75,10 @@ import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * This class is instanciated for each client and for each bot running on that
@@ -157,6 +127,12 @@ public class Client implements IClientCommandHandler {
 
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
 
+    //Hashtable for storing image tags containing base64Text src
+    private Hashtable<Integer, String> imgCache;
+
+    //board view for getting entity art assets
+    private BoardView1 bv;
+
     ConnectionHandler packetUpdate;
 
     private class ConnectionHandler implements Runnable {
@@ -179,8 +155,6 @@ public class Client implements IClientCommandHandler {
             }
         }
     }
-
-    ;
 
     private Thread connThread;
 
@@ -235,7 +209,7 @@ public class Client implements IClientCommandHandler {
      * @param port
      *            the host port
      */
-    public Client(String name, String host, int port) {
+    public Client(String name, String host, int port){
         // construct new client
         this.name = name;
         this.host = host;
@@ -250,6 +224,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
+        registerCommand(new SitrepCommand(this));
 
         rsg = new RandomSkillsGenerator();
     }
@@ -269,6 +244,10 @@ public class Client implements IClientCommandHandler {
         if (connection != null && !connection.isClosed()) {
             connection.update();
         }
+    }
+
+    public void setBoardView(BoardView1 bv){
+        this.bv = bv;
     }
 
     /**
@@ -354,8 +333,13 @@ public class Client implements IClientCommandHandler {
         log.append("<html><body>");
     }
 
-    private boolean keepGameLog() {
-        return PreferenceManager.getClientPreferences().keepGameLog() && !(this instanceof BotClient);
+    /**
+     * Called to determine whether the game log should be kept.
+     * <p>
+     * Default implementation delegates to {@code PreferenceManager.getClientPreferences()}.
+     */
+    protected boolean keepGameLog() {
+        return PreferenceManager.getClientPreferences().keepGameLog();
     }
 
     /**
@@ -459,16 +443,13 @@ public class Client implements IClientCommandHandler {
         // Handle phase-specific items.
         switch (phase) {
         case PHASE_STARTING_SCENARIO:
-            sendDone(true);
-            break;
         case PHASE_EXCHANGE:
             sendDone(true);
             break;
         case PHASE_DEPLOYMENT:
             // free some memory thats only needed in lounge
             MechFileParser.dispose();
-            // We must do this last, as the name and unit generators can
-            // create
+            // We must do this last, as the name and unit generators can create
             // a new instance if they are running
             MechSummaryCache.dispose();
             memDump("entering deployment phase"); //$NON-NLS-1$
@@ -495,12 +476,8 @@ public class Client implements IClientCommandHandler {
                 System.out.println(e);
                 e.printStackTrace();
             }
-            RandomNameGenerator.initialize();
-            MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
-                public void doneLoading() {
-                    RandomUnitGenerator.getInstance();
-                }
-            });
+            UnitRoleHandler.initialize();
+            MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
             }
@@ -558,15 +535,15 @@ public class Client implements IClientCommandHandler {
     /**
      * Change whose turn it is.
      */
-    protected void changeTurnIndex(int index) {
-        game.setTurnIndex(index);
+    protected void changeTurnIndex(int index, int prevPlayerId) {
+        game.setTurnIndex(index, prevPlayerId);
     }
 
     /**
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nMode) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
@@ -574,7 +551,7 @@ public class Client implements IClientCommandHandler {
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nFacing) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip), Integer.valueOf(nFacing) };
         send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
     }
 
@@ -582,7 +559,7 @@ public class Client implements IClientCommandHandler {
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nEquip) };
         send(new Packet(Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE, data));
     }
 
@@ -590,7 +567,7 @@ public class Client implements IClientCommandHandler {
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nSystem), new Integer(nMode) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSystem), Integer.valueOf(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
     }
 
@@ -598,7 +575,7 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon), new Integer(nAmmo) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nWeapon), Integer.valueOf(nAmmo) };
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -606,7 +583,7 @@ public class Client implements IClientCommandHandler {
      * Send sensor-change data to the server
      */
     public void sendSensorChange(int nEntity, int nSensor) {
-        Object[] data = { new Integer(nEntity), new Integer(nSensor) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(nSensor) };
         send(new Packet(Packet.COMMAND_ENTITY_SENSORCHANGE, data));
     }
 
@@ -614,7 +591,7 @@ public class Client implements IClientCommandHandler {
      * Send sinks-change data to the server
      */
     public void sendSinksChange(int nEntity, int activeSinks) {
-        Object[] data = { new Integer(nEntity), new Integer(activeSinks) };
+        Object[] data = { Integer.valueOf(nEntity), Integer.valueOf(activeSinks) };
         send(new Packet(Packet.COMMAND_ENTITY_SINKSCHANGE, data));
     }
 
@@ -622,7 +599,7 @@ public class Client implements IClientCommandHandler {
      * Send activate hidden data to the server
      */
     public void sendActivateHidden(int nEntity, IGame.Phase phase) {
-        Object[] data = { new Integer(nEntity), phase };
+        Object[] data = { Integer.valueOf(nEntity), phase };
         send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
     }
 
@@ -632,7 +609,7 @@ public class Client implements IClientCommandHandler {
     public void moveEntity(int id, MovePath md) {
         Object[] data = new Object[2];
 
-        data[0] = new Integer(id);
+        data[0] = Integer.valueOf(id);
         data[1] = md;
 
         send(new Packet(Packet.COMMAND_ENTITY_MOVE, data));
@@ -672,15 +649,15 @@ public class Client implements IClientCommandHandler {
         int packetCount = 6 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
-        data[index++] = new Integer(id);
+        data[index++] = Integer.valueOf(id);
         data[index++] = c;
-        data[index++] = new Integer(nFacing);
-        data[index++] = new Integer(elevation);
-        data[index++] = new Integer(loadedUnits.size());
-        data[index++] = new Boolean(assaultDrop);
+        data[index++] = Integer.valueOf(nFacing);
+        data[index++] = Integer.valueOf(elevation);
+        data[index++] = Integer.valueOf(loadedUnits.size());
+        data[index++] = Boolean.valueOf(assaultDrop);
 
         for (Entity ent : loadedUnits) {
-            data[index++] = new Integer(ent.getId());
+            data[index++] = Integer.valueOf(ent.getId());
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
@@ -771,7 +748,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "player done" message to the server.
      */
     public synchronized void sendDone(boolean done) {
-        send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
+        send(new Packet(Packet.COMMAND_PLAYER_READY, Boolean.valueOf(done)));
         flushConn();
     }
 
@@ -911,9 +888,9 @@ public class Client implements IClientCommandHandler {
      */
     public void sendLoadGame(File f) {
         try (InputStream is = new GZIPInputStream(new FileInputStream(f))) {
-            XStream xstream = new XStream();
-
             game.reset();
+            
+            XStream xstream = SerializationHelper.getXStream();            
             IGame newGame = (IGame) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
@@ -969,11 +946,17 @@ public class Client implements IClientCommandHandler {
     protected void receiveEntities(Packet c) {
         List<Entity> newEntities = (List<Entity>) c.getObject(0);
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
-
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
+            for(Entity e: newOutOfGame) {
+                cacheImgTag(e);
+            }
+        }
+        //cache the image data for the entities
+        for(Entity e: newEntities) {
+            cacheImgTag(e);
         }
     }
 
@@ -1006,6 +989,10 @@ public class Client implements IClientCommandHandler {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         int condition = packet.getIntValue(1);
+        //create a final image for the entity
+        for(int id: entityIds) {
+            cacheImgTag(game.getEntity(id));
+        }
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
     }
@@ -1114,6 +1101,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+
     // Should be private?
     public String receiveReport(Vector<Report> v) {
         if (v == null) {
@@ -1124,7 +1112,87 @@ public class Client implements IClientCommandHandler {
         for (Report r : v) {
             report.append(r.getText());
         }
-        return report.toString();
+
+        Set<Integer> set = new HashSet<Integer>();
+        //find id stored in spans and extract it
+        Pattern p = Pattern.compile("<s(.*?)n>");
+        Matcher m = p.matcher(report.toString());
+
+        //add all instances to a hashset to prevent duplicates
+        while(m.find()){
+            String cleanedText = m.group(1).replaceAll("\\D", "");
+            if(cleanedText.length() > 0) {
+                set.add(Integer.parseInt(cleanedText));
+            }
+        }
+
+        String updatedReport = report.toString();
+        //loop through the hashset of unique ids and replace the ids with img tags
+        for (int i : set) {
+            if(getCachedImgTag(i) != null) {
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+            }
+        }
+        return updatedReport;
+    }
+
+    /**
+     * returns the stored <img> tag for given unit id
+     */
+    private String getCachedImgTag(int id){
+        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+                || (imgCache == null) || !imgCache.containsKey(id)) {
+            return null;
+        }
+        return imgCache.get(id);
+    }
+
+    /**
+     * Hashtable for storing <img> tags containing base64Text src.
+     */
+    private void cacheImgTag(Entity entity){
+
+        if(entity == null) {
+            MegaMek.getLogger().error("Null entity reference");
+            return;
+        }
+
+        if (imgCache == null) {
+            imgCache = new Hashtable<>();
+        } else if (imgCache.containsKey(entity.getId())) {
+            //remove images that should be refreshed
+            imgCache.remove(entity.getId());
+        }
+
+        if (getTargetImage(entity) != null) {
+            //convert image to base64, add to to <img> tag and store in cache
+            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            try {
+                String base64Text;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write((RenderedImage) image, "png", baos);
+                baos.flush();
+                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+                baos.close();
+                String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                imgCache.put(entity.getId(), img);
+            } catch (final IOException ioe) {
+                throw new UncheckedIOException(ioe);
+            }
+        }
+    }
+
+    /**
+     * Gets the current mech image
+     */
+    private Image getTargetImage(Entity e){
+        if (bv == null) {
+            return null;
+        } else if (e.isDestroyed()) {
+            return bv.getTilesetManager().wreckMarkerFor(e, -1);
+        } else {
+            return bv.getTilesetManager().imageFor(e);
+        }
     }
 
     /**
@@ -1166,7 +1234,7 @@ public class Client implements IClientCommandHandler {
      * @param net
      */
     public void sendNovaChange(int ID, String net) {
-        Object[] data = { new Integer(ID), new String(net) };
+        Object[] data = { Integer.valueOf(ID), new String(net) };
         Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
         send(packet);
     }
@@ -1301,7 +1369,7 @@ public class Client implements IClientCommandHandler {
             changePhase((IGame.Phase) c.getObject(0));
             break;
         case Packet.COMMAND_TURN:
-            changeTurnIndex(c.getIntValue(0));
+            changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
             break;
         case Packet.COMMAND_ROUND_UPDATE:
             game.setRoundCount(c.getIntValue(0));
@@ -1461,6 +1529,14 @@ public class Client implements IClientCommandHandler {
                 cfrEvt.setEntityId((int) c.getObject(1));
                 cfrEvt.setTargetId((int) c.getObject(2));
                 break;
+            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                cfrEvt.setTeleguidedMissileTargets((List<Integer>)c.getObject(1));
+                cfrEvt.setTmToHitValues((List<Integer>)c.getObject(2));
+                break;
+            case Packet.COMMAND_CFR_TAG_TARGET:
+                cfrEvt.setTAGTargets((List<Integer>)c.getObject(1));
+                cfrEvt.setTAGTargetTypes((List<Integer>)c.getObject(2));
+                break;
             }
             game.processGameEvent(cfrEvt);
             break;
@@ -1510,6 +1586,18 @@ public class Client implements IClientCommandHandler {
 
     public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
         Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendTelemissileTargetCFRResponse(int index) {
+        Object data[] = { Packet.COMMAND_CFR_TELEGUIDED_TARGET, index };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+    
+    public void sendTAGTargetCFRResponse(int index) {
+        Object data[] = { Packet.COMMAND_CFR_TAG_TARGET, index };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
@@ -1567,11 +1655,11 @@ public class Client implements IClientCommandHandler {
      */
     private void checkDuplicateNamesDuringAdd(Entity entity) {
         if (duplicateNameHash.get(entity.getShortName()) == null) {
-            duplicateNameHash.put(entity.getShortName(), new Integer(1));
+            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(1));
         } else {
             int count = duplicateNameHash.get(entity.getShortName()).intValue();
             count++;
-            duplicateNameHash.put(entity.getShortName(), new Integer(count));
+            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(count));
             entity.duplicateMarker = count;
             entity.generateShortName();
             entity.generateDisplayName();
@@ -1622,7 +1710,7 @@ public class Client implements IClientCommandHandler {
                         }
                     }
                 }
-                duplicateNameHash.put(removedEntity.getShortNameRaw(), new Integer(count - 1));
+                duplicateNameHash.put(removedEntity.getShortNameRaw(), Integer.valueOf(count - 1));
 
             } else if (count != null) {
                 duplicateNameHash.remove(removedEntity.getShortNameRaw());
@@ -1679,10 +1767,6 @@ public class Client implements IClientCommandHandler {
 
     public RandomSkillsGenerator getRandomSkillsGenerator() {
         return rsg;
-    }
-
-    public RandomNameGenerator getRandomNameGenerator() {
-        return RandomNameGenerator.getInstance();
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {

@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Horatio Heavy Bridgelayer
+</Name>
+
+<Model>
+(Marik)-FC
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:3.0
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+33
+31
+31
+30
+</armor>
+
+<Body Equipment>
+Cargo (1.5 tons)
+</Body Equipment>
+
+<Front Equipment>
+ISERMediumLaser
+HeavyBridgeLayer
+</Front Equipment>
+
+<Right Equipment>
+ISSmallPulseLaser
+ISSponsonTurret
+</Right Equipment>
+
+<Left Equipment>
+ISSmallPulseLaser
+ISSponsonTurret
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+
+<history>
+Cargo space is for additional bridgelayer gear.
+</history>

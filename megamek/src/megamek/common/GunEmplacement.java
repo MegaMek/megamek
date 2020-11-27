@@ -2,22 +2,21 @@
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.Vector;
 
-import megamek.common.preference.PreferenceManager;
+import megamek.MegaMek;
 
 /**
  * A building with weapons fitted and, optionally, a turret.
@@ -27,9 +26,6 @@ import megamek.common.preference.PreferenceManager;
  */
 public class GunEmplacement extends Tank {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8561738092216598248L;
 
     // locations
@@ -40,11 +36,34 @@ public class GunEmplacement extends Tank {
     private static int[] CRITICAL_SLOTS = new int[] { 0 };
     private static String[] LOCATION_ABBRS = { "GUN" };
     private static String[] LOCATION_NAMES = { "GUNS" };
+        
+    private static final TechAdvancement TA_GUN_EMPLACEMENT = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    
+    public static final TechAdvancement TA_LIGHT_BUILDING = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
+    
+    private int initialBuildingCF;
+    private int initialBuildingArmor;
+    
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return TA_GUN_EMPLACEMENT;
+    }
 
     public GunEmplacement() {
         initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
         //give it an engine just to avoid NPE on calls to Tank
         setEngine(new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
+    }
+
+    @Override
+    public int getUnitType() {
+        return UnitType.GUN_EMPLACEMENT;
     }
 
     public boolean isTurret() {
@@ -53,6 +72,14 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isImmobile() {
+        return true;
+    }
+    
+    /**
+     * Our gun emplacements do not support dual turrets at this time
+     */
+    @Override
+    public boolean hasNoDualTurret() {
         return true;
     }
 
@@ -75,7 +102,7 @@ public class GunEmplacement extends Tank {
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
 
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
         //gun emplacements must be placed on a building
@@ -110,7 +137,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getWeaponArc(int weaponId) {
-        if(isTurret()) {
+        if (isTurret()) {
             return Compute.ARC_TURRET;
         }
         return Compute.ARC_FORWARD;
@@ -223,6 +250,10 @@ public class GunEmplacement extends Tank {
                     dBV *= 1.2;
                 }
                 if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                }
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
@@ -292,8 +323,7 @@ public class GunEmplacement extends Tank {
             pilotFactor = getCrew().getBVSkillMultiplier(game);
         }
 
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-        return retVal;
+        return (int) Math.round((finalBV) * pilotFactor);
     }
 
     @Override
@@ -303,7 +333,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -331,7 +361,7 @@ public class GunEmplacement extends Tank {
                 r = new Report(7073, Report.PUBLIC);
             }
             vDesc.addElement(r);
-        } else if (getCrew().isEjected()){
+        } else if (getCrew().isEjected()) {
             r = new Report(7071, Report.PUBLIC);
             vDesc.addElement(r);
         }
@@ -352,7 +382,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
 
     @Override
@@ -470,19 +500,15 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
-    }
-
-    @Override
-    public boolean isCrippled() {
-        if (isMilitary() && !hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: no viable weapons left.");
-            }
+        if (checkCrew && (null != getCrew()) && getCrew().isDead()) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Crew dead.");
             return true;
+        } else if (isMilitary() && !hasViableWeapons()) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -494,7 +520,7 @@ public class GunEmplacement extends Tank {
                 totalInoperable++;
             }
         }
-        return ((double)totalInoperable / totalWeapons) >= 0.75;
+        return ((double) totalInoperable / totalWeapons) >= 0.75;
     }
 
     @Override
@@ -507,7 +533,7 @@ public class GunEmplacement extends Tank {
             }
         }
 
-        return ((double)totalInoperable / totalWeapons) >= 0.25;
+        return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
 
     @Override
@@ -520,12 +546,11 @@ public class GunEmplacement extends Tank {
             }
         }
 
-        return ((double)totalInoperable / totalWeapons) >= 0.5;
+        return ((double) totalInoperable / totalWeapons) >= 0.5;
     }
 
-
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
     }
     
@@ -533,5 +558,54 @@ public class GunEmplacement extends Tank {
     public boolean hasEngine() {
         // TODO: Power generators and energy grid setup
         return false;
+    }
+    
+    @Override
+    public int getArmorType(int loc) {
+        // this is a hack to get around the fact that gun emplacements don't even have armor
+        return 0;
+    }
+    
+    @Override
+    public boolean hasStealth() {
+        return false;
+    }
+    
+    /**
+     * Sets the deployed flag. 
+     * Has the side effect of initializing building CF if deployed
+     */
+    @Override
+    public void setDeployed(boolean deployed) {
+        super.setDeployed(deployed);
+
+        if (deployed) {
+            Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
+            
+            initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
+            initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+        } else {
+            initialBuildingCF = initialBuildingArmor = 0;
+        }
+    }
+    
+    /**
+     * How much more damage, percentage-wise, the gun emplacement's building can take
+     */
+    @Override
+    public double getArmorRemainingPercent() {
+        if (getPosition() == null) {
+            return 1.0;
+        }
+        
+        Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
+        
+        // we'll consider undeployed emplacements to be fully intact
+        if ((occupiedStructure == null) || (initialBuildingCF + initialBuildingArmor == 0)) {
+            return 1.0;
+        }
+        
+        return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
+                / ((double) (initialBuildingCF + initialBuildingArmor));
     }
 }

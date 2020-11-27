@@ -64,37 +64,32 @@ public class MGHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
-        if (weapon.isRapidfire()
-            && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+        if (weapon.isRapidfire() && !(target.isConventionalInfantry())) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
-            if (bGlancing) {
-                toReturn = (int) Math.floor(nDamPerHit / 2.0);
-            }
+            toReturn = applyGlancingBlowModifier(toReturn, false);
+            
             if (bDirect) {
                 toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
                                     toReturn * 2);
             }
         } else {
-            if ((target instanceof Infantry)
-                    && !(target instanceof BattleArmor)) {
+            if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
                         wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                         wtype.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
                         toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-                if (bGlancing) {
-                    toReturn = (int) Math.floor(toReturn / 2.0);
-                }
+                
+                toReturn = applyGlancingBlowModifier(toReturn, true);
             } else {
                 toReturn = wtype.getDamage();
                 if (bDirect) {
                     toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
                                         toReturn * 2);
                 }
-                if (bGlancing) {
-                    toReturn = (int) Math.floor(toReturn / 2.0);
-                }
+                
+                toReturn = applyGlancingBlowModifier(toReturn, false);
             }
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)

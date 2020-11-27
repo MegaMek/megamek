@@ -12845,10 +12845,10 @@ public class Server implements Runnable {
                                 throw new IllegalStateException();
                             }
                             MovePath mp = (MovePath) rp.packet.getData()[1];
-                            mp.setGame(getGame());
-                            mp.setEntity(violation);
                             // Move based on the feedback
                             if (mp != null) {
+                                mp.setGame(getGame());
+                                mp.setEntity(violation);
                                 // Report
                                 r = new Report(2352);
                                 r.indent(3);

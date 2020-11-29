@@ -2353,11 +2353,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * mapsheets), draws the hexes onto it, and returns that image.
      */
     public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
-    	// Set zoom to base, so we get a consist board image
+        // Set zoom to base, so we get a consist board image
 
-    	int oldZoom = zoomIndex;
-    	zoomIndex = BASE_ZOOM_INDEX;
-    	zoom();
+        int oldZoom = zoomIndex;
+        zoomIndex = BASE_ZOOM_INDEX;
+        zoom();
 
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
@@ -2468,7 +2468,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Restore the zoom setting
         zoomIndex = oldZoom;
-    	zoom();
+        zoom();
 
         return (BufferedImage) entireBoard;
     }
@@ -5356,8 +5356,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+                        + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
                     ImageIO.write(getEntireBoardImage(false), "png", imgFile);
                 } catch (IOException e1) {

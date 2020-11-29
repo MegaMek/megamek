@@ -47,6 +47,7 @@ import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.common.weapons.prototypes.*;
 
 /**
  * You know what mechs are, silly.
@@ -4472,6 +4473,15 @@ public abstract class Mech extends Entity {
                 weaponHeat *= 6;
             }
 
+            // 1d6 extra heat; add half for heat calculations (1d3/+2 for small pulse)
+            if ((wtype instanceof ISERLaserLargePrototype)
+                    || (wtype instanceof ISPulseLaserLargePrototype)
+                    || (wtype instanceof ISPulseLaserMediumPrototype)
+                    || (wtype instanceof ISPulseLaserMediumRecovered)) {
+                weaponHeat += 3;
+            } else if (wtype instanceof ISPulseLaserSmallPrototype) {
+                weaponHeat += 2;
+            }
 
             String name = wtype.getName();
 

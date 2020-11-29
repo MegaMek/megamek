@@ -5810,6 +5810,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             new Object[] { distance }));
                 }
 
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+                    LosEffects los = fovHighlightingAndDarkening.getCachedLosEffects(selectedEntity.getPosition(), mcoords);
+                    int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
+                            fovHighlightingAndDarkening.cachedAllECMInfo);
+                    int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
+
+                    int maxSensorRange = bracket * range;
+                    int minSensorRange = Math.max((bracket - 1) * range, 0);
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
+                        minSensorRange = 0;
+                    }
+                    txt.append("<BR>");
+                    if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
+                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexInRange"));
+                    } else {
+                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange"));
+                    }
+                }
+
                 if ((game.getPhase() == Phase.PHASE_MOVEMENT) &&
                         (movementTarget != null)) {
                     txt.append("<BR>");
@@ -5821,6 +5840,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 new Object[] { disPM }));
                     }
                 }
+
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
 

@@ -58,9 +58,11 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -2351,6 +2353,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * mapsheets), draws the hexes onto it, and returns that image.
      */
     public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+        // Set zoom to base, so we get a consist board image
+
+        int oldZoom = zoomIndex;
+        zoomIndex = BASE_ZOOM_INDEX;
+        zoom();
+
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
         boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
@@ -2358,6 +2366,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
+
+        if (shadowMap == null) {
+            updateShadowMap();
+        }
+
         // Draw hexes
         drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
 
@@ -2451,8 +2464,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-
         boardGraph.dispose();
+
+        // Restore the zoom setting
+        zoomIndex = oldZoom;
+        zoom();
+
         return (BufferedImage) entireBoard;
     }
 
@@ -5332,6 +5349,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryBoardView() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+                        + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                try {
+                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
             refreshAttacks();
 
             // Clear some information regardless of what phase it is

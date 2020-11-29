@@ -46,6 +46,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -86,6 +88,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.IGame.Phase;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -98,6 +101,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -132,7 +136,7 @@ public class MiniMap extends JPanel {
     private static final int SCROLL_PANE_WIDTH = 160;
     private static final int SCROLL_PANE_HEIGHT = 200;
 
-    private Image m_mapImage;
+    private BufferedImage m_mapImage;
     private IBoardView m_bview;
     private IGame m_game;
     private IBoard m_board;
@@ -633,7 +637,7 @@ public class MiniMap extends JPanel {
             ((JDialog) m_dialog).pack();
         }
         // m_dialog.setVisible(true);
-        m_mapImage = createImage(getSize().width, getSize().height);
+        m_mapImage = ImageUtil.createAcceleratedImage(getSize().width, getSize().height);
 
         terrainBuffer = createImage(getSize().width, getSize().height);
         Graphics gg = terrainBuffer.getGraphics();
@@ -1699,7 +1703,7 @@ public class MiniMap extends JPanel {
         if (y > (getSize().height - 14) && !dragging) {
             if (minimized) {
                 setSize(getSize().width, heightBufer);
-                m_mapImage = createImage(getSize().width, heightBufer);
+                m_mapImage =  ImageUtil.createAcceleratedImage(getSize().width, heightBufer);
                 minimized = false;
                 initializeMap();
             } else {
@@ -1722,7 +1726,9 @@ public class MiniMap extends JPanel {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
-                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
+
+                    m_mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
+
                     minimized = true;
                     initializeMap();
                 }  
@@ -1783,6 +1789,22 @@ public class MiniMap extends JPanel {
     protected GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesMMDir(), m_game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+				File imgFile = new File(dir, "round_" + m_game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                try {
+                    ImageIO.write(m_mapImage, "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
             drawMap();
         }
 

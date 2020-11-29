@@ -4500,7 +4500,8 @@ public abstract class Mech extends Entity {
             // half heat for streaks
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    || (wtype.getAmmoType() == AmmoType.T_IATM)) {
                 weaponHeat *= 0.5;
             }
             // check to see if the weapon is a PPC and has a Capacitor attached

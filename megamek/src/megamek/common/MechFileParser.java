@@ -25,10 +25,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
+import megamek.MegaMek;
 import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKConvFighterFile;
@@ -739,24 +742,35 @@ public class MechFileParser {
             }
         }
 
-        Vector<Integer> usedMG = new Vector<Integer>();
-        for (Mounted m : ent.getWeaponList()) {
-            // link MGs to their MGA
-            // we are going to use the bayWeapon vector because we can't
-            // directly link them
-            if (m.getType().hasFlag(WeaponType.F_MGA)) {
-                for (Mounted other : ent.getWeaponList()) {
-                    int eqn = ent.getEquipmentNum(other);
-                    if (!usedMG.contains(eqn)
-                            && (m.getLocation() == other.getLocation())
-                            && other.getType().hasFlag(WeaponType.F_MG)
-                            && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) other
-                                    .getType()).getRackSize())
-                            && !m.getBayWeapons().contains(eqn)
-                            && (m.getBayWeapons().size() <= 4)) {
-                        m.addWeaponToBay(eqn);
-                        usedMG.add(eqn);
-                        if (m.getBayWeapons().size() >= 4) {
+        List<Integer> usedMG = new ArrayList<>();
+        for (Mounted mga : ent.getWeaponList()) {
+            // link MGs to their MGA we are going to use the bayWeapon list because we can't
+            // directly link them. Take the first qualifying MG in the location and continue
+            // adding successive slots until full or encountering something other than a
+            // qualifying MG.
+            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+                mga.getBayWeapons().clear();
+                for (int i = 0; i < ent.getNumberOfCriticals(mga.getLocation()); i++) {
+                    CriticalSlot slot = ent.getCritical(mga.getLocation(), i);
+                    if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                            && (slot.getMount().getType() instanceof WeaponType)) {
+                        WeaponType wtype = (WeaponType) slot.getMount().getType();
+                        int eqNum = ent.getEquipmentNum(slot.getMount());
+                        if (!usedMG.contains(eqNum)
+                                && wtype.hasFlag(WeaponType.F_MG)
+                                && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
+                            mga.addWeaponToBay(eqNum);
+                            usedMG.add(eqNum);
+                            if (mga.getBayWeapons().size() >= 4) {
+                                break;
+                            }
+                        } else {
+                            if (!mga.getBayWeapons().isEmpty()) {
+                                break;
+                            }
+                        }
+                    } else {
+                        if (!mga.getBayWeapons().isEmpty()) {
                             break;
                         }
                     }

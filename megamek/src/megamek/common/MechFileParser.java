@@ -742,41 +742,7 @@ public class MechFileParser {
             }
         }
 
-        List<Integer> usedMG = new ArrayList<>();
-        for (Mounted mga : ent.getWeaponList()) {
-            // link MGs to their MGA we are going to use the bayWeapon list because we can't
-            // directly link them. Take the first qualifying MG in the location and continue
-            // adding successive slots until full or encountering something other than a
-            // qualifying MG.
-            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
-                mga.getBayWeapons().clear();
-                for (int i = 0; i < ent.getNumberOfCriticals(mga.getLocation()); i++) {
-                    CriticalSlot slot = ent.getCritical(mga.getLocation(), i);
-                    if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                            && (slot.getMount().getType() instanceof WeaponType)) {
-                        WeaponType wtype = (WeaponType) slot.getMount().getType();
-                        int eqNum = ent.getEquipmentNum(slot.getMount());
-                        if (!usedMG.contains(eqNum)
-                                && wtype.hasFlag(WeaponType.F_MG)
-                                && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
-                            mga.addWeaponToBay(eqNum);
-                            usedMG.add(eqNum);
-                            if (mga.getBayWeapons().size() >= 4) {
-                                break;
-                            }
-                        } else {
-                            if (!mga.getBayWeapons().isEmpty()) {
-                                break;
-                            }
-                        }
-                    } else {
-                        if (!mga.getBayWeapons().isEmpty()) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        linkMGAs(ent);
 
         // Don't forget to actually load any applicable weapons.
         ent.loadAllWeapons();
@@ -939,6 +905,51 @@ public class MechFileParser {
         ent.initMilitary();
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException
+
+    /**
+     * Links machine gun arrays to their machine guns using the bayWeapon list.
+     * We take the first qualifying machine gun in the location (correct size and not already
+     * linked to this or another MGA and continue linking successive slots until full or we get to
+     * a slot that does not contain a qualifying machine gun. This allows specifying which guns go
+     * with which array in the event of multiple MGAs in a location or some MGs that are not linked.
+     *
+     * @param entity
+     */
+    static void linkMGAs(Entity entity) {
+        List<Integer> usedMG = new ArrayList<>();
+        for (Mounted mga : entity.getWeaponList()) {
+            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+                // This may be called from MML after changing equipment location, so there
+                // may be old data that needs to be cleared
+                mga.getBayWeapons().clear();
+                for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
+                    CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
+                    if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                            && (slot.getMount().getType() instanceof WeaponType)) {
+                        WeaponType wtype = (WeaponType) slot.getMount().getType();
+                        int eqNum = entity.getEquipmentNum(slot.getMount());
+                        if (!usedMG.contains(eqNum)
+                                && wtype.hasFlag(WeaponType.F_MG)
+                                && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
+                            mga.addWeaponToBay(eqNum);
+                            usedMG.add(eqNum);
+                            if (mga.getBayWeapons().size() >= 4) {
+                                break;
+                            }
+                        } else {
+                            if (!mga.getBayWeapons().isEmpty()) {
+                                break;
+                            }
+                        }
+                    } else {
+                        if (!mga.getBayWeapons().isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length == 0) {

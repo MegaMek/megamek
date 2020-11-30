@@ -4225,15 +4225,14 @@ public abstract class Mech extends Entity {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : weapon.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             String name = wtype.getName();
             // artemis bumps up the value
@@ -4537,15 +4536,14 @@ public abstract class Mech extends Entity {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
 
             // artemis bumps up the value

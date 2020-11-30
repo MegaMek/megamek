@@ -957,14 +957,14 @@ public class Dropship extends SmallCraft {
                 }
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && (possibleMG.getLocation() == mounted.getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
+                    double mgBV = 0;
+                    for (int eqNum : mounted.getBayWeapons()) {
+                        Mounted mg = getEquipment(eqNum);
+                        if ((mg != null) && (!mg.isDestroyed())) {
+                            mgBV += mg.getType().getBV(this);
                         }
                     }
-                    dBV = mgaBV * 0.67;
+                    dBV = mgBV * 0.67;
                 }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {

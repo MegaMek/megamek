@@ -1570,6 +1570,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovDarkenAlpha.addChangeListener(this);
         fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
+        darkenAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
@@ -1598,8 +1599,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         numStripesSlider.setPaintLabels(true);
         numStripesSlider.setMaximumSize(new Dimension(250, 100));
         numStripesSlider.addChangeListener(this);
+        numStripesSlider.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         numStripesLabel = new JLabel(
                 Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); //$NON-NLS-1$
+        numStripesLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));

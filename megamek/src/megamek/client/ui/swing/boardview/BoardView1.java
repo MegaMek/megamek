@@ -535,18 +535,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent we) {
                 Point mousePoint = we.getPoint();
-                Point dispPoint = new Point();
-                dispPoint.setLocation(mousePoint.x + getBounds().x,
-                        mousePoint.y + getBounds().y);
+                Point dispPoint = new Point(mousePoint.x + getBounds().x, mousePoint.y + getBounds().y);
+                
+                // If the mouse is over an IDisplayable, have it react instead of the board
+                // Currently only implemented for the ChatterBox
                 for (int i = 0; i < displayables.size(); i++) {
                     IDisplayable disp = displayables.get(i);
                     if (!(disp instanceof ChatterBox2)) {
-                        break;
+                        continue;
                     }
-                    double width = scrollpane.getViewport().getSize()
-                                             .getWidth();
-                    double height = scrollpane.getViewport().getSize()
-                                              .getHeight();
+                    double width = scrollpane.getViewport().getSize().getWidth();
+                    double height = scrollpane.getViewport().getSize().getHeight();
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
                     // we need to adjust the point, because it should be against
@@ -562,6 +561,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         return;
                     }
                 }
+                
                 // calculate a few things to reposition the map
                 Coords zoomCenter = getCoordsAt(we.getPoint());
                 Point hexL = getCentreHexLocation(zoomCenter);
@@ -571,57 +571,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 double ihdx = ((double)inhexDelta.x)/((double)HEX_W)/scale;
                 double ihdy = ((double)inhexDelta.y)/((double)HEX_H)/scale;
                 int oldzoomIndex = zoomIndex;
+                
+                boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
+                boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelZoomFlip();
+                boolean zoomIn = (we.getWheelRotation() > 0) ^ wheelFlip; // = XOR
+                boolean doZoom = ZoomNoCtrl ^ we.isControlDown(); // = XOR
+                boolean horizontalScroll = !doZoom && we.isShiftDown();
 
-                if (GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
-                            .getInstance().getMouseWheelZoomFlip())
-                                     || ((we.getWheelRotation() <= 0) && GUIPreferences
-                            .getInstance().getMouseWheelZoomFlip());
+                if (doZoom) {
                     if (zoomIn) {
                         zoomIn();
                     } else {
                         zoomOut();
                     }
-                    if (zoomIndex != oldzoomIndex)
+                    if (zoomIndex != oldzoomIndex) {
                         adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-
-                } else {
-                    if (we.isControlDown()) {
-                        boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
-                                .getInstance().getMouseWheelZoomFlip())
-                                         || ((we.getWheelRotation() <= 0) && GUIPreferences
-                                .getInstance().getMouseWheelZoomFlip());
-                        if (zoomIn) {
-                            zoomOut();
-                        } else {
-                            zoomIn();
-                        }
-                        if (zoomIndex != oldzoomIndex)
-                            adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-                    } else if (we.isShiftDown()) {
-                        int notches = we.getWheelRotation();
-                        if (notches < 0) {
-                            hbar.setValue((int) (hbar.getValue() - (HEX_H
-                                                                    * scale * (-1 * notches))));
-
-                        } else {
-                            hbar.setValue((int) (hbar.getValue() + (HEX_H
-                                                                    * scale * (notches))));
-                        }
-                        stopSoftCentering();
-                    } else {
-                        int notches = we.getWheelRotation();
-                        if (notches < 0) {
-                            vbar.setValue((int) (vbar.getValue() - (HEX_H
-                                                                    * scale * (-1 * notches))));
-
-                        } else {
-                            vbar.setValue((int) (vbar.getValue() + (HEX_H
-                                                                    * scale * (notches))));
-                        }
-                        stopSoftCentering();
                     }
+                } else { // SCROLL
+                    if (horizontalScroll) {
+                        hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                    } else {
+                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                    }
+                    stopSoftCentering();
                 }
+                
                 pingMinimap();
             }
         });

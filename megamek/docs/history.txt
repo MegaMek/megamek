@@ -22,6 +22,7 @@ VERSION HISTORY:
 + Issue #2078: Ignore weapon groups when counting equipment
 + Issues #2405 #2399: Fix scroll wheel oddities
 + PR #2461: Allow LBX autocannons to swap between cluster and solid ammo
++ Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

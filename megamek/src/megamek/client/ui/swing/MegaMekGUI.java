@@ -550,6 +550,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
+            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
+            Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         Vector<String> playerNames = null;

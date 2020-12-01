@@ -15901,7 +15901,13 @@ public class AmmoType extends EquipmentType {
         
         // MMLs can swap between different specific ammo types, so we have a special case check here
         boolean mmlAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_MML &&
-                currentAmmoType.getRackSize() == otherAmmo.getRackSize();        
+                otherAmmo.getAmmoType() == AmmoType.T_MML &&
+                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
+        
+        // LBXs can swap between cluster and slug ammo types
+        boolean lbxAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX &&
+                otherAmmo.getAmmoType() == AmmoType.T_AC_LBX &&
+                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
         
         boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
         boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
@@ -15910,6 +15916,6 @@ public class AmmoType extends EquipmentType {
         boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
         boolean staticFeedMismatch = hasStaticFeed && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
         
-        return (ammoOfSameType || mmlAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
+        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
     }
 }

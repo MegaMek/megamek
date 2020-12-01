@@ -32,6 +32,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Vector;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
     private static final long serialVersionUID = -5114410402284987181L;
@@ -40,13 +42,22 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     private boolean confirmed;
 
-    private JTextField playerNameField;
+    private JTextField playerNameField = null;
+    private JComboBox<String> playerNameCombo = null;
     private JTextField portField;
+
+    private Vector<String> playerNames = null;
 
     private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
+        this(owner, title, modal, playerName, null);
+    }
+
+    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName, Vector<String> playerNames) {
         super(owner, title, modal);
+
+        this.playerNames = playerNames;
 
         setPlayerName(""); // initialize player name
         setPort(2346);
@@ -56,7 +67,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
         // if the player name is specified, overwrite the preference with it
         if (!StringUtil.isNullOrEmpty(playerName)) {
-            getPlayerNameField().setText(playerName);
+            setPlayerName(playerName);
         }
     }
 
@@ -91,6 +102,27 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+        if (playerNames == null) {
+            if (playerNameField == null) {
+                playerNameField = new JTextField(playerName, 16);
+            } else {
+                playerNameField.setText(playerName);
+            }
+        } else {
+            if (playerNameCombo == null) {
+                playerNameCombo = new JComboBox<String>(playerNames);
+                playerNameCombo.setEditable(true);
+            }
+            playerNameCombo.setSelectedItem(playerName);
+        }
+    }
+
+    public String getPlayerNameFromUI() {
+        if (playerNames == null) {
+            return playerNameField.getText();
+        } else {
+            return (String) playerNameCombo.getSelectedItem();
+        }
     }
 
     public int getPort() {
@@ -109,12 +141,20 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.confirmed = confirmed;
     }
 
-    public JTextField getPlayerNameField() {
-        return playerNameField;
+    public JComponent getPlayerNameField() {
+        if (playerNames == null) {
+            return playerNameField;
+        } else {
+            return playerNameCombo;
+        }
     }
 
-    public void setPlayerNameField(JTextField playerNameField) {
-        this.playerNameField = playerNameField;
+    public void addPlayerNameActionListener(ActionListener listener) {
+        if (playerNames == null) {
+            playerNameField.addActionListener(listener);
+        } else {
+            playerNameCombo.addActionListener(listener);
+        }
     }
 
     public JTextField getPortField() {
@@ -152,7 +192,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     @Override
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
-        setPlayerName(getPlayerNameField().getText());
+        setPlayerName(getPlayerNameFromUI());
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {

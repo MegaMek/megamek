@@ -160,6 +160,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_SORT_ORDER = "MechSelectorSortOrder";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
+    public static final String MECH_SELECTOR_POS_X = "MechSelectorPosX";
+    public static final String MECH_SELECTOR_POS_Y = "MechSelectorPosY";
+    public static final String MECH_SELECTOR_SPLIT_POS = "MechSelectorSplitPos";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
@@ -377,6 +380,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
         store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
+        store.setDefault(MECH_SELECTOR_POS_X, 200);
+        store.setDefault(MECH_SELECTOR_POS_Y, 200);
+        store.setDefault(MECH_SELECTOR_SPLIT_POS, 300);
         
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
@@ -674,6 +680,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMechSelectorSizeWidth() {
         return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
+    }
+    
+    public int getMechSelectorPosX() {
+        return store.getInt(MECH_SELECTOR_POS_X);
+    }
+    
+    public int getMechSelectorPosY() {
+        return store.getInt(MECH_SELECTOR_POS_Y);
+    }
+    
+    public int getMechSelectorSplitPos() {
+        return store.getInt(MECH_SELECTOR_SPLIT_POS);
     }
 
     public String getMinimapColours() {
@@ -1143,6 +1161,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMechSelectorSizeWidth(int i) {
         store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
+    }
+    
+    public void setMechSelectorPosX(int i) {
+        store.setValue(MECH_SELECTOR_POS_X, i);
+    }
+    
+    public void setMechSelectorSplitPos(int i) {
+        store.setValue(MECH_SELECTOR_SPLIT_POS, i);
+    }
+    
+    public void setMechSelectorPosY(int i) {
+        store.setValue(MECH_SELECTOR_POS_Y, i);
     }
 
     public void setMinimapEnabled(boolean b) {

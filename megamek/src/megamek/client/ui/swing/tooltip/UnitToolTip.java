@@ -21,8 +21,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChatLounge;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -88,6 +88,22 @@ public final class UnitToolTip {
     // tables no line breaks
     //TODO: Show ID for loader
     //TODO: When resizing table columns, dont switch sorter
+    // extract Mektablemodel, mektablepopup, mektableformatter, package lobby
+    //TODO: Search Game Options switch legacy unoff.
+    //TODO: debug hotloading improved lrms
+    //TODO: Squadron Pilot name?
+    // Add developer quicksave and quickload Ctrl-S/L. Will save to quicksave.sav.gz, assumes no PW, no registering on load
+    // Tooltip shows Hotload and Burst MG mode (format better!)
+    //TODO: squadron show actual fighters in them (icon)?
+    //TODO: when loading mul, note temporary ID to get loaded units corect
+    // Button Player Settings, Bot Settings, 
+    // remove popup on players
+    //TODO: add init and mindefields to table?
+    // dont show hotload as valid in popup for clan wps
+    //TODO: Add confirm dlg for delete
+    //TODO: TacOps/BMM minefields setting should affect lobby player table and player config
+    //TODO: remove path from board list
+    // unit selector remember sizes #2428
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
@@ -332,6 +348,14 @@ public final class UnitToolTip {
                 }
             }
             weapDesc += rangeString;
+            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
+                    && curWp.isHotLoaded()) {
+                weapDesc += " \u22EF<I> Hot-loaded</I>";
+            }
+            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)
+                    && curWp.isRapidfire()) {
+                weapDesc += " \u22EF<I> Rapid-fire</I>";
+            }
             if (wpNames.containsKey(weapDesc)) {
                 int number = wpNames.get(weapDesc);
                 if (number > 0) 
@@ -340,7 +364,6 @@ public final class UnitToolTip {
                     wpNames.put(weapDesc, number - 1);
             } else {
                 WeaponType wpT = ((WeaponType)curWp.getType());
-
                 if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
                     wpNames.put(weapDesc, -1);
                 else

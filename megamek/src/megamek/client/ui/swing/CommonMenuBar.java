@@ -53,6 +53,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileGameNew;
     private JMenuItem fileGameOpen;
     private JMenuItem fileGameSave;
+    private JMenuItem fileGameQSave;
+    private JMenuItem fileGameQLoad;
     private JMenuItem fileGameSaveServer;
     private JMenuItem fileGameScenario;
     private JMenuItem fileGameConnectBot;
@@ -244,6 +246,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameSave.addActionListener(this);
         fileGameSave.setActionCommand(ClientGUI.FILE_GAME_SAVE);
         submenu.add(fileGameSave);
+        fileGameQSave = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickSave")); //$NON-NLS-1$
+        fileGameQSave.addActionListener(this);
+        fileGameQSave.setActionCommand(ClientGUI.FILE_GAME_QSAVE);
+        fileGameQSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQSave);
+        fileGameQLoad = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickSave")); //$NON-NLS-1$
+        fileGameQLoad.addActionListener(this);
+        fileGameQLoad.setActionCommand(ClientGUI.FILE_GAME_QLOAD);
+        fileGameQLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQLoad);
         fileGameSaveServer = new JMenuItem(Messages.getString("CommonMenuBar.fileGameSaveServer")); //$NON-NLS-1$
         fileGameSaveServer.addActionListener(this);
         fileGameSaveServer.setActionCommand(ClientGUI.FILE_GAME_SAVE_SERVER);

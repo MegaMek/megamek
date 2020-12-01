@@ -134,6 +134,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      * options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
+    
+    private final static String UNOFFICIAL = "Unofficial";
+    private final static String LEGACY = "Legacy";
 
     /**
      * Initialize this dialog.
@@ -299,6 +302,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
     }
+    
+    private boolean shouldShow(DialogOptionComponent comp) {
+        boolean hiddenUnofficial = !butUnofficial.isSelected() 
+                && comp.getOption().getDisplayableName().contains(UNOFFICIAL);
+        boolean hiddenLegacy = !butLegacy.isSelected() 
+                && comp.getOption().getDisplayableName().contains(LEGACY);
+        return !hiddenLegacy && !hiddenUnofficial;
+    }
 
     private void refreshSearchPanel() {
         panSearchOptions.removeAll();
@@ -313,25 +324,27 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
-        ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
-        for (List<DialogOptionComponent> comps : optionComps.values()) {
-            ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
-            for (DialogOptionComponent comp : comps) {
-                String optName = comp.option.getDisplayableName().toLowerCase();
-                String optDesc = comp.option.getDescription().toLowerCase();
-                if ((optName.contains(searchText) || optDesc.contains(searchText)) && !searchText.equals("")) {
-                    DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
-                    newComp.setEditable(comp.getEditable());
-                    searchComps.add(newComp);
-                    newComps.add(newComp);
+        if (!searchText.equals("")) {
+            ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
+            for (List<DialogOptionComponent> comps : optionComps.values()) {
+                ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
+                for (DialogOptionComponent comp : comps) {
+                    String optName = comp.option.getDisplayableName().toLowerCase();
+                    String optDesc = comp.option.getDescription().toLowerCase();
+                    if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
+                        DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
+                        newComp.setEditable(comp.getEditable());
+                        searchComps.add(newComp);
+                        newComps.add(newComp);
+                    }
                 }
+                comps.addAll(newComps);
+                allNewComps.addAll(newComps);
             }
-            comps.addAll(newComps);
-            allNewComps.addAll(newComps);
-        }
-        Collections.sort(allNewComps);
-        for (DialogOptionComponent comp : allNewComps) {
-            panSearchOptions.add(comp);
+            Collections.sort(allNewComps);
+            for (DialogOptionComponent comp : allNewComps) {
+                panSearchOptions.add(comp);
+            }
         }
         // panSearchOptions.validate();
         panOptions.repaint();
@@ -869,10 +882,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             cancelled = true;
         } else if (e.getSource().equals(butUnofficial)) {
             toggleOptions(butUnofficial.isSelected(), "Unofficial");
+            refreshSearchPanel();
             GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL, butUnofficial.isSelected());
             return;
         } else if (e.getSource().equals(butLegacy)) {
             toggleOptions(butLegacy.isSelected(), "Legacy");
+            refreshSearchPanel();
             GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_LEGACY, butLegacy.isSelected());
             return;
         }

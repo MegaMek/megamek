@@ -589,6 +589,56 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         launch(gui.getFrame());
     }
+    
+    /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
+    void quickLoadGame() {
+        // kick off a RNG check
+        d6();
+        // start server
+        int port = PreferenceManager.getClientPreferences().getLastServerPort();
+        try {
+            server = new Server("", port, false, "");
+        } catch (IOException ex) {
+            MegaMek.getLogger().error("Could not create server socket on port " + port, ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!server.loadGame(new File("./savegames", "quicksave.sav.gz"))) {
+            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            server.die();
+            server = null;
+            return;
+        }
+
+        client = new Client(PreferenceManager.getClientPreferences().getLastPlayerName(), "localhost", port);
+        ClientGUI gui = new ClientGUI(client, controller);
+        controller.clientgui = gui;
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        gui.initialize();
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        if (!client.connect()) {
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.ServerConnectionError", "localhost", port),
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            frame.setVisible(false);
+            client.die();
+        }
+        optionsDialog = null;
+
+        // free some memory that's only needed in lounge
+        // This normally happens in the deployment phase in Client, but
+        // if we are loading a game, this phase may not be reached
+        MechFileParser.dispose();
+        // We must do this last, as the name and unit generators can create
+        // a new instance if they are running
+        MechSummaryCache.dispose();
+
+        launch(gui.getFrame());
+    }
 
     /**
      * Host a game constructed from a scenario file
@@ -980,6 +1030,9 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 break;
             case ClientGUI.FILE_GAME_OPEN:
                 loadGame();
+                break;
+            case ClientGUI.FILE_GAME_QLOAD:
+                quickLoadGame();
                 break;
             case ClientGUI.VIEW_GAME_OPTIONS:
                 showGameOptions();

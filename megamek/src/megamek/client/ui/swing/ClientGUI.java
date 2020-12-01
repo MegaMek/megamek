@@ -83,6 +83,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -147,6 +148,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_GAME_OPEN = "fileGameOpen";
     public static final String FILE_GAME_SAVE = "fileGameSave";
     public static final String FILE_GAME_SAVE_SERVER = "fileGameSaveServer";
+    public static final String FILE_GAME_QSAVE = "fileGameQSave";
+    public static final String FILE_GAME_QLOAD = "fileGameQLoad";
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
@@ -754,6 +757,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
+                break;
+            case FILE_GAME_QSAVE:
+                quickSaveGame();
                 break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
@@ -1573,7 +1579,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * @param player
      */
-    protected void loadListFile(IPlayer player) {
+    public void loadListFile(IPlayer player) {
         loadListFile(player, false);
     }
 
@@ -1696,6 +1702,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         return false;
     }
+    
+    /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
+    private boolean quickSaveGame() {
+        String file = "quicksave";
+        String path = "./savegames";
+        client.sendChat("/localsave " + file + " " + path);
+        return true;
+    }
 
     /**
      * Allow the player to save a list of entities to a MegaMek Unit List file.
@@ -1709,11 +1723,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(ArrayList<Entity> unitList) {
+    public void saveListFile(ArrayList<Entity> unitList) {
         saveListFile(unitList, client.getLocalPlayer().getName());
     }
 
-    protected void saveListFile(ArrayList<Entity> unitList, String filename) {
+    public void saveListFile(ArrayList<Entity> unitList, String filename) {
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;

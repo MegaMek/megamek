@@ -639,7 +639,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
      * @param port The gme server's host port.
      * @return A new bot-controlled client.
      */
-    BotClient getSelectedBot(String host, int port) {
+    public BotClient getSelectedBot(String host, int port) {
         if (testBotRadiobutton.isSelected()) {
             return new TestBot(getBotName(), host, port);
 

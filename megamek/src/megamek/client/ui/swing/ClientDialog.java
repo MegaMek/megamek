@@ -74,7 +74,7 @@ public class ClientDialog extends JDialog {
      * @param desiredDimension the desired dimension of this dialog (you might
      *            not get it)
      */
-    protected void setLocationAndSize(Dimension desiredDimension) {
+    public void setLocationAndSize(Dimension desiredDimension) {
         int height, width;
 
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -103,7 +103,7 @@ public class ClientDialog extends JDialog {
     }
     
     /** Center the dialog within the owner frame.  */
-    protected void center() {
+    public void center() {
         if (owner == null) {
             return;
         }
@@ -120,7 +120,7 @@ public class ClientDialog extends JDialog {
      * right-aligned, the secondC left-aligned to bring them close together. 
      * Only useful for simple panels with GridBagLayout.
      */
-    protected void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
+    public void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
         int oldGridW = c.gridwidth;
         int oldAnchor = c.anchor;
         
@@ -140,7 +140,7 @@ public class ClientDialog extends JDialog {
      * Adds a spacer row (line) to the given <code>panel</code>, 
      * using constraints c. Only useful for simple panels with GridBagLayout.
      */
-    protected void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
+    public void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
         int oldGridW = c.gridwidth;
         
         c.gridwidth = GridBagConstraints.REMAINDER;

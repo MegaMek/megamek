@@ -153,10 +153,6 @@ public class HostDialog extends AbstractGameConnectionDialog {
         // reached from the Okay button or pressing Enter in the text fields
         super.actionPerformed(e);
 
-        // We should ignore combo box changed actions
-        if (e.getActionCommand().equals("comboBoxChanged")) {
-            return;
-        }
         setServerPass(serverPassField.getText());
         setRegister(chkRegister.isSelected());
         setMetaserver(metaserverField.getText());

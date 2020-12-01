@@ -32,10 +32,40 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.awt.event.KeyEvent;
 import java.util.Vector;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
+
+    /**
+     * We need a way to access the action map for a JComboBox editor, so that we can
+     * have it fire an action when wenter is pressed. This simple class allows this.
+     */
+    public class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
+
+        private static final long serialVersionUID = 4496820410417436582L;
+
+        @Override
+        public Component getEditorComponent() {
+            return this;
+        }
+
+        @Override
+        public void setItem(Object anObject) {
+            if (anObject != null) {
+                setText(anObject.toString());
+            } else {
+                setText(null);
+            }
+        }
+
+        @Override
+        public Object getItem() {
+            return getText();
+        }
+
+    }
+
     private static final long serialVersionUID = -5114410402284987181L;
     private String playerName;
     private int port;
@@ -153,7 +183,24 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         if (playerNames == null) {
             playerNameField.addActionListener(listener);
         } else {
-            playerNameCombo.addActionListener(listener);
+            // Make it so an action is fired when enter is pressed
+            // This is necessary because the default JComboBox ActionEven
+            // can't distinguish between typing and hitting enter
+            // Note, this won't work with multiple action listeners
+            //  but that shouldn't be a problem for these dialogs
+            SimpleComboBoxEditor cbe = new SimpleComboBoxEditor();
+            InputMap im = cbe.getInputMap();
+            ActionMap am = cbe.getActionMap();
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+            am.put("enter", new AbstractAction() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.actionPerformed(e);
+                }
+            });
+            playerNameCombo.setEditor(cbe);
         }
     }
 

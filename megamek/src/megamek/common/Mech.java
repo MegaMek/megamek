@@ -4106,6 +4106,9 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + getHeatCapacity();
+        if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType() == LandAirMech.LAM_STANDARD)) {
+            mechHeatEfficiency += 3;
+        }
 
         bvText.append(startRow);
         bvText.append(startColumn);

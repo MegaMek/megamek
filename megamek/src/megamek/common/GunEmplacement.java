@@ -259,7 +259,7 @@ public class GunEmplacement extends Tank {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                 }
             }
 

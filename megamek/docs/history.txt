@@ -23,6 +23,7 @@ VERSION HISTORY:
 + Issues #2405 #2399: Fix scroll wheel oddities
 + PR #2461: Allow LBX autocannons to swap between cluster and solid ammo
 + Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
++ PR #2464: LAM BV heat efficiency
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there
@@ -140,6 +141,8 @@ VERSION HISTORY:
 + Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
 + Issue #1719: Level 1 Foliage
 + Issue #2212: Diagramming LOS calculation issue
++ PR #2467: Remove outdated final BV multiplier for tripod cockpits.
++ PR #2468: RISC laser pulse module BV
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

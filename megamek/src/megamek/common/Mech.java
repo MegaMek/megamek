@@ -4106,6 +4106,9 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + getHeatCapacity();
+        if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType() == LandAirMech.LAM_STANDARD)) {
+            mechHeatEfficiency += 3;
+        }
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -4130,18 +4133,21 @@ public abstract class Mech extends Entity {
             bvText.append(" + RISC Emergency Coolant System");
         }
 
-        if ((getJumpMP(false, true) > 0)
+        int moveHeat;
+        if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType()  == LandAirMech.LAM_STANDARD)) {
+            moveHeat = (int) Math.round(((LandAirMech) this).getAirMechFlankMP(false, true) / 3.0);
+        } else if ((getJumpMP(false, true) > 0)
                 && (getJumpHeat(getJumpMP(false, true)) > getRunHeat())) {
-            mechHeatEfficiency -= getJumpHeat(getJumpMP(false, true));
+            moveHeat = getJumpHeat(getJumpMP(false, true));
             bvText.append(" - Jump Heat ");
         } else {
-            int runHeat = getRunHeat();
+            moveHeat = getRunHeat();
             if (hasSCM()) {
-                runHeat = 0;
+                moveHeat = 0;
             }
-            mechHeatEfficiency -= runHeat;
             bvText.append(" - Run Heat ");
         }
+        mechHeatEfficiency -= moveHeat;
         if (hasStealth()) {
             mechHeatEfficiency -= 10;
             bvText.append(" - Stealth Heat ");
@@ -4173,12 +4179,7 @@ public abstract class Mech extends Entity {
             bvText.append(" + 4");
         }
 
-        bvText.append(" - ");
-        if (getJumpMP(false, true) > 0) {
-            bvText.append(getJumpHeat(getJumpMP(false, true)));
-        } else {
-            bvText.append(getRunHeat());
-        }
+        bvText.append(" - ").append(moveHeat);
         if (hasStealth()) {
             bvText.append(" - 10");
         }

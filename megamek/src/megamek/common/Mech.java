@@ -5242,10 +5242,6 @@ public abstract class Mech extends Entity {
                 || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
-        } else if ((getCockpitType() == Mech.COCKPIT_TRIPOD)
-                || (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD)) {
-            cockpitMod = 1.1;
-            finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
         } else if (getCockpitType() == Mech.COCKPIT_INTERFACE) {

@@ -4269,7 +4269,7 @@ public abstract class Mech extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }
@@ -4576,7 +4576,7 @@ public abstract class Mech extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     weaponName = weaponName.concat(" with RISC Laser Pulse Module");
                 }
             }

@@ -1654,8 +1654,8 @@ public class Tank extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
-                    bvText.append(" x 1.25 RISC Laser Pulse Module");
+                    dBV *= 1.15;
+                    bvText.append(" x 1.15 RISC Laser Pulse Module");
                 }
             }
             if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {

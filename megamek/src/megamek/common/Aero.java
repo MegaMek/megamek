@@ -2033,7 +2033,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }

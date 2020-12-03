@@ -505,17 +505,17 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean isImmobile() {
+    public boolean isImmobile(boolean checkCrew) {
         if ((game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
-            return super.isImmobile();
+            return super.isImmobile(checkCrew);
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
         //We do run into some double-blind entityList differences though, so include a null check
-        if (isTrailer() && getTractor() != Entity.NONE) {
-            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
+        if (isTrailer() && (getTractor() != Entity.NONE)) {
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile(checkCrew) : super.isImmobile(checkCrew) || m_bImmobile);
         }
-        return super.isImmobile() || m_bImmobile;
+        return m_bImmobile || super.isImmobile(checkCrew);
     }
     
     /**
@@ -715,14 +715,23 @@ public class Tank extends Entity {
 
     @Override
     public void applyDamage() {
+        applyMovementDamage();
+
+        super.applyDamage();
+    }
+
+    /**
+     * Applies movement damage to the Tank.
+     */
+    public void applyMovementDamage() {
         m_bImmobile |= m_bImmobileHit;
-        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+
+        // Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && (getTractor() != Entity.NONE) && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit = Tractor.m_bImmobileHit;
         }
-        super.applyDamage();
     }
 
     @Override
@@ -3484,6 +3493,7 @@ public class Tank extends Entity {
         moderateMovementDamage = false;
         heavyMovementDamage = false;
         m_bImmobileHit = false;
+        m_bImmobile = false;
     }
 
     public void unlockTurret() {

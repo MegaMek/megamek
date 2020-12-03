@@ -2359,7 +2359,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * @param entities
      * @return
      */
-    boolean canConfigureAll(Collection<Entity> entities) {
+    boolean canConfigureDeploymentAll(Collection<Entity> entities) {
         if (entities.size() == 1) {
             return true;
         }
@@ -2399,11 +2399,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return true;
         }
         for (Entity entity: entities) {
-            if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+            if (!entityInLocalTeam(entity)) {
                 return false;
             }
         }
         return true;
+    }
+    
+    boolean entityInLocalTeam(Entity entity) {
+        return !clientgui.getClient().getLocalPlayer().isEnemyOf(entity.getOwner());
     }
     
 
@@ -2609,7 +2613,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 e.consume();
                 if (entities.size() == 1) {
                     customizeMech(entities.get(0));
-                } else if (canConfigureAll(entities)) {
+                } else if (canConfigureDeploymentAll(entities)) {
                     customizeMechs(entities);
                 }
             }

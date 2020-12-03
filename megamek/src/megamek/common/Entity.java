@@ -1518,11 +1518,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if(null == other) {
             return false;
         }
-        if(null == owner) {
+        if(null == getOwner()) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
         return (id != other.getId())
-            && ((null == other.getOwner()) || owner.isEnemyOf(other.getOwner()));
+            && ((null == other.getOwner()) || getOwner().isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {

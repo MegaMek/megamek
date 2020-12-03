@@ -104,6 +104,8 @@ public final class UnitToolTip {
     //TODO: TacOps/BMM minefields setting should affect lobby player table and player config
     //TODO: remove path from board list
     // unit selector remember sizes #2428
+    //TODO: add dialog before delete
+    //TODO: hide deployment info for loaded units
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

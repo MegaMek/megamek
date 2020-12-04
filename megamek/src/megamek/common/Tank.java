@@ -1913,6 +1913,7 @@ public class Tank extends Entity {
                     || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_BULLDOZER)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)
                     || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;

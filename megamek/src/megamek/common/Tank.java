@@ -1981,7 +1981,7 @@ public class Tank extends Entity {
         double runMP = getRunMP(false, true, true);
 
         // Trains use cruise instead of flank MP for speed factor
-        if (getMovementMode() == EntityMovementMode.RAIL) {
+        if (getMovementMode().equals(EntityMovementMode.RAIL) || getMovementMode().equals(EntityMovementMode.MAGLEV)) {
             runMP = getWalkMP(false, true, true);
         }
         // trailers have original run MP of 0, but should count at 1 for speed

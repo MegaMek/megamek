@@ -50,11 +50,19 @@ public class HostDialog extends AbstractGameConnectionDialog {
 
     /** Constructs a host game dialog for hosting or loading a game. */
     public HostDialog(JFrame frame) {
-        super(frame, Messages.getString("MegaMek.HostDialog.title"), true, "");
+        this(frame, "", null);
+    }
+
+    public HostDialog(JFrame frame, String playerName) {
+        this(frame, playerName, null);
     }
 
     public HostDialog(JFrame frame, Vector<String> playerNames) {
-        super(frame, Messages.getString("MegaMek.HostDialog.title"), true, "", playerNames);
+        this(frame, "", playerNames);
+    }
+
+    public HostDialog(JFrame frame, String playerName, Vector<String> playerNames) {
+        super(frame, Messages.getString("MegaMek.HostDialog.title"), true, playerName, playerNames);
     }
 
     //region Initialization

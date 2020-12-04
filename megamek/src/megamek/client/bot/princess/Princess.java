@@ -439,74 +439,67 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateDeployment() {
-        getLogger().methodBegin();
-
-        try {
-
-            // get the first unit
-            final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-            if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
-                sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
-            }
-
-            // if we are using forced withdrawal, and the entity being considered is crippled
-            // we will opt to not re-deploy the entity
-            if(getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
-                getLogger().info("Declining to deploy crippled unit: "
-                        + getEntity(entityNum).getChassis() + ". Removing unit.");
-                sendDeleteEntity(entityNum);
-                return;
-            }
-            
-            // get a list of all coordinates to which we can deploy
-            final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
-            if (0 == startingCoords.size()) {
-                getLogger().error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
-            }
-
-            // get the coordinates I can deploy on
-            final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
-            if (null == deployCoords) {
-                // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
-                getLogger().error("getCoordsAround gave no location for "
-                        + getEntity(entityNum).getChassis() + ". Removing unit.");
-                
-                sendDeleteEntity(entityNum);
-                return;
-            }
-
-            // first coordinate that it is legal to put this unit on now find 
-            // some sort of reasonable facing. If there are deployed enemies, 
-            // face them
-            
-            // specifically, face the last deployed enemy.
-            int decentFacing = -1;
-            for (final Entity e : getEnemyEntities()) {
-                if (e.isDeployed() && (!e.isOffBoard())) {
-                    decentFacing = deployCoords.direction(e.getPosition());
-                    break;
-                }
-            }
-
-            // if I haven't found a decent facing, then at least face towards 
-            // the center of the board
-            if (-1 == decentFacing) {
-                final Coords center = new Coords(game.getBoard().getWidth() / 2,
-                                           game.getBoard().getHeight() / 2);
-                decentFacing = deployCoords.direction(center);
-            }
-
-            final Entity deployEntity = game.getEntity(entityNum);
-            final IHex deployHex = game.getBoard().getHex(deployCoords);
-
-            int deployElevation = getDeployElevation(deployEntity, deployHex);
-
-            // Compensate for hex elevation where != 0...
-            deployElevation -= deployHex.getLevel();
-            deploy(entityNum, deployCoords, decentFacing, deployElevation);
-        } finally {
-            getLogger().methodEnd();
+        // get the first unit
+        final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
+        if (getLogger().getLogLevel(LOGGING_CATEGORY).toInt() > LogLevel.WARNING.toInt()) {
+            sendChat("deploying unit " + getEntity(entityNum).getChassis(), LogLevel.INFO);
         }
+
+        // if we are using forced withdrawal, and the entity being considered is crippled
+        // we will opt to not re-deploy the entity
+        if(getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+            getLogger().info("Declining to deploy crippled unit: "
+                    + getEntity(entityNum).getChassis() + ". Removing unit.");
+            sendDeleteEntity(entityNum);
+            return;
+        }
+        
+        // get a list of all coordinates to which we can deploy
+        final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
+        if (0 == startingCoords.size()) {
+            getLogger().error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
+        }
+
+        // get the coordinates I can deploy on
+        final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
+        if (null == deployCoords) {
+            // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business                
+            getLogger().error("getCoordsAround gave no location for "
+                    + getEntity(entityNum).getChassis() + ". Removing unit.");
+            
+            sendDeleteEntity(entityNum);
+            return;
+        }
+
+        // first coordinate that it is legal to put this unit on now find 
+        // some sort of reasonable facing. If there are deployed enemies, 
+        // face them
+        
+        // specifically, face the last deployed enemy.
+        int decentFacing = -1;
+        for (final Entity e : getEnemyEntities()) {
+            if (e.isDeployed() && (!e.isOffBoard())) {
+                decentFacing = deployCoords.direction(e.getPosition());
+                break;
+            }
+        }
+
+        // if I haven't found a decent facing, then at least face towards 
+        // the center of the board
+        if (-1 == decentFacing) {
+            final Coords center = new Coords(game.getBoard().getWidth() / 2,
+                                       game.getBoard().getHeight() / 2);
+            decentFacing = deployCoords.direction(center);
+        }
+
+        final Entity deployEntity = game.getEntity(entityNum);
+        final IHex deployHex = game.getBoard().getHex(deployCoords);
+
+        int deployElevation = getDeployElevation(deployEntity, deployHex);
+
+        // Compensate for hex elevation where != 0...
+        deployElevation -= deployHex.getLevel();
+        deploy(entityNum, deployCoords, decentFacing, deployElevation);
     }
     
     /**

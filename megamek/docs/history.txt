@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
 + PR #2464: LAM BV heat efficiency
 + Issue #2465: Ensure immobility takes into account the crew only when applicable
++ PR #2474: Fix game freeze when removing last unit during deployment phase with lance movement for that unit type turned on
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

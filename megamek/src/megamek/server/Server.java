@@ -29809,6 +29809,8 @@ public class Server implements Runnable {
         @SuppressWarnings("unchecked")
         final List<Entity> entities = (List<Entity>) c.getObject(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());
+        // Map client-received to server-given IDs: 
+        Map<Integer, Integer> idMap = new HashMap<>();
 
         for (final Entity entity : entities) {
 
@@ -29884,12 +29886,14 @@ public class Server implements Runnable {
                 entity.setId(getFreeEntityId());
             }
 
+            int clientSideId = entity.getId();
             game.addEntity(entity);
+            
+            // Remember which received ID corresponds to which actual ID
+            idMap.put(clientSideId, entity.getId());
 
             // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
-            // do
-            // what we must.
-            // Its just too bad we have to loop over the entire entities array..
+            // do what we must. Its just too bad we have to loop over the entire entities array..
             if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
                 boolean C3iSet = false;
 
@@ -29968,6 +29972,35 @@ public class Server implements Runnable {
                 entity.getOwner().increaseInitialBV(entity.calculateBattleValue(false, false));
             }
         }
+        
+        // Cycle through the entities again and update any carried units
+        // and carrier units to use the correct server-given IDs.
+        // Typically necessary when loading a MUL containing transported units.
+        for (final Entity entity: entities) {
+            // Get the original (client side) ID of the transporter
+            int origTrsp = entity.getTransportId();
+            // Only act if the unit thinks it is transported
+            if (origTrsp != Entity.NONE) {
+                // if the transporter is among the new units, 
+                if (idMap.containsKey(origTrsp)) {
+                    // The wrong transporter doesn't know of anything and does not need an update
+                    Entity carrier = game.getEntity(idMap.get(origTrsp)); 
+                    if (carrier.canLoad(entity, false)) {
+                        // The correct transporter must be told it's carrying something and
+                        // the carried unit must be told where it is embarked
+                        game.getEntity(idMap.get(origTrsp)).load(entity);
+                        entity.setTransportId(idMap.get(origTrsp));
+                    } else {
+                        // This seems to be an invalid carrier; update the entity accordingly
+                        entity.setTransportId(Entity.NONE);
+                    }
+                } else {
+                    // this transporter does not exist; update the entity accordingly
+                    entity.setTransportId(Entity.NONE);
+                }
+            }
+        }
+    
 
         send(createAddEntityPacket(entityIds));
     }

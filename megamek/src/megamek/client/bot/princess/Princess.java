@@ -447,7 +447,7 @@ public class Princess extends BotClient {
 
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
-        if(getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
+        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
             getLogger().info("Declining to deploy crippled unit: "
                     + getEntity(entityNum).getChassis() + ". Removing unit.");
             sendDeleteEntity(entityNum);
@@ -478,7 +478,7 @@ public class Princess extends BotClient {
         // specifically, face the last deployed enemy.
         int decentFacing = -1;
         for (final Entity e : getEnemyEntities()) {
-            if (e.isDeployed() && (!e.isOffBoard())) {
+            if (e.isDeployed() && !e.isOffBoard()) {
                 decentFacing = deployCoords.direction(e.getPosition());
                 break;
             }

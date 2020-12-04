@@ -21,7 +21,7 @@ VERSION HISTORY:
 + Issue #2413: Improve "Darken hexes outside field of view"
 + Issue #2078: Ignore weapon groups when counting equipment
 + Issues #2405 #2399: Fix scroll wheel oddities
-+ PR #2461: Allow LBX autocannons to swap between cluster and solid ammo
++ PR #2461: Allow LBX autocannons to swap between cluster and solid ammo again
 + Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
 + PR #2464: LAM BV heat efficiency
 + Issue #2465: Ensure immobility takes into account the crew only when applicable

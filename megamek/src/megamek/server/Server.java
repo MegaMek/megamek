@@ -33264,14 +33264,18 @@ public class Server implements Runnable {
                                              int cachedMaxMPExpenditure) {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
-            if (entity instanceof Mech) {
+            if ((entity instanceof Mech) || (entity instanceof Tank)) {
                 if ((moveType == EntityMovementType.MOVE_WALK)
                         || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                         || (moveType == EntityMovementType.MOVE_RUN)
                         || (moveType == EntityMovementType.MOVE_SPRINT)
                         || (moveType == EntityMovementType.MOVE_VTOL_RUN)
                         || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                    if (step.getMpUsed() > cachedMaxMPExpenditure) {
+                    int limit = cachedMaxMPExpenditure;
+                    if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                        limit++;
+                    }
+                    if (step.getMpUsed() > limit) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(
@@ -33304,27 +33308,6 @@ public class Server implements Runnable {
                                 0, "jumped in high gravity"));
                         game.addExtremeGravityPSR(rollTarget);
                     }
-                }
-            } else if (entity instanceof Tank) {
-                if ((moveType == EntityMovementType.MOVE_WALK)
-                        || (moveType == EntityMovementType.MOVE_VTOL_WALK)
-                        || (moveType == EntityMovementType.MOVE_RUN)
-                        || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                        || (moveType == EntityMovementType.MOVE_SPRINT)
-                        || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                    // For Tanks, we need to check if the tank had
-                    // more MPs because it was moving along a road.
-                    if ((step.getMpUsed() > cachedMaxMPExpenditure)
-                        && !step.isOnlyPavement()) {
-                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
-                                step, moveType));
-                    } else if (step.getMpUsed() > (cachedMaxMPExpenditure + 1)) {
-                        // If the tank was moving on a road, he got a +1 bonus.
-                        // N.B. The Ask Precentor Martial forum said that a 4/6
-                        // tank on a road can move 5/7, **not** 5/8.
-                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
-                                step, moveType));
-                    } // End tank-has-road-bonus
                 }
             }
         }

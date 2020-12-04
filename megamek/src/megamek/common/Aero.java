@@ -1841,14 +1841,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : weapon.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -1994,14 +1994,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             // artemis bumps up the value
             // PPC caps do, too
@@ -2033,7 +2033,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }

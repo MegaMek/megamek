@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.15-SNAPSHOT
++ Issue #1449: Zweihander SPA incorrectly applies critical damage
 + PR #2402: Upgrade to XStream 1.4.14 (Removes warning about illegal reflective operation)
 + Issue #2398: Final position of vehicle after skid (and fall) reported in Round Report but not applied to unit
 + Issue #1803: Configure view changes Clan unit BV due to AmmoType switching
@@ -20,6 +21,12 @@ VERSION HISTORY:
 + Issue #2413: Improve "Darken hexes outside field of view"
 + Issue #2078: Ignore weapon groups when counting equipment
 + Issues #2405 #2399: Fix scroll wheel oddities
++ PR #2461: Allow LBX autocannons to swap between cluster and solid ammo again
++ Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
++ PR #2464: LAM BV heat efficiency
++ Issue #2465: Ensure immobility takes into account the crew only when applicable
++ PR #2474: Fix game freeze when removing last unit during deployment phase with lance movement for that unit type turned on
++ PR #2469: BV weapon heat 
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there
@@ -137,6 +144,8 @@ VERSION HISTORY:
 + Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
 + Issue #1719: Level 1 Foliage
 + Issue #2212: Diagramming LOS calculation issue
++ PR #2467: Remove outdated final BV multiplier for tripod cockpits.
++ PR #2468: RISC laser pulse module BV
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

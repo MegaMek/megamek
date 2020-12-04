@@ -47,6 +47,7 @@ import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.common.weapons.prototypes.*;
 
 /**
  * You know what mechs are, silly.
@@ -4106,6 +4107,9 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + getHeatCapacity();
+        if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType() == LandAirMech.LAM_STANDARD)) {
+            mechHeatEfficiency += 3;
+        }
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -4130,18 +4134,21 @@ public abstract class Mech extends Entity {
             bvText.append(" + RISC Emergency Coolant System");
         }
 
-        if ((getJumpMP(false, true) > 0)
+        int moveHeat;
+        if ((this instanceof LandAirMech) && (((LandAirMech) this).getLAMType()  == LandAirMech.LAM_STANDARD)) {
+            moveHeat = (int) Math.round(((LandAirMech) this).getAirMechFlankMP(false, true) / 3.0);
+        } else if ((getJumpMP(false, true) > 0)
                 && (getJumpHeat(getJumpMP(false, true)) > getRunHeat())) {
-            mechHeatEfficiency -= getJumpHeat(getJumpMP(false, true));
+            moveHeat = getJumpHeat(getJumpMP(false, true));
             bvText.append(" - Jump Heat ");
         } else {
-            int runHeat = getRunHeat();
+            moveHeat = getRunHeat();
             if (hasSCM()) {
-                runHeat = 0;
+                moveHeat = 0;
             }
-            mechHeatEfficiency -= runHeat;
             bvText.append(" - Run Heat ");
         }
+        mechHeatEfficiency -= moveHeat;
         if (hasStealth()) {
             mechHeatEfficiency -= 10;
             bvText.append(" - Stealth Heat ");
@@ -4173,12 +4180,7 @@ public abstract class Mech extends Entity {
             bvText.append(" + 4");
         }
 
-        bvText.append(" - ");
-        if (getJumpMP(false, true) > 0) {
-            bvText.append(getJumpHeat(getJumpMP(false, true)));
-        } else {
-            bvText.append(getRunHeat());
-        }
+        bvText.append(" - ").append(moveHeat);
         if (hasStealth()) {
             bvText.append(" - 10");
         }
@@ -4225,15 +4227,14 @@ public abstract class Mech extends Entity {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : weapon.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             String name = wtype.getName();
             // artemis bumps up the value
@@ -4269,7 +4270,7 @@ public abstract class Mech extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }
@@ -4472,6 +4473,15 @@ public abstract class Mech extends Entity {
                 weaponHeat *= 6;
             }
 
+            // 1d6 extra heat; add half for heat calculations (1d3/+2 for small pulse)
+            if ((wtype instanceof ISERLaserLargePrototype)
+                    || (wtype instanceof ISPulseLaserLargePrototype)
+                    || (wtype instanceof ISPulseLaserMediumPrototype)
+                    || (wtype instanceof ISPulseLaserMediumRecovered)) {
+                weaponHeat += 3;
+            } else if (wtype instanceof ISPulseLaserSmallPrototype) {
+                weaponHeat += 2;
+            }
 
             String name = wtype.getName();
 
@@ -4500,7 +4510,8 @@ public abstract class Mech extends Entity {
             // half heat for streaks
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    || (wtype.getAmmoType() == AmmoType.T_IATM)) {
                 weaponHeat *= 0.5;
             }
             // check to see if the weapon is a PPC and has a Capacitor attached
@@ -4537,15 +4548,14 @@ public abstract class Mech extends Entity {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
 
             // artemis bumps up the value
@@ -4576,7 +4586,7 @@ public abstract class Mech extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     weaponName = weaponName.concat(" with RISC Laser Pulse Module");
                 }
             }
@@ -5241,10 +5251,6 @@ public abstract class Mech extends Entity {
                 || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                 || (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
-            finalBV *= cockpitMod;
-        } else if ((getCockpitType() == Mech.COCKPIT_TRIPOD)
-                || (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD)) {
-            cockpitMod = 1.1;
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;

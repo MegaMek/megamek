@@ -1745,7 +1745,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     @Override
     public boolean isImmobile() {
-        return isShutDown() || ((crew != null) && crew.isUnconscious());
+        return isImmobile(true);
+    }
+
+    /**
+     * Is this entity shut down, or if applicable is the crew unconscious?
+     * @param checkCrew If true, consider the fitness of the crew when determining
+     *                  if the entity is immobile.
+     */
+    public boolean isImmobile(boolean checkCrew) {
+        return isShutDown() || (checkCrew && (crew != null) && crew.isUnconscious());
     }
 
     /**

@@ -15268,17 +15268,22 @@ public class Server implements Runnable {
     /**
      * Apply damage to mech for zweihandering (melee attack with both hands) as per
      * pg. 82, CamOps
-     * @param ae - the attacking entity
-     * @param missed - did the attack missed. If so PSR is necessary.
+     * 
+     * @param ae           - the attacking entity
+     * @param missed       - did the attack missed. If so PSR is necessary.
+     * @param criticalLocs - the locations for possible criticals, should be one or
+     *                     both arms depending on if it was an unarmed attack (both
+     *                     arms) or a weapon attack (the arm with the weapon).
      */
-    private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed, List<Integer> criticalLocs) {
         Report r = new Report(4022);
         r.subject = ae.getId();
         r.indent();
         r.addDesc(ae);
         addReport(r);
-        addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
-        addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
+        for (Integer loc : criticalLocs) {
+            addReport(criticalEntity(ae, loc, false, 0, 1));
+        }
         if(missed) {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
         }
@@ -15403,7 +15408,10 @@ public class Server implements Runnable {
             }
 
             if(paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(Mech.LOC_RARM);
+                criticalLocs.add(Mech.LOC_LARM);
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
 
             return;
@@ -15426,7 +15434,10 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(Mech.LOC_RARM);
+                criticalLocs.add(Mech.LOC_LARM);
+                applyZweihanderSelfDamage(ae, false, criticalLocs);
             }
 
             // And we're done!
@@ -15535,7 +15546,10 @@ public class Server implements Runnable {
         addNewLines();
 
         if(paa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false);
+            ArrayList<Integer> criticalLocs = new ArrayList<>();
+            criticalLocs.add(Mech.LOC_RARM);
+            criticalLocs.add(Mech.LOC_LARM);
+            applyZweihanderSelfDamage(ae, false, criticalLocs);
         }
         addNewLines();
 
@@ -16747,7 +16761,9 @@ public class Server implements Runnable {
                                                  "missed a flail/wrecking ball attack"));
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         }
@@ -16775,7 +16791,9 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 if(caa.isZweihandering()) {
-                    applyZweihanderSelfDamage(ae, true);
+                    ArrayList<Integer> criticalLocs = new ArrayList<>();
+                    criticalLocs.add(caa.getClub().getLocation());
+                    applyZweihanderSelfDamage(ae, true, criticalLocs);
                 }
                 return;
             }
@@ -16805,7 +16823,9 @@ public class Server implements Runnable {
                 }
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -16878,7 +16898,9 @@ public class Server implements Runnable {
 
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         }
@@ -16900,7 +16922,9 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, false, criticalLocs);
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
                     // the club breaks
                     r = new Report(4150);
@@ -17106,7 +17130,9 @@ public class Server implements Runnable {
         }
 
         if(caa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false);
+            ArrayList<Integer> criticalLocs = new ArrayList<>();
+            criticalLocs.add(caa.getClub().getLocation());
+            applyZweihanderSelfDamage(ae, false, criticalLocs);
             if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
                 // the club breaks
                 r = new Report(4150);
@@ -30420,8 +30446,8 @@ public class Server implements Runnable {
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
-                endCurrentTurn(entity);
                 game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                endCurrentTurn(entity);
             }
         }
     }

@@ -1568,7 +1568,7 @@ public class Tank extends Entity {
         boolean hasTargComp = hasTargComp();
         double targetingSystemBVMod = 1.0;
 
-        if ((this instanceof SupportTank) || (this instanceof SupportVTOL)) {
+        if (isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 targetingSystemBVMod = 1.0;
             } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
@@ -1676,8 +1676,7 @@ public class Tank extends Entity {
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
                 bvText.append(" x 1.25 Direct Fire and TC");
-            } else if ((this instanceof SupportTank)
-                    && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
+            } else if (isSupportVehicle() && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMod;
                 bvText.append(" x ");
                 bvText.append(targetingSystemBVMod);
@@ -1914,6 +1913,7 @@ public class Tank extends Entity {
                     || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_BULLDOZER)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)
                     || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;
@@ -1981,7 +1981,7 @@ public class Tank extends Entity {
         double runMP = getRunMP(false, true, true);
 
         // Trains use cruise instead of flank MP for speed factor
-        if (getMovementMode() == EntityMovementMode.RAIL) {
+        if (getMovementMode().equals(EntityMovementMode.RAIL) || getMovementMode().equals(EntityMovementMode.MAGLEV)) {
             runMP = getWalkMP(false, true, true);
         }
         // trailers have original run MP of 0, but should count at 1 for speed

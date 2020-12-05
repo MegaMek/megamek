@@ -538,6 +538,20 @@ public class TechAdvancement implements ITechnology {
     }
 
     /**
+     * Formats introduction date indicating approximate when appropriate, and prototype faction if any
+     * for either IS or Clan use tech base.
+     */
+    public String getIntroductionDateName() {
+        if (getPrototypeDate() > 0) {
+            return getPrototypeDateName();
+        }
+        if (getProductionDate() > 0) {
+            return getProductionDateName();
+        }
+        return getCommonDateName();
+    }
+
+    /**
      * Formats prototype date indicating approximate when appropriate, and prototype faction if any
      * for either IS or Clan use tech base.
      */

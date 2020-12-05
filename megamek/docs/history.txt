@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.15-SNAPSHOT
++ Pr #2458: When loading saved games, drop down box allows selecting of player names present in game
 + Issue #1449: Zweihander SPA incorrectly applies critical damage
 + PR #2402: Upgrade to XStream 1.4.14 (Removes warning about illegal reflective operation)
 + Issue #2398: Final position of vehicle after skid (and fall) reported in Round Report but not applied to unit

@@ -9365,12 +9365,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
-        // also set this for any transported units
-        for (Transporter transport : getTransports()) {
-            for (Entity e : transport.getLoadedUnits()) {
-                e.setDeployRound(deployRound);
-            }
-        }
 
         // Entity's that deploy after the start can set their own deploy zone
         // If the deployRound is being set back to 0, make sure we reset the

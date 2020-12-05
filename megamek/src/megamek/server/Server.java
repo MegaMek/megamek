@@ -29982,17 +29982,21 @@ public class Server implements Runnable {
         Set<Entity> transportCorrected = new HashSet<>();
         for (final Entity carrier: entities) {
             for (int carriedId: carrier.getBayLoadedUnitIds()) {
+                // First, see if a bay loaded unit can be found and unloaded,
+                // because it might be the wrong unit
                 Entity carried = game.getEntity(carriedId);
                 if (carried == null) {
                     continue;
                 }
                 int bay = carrier.getBay(carried).getBayNumber();
                 carrier.unload(carried);
+                // Now, load the correct unit if there is one
                 if (idMap.containsKey(carriedId)) {
                     Entity newCarried = game.getEntity(idMap.get(carriedId));
                     if (carrier.canLoad(newCarried, false)) {
                         carrier.load(newCarried, false, bay);
                         newCarried.setTransportId(carrier.getId());
+                        // Remember that the carried unit should not be treated again below
                         transportCorrected.add(newCarried);
                     }
                 }
@@ -30010,7 +30014,7 @@ public class Server implements Runnable {
             int origTrsp = entity.getTransportId();
             // Only act if the unit thinks it is transported
             if (origTrsp != Entity.NONE) {
-                // if the transporter is among the new units, 
+                // If the transporter is among the new units, go on with loading 
                 if (idMap.containsKey(origTrsp)) {
                     // The wrong transporter doesn't know of anything and does not need an update
                     Entity carrier = game.getEntity(idMap.get(origTrsp)); 

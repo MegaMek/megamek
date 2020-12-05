@@ -27,6 +27,7 @@ VERSION HISTORY:
 + Issue #2465: Ensure immobility takes into account the crew only when applicable
 + PR #2474: Fix game freeze when removing last unit during deployment phase with lance movement for that unit type turned on
 + PR #2469: BV weapon heat 
++ PR #2476: Vehicle BV fixes
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

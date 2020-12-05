@@ -618,9 +618,11 @@ public class TechAdvancement implements ITechnology {
     public String getExtinctionDateName() {
         if (techBase == TECH_BASE_ALL) {
             if (isAdvancement[EXTINCT] == DATE_NONE) {
-                return getExtinctionDateName(false);
-            } else if (clanAdvancement[EXTINCT] == DATE_NONE) {
+                // If there is no IS date, choose the Clan date
                 return getExtinctionDateName(true);
+            } else if (clanAdvancement[EXTINCT] == DATE_NONE) {
+                // If there is no Clan date, choose the IS date
+                return getExtinctionDateName(false);
             } else {
                 return formatDate(EXTINCT, clanAdvancement[EXTINCT] > isAdvancement[EXTINCT], extinctionFactions);
             }

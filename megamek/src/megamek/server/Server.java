@@ -3177,16 +3177,19 @@ public class Server implements Runnable {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
+        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
+        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
+        
         GameTurn nextTurn = null;
         Entity nextEntity = null;
         while (game.hasMoreTurns() && (null == nextEntity)) {
             nextTurn = game.changeToNextTurn();
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+            if (minefieldPhase || artyPhase) {
+                break;
+            }
         }
-
-        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
-        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
-
+   
         // if there aren't any more valid turns, end the phase
         // note that some phases don't use entities
         if (((null == nextEntity) && !minefieldPhase) || ((null == nextTurn) && minefieldPhase)) {

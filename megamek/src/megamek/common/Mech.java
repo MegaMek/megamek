@@ -498,12 +498,9 @@ public abstract class Mech extends Entity {
         // if ba_grab_bars is on, then we need to add battlearmor handles,
         // otherwise clamp mounts
         // but first clear out whatever we have
-        Vector<Transporter> et = new Vector<Transporter>(getTransports());
-        for (Transporter t : et) {
-            if (t instanceof BattleArmorHandles) {
-                removeTransporter(t);
-            }
-        }
+        // Removed the removal of transporters so that loaded units don't get ditched
+        // This is an unofficial rule and it doesn't work well anyway as changing the option
+        // does not affect units that are in the game
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandles());
         } else {

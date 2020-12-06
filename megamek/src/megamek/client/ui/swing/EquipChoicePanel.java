@@ -1104,16 +1104,13 @@ public class EquipChoicePanel extends JPanel {
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
-                if (entity instanceof BattleArmor){
+                // Protomechs and BattleArmor are limited to the number of shots allocated in construction
+                if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                    shotsPerTon = m.getOriginalShots();
+                    // BA tube artillery always comes in pairs
                     if (curType.getAmmoType() == AmmoType.T_BA_TUBE) {
-                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT_TA;
                         stepSize = 2;
-                    } else {
-                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                     }
-                    // Protomechs are limited to the number of shots allocated in construction
-                } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                    shotsPerTon = m.getBaseShotsLeft();
                 }
                 for (int i = 0; i <= shotsPerTon; i += stepSize){
                     m_num_shots.addItem(i);
@@ -1125,16 +1122,13 @@ public class EquipChoicePanel extends JPanel {
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
                         m_num_shots.removeItemListener(numShotsListener);
-                        int currShots = (Integer)m_num_shots.getSelectedItem();
+                        int currShots = (Integer) m_num_shots.getSelectedItem();
                         m_num_shots.removeAllItems();
                         int shotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
                         
-                        // BA always have a certain number of shots per slot
-                        if (entity instanceof BattleArmor){
-                            shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
-                            // Protomechs are limited to number of shots added during construction
-                        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                            shotsPerTon = m.getBaseShotsLeft();
+                        // Protomechs are limited to number of shots added during construction
+                        if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                            shotsPerTon = m.getOriginalShots();
                         }
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);

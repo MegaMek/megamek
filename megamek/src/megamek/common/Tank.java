@@ -2296,6 +2296,14 @@ public class Tank extends Entity {
     }
 
     @Override
+    public int getRunningGravityLimit() {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return getSprintMP(false, false, false);
+        }
+        return getRunMP(false, false, false);
+    }
+
+    @Override
     public int getHeatCapacity(boolean radicalHeatSinks) {
         return DOES_NOT_TRACK_HEAT;
     }

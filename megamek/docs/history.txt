@@ -30,6 +30,10 @@ VERSION HISTORY:
 + PR #2469: BV weapon heat 
 + PR #2476: Vehicle BV fixes
 + Issue #2473: Only last player to connect can deploy minefields
++ Data: Updating Level 1 Foliage and Clan Invasion Boxset Maps.
++ Issue #2431: Player units not making PSRs for exceeding normal MP in low gravity
++ Issue #2447: Bridge elevation bugs - charging from bridge & reversing from bridge
++ Issue #2450: Aerospace unit crash damage incorrect at velocity 0
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

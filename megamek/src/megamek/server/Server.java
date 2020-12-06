@@ -6157,8 +6157,9 @@ public class Server implements Runnable {
                 }
             }
         }
+        // Units with velocity zero are treated like that had velocity two
         if (vel < 1) {
-            vel = 1;
+            vel = 2;
         }
 
         // deal crash damage only once

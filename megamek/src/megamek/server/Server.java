@@ -8488,11 +8488,7 @@ public class Server implements Runnable {
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && !(md.isJumping()
                             && (entity.getJumpType() == Mech.JUMP_BOOSTER))
-                    && ((lastHex.getLevel()
-                            + entity.calcElevation(curHex, lastHex,
-                                    step.getElevation(), curClimbMode,
-                                    false)) != (curHex.getLevel()
-                                            + entity.getElevation()))
+                    && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
                     && !(entity instanceof VTOL)
                     && !(curClimbMode
                             && curHex.containsTerrain(Terrains.BRIDGE)

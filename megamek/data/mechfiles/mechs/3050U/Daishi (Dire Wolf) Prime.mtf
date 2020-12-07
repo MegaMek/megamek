@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.2
 Daishi (Dire Wolf)
 Prime
 
@@ -49,11 +49,11 @@ Shoulder
 Upper Arm Actuator
 CLERLargeLaser (omnipod)
 CLERLargeLaser (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
-CLUltraAC5 (omnipod)
-CLUltraAC5 (omnipod)
-CLUltraAC5 (omnipod)
 Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
@@ -63,11 +63,11 @@ Shoulder
 Upper Arm Actuator
 CLERLargeLaser (omnipod)
 CLERLargeLaser (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
-CLUltraAC5 (omnipod)
-CLUltraAC5 (omnipod)
-CLUltraAC5 (omnipod)
 Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
@@ -155,3 +155,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

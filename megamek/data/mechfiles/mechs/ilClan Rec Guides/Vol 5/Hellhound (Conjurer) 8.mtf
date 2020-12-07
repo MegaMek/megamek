@@ -1,21 +1,20 @@
 Version:1.0
-Conjurer
-(Hellhound)
+Hellhound (Conjurer)
+8
 
 Config:Biped
-techbase:Clan
-era:2831
-source:TRO 3055 - Succession Wars
+techbase:Mixed (Clan Chassis)
+era:3150
 rules level:2
 
 mass:50
-engine:300 Fusion (Clan) Engine(IS)
+engine:250 XL Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
 heat sinks:10 Double
-walk mp:6
-jump mp:6
+walk mp:5
+jump mp:5
 
 armor:Ferro-Fibrous(Clan)
 LA armor:14
@@ -30,12 +29,11 @@ RTL armor:5
 RTR armor:5
 RTC armor:7
 
-Weapons:5
-Large Pulse Laser, Right Arm
-Streak SRM 2, Left Torso
-Streak SRM 2, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
+Weapons:4
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Rotary AC/5, Right Arm
+Streak SRM 6, Left Torso
 
 Left Arm:
 Shoulder
@@ -44,8 +42,8 @@ Lower Arm Actuator
 Hand Actuator
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
--Empty-
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,42 +54,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
 
 Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
-CLStreakSRM2
-CLStreakSRM2
-Clan Streak SRM 2 Ammo
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-CLERMediumLaser
-Clan Endo Steel
-Clan Endo Steel
+CLMediumPulseLaser
+CLMediumPulseLaser
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+CLMASC
+CLMASC
 Clan Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Center Torso:
 Fusion Engine
@@ -105,7 +103,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Jump Jet
+Clan Endo Steel
 
 Head:
 Life Support

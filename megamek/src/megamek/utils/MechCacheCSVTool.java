@@ -52,7 +52,7 @@ public class MechCacheCSVTool {
         
         try {
             StringBuffer csvLine = new StringBuffer();
-            csvLine.append("Chassis,Model,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Rules,Engine Name,Internal Structure," +
+            csvLine.append("Chassis,Model,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -119,7 +119,10 @@ public class MechCacheCSVTool {
                 
                 // BV
                 csvLine.append(mech.getBV()  + ",");
-
+                
+                //Cost
+                csvLine.append(mech.getCost() + ",");
+                
                 csvLine.append(mech.getLevel() + ",");
                 // Engine Type
                 csvLine.append(mech.getEngineName() + ",");

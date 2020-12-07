@@ -1,23 +1,22 @@
-Version:1.0
+Version:1.1
 Marauder
 C
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3050
-Source:Clan Invasion
+TechBase:Mixed (Clan Chassis)
+Era:3052
 Rules Level:4
 
 Mass:75
-Engine:300 Fusion Engine
+Engine:300 Fusion Engine (Clan)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:16 Single
+Heat Sinks:19 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(Inner Sphere)
+Armor:Standard Armor (Clan)
 LA Armor:22
 RA Armor:22
 LT Armor:17
@@ -31,20 +30,20 @@ RTR Armor:8
 RTC Armor:10
 
 Weapons:5
-Large Pulse Laser, Right Arm
-Large Pulse Laser, Left Arm
-Medium Laser, Right Arm
-Medium Laser, Left Arm
-Ultra AC/5, Right Torso
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Right Arm
+1 CLLargePulseLaser, Left Arm
+1 CLLargePulseLaser, Right Arm
+1 CLUltraAC5, Right Torso, Ammo:20
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+Heat Sink
 CLLargePulseLaser
 CLLargePulseLaser
-Medium Laser
--Empty-
+ISMediumLaser
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +54,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+Heat Sink
 CLLargePulseLaser
 CLLargePulseLaser
-Medium Laser
--Empty-
+ISMediumLaser
 -Empty-
 -Empty-
 -Empty-
@@ -66,8 +65,8 @@ Medium Laser
 -Empty-
 
 Left Torso:
-Clan Ultra AC/5 Ammo
-ISCASE
+CLUltraAC5 Ammo
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -94,17 +93,17 @@ CLUltraAC5
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Engine
+Engine
+Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
--Empty-
+Engine
+Engine
+Engine
+Heat Sink
 -Empty-
 
 Head:
@@ -114,12 +113,6 @@ Cockpit
 -Empty-
 Sensors
 Life Support
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Leg:
 Hip
@@ -128,12 +121,6 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Leg:
 Hip
@@ -142,11 +129,3 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-

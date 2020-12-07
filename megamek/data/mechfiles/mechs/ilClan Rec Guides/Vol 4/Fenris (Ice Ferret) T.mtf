@@ -1,6 +1,6 @@
 Version:1.0
-Ice Ferret (Fenris)
-K
+Fenris (Ice Ferret)
+T
 
 Config:Biped Omnimech
 techbase:Clan
@@ -30,21 +30,19 @@ RTL armor:7
 RTR armor:7
 RTC armor:8
 
-Weapons:5
-Large Pulse Laser, Left Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Small Laser, Left Arm
-Laser AMS, Center Torso
+Weapons:3
+Improved Heavy Large Laser, Left Arm
+ER Medium Laser, Left Arm
+SRM 2, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-CLERSmallLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,8 +54,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLSRM2 (omnipod)
+Clan Ammo SRM-2 (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -82,10 +80,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
+Supercharger (Clan) (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -104,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLaserAntiMissileSystem (omnipod)
+CLActiveProbe (omnipod)
 Clan Endo Steel
 
 Head:

@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.2
 Dasher (Fire Moth)
 D
 
@@ -86,9 +86,9 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLTargeting Computer (omnipod)
 CLERMediumLaser (omnipod)
 CLFlamer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -150,3 +150,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+

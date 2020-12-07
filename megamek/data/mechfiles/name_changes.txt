@@ -182,6 +182,10 @@ Mad Cat (Timber Wolf) B|Timber Wolf (Mad Cat) B
 Mad Cat (Timber Wolf) C|Timber WOlf (Mad Cat) C
 Mad Cat (Timber WOlf) D|Timber Wolf (Mad Cat) D
 Mad Cat (Timber Wolf) S|Timber Wolf (Mad Cat) S
+Timber Wolf (Mad Cat) M|Mad Cat (Timber Wolf) M
+Timber Wolf (Mad Cat) N|Mad Cat (Timber Wolf) N
+Timber Wolf (Mad Cat) T|Mad Cat (Timber Wolf) T
+Timber Wolf (Mad Cat) W|Mad Cat (Timber Wolf) W
 Goshawk (Vapor Eagle) 2|Vapor Eagle (Goshawk) 2
 Goshawk (Vapor Eagle) (Standard)|Vapor Eagle (Goshawk)
 Dragonfly (Viper) Prime|Viper (Dragonfly) Prime

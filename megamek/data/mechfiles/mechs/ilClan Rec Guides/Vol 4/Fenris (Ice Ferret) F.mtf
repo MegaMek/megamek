@@ -1,6 +1,6 @@
 Version:1.0
-Ice Ferret (Fenris)
-G
+Fenris (Ice Ferret)
+F
 
 Config:Biped Omnimech
 techbase:Clan
@@ -30,23 +30,16 @@ RTL armor:7
 RTR armor:7
 RTC armor:8
 
-Weapons:9
-Light TAG [Clan], Center Torso
-ER Small Pulse Laser, Right Torso
-ER Small Pulse Laser, Left Torso
-SRM 4, Right Arm
-SRM 4, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Right Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Right Arm
+Weapons:2
+ER Large Laser, Right Arm
+ER Large Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM4 (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle (omnipod)
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -58,9 +51,9 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM4 (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle (omnipod)
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -72,11 +65,11 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser (omnipod)
-CLAPGaussRifle Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -86,8 +79,8 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser (omnipod)
-Clan Ammo SRM-4 (omnipod)
+WatchdogECMSuite (omnipod)
+WatchdogECMSuite (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -108,8 +101,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightTAG (omnipod)
 Clan Endo Steel
+-Empty-
 
 Head:
 Life Support

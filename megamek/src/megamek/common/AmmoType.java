@@ -154,7 +154,7 @@ public class AmmoType extends EquipmentType {
     private static final Integer[] ALLOWED_BY_TYPE_ARRAY = { AmmoType.T_LRM, AmmoType.T_LRM_PRIMITIVE, AmmoType.T_LRM_STREAK, AmmoType.T_LRM_TORPEDO,
         AmmoType.T_LRM_TORPEDO_COMBO, AmmoType.T_SRM, AmmoType.T_SRM_ADVANCED, AmmoType.T_SRM_PRIMITIVE, AmmoType.T_SRM_STREAK, AmmoType.T_SRM_TORPEDO,
         AmmoType.T_MRM, AmmoType.T_MRM_STREAK, AmmoType.T_ROCKET_LAUNCHER, AmmoType.T_EXLRM, AmmoType.T_PXLRM, AmmoType.T_HSRM, AmmoType.T_MML,
-        AmmoType.T_NLRM };
+        AmmoType.T_NLRM, AmmoType.T_MG, AmmoType.T_MG_LIGHT, AmmoType.T_MG_HEAVY, };
 
     /**
      * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds),

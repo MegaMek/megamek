@@ -23,7 +23,12 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -162,15 +167,11 @@ public class MegaMekXmlUtil {
     }
 
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, boolean... values) {
-        // cannot use StringUtils.join for a boolean array, so we are using this instead
-        StringBuilder csv = new StringBuilder();
-        for (int i = 0; i < values.length; i++) {
-            csv.append(values[i]);
-            if (i < values.length - 1) {
-                csv.append(",");
-            }
+        StringJoiner stringJoiner = new StringJoiner(",", "", "");
+        for (boolean value : values) {
+            stringJoiner.add(Boolean.toString(value));
         }
-        pw1.println(indentStr(indent) + "<" + name + ">" + csv + "</" + name + ">");
+        pw1.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {

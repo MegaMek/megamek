@@ -141,20 +141,56 @@ public class MegaMekXmlUtil {
         pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, String... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, int... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, boolean... values) {
+        // cannot use StringUtils.join for a boolean array, so we are using this instead
+        StringBuilder csv = new StringBuilder();
+        for (int i = 0; i < values.length; i++) {
+            csv.append(values[i]);
+            if (i < values.length - 1) {
+                csv.append(",");
+            }
+        }
+        pw1.println(indentStr(indent) + "<" + name + ">" + csv + "</" + name + ">");
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, long... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, double... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
     }
 
     public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {

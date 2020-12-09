@@ -37,6 +37,8 @@ VERSION HISTORY:
 + Data: Overhaul of units, fixes to names, quirks, roles, and crit placements as a result of the Tukkayid books.
 + Issue #2453: Changing BA Ammo Selects Invalid Quantity
 + Issue #2493: Prevent players from firing hidden units' weapons without revealing them
++ PR #2494: Fix protomech myomer booster BV calculation
++ PR #2495: Use fastest movement mode to calculate infantry BV speed factor
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

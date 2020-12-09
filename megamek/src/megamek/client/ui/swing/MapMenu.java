@@ -831,10 +831,12 @@ public class MapMenu extends JPopupMenu {
     private JMenu createWeaponsFireMenu() {
         JMenu menu = new JMenu("Weapons");
 
-        /*
-         * if ( myTarget == null || (myTarget instanceof Entity &&
-         * !myEntity.isEnemyOf((Entity)myTarget)) ){ return menu; }
-         */
+        // Hidden entities are not allowed to shoot without being revealed
+        // so let's not give them the option
+        if (myEntity.isHidden()) {
+            return menu;
+        }
+        
         menu.add(createFireJMenuItem());
         menu.add(createSkipJMenuItem());
         menu.add(createAlphaStrikeJMenuItem());

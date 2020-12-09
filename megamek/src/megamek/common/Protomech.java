@@ -1490,7 +1490,6 @@ public class Protomech extends Entity {
             mp++;
         }
         double speedFactor = Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
-        calculations[5] = speedFactor;
 
         obv = weaponBV * speedFactor;
         

@@ -39,6 +39,7 @@ VERSION HISTORY:
 + Issue #2493: Prevent players from firing hidden units' weapons without revealing them
 + PR #2494: Fix protomech myomer booster BV calculation
 + PR #2495: Use fastest movement mode to calculate infantry BV speed factor
++ Issue #2498: Prevent leakage of information about hidden unit positions via right-clicking
 
 0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there

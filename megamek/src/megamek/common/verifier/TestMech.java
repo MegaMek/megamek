@@ -1005,7 +1005,7 @@ public class TestMech extends TestEntity {
                 for (int loc = 0; loc < mech.locations(); loc++) {
                     if (mech.locationIsLeg(loc) && countCriticalSlotsFromEquipInLocation(mech, m, loc) != slots) {
                         illegal = true;
-                        buff.append("Talons require").append(slots).append(" critical slots in each leg.\n");
+                        buff.append("Talons require ").append(slots).append(" critical slots in each leg.\n");
                         break;
                     }
                 }

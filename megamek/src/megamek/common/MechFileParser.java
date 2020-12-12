@@ -593,42 +593,18 @@ public class MechFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
-                if (ent instanceof BipedMech) {
-                    if ((m.getLocation() != Mech.LOC_LLEG)
-                            && (m.getLocation() != Mech.LOC_RLEG)) {
-                        throw new EntityLoadingException(
-                                "Talons are only legal in the Legs for "+ent.getShortName());
+                if (ent instanceof Mech) {
+                    if (!ent.locationIsLeg(m.getLocation())) {
+                        throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
-
-                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LLEG)) {
-                        throw new EntityLoadingException(
-                                "Talons must be in all legs for "+ent.getShortName());
+                    for (int loc = 0; loc < ent.locations(); loc++) {
+                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, -1, loc)) {
+                            throw new EntityLoadingException("Talons must be in all legs for " + ent.getShortName());
+                        }
                     }
-                } else if (ent instanceof QuadMech) {
-                    if ((m.getLocation() != Mech.LOC_LLEG)
-                            && (m.getLocation() != Mech.LOC_RLEG)
-                            && (m.getLocation() != Mech.LOC_LARM)
-                            && (m.getLocation() != Mech.LOC_RARM)) {
-                        throw new EntityLoadingException(
-                                "Talons are only legal in the Legs for "+ent.getShortName());
-                    }
-
-                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LARM)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LARM)) {
-                        throw new EntityLoadingException(
-                                "Talons must be in all legs for "+ent.getShortName());
-                    }
-
                 } else {
-                    throw new EntityLoadingException(
-                            "Unable to load talons in non-Mek entity for "+ent.getShortName());
+                    throw new EntityLoadingException("Unable to load talons in non-Mek entity for "
+                            + ent.getShortName());
                 }
             }
 

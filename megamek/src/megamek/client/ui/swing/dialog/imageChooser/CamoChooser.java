@@ -22,6 +22,7 @@ import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
@@ -106,7 +107,7 @@ public class CamoChooser extends AbstractIconChooser {
             if (individualCamo) {
                 result.add(entityOwnerCamo);
             } else {
-                for (String color: IPlayer.colorNames) {
+                for (String color: PlayerColors.COLOR_NAMES) {
                     result.add(createIcon(Camouflage.NO_CAMOUFLAGE, color));
                 }
             }
@@ -146,7 +147,7 @@ public class CamoChooser extends AbstractIconChooser {
         // This may be a color
         String item = entity.getOwner().getCamouflage().getFilename();
         if (entity.getOwner().getCamouflage().getCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
-            item = IPlayer.colorNames[entity.getOwner().getColorIndex()];
+            item = PlayerColors.COLOR_NAMES[entity.getOwner().getColorIndex()];
         }
         entityOwnerCamo = createIcon(entity.getOwner().getCamouflage().getCategory(), item);
 

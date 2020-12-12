@@ -19,17 +19,7 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MegaMek;
 import megamek.common.loaders.MtfFile;
@@ -6708,12 +6698,22 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
-        if (hasCompactHeatSinks()) {
-            sb.append(MtfFile.HS_COMPACT);
-        } else if (hasLaserHeatSinks()) {
+        Optional<EquipmentType> heatSink = getMisc().stream()
+                .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK)
+                    || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+                .map(Mounted::getType).findFirst();
+        // If we didn't find any heat sinks we may have an ICE with no added sinks, or prototype
+        // doubles (which have a different flag). In the latter case, we want to put single
+        // here, since this determines what's installed as engine-integrated heat sinks.
+        if (!heatSink.isPresent()) {
+            sb.append(MtfFile.HS_SINGLE);
+        } else if (heatSink.get().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
             sb.append(MtfFile.HS_LASER);
-        } else if (hasDoubleHeatSinks()) {
-            sb.append(MtfFile.HS_DOUBLE);
+        } else if (heatSink.get().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+            sb.append(MtfFile.HS_COMPACT);
+        } else if (heatSink.get().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            sb.append(heatSink.get().isClan() ? MtfFile.TECH_BASE_CLAN : MtfFile.TECH_BASE_IS);
+            sb.append(" ").append(MtfFile.HS_DOUBLE);
         } else {
             sb.append(MtfFile.HS_SINGLE);
         }

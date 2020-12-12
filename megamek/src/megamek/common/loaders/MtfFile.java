@@ -23,24 +23,7 @@ package megamek.common.loaders;
 import java.io.*;
 import java.util.*;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.CriticalSlot;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
-import megamek.common.LandAirMech;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.TechConstants;
-import megamek.common.TripodMech;
-import megamek.common.WeaponType;
+import megamek.common.*;
 
 /**
  * @author Ben
@@ -116,6 +99,8 @@ public class MtfFile implements IMechLoader {
     public static final String HS_DOUBLE = "Double";
     public static final String HS_LASER = "Laser";
     public static final String HS_COMPACT = "Compact";
+    public static final String TECH_BASE_IS = "IS";
+    public static final String TECH_BASE_CLAN = "Clan";
     public static final String WALK_MP = "walk mp:";
     public static final String JUMP_MP = "jump mp:";
     public static final String ARMOR = "armor:";
@@ -302,14 +287,21 @@ public class MtfFile implements IMechLoader {
             mech.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
             boolean dblSinks = heatSinks.contains(HS_DOUBLE);
-
             boolean laserSinks = heatSinks.contains(HS_LASER);
-
             boolean compactSinks = heatSinks.contains(HS_COMPACT);
-
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
-
             int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
+            // For mixed tech units with double heat sinks we want to install the correct type. Legacy files
+            // don't specify, so we'll use TECH_BASE_ALL to indicate unknown and check for heat sinks on the
+            // critical table.
+            int heatSinkBase;
+            if (heatSinks.contains(TECH_BASE_CLAN)) {
+                heatSinkBase = ITechnology.TECH_BASE_CLAN;
+            } else if (heatSinks.contains(TECH_BASE_IS)) {
+                heatSinkBase = ITechnology.TECH_BASE_IS;
+            } else {
+                heatSinkBase = ITechnology.TECH_BASE_ALL;
+            }
 
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
             if (thisStructureType.length() > 0) {
@@ -461,7 +453,27 @@ public class MtfFile implements IMechLoader {
             if (laserSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_LASER_HEAT_SINK);
             } else if (dblSinks) {
-                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK);
+                // If the heat sink entry didn't specify Clan or IS double, check for sinks that take
+                // critical slots. If none are found, default to the overall tech base of the unit.
+                if (heatSinkBase == ITechnology.TECH_BASE_ALL) {
+                    for (Mounted mounted : mech.getMisc()) {
+                        if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                            heatSinkBase = mounted.getType().getTechBase();
+                        }
+                    }
+                }
+                boolean clan;
+                switch (heatSinkBase) {
+                    case ITechnology.TECH_BASE_IS:
+                        clan = false;
+                        break;
+                    case ITechnology.TECH_BASE_CLAN:
+                        clan = true;
+                        break;
+                    default:
+                        clan = mech.isClan();
+                }
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK, clan);
             } else if (compactSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
             } else {

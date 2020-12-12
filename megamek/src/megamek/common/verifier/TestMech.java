@@ -1001,11 +1001,11 @@ public class TestMech extends TestEntity {
             }
             
             if (m.getType().hasFlag(MiscType.F_TALON)) {
+                int slots = getMech().isSuperHeavy() ? 1 : 2;
                 for (int loc = 0; loc < mech.locations(); loc++) {
-                    if (mech.locationIsLeg(loc)
-                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 2) {
+                    if (mech.locationIsLeg(loc) && countCriticalSlotsFromEquipInLocation(mech, m, loc) != slots) {
                         illegal = true;
-                        buff.append("Talons require two critical slots in each leg.\n");
+                        buff.append("Talons require").append(slots).append(" critical slots in each leg.\n");
                         break;
                     }
                 }

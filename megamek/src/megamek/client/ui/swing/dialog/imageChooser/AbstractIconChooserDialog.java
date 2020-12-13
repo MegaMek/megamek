@@ -134,7 +134,7 @@ public abstract class AbstractIconChooserDialog extends JDialog {
         return wasCanceled ? JOptionPane.CANCEL_OPTION : JOptionPane.OK_OPTION;
     }
 
-    /** Called when the Okay button is pressed or an image is double-clicked. */
+    /** Called when the Okay button is pressed */
     protected void select() {
         wasCanceled = false;
         setVisible(false);

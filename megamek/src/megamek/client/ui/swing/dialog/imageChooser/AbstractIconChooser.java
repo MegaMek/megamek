@@ -199,7 +199,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * Returns a list of items that should be shown for the category which
      * is given as a Treepath.
      */
-    protected abstract java.util.List<AbstractIcon> getItems(String category);
+    protected abstract List<AbstractIcon> getItems(String category);
 
     /**
      * Called when at least 3 characters are entered into the search bar.
@@ -207,7 +207,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @param searchString the string to search for
      * @return a list of icons that fit the provided search string
      */
-    protected java.util.List<AbstractIcon> getSearchedItems(String searchString) {
+    protected List<AbstractIcon> getSearchedItems(String searchString) {
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain
         // the search string are added.

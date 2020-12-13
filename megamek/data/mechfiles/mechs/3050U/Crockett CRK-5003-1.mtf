@@ -46,9 +46,9 @@ Lower Arm Actuator
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
 ISSmallLaser
-ISERLargeLaser
-ISERLargeLaser
 -Empty-
 -Empty-
 -Empty-
@@ -60,9 +60,9 @@ Lower Arm Actuator
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
 ISSmallLaser
-ISERLargeLaser
-ISERLargeLaser
 -Empty-
 -Empty-
 -Empty-
@@ -93,7 +93,7 @@ ISSRM6
 ISSRM6 Ammo
 ISSRM6 Ammo
 ISLBXAC10 Ammo
-ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
 
 Center Torso:
 Fusion Engine

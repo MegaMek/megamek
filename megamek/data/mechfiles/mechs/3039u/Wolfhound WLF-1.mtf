@@ -1,42 +1,41 @@
-Version:1.2
+Version:1.0
 Wolfhound
 WLF-1
 
 Config:Biped
-techbase:Inner Sphere
-era:3028
-source:TRO 3039 - Succession Wars
-rules level:3
+TechBase:Inner Sphere
+Era:3028
+Source:TRO 3039 - Succession Wars
+Rules Level:1
 
-mass:35
-engine:210 Fusion Engine(IS)
-structure:IS Standard
-myomer:Standard
-ejection:Full Head Ejection System
+Mass:35
+Engine:210 Fusion Engine
+Structure:Standard
+Myomer:Standard
 
-heat sinks:10 Single
-walk mp:6
-jump mp:0
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
 
-armor:Standard(Inner Sphere)
-LA armor:12
-RA armor:12
-LT armor:11
-RT armor:11
-CT armor:16
-HD armor:9
-LL armor:16
-RL armor:16
-RTL armor:5
-RTR armor:5
-RTC armor:6
+Armor:Standard(Inner Sphere)
+LA Armor:12
+RA Armor:12
+LT Armor:11
+RT Armor:11
+CT Armor:16
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
 
 Weapons:5
 Large Laser, Right Arm
-Medium Laser, Left Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 Medium Laser, Right Torso
-Medium Laser, Center Torso
-Medium Laser, Center Torso
+Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -105,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (R)
 Medium Laser
+Medium Laser (R)
 
 Head:
 Life Support

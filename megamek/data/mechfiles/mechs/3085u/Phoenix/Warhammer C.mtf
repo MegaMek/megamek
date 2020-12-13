@@ -1,23 +1,22 @@
-Version:1.0
+Version:1.1
 Warhammer
 C
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3050
-Source:Clan Invasion
+TechBase:Mixed (Clan Chassis)
+Era:3052
 Rules Level:4
 
 Mass:70
-Engine:280 Fusion Engine
+Engine:280 Fusion Engine (Clan)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:18 Single
+Heat Sinks:20 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(Inner Sphere)
+Armor:Standard Armor (Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:17
@@ -31,15 +30,15 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:9
-Streak SRM 6, Right Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Small Laser, Left Torso
-ER Small Laser, Right Torso
-Large Pulse Laser, Right Arm
-Large Pulse Laser, Left Arm
-Machine Gun, Left Torso
-Machine Gun, Right Torso
+1 CLERMediumLaser, Right Torso
+1 CLERMediumLaser, Left Torso
+1 CLERSmallLaser, Right Torso
+1 CLERSmallLaser, Left Torso
+1 CLLargePulseLaser, Left Arm
+1 CLLargePulseLaser, Right Arm
+1 CLStreakSRM6, Right Torso, Ammo:15
+1 ISMachine Gun, Right Torso, Ammo:200
+1 ISMachine Gun, Left Torso
 
 Left Arm:
 Shoulder
@@ -70,11 +69,11 @@ CLLargePulseLaser
 -Empty-
 
 Left Torso:
+Heat Sink
+Heat Sink
 CLERMediumLaser
 CLERSmallLaser
-Machine Gun
--Empty-
--Empty-
+ISMachine Gun
 -Empty-
 -Empty-
 -Empty-
@@ -88,8 +87,8 @@ CLStreakSRM6
 CLStreakSRM6
 CLERMediumLaser
 CLERSmallLaser
-Machine Gun
-Clan Streak SRM 6 Ammo
+ISMachine Gun
+CLStreakSRM6 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -98,17 +97,17 @@ Clan Streak SRM 6 Ammo
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Engine
+Engine
+Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
-IS Ammo MG - Full
+Engine
+Engine
+Engine
+CLMG Ammo (200)
 -Empty-
 
 Head:
@@ -118,12 +117,6 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Leg:
 Hip
@@ -132,12 +125,6 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Leg:
 Hip
@@ -146,11 +133,3 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-

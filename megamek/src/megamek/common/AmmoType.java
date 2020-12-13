@@ -17,8 +17,12 @@ package megamek.common;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -143,6 +147,22 @@ public class AmmoType extends EquipmentType {
     public static final int T_BARRACUDA_T = 112;
     public static final int T_INFANTRY = 113;
     public static final int NUM_TYPES = 114;  //Should always be at the end with the highest number
+
+    /**
+     * Contains the {@code AmmoType}s that could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds).
+     */
+    private static final Integer[] ALLOWED_BY_TYPE_ARRAY = { AmmoType.T_LRM, AmmoType.T_LRM_PRIMITIVE, AmmoType.T_LRM_STREAK, AmmoType.T_LRM_TORPEDO,
+        AmmoType.T_LRM_TORPEDO_COMBO, AmmoType.T_SRM, AmmoType.T_SRM_ADVANCED, AmmoType.T_SRM_PRIMITIVE, AmmoType.T_SRM_STREAK, AmmoType.T_SRM_TORPEDO,
+        AmmoType.T_MRM, AmmoType.T_MRM_STREAK, AmmoType.T_ROCKET_LAUNCHER, AmmoType.T_EXLRM, AmmoType.T_PXLRM, AmmoType.T_HSRM, AmmoType.T_MML,
+        AmmoType.T_NLRM, AmmoType.T_MG, AmmoType.T_MG_LIGHT, AmmoType.T_MG_HEAVY, AmmoType.T_NAIL_RIVET_GUN, };
+
+    /**
+     * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds),
+     * and conceptually can share ammo.
+     * 
+     * NB: This is used in MekHQ.
+     */
+    public static final Set<Integer> ALLOWED_BY_TYPE = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ALLOWED_BY_TYPE_ARRAY)));
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -391,20 +411,6 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     *
-     * @param other the <code>Object</code> to compare to this one.
-     * @return <code>true</code> if the other is an <code>AmmoType</code> object
-     *         of the same <code>ammoType</code> as this object. N.B. different
-     *         munition types are still equal.
-     */
-    @Override
-    public boolean equals(Object other) {
-        return equalsAmmoTypeOnly(other) && (getRackSize() == ((AmmoType) other)
-                .getRackSize());
-    }
-
-    /**
      * When comparing <code>AmmoType</code>s, look at the ammoType only.
      *
      * @param other the <code>Object</code> to compare to this one.
@@ -416,45 +422,111 @@ public class AmmoType extends EquipmentType {
         if (!(other instanceof AmmoType)) {
             return false;
         }
-        // there a couple of flags that need to be checked
-        if (getAmmoType() == T_MML) {
-            if (hasFlag(F_MML_LRM) != ((AmmoType) other).hasFlag(F_MML_LRM)) {
+
+        AmmoType otherAmmoType = (AmmoType) other;
+
+        // There a couple of flags that need to be checked before we check
+        // on getAmmoType() strictly.
+        if (is(T_MML)) {
+            if (hasFlag(F_MML_LRM) != otherAmmoType.hasFlag(F_MML_LRM)) {
                 return false;
             }
         }
-        if (getAmmoType() == T_AR10) {
-            if (hasFlag(F_AR10_BARRACUDA) != ((AmmoType) other)
-                    .hasFlag(F_AR10_BARRACUDA)) {
+
+        if (is(T_AR10)) {
+            if (hasFlag(F_AR10_BARRACUDA) != otherAmmoType.hasFlag(F_AR10_BARRACUDA)) {
                 return false;
             }
-            if (hasFlag(F_AR10_WHITE_SHARK) != ((AmmoType) other)
-                    .hasFlag(F_AR10_WHITE_SHARK)) {
+            if (hasFlag(F_AR10_WHITE_SHARK) != otherAmmoType.hasFlag(F_AR10_WHITE_SHARK)) {
                 return false;
             }
-            if (hasFlag(F_AR10_KILLER_WHALE) != ((AmmoType) other)
-                    .hasFlag(F_AR10_KILLER_WHALE)) {
+            if (hasFlag(F_AR10_KILLER_WHALE) != otherAmmoType.hasFlag(F_AR10_KILLER_WHALE)) {
                 return false;
             }
-            if (hasFlag(F_NUCLEAR) != ((AmmoType) other)
-                    .hasFlag(F_NUCLEAR)) {
+            if (hasFlag(F_NUCLEAR) != otherAmmoType.hasFlag(F_NUCLEAR)) {
                 return false;
             }
         }
-        return getAmmoType() == ((AmmoType) other).getAmmoType();
+
+        return is(otherAmmoType.getAmmoType());
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = ammoType;
-        result = prime * result
-                + ((flags == null) ? 0 : flags.hashCode());
-        result = prime * result + rackSize;
-        return result;
+    /**
+     * Gets a value indicating whether or not this {@code AmmoType}
+     * is compatible with another {@code AmmoType}.
+     * 
+     * NB: this roughly means the same ammo type and munition type, but not rack size.
+     * 
+     * @param other The other {@code AmmoType} to determine compatibility with.
+     */
+    public boolean isCompatibleWith(AmmoType other) {
+        if (other == null) {
+            return false;
+        }
+
+        // If it isn't an allowed type, then nope!
+        if (!ALLOWED_BY_TYPE.contains(getAmmoType()) 
+                || !ALLOWED_BY_TYPE.contains(other.getAmmoType())) {
+            return false;
+        }
+
+        // MML Launchers, ugh.
+        if ((is(T_MML) || other.is(T_MML)) && (getMunitionType() == other.getMunitionType())) {
+            // LRMs...
+            if (is(T_MML) && hasFlag(F_MML_LRM) && other.is(T_LRM)) {
+                return true;
+            } else if (other.is(T_MML) && other.hasFlag(AmmoType.F_MML_LRM) && is(T_LRM)) {
+                return true;
+            }
+
+            // SRMs
+            if (is(T_MML) && !hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+                return true;
+            } else if (other.is(T_MML) && !other.hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+                return true;
+            }
+        }
+
+        // AR-10 Launchers, ugh.
+        /*if (getAmmoType() == T_AR10 || a2.getAmmoType() == T_AR10) {
+            // Barracuda
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_BARRACUDA) && a2.getAmmoType() == T_BARRACUDA) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_BARRACUDA) && getAmmoType() == T_BARRACUDA) {
+                result = true;
+            }
+            // Killer Whale
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_KILLER_WHALE) && a2.getAmmoType() == T_KILLER_WHALE) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_KILLER_WHALE) && getAmmoType() == T_KILLER_WHALE) {
+                result = true;
+            }
+            // White Shark
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_WHITE_SHARK) && a2.getAmmoType() == T_WHITE_SHARK) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_WHITE_SHARK) && getAmmoType() == T_WHITE_SHARK) {
+                result = true;
+            }
+        }*/
+
+        // General Launchers
+        if (is(other.getAmmoType()) && (getMunitionType() == other.getMunitionType())) {
+            return true;
+        }
+
+        return false;
     }
 
     public int getAmmoType() {
         return ammoType;
+    }
+
+    /**
+     * Gets a value indicating whether or not this is a certain ammo type.
+     * @param ammoType The ammo type to compare against.
+     */
+    public boolean is(int ammoType) {
+        return getAmmoType() == ammoType;
     }
 
     public long getMunitionType() {
@@ -15823,17 +15895,27 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         
-        Mounted currentAmmoBin = weapon.getLinked();
+        AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
         
-        boolean ammoOfSameType = weapon.getLinked().getType().equals(otherAmmo);
+        boolean ammoOfSameType = currentAmmoType.equals(otherAmmo);
         
-        boolean caselessLoaded = ((AmmoType) currentAmmoBin.getType()).getMunitionType() == AmmoType.M_CASELESS;
+        // MMLs can swap between different specific ammo types, so we have a special case check here
+        boolean mmlAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_MML &&
+                otherAmmo.getAmmoType() == AmmoType.T_MML &&
+                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
+        
+        // LBXs can swap between cluster and slug ammo types
+        boolean lbxAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX &&
+                otherAmmo.getAmmoType() == AmmoType.T_AC_LBX &&
+                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
+        
+        boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
         boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
         boolean caselessMismatch = caselessLoaded != otherBinCaseless;
         
         boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
-        boolean staticFeedMismatch = hasStaticFeed && (((AmmoType) currentAmmoBin.getType()).getMunitionType() != otherAmmo.getMunitionType());
+        boolean staticFeedMismatch = hasStaticFeed && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
         
-        return ammoOfSameType && !caselessMismatch && !staticFeedMismatch;
+        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
     }
 }

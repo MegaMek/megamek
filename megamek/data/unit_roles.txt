@@ -372,6 +372,8 @@ Bashkir Z:INTERCEPTOR
 Basilisk (Standard):BRAWLER
 Basilisk 2:BRAWLER
 Basilisk 3:STRIKER
+Basilisk ProtoMech (Quad) B:STRIKER
+Basilisk ProtoMech (Quad) (Standard):STRIKER
 Battle Cobra A:STRIKER
 Battle Cobra B:SNIPER
 Battle Cobra BTL-C-2O:BRAWLER
@@ -567,8 +569,8 @@ Bloodhound B3-HND:STRIKER
 Blue Flame BLF-21:SNIPER
 Blue Flame BLF-40:SNIPER
 Bluehawk Combat Support Fighter MSF-42:ATTACK_FIGHTER
-Boggart (Quad) 1:STRIKER
-Boggart (Quad) 2:STRIKER
+Boggart Ultraheavy ProtoMech 2:STRIKER
+Boggart Ultraheavy ProtoMech (Standard):STRIKER
 Bokkusu Support Trailer (Standard):JUGGERNAUT
 Bolla Stealth Tank (RotS) A:SNIPER
 Bolla Stealth Tank (RotS) B:MISSILE_BOAT
@@ -750,6 +752,7 @@ Centaur (Standard):MISSILE_BOAT
 Centaur 2:SCOUT
 Centaur 3:BRAWLER
 Centaur 4:STRIKER
+Centaur Z:MISSILE_BOAT
 Centaur Battle Armor (Standard):MISSILE_BOAT
 Centipede Scout Car (SRM):SCOUT
 Centipede Scout Car (Standard):SCOUT
@@ -879,6 +882,20 @@ Cizin Hover Tank (Standard):STRIKER
 Cizin Hover Tank (Support):STRIKER
 Clan Anti-Infantry Clan Jade Falcon Police:AMBUSHER
 Clan Assault Infantry Ghost Bear Heavy Solahma Infantry:AMBUSHER
+Clan Field Artillery (Arrow IV):AMBUSHER
+Clan Field Artillery (Sniper):AMBUSHER
+Clan Field Artillery (Thumper):AMBUSHER
+Clan Field Gunners (Gauss):AMBUSHER
+Clan Field Gunners (LBX10):AMBUSHER
+Clan Field Gunners (LBX2):AMBUSHER
+Clan Field Gunners (LBX20):AMBUSHER
+Clan Field Gunners (LBX5):AMBUSHER
+Clan Field Gunners (RAC2):AMBUSHER
+Clan Field Gunners (RAC5):AMBUSHER
+Clan Field Gunners (UAC10):AMBUSHER
+Clan Field Gunners (UAC2):AMBUSHER
+Clan Field Gunners (UAC20):AMBUSHER
+Clan Field Gunners (UAC5):AMBUSHER
 Clan Foot Infantry Ad Hoc Point:AMBUSHER
 Clan Foot Point (Flamer):AMBUSHER
 Clan Foot Point (LRM):AMBUSHER
@@ -886,6 +903,12 @@ Clan Foot Point (Laser):AMBUSHER
 Clan Foot Point (MG):AMBUSHER
 Clan Foot Point (Rifle):AMBUSHER
 Clan Foot Point (SRM):AMBUSHER
+Clan Foot Point (Anti-'Mech) (Flamer):AMBUSHER
+Clan Foot Point (Anti-'Mech) (Laser):AMBUSHER
+Clan Foot Point (Anti-'Mech) (LRM):AMBUSHER
+Clan Foot Point (Anti-'Mech) (MG):AMBUSHER
+Clan Foot Point (Anti-'Mech) (Rifle):AMBUSHER
+Clan Foot Point (Anti-'Mech) (SRM):AMBUSHER
 Clan Heavy Foot Infantry Ebon Keshik Point:AMBUSHER
 Clan Heavy Jump Infantry Heavy Infantry Point:AMBUSHER
 Clan Interface Armor (Standard):SCOUT
@@ -1094,6 +1117,7 @@ Crusader CRD-7W:MISSILE_BOAT
 Crusader CRD-8L:SKIRMISHER
 Crusader CRD-8S:SKIRMISHER
 Cuchulainn Support Armor (Clan Model):JUGGERNAUT
+Cuchulainn Support Armor (IS Model):JUGGERNAUT
 Cudgel CDG-1B:JUGGERNAUT
 Cudgel CDG-2A:JUGGERNAUT
 Cudgel CDG-2B:JUGGERNAUT
@@ -1675,7 +1699,7 @@ Ghost GST-10:SNIPER
 Ghost GST-11:SNIPER
 Ghost GST-50:STRIKER
 Ghost GST-90:STRIKER
-Giggins APC (Fire Support):SKIRMISHER
+Giggins APC (FIRE_SUPPORT):SKIRMISHER
 Giggins APC (Standard):SKIRMISHER
 Gladiator (Executioner) A:SKIRMISHER
 Gladiator (Executioner) B:SKIRMISHER
@@ -1701,10 +1725,10 @@ Gladius Medium Hover Tank (Standard):STRIKER
 Gladius Medium Hover Tank Mk II:STRIKER
 Glaive Medium Tank (MFB):SCOUT
 Glaive Medium Tank (Standard):SNIPER
-Glory Heavy Fire Support Vehicle (3090 Upgrade):JUGGERNAUT
-Glory Heavy Fire Support Vehicle (Arrow IV):MISSILE_BOAT
-Glory Heavy Fire Support Vehicle (Light Gauss):MISSILE_BOAT
-Glory Heavy Fire Support Vehicle (Standard):MISSILE_BOAT
+Glory Heavy FIRE_SUPPORT Vehicle (3090 Upgrade):JUGGERNAUT
+Glory Heavy FIRE_SUPPORT Vehicle (Arrow IV):MISSILE_BOAT
+Glory Heavy FIRE_SUPPORT Vehicle (Light Gauss):MISSILE_BOAT
+Glory Heavy FIRE_SUPPORT Vehicle (Standard):MISSILE_BOAT
 Gnome Battle Armor (LRM):MISSILE_BOAT
 Gnome Battle Armor (Standard):JUGGERNAUT
 Gnome Battle Armor (Upgrade) [Bearhunter]:JUGGERNAUT
@@ -1918,8 +1942,8 @@ Ha Otoko 2:BRAWLER
 Ha Otoko 3:MISSILE_BOAT
 Ha Otoko HKO-1C:MISSILE_BOAT
 Ha Otoko-HR (Standard):MISSILE_BOAT
-Hachiman Fire Support Tank (AAA):SNIPER
-Hachiman Fire Support Tank (Standard):MISSILE_BOAT
+Hachiman FIRE_SUPPORT Tank (AAA):SNIPER
+Hachiman FIRE_SUPPORT Tank (Standard):MISSILE_BOAT
 Hachiwara HCA-3T:SKIRMISHER
 Hachiwara HCA-4T:SKIRMISHER
 Hachiwara HCA-4U:SKIRMISHER
@@ -2309,9 +2333,9 @@ Ironsides IRN-SD1:DOGFIGHTER
 Ironsides IRN-SD1b:DOGFIGHTER
 Ironsides IRN-SD2:DOGFIGHTER
 Ironsides IRN-SD3:DOGFIGHTER
-Ishtar Heavy Fire Support Tank (Gauss):SNIPER
-Ishtar Heavy Fire Support Tank (Original):SNIPER
-Ishtar Heavy Fire Support Tank (Standard):SNIPER
+Ishtar Heavy FIRE_SUPPORT Tank (Gauss):SNIPER
+Ishtar Heavy FIRE_SUPPORT Tank (Original):SNIPER
+Ishtar Heavy FIRE_SUPPORT Tank (Standard):SNIPER
 Issus (Erika):FAST_DOGFIGHTER
 Issus (Standard):FAST_DOGFIGHTER
 Issus 2:FAST_DOGFIGHTER
@@ -2799,6 +2823,7 @@ Mad Cat (Timber Wolf) U:SNIPER
 Mad Cat (Timber Wolf) Z:SKIRMISHER
 Mad Cat III (Eve):SNIPER
 Mad Cat III (Standard):MISSILE_BOAT
+#Mad Cat III 2:SNIPER
 Mad Cat III 3:SNIPER
 Mad Cat III 4:SKIRMISHER
 Mad Cat III 5:SKIRMISHER
@@ -2990,7 +3015,7 @@ Maxim Heavy Hover Transport (BA Field Upgrade):STRIKER
 Maxim Heavy Hover Transport (C3M):STRIKER
 Maxim Heavy Hover Transport (C3S):STRIKER
 Maxim Heavy Hover Transport (Clan):STRIKER
-Maxim Heavy Hover Transport (Fire Support):MISSILE_BOAT
+Maxim Heavy Hover Transport (FIRE_SUPPORT):MISSILE_BOAT
 Maxim Heavy Hover Transport (SRM2):STRIKER
 Maxim Heavy Hover Transport (SRM4):STRIKER
 Maxim Heavy Hover Transport (Standard):STRIKER
@@ -3064,6 +3089,7 @@ Minotaur 3:MISSILE_BOAT
 Minotaur 4:SNIPER
 Minotaur P2:AMBUSHER
 Minotaur XP:JUGGERNAUT
+Minotaur Z:AMBUSHER
 Missile Artillery Infantry Kommando Special Forces:MISSILE_BOAT
 Mithras Light Tank (ERLL):SNIPER
 Mithras Light Tank (Standard):STRIKER
@@ -3106,9 +3132,9 @@ Morrigan 2:STRIKER
 Morrigan 3:STRIKER
 Morrigan 4:STRIKER
 Morrigan 5:SNIPER
-Morrigu Fire Support Vehicle (HAG):MISSILE_BOAT
-Morrigu Fire Support Vehicle (Laser):SNIPER
-Morrigu Fire Support Vehicle (Standard):MISSILE_BOAT
+Morrigu FIRE_SUPPORT Vehicle (HAG):MISSILE_BOAT
+Morrigu FIRE_SUPPORT Vehicle (Laser):SNIPER
+Morrigu FIRE_SUPPORT Vehicle (Standard):MISSILE_BOAT
 Mortar Carrier (Standard):MISSILE_BOAT
 Mortis MS-1A:SKIRMISHER
 Mortis MS-1P:SKIRMISHER
@@ -3624,12 +3650,13 @@ Preta C-PRT-OE Eminus:MISSILE_BOAT
 Preta C-PRT-OS Caelestis:STRIKER
 Preta C-PRT-OU Exanimus:SCOUT
 Prey Seeker PY-SR10:STRIKER
-Procyon (Quad):AMBUSHER
+Procyon ProtoMech (Quad):STRIKER
 Procyon (Standard):AMBUSHER
 Procyon 2:MISSILE_BOAT
 Procyon 3:MISSILE_BOAT
 Procyon 4:AMBUSHER
 Procyon 5:AMBUSHER
+Procyon Z:STRIKER
 Prometheus (Standard):SNIPER
 Protector Combat Support Fighter ASF-23:ATTACK_FIGHTER
 Prowler Multi-Terrain Vehicle (3140 Upgrade):SCOUT
@@ -3782,13 +3809,13 @@ Revenant UBM-2R2:MISSILE_BOAT
 Revenant UBM-2R3:SNIPER
 Revenant UBM-2R4:SCOUT
 Revenant UBM-2R7:SCOUT
-Rhino Fire Support Tank (Flamer):MISSILE_BOAT
-Rhino Fire Support Tank (Hagar):MISSILE_BOAT
-Rhino Fire Support Tank (MG):MISSILE_BOAT
-Rhino Fire Support Tank (ML):MISSILE_BOAT
-Rhino Fire Support Tank (Royal):MISSILE_BOAT
-Rhino Fire Support Tank (SL):MISSILE_BOAT
-Rhino Fire Support Tank (Standard):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (Flamer):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (Hagar):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (MG):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (ML):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (Royal):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (SL):MISSILE_BOAT
+Rhino FIRE_SUPPORT Tank (Standard):MISSILE_BOAT
 Riever F-100:ATTACK_FIGHTER
 Riever F-100a:ATTACK_FIGHTER
 Riever F-100b:ATTACK_FIGHTER
@@ -3837,6 +3864,7 @@ Roc (Standard):BRAWLER
 Roc 2:BRAWLER
 Roc 3:BRAWLER
 Roc 4:BRAWLER
+Roc Z:SKIRMISHER
 Rogue Bear Heavy Battle Armor (Hybrid):JUGGERNAUT
 Rogue Bear Heavy Battle Armor (Standard):AMBUSHER
 Rogue Bear Heavy Battle Armor (Upgrade):JUGGERNAUT
@@ -4329,8 +4357,9 @@ Sprint Scout Helicopter (Interdictor):SCOUT
 Sprint Scout Helicopter (Laser):SCOUT
 Sprint Scout Helicopter (Standard):SCOUT
 Sprint Scout Helicopter (Troop Transport):SCOUT
-Sprite (Standard):MISSILE_BOAT
-Sprite 2:SNIPER
+Sprite Ultraheavy ProtoMech 2:SNIPER
+Sprite Ultraheavy ProtoMech 3:STRIKER
+Sprite Ultraheavy ProtoMech (Standard):MISSILE_BOAT
 Stag II ST-24G:STRIKER
 Stag ST-14G:STRIKER
 Stalker II STK-9A:JUGGERNAUT
@@ -4489,6 +4518,7 @@ Svantovit Infantry Fighting Vehicle (ATM) 'Masada':STRIKER
 Svantovit Infantry Fighting Vehicle (Original):STRIKER
 Svantovit Infantry Fighting Vehicle (Standard):MISSILE_BOAT
 Svartalfa Ultra ProtoMech (Standard):BRAWLER
+Svartalfa Ultra ProtoMech (LRM Variant):MISSILE_BOAT
 Swallow Attack WIGE (Original):STRIKER
 Swallow Attack WIGE (Standard):STRIKER
 Swift C:INTERCEPTOR
@@ -4645,13 +4675,22 @@ Thunder THR-1L:SKIRMISHER
 Thunder THR-2L:SKIRMISHER
 Thunder THR-3L:MISSILE_BOAT
 Thunder THR-C4:SKIRMISHER
-Thunderbird Battle Armor (Upgrade)[LBX]:AMBUSHER
 Thunderbird Battle Armor [AP Gauss]:AMBUSHER
 Thunderbird Battle Armor [ER Laser]:AMBUSHER
 Thunderbird Battle Armor [Pulse Laser]:AMBUSHER
 Thunderbird Battle Armor [Upgrade](ER Laser):AMBUSHER
 Thunderbird Battle Armor [Upgrade](Pulse Laser):AMBUSHER
-Thunderbird II BattleArmor:AMBUSHER
+Thunderbird Battle Armor (DCMS) [AP Gauss]:AMBUSHER
+Thunderbird Battle Armor (DCMS) [Pulse Laser]:AMBUSHER
+Thunderbird Battle Armor (Upgrade)[LBX]:AMBUSHER
+Thunderbird Battle Armor (Upgrade - DCMS)[LBX]:AMBUSHER
+Thunderbird Battle Armor [Upgrade - DCMS](ER Laser):AMBUSHER
+Thunderbird Battle Armor [Upgrade - DCMS](Pulse Laser):AMBUSHER
+Thunderbird Battle Armor (Upgrade - DCMS)[LBX]:AMBUSHER
+Thunderbird Battle Armor [Upgrade - DCMS](ER Laser):AMBUSHER
+Thunderbird Battle Armor [Upgrade - DCMS](Pulse Laser):AMBUSHER
+Thunderbird II Battle Armor (RotS):AMBUSHER
+Thunderbird II Battle Armor:AMBUSHER
 Thunderbird TRB-D36:ATTACK_FIGHTER
 Thunderbird TRB-D36b:ATTACK_FIGHTER
 Thunderbird TRB-D46:ATTACK_FIGHTER
@@ -5475,7 +5514,7 @@ Warhammer WHM-9K:BRAWLER
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER
-Drift Shag:STRIKER
+Drift Shag (Standard):STRIKER
 Night Hawk NTK-2Q-EC:STRIKER
 Talon TLN-5W-EC:STRIKER
 Coyotl B:STRIKER
@@ -5484,17 +5523,17 @@ Coyotl D:STRIKER
 Phoenix Hawk PXH-1-EC:SKIRMISHER
 Enfield END-6J-EC:SKIRMISHER
 Fox CS-1:MISSILE_BOAT
-Fox:MISSILE_BOAT
+Fox (Standard):MISSILE_BOAT
 Omni-Corvis Prime:SNIPER
 Omni-Corvis A:BRAWLER
 Omni-Corvis B:MISSILE_BOAT
 Starslayer STY-2C-EC:SKIRMISHER
 Lynx C:SKIRMISHER
 Naja KTO-19b-EC:SKIRMISHER
-Naja:SKIRMISHER
-Sun Bear (Prototype A) Prime:BRAWLER
-Sun Bear (Prototype A) A:SKIRMISHER
-Sun Bear (Prototype A) B:MISSILE_BOAT
+Naja (Standard):SKIRMISHER
+Sun Bear Prime:BRAWLER
+Sun Bear A:SKIRMISHER
+Sun Bear B:MISSILE_BOAT
 Lancelot C:SNIPER
 Lancelot C 2:SNIPER
 Lupus Prime:MISSILE_BOAT
@@ -5503,26 +5542,50 @@ Lupus B:SKIRMISHER
 Lupus C:BRAWLER
 Lupus D:BRAWLER
 Vision Quest VQ-1NC:SNIPER
-Vision Quest:BRAWLER
+Vision Quest (Standard):BRAWLER
 Vision Quest 2:SNIPER
 Cestus CTS-6Y-EC:BRAWLER
 Exterminator EXT-4Db-EC:SKIRMISHER
 Excalibur EXC-B2b-EC:MISSILE_BOAT
 Minsk MNK-101:BRAWLER
-Minsk:BRAWLER
+Minsk (Standard):BRAWLER
 Minsk 2:BRAWLER
-Masauwu:BRAWLER
-Redback:SKIRMISHER
+Masauwu (Standard):BRAWLER
+Redback (Standard):SKIRMISHER
 Woodsman B:BRAWLER
 Woodsman C:BRAWLER
 Woodsman D:MISSILE_BOAT
 Spartan C:SKIRMISHER
 Emperor EMP-6A-EC:JUGGERNAUT
 Pulverizer PUL-3R:BRAWLER
-Pulverizer:BRAWLER
+Pulverizer (Standard):BRAWLER
 Devastator DVS-2-EC:JUGGERNAUT
-Storm Giant:MISSILE_BOAT
+Storm Giant (Standard):MISSILE_BOAT
 Storm Giant 2:JUGGERNAUT
+Chippewa IIC 2:FIRE_SUPPORT
+Goth A:ATTACK_FIGHTER
+Goth B:FIRE_SUPPORT
+Goth C:FIRE_SUPPORT
+Goth D:FIRE_SUPPORT
+Goth Prime:FIRE_SUPPORT
+Issedone A:FIRE_SUPPORT
+Issedone B:FIRE_SUPPORT
+Issedone C:FAST DOGFIGHTER
+Issedone D:FAST DOGFIGHTER
+Issedone Prime:FAST DOGFIGHTER
+Kublai E:FAST DOGFIGHTER
+Kublai F:FAST DOGFIGHTER
+Kublai G:FAST DOGFIGHTER
+Ogotai A:FAST DOGFIGHTER
+Ogotai B:FAST DOGFIGHTER
+Ogotai Prime:FAST DOGFIGHTER
+Pella:FAST DOGFIGHTER
+Qasar A:FAST DOGFIGHTER
+Qasar B:FIRE_SUPPORT
+Qasar C:FIRE_SUPPORT
+Qasar D:FAST DOGFIGHTER
+Qasar Prime:FAST DOGFIGHTER
+Tomahawk THK-63-EC:FAST DOGFIGHTER
 #ToS Kaumberg
 Copper SecurityMech CPK-65KM:AMBUSHER
 Commando COM-1AK:SCOUT

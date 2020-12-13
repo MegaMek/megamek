@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.util;
 
 import java.awt.BasicStroke;
@@ -55,7 +54,7 @@ public final class ImageUtil {
         GraphicsDevice gd = null;
         try {
             gd = ge.getDefaultScreenDevice();
-        } catch(HeadlessException he) {
+        } catch (HeadlessException ignored) {
         }
         GC = (null != gd) ? gd.getDefaultConfiguration() : null;
     }
@@ -88,10 +87,8 @@ public final class ImageUtil {
      * @return an image in a format best fitting for hardware acceleration, if possible
      */
     public static BufferedImage createAcceleratedImage(int w, int h) {
-        if(null == GC) {
-            return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        }
-        return GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
+        return (GC == null) ? new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
+                : GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
     }
     
     /** 
@@ -118,8 +115,7 @@ public final class ImageUtil {
      * @param img
      * @return
      */
-    public static BufferedImage getScaledImage(Image img, int newWidth,
-            int newHeight) {
+    public static BufferedImage getScaledImage(Image img, int newWidth, int newHeight) {
         return getScaledImage(img, newWidth, newHeight, IMAGE_SCALE_BICUBIC);
     }
 
@@ -169,7 +165,7 @@ public final class ImageUtil {
     }
 
     public static Image loadImageFromFile(String fileName) {
-        if(null == fileName) {
+        if (null == fileName) {
             return null;
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
@@ -211,10 +207,13 @@ public final class ImageUtil {
                 return null;
             }
             Image result = Toolkit.getDefaultToolkit().getImage(fileName);
-            if(null == result) {
+            if (result == null) {
                 return null;
             }
-            boolean isAnimated = waitUntilLoaded(result);
+            final boolean isAnimated = waitUntilLoaded(result);
+            if ((result.getWidth(null) < 0) || (result.getHeight(null) < 0)) {
+                return null;
+            }
             return isAnimated ? result : ImageUtil.createAcceleratedImage(result);
         }
     }
@@ -307,6 +306,7 @@ public final class ImageUtil {
             imgFileToAtlasMap = ImageAtlasMap.readFromFile();
         }
 
+        @Override
         public Image loadImage(String fileName) {
             // The tileset could be using the tiling syntax to flip the image
             // We may still need to look up the base file name in an atlas and then modify the image

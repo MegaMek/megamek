@@ -102,7 +102,6 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.icons.Camouflage;
-import megamek.common.logging.MMLogger;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -135,12 +134,8 @@ import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
-import megamek.common.weapons.autocannons.HVACWeapon;
-import megamek.common.weapons.defensivepods.BPodWeapon;
-import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
-import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
@@ -3182,16 +3177,19 @@ public class Server implements Runnable {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
+        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
+        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
+        
         GameTurn nextTurn = null;
         Entity nextEntity = null;
         while (game.hasMoreTurns() && (null == nextEntity)) {
             nextTurn = game.changeToNextTurn();
             nextEntity = game.getEntity(game.getFirstEntityNum(nextTurn));
+            if (minefieldPhase || artyPhase) {
+                break;
+            }
         }
-
-        boolean minefieldPhase = game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS;
-        boolean artyPhase = game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES;
-
+   
         // if there aren't any more valid turns, end the phase
         // note that some phases don't use entities
         if (((null == nextEntity) && !minefieldPhase) || ((null == nextTurn) && minefieldPhase)) {
@@ -6159,8 +6157,9 @@ public class Server implements Runnable {
                 }
             }
         }
+        // Units with velocity zero are treated like that had velocity two
         if (vel < 1) {
-            vel = 1;
+            vel = 2;
         }
 
         // deal crash damage only once
@@ -7704,7 +7703,7 @@ public class Server implements Runnable {
                             continueTurnFromFishtail = true;
                         }
                         curFacing = entity.getFacing();
-                        entity.setPosition(curPos);
+                        curPos = entity.getPosition();
                         entity.setSecondaryFacing(curFacing);
                         break;
                     }
@@ -8493,11 +8492,7 @@ public class Server implements Runnable {
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && !(md.isJumping()
                             && (entity.getJumpType() == Mech.JUMP_BOOSTER))
-                    && ((lastHex.getLevel()
-                            + entity.calcElevation(curHex, lastHex,
-                                    step.getElevation(), curClimbMode,
-                                    false)) != (curHex.getLevel()
-                                            + entity.getElevation()))
+                    && (lastHex.getLevel() + lastElevation != curHex.getLevel() + step.getElevation())
                     && !(entity instanceof VTOL)
                     && !(curClimbMode
                             && curHex.containsTerrain(Terrains.BRIDGE)
@@ -12798,6 +12793,8 @@ public class Server implements Runnable {
             MovePath stepBackwards = new MovePath(game, violation);
             stepForward.addStep(MoveStepType.FORWARDS);
             stepBackwards.addStep(MoveStepType.BACKWARDS);
+            stepForward.compile(getGame(), violation, false);
+            stepBackwards.compile(getGame(), violation, false);
             if ((direction != violation.getFacing())
                     && (direction != ((violation.getFacing() + 3) % 6))
                     && !entity.getIsJumpingNow()
@@ -12845,6 +12842,8 @@ public class Server implements Runnable {
                             MovePath mp = (MovePath) rp.packet.getData()[1];
                             // Move based on the feedback
                             if (mp != null) {
+                                mp.setGame(getGame());
+                                mp.setEntity(violation);
                                 // Report
                                 r = new Report(2352);
                                 r.indent(3);
@@ -15269,17 +15268,22 @@ public class Server implements Runnable {
     /**
      * Apply damage to mech for zweihandering (melee attack with both hands) as per
      * pg. 82, CamOps
-     * @param ae - the attacking entity
-     * @param missed - did the attack missed. If so PSR is necessary.
+     * 
+     * @param ae           - the attacking entity
+     * @param missed       - did the attack missed. If so PSR is necessary.
+     * @param criticalLocs - the locations for possible criticals, should be one or
+     *                     both arms depending on if it was an unarmed attack (both
+     *                     arms) or a weapon attack (the arm with the weapon).
      */
-    private void applyZweihanderSelfDamage(Entity ae, boolean missed) {
+    private void applyZweihanderSelfDamage(Entity ae, boolean missed, List<Integer> criticalLocs) {
         Report r = new Report(4022);
         r.subject = ae.getId();
         r.indent();
         r.addDesc(ae);
         addReport(r);
-        addReport(criticalEntity(ae, Mech.LOC_RARM, false, 0, 1));
-        addReport(criticalEntity(ae, Mech.LOC_LARM, false, 0, 1));
+        for (Integer loc : criticalLocs) {
+            addReport(criticalEntity(ae, loc, false, 0, 1));
+        }
         if(missed) {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
         }
@@ -15404,7 +15408,10 @@ public class Server implements Runnable {
             }
 
             if(paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(Mech.LOC_RARM);
+                criticalLocs.add(Mech.LOC_LARM);
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
 
             return;
@@ -15427,7 +15434,10 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(Mech.LOC_RARM);
+                criticalLocs.add(Mech.LOC_LARM);
+                applyZweihanderSelfDamage(ae, false, criticalLocs);
             }
 
             // And we're done!
@@ -15536,7 +15546,10 @@ public class Server implements Runnable {
         addNewLines();
 
         if(paa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false);
+            ArrayList<Integer> criticalLocs = new ArrayList<>();
+            criticalLocs.add(Mech.LOC_RARM);
+            criticalLocs.add(Mech.LOC_LARM);
+            applyZweihanderSelfDamage(ae, false, criticalLocs);
         }
         addNewLines();
 
@@ -16748,7 +16761,9 @@ public class Server implements Runnable {
                                                  "missed a flail/wrecking ball attack"));
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         }
@@ -16776,7 +16791,9 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 addReport(r);
                 if(caa.isZweihandering()) {
-                    applyZweihanderSelfDamage(ae, true);
+                    ArrayList<Integer> criticalLocs = new ArrayList<>();
+                    criticalLocs.add(caa.getClub().getLocation());
+                    applyZweihanderSelfDamage(ae, true, criticalLocs);
                 }
                 return;
             }
@@ -16806,7 +16823,9 @@ public class Server implements Runnable {
                 }
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -16879,7 +16898,9 @@ public class Server implements Runnable {
 
             }
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, true, criticalLocs);
             }
             return;
         }
@@ -16901,7 +16922,9 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             if(caa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false);
+                ArrayList<Integer> criticalLocs = new ArrayList<>();
+                criticalLocs.add(caa.getClub().getLocation());
+                applyZweihanderSelfDamage(ae, false, criticalLocs);
                 if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
                     // the club breaks
                     r = new Report(4150);
@@ -17107,7 +17130,9 @@ public class Server implements Runnable {
         }
 
         if(caa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false);
+            ArrayList<Integer> criticalLocs = new ArrayList<>();
+            criticalLocs.add(caa.getClub().getLocation());
+            applyZweihanderSelfDamage(ae, false, criticalLocs);
             if (caa.getClub().getType().hasSubType(MiscType.S_CLUB)) {
                 // the club breaks
                 r = new Report(4150);
@@ -30421,8 +30446,8 @@ public class Server implements Runnable {
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
-                endCurrentTurn(entity);
                 game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                endCurrentTurn(entity);
             }
         }
     }
@@ -32178,13 +32203,14 @@ public class Server implements Runnable {
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
             boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
-        if (!bldg.hasCFIn(coords)) {
-            return;
-        }
+        // sometimes, buildings that reach CF 0 decide against collapsing
+        // but we want them to go away anyway, as a building with CF 0 cannot stand
+        final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
+
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
         Report r;
-        final int phaseCF = bldg.getPhaseCF(coords);
+        
         // Get the Vector of Entities at these coordinates.
         final Vector<Entity> vector = positionMap.get(coords);
 
@@ -33238,14 +33264,18 @@ public class Server implements Runnable {
                                              int cachedMaxMPExpenditure) {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
-            if (entity instanceof Mech) {
+            if ((entity instanceof Mech) || (entity instanceof Tank)) {
                 if ((moveType == EntityMovementType.MOVE_WALK)
                         || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                         || (moveType == EntityMovementType.MOVE_RUN)
                         || (moveType == EntityMovementType.MOVE_SPRINT)
                         || (moveType == EntityMovementType.MOVE_VTOL_RUN)
                         || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                    if (step.getMpUsed() > cachedMaxMPExpenditure) {
+                    int limit = cachedMaxMPExpenditure;
+                    if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                        limit++;
+                    }
+                    if (step.getMpUsed() > limit) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(
@@ -33278,27 +33308,6 @@ public class Server implements Runnable {
                                 0, "jumped in high gravity"));
                         game.addExtremeGravityPSR(rollTarget);
                     }
-                }
-            } else if (entity instanceof Tank) {
-                if ((moveType == EntityMovementType.MOVE_WALK)
-                        || (moveType == EntityMovementType.MOVE_VTOL_WALK)
-                        || (moveType == EntityMovementType.MOVE_RUN)
-                        || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                        || (moveType == EntityMovementType.MOVE_SPRINT)
-                        || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                    // For Tanks, we need to check if the tank had
-                    // more MPs because it was moving along a road.
-                    if ((step.getMpUsed() > cachedMaxMPExpenditure)
-                        && !step.isOnlyPavement()) {
-                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
-                                step, moveType));
-                    } else if (step.getMpUsed() > (cachedMaxMPExpenditure + 1)) {
-                        // If the tank was moving on a road, he got a +1 bonus.
-                        // N.B. The Ask Precentor Martial forum said that a 4/6
-                        // tank on a road can move 5/7, **not** 5/8.
-                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
-                                step, moveType));
-                    } // End tank-has-road-bonus
                 }
             }
         }

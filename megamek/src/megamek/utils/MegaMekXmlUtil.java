@@ -23,7 +23,12 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -141,20 +146,52 @@ public class MegaMekXmlUtil {
         pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, String... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, int... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
     }
 
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, boolean... values) {
+        StringJoiner stringJoiner = new StringJoiner(",", "", "");
+        for (boolean value : values) {
+            stringJoiner.add(Boolean.toString(value));
+        }
+        pw1.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, long... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, double... values) {
+        if (values.length > 0) {
+            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
     }
 
     public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {

@@ -3,32 +3,32 @@ BattleMaster
 BLR-3M
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
-Source:Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3049
+source:Clan Invasion
+rules level:2
 
-Mass:85
-Engine:340 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:340 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Double
-Walk MP:4
-Jump MP:0
+heat sinks:18 Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:28
-RT Armor:28
-CT Armor:40
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:9
 Machine Gun, Left Arm
@@ -78,9 +78,9 @@ SRM 6
 Medium Laser
 Medium Laser
 Medium Laser (R)
+IS Ammo SRM-6
+IS Ammo SRM-6
 IS Ammo MG - Full
-IS Ammo SRM-6
-IS Ammo SRM-6
 ISCASE
 
 Right Torso:
@@ -154,3 +154,4 @@ Foot Actuator
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\BattleMaster3050.jpg
+

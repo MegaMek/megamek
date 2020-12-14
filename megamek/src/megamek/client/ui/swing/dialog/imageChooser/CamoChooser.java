@@ -19,7 +19,7 @@
 package megamek.client.ui.swing.dialog.imageChooser;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.common.IPlayer;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -88,7 +88,7 @@ public class CamoChooser extends AbstractIconChooser {
             if (individualCamo) {
                 result.add(entityOwnerCamo);
             } else {
-                for (String color: IPlayer.colorNames) {
+                for (String color: PlayerColors.COLOR_NAMES) {
                     result.add(createIcon(Camouflage.NO_CAMOUFLAGE, color));
                 }
             }

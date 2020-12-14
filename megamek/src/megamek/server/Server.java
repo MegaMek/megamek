@@ -1021,8 +1021,7 @@ public class Server implements Runnable {
         IPlayer newPlayer = new Player(connId, name);
         int colorInd = newPlayer.getColorIndex();
         Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements()
-               && (colorInd < IPlayer.colorNames.length)) {
+        while (players.hasMoreElements() && (colorInd < PlayerColors.COLOR_NAMES.length)) {
             final IPlayer p = players.nextElement();
             if (p.getId() == newPlayer.getId()) {
                 continue;
@@ -1036,7 +1035,7 @@ public class Server implements Runnable {
         }
         newPlayer.setColorIndex(colorInd);
         newPlayer.setCamoCategory(Camouflage.NO_CAMOUFLAGE);
-        newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
+        newPlayer.setCamoFileName(PlayerColors.COLOR_NAMES[colorInd]);
         newPlayer.setTeam(Math.min(team, 5));
         game.addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);
@@ -1052,7 +1051,7 @@ public class Server implements Runnable {
         // TODO : check for duplicate or reserved names
 
         // make sure colorIndex is unique
-        boolean[] colorUsed = new boolean[IPlayer.colorNames.length];
+        boolean[] colorUsed = new boolean[PlayerColors.COLOR_NAMES.length];
         for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
             final IPlayer otherPlayer = i.nextElement();
             if (otherPlayer.getId() != playerId) {

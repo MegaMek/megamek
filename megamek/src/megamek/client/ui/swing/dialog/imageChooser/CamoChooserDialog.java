@@ -18,6 +18,7 @@ package megamek.client.ui.swing.dialog.imageChooser;
 import java.awt.Window;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
@@ -85,7 +86,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         // This may be a color
         String item = entity.getOwner().getCamouflage().getFilename();
         if (entity.getOwner().getCamouflage().getCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
-            item = IPlayer.colorNames[entity.getOwner().getColorIndex()];
+            item = PlayerColors.COLOR_NAMES[entity.getOwner().getColorIndex()];
         }
         getChooser().setEntityOwnerCamo(getChooser()
                 .createIcon(entity.getOwner().getCamouflage().getCategory(), item));

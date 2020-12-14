@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import megamek.MegaMek;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -659,7 +660,7 @@ public class ScenarioLoader {
 
         // Validate CamoName
         if (Camouflage.NO_CAMOUFLAGE.equals(camoGroup)) {
-            for (String color : IPlayer.colorNames) {
+            for (String color : PlayerColors.COLOR_NAMES) {
                 if (camoName.equals(color)) {
                     validName = true;
                     break;

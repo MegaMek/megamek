@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Mechanized Tracked Point
+Clan Mechanized Tracked Squad
 </Name>
 
 <Model>
@@ -44,7 +44,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-4
+1
 </squadn>
 
 <secondn>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,23 +13,23 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Mechanized Tracked Point
+Clan Jump Squad
 </Name>
 
 <Model>
-(LRM)
+(SRM)
 </Model>
 
 <year>
-3065
+2815
 </year>
 
 <type>
-Clan Level 5
+Clan Level 2
 </type>
 
 <motion_type>
-Tracked
+Jump
 </motion_type>
 
 <Field Guns Equipment>
@@ -44,7 +44,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-4
+1
 </squadn>
 
 <secondn>
@@ -56,8 +56,12 @@ Auto-Rifle
 </Primary>
 
 <Secondary>
-LRM Launcher (FarShot)
+SRM Launcher (Hvy, One-Shot)
 </Secondary>
+
+<antimek>
+6
+</antimek>
 
 <armorKit>
 ClanKit

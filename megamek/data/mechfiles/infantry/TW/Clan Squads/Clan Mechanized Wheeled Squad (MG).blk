@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,23 +13,23 @@ Infantry
 </UnitType>
 
 <Name>
-Clan Mechanized Tracked Point
+Clan Mechanized Wheeled Squad
 </Name>
 
 <Model>
-(LRM)
+(MG)
 </Model>
 
 <year>
-3065
+2815
 </year>
 
 <type>
-Clan Level 5
+Clan Level 2
 </type>
 
 <motion_type>
-Tracked
+Wheeled
 </motion_type>
 
 <Field Guns Equipment>
@@ -44,7 +44,7 @@ Total Warfare - Succession Wars
 </squad_size>
 
 <squadn>
-4
+1
 </squadn>
 
 <secondn>
@@ -56,7 +56,7 @@ Auto-Rifle
 </Primary>
 
 <Secondary>
-LRM Launcher (FarShot)
+Machine Gun (Portable)
 </Secondary>
 
 <armorKit>

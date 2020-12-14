@@ -1,35 +1,35 @@
-Version:1.0
-Man O' War (Gargoyle)
+Version:1.1
+Gargoyle (Man O' War)
 C
 
 Config:Biped Omnimech
-techbase:Clan
-era:2945
-source:TRO 3050 - Succession Wars
-rules level:2
+TechBase:Clan
+Era:2945
+Source:TRO 3050 - Succession Wars
+Rules Level:2
 
-mass:80
-engine:400 XL (Clan) Engine(IS)
-structure:IS Standard
-myomer:Standard
+Mass:80
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
 
-heat sinks:16 Double
-base chassis heat sinks:16
-walk mp:5
-jump mp:0
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
+Walk MP:5
+Jump MP:0
 
-armor:Ferro-Fibrous(Clan)
-LA armor:23
-RA armor:23
-LT armor:24
-RT armor:24
-CT armor:30
-HD armor:9
-LL armor:24
-RL armor:24
-RTL armor:10
-RTR armor:10
-RTC armor:10
+Armor:Ferro-Fibrous(Clan)
+LA Armor:23
+RA Armor:23
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
 
 Weapons:8
 Ultra AC/20, Left Arm
@@ -130,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod (omnipod)
+CLAntiPersonnelPod (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -144,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod (omnipod)
+CLAntiPersonnelPod (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-

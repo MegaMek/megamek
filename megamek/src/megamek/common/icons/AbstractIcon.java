@@ -91,27 +91,28 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     /**
-     * @return the ImageIcon for the Image stored by the AbstractIcon
+     * @return the ImageIcon for the Image stored by the AbstractIcon. May be null for non-existent
+     * files
      */
-    public ImageIcon getImageIcon() {
+    public @Nullable ImageIcon getImageIcon() {
         Image image = getImage();
         return (image == null) ? null : new ImageIcon(image);
     }
 
-    public ImageIcon getImageIcon(int size) {
+    public @Nullable ImageIcon getImageIcon(int size) {
         Image image = getImage(size);
         return (image == null) ? null : new ImageIcon(image);
     }
 
-    public Image getImage() {
+    public @Nullable Image getImage() {
         return getImage(0, 0);
     }
 
-    public Image getImage(int size) {
+    public @Nullable Image getImage(int size) {
         return getImage(size, -1);
     }
 
-    public Image getImage(int width, int height) {
+    public @Nullable Image getImage(int width, int height) {
         return getImage(getBaseImage(), width, height);
     }
 

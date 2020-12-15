@@ -18,9 +18,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -37,7 +37,6 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -46,6 +45,7 @@ import megamek.common.IStartingPositions;
 import megamek.common.OffBoardDirection;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -96,6 +96,9 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         this.client = client;
         this.clientgui = clientgui;
         currentPlayerStartPos = client.getLocalPlayer().getStartingPos();
+        if (currentPlayerStartPos > 10) {
+            currentPlayerStartPos -= 10;
+        }
         
         fillInValues();
         
@@ -126,12 +129,8 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     }
     
     private JPanel botPanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-        result.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        result.add(new HeaderLabel("Bot Player"));
-        JPanel panContent = new JPanel(new FlowLayout());
-        panContent.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel result = new OptionPanel("Bot Player");
+        Content panContent = new Content(new FlowLayout());
         result.add(panContent);
         panContent.add(butBotSettings);
         butBotSettings.addActionListener(this);
@@ -139,54 +138,45 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
     }
     
     private JPanel startPanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-        result.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 15));
-        result.add(new HeaderLabel("Deployment Area"));
+        JPanel result = new OptionPanel("Deployment Area");
+        Content panContent = new Content(new GridLayout(1, 1));
+        result.add(panContent);
         setupStartGrid();
-        result.add(panStartButtons);
+        panContent.add(panStartButtons);
         return result;
     }
     
     private JPanel initiativePanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.Y_AXIS));
-        result.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        JLabel header2 = new JLabel("<HTML>Use this to give a player lore-based <BR>or other modifiers, e.g. a company <BR>initiative bonus.");
-        header2.setBorder(BorderFactory.createEmptyBorder(5, 30, 5, 10));
-        header2.setAlignmentX(Component.LEFT_ALIGNMENT);
-        result.add(new HeaderLabel("Initiative Modifier"));
-        result.add(header2);
-        
-        JPanel panContent = new JPanel(new GridLayout(1, 2));
-        panContent.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel result = new OptionPanel("Initiative Modifier");
+        Content panContent = new Content();
         result.add(panContent);
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.Y_AXIS));
         
-        panContent.add(labInit);
-        panContent.add(texInit);
+        JLabel textInfo = new JLabel("<HTML>Use this to give a player lore-based "
+                + "<BR>or other modifiers, e.g. a company <BR>initiative bonus.");
+        textInfo.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        textInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panContent.add(textInfo);
+        
+        Content init = new Content(new GridLayout(1, 2, 10, 5));
+        panContent.add(init);
+        init.add(labInit);
+        init.add(texInit);
         
         return result;
     }
     
     private JPanel minePanel() {
-        JPanel result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
-        result.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        result.add(new HeaderLabel("Minefields"));
-        
-        JPanel panContent = new JPanel(new GridLayout(4, 2, 10, 5));
-        panContent.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel result = new OptionPanel("Minefields");
+        Content panContent = new Content(new GridLayout(4, 2, 10, 5));
         result.add(panContent);
         
         panContent.add(labConventional);
         panContent.add(fldConventional);
-        
         panContent.add(labVibrabomb);
         panContent.add(fldVibrabomb);
-        
         panContent.add(labActive);
         panContent.add(fldActive);
-        
         panContent.add(labInferno);
         panContent.add(fldInferno);
         return result;
@@ -227,7 +217,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
         for (int i = 0; i < 11; i++) {
             String butText = "<HTML><P ALIGN=CENTER>";
-            if (isExclusiveDeployment()) {
+            if (isExclusiveDeployment(client.getGame())) {
                 final int pos = i;
                 if (players.stream().filter(p -> !p.equals(client.getLocalPlayer()))
                         .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()))) {
@@ -241,15 +231,17 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
         for (IPlayer player: players) {
             int pos = player.getStartingPos(); 
-            if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 10)) { 
+            if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) { 
                 String butText = "";
                 if (player.isEnemyOf(client.getLocalPlayer())) {
                     butText += UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getEnemyUnitColor());
-                    butText += "\u2BC1<FONT>";
+                    butText += "\u25A0<FONT>";
                 } else {
                     butText += UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getAllyUnitColor());
-                    butText += "\u2BC1<FONT>";
-//                    butText += "\u25A0<FONT>";
+                    butText += "\u25A0<FONT>";
+                }
+                if (pos > 10) {
+                    pos -= 10;
                 }
                 JButton button = butStartPos[pos];
                 button.setText(button.getText() + butText);
@@ -340,52 +332,41 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         }
     }
 
-    private static class HeaderLabel extends JLabel {
+    private static class Header extends JPanel {
         private static final long serialVersionUID = -6235772150005269143L;
-        HeaderLabel(String text) {
-            super(" \u2B9E " + text);
-            setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        Header(String text) {
+            super();
+            setLayout(new GridLayout(1, 1, 0, 0));
+            add(new JLabel("\u29C9  " + text));
+            setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+            setBackground(UIUtil.alternateTableBGColor());
+        }
+    }
+    
+    private static class Content extends JPanel {
+        Content(LayoutManager layout) {
+            this();
+            setLayout(layout);
+        }
+        Content() {
+            super();
+            setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
             setAlignmentX(Component.LEFT_ALIGNMENT);
         }
     }
     
-    
+    private static class OptionPanel extends JPanel {
+        OptionPanel(String header) {
+            super();
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            add(new Header(header));
+        }
+    }
     
     private void setStartPos() {
         final GameOptions gOpts = client.getGame().getOptions();
-        if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) {
-            if (currentPlayerStartPos == 0) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ExclusiveDeploy.title"),
-                        Messages.getString("ChatLounge.ExclusiveDeploy.msg"));
-                return;
-            }
-            for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e
-                    .hasMoreElements();) {
-                IPlayer player = e.nextElement();
-                if (player.getStartingPos() == 0) {
-                    continue;
-                }
-                // CTR and EDG don't overlap
-                if (((player.getStartingPos() == 9) && (currentPlayerStartPos == 10))
-                        || ((player.getStartingPos() == 10) && (currentPlayerStartPos == 9))) {
-                    continue;
-                }
-
-                // check for overlapping starting directions
-                if (((player.getStartingPos() == currentPlayerStartPos)
-                        || ((player.getStartingPos() + 1) == currentPlayerStartPos) || ((player
-                                .getStartingPos() - 1) == currentPlayerStartPos))
-                        && (player.getId() != client.getLocalPlayer()
-                        .getId())) {
-                    clientgui.doAlertDialog(
-                            Messages.getString("ChatLounge.OverlapDeploy.title"),
-                            Messages.getString("ChatLounge.OverlapDeploy.msg"));
-                    return;
-                }
-            }
-        }
         if (gOpts.booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
                 && (currentPlayerStartPos > 0) && (currentPlayerStartPos <= 9)) {
             currentPlayerStartPos += 10;
@@ -457,41 +438,5 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         }
     }
 
-    /** 
-     * Returns true when double blind and exclusive deployment is on,
-     * meaning that player's deployment zones may not overlap.
-     */
-    private boolean isExclusiveDeployment() {
-        final GameOptions gOpts = client.getGame().getOptions();
-        return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
-    }
-    
-    /** 
-     * Returns true when the two starting positions overlap, i.e.
-     * if they are equal or adjacent (e.g. E and NE, SW and S).
-     * ANY overlaps all others. 
-     */
-    private boolean startPosOverlap(int pos1, int pos2) {
-        if (pos1 == pos2) {
-            return true;
-        }
-        int a = Math.max(pos1, pos2);
-        int b = Math.min(pos1, pos2);
-        // Out of bounds values:
-        if (b < 0 || a > 10) {
-            return false;
-        }
-        // ANY overlaps all others, EDG overlaps all others but CTR
-        if (b == 0 || a == 9) {
-            return true;
-        }
-        // EDG and CTR don't overlap
-        if (a == 10 && b == 9) {
-            return false;
-        }
-        // the rest of the positions overlap if they're 1 apart
-        return (a - b == 1);
-    }
 
 }

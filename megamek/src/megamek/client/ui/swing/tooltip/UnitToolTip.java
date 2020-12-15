@@ -111,6 +111,7 @@ public final class UnitToolTip {
     // Remove bot with loaded units breaks...
     //TODO: Player removal with loaded units rbeaks the game
     //TODO: Table sorter not updated when it was prohibited and changed 
+    //TODO: sorting use the UIManager char for ascending/descending
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

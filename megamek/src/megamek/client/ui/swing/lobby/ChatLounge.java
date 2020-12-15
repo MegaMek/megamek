@@ -2714,7 +2714,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 result.append("<BR>" + IPlayer.teamNames[player.getTeam()] + "</FONT>");
                 result.append(guiScaledFontHTML());
                 result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                if (!isValidStartPos(clientgui.getClient().getGame(), player.getStartingPos())) {
+                if (!isValidStartPos(clientgui.getClient().getGame(), player)) {
                     result.append(guiScaledFontHTML(uiYellow())); 
                     result.append(MekTableCellFormatter.WARNING_SIGN + "</FONT>");
                 }

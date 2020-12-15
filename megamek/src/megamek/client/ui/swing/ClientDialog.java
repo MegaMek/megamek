@@ -163,6 +163,7 @@ public class ClientDialog extends JDialog {
         if (isScaling && b) {
             UIUtil.adjustDialog(getContentPane());
             pack();
+            center();
         }
         super.setVisible(b);
     }

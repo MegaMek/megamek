@@ -18,10 +18,12 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,6 +41,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import megamek.client.ui.swing.ClientGUI;
@@ -148,6 +151,27 @@ public final class UIUtil {
         } else {
             return "";
         }
+    }
+    
+    /** 
+     * Returns a UIManager Color that can be used as an alternate row color in a table
+     * to offset each other row.
+     */
+    public static Color alternateTableBGColor() {
+        Color result = UIManager.getColor("Table.alternateRowColor");
+        if (result != null) {
+            return result;
+        }
+        result = UIManager.getColor("controlHighlight");
+        if (result != null) {
+            return result;
+        }
+        result = UIManager.getColor("Table.background");
+        if (result != null) {
+            return result;
+        }
+        // The really last fallback position
+        return uiGray();
     }
     
     /** 
@@ -286,6 +310,14 @@ public final class UIUtil {
                 Border border = panel.getBorder();
                 if ((border != null) && (border instanceof TitledBorder)) {
                     ((TitledBorder)border).setTitleFont(scaledFont);
+                }
+                if ((border != null) && (border instanceof EmptyBorder)) {
+                    Insets i = ((EmptyBorder)border).getBorderInsets();
+                    int top = scaleForGUI(i.top);
+                    int bottom = scaleForGUI(i.bottom);
+                    int left = scaleForGUI(i.left);
+                    int right = scaleForGUI(i.right);
+                    panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
                 adjustDialog((JPanel)comp);
             }

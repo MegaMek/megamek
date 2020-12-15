@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.16 (RC2)-SNAPSHOT
+
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game
 + Issue #1449: Zweihander SPA incorrectly applies critical damage

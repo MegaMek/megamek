@@ -160,23 +160,23 @@ public class MekTableModel extends AbstractTableModel {
         playerCells.add(playerCellContent(entity));
 
         IPlayer owner = ownerOf(entity);
-        boolean hideEntity = !owner.equals(clientGui.getClient().getLocalPlayer())
+        boolean hideEntity = owner.isEnemyOf(clientGui.getClient().getLocalPlayer())
                 && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             unitTooltips.add(null);
             pilotTooltips.add(null);
         } else {
-            MapSettings mset = chatLounge.getMapSettings();
+            MapSettings mset = chatLounge.mapSettings;
             IPlayer lPlayer = clientGui.getClient().getLocalPlayer();
             unitTooltips.add("<HTML>" + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset));
             pilotTooltips.add("<HTML>" + PilotToolTip.getPilotTipDetailed(entity));
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         if (chatLounge.isCompact()) {
-            unitCells.add(MekTableCellFormatter.formatUnitCompact(entity, hideEntity, chatLounge.getMapSettings().getMedium()));
+            unitCells.add(MekTableCellFormatter.formatUnitCompact(entity, hideEntity, chatLounge.mapSettings.getMedium()));
             pilotCells.add(MekTableCellFormatter.formatPilotCompact(entity.getCrew(), hideEntity, rpgSkills));
         } else {
-            unitCells.add(MekTableCellFormatter.formatUnitFull(entity, hideEntity, chatLounge.getMapSettings().getMedium()));
+            unitCells.add(MekTableCellFormatter.formatUnitFull(entity, hideEntity, chatLounge.mapSettings.getMedium()));
             pilotCells.add(MekTableCellFormatter.formatPilotFull(entity, hideEntity));
         }
 
@@ -284,7 +284,7 @@ public class MekTableModel extends AbstractTableModel {
             }
             
             IPlayer owner = ownerOf(entity);
-            boolean showAsUnknown = !owner.equals(clientGui.getClient().getLocalPlayer())
+            boolean showAsUnknown = owner.isEnemyOf(clientGui.getClient().getLocalPlayer())
                     && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
             

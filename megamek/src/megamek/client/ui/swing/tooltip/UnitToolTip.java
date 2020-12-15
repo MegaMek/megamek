@@ -81,7 +81,7 @@ public final class UnitToolTip {
     // gui scale various dialogs: connect/host/planetary conditions/randommap/mapsize
     // gui scale popups: player list, mek list
     // Player toolrip notes You and Your Bot
-    //TODO: same team should see through blind drop
+    // same team should see through blind drop
     // renew the TT when mouseing over the same units... -> shows ID in unit TT
     // in the unit selector, the text filter gets cursor directly and content is marked
     // constant tooltip recalc calling BV() all the time in the mek list -> bad
@@ -89,23 +89,28 @@ public final class UnitToolTip {
     //TODO: Show ID for loader
     //TODO: When resizing table columns, dont switch sorter
     // extract Mektablemodel, mektablepopup, mektableformatter, package lobby
-    //TODO: Search Game Options switch legacy unoff.
+    // Search Game Options switch legacy unoff.
     //TODO: debug hotloading improved lrms
     //TODO: Squadron Pilot name?
     // Add developer quicksave and quickload Ctrl-S/L. Will save to quicksave.sav.gz, assumes no PW, no registering on load
     // Tooltip shows Hotload and Burst MG mode (format better!)
     //TODO: squadron show actual fighters in them (icon)?
-    //TODO: when loading mul, note temporary ID to get loaded units corect
     // Button Player Settings, Bot Settings, 
     // remove popup on players
     //TODO: add init and mindefields to table?
     // dont show hotload as valid in popup for clan wps
-    //TODO: Add confirm dlg for delete
+    // Add confirm dlg for delete
     //TODO: TacOps/BMM minefields setting should affect lobby player table and player config
     //TODO: remove path from board list
     // unit selector remember sizes #2428
-    //TODO: add dialog before delete
-    //TODO: hide deployment info for loaded units
+    // add dialog before delete
+    // hide deployment info for loaded units
+    // blind drop unit display "Medium Support Vehcles Vehicle...correction, generall< more specific (Light Vehicle)
+    // corrected conventional fighter weight classes, use the same as ASF (50t = medium)
+    //TODO: Mark a carrier and an unrelated unit, select offload -> doesnt work; mark carrier alone: works
+    // Remove bot with loaded units breaks...
+    //TODO: Player removal with loaded units rbeaks the game
+    //TODO: Table sorter not updated when it was prohibited and changed 
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

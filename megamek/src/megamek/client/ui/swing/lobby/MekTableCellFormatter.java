@@ -33,6 +33,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.MapSettings;
+import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.VTOL;
@@ -48,7 +49,7 @@ public class MekTableCellFormatter {
     private static final String LOADED_SIGN = " \u26DF ";
     private static final String UNCONNECTED_SIGN = " \u26AC";
     private static final String CONNECTED_SIGN = " \u26AF ";
-    private static final String WARNING_SIGN = " \u26A0 ";
+    public static final String WARNING_SIGN = " \u26A0 ";
 
     /** 
      * Creates and returns the display content of the Unit column for the given entity and 
@@ -63,23 +64,29 @@ public class MekTableCellFormatter {
                 value += UIUtil.guiScaledFontHTML(UIUtil.uiGray());
                 value += MessageFormat.format("[{0}] </FONT>", entity.getId());
             }
-            String uType;
+            String uType = "";
             if (entity instanceof Infantry) {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof Protomech) {
                 uType = Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
                 uType = Messages.getString("ChatLounge.2");
+            } else if (entity.isSupportVehicle()) {
+                uType = entity.getWeightClassName();
+            } else if (entity.isFighter()) {
+                uType = entity.getWeightClassName() + Messages.getString("ChatLounge.4");
+            } else if (entity instanceof Mech) {
+                uType = entity.getWeightClassName() + Messages.getString("ChatLounge.3");
+            } else if (entity instanceof Tank) {
+                uType = entity.getWeightClassName() + Messages.getString("ChatLounge.6");
             } else {
                 uType = entity.getWeightClassName();
-                if (entity instanceof Tank) {
-                    uType += Messages.getString("ChatLounge.6");
-                }
             }
             return value + UIUtil.guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER;
         }
         
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
+        boolean isCarried = entity.getTransportId() != Entity.NONE;
         
         // Signs before the unit name
         // ID
@@ -108,7 +115,7 @@ public class MekTableCellFormatter {
         }
         
         // Loaded unit
-        if (entity.getTransportId() != Entity.NONE) {
+        if (isCarried) {
             result.append(guiScaledFontHTML(uiGreen()) + LOADED_SIGN + "</FONT>");
         }
         
@@ -165,28 +172,30 @@ public class MekTableCellFormatter {
         }
         
         // Loaded onto another unit
-        if (entity.getTransportId() != Entity.NONE) {
+        if (isCarried) {
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
             result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) +  "<I>(");
             result.append(loader.getChassis() + ")</I></FONT>");
         }
 
-        // Hidden deployment
-        if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
-            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
-            result.append(Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>");
+        // Deployment info, doesn't matter when the unit is carried
+        if (!isCarried) {
+            if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
+                result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+                result.append(Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>");
+            }
+
+            if (entity.isHullDown()) {
+                result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+                result.append(Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>");
+            }
+
+            if (entity.isProne()) {
+                result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
+                result.append(Messages.getString("ChatLounge.compact.prone") + "</I></FONT>");
+            }
         }
-        
-        if (entity.isHullDown()) {
-            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
-            result.append(Messages.getString("ChatLounge.compact.hulldown") + "</I></FONT>");
-        }
-        
-        if (entity.isProne()) {
-            result.append(DOT_SPACER + UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>");
-            result.append(Messages.getString("ChatLounge.compact.prone") + "</I></FONT>");
-        }
-        
+
         if (entity.countPartialRepairs() > 0) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiLightRed()));
             result.append("Partial Repairs</FONT>");
@@ -208,19 +217,28 @@ public class MekTableCellFormatter {
 
         // Starting values for Altitude / Velocity / Elevation
         if (entity.isAero()) {
-            result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
             Aero aero = (Aero) entity;
-            result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
-            result.append(aero.getCurrentVelocity());
-            if (mapType != MapSettings.MEDIUM_SPACE) {
-                result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
-                result.append(aero.getAltitude());
-            } 
-            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
-                result.append(aero.getCurrentFuel());
+            if (isCarried) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                    result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>");
+                    result.append(Messages.getString("ChatLounge.compact.fuel") + ": ");
+                    result.append(aero.getCurrentFuel());
+                    result.append("</I></FONT>");
+                }
+            } else {
+                result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
+                result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
+                result.append(aero.getCurrentVelocity());
+                if (mapType != MapSettings.MEDIUM_SPACE) {
+                    result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
+                    result.append(aero.getAltitude());
+                } 
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                    result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
+                    result.append(aero.getCurrentFuel());
+                }
+                result.append("</I></FONT>");
             }
-            result.append("</I></FONT>");
         } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>");
             result.append(Messages.getString("ChatLounge.compact.elevation") + ": ");
@@ -246,16 +264,21 @@ public class MekTableCellFormatter {
         if (blindDrop) {
             value += DOT_SPACER;
             if (entity instanceof Infantry) {
-                value += Messages.getString("ChatLounge.0"); 
+                value += Messages.getString("ChatLounge.0");
             } else if (entity instanceof Protomech) {
-                value += Messages.getString("ChatLounge.1"); 
+                value += Messages.getString("ChatLounge.1");
             } else if (entity instanceof GunEmplacement) {
-                value += Messages.getString("ChatLounge.2"); 
+                value += Messages.getString("ChatLounge.2");
+            } else if (entity.isSupportVehicle()) {
+                value += entity.getWeightClassName();
+            } else if (entity.isFighter()) {
+                value += entity.getWeightClassName() + Messages.getString("ChatLounge.4");
+            } else if (entity instanceof Mech) {
+                value += entity.getWeightClassName() + Messages.getString("ChatLounge.3");
+            } else if (entity instanceof Tank) {
+                value += entity.getWeightClassName() + Messages.getString("ChatLounge.6");
             } else {
                 value += entity.getWeightClassName();
-                if (entity instanceof Tank) {
-                    value += Messages.getString("ChatLounge.6"); 
-                }
             }
             value += DOT_SPACER;
             return value;
@@ -268,6 +291,7 @@ public class MekTableCellFormatter {
                 value += carriedUnit.getId()+";";
             } 
 
+        boolean isCarried = entity.getTransportId() != Entity.NONE; 
         boolean hasWarning = false;
         boolean hasCritical = false;
         // General (Yellow) Warnings
@@ -444,7 +468,7 @@ public class MekTableCellFormatter {
         }
 
         // Loaded onto transport
-        if (entity.getTransportId() != Entity.NONE) {
+        if (isCarried) {
             if (subsequentElement) {
                 value += DOT_SPACER;
             }
@@ -452,33 +476,35 @@ public class MekTableCellFormatter {
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
             value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + LOADED_SIGN;
             value += "<I> aboard " + loader.getChassis() + "</I></FONT>";
-        }
-        
-        if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
-            if (subsequentElement) {
-                value += DOT_SPACER;
+            
+        } else { // Hide deployment info when a unit is carried
+            
+            if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
+                if (subsequentElement) {
+                    value += DOT_SPACER;
+                }
+                subsequentElement = true;
+                value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
+                value += Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>";
             }
-            subsequentElement = true;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>";
-        }
-        
-        if (entity.isHullDown()) {
-            if (subsequentElement) {
-                value += DOT_SPACER;
+
+            if (entity.isHullDown()) {
+                if (subsequentElement) {
+                    value += DOT_SPACER;
+                }
+                subsequentElement = true;
+                value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
+                value += Messages.getString("ChatLounge.hulldown") + "</I></FONT>";
             }
-            subsequentElement = true;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.hulldown") + "</I></FONT>";
-        }
-        
-        if (entity.isProne()) {
-            if (subsequentElement) {
-                value += DOT_SPACER;
+
+            if (entity.isProne()) {
+                if (subsequentElement) {
+                    value += DOT_SPACER;
+                }
+                subsequentElement = true;
+                value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
+                value += Messages.getString("ChatLounge.prone") + "</I></FONT>";
             }
-            subsequentElement = true;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>";
-            value += Messages.getString("ChatLounge.prone") + "</I></FONT>";
         }
 
         if (entity.isOffBoard()) {
@@ -504,23 +530,36 @@ public class MekTableCellFormatter {
         
         // Starting values for Altitude / Velocity / Elevation
         if (entity.isAero()) {
-            if (subsequentElement) {
-                value += DOT_SPACER;
-            }
-            subsequentElement = true;
-            value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
             Aero aero = (Aero) entity;
-            value += Messages.getString("ChatLounge.compact.velocity") + ": ";
-            value += aero.getCurrentVelocity();
-            if (mapType != MapSettings.MEDIUM_SPACE) {
-                value += ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
-                value += aero.getAltitude();
-            } 
-            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                value += ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
-                value += aero.getCurrentFuel();
+            if (isCarried) {
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                    if (subsequentElement) {
+                        value += DOT_SPACER;
+                    }
+                    subsequentElement = true;
+                    value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
+                    value += Messages.getString("ChatLounge.compact.fuel") + ": ";
+                    value += aero.getCurrentFuel();
+                }
+                value += "</I></FONT>";   
+            } else {
+                if (subsequentElement) {
+                    value += DOT_SPACER;
+                }
+                subsequentElement = true;
+                value += UIUtil.guiScaledFontHTML(UIUtil.uiGreen()) + "<I>"; 
+                value += Messages.getString("ChatLounge.compact.velocity") + ": ";
+                value += aero.getCurrentVelocity();
+                if (mapType != MapSettings.MEDIUM_SPACE) {
+                    value += ", " + Messages.getString("ChatLounge.compact.altitude") + ": ";
+                    value += aero.getAltitude();
+                } 
+                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                    value += ", " + Messages.getString("ChatLounge.compact.fuel") + ": ";
+                    value += aero.getCurrentFuel();
+                }
+                value += "</I></FONT>";
             }
-            value += "</I></FONT>";
         } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
             if (subsequentElement) {
                 value += DOT_SPACER;

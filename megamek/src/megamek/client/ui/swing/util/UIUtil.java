@@ -16,6 +16,7 @@ package megamek.client.ui.swing.util;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
@@ -259,6 +261,11 @@ public final class UIUtil {
         return GUIPreferences.getInstance().getGUIScale() * value;
     }
     
+    public static Dimension scaleForGUI(Dimension dim) {
+        float scale = GUIPreferences.getInstance().getGUIScale();
+        return new Dimension((int)(scale * dim.width), (int)(scale * dim.height));
+    }
+    
     public static void adjustDialog(Container contentPane) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         Component[] allComps = contentPane.getComponents();
@@ -266,7 +273,8 @@ public final class UIUtil {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JCheckBox)
                     || (comp instanceof JTextField) || (comp instanceof JSlider)
-                    || (comp instanceof JSpinner) || (comp instanceof JRadioButton)) {
+                    || (comp instanceof JSpinner) || (comp instanceof JRadioButton)
+                    || (comp instanceof JTextArea)) {
                 comp.setFont(scaledFont);
             }
             if (comp instanceof JScrollPane 

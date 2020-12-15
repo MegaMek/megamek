@@ -26,6 +26,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import megamek.client.ui.swing.util.UIUtil;
+
 /**
  * A MegaMek Dialog box.
  */
@@ -37,6 +39,7 @@ public class ClientDialog extends JDialog {
     private static final int CONTAINER_BUFFER = 10;
 
     protected JFrame owner = null;
+    private boolean isScaling = false;
 
     /**
      * @param owner - the <code>Frame</code> that owns this dialog.
@@ -50,6 +53,12 @@ public class ClientDialog extends JDialog {
     public ClientDialog(JFrame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.owner = owner;
+    }
+    
+    public ClientDialog(JFrame owner, String title, boolean modal, boolean scale) {
+        super(owner, title, modal);
+        this.owner = owner;
+        isScaling = scale;
     }
 
     /**
@@ -147,6 +156,15 @@ public class ClientDialog extends JDialog {
         targetP.add(Box.createVerticalStrut(vGap), c);
         
         c.gridwidth = oldGridW;
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (isScaling && b) {
+            UIUtil.adjustDialog(getContentPane());
+            pack();
+        }
+        super.setVisible(b);
     }
 
 }

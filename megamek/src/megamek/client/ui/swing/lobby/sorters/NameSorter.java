@@ -1,5 +1,6 @@
-package megamek.client.ui.swing.lobby;
+package megamek.client.ui.swing.lobby.sorters;
 
+import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 
 /** A Lobby Mek Table sorter that sorts by unit name. */

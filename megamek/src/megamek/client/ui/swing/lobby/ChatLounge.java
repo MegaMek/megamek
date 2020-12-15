@@ -32,6 +32,8 @@ import java.awt.Point;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -40,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -48,21 +51,20 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.AbstractPhaseDisplay;
-import megamek.client.ui.swing.BotConfigDialog;
-import megamek.client.ui.swing.ClientDialog;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.CustomMechDialog;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.IMapSettingsObserver;
-import megamek.client.ui.swing.MapDimensionsDialog;
-import megamek.client.ui.swing.MechViewPanel;
-import megamek.client.ui.swing.MiniMap;
-import megamek.client.ui.swing.PlayerSettingsDialog;
-import megamek.client.ui.swing.RandomMapDialog;
-import megamek.client.ui.swing.UnitEditorDialog;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.dialog.MMConfirmDialog.Response;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.swing.lobby.sorters.BVSorter;
+import megamek.client.ui.swing.lobby.sorters.IDSorter;
+import megamek.client.ui.swing.lobby.sorters.MekTableSorter;
+import megamek.client.ui.swing.lobby.sorters.NameSorter;
+import megamek.client.ui.swing.lobby.sorters.PlayerBVSorter;
+import megamek.client.ui.swing.lobby.sorters.PlayerTonnageSorter;
+import megamek.client.ui.swing.lobby.sorters.PlayerTransportIDSorter;
+import megamek.client.ui.swing.lobby.sorters.TonnageSorter;
+import megamek.client.ui.swing.lobby.sorters.TypeSorter;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -74,6 +76,7 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 public class ChatLounge extends AbstractPhaseDisplay implements  
         ListSelectionListener, MouseListener, IMapSettingsObserver, IPreferenceChangeListener {
@@ -124,7 +127,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private PlayerTableModel playerModel;
 
     /* Map Settings Panel */
-    private MapSettings mapSettings;
+    MapSettings mapSettings;
     private JButton butConditions;
     private JPanel panGroundMap;
     private JPanel panSpaceMap;
@@ -362,29 +365,38 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             @Override
             public String getToolTipText(MouseEvent e) {
                 Point p = e.getPoint();
-                int rowIndex = rowAtPoint(p);
-                IPlayer player = playerModel.getPlayerAt(rowIndex);
+                IPlayer player = playerModel.getPlayerAt(rowAtPoint(p));
                 if (player == null) {
                     return null;
                 }
-                int mines = player.getNbrMFConventional() + player.getNbrMFActive() + player.getNbrMFInferno()
-                        + player.getNbrMFVibra();
                 
                 StringBuilder result = new StringBuilder("<HTML>");
                 result.append(guiScaledFontHTML(PlayerColors.getColor(player.getColorIndex())));
                 result.append(player.getName() + "</FONT>");
                 
                 result.append(guiScaledFontHTML());
-                if (clientgui.getBots().containsKey(player.getName()) ||
-                        ((clientgui.getClient() instanceof BotClient) 
-                                && (player.equals(clientgui.getClient().getLocalPlayer())))) {
+                if ((clientgui.getClient() instanceof BotClient) && player.equals(getLocalPlayer())) {
+                    result.append(" (This Bot)");
+                } else if (clientgui.getBots().containsKey(player.getName())) {
                     result.append(" (Your Bot)");
-                } else if (clientgui.getClient().getLocalPlayer().equals(player)) {
+                } else if (getLocalPlayer().equals(player)) {
                     result.append(" (You)");
                 }
                 result.append("<BR>");
-                result.append(Messages.getString("ChatLounge.tipPlayer", 
-                        "", player.getConstantInitBonus(), mines));
+                if (player.getConstantInitBonus() != 0) {
+                    String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
+                    result.append("Initiative Modifier: ").append(sign);
+                    result.append(player.getConstantInitBonus());
+                } else {
+                    result.append("No Initiative Modifier");
+                }
+                if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+//                    result.append(Messages.getString("ChatLounge.tipPlayer", 
+//                            "", player.getConstantInitBonus(), mines));
+                    int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
+                                + player.getNbrMFInferno() + player.getNbrMFVibra();
+                    result.append("<BR>Minefields: ").append(mines);
+                }
                 return result.toString();
             }
         };
@@ -1102,48 +1114,46 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     public void refreshEntities() {
         mekModel.clearData();
-        boolean localUnits = false;
-        System.out.println("Refresh Units! ");
-        ArrayList<Entity> allEntities = new ArrayList<Entity>();
-        for (Entity ent : clientgui.getClient().getEntitiesVector()) {
-            allEntities.add(ent);
-        }
+        System.out.println("Refresh Units! "); // DEBUG
+        ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
+//        for (Entity ent : clientgui.getClient().getEntitiesVector()) {
+//            allEntities.add(ent);
+//        }
 
         Collections.sort(allEntities, activeSorter);
 
+        boolean localUnits = false;
+        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        
         for (Entity entity : allEntities) {
             // Remember if the local player has units.
-            if (!localUnits && entity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+            if (!localUnits && entity.getOwner().equals(getLocalPlayer())) {
                 localUnits = true;
             }
 
-            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) { 
+            if (!opts.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) { 
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
 
-            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.EDGE)) { 
+            if (!opts.booleanOption(OptionsConstants.EDGE)) { 
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
 
-            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { 
+            if (!opts.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { 
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
-            if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) { 
+            if (!opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) { 
                 entity.clearPartialRepairs();
             }
-            // Handle the "Blind Drop" option.
-            if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
-                    && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) 
-                    && !clientgui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { 
-
-                mekModel.addUnit(entity);
-            } else if (entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
-                    || (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) 
-                    && !clientgui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) { 
+            
+            // Handle the "Blind Drop" option. In blind drop, units must be added
+            // but they will be obscured in the table. In real blind drop, units
+            // don't even get added to the table. Teams see their units in any case.
+            boolean localUnit = entity.getOwner().equals(getLocalPlayer());
+            boolean teamUnit = !entity.getOwner().isEnemyOf(getLocalPlayer());
+            boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+            if (localUnit || teamUnit || !realBlindDrop) {
                 mekModel.addUnit(entity);
             }
         }
@@ -1215,7 +1225,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void refreshTeams() {
         comboTeam.removeActionListener(lobbyListener);
-        comboTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer().getTeam());
+        comboTeam.setSelectedIndex(getLocalPlayer().getTeam());
         comboTeam.addActionListener(lobbyListener);
     }
 
@@ -1226,11 +1236,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void refreshDoneButton(boolean done) {
         butDone.setText(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone"));
-         //$NON-NLS-2$
     }
 
     private void refreshDoneButton() {
-        refreshDoneButton(clientgui.getClient().getLocalPlayer().isDone());
+        refreshDoneButton(getLocalPlayer().isDone());
     }
 
     /** Change the team of a controlled player (the local player or one of his bots). */
@@ -1269,27 +1278,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /**
-     * Load one unit into another in the chat lounge
-     *
-     * @param loadee
-     *            - an Entity that should be loaded
-     * @param loaderId
-     *            - the id of the entity that will load
+     * Embarks the given carried Entity onto the carrier given as carrierId.
      */
-    private void loader(Entity loadee, int loaderId, int bayNumber) {
-        Client c = clientgui.getBots().get(loadee.getOwner().getName());
-        if (c == null) {
-            c = clientgui.getClient();
-        }
-        Entity loader = clientgui.getClient().getGame().getEntity(loaderId);
-        if (loader == null) {
+    private void loadOnto(Entity carried, int carrierId, int bayNumber) {
+        Entity carrier = clientgui.getClient().getGame().getEntity(carrierId);
+        if (carrier == null || !isLoadable(carried, carrier)) {
             return;
         }
 
         // We need to make sure our current bomb choices fit onto the new
         // fighter
-        if (loader instanceof FighterSquadron) {
-            FighterSquadron fSquad = (FighterSquadron) loader;
+        if (carrier instanceof FighterSquadron) {
+            FighterSquadron fSquad = (FighterSquadron) carrier;
             // We can't use Aero.getBombPoints() because the bombs haven't been
             // loaded yet, only selected, so we have to count the choices
             int[] bombChoice = fSquad.getBombChoices();
@@ -1298,13 +1298,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 numLoadedBombs += bombChoice[i];
             }
             // We can't load all of the squadrons bombs
-            if (numLoadedBombs > ((IBomber)loadee).getMaxBombPoints()) {
+            if (numLoadedBombs > ((IBomber)carried).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
-        c.sendLoadEntity(loadee.getId(), loaderId, bayNumber);
+        
+        getLocalClient(carried).sendLoadEntity(carried.getId(), carrierId, bayNumber);
         // TODO: it would probably be a good idea to reset deployment
         // info to equal that of the loader, and disable it in customMechDialog
         // I tried doing this but I cant quite figure out the client/server
@@ -1313,10 +1314,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** 
      * Have the given entity disembark if it is carried by another unit.
-     * Entities that were modified and need an update to be sent to the server
-     * are added to the given updateCandidate set. 
+     * Entities that are modified and need an update to be sent to the server
+     * are added to the given updateCandidates. 
      */
-    private void disembark(Entity entity, Set<Entity> updateCandidates) {
+    private void disembark(Entity entity, Collection<Entity> updateCandidates) {
         if (entity.getTransportId() == Entity.NONE) {
             return;
         }
@@ -1334,7 +1335,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Entities that were modified and need an update to be sent to the server
      * are added to the given updateCandidate set. 
      */
-    private void disembarkDifferentOwner(Entity entity, Set<Entity> updateCandidates) {
+    private void disembarkDifferentOwner(Entity entity, Collection<Entity> updateCandidates) {
         if (entity.getTransportId() == Entity.NONE) {
             return;
         }
@@ -1348,7 +1349,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Have the given entity offload all the units it is carrying.
      * Returns a set of entities that need to be sent to the server. 
      */
-    private void offloadFrom(Entity entity, Set<Entity> updateCandidates) {
+    private void offloadFrom(Entity entity, Collection<Entity> updateCandidates) {
         for (Entity carriedUnit: entity.getLoadedUnits()) {
             disembark(carriedUnit, updateCandidates);
         } 
@@ -1358,86 +1359,73 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Have the given entity offload all units of different players it is carrying.
      * Returns a set of entities that need to be sent to the server. 
      */
-    private void offloadFromDifferentOwner(Entity entity, Set<Entity> updateCandidates) {
+    private void offloadFromDifferentOwner(Entity entity, Collection<Entity> updateCandidates) {
         for (Entity carriedUnit: entity.getLoadedUnits()) {
             if (ownerOf(carriedUnit) != ownerOf(entity)) {
                 disembark(carriedUnit, updateCandidates);
             }
         } 
     }
-
-
-    /** Change the given entity's controller to the player with ID newOwnerId. */
-    private void changeEntityOwner(Entity entity, int newOwnerId) {
-        if (!isEditable(entity) || entity.getOwnerId() == newOwnerId) {
+    
+    /** Change the given entities' controller to the player with ID newOwnerId. */
+    private void changeOwner(Collection<Entity> entities, int newOwnerId) {
+        IPlayer new_owner = clientgui.getClient().getGame().getPlayer(newOwnerId);
+        if (new_owner == null) {
             return;
         }
         
-        IPlayer new_owner = clientgui.getClient().getGame().getPlayer(newOwnerId);
-        // Store entities that need to be sent to the Server to avoid
-        // sending them twice which leads to dropped updates
+        // Store entities that need to be sent to the Server to avoid sending them twice
         Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.add(entity);
         
-        // If the unit is switching teams, offload units from it
-        // and have it disembark if it is being carried
-        if (entity.getOwner().getTeam() != new_owner.getTeam()) {
-            offloadFrom(entity, updateCandidates);
-            disembark(entity, updateCandidates);
+        // For any units that are switching teams, offload units from them
+        // and have them disembark if carried
+        for (Entity entity: editableEntities(entities)) {
+            if (entity.getOwner().isEnemyOf(new_owner)) {
+                offloadFrom(entity, updateCandidates);
+                disembark(entity, updateCandidates);
+            }
         }
 
-        // Finally, update them except for the entity itself
-        updateCandidates.remove(entity);
+        // Update any changed entities except for the entities changing owner (treated below)
+        updateCandidates.removeAll(entities);
         sendUpdate(updateCandidates);
         
-        // The entity itself must be updated from the correct client
-        Client formerClient = getLocalClient(entity);
-        entity.setOwner(new_owner);
-        formerClient.sendUpdateEntity(entity);
+        // The entities themselves must be updated from the correct client
+        // to make the update work when changing owner to a remote player
+        for (Entity entity: editableEntities(entities)) {
+            Client formerClient = getLocalClient(entity);
+            entity.setOwner(new_owner);
+            formerClient.sendUpdateEntity(entity);
+        }
     }
     
     /**
-     * swap pilots from one entity to another
-     *
-     * @param swapee
-     *            - an Entity that should be swapped from
-     * @param swapperId
-     *            - the id of the entity that should be swapped to
+     * Swaps pilots between the given entity (that was selected in the
+     * Mektable) and another entity of the given swapperId
      */
     private void swapPilots(Entity swapee, int swapperId) {
-        Client c = clientgui.getBots().get(swapee.getOwner().getName());
-        if (c == null) {
-            c = clientgui.getClient();
-        }
         Entity swapper = clientgui.getClient().getGame().getEntity(swapperId);
-        if (swapper == null) {
+        if (swapper == null || !isEditable(swapee) || !isEditable(swapper)) {
             return;
         }
         Crew temp = swapper.getCrew();
         swapper.setCrew(swapee.getCrew());
         swapee.setCrew(temp);
-        c.sendUpdateEntity(swapee);
-        c.sendUpdateEntity(swapper);
+        getLocalClient(swapee).sendUpdateEntity(swapee);
+        getLocalClient(swapper).sendUpdateEntity(swapper);
     }
 
-    /** Sends the entities in the given set to the Server. */
-    private void sendUpdate(Set<Entity> updateCandidates) {
-        for (Entity entity: updateCandidates) {
-            getLocalClient(entity).sendUpdateEntity(entity);
-        }
+    /** Sends the entities in the given Collection to the Server. */
+    private void sendUpdate(Collection<Entity> updateCandidates) {
+        updateCandidates.stream()
+                .filter(e -> isEditable(e))
+                .forEach(e -> getLocalClient(e).sendUpdateEntity(e));
     }
 
-    /** 
-     * Offloads/disembarks the given entities, updating all carriers/carried,
-     * and deletes the given entities.
-     */
+    /** Deletes the given entities, offloading/disembarking them first. */
     private void deleteEntities(Collection<Entity> entities) {
-        // Copy the list and remove all entities that cannot be deleted by the local player
-        HashSet<Entity> deletionCandidates = new HashSet<>(entities);
-        deletionCandidates.removeIf(e -> !isEditable(e));
-        if (deletionCandidates.isEmpty()) {
-            return;
-        }
+        // Only consider entities that can be deleted by the local player
+        Collection<Entity> deletionCandidates = editableEntities(entities);
         
         // Store entities that need to be sent to the Server to avoid sending them twice
         Set<Entity> updateCandidates = new HashSet<>();
@@ -1448,7 +1436,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             disembark(entity, updateCandidates);
         }
         
-        // Avoid updating the status of the morituri before removal
+        // Update the units, but not those that will be deleted anyway
         updateCandidates.removeAll(deletionCandidates);
         sendUpdate(updateCandidates);
 
@@ -1456,6 +1444,65 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         for (Entity entity: deletionCandidates) {
             getLocalClient(entity).sendDeleteEntity(entity.getId());
         }
+    }
+    
+    /** OK
+     * Sets random skills for the given entities, as far as they can
+     * be configured by the local player. 
+     */
+    private void setRandomSkills(Collection<Entity> entities) {
+        entities.stream().filter(e -> isEditable(e)).forEach(e -> {
+            Client c = getLocalClient(e);
+            for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                e.getCrew().setGunnery(skills[0], i);
+                e.getCrew().setPiloting(skills[1], i);
+                if (e.getCrew() instanceof LAMPilot) {
+                    skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
+                }
+            }
+            e.getCrew().sortRandomSkills();
+            getLocalClient(e).sendUpdateEntity(e);
+        });
+    }
+    
+    /** OK
+     * Sets random names for the given entities' pilots, as far as they can
+     * be configured by the local player. 
+     */
+    private void setRandomNames(Collection<Entity> entities) {
+        entities.stream().filter(e -> isEditable(e)).forEach(e -> {
+            for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                Gender gender = RandomGenderGenerator.generate();
+                e.getCrew().setGender(gender, i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
+            }
+            getLocalClient(e).sendUpdateEntity(e);
+        });
+    }
+    
+    /** OK
+     * Sets random callsigns for the given entities' pilots, as far as they can
+     * be configured by the local player. 
+     */
+    private void setRandomCallsigns(Collection<Entity> entities) {
+        entities.stream().filter(e -> isEditable(e)).forEach(e -> {
+            for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                e.getCrew().setNickname(RandomCallsignGenerator.getInstance().generate(), i);
+            }
+            getLocalClient(e).sendUpdateEntity(e);
+        });
+    }
+    
+    /** 
+     * Disembarks all given entities from any transports they are in. 
+     */
+    private void disembarkAll(Collection<Entity> entities) {
+        Set<Entity> updateCandidates = new HashSet<>();
+        entities.stream().filter(e -> isEditable(e)).forEach(e -> disembark(e, updateCandidates));
+        sendUpdate(updateCandidates);
     }
 
     /**
@@ -1486,7 +1533,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (editable) {
             client = clientgui.getBots().get(ownerName);
         } else {
-            editable |= ownerId == clientgui.getClient().getLocalPlayer().getId();
+            editable |= ownerId == getLocalPlayer().getId();
             client = clientgui.getClient();
         }
 
@@ -1532,6 +1579,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
+    /** 
+     * Confirms that the player really wants to delete the units, and deletes them.
+     * Assumes that entities contains at least one entity that the player can
+     * actually delete. 
+     */
+    private void deleteAction(Collection<Entity> entities) {
+        // Only count entities that the player can actually delete
+        HashSet<Entity> configurableEntities = new HashSet<>(entities);
+        configurableEntities.removeIf(e -> !isEditable(e));
+        int count = configurableEntities.size();
+        
+        if (count == 0) {
+            JOptionPane.showMessageDialog(clientgui.frame, "You cannot delete any of the selected units!");
+            return;
+        }
+        
+        String question = "Really delete ";
+        question += (count == 1) ? "one unit?" : configurableEntities.size() + " units?";
+        if (Response.YES == MMConfirmDialog.confirm(clientgui.getFrame(), "Delete Units...", question)) {
+            deleteEntities(entities);
+        }
+        
+    }
+
     /**
      *
      * @param entity
@@ -1542,7 +1613,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
+            editable |= entity.getOwnerId() == getLocalPlayer().getId();
             c = clientgui.getClient();
         }
         // When we customize a single entity's C3 network setting,
@@ -1621,19 +1692,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** 
      * Displays a CamoChooser to choose an individual camo for 
-     * the given vector of entities. The camo will only be applied
+     * the given entities. The camo will only be applied
      * to units configurable by the local player, i.e. his own units
      * or those of his bots.
      */
-    public void mechCamo(Vector<Entity> entities) {
-        if (entities.size() < 1) {
+    public void mechCamo(Collection<Entity> entities) {
+        Collection<Entity> editableEntities = editableEntities(entities);
+        if (editableEntities.isEmpty()) {
             return;
         }
 
+        // We need one of the selected units to base some tests on
+        Entity randomSelected = editableEntities.stream().findAny().get();
+        
         // Display the CamoChooser and await the result
         // The dialog is preset to the first selected unit's settings
         CamoChooser mcd = new CamoChooser(clientgui.getFrame());
-        int result = mcd.showDialog(entities.get(0));
+        int result = mcd.showDialog(randomSelected);
 
         // If the dialog was canceled or nothing was selected, do nothing
         if ((result == JOptionPane.CANCEL_OPTION) || (mcd.getSelectedItem() == null)) {
@@ -1643,33 +1718,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Choosing the player camo resets the units to have no 
         // individual camo.
         AbstractIcon selectedItem = mcd.getSelectedItem();
-        IPlayer owner = entities.get(0).getOwner();
+        IPlayer owner = randomSelected.getOwner();
         AbstractIcon ownerCamo = owner.getCamouflage();
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
         
         // Update all allowed entities with the camo
-        for (Entity ent : entities) {
-            if (isEditable(ent)) {
-                if (noIndividualCamo) {
-                    ent.setCamoCategory(null);
-                    ent.setCamoFileName(null);
-                } else {
-                    ent.setCamoCategory(selectedItem.getCategory());
-                    ent.setCamoFileName(selectedItem.getFilename());
-                }
-                getLocalClient(ent).sendUpdateEntity(ent);
+        for (Entity ent : editableEntities) {
+            if (noIndividualCamo) {
+                ent.setCamoCategory(null);
+                ent.setCamoFileName(null);
+            } else {
+                ent.setCamoCategory(selectedItem.getCategory());
+                ent.setCamoFileName(selectedItem.getFilename());
             }
+            getLocalClient(ent).sendUpdateEntity(ent);
         }
     }
     
     /** 
-     * Returns true when the given entity may be configured
-     * by the local player, i.e. if it is his own unit or one
-     * of his bot's units.
+     * Returns true when the given entity may be configured by the local player,
+     * i.e. if it is his own unit or one of his bot's units.
+     * <P>Note that this is more restrictive than the Server is. The Server
+     * accepts entity changes also for teammates so that entity updates that 
+     * signal transporting a teammate's unit don't get rejected. I feel that
+     * configuration other than transporting units should be limited to one's
+     * own units (and bots) though.
      */
     boolean isEditable(Entity entity) {
         return clientgui.getBots().containsKey(entity.getOwner().getName())
-                || (entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId());
+                || (entity.getOwnerId() == getLocalPlayer().getId());
     }
     
     /** 
@@ -1686,25 +1763,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    public void mechEdit(Entity entity) {
-        boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
-        Client c;
-        if (editable) {
-            c = clientgui.getBots().get(entity.getOwner().getName());
-        } else {
-            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
-            c = clientgui.getClient();
+    /** Shows the dialog which allows adding pre-existing damage to units. */
+    public void configureDamage(Entity entity) {
+        if (!isEditable(entity)) {
+            return;
         }
 
-        // display dialog
         UnitEditorDialog med = new UnitEditorDialog(clientgui.getFrame(), entity);
-        // med.setPlayer(c.getLocalPlayer());
         med.setVisible(true);
-        c.sendUpdateEntity(entity);
-        /*
-         * if (editable && med.isSelect()) { // send changes
-         * c.sendUpdateEntity(entity); }
-         */
+        getLocalClient(entity).sendUpdateEntity(entity);
     }
 
     public void customizePlayer() {
@@ -1823,22 +1890,103 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**
      * Pop up the dialog to load a mech
      */
-    private void loadMech() {
+    private void addUnit() {
         clientgui.getMechSelectorDialog().updateOptionValues();
         clientgui.getMechSelectorDialog().setVisible(true);
     }
-
-    public void loadFS(Vector<Integer> fighterIds) {
+    
+    /** OK
+     * Creates a fighter squadron from the given list of entities.
+     * Checks if all entities are fighters and if the number of entities
+     * does not exceed squadron capacity. Asks for a squadron name.
+     */
+    public void createSquadron(Collection<Entity> entities) {
+        if (!validateFightersForSquadron(entities)) {
+            return;
+        }
+        
+        // Obtain the IDs
+        Vector<Integer> fighterIds = 
+                new Vector<>(entities.stream().map(e -> e.getId()).collect(Collectors.toList()));
+        
+        // Make sure the number of fighters does not exceed squadron capacity
+        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        if ((!opts.booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+                && (fighterIds.size() > FighterSquadron.MAX_SIZE))
+                || (opts.booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+                && (fighterIds.size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
+            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.toomany"));
+            return;
+        } 
+        
+        // Ask for a squadron name
         String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
-            name = "Flying Circus";
+            name = "Alpha";
         }
+        
+        // Now, actually create the squadron
         FighterSquadron fs = new FighterSquadron(name);
-        fs.setOwner(clientgui.getClient().getGame().getEntity(fighterIds.firstElement()).getOwner());
+        fs.setOwner(createSquadronOwner(entities));
         clientgui.getClient().sendAddSquadron(fs, fighterIds);
     }
+    
+    private IPlayer createSquadronOwner(Collection<Entity> entities) {
+        if (entities.stream().anyMatch(e -> e.getOwner().equals(getLocalPlayer()))) {
+            return getLocalPlayer();
+        } else {
+            for (Entry<String, Client> en: clientgui.getClient().bots.entrySet()) {
+                IPlayer bot = en.getValue().getLocalPlayer();
+                if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
+                    return bot;
+                }
+            }
+        }
+        // Should not arrive here because that means that none of the entities are 
+        // editable by the local player.
+        MegaMek.getLogger().error("Could not find a suitable owner for creating a fighter squadron.");
+        return getLocalPlayer();
+    }
 
-    private void loadArmy() {
+    /** 
+     * Validates the selected units for fighter squadron creation. Returns true
+     * if they can form a squadron 
+     */
+    private boolean validateFightersForSquadron(Collection<Entity> entities) {
+        if (entities.size() == 0) {
+            return false;
+        }
+        if (!areAllied(entities) || !canEditAny(entities)) {
+            JOptionPane.showMessageDialog(clientgui.frame, "Enemy units cannot be transported!");
+            return false;
+        }
+        for (Entity e: entities) {
+            if (!e.isFighter()) {
+                JOptionPane.showMessageDialog(clientgui.frame, "Only aerospace and conventional fighters can join squadrons!");
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Returns true if no two of the given entities are enemies. This is
+     * true when all entities belong to a single player. If they belong to 
+     * different players, it is true when all belong to the same team and 
+     * that team is one of Teams 1 through 5 (not "No Team").
+     * <P>Returns true when entities is empty or has only one entity. The case of
+     * entities being empty should be considered by the caller.  
+     */
+    public boolean areAllied(Collection<Entity> entities) {
+        if (entities.size() == 0) {
+            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied.");
+            return true;
+        }
+        Entity randomEntry = entities.stream().findAny().get();
+        return entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
+    }
+
+    private void createArmy() {
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
@@ -1973,10 +2121,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             System.out.println("Action! " + ev.getSource());
             
             if (ev.getSource().equals(butAdd)) {
-                loadMech();
+                addUnit();
                 
             } else if (ev.getSource().equals(butArmy)) {
-                loadArmy();
+                createArmy();
                 
             } else if (ev.getSource().equals(butSkills)) {
                 loadRandomSkills();
@@ -2014,6 +2162,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     player.setName(bcd.getBotName());
                     clientgui.chatlounge.refreshPlayerInfo();
                 }
+                
             } else if (ev.getSource().equals(butOptions)) {
                 // Make sure the game options dialog is editable.
                 if (!clientgui.getGameOptionsDialog().isEditable()) {
@@ -2081,13 +2230,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     }
                     clientgui.getBots().put(bcd.getBotName(), c);
                 }
+                
             } else if (ev.getSource().equals(butRemoveBot)) {
                 Client c = getSelectedPlayer();
                 if ((c == null) || c.equals(clientgui.getClient())) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-                            Messages.getString("ChatLounge.SelectBo"));  //$NON-NLS-2$
+                            Messages.getString("ChatLounge.SelectBo"));
                     return;
                 }
+                // Delete units first, which safely disembarks and offloads them
+                deleteEntities(clientgui.getClient().getGame().getPlayerEntities(c.getLocalPlayer(), false));
                 c.die();
                 clientgui.getBots().remove(c.getName());
                 
@@ -2260,7 +2412,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // enforce exclusive deployment zones in double blind
         if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) 
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { 
-            int i = client.getLocalPlayer().getStartingPos();
+            int i = getLocalPlayer().getStartingPos();
             if (i == 0) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.ExclusiveDeploy.title"), 
                         Messages.getString("ChatLounge.ExclusiveDeploy.msg")); 
@@ -2279,7 +2431,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // check for overlapping starting directions
                 if (((player.getStartingPos() == i) || ((player.getStartingPos() + 1) == i)
                         || ((player.getStartingPos() - 1) == i))
-                        && (player.getId() != client.getLocalPlayer().getId())) {
+                        && (player.getId() != getLocalPlayer().getId())) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"), 
                             Messages.getString("ChatLounge.OverlapDeploy.msg")); 
                     return;
@@ -2290,8 +2442,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             List<String> players = new ArrayList<>();
-            if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
-                    && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
+            if ((game.getLiveCommandersOwnedBy(getLocalPlayer()) < 1)
+                    && (game.getEntitiesOwnedBy(getLocalPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
             }
             for (Client bc : clientgui.getBots().values()) {
@@ -2312,7 +2464,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         }
 
-        boolean done = !client.getLocalPlayer().isDone();
+        boolean done = !getLocalPlayer().isDone();
         client.sendDone(done);
         refreshDoneButton(done);
         for (Client client2 : clientgui.getBots().values()) {
@@ -2360,10 +2512,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * @return
      */
     boolean canConfigureDeploymentAll(Collection<Entity> entities) {
-        if (entities.size() == 1) {
-            return true;
-        }
-
         Set<Integer> owners = new HashSet<>();
         boolean containsTransportedUnit = false;
         for (Entity e : entities) {
@@ -2375,22 +2523,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     /**
      * Returns true if the given collection contains at least one entity
-     * that the local player can configure, i.e. is his own or belongs to
+     * that the local player can edit, i.e. is his own or belongs to
      * one of his bots. Does not check if the units are otherwise configured,
      * e.g. transported.
+     * <P>See also {@link #isEditable(Entity)}
      */
-    boolean canConfigureAny(Collection<Entity> entities) {
-        for (Entity entity: entities) {
-            if (isEditable(entity)) {
-                return true;
-            }
-        }
-        return false;
+    boolean canEditAny(Collection<Entity> entities) {
+        return entities.stream().anyMatch(e -> isEditable(e));
     }
     
     /**
      * Returns true if the local player can see all of the given entities.
-     * This true except when a blind drop option is active and one or more
+     * This is true except when a blind drop option is active and one or more
      * of the entities are not his own.
      */
     boolean canSeeAll(Collection<Entity> entities) {
@@ -2407,7 +2551,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     boolean entityInLocalTeam(Entity entity) {
-        return !clientgui.getClient().getLocalPlayer().isEnemyOf(entity.getOwner());
+        return !getLocalPlayer().isEnemyOf(entity.getOwner());
     }
     
 
@@ -2427,7 +2571,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             butCamo.setEnabled(selClient != null);
             butConfigPlayer.setEnabled(selClient != null);
             refreshCamos();
-            butRemoveBot.setEnabled(selClient instanceof BotClient);
+            // Disable the Remove Bot button for the "player" of a "Connect As Bot" client
+            butRemoveBot.setEnabled(selClient instanceof BotClient
+                    && !selClient.getLocalPlayer().equals(getLocalPlayer()));
             butBotSettings.setEnabled(selClient instanceof BotClient);
             if (selClient != null) {
                 IPlayer selPlayer = selClient.getLocalPlayer();
@@ -2451,9 +2597,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * true otherwise. When true, individual units of the given player should not be shown/saved/etc. 
      */ 
     private boolean unitsVisible(IPlayer player) {
-        boolean isBlindDrop = clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                || clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-        return player.equals(clientgui.getClient().getLocalPlayer()) || !isBlindDrop;
+        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        boolean isBlindDrop = opts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                || opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+        return player.equals(getLocalPlayer()) || !isBlindDrop;
     }
 
     /**
@@ -2539,7 +2686,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public Object getValueAt(int row, int col) {
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             IPlayer player = getPlayerAt(row);
-            boolean realBlindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) 
+            boolean realBlindDrop = !player.equals(getLocalPlayer()) 
                     && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
 
             if (col == COL_FORCE) {
@@ -2562,11 +2709,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else {
                 result.append(guiScaledFontHTML(0.1f));
                 result.append(player.getName() + "</FONT>");
-                boolean isEnemy = clientgui.getClient().getLocalPlayer().isEnemyOf(player);
+                boolean isEnemy = getLocalPlayer().isEnemyOf(player);
                 result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen()));
                 result.append("<BR>" + IPlayer.teamNames[player.getTeam()] + "</FONT>");
                 result.append(guiScaledFontHTML());
                 result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                if (!isValidStartPos(clientgui.getClient().getGame(), player.getStartingPos())) {
+                    result.append(guiScaledFontHTML(uiYellow())); 
+                    result.append(MekTableCellFormatter.WARNING_SIGN + "</FONT>");
+                }
             }
             return result.toString();
         }
@@ -2584,7 +2735,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 int row = tablePlayers.rowAtPoint(e.getPoint());
                 IPlayer player = playerModel.getPlayerAt(row);
                 if (player != null) {
-                    boolean isLocalPlayer = player.equals(clientgui.getClient().getLocalPlayer());
+                    boolean isLocalPlayer = player.equals(getLocalPlayer());
                     boolean isLocalBot = clientgui.getBots().get(player.getName()) != null;
                     if ((isLocalPlayer || isLocalBot)) {
                         customizePlayer();
@@ -2605,10 +2756,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                deleteEntities(entities);
+                deleteAction(entities);
             } else if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mechReadout(entities.get(0));
+                if (entities.size() == 1) {
+                    mechReadout(entities.get(0));
+                }
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
                 if (entities.size() == 1) {
@@ -2624,356 +2777,142 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         @Override
         public void actionPerformed(ActionEvent action) {
-            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
-            String command = st.nextToken();
-            int[] rows = mekTable.getSelectedRows();
-            int row = mekTable.getSelectedRow();
-            Entity entity = mekModel.getEntityAt(row);
-            Vector<Entity> entities = new Vector<>();
-            for (int value : rows) {
-                entities.add(mekModel.getEntityAt(value));
-            }
-            if (null == entity) {
+            Entity entity = mekModel.getEntityAt(mekTable.getSelectedRow());
+            List<Entity> entities = getSelectedEntities();
+            boolean oneSelected = entities.size() == 0;
+            if ((null == entity) || (entities.size() == 0)) {
                 return;
             }
-            if (command.equalsIgnoreCase("VIEW")) {
-                mechReadout(entity);
-            } else if (command.equalsIgnoreCase("BV")) {
-                mechBVDisplay(entity);
-            } else if (command.equalsIgnoreCase("DAMAGE")) {
-                mechEdit(entity);
-            } else if (command.equalsIgnoreCase("INDI_CAMO")) {
+            
+            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
+            String command = st.nextToken();
+            Set<Entity> updateCandidates = new HashSet<>();
+            int id;
+
+            switch (command) {
+            case "VIEW":
+                if (oneSelected) {
+                    mechReadout(entity);
+                }
+                break;
+
+            case "BV":
+                if (oneSelected) {
+                    mechBVDisplay(entity);
+                }
+                break;
+
+            case "DAMAGE":
+                if (oneSelected) {
+                    configureDamage(entity);
+                }
+                break;
+
+            case "INDI_CAMO":
                 mechCamo(entities);
-            } else if (command.equalsIgnoreCase("CONFIGURE")) {
-                customizeMech(entity);
-            } else if (command.equalsIgnoreCase("CONFIGURE_ALL")) {
+                break;
+
+            case "CONFIGURE":
+                if (oneSelected) {
+                    customizeMech(entity);
+                }
+                break;
+
+            case "CONFIGURE_ALL":
                 customizeMechs(entities);
-            } else if (command.equalsIgnoreCase("DELETE")) {
-                Client c = clientgui.getBots().get(entity.getOwner().getName());
-                if (c == null) {
-                    c = clientgui.getClient();
-                }
-                for (Entity e : entities) {
-                    // first unload any units from this unit
-                    if (e.getLoadedUnits().size() > 0) {
-                        for (Entity loaded : e.getLoadedUnits()) {
-                            e.unload(loaded);
-                            loaded.setTransportId(Entity.NONE);
-                            c.sendUpdateEntity(loaded);
-                        }
-                        c.sendUpdateEntity(e);
-                    }
-                    // unload this unit from any other units it might be loaded
-                    // onto
-                    if (entity.getTransportId() != Entity.NONE) {
-                        Entity loader = clientgui.getClient().getGame().getEntity(entity.getTransportId());
-                        if (null != loader) {
-                            loader.unload(entity);
-                            entity.setTransportId(Entity.NONE);
-                            c.sendUpdateEntity(loader);
-                            c.sendUpdateEntity(entity);
-                        }
-                    }
-                    c.sendDeleteEntity(e.getId());
-                }
-            } else if (command.equalsIgnoreCase("SKILLS")) {
-                Client c = clientgui.getBots().get(entity.getOwner().getName());
-                if (c == null) {
-                    c = clientgui.getClient();
-                }
-                for (Entity e : entities) {
-                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                        e.getCrew().setGunnery(skills[0], i);
-                        e.getCrew().setPiloting(skills[1], i);
-                        if (e.getCrew() instanceof LAMPilot) {
-                            skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                            ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
-                            ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
-                        }
-                    }
-                    e.getCrew().sortRandomSkills();
-                    c.sendUpdateEntity(e);
-                }
-            } else if (command.equalsIgnoreCase(NAME_COMMAND)) {
-                Client c = clientgui.getBots().get(entity.getOwner().getName());
-                if (c == null) {
-                    c = clientgui.getClient();
-                }
-                for (Entity e : entities) {
-                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        Gender gender = RandomGenderGenerator.generate();
-                        e.getCrew().setGender(gender, i);
-                        e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getOwner().getName()), i);
-                    }
-                    c.sendUpdateEntity(e);
-                }
-            } else if (command.equals(CALLSIGN_COMMAND)) {
-                Client c = clientgui.getBots().get(entity.getOwner().getName());
-                if (c == null) {
-                    c = clientgui.getClient();
-                }
-                for (Entity e : entities) {
-                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        e.getCrew().setNickname(RandomCallsignGenerator.getInstance().generate(), i);
-                    }
-                    c.sendUpdateEntity(e);
-                }
-            } else if (command.equalsIgnoreCase("LOAD")) {
-                StringTokenizer stLoad = new StringTokenizer(st.nextToken(), ":");
-                int id = Integer.parseInt(stLoad.nextToken());
-                int bayNumber = Integer.parseInt(stLoad.nextToken());
-                Entity loadingEntity = clientgui.getClient().getEntity(id);
-                boolean loadRear = false;
-                if (stLoad.hasMoreTokens()) {
-                    loadRear = Boolean.parseBoolean(stLoad.nextToken());
-                }
+                break;
+            
+            case "DELETE":
+                deleteAction(entities);
+                break;
 
-                double capacity;
-                boolean hasEnoughCargoCapacity;
-                String errorMessage = "";
-                if (bayNumber != -1) {
-                    Bay bay = loadingEntity.getBayById(bayNumber);
-                    if (null != bay) {
-                        double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
-                        capacity = bay.getUnused();
-                        hasEnoughCargoCapacity = loadSize <= capacity;
-                        errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
-                                " " + (int) bay.getUnusedSlots()
-                                + bay.getDefaultSlotDescription() + ".";
-                        // We're also using bay number to distinguish between front and rear locations
-                        // for protomech mag clamp systems
-                    } else if (loadingEntity.hasETypeFlag(Entity.ETYPE_MECH)
-                            && entities.get(0).hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                        capacity = 1;
-                        hasEnoughCargoCapacity = entities.size() == 1;
-                        errorMessage = Messages.getString("LoadingBay.protostoomany");
-                    } else {
-                        hasEnoughCargoCapacity = false;
-                        errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
-                    }
-                } else {
-                    HashMap<Long, Double> capacities, counts;
-                    capacities = new HashMap<>();
-                    counts = new HashMap<>();
-                    HashMap<Transporter, Double> potentialLoad = new HashMap<>();
-                    // Get the counts and capacities for all present types
-                    for (Entity e : entities) {
-                        long entityType = e.getEntityType();
-                        long loaderType = loadingEntity.getEntityType();
-                        double unitSize;
-                        if ((entityType & Entity.ETYPE_MECH) != 0) {
-                            entityType = Entity.ETYPE_MECH;
-                            unitSize = 1;
-                        } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
-                            entityType = Entity.ETYPE_INFANTRY;
-                            boolean useCount = true;
-                            if ((loaderType & Entity.ETYPE_TANK) != 0) {
-                                // This is a super hack... When getting
-                                // capacities, troopspace gives unused space in
-                                // terms of tons, and BattleArmorHandles gives
-                                // it in terms of unit count. If I call
-                                // getUnused, it sums these together, and is
-                                // meaningless, so we'll go through all
-                                // transporters....
-                                boolean hasTroopSpace = false;
-                                for (Transporter t : loadingEntity.getTransports()) {
-                                    if (t instanceof TankTrailerHitch) {
-                                        continue;
-                                    }
-                                    double loadWeight = e.getWeight();
-                                    if (potentialLoad.containsKey(t)) {
-                                        loadWeight += potentialLoad.get(t);
-                                    }
-                                    if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
-                                            && (loadWeight <= t.getUnused())) {
-                                        hasTroopSpace = true;
-                                        potentialLoad.put(t, loadWeight);
-                                        break;
-                                    }
-                                }
-                                if (hasTroopSpace) {
-                                    useCount = false;
-                                }
-                            }
-                            // TroopSpace uses tonnage
-                            // bays and BA handlebars use a count
-                            if (useCount) {
-                                unitSize = 1;
-                            } else {
-                                unitSize = e.getWeight();
-                            }
-                        } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
-                            entityType = Entity.ETYPE_PROTOMECH;
-                            unitSize = 1;
-                            // Loading using mag clamps; user can specify front or rear.
-                            // Make use of bayNumber field
-                            if ((loaderType & Entity.ETYPE_MECH) != 0) {
-                                bayNumber = loadRear? 1 : 0;
-                            }
-                        } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
-                            entityType = Entity.ETYPE_DROPSHIP;
-                            unitSize = 1;
-                        } else if ((entityType & Entity.ETYPE_JUMPSHIP) != 0) {
-                            entityType = Entity.ETYPE_JUMPSHIP;
-                            unitSize = 1;
-                        } else if ((entityType & Entity.ETYPE_AERO) != 0) {
-                            entityType = Entity.ETYPE_AERO;
-                            unitSize = 1;
-                        } else if ((entityType & Entity.ETYPE_TANK) != 0) {
-                            entityType = Entity.ETYPE_TANK;
-                            unitSize = 1;
-                        } else {
-                            unitSize = 1;
-                        }
-
-                        Double count = counts.get(entityType);
-                        if (count == null) {
-                            count = 0.0;
-                        }
-                        count = count + unitSize;
-                        counts.put(entityType, count);
-
-                        Double cap = capacities.get(entityType);
-                        if (cap == null) {
-                            cap = loadingEntity.getUnused(e);
-                            capacities.put(entityType, cap);
-                        }
-                    }
-                    hasEnoughCargoCapacity = true;
-                    capacity = 0;
-                    for (Long typeId : counts.keySet()) {
-                        double currCount = counts.get(typeId);
-                        double currCapacity = capacities.get(typeId);
-                        if (currCount > currCapacity) {
-                            hasEnoughCargoCapacity = false;
-                            capacity = currCapacity;
-                            String messageName;
-                            if (typeId == Entity.ETYPE_INFANTRY) {
-                                messageName = "LoadingBay.nonbaytoomanyInf";
-                            } else {
-                                messageName = "LoadingBay.nonbaytoomany";
-                            }
-                            errorMessage = Messages.getString(messageName, currCount,
-                                    Entity.getEntityTypeName(typeId), currCapacity);
-                        }
-                    }
-                }
-                if (hasEnoughCargoCapacity) {
-                    for (Entity e : entities) {
-                        loader(e, id, bayNumber);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(clientgui.frame, errorMessage, Messages.getString("LoadingBay.error"), // $NON-NLS-2$
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            } else if (command.equalsIgnoreCase("UNLOAD")) {
-                Set<Entity> updateCandidates = new HashSet<>();
+            case "SKILLS":
+                setRandomSkills(entities);
+                break;
+                
+            case NAME_COMMAND:
+                setRandomNames(entities);
+                break;
+                
+            case CALLSIGN_COMMAND:
+                setRandomCallsigns(entities);
+                break;
+                
+            case "LOAD":
+                load(entities, st);
+                break;
+                
+            case "UNLOAD":
+                disembarkAll(entities);
                 for (Entity e: entities) {
                     disembark(e, updateCandidates);
                 }
                 sendUpdate(updateCandidates);
-            } else if (command.equalsIgnoreCase("UNLOADALL")) {
-                Set<Entity> updateCandidates = new HashSet<>();
+                break;
+                
+            case "UNLOADALL":
                 offloadFrom(entity, updateCandidates);
                 sendUpdate(updateCandidates);
-            } else if (command.equalsIgnoreCase("UNLOADALLFROMBAY")) {
-                int id = Integer.parseInt(st.nextToken());
+                break;
+                
+            case "UNLOADALLFROMBAY":
+                id = Integer.parseInt(st.nextToken());
                 Bay bay = entity.getBayById(id);
-                Set<Entity> updateCandidates = new HashSet<>();
                 for (Entity loadee : bay.getLoadedUnits()) {
                     disembark(loadee, updateCandidates);
                 }
                 sendUpdate(updateCandidates);
-            } else if (command.equalsIgnoreCase("SQUADRON")) {
-                Vector<Integer> fighters = new Vector<Integer>();
-                for (Entity e : entities) {
-                    fighters.add(e.getId());
+                break;
+                
+            case "SQUADRON":
+                createSquadron(entities);
+                
+            case "SWAP":
+                if (oneSelected) {
+                    id = Integer.parseInt(st.nextToken());
+                    swapPilots(entity, id);
                 }
-                if ((!clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
-                        && (fighters.size() > FighterSquadron.MAX_SIZE))
-                        || (clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
-                        && (fighters.size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
-                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.toomany"),
-                            Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE); 
-                    // //$NON-NLS-2$
-                } else {
-                    loadFS(fighters);
-                }
-            } else if (command.equalsIgnoreCase("SWAP")) {
-                int id = Integer.parseInt(st.nextToken());
-                swapPilots(entity, id);
-            } else if (command.equalsIgnoreCase("CHANGE_OWNER")) {
-                // Code to swap entities to a player.
-                int id = Integer.parseInt(st.nextToken());
-                for (Entity e : entities) {
-                    changeEntityOwner(e, id);
-                }
-            } else if (command.equalsIgnoreCase("SAVE_QUIRKS_ALL")) {
+                break;
+                
+            case "CHANGE_OWNER":
+                id = Integer.parseInt(st.nextToken());
+                changeOwner(entities, id);
+                break;
+                
+            case "SAVE_QUIRKS_ALL":
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, false);
                 }
-            } else if (command.equalsIgnoreCase("SAVE_QUIRKS_MODEL")) {
+                break;
+                
+            case "SAVE_QUIRKS_MODEL":
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, true);
                 }
-            } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF") || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
-                boolean rapidFire = command.equalsIgnoreCase("RAPIDFIREMG_ON");
-                for (Entity e : entities) {
-                    boolean dirty = false;
-                    for (Mounted m : e.getWeaponList()) {
-                        WeaponType wtype = (WeaponType) m.getType();
-                        if (!wtype.hasFlag(WeaponType.F_MG)) {
-                            continue;
-                        }
-                        m.setRapidfire(rapidFire);
-                        dirty = true;
-                    }
-                    if (dirty) {
-                        clientgui.getClient().sendUpdateEntity(e);
-                    }
-                }
-            } else if (command.equalsIgnoreCase("HOTLOAD_OFF") || command.equalsIgnoreCase("HOTLOAD_ON")) {
-                toggleHotLoad(entities, command.equalsIgnoreCase("HOTLOAD_ON"));
-            } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF") || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
-                boolean searchLight = command.equalsIgnoreCase("SEARCHLIGHT_ON");
-                for (Entity e : entities) {
-                    boolean dirty = false;
-                    if (!e.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
-                        e.setExternalSearchlight(searchLight);
-                        e.setSearchlightState(searchLight);
-                        dirty = true;
-                    }
-                    if (dirty) {
-                        clientgui.getClient().sendUpdateEntity(e);
-                    }
-                }
-            }
+                break;
+                
+            case "RAPIDFIREMG_ON":
+            case "RAPIDFIREMG_OFF":
+                toggleBurstMg(entities, command.equals("RAPIDFIREMG_ON"));
+                break;
 
+            case "HOTLOAD_ON":
+            case "HOTLOAD_OFF":
+                toggleHotLoad(entities, command.equals("HOTLOAD_ON"));
+                break;
+            } 
         }
-        
-        
 
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
                 int row = mekTable.rowAtPoint(e.getPoint());
                 Entity entity = mekModel.getEntityAt(row);
-                if (entity != null) {
-                    boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
-                    boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
-                    if ((isOwner || isBot)) {
-                        customizeMech(entity);
-                    }
+                if (entity != null && isEditable(entity)) {
+                    customizeMech(entity);
                 }
-
             }
         }
-
-        @Override
-        public void mousePressed(MouseEvent e) { }
 
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -2988,6 +2927,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
+        /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
             if (mekTable.getSelectedRowCount() == 0) {
                 return;
@@ -2999,49 +2939,250 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
-
+    
+    /** OK
+     * Returns a Collection that contains only those of the given entities
+     * that the local player can affect, i.e. his units or those of his bots. 
+     * The returned Collection is a new Collection and can be safely altered.
+     * (The entities are not copies of course.)
+     * <P>See also {@link #isEditable(Entity)} 
+     */
+    private Set<Entity> editableEntities(Collection<Entity> entities) {
+        return entities.stream().filter(e -> isEditable(e)).collect(Collectors.toSet());
+    }
+    
     /** 
+     * Returns true if the given carrier and the entities can be edited to transport 
+     * all the given entities. That is the case when carrier and entities are 
+     * all teammates and either the carrier or all the entities can be edited 
+     * by the local player. 
+     * Note: this method does NOT check if the loadings are rules-valid.
+     * <P>See also {@link #isEditable(Entity)}
+     * 
+     */
+    private boolean isLoadable(Collection<Entity> entities, Entity carrier) {
+        return entities.stream().allMatch(e -> isLoadable(e, carrier));
+    }
+    
+    /** 
+     * Returns true if the given carrier and carried can be edited to have the 
+     * carrier transport the given carried entity. That is the case when they 
+     * are teammates and one of the entities can be edited by the local player. 
+     * Note: this method does NOT check if the loading is rules-valid.
+     * <P>See also {@link #isEditable(Entity)}
+     */
+    private boolean isLoadable(Entity carried, Entity carrier) {
+        return !carrier.getOwner().isEnemyOf(carried.getOwner()) 
+                && (isEditable(carrier) || isEditable(carried));
+    }
+    
+    /** 
+     * Returns a Collection that contains only those of the given entities that can 
+     * be edited to be transported by the carrier. For each of the given entities,
+     * that is the case when it and the carrier are teammates and one of them 
+     * can be edited by the local player. 
+     * Note: this method does NOT check if the loading is rules-valid.
+     * The returned Collection is a new Collection and can be safely altered.
+     * (The entities are not copies of course.)
+     * <P>See also {@link #isLoadable(Entity)} 
+     */
+    private Set<Entity> loadableEntities(Collection<Entity> entities, Entity carrier) {
+        return entities.stream().filter(e -> isLoadable(e, carrier)).collect(Collectors.toSet());
+    }
+    
+
+    /** OK
      * Toggles hot loading LRMs for the given entities to the state given as hotLoadOn
      */
-    private void toggleHotLoad(Collection<Entity> entities, boolean newState) {
+    private void toggleHotLoad(Collection<Entity> entities, boolean hotLoadOn) {
         Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: entities) {
-            if (!isEditable(entity)) {
-                continue;
-            }
-
-            // Update the weapons
-            for (Mounted m: entity.getWeaponList()) {
-                WeaponType wtype = (WeaponType) m.getType();
-                if (wtype.hasFlag(WeaponType.F_MISSILE)
-                        && (wtype.getAmmoType() == AmmoType.T_LRM)) {
-                    m.setHotLoad(newState);
-                    updateCandidates.add(entity);
+        for (Entity entity: editableEntities(entities)) {
+            for (Mounted m: entity.getAmmo()) { 
+                // setHotLoad checks the Ammo to see if it can be hotloaded
+                m.setHotLoad(hotLoadOn);
+                // TODO: The following should be part of setHotLoad in Mounted
+                if (hotLoadOn) {
+                    m.setMode("HotLoad");
+                } else if (((EquipmentType)m.getType()).hasModeType("HotLoad")) {
+                    m.setMode("");
                 }
-            }
-
-            // Update the ammo
-            for (Mounted m: entity.getAmmo()) {
-                if (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_LRM) {
-                    m.setHotLoad(newState);
-                    // Set the mode too, so vehicles can switch back
-                    int numModes = m.getType().getModesCount();
-                    for (int i = 0; i < numModes; i++) {
-                        if (m.getType().getMode(i).getName().equals("HotLoad")) {
-                            m.setMode(i);
-                        }
-                    }
+                updateCandidates.add(entity);
+            };
+        }
+        sendUpdate(updateCandidates);
+    }
+    
+    /** 
+     * Toggles burst MG fire for the given entities to the state given as burstOn
+     */
+    private void toggleBurstMg(Collection<Entity> entities, boolean burstOn) {
+        Set<Entity> updateCandidates = new HashSet<>();
+        for (Entity entity: editableEntities(entities)) {
+            for (Mounted m: entity.getWeaponList()) {
+                if (((WeaponType) m.getType()).hasFlag(WeaponType.F_MG)) {
+                    m.setRapidfire(burstOn);
                     updateCandidates.add(entity);
                 }
             }
         }
         sendUpdate(updateCandidates);
     }
+    
+    public void load(List<Entity> entities, StringTokenizer st) {
+        StringTokenizer stLoad = new StringTokenizer(st.nextToken(), ":");
+        int id = Integer.parseInt(stLoad.nextToken());
+        int bayNumber = Integer.parseInt(stLoad.nextToken());
+        Entity loadingEntity = clientgui.getClient().getEntity(id);
+        boolean loadRear = false;
+        if (stLoad.hasMoreTokens()) {
+            loadRear = Boolean.parseBoolean(stLoad.nextToken());
+        }
+
+        double capacity;
+        boolean hasEnoughCargoCapacity;
+        String errorMessage = "";
+        if (bayNumber != -1) {
+            Bay bay = loadingEntity.getBayById(bayNumber);
+            if (null != bay) {
+                double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
+                capacity = bay.getUnused();
+                hasEnoughCargoCapacity = loadSize <= capacity;
+                errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
+                        " " + (int) bay.getUnusedSlots()
+                        + bay.getDefaultSlotDescription() + ".";
+                // We're also using bay number to distinguish between front and rear locations
+                // for protomech mag clamp systems
+            } else if (loadingEntity.hasETypeFlag(Entity.ETYPE_MECH)
+                    && entities.get(0).hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                capacity = 1;
+                hasEnoughCargoCapacity = entities.size() == 1;
+                errorMessage = Messages.getString("LoadingBay.protostoomany");
+            } else {
+                hasEnoughCargoCapacity = false;
+                errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
+            }
+        } else {
+            HashMap<Long, Double> capacities, counts;
+            capacities = new HashMap<>();
+            counts = new HashMap<>();
+            HashMap<Transporter, Double> potentialLoad = new HashMap<>();
+            // Get the counts and capacities for all present types
+            for (Entity e : entities) {
+                long entityType = e.getEntityType();
+                long loaderType = loadingEntity.getEntityType();
+                double unitSize;
+                if ((entityType & Entity.ETYPE_MECH) != 0) {
+                    entityType = Entity.ETYPE_MECH;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
+                    entityType = Entity.ETYPE_INFANTRY;
+                    boolean useCount = true;
+                    if ((loaderType & Entity.ETYPE_TANK) != 0) {
+                        // This is a super hack... When getting
+                        // capacities, troopspace gives unused space in
+                        // terms of tons, and BattleArmorHandles gives
+                        // it in terms of unit count. If I call
+                        // getUnused, it sums these together, and is
+                        // meaningless, so we'll go through all
+                        // transporters....
+                        boolean hasTroopSpace = false;
+                        for (Transporter t : loadingEntity.getTransports()) {
+                            if (t instanceof TankTrailerHitch) {
+                                continue;
+                            }
+                            double loadWeight = e.getWeight();
+                            if (potentialLoad.containsKey(t)) {
+                                loadWeight += potentialLoad.get(t);
+                            }
+                            if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
+                                    && (loadWeight <= t.getUnused())) {
+                                hasTroopSpace = true;
+                                potentialLoad.put(t, loadWeight);
+                                break;
+                            }
+                        }
+                        if (hasTroopSpace) {
+                            useCount = false;
+                        }
+                    }
+                    // TroopSpace uses tonnage
+                    // bays and BA handlebars use a count
+                    if (useCount) {
+                        unitSize = 1;
+                    } else {
+                        unitSize = e.getWeight();
+                    }
+                } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
+                    entityType = Entity.ETYPE_PROTOMECH;
+                    unitSize = 1;
+                    // Loading using mag clamps; user can specify front or rear.
+                    // Make use of bayNumber field
+                    if ((loaderType & Entity.ETYPE_MECH) != 0) {
+                        bayNumber = loadRear? 1 : 0;
+                    }
+                } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
+                    entityType = Entity.ETYPE_DROPSHIP;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_JUMPSHIP) != 0) {
+                    entityType = Entity.ETYPE_JUMPSHIP;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_AERO) != 0) {
+                    entityType = Entity.ETYPE_AERO;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_TANK) != 0) {
+                    entityType = Entity.ETYPE_TANK;
+                    unitSize = 1;
+                } else {
+                    unitSize = 1;
+                }
+
+                Double count = counts.get(entityType);
+                if (count == null) {
+                    count = 0.0;
+                }
+                count = count + unitSize;
+                counts.put(entityType, count);
+
+                Double cap = capacities.get(entityType);
+                if (cap == null) {
+                    cap = loadingEntity.getUnused(e);
+                    capacities.put(entityType, cap);
+                }
+            }
+            hasEnoughCargoCapacity = true;
+            capacity = 0;
+            for (Long typeId : counts.keySet()) {
+                double currCount = counts.get(typeId);
+                double currCapacity = capacities.get(typeId);
+                if (currCount > currCapacity) {
+                    hasEnoughCargoCapacity = false;
+                    capacity = currCapacity;
+                    String messageName;
+                    if (typeId == Entity.ETYPE_INFANTRY) {
+                        messageName = "LoadingBay.nonbaytoomanyInf";
+                    } else {
+                        messageName = "LoadingBay.nonbaytoomany";
+                    }
+                    errorMessage = Messages.getString(messageName, currCount,
+                            Entity.getEntityTypeName(typeId), currCapacity);
+                }
+            }
+        }
+        if (hasEnoughCargoCapacity) {
+            for (Entity e : entities) {
+                loadOnto(e, id, bayNumber);
+            }
+        } else {
+            JOptionPane.showMessageDialog(clientgui.frame, errorMessage, Messages.getString("LoadingBay.error"), // $NON-NLS-2$
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        // Catches changes to the GUI scale and adapts the UI accordingly
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            // Change to the GUI scale: adapt the UI accordingly
             adaptToGUIScale();
             // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)
             ToolTipManager manager = ToolTipManager.sharedInstance();
@@ -3054,6 +3195,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             manager.mouseMoved(event);
             
         } else if (e.getName().equals(IClientPreferences.SHOW_UNIT_ID)) {
+            // Show/Hide unit IDs from the client settings: adapt the button and mek table
             setButUnitIDState(PreferenceManager.getClientPreferences().getShowUnitId());
             mekModel.refreshCells();
         }
@@ -3072,13 +3214,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         tablePlayers.setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
     }
 
-    /** Renews the table headers of the MekTable and PlayerTable with guiScaled values */
+    /** Refreshes the table headers of the MekTable and PlayerTable. */
     private void updateTableHeaders() {
+        // The mek table
         JTableHeader header = mekTable.getTableHeader();
         TableColumnModel colMod = header.getColumnModel();
         for (int i = 0; i < colMod.getColumnCount(); i++) {
             TableColumn tabCol = colMod.getColumn(i);
             String headerText = mekModel.getColumnName(i);
+            // Add info about the current sorting
             if (activeSorter.getColumnIndex() == i) {
                 headerText += "&nbsp;&nbsp;&nbsp;" + guiScaledFontHTML(uiGray());
                 if (activeSorter.getSortingDirection() == MekTableSorter.Sorting.ASCENDING) {
@@ -3086,13 +3230,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } else {
                     headerText += "\u25BE ";
                 }
-                 
                 headerText += activeSorter.getDisplayName();
             }
             tabCol.setHeaderValue(headerText);
         }
         header.revalidate();
         
+        // The player table
         header = tablePlayers.getTableHeader();
         colMod = header.getColumnModel();
         for (int i = 0; i < colMod.getColumnCount(); i++) {
@@ -3229,7 +3373,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     };
     
-    /** 
+    /** OK
      * Sets the sorting used in the Mek Table depending on the column header 
      * that was clicked.  
      */ 
@@ -3247,16 +3391,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        // Select the next allowed sorter
+        // Select the next allowed sorter and refresh the display if the sorter was changed
         nextSorter(sorters);
-
         if (activeSorter != previousSorter) {
             refreshEntities();
             updateTableHeaders();
         }
     }
     
-    /** Selects the next allowed sorter in the given list of sorters. */
+    /** OK Selects the next allowed sorter in the given list of sorters. */
     private void nextSorter(List<MekTableSorter> sorters) {
         // Set the next sorter as active, if this column was already sorted, or
         // the first sorter otherwise
@@ -3268,7 +3411,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             activeSorter = sorters.get(index);
         }
         
-        // Find an allowed sorter (e.g. blind drop may disallow some)
+        // Find an allowed sorter (e.g. blind drop may prohibit some)
         int counter = 0; // Endless loop safeguard
         while (!activeSorter.isAllowed(clientgui.getClient().getGame().getOptions())
                 && ++counter < 100) {
@@ -3351,22 +3494,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return this;
         }
     }
-    
+
+    /** OK Returns true when the compact view is active. */ 
     public boolean isCompact() {
         return butCompact.isSelected();
     }
     
-    public MapSettings getMapSettings() {
-        return mapSettings;
-    }
-    
-    /** Returns a list of the selected entities in the Mek table. The list may be empty but not null. */
-    private List<Entity> getSelectedEntities() {
+    /** OK 
+     * Returns a list of the selected entities in the Mek table. 
+     * The list may be empty but not null. 
+     */
+    private ArrayList<Entity> getSelectedEntities() {
         ArrayList<Entity> result = new ArrayList<>();
         int[] rows = mekTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
             result.add(mekModel.getEntityAt(rows[i]));
         }
         return result;
+    }
+    
+    /** OK Helper method to shorten calls. */
+    private IPlayer getLocalPlayer() {
+        return clientgui.getClient().getLocalPlayer();
     }
 }

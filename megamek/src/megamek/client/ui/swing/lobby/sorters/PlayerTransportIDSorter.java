@@ -1,6 +1,7 @@
-package megamek.client.ui.swing.lobby;
+package megamek.client.ui.swing.lobby.sorters;
 
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 

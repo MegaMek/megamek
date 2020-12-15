@@ -4181,9 +4181,8 @@ public class Server implements Runnable {
         entityUpdate(unit.getId());
 
         // Taharqa (2/28/13): I am not sure why the loader is not getting
-        // updated too - not updating it
-        // is causing problem in the chat lounge loading, so I am going to do it
-        // here, but if we get
+        // updated too - not updating it is causing problem in the chat 
+        // lounge loading, so I am going to do it here, but if we get
         // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
@@ -30014,9 +30013,7 @@ public class Server implements Runnable {
     private void receiveEntityUpdate(Packet c, int connIndex) {
         Entity entity = (Entity) c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null)
-                && ((oldEntity.getOwner() == getPlayer(connIndex)) || (oldEntity
-                        .getOwner().getTeam() == getPlayer(connIndex).getTeam()))) {
+        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit

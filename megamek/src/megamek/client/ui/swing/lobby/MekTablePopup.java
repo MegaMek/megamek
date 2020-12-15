@@ -25,15 +25,14 @@ import javax.swing.JMenuItem;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 class MekTablePopup {
-
 
     static ScalingPopup mekTablePopup(ClientGUI clientGui, List<Entity> entities, 
             Entity e2, ActionListener listener, ChatLounge lobby) {
@@ -42,71 +41,56 @@ class MekTablePopup {
             return new ScalingPopup();
         }
         
-        // create a list of entities that belong to the local player or one
+        GameOptions opts = clientGui.getClient().getGame().getOptions();
+        boolean optQuirks = opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
+        boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
+        boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
+        boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
+        
+        // Create a list of selected units that belong to the local player or one
         // of his bots, as only those are configurable, so the popup menu really
         // reflects what can be configured
         HashSet<Entity> configurableEntities = new HashSet<>(entities);
         configurableEntities.removeIf(e -> !lobby.isEditable(e));
 
-        
-
+        boolean unconfigSelected = entities.size() != configurableEntities.size();
         boolean canConfigureAny = configurableEntities.size() > 0;
         boolean canConfigureAll = entities.size() == configurableEntities.size();
         boolean canConfigureDeployAll = lobby.canConfigureDeploymentAll(entities);
         boolean canSeeAll = lobby.canSeeAll(entities);
-
-//        boolean isOwner = entity.getOwner().equals(clientGui.getClient().getLocalPlayer());
-//        boolean isBot = clientGui.getBots().get(entity.getOwner().getName()) != null;
-        boolean blindDrop = clientGui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.BASE_BLIND_DROP);
-        boolean isQuirksEnabled = clientGui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
-        boolean optBurstMG = clientGui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
-        boolean optLRMHotLoad = clientGui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
-
         boolean oneSelected = configurableEntities.size() == 1;
-        boolean allCapFighter = true;
-        boolean allDropships = true;
-        boolean allInfantry = true;
-        boolean allBattleArmor = true;
-        boolean allProtomechs = true;
-        boolean allSameEntityType = true;
-        boolean hasMGs = false;
-        boolean hasLRMS = false;
-        boolean anyHotLoadOn = false;
-        boolean anyHotLoadOff = false;
-        boolean anyRapidFireMGOn = false;
-        boolean anyRapidFireMGOff = false;
-        boolean allSamePlayer = true;
-        Entity prevEntity = null;
-        int prevOwnerId = -1;
 
-        // Find certain unit features among all units the player could access
-        // i.e. on the same team or his own bots
+        // Find certain unit features among all units the player can access
+        // i.e. his own units or his bots' units (not only selected units!)
         HashSet<Entity> teamEntities = new HashSet<>(clientGui.getClient().getGame().getEntitiesVector());
         teamEntities.removeIf(e -> !lobby.isEditable(e));
+        
         boolean accessibleFighters = false;
         boolean accessibleJumpships = false;
         boolean accessibleTransportBays = false;
         boolean accessibleCarriers = false;
+        boolean accessibleProtomeks = false;
         for (Entity en: teamEntities) {
             accessibleFighters |= en.isFighter(); 
             accessibleJumpships |= en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
             accessibleTransportBays |= !en.getTransportBays().isEmpty();
             accessibleCarriers |= en.getLoadedUnits().size() > 0;
+            accessibleProtomeks |= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
         }
 
-        // find what can be done with the entities
-        for (Entity en : entities) {
-            if ((prevOwnerId != -1) && (en.getOwnerId() != prevOwnerId)) {
-                allSamePlayer = false;
-            }
-            prevOwnerId = en.getOwnerId();
-            prevEntity = en;
-        }
-        
+        // Find what can be done with the entities
+        // When units are selected that can't be configured, then
+        // some actions should not be available regardless of the type
+        // of those units
+        boolean allCapFighter = !unconfigSelected;
+        boolean allDropships = !unconfigSelected;
+//        boolean allInfantry = !unconfigSelected;
+//        boolean allBattleArmor = !unconfigSelected;
+        boolean allProtomeks = !unconfigSelected;
+        boolean anyHotLoadOn = false;
+        boolean anyHotLoadOff = false;
+        boolean anyRapidFireMGOn = false;
+        boolean anyRapidFireMGOff = false;
         boolean anyCarrier = false;
         boolean allEmbarked = true;
         boolean noneEmbarked = true;
@@ -120,32 +104,21 @@ class MekTablePopup {
             if (en.getLoadedUnits().size() > 0) {
                 anyCarrier = true;
             }
+            if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
+                allCapFighter = false;
+            }
             if (en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
                     || en.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                 allHaveMagClamp &= en.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
             }
-
-        }
-        
-        boolean enemiesSelected = entities.size() != configurableEntities.size();
-        
-        for (Entity en: entities) {
-            if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
-                allCapFighter = false;
-            }
-            
+            allProtomeks &= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
             allDropships &= en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
-            allInfantry &= en.hasETypeFlag(Entity.ETYPE_INFANTRY);
-            allBattleArmor &= en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
-            allProtomechs &= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
-            if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
-                allSameEntityType = false;
-            }
+//            allInfantry &= en.hasETypeFlag(Entity.ETYPE_INFANTRY);
+//            allBattleArmor &= en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
             if (optBurstMG) {
                 for (Mounted m: en.getWeaponList()) {
                     EquipmentType etype = m.getType();
                     if (etype.hasFlag(WeaponType.F_MG)) {
-                        hasMGs = true;
                         anyRapidFireMGOn |= m.isRapidfire();
                         anyRapidFireMGOff |= !m.isRapidfire();
                     }
@@ -155,14 +128,28 @@ class MekTablePopup {
                 for (Mounted ammo: en.getAmmo()) {
                     AmmoType etype = (AmmoType)ammo.getType();
                     if (etype.hasFlag(AmmoType.F_HOTLOAD)) {
-                        hasLRMS = true;
                         anyHotLoadOn |= ammo.isHotLoaded();
                         anyHotLoadOff |= !ammo.isHotLoaded();
                     }
                 }
             }
         }
-
+        
+//        boolean allSamePlayer = true;
+//        boolean allSameEntityType = true;
+//        Entity prevEntity = null;
+//        int prevOwnerId = -1;
+//        for (Entity en : entities) {
+//            if ((prevOwnerId != -1) && (en.getOwnerId() != prevOwnerId)) {
+//                allSamePlayer = false;
+//            }
+//            if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
+//                allSameEntityType = false;
+//            }
+//            prevOwnerId = en.getOwnerId();
+//            prevEntity = en;
+//        }
+        
         // listener menu uses the following Mnemonics:
         // B, C, D, E, I, O, R, V
         ScalingPopup popup = new ScalingPopup();
@@ -188,27 +175,24 @@ class MekTablePopup {
             popup.add(equipMenu(anyRapidFireMGOn, anyRapidFireMGOff, anyHotLoadOn, anyHotLoadOff, optLRMHotLoad, optBurstMG, listener));
         }
         
-        if (isQuirksEnabled) {
+        if (optQuirks) {
             popup.add(quirksMenu(canSeeAll, listener));
         }
         
         popup.add(spacer());
 
         popup.add(loadMenu(clientGui, canConfigureAny && !allEmbarked, listener, entities));
+        
         if (accessibleCarriers) {
-            String disembark = "Disembark / Leave";
-            if (!oneSelected) {
-                disembark = "Disembark All Units from Carriers";
-            }
-            popup.add(menuItem(disembark, "UNLOAD", canConfigureAny && !noneEmbarked, listener));
-            popup.add(menuItem("Offload All Carried Units", "UNLOADALL", canConfigureAny && anyCarrier, listener));
+            popup.add(menuItem("Disembark / leave from carriers", "UNLOAD", canConfigureAny && !noneEmbarked, listener));
+            popup.add(menuItem("Offload all carried units", "UNLOADALL", canConfigureAny && anyCarrier, listener));
         }
 
         if (accessibleTransportBays) {
             popup.add(offloadBayMenu(oneSelected && anyCarrier && canConfigureAny, entities.get(0), listener));
         }
 
-        if (accessibleFighters) {
+        if (accessibleFighters && optCapFighters) {
             boolean fsEnabled = canConfigureAny && allCapFighter && noneEmbarked;
             popup.add(squadronMenu(clientGui, fsEnabled, listener, entities));
         }
@@ -217,37 +201,14 @@ class MekTablePopup {
             boolean jsEnabled = canConfigureAny && allDropships && noneEmbarked;
             popup.add(jumpShipMenu(clientGui, jsEnabled, listener, entities));
         }
-
-//        if (oneSelected && anyCarrier && canConfigureAny) {
-//            Entity entity = entities.get(0);
-//            boolean enabled = oneSelected && anyCarrier && canConfigureAny;
-//            JMenu subMenu = new JMenu("Offload All From...");
-//            for (Bay bay : entity.getTransportBays()) {
-//                if (bay.getLoadedUnits().size() > 0) {
-////                    menuItem = new JMenuItem(
-////                            "Bay # " + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)");
-////                    menuItem.setActionCommand("UNLOADALLFROMBAY|" + bay.getBayNumber());
-////                    menuItem.addActionListener(listener);
-////                    menuItem.setEnabled((isOwner || isBot));
-////                    subMenu.add(menuItem);
-//                    String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
-//                    subMenu.add(menuItem(label, "UNLOADALLFROMBAY|" + bay.getBayNumber(), enabled, listener));
-//                }
-//            }
-//            if (subMenu.getItemCount() > 0) {
-//                subMenu.setEnabled(enabled);
-//                popup.add(subMenu);
-//            }
-//        }
-
-        //        if (allCapFighter && noneCarried && allSamePlayer) {
-//        popup.add(menuItem("Create Fighter Squadron", "SQUADRON", fsEnabled, listener));
+        
+        if (accessibleProtomeks) {
+            boolean prEnabled = oneSelected && canConfigureAny && allProtomeks && noneEmbarked && allHaveMagClamp;
+            popup.add(protoMenu(clientGui, prEnabled, listener, entities.get(0)));
+        }
 
         return popup;
     }
-
-
-
 
     /** Returns a spacer (empty, small menu item) for the popup. */
     private static JMenuItem spacer() {
@@ -275,13 +236,14 @@ class MekTablePopup {
         menu.setEnabled(enabled);
         if (enabled) {
             for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
-                if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
+                if (loader.isCapitalFighter()) {
                     continue;
                 }
                 boolean loadable = true;
                 for (Entity en : entities) {
                     if (!loader.canLoad(en, false)
                             || (loader.getId() == en.getId())
+                            || en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
                             //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
                             || (loader.canTow(en.getId()))) {
                         loadable = false;
@@ -297,15 +259,49 @@ class MekTablePopup {
         return menu;
     }
 
+    /**
+     * Returns the "Load Protomech" submenu
+     */
+    private static JMenu protoMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
+            Entity entity) {
 
-
-
-
-
-
-
-
-    
+        JMenu menu = new JMenu("Load Protomek");
+        if (enabled) {
+            for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
+                if (!loader.hasETypeFlag(Entity.ETYPE_MECH) || !loader.canLoad(entity, false)) {
+                    continue;
+                }
+                Transporter front = null;
+                Transporter rear = null;
+                for (Transporter t : loader.getTransports()) {
+                    if (t instanceof ProtomechClampMount) {
+                        if (((ProtomechClampMount) t).isRear()) {
+                            rear = t;
+                        } else {
+                            front = t;
+                        }
+                    }
+                }
+                JMenu loaderMenu = new JMenu(loader.getShortName());
+                if ((front != null) && front.canLoad(entity)
+                        && ((entity.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
+                                || (rear == null) || rear.getLoadedUnits().isEmpty())) {
+                    loaderMenu.add(menuItem("Onto Front", "LOAD|" + loader.getId() + ":0", enabled, listener));
+                }
+                boolean frontUltra = (front != null)
+                        && front.getLoadedUnits().stream()
+                        .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+                if ((rear != null) && rear.canLoad(entity) && !frontUltra) {
+                    loaderMenu.add(menuItem("Onto Rear", "LOAD|" + loader.getId() + ":1", enabled, listener));
+                }
+                if (loaderMenu.getItemCount() > 0) {
+                    menu.add(loaderMenu);
+                }
+            }
+        }
+        menu.setEnabled(enabled && (menu.getItemCount() > 0));
+        return menu;
+    }
 
     /**
      * Returns the "Fighter Squadron" submenu, allowing to assign units to or
@@ -638,14 +634,6 @@ class MekTablePopup {
 //                              + ")");
 //                      menuItem.setActionCommand(
 //                              "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
-//                      /*
-//                       * } else { menuItem = new
-//                       * JMenuItem(
-//                       * t.getClass().getName()+
-//                       * "Transporter" );
-//                       * menuItem.setActionCommand("LOAD|"
-//                       * + loader.getId() + ":-1"); }
-//                       */
 //                      menuItem.addActionListener(listener);
 //                      menuItem.setEnabled((isOwner || isBot) && noneCarried);
 //                      subMenu.add(menuItem);

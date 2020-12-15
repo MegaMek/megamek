@@ -1,4 +1,4 @@
-package megamek.client.ui.swing.lobby;
+package megamek.client.ui.swing.lobby.sorters;
 
 import java.util.Comparator;
 

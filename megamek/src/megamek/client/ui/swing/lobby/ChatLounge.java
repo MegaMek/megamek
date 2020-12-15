@@ -56,6 +56,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog.Response;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.lobby.sorters.BVSorter;
 import megamek.client.ui.swing.lobby.sorters.IDSorter;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter;
@@ -174,7 +175,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     JButton debugButton = new JButton("<>");
 
-    private CamoChooser camoDialog;
+    private CamoChooserDialog camoDialog;
 
     //region Action Commands
     static final String NAME_COMMAND = "NAME";
@@ -460,7 +461,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             butCamo.setIcon(player.getCamouflage().getImageIcon());
             getSelectedPlayer().sendPlayerInfo();
         });
-        camoDialog = new CamoChooser(clientgui.getFrame());
+        camoDialog = new CamoChooserDialog(clientgui.getFrame());
         refreshCamos();
 
         butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); 
@@ -1707,7 +1708,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         // Display the CamoChooser and await the result
         // The dialog is preset to the first selected unit's settings
-        CamoChooser mcd = new CamoChooser(clientgui.getFrame());
+        CamoChooserDialog mcd = new CamoChooserDialog(clientgui.getFrame());
         int result = mcd.showDialog(randomSelected);
 
         // If the dialog was canceled or nothing was selected, do nothing

@@ -40,13 +40,17 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.Window;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -59,6 +63,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
 import megamek.client.Client;
@@ -93,6 +99,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
@@ -536,7 +543,27 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             // I want a file, y'know!
             return;
         }
-        HostDialog hd = new HostDialog(frame);
+
+        IGame newGame = null;
+        try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
+            XStream xstream = SerializationHelper.getXStream();
+            newGame = (IGame) xstream.fromXML(gzi);
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
+            JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
+            Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Vector<String> playerNames = null;
+        if (newGame != null) {
+            playerNames = new Vector<>();
+            for (IPlayer player : newGame.getPlayersVector()) {
+                playerNames.add(player.getName());
+            }
+        }
+
+        HostDialog hd = new HostDialog(frame, playerNames);
         hd.setVisible(true);
 
         if (!hd.dataValidation("MegaMek.LoadGameAlert.title")) {
@@ -728,7 +755,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         if (!("".equals(sd.localName))) {
             hasSlot = true;
         }
-        hd.getPlayerNameField().setText(sd.localName);
+        hd.setPlayerName(sd.localName);
         hd.setVisible(true);
 
         if (!hd.dataValidation("MegaMek.HostScenarioAlert.title")) {

@@ -376,13 +376,18 @@ public class SharedUtility {
 
             // Check if used more MPs than Mech/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {
-                if ((entity instanceof Mech) || (entity instanceof VTOL)) {
+                if ((entity instanceof Mech) || (entity instanceof Tank)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
                             || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                             || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType  .MOVE_VTOL_RUN)) {
-                        //TODO: need to adjust for sprinting, but game options are not passed
-                        if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
+                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                            || (moveType == EntityMovementType.MOVE_SPRINT)
+                            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                        int limit = entity.getRunningGravityLimit();
+                        if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                            limit++;
+                        }
+                        if (step.getMpUsed() > limit) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
@@ -408,33 +413,8 @@ public class SharedUtility {
                             SharedUtility.checkNag(rollTarget, nagReport,
                                     psrList);
                         }
-                    } else if (moveType == EntityMovementType.MOVE_SPRINT
-                            || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                            checkNag(rollTarget, nagReport, psrList);
-                        }
-                    }
-                } else if (entity instanceof Tank) {
-                    if ((moveType == EntityMovementType.MOVE_WALK)
-                            || (moveType == EntityMovementType.MOVE_VTOL_WALK)
-                            || (moveType == EntityMovementType.MOVE_RUN)
-                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
-
-                        // For Tanks, we need to check if the tank had more MPs
-                        // because it was moving along a road
-                        if ((step.getMpUsed() > entity.getRunMP(false, false,
-                                false)) && !step.isOnlyPavement()) {
-                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                            checkNag(rollTarget, nagReport, psrList);
-                        }
-                        // If the tank was moving on a road, he got a +1 bonus.
-                        // N.B. The Ask Precentor Martial forum said that a 4/6
-                        // tank on a road can move 5/7, **not** 5/8.
-                        else if (step.getMpUsed() > (entity.getRunMP(false,
-                                false, false) + 1)) {
-                            rollTarget = entity.checkMovedTooFast(step,
-                                    overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     }
@@ -513,10 +493,7 @@ public class SharedUtility {
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
-                    && ((lastHex.getLevel() + entity.calcElevation(curHex,
-                            lastHex, step.getElevation(),
-                            md.getFinalClimbMode(), false)) != (curHex
-                            .getLevel() + entity.getElevation()))
+                    && (lastHex.getLevel() + lastElevation != (curHex.getLevel() + step.getElevation()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex

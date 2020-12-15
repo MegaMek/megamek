@@ -60,6 +60,7 @@ public class ISLaserMedium extends LaserWeapon {
             .setClanAdvancement(2290, 2300, 2310, 2850, DATE_NONE)
             .setClanApproximate(false, true, false,true, false)
             .setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TA);
+            .setProductionFactions(F_TA)
+            .setExtinctionFactions(F_CLAN);
     }
 }

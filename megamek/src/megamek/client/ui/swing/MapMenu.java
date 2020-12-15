@@ -831,10 +831,12 @@ public class MapMenu extends JPopupMenu {
     private JMenu createWeaponsFireMenu() {
         JMenu menu = new JMenu("Weapons");
 
-        /*
-         * if ( myTarget == null || (myTarget instanceof Entity &&
-         * !myEntity.isEnemyOf((Entity)myTarget)) ){ return menu; }
-         */
+        // Hidden entities are not allowed to shoot without being revealed
+        // so let's not give them the option
+        if (myEntity.isHidden()) {
+            return menu;
+        }
+        
         menu.add(createFireJMenuItem());
         menu.add(createSkipJMenuItem());
         menu.add(createAlphaStrikeJMenuItem());
@@ -1253,7 +1255,8 @@ public class MapMenu extends JPopupMenu {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may have unseen units
             if (!entity.isSensorReturn(localPlayer)
-                    && entity.hasSeenEntity(localPlayer)) {
+                    && entity.hasSeenEntity(localPlayer)
+                    && !entity.isHidden()) {
                 menu.add(TargetMenuItem(entity));
             }
         }
@@ -1612,7 +1615,8 @@ public class MapMenu extends JPopupMenu {
             //  With double blind on, the game may have unseen units
             if ((en.isEnemyOf(myEntity) || friendlyFire) && !en.equals(myEntity)
                     && !en.isSensorReturn(localPlayer)
-                    && en.hasSeenEntity(localPlayer)) {
+                    && en.hasSeenEntity(localPlayer)
+                    && !en.isHidden()) {
                 list.add(en);
             }
         }

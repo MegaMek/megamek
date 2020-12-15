@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -50,11 +51,19 @@ public class HostDialog extends AbstractGameConnectionDialog {
 
     /** Constructs a host game dialog for hosting or loading a game. */
     public HostDialog(JFrame frame) {
-        this(frame, "");
+        this(frame, "", null);
     }
 
     public HostDialog(JFrame frame, String playerName) {
-        super(frame, Messages.getString("MegaMek.HostDialog.title"), true, playerName);
+        this(frame, playerName, null);
+    }
+
+    public HostDialog(JFrame frame, Vector<String> playerNames) {
+        this(frame, "", playerNames);
+    }
+
+    public HostDialog(JFrame frame, String playerName, Vector<String> playerNames) {
+        super(frame, Messages.getString("MegaMek.HostDialog.title"), true, playerName, playerNames);
     }
 
     //region Initialization
@@ -65,9 +74,9 @@ public class HostDialog extends AbstractGameConnectionDialog {
         JLabel portLabel = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
         JLabel metaserverLabel = new JLabel(Messages.getString("MegaMek.metaserverL"), SwingConstants.RIGHT);
 
-        setPlayerNameField(new JTextField(getClientPreferences().getLastPlayerName(), 16));
+        setPlayerName(getClientPreferences().getLastPlayerName());
         playerNameLabel.setLabelFor(getPlayerNameField());
-        getPlayerNameField().addActionListener(this);
+        addPlayerNameActionListener(this);
 
         serverPassField = new JTextField(getClientPreferences().getLastServerPass(), 16);
         serverPassLabel.setLabelFor(serverPassField);
@@ -152,6 +161,7 @@ public class HostDialog extends AbstractGameConnectionDialog {
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
         super.actionPerformed(e);
+
         setServerPass(serverPassField.getText());
         setRegister(chkRegister.isSelected());
         setMetaserver(metaserverField.getText());

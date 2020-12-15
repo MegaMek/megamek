@@ -365,7 +365,10 @@ public class TestTank extends TestEntity {
         if (tank instanceof VTOL) {
             if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
                 for (Mounted m : tank.getEquipment()) {
-                    if (m.getLocation() == VTOL.LOC_ROTOR) {
+                    // Units with patchwork armor place any armor slots in the same location
+                    // as the armor. This is for accounting convenience.
+                    if ((m.getLocation() == VTOL.LOC_ROTOR)
+                            && EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
                         buff.append("rotor equipment must be placed in mast mount");
                         correct = false;
                     }

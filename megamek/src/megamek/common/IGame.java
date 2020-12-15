@@ -1545,4 +1545,5 @@ public interface IGame {
     abstract void updateEntityPositionLookup(Entity e,
             HashSet<Coords> oldPositions);
 
+    public abstract String getUUIDString();
 }

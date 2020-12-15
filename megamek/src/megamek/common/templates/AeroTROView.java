@@ -175,6 +175,7 @@ public class AeroTROView extends TROView {
         int erv = 0;
         final int multiplier = ((WeaponType) bay.getType()).isCapital() ? 10 : 1;
         Mounted linker = null;
+        // FIXME: Consider new AmmoType::equals / BombType::equals
         final Map<AmmoType, Integer> shotsByAmmoType = bay.getBayAmmo().stream().map(aero::getEquipment)
                 .collect(Collectors.groupingBy(m -> (AmmoType) m.getType(),
                         Collectors.summingInt(Mounted::getBaseShotsLeft)));

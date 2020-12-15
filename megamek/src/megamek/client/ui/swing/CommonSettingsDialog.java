@@ -255,7 +255,10 @@ public class CommonSettingsDialog extends ClientDialog implements
     
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
-    
+
+    private JCheckBox gameSummaryBV;
+    private JCheckBox gameSummaryMM;
+
     private JComboBox<String> skinFiles;
 
     private JComboBox<UITheme> uiThemes;
@@ -860,6 +863,9 @@ public class CommonSettingsDialog extends ClientDialog implements
                 }
             }
 
+	        gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
+	        gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+
             skinFiles.removeAllItems();
             List<String> xmlFiles = new ArrayList<>(Arrays
                     .asList(Configuration.skinsDir().list(new FilenameFilter() {
@@ -875,6 +881,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                     });
             if (files != null) {
                 xmlFiles.addAll(Arrays.asList(files));
+
             }
             Collections.sort(xmlFiles);
             for (String file : xmlFiles) {
@@ -894,11 +901,11 @@ public class CommonSettingsDialog extends ClientDialog implements
             uiThemes.setSelectedItem(new UITheme(GUIPreferences.getInstance().getUITheme()));
 
             fovInsideEnabled.setSelected(gs.getFovHighlight());
-            fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
+            fovHighlightAlpha.setValue(gs.getFovHighlightAlpha());
             fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
             fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
             fovOutsideEnabled.setSelected(gs.getFovDarken());
-            fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
+            fovDarkenAlpha.setValue(gs.getFovDarkenAlpha());
             numStripesSlider.setValue(gs.getFovStripes());
             fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
 
@@ -1047,6 +1054,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
+
+        gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
+        gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
 
         UITheme newUITheme = (UITheme)uiThemes.getSelectedItem();
         String oldUITheme = gs.getUITheme();
@@ -1386,6 +1396,24 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(mmSymbol);
         comps.add(row);
 
+        // Game Summary - BoardView
+        gameSummaryBV = new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name")); //$NON-NLS-1$
+        gameSummaryBV.setToolTipText(Messages.getString("CommonSettingsDialog.gameSummaryBV.tooltip", //$NON-NLS-1$
+                new Object[] { Configuration.gameSummaryImagesBVDir() }));
+        row = new ArrayList<>();
+        gameSummaryBV.addItemListener(this);
+        row.add(gameSummaryBV);
+        comps.add(row);
+
+        // Game Summary - Mini-map
+        gameSummaryMM = new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryMM.name")); //$NON-NLS-1$
+        gameSummaryMM.setToolTipText(Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip", //$NON-NLS-1$
+                new Object[] { Configuration.gameSummaryImagesMMDir() }));
+        row = new ArrayList<>();
+        gameSummaryMM.addItemListener(this);
+        row.add(gameSummaryMM);
+        comps.add(row);
+
         // UI Theme
         uiThemes = new JComboBox<UITheme>();
         uiThemes.setMaximumSize(new Dimension(400,uiThemes.getMaximumSize().height));
@@ -1453,13 +1481,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
 
         // Inside Opaqueness slider
-        fovHighlightAlpha = new JSlider();
-        fovHighlightAlpha.setMajorTickSpacing(20);
+        fovHighlightAlpha = new JSlider(0, 255);
+        fovHighlightAlpha.setMajorTickSpacing(25);
         fovHighlightAlpha.setMinorTickSpacing(5);
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
-        fovHighlightAlpha.setMaximumSize(new Dimension(250, 100));
+        fovHighlightAlpha.setMaximumSize(new Dimension(400, 100));
         fovHighlightAlpha.addChangeListener(this);
+        fovHighlightAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         // Label
         highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -1554,14 +1583,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(Box.createVerticalStrut(1));
         comps.add(row);
 
-        fovDarkenAlpha = new JSlider();
-        fovDarkenAlpha.setMajorTickSpacing(20);
+        fovDarkenAlpha = new JSlider(0, 255);
+        fovDarkenAlpha.setMajorTickSpacing(25);
         fovDarkenAlpha.setMinorTickSpacing(5);
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
-        fovDarkenAlpha.setMaximumSize(new Dimension(250, 100));
+        fovDarkenAlpha.setMaximumSize(new Dimension(400, 100));
         fovDarkenAlpha.addChangeListener(this);
+        fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
+        darkenAlphaLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
@@ -1590,8 +1621,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         numStripesSlider.setPaintLabels(true);
         numStripesSlider.setMaximumSize(new Dimension(250, 100));
         numStripesSlider.addChangeListener(this);
+        numStripesSlider.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         numStripesLabel = new JLabel(
                 Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); //$NON-NLS-1$
+        numStripesLabel.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
@@ -1908,11 +1941,9 @@ public class CommonSettingsDialog extends ClientDialog implements
     public void stateChanged(ChangeEvent evt) {
         GUIPreferences guip = GUIPreferences.getInstance();
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
+            guip.setFovHighlightAlpha(Math.max(0, Math.min(255, (int) fovHighlightAlpha.getValue())));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            // Need to convert from 0-100 to 0-255
-            guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
+            guip.setFovDarkenAlpha(Math.max(0, Math.min(255, (int) fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
             guip.setFovStripes(numStripesSlider.getValue());
         }

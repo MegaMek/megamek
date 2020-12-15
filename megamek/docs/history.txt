@@ -1,8 +1,60 @@
 VERSION HISTORY:
 ----------------
-0.47.14-SNAPSHOT
+0.47.16 (RC2)-SNAPSHOT
+
+0.47.15 (RC1) (2020-12-14 2330 UTC)
++ Pr #2458: When loading saved games, drop down box allows selecting of player names present in game
++ Issue #1449: Zweihander SPA incorrectly applies critical damage
++ PR #2402: Upgrade to XStream 1.4.14 (Removes warning about illegal reflective operation)
++ Issue #2398: Final position of vehicle after skid (and fall) reported in Round Report but not applied to unit
++ Issue #1803: Configure view changes Clan unit BV due to AmmoType switching
++ Issue #2302: fix Map Size in lobby when decreasing map size
++ Issue #2169: Harjel in head
++ PR #2412: Fix armor BV calculation for SV BAR armor
++ Issue #2415: Fix Client Settings truncating certain FOV alpha values on Save/Load
++ Issue #2424: Changing ammo type on one-shot weapons no longer secretly sets their ammo count to 1 ton's worth of ammo
++ Data: IS Tag restricted from Aerospace Fighters.
++ PR #2433: Fix for weird edge case where a collapsed building would remain on the board.
++ Issue #2426: Old language for double heat sinks in mtfs no longer read by Megamek 
++ Issue #2309: Tanks no longer display as damaged when in pristine condition but have had MP reduced by non-damaging conditions (e.g. gravity, temperature)
++ Issue #2430: NPE in doEntityDisplacement
++ PR #2444: Improve MtfFile parsing performance
++ PR #2445: Defensive BV for HarJel III should be -1
++ Issue #2348: Added option to output game summary images during various phases
++ Issue #2413: Improve "Darken hexes outside field of view"
++ Issue #2078: Ignore weapon groups when counting equipment
++ Issues #2405 #2399: Fix scroll wheel oddities
++ PR #2461: Allow LBX autocannons to swap between cluster and solid ammo again
++ Issue #2095: Lineholder I/Machine Gun Array Battle Value Issue
++ PR #2464: LAM BV heat efficiency
++ Issue #2465: Ensure immobility takes into account the crew only when applicable
++ PR #2474: Fix game freeze when removing last unit during deployment phase with lance movement for that unit type turned on
++ PR #2469: BV weapon heat 
++ PR #2476: Vehicle BV fixes
++ Issue #2473: Only last player to connect can deploy minefields
++ Data: Updating Level 1 Foliage and Clan Invasion Boxset Maps.
++ Issue #2431: Player units not making PSRs for exceeding normal MP in low gravity
++ Issue #2447: Bridge elevation bugs - charging from bridge & reversing from bridge
++ Issue #2450: Aerospace unit crash damage incorrect at velocity 0
++ Data: Overhaul of units, fixes to names, quirks, roles, and crit placements as a result of the Tukkayid books.
++ Issue #2453: Changing BA Ammo Selects Invalid Quantity
++ Issue #2493: Prevent players from firing hidden units' weapons without revealing them
++ PR #2494: Fix protomech myomer booster BV calculation
++ PR #2495: Use fastest movement mode to calculate infantry BV speed factor
++ Issue #2498: Prevent leakage of information about hidden unit positions via right-clicking
++ PR #2490: Add machine gun (regular, light, and heavy) and nail/rivet ammo types to the compatible list
++ PR #2482: Update Equipment Extended Database CSV file format for errata team
++ Issue #2497: Setting hidden units to activate during movement phase allows them to move during said movement phase
++ PR #2480: Fix loading transported units in MULs
++ Data: New Sprites
++ Data Fixes: #2492, #2485, #2437, #2429
++ PR #2509: AbstractIcon: Improving Null Protection
+
+0.47.14 (2020-11-15 1930 UTC)
 + PR #2393: Bot units attempting to retreat to a particular edge are much more likely to "stick" to it when they get there
 + Issue #2392: MMLs can switch between LRM and SRM ammo
++ Data: New Sprites
++ Data: Various Misc Fixes.
 
 0.47.13 (2020-11-09 1600 UTC) 
 + Data #2345: Infantry force assignment tables
@@ -114,6 +166,8 @@ VERSION HISTORY:
 + Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
 + Issue #1719: Level 1 Foliage
 + Issue #2212: Diagramming LOS calculation issue
++ PR #2467: Remove outdated final BV multiplier for tripod cockpits.
++ PR #2468: RISC laser pulse module BV
 
 0.47.9 (2020-08-07 1830 UTC)
 + Issue #1807: Potential fix for princess crash (fixable with kick/replace) when attempting to calculate moves for a destroyed unit

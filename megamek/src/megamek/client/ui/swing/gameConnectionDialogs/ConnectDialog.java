@@ -53,8 +53,8 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         JLabel yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT);
         JLabel serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT);
         JLabel portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT);
-        setPlayerNameField(new JTextField(getClientPreferences().getLastPlayerName(), 16));
-        getPlayerNameField().addActionListener(this);
+        setPlayerName(getClientPreferences().getLastPlayerName());
+        addPlayerNameActionListener(this);
         serverAddressField = new JTextField(getClientPreferences().getLastConnectAddr(), 16);
         serverAddressField.addActionListener(this);
         setPortField(new JTextField(getClientPreferences().getLastConnectPort() + "", 4));

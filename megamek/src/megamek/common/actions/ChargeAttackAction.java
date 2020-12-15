@@ -128,14 +128,30 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             }
         }
 
+        IHex srcHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex
-        final int attackerElevation = elevation + targHex.getLevel();
+
+        // If the charge is coming across a bridge, we want the elevation above the bridge rather
+        // than the underlying terrain.
+        final int attackerElevation;
+        if (srcHex.containsTerrain(Terrains.BRIDGE)
+                && (elevation >= srcHex.getTerrain(Terrains.BRIDGE_ELEV).getLevel())) {
+            attackerElevation = elevation + targHex.getLevel() - srcHex.getTerrain(Terrains.BRIDGE_ELEV).getLevel();
+        } else {
+            attackerElevation = elevation + targHex.getLevel();
+        }
         final int attackerHeight = attackerElevation + ae.height();
-        final int targetElevation = target.getElevation()
-                                    + targHex.getLevel();
+        final int targetElevation;
+        if (targHex.containsTerrain(Terrains.BRIDGE)
+                && (target.getElevation() >= targHex.getTerrain(Terrains.BRIDGE_ELEV).getLevel())) {
+            targetElevation = target.getElevation() + targHex.getLevel()
+                    - targHex.getTerrain(Terrains.BRIDGE_ELEV).getLevel();
+        } else {
+            targetElevation = target.getElevation() + targHex.getLevel();
+        }
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit = null;

@@ -1,42 +1,39 @@
-Version:1.0
+Version:1.1
 Rifleman
 C
 
 Config:Biped
-techbase:Mixed (IS Chassis)
-era:3050
-source:TRO 3085 - Clan Invasion
-rules level:4
+TechBase:Mixed (Clan Chassis)
+Era:3052
+Rules Level:4
 
-mass:60
-engine:240 Fusion Engine(IS)
-structure:IS Standard
-myomer:Standard
+Mass:60
+Engine:240 Fusion Engine (Clan)
+Structure:Standard
+Myomer:Standard
 
-heat sinks:10 Single
-nocrit:Standard:None
-nocrit:Standard:None
-walk mp:4
-jump mp:0
+Heat Sinks:12 Single
+Walk MP:4
+Jump MP:0
 
-armor:Standard(Inner Sphere)
-LA armor:15
-RA armor:15
-LT armor:15
-RT armor:15
-CT armor:22
-HD armor:6
-LL armor:12
-RL armor:12
-RTL armor:2
-RTR armor:2
-RTC armor:4
+Armor:Standard Armor (Clan)
+LA Armor:15
+RA Armor:15
+LT Armor:15
+RT Armor:15
+CT Armor:22
+HD Armor:6
+LL Armor:12
+RL Armor:12
+RTL Armor:2
+RTR Armor:2
+RTC Armor:4
 
 Weapons:4
-Large Pulse Laser, Left Arm
-LB 5-X AC, Left Arm
-Large Pulse Laser, Right Arm
-LB 5-X AC, Right Arm
+1 CLLBXAC5, Left Arm, Ammo:20
+1 CLLBXAC5, Right Arm
+1 CLLargePulseLaser, Left Arm
+1 CLLargePulseLaser, Right Arm
 
 Left Arm:
 Shoulder
@@ -67,7 +64,7 @@ CLLBXAC5
 -Empty-
 
 Left Torso:
--Empty-
+Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -81,7 +78,7 @@ Left Torso:
 -Empty-
 
 Right Torso:
--Empty-
+Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -95,17 +92,17 @@ Right Torso:
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Engine
+Engine
+Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
-Clan LB 5-X AC Ammo
+Engine
+Engine
+Engine
+CLLBXAC5 Ammo
 -Empty-
 
 Head:
@@ -115,12 +112,6 @@ Cockpit
 -Empty-
 Sensors
 Life Support
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Leg:
 Hip
@@ -128,12 +119,6 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 -Empty-
 
 Right Leg:
@@ -143,12 +128,3 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-imagefile:.\data\images\fluff\Mech\rifleman Silhouette.jpg
-

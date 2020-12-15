@@ -32,21 +32,62 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 public abstract class AbstractGameConnectionDialog extends ClientDialog implements ActionListener {
+
+    /**
+     * We need a way to access the action map for a JComboBox editor, so that we can
+     * have it fire an action when wenter is pressed. This simple class allows this.
+     */
+    public class SimpleComboBoxEditor extends JTextField implements ComboBoxEditor {
+
+        private static final long serialVersionUID = 4496820410417436582L;
+
+        @Override
+        public Component getEditorComponent() {
+            return this;
+        }
+
+        @Override
+        public void setItem(Object anObject) {
+            if (anObject != null) {
+                setText(anObject.toString());
+            } else {
+                setText(null);
+            }
+        }
+
+        @Override
+        public Object getItem() {
+            return getText();
+        }
+
+    }
+
     private static final long serialVersionUID = -5114410402284987181L;
     private String playerName;
     private int port;
 
     private boolean confirmed;
 
-    private JTextField playerNameField;
+    private JTextField playerNameField = null;
+    private JComboBox<String> playerNameCombo = null;
     private JTextField portField;
+
+    private Vector<String> playerNames = null;
 
     private IClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
     protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName) {
+        this(owner, title, modal, playerName, null);
+    }
+
+    protected AbstractGameConnectionDialog(JFrame owner, String title, boolean modal, String playerName, Vector<String> playerNames) {
         super(owner, title, modal);
+
+        this.playerNames = playerNames;
 
         setPlayerName(""); // initialize player name
         setPort(2346);
@@ -56,7 +97,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
         // if the player name is specified, overwrite the preference with it
         if (!StringUtil.isNullOrEmpty(playerName)) {
-            getPlayerNameField().setText(playerName);
+            setPlayerName(playerName);
         }
     }
 
@@ -91,6 +132,30 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+        if (playerNames == null) {
+            if (playerNameField == null) {
+                playerNameField = new JTextField(playerName, 16);
+            } else {
+                playerNameField.setText(playerName);
+            }
+        } else {
+            if (playerNameCombo == null) {
+                playerNameCombo = new JComboBox<String>(playerNames);
+                Dimension preferredSize = playerNameCombo.getPreferredSize();
+                preferredSize.setSize(180, preferredSize.getHeight());
+                playerNameCombo.setPreferredSize(preferredSize);
+                playerNameCombo.setEditable(true);
+            }
+            playerNameCombo.setSelectedItem(playerName);
+        }
+    }
+
+    public String getPlayerNameFromUI() {
+        if (playerNames == null) {
+            return playerNameField.getText();
+        } else {
+            return (String) playerNameCombo.getSelectedItem();
+        }
     }
 
     public int getPort() {
@@ -109,12 +174,37 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         this.confirmed = confirmed;
     }
 
-    public JTextField getPlayerNameField() {
-        return playerNameField;
+    public JComponent getPlayerNameField() {
+        if (playerNames == null) {
+            return playerNameField;
+        } else {
+            return playerNameCombo;
+        }
     }
 
-    public void setPlayerNameField(JTextField playerNameField) {
-        this.playerNameField = playerNameField;
+    public void addPlayerNameActionListener(ActionListener listener) {
+        if (playerNames == null) {
+            playerNameField.addActionListener(listener);
+        } else {
+            // Make it so an action is fired when enter is pressed
+            // This is necessary because the default JComboBox ActionEven
+            // can't distinguish between typing and hitting enter
+            // Note, this won't work with multiple action listeners
+            //  but that shouldn't be a problem for these dialogs
+            SimpleComboBoxEditor cbe = new SimpleComboBoxEditor();
+            InputMap im = cbe.getInputMap();
+            ActionMap am = cbe.getActionMap();
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+            am.put("enter", new AbstractAction() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.actionPerformed(e);
+                }
+            });
+            playerNameCombo.setEditor(cbe);
+        }
     }
 
     public JTextField getPortField() {
@@ -152,7 +242,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     @Override
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
-        setPlayerName(getPlayerNameField().getText());
+        setPlayerName(getPlayerNameFromUI());
         try {
             setPort(Integer.parseInt(getPortField().getText()));
         } catch (NumberFormatException ex) {

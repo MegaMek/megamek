@@ -19,15 +19,24 @@
  */
 package megamek.common.util.fileUtils;
 
+import java.awt.*;
+
 /**
  * This interface represents a categorizable file. Created on January 18, 2004
  * @author James Damour
  */
-public interface ItemFile {
+public abstract class ItemFile {
+    protected Object item = null; // allows us to cache the item
+
     /**
      * Get the item for this file.
      *
      * @throws Exception if there's any error getting the item.
      */
-    Object getItem() throws Exception;
+    public abstract Object getItem() throws Exception;
+
+    protected boolean isNullOrEmpty() {
+        return (item == null) || ((item instanceof Image)
+                && (((Image) item).getWidth(null) < 0) || (((Image) item).getHeight(null) < 0));
+    }
 }

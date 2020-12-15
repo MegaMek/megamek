@@ -19,6 +19,8 @@ package megamek.common;
 import java.io.File;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import megamek.common.preference.PreferenceManager;
+
 /*
  * TODO: Merge this with the PreferenceStore stuff and simplify/cleanup.
  * TODO: The 'common' library parts shouldn't be referring to these directories; any paths they need should be passed-in from the application.
@@ -431,6 +433,16 @@ public final class Configuration {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    public static File gameSummaryImagesBVDir() {
+        return new File(PreferenceManager.getClientPreferences()
+        .getLogDirectory() + "/gameSummaries/board"); 
+    }
+
+    public static File gameSummaryImagesMMDir() {
+        return new File(PreferenceManager.getClientPreferences()
+        .getLogDirectory() + "/gameSummaries/minimap"); 
     }
 
     /**

@@ -37,7 +37,7 @@ Add to Force: Though intended for random generation, the RAT Generator can also 
 
 Implementation Details - Overview
 (Note: the availability code mechanic is based on the RAT work of BT community member Xotl, but the implementation has some significant changes.)
-The core of the generation system is the availability code. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year:
+The core of the generation system is the availability rating. This is at a minimum a value in the range 1-10 that indicates how likely it is to find that unit in a given faction's military in a given year:
 1-2: Very rare
 3-4: Rare
 5-6: Common
@@ -46,19 +46,18 @@ The core of the generation system is the availability code. This is at a minimum
 
 The context for the availability is other units of the same general type: a very common assault Mek is more likely than a common one, but may be less common overall than a rare medium Mek.
 
-The availability code is converted to a weighted value by the formula wt = 2^(av/2). Every two steps the av code increases doubles the weight and every two steps it decreases cuts the weight in half. Numbers above 10 and below 1 are possible (-1 av is half as common as 1), but 1-10 is the range for base values. Av rating of zero has a special meaning in the data files.
+The availability rating is converted to a weighted value by the formula wt = 2^(av/2). Every two steps the av code increases doubles the weight and every two steps it decreases cuts the weight in half. Numbers above 10 and below 1 are possible (-1 av is half as common as 1), but 1-10 is the range for base values. Av rating of zero has a special meaning in the data files.
 
-A specific model has two availability codes: one for the chassis and one for the specific variant. The chassis code is used to determine how common the base model is in comparison to others in the same category (e.g. the chance that a medium Mek is some variant of a Phoenix Hawk as opposed to a Griffin) and the variant av code is used to determine the relative distribution of all variants within the base type (e.g. the chance that a particular Phoenix Hawk is a PHX-1 as opposed to a PHX-1D or PHX-1K).
+A specific model has two availability ratings: one for the chassis and one for the specific variant. The chassis code is used to determine how common the base model is in comparison to others in the same category (e.g. the chance that a medium Mek is some variant of a Phoenix Hawk as opposed to a Griffin) and the variant av code is used to determine the relative distribution of all variants within the base type (e.g. the chance that a particular Phoenix Hawk is a PHX-1 as opposed to a PHX-1D or PHX-1K).
 
 In addition to the numeric rating, the av code can also have a rating modifier, expressed as a + or -. A + indicates that the av rating is used for the highest equipment rating available to the faction (usually A or Keshik) and decreases by one for each rating level below. A - indicates that the av rating is used for the lowest available equipment rating (usually F or Provisional Garrison) and decreases moving up the rating. A + is typical for a technology level that is not generally available, such as remaining Star League tech in the early succession wars or newly recovered tech in the 3050s. A - can indicate older tech on its way out, such as primitive units in the late AoW or early SL era (or built by necessity during the Jihad), or Succession Wars tech after upgraded becomes standard. It can also be used to units that are more common in militia units, such as the Banshee, or those with a bad reputation, such as the Scorpion or the Blackjack.
 
-Factions are arranged in a hierarchy. Availability is determined by checking for the indicated faction itself, then working up the tree through parent factions until a value is found or reaching the root of the tree, which is the "General" faction. Several category pseudo-factions are used for convenience and efficiency: IS, (Near) Periphery, Clan, and Deep Periphery. The Near Periphery is further divided into six regions (The Magistracy of Canopus, for instance, has the Capellan Marches as its parent faction, and the Taurian Concordat is part of the Hyades Rim; see Periphery sourcebook, p. 156). Clans are divided into IS and Homeworld Clans. Commands within a faction nearly always have that faction as their parent, but there are exceptions (e.g. the Raven Alliance is an IS Clan, while the Alliance Military Corps is treated as a Periphery nation). A faction can have multiple parents, in which case the properties of the parents are merged (e.g. The Federated Commonwealth combines Davion and Steiner).
+Factions are arranged in a hierarchy. Availability is determined by checking for the indicated faction itself, then working up the tree through parent factions until a value is found or reaching the root of the tree, which is the "General" faction. Several category pseudo-factions are used for convenience and efficiency: IS, (Near) Periphery, Clan, and Deep Periphery. The Near Periphery is further divided into six regions (The Magistracy of Canopus, for instance, has the Capellan Marches as its parent faction, and the Taurian Concordat is part of the Hyades Rim; see Periphery Sourcebook, p. 156). Clans are divided into IS and Homeworld Clans. Commands within a faction nearly always have that faction as their parent, but there are exceptions (e.g. the Raven Alliance is an IS Clan, while the Alliance Military Corps is treated as a Periphery nation). A faction can have multiple parents, in which case the properties of the parents are merged (e.g. The Federated Commonwealth combines Davion and Steiner).
 
 Besides unit availability, the faction also determines the approximate percentage of SL/Upgraded, Clan, and omni technology in certain eras. For IS factions this begins with the reintroduction of lostech beginning just before the Clan invasion. For Clans this begins with the first introduction of new Clan technology. For general forces (no specific command chosen), the ratios depend on the equipment rating. Specific commands have their own ratios. These numbers are taken from the field manuals.
 
 Implementation Details - File Format
-The data used for the RAT generator is in the data/forcegenerator directory in the MegaMek distribution. All are xml files.
-A graphic editing tool is available by running MegaMek from the command line with the argument "-editratgen" but a working knowledge of the file format is strongly recommended when using it. The graphical editor allows selecting an alternate directory for loading and saving the data files. Custom files can also be installed in "userdata/data/forcegenerator" and this will take precedence over the distribution files without having to replace them.
+The data used for the RAT generator is in the data/forcegenerator directory in the MegaMek distribution. All are xml files. A graphic editing tool is available by running MegaMek from the command line with the argument "-editratgen" but a working knowledge of the file format is strongly recommended when using it. The graphical editor allows selecting an alternate directory for loading and saving the data files. Custom files can also be installed in "userdata/data/forcegenerator" and this will take precedence over the distribution files without having to replace them.
 
 factions.xml:
 This file holds faction data that is not tied to a specific year. There is one node for each faction; subcommands are considered factions. Here is the entry for Clan Ghost Bear for reference:
@@ -72,7 +71,7 @@ This file holds faction data that is not tied to a specific year. There is one n
 
 'key' attribute: a code that uniquely identifies this faction. For MekHQ interoperability, any factions appearing in both should have the same key. Though not necessary for functionality, subcommands should have the form "parentKey.commandKey" for clarity. For example, the Sword of Light is DC.SL.
 
-'name' attribute: The official name of the faction. For factions that have a name change, the earliest name goes here.
+'name' attribute: the official name of the faction. For factions that have a name change, the earliest name goes here.
 
 'minor' attribute: if true, this faction is not shown in the Faction combobox by default.
 
@@ -84,7 +83,7 @@ This file holds faction data that is not tied to a specific year. There is one n
 
 'years': the range of years this faction is active. A faction is in existence in the current universe timeline, the end date can be left off. Most pseudo-factions used as categories (e.g. IS or Periphery) have neither start or end and are represented as '-'. A faction that disappears and is later reappears can have multiple ranges separated by commas (no spaces). Duchy of Andurien: <years>3030-3040,3079-</years>
 
-'ratingLevels': A comma-separated list of all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction will inherit the same system as the parent. If exactly one value is given, it is treated as a special case. It is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands.
+'ratingLevels': a comma-separated list of all ratings available to this faction, from lowest to highest. These are the values that will appear in the ratings combobox. If empty or missing, the faction will inherit the same system as the parent. If exactly one value is given, it is treated as a special case. It is not shown in the ratings combobox, and its position in the parent faction's ratings is used in calculating any availability adjustments due to rating (+/- in the av code). This is used to set the rating of subcommands.
 
 'parentFaction': the faction key of any parent faction(s). If there is more than one, they are separated by commas. If none is given, 'General' is implied.
 
@@ -109,13 +108,13 @@ Example of faction node (Republic of the Sphere, 3100):
 		<weightDistribution era='3100' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 
-'key' attribute: must match a faction in factions.xml.
+'key' attribute: must match a faction key in factions.xml.
 
-'pctOmni' element: the target percentage of OmniMeks and OmniFighters in the generated table. There should be one value for each of the faction's available rating levels. An alternate value can be provided for OmniFighters by adding the "type='aero'" attribute. Raven Alliance example:
+'pctOmni' element: the target percentage of OmniMeks and OmniFighters in the generated table. There should be one value for each of the faction's available rating levels, from lowest to highest. An alternate value can be provided for OmniFighters by adding the "type='aero'" attribute. Raven Alliance example:
     <pctOmni unitType='Aero'>0,0,15,90,100</pctOmni>
 OmniVehicles are uncommon enough to rely on faction availability to set their values.
- 
-'pctClan' element: the target percentage of Clan equipment in the generated table. Alternate values can be provided by adding either "type='aero'" or "type='vehicle'".
+
+'pctClan' element: the target percentage of Clan equipment in the generated table. Alternate values can be provided by adding either "type='Aero'" or "type='Vehicle'".
 Hell's Horses example:
 		<pctClan unitType='Vehicle'>10,10,40,50,60</pctClan>
 
@@ -152,12 +151,85 @@ Example: Shadow Cat from 3055
 	</chassis>
 
 'name' attribute: the chassis name as used by MegaMek
-'unitType' attribute: Can be one of the following values: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter, Aero, Small Craft, Dropship, Jumpship, Warship. Needed to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
-'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the CS copy.
+
+'unitType' attribute: Can be one of the following values:
+Mek
+Tank
+BattleArmor
+Infantry
+ProtoMek
+VTOL
+Naval
+ConventionalFighter
+Aero
+Small Craft
+Dropship
+Jumpship
+Warship
+ Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter, Aero, Small Craft, Dropship, Jumpship, Warship. Needed to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
+
+'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the ComStar copy.
+
 'availability' node: a comma-separated list of availability codes for the current year. The format is FKEY:AV[+|-][:YEAR], in which FKEY is the faction key, AV is the rating from 1-10, + or - (optional) adjusts av based on rating, and :YEAR optionally provides an introduction year for the faction. If given, the designated unit will not appear in the year range before the one given. This is used frequently for the reformation of the Free Worlds League. Units that were in use by one or more of the former Free Worlds states but not available to the former FWL independents have FWL:(av rating):3139 in 3135.xml, which prevents them from showing up for FWL during 3135-3138. A value of zero is a special case which indicates unavailable even if available to a parent faction. Sometimes a unit may be available to all IS factions except X, for example, and it is easier to add "IS:6,X:0" than to list all IS factions.
 
 'model' node: There is one model node for each variant in use during the year range.
+
     'name' attribute: the name of the variant. The full unit name is chassis name + model name,separated by a space.
-    'role' element: comma-separated list of roles the variant was designed for. Supported values are recon, fire support, spotter, urban, infantry support, cavalry, raider, incindiary, ew support, artillery, missile artillery, anti-aircraft, anti-infantry, apc, spec ops, cargo, support, bomber, escort, interceptor, ground support, training, assault, mech carrier, asf carrier, vee carrier, infantry carrier, ba carrier, tug, troop carrier, pocket ws, corvette, destroyer, frigate, cruiser, battleship, engineer, marine, mountaineer, xct, paratrooper, anti-mek, mechanized ba, field gun, civilian, minesweeper, minelayer
-    'deployedWith' element: not used by RAT Generator, but provided for utilities that might want to use RAT Generator as a back end to build larger forces. Lists other units this one is frequently deployed with.
+
+    'role' element: comma-separated list of roles the variant was designed for.
+        comma-separated list of roles the variant was designed for. Supported values are:
+        fire_support - focus on long range firepower
+        sr_fire_support - focus on short range firepower
+        infantry_support - commonly found supporting infantry formations
+        ew_support - carries additional electronics for ECM, scanning, or command functions
+        spotter - carries TAG or equivalent, such as C3 master
+        incindiary - can easily set fires
+        mag_clamp - battle armor or ProtoMek with magnetic clamps
+        artillery - carries tube artillery or artillery cannon
+        missile_artillery - carries missile artillery, typically Arrow IV
+        minesweeper - can clear mines
+        minelayer - can lay mines
+        anti_aircraft - special anti-aircraft targeting or flak-coded weapons
+        anti_infantry - focus on fighting conventional infantry
+        apc - vehicle can carry infantry or battle armor internally
+        specops - more focus on stealth than combat
+        urban - normally used for urban combat
+        recon - speed and detection gear over firepower
+        cavalry - speed and firepower
+        command - has 'Command Mek' quirk, C3 master, or is otherwise commonly used as a commanders ride
+        raider - focus on speed and ammo independence
+        engineer - various combat support engineering roles, such as fieldworks and bridge layers
+        cargo - primarily a cargo mover, or has large cargo capacity
+        support - primary role is noncombat
+        civilian - non-military vehicles
+        training - historically used for training purposes rather than regular combat
+        bomber - focus on bomb delivery
+        interceptor - focus on attacking other aerospace units
+        ground_support - focus on ground units
+        assault - focus on heavy firepower
+        escort - small craft and fighters designed to protect others
+        mech_carrier - has Mek bays
+        asf_carrier - has aerospace bays
+        vee_carrier - has vehicle bays
+        infantry_carrier - has infantry bays
+        troop_carrier - has both infantry and vehicle bays
+        ba_carrier - has battle armor bays
+        tug - has tug adaptor
+        pocket ws - pocket warship DropShip
+        corvette - WarShip class
+        destroyer - WarShip class
+        frigate - WarShip class
+        cruiser - WarShip class
+        battleship - WarShip class
+        marine - conventional infantry that can fight in vacuum
+        mountaineer - conventional infantry with mountaineer specialty
+        xct - conventional infantry that can survive hostile environments
+        paratrooper - conventional non-jump infantry that can be air dropped
+        anti_mek - conventional infantry that can perform anti-mek attacks
+        field_gun - motorized or mechanized infantry with a towed ballistic or artillery weapon
+
+    'deployedWith' element: not used by RAT Generator, but provided for utilities that might want to use RAT Generator as a back end to build larger forces. Lists other units this one is frequently deployed with. Prefixing the other unit name with "req:" indicates that it is required (e.g. LongTom and its trailers). Units that are deployed independently can indicate this by using "solo" instead of another unit name.
+
     'availability' element: same as in the chassis element
+
+    'mechanized' element: 'true' for BattleArmor that qualifies for the mechanized BattleArmor rules

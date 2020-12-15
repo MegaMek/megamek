@@ -28,11 +28,6 @@ public interface IPlayer extends ITurnOrdered {
     int PLAYER_NONE = -1;
     int TEAM_NONE = 0;
     int TEAM_UNASSIGNED = -1;
-    String[] colorNames = { "Blue", "Red", "Green", "Cyan",
-            "Pink", "Orange", "Gray", "Brown", "Purple", "Turquoise ",
-            "Maroon", "Spring Green", "Gold", "Sienna", "Violet", "Navy",
-            "Olive Drab", "Fuchsia", "FireBrick", "Dark Golden Rod", "Coral",
-            "Chartreuse", "Deep Purple", "Yellow" };
     String[] teamNames = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
     int MAX_TEAMS = teamNames.length;
 

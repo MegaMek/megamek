@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Bulldog Medium Tank
 3088
 </year>
 
+<originalBuildYear>
+3088
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -32,6 +36,9 @@ IS Level 3
 Tracked
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 4
 </cruiseMP>
@@ -39,6 +46,14 @@ Tracked
 <engine_type>
 6
 </engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
 
 <armor>
 40
@@ -82,3 +97,4 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 60.0
 </tonnage>
+

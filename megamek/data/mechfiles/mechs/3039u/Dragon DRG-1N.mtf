@@ -3,45 +3,45 @@ Dragon
 DRG-1N
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2754
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2754
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:60
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:60
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:0
+heat sinks:10 Single
+walk mp:5
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:27
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:27
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
 Weapons:4
 Medium Laser, Left Arm
+AC/5, Right Arm
 Medium Laser, Left Torso
 LRM 10, Center Torso
-Autocannon/5, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+Hand Actuator
 Medium Laser
--Empty-
 -Empty-
 -Empty-
 -Empty-

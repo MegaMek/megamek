@@ -115,6 +115,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
+    public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
+    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
@@ -343,6 +346,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
+        store.setDefault(GAME_SUMMARY_MINI_MAP, false);
+        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
@@ -548,6 +554,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDisplaySizeWidth() {
         return store.getInt(DISPLAY_SIZE_WIDTH);
+    }
+
+    public boolean getGameSummaryBoardView() {
+        return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
+    }
+
+    public boolean getGameSummaryMiniMap() {
+        return store.getBoolean(GAME_SUMMARY_MINI_MAP);
+    }
+
+    public boolean getEntityOwnerLabelColor() {
+        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
 
     public boolean getUnitLabelBorder() {
@@ -1041,6 +1059,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplaySizeWidth(int i) {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setGameSummaryBoardView(boolean state) {
+        store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
+    }
+
+    public void setGameSummaryMiniMap(boolean state) {
+        store.setValue(GAME_SUMMARY_MINI_MAP, state);
+    }
+
+    public void setEntityOwnerLabelColor(boolean i) {
+        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
 
     public void setUnitLabelBorder(boolean i) {

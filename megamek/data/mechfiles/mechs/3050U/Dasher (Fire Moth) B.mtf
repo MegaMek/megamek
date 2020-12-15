@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Dasher (Fire Moth)
 B
 
@@ -56,10 +56,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLECMSuite (omnipod)
 CLMG (omnipod)
 CLMG (omnipod)
 Clan Machine Gun Ammo - Half (omnipod)
+CLECMSuite (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -148,3 +148,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+

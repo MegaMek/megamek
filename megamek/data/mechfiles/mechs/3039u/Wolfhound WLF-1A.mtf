@@ -3,10 +3,10 @@ Wolfhound
 WLF-1A
 
 Config:Biped
-techbase:Inner Sphere
-era:3028
-source:TRO 3039 - Succession Wars
-rules level:3
+TechBase:Inner Sphere
+Era:3028
+Source:TRO 3039 - Succession Wars
+Rules Level:1
 
 mass:35
 engine:210 Fusion Engine(IS)

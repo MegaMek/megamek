@@ -1276,7 +1276,7 @@ public class Protomech extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                 }
             }
 
@@ -1482,10 +1482,14 @@ public class Protomech extends Entity {
         bvText.append(endRow);
 
         // adjust further for speed factor
-        double speedFactor = Math
-                .pow(1 + ((((double) getRunMP(false, true, true) + (Math
-                        .round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
+        int mp = getRunMPwithoutMyomerBooster(false, true, true)
+                + (int) Math.round(Math.max(jumpMP, umuMP) / 2.0);
+        // Unlike MASC and superchargers, which use walk x 2 for speed factor, myomer booster adds
+        // one to run + 1/2 jump MP
+        if (hasMyomerBooster()) {
+            mp++;
+        }
+        double speedFactor = Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
 
         obv = weaponBV * speedFactor;
         

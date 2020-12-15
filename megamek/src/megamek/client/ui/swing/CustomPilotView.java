@@ -36,8 +36,8 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooser;
-import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
+import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooserDialog;
+import megamek.client.ui.swing.dialog.imageChooser.PortraitChooserDialog;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -102,7 +102,7 @@ public class CustomPilotView extends JPanel {
         portraitButton.setPreferredSize(new Dimension(72, 72));
         portraitButton.setName("portrait");
         portraitButton.addActionListener(e -> {
-            AbstractIconChooser portraitDialog = new PortraitChooser(parent,
+            AbstractIconChooserDialog portraitDialog = new PortraitChooserDialog(parent,
                     entity.getCrew().getPortrait(slot));
             int result = portraitDialog.showDialog();
             if (result == JOptionPane.OK_OPTION) {

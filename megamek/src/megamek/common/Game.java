@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,6 +65,11 @@ public class Game implements Serializable, IGame {
      *
      */
     private static final long serialVersionUID = 8376320092671792532L;
+
+    /**
+     * A UUID to identify this game instance.
+     */
+    public UUID uuid = UUID.randomUUID();
 
     /**
      * Stores the version of MM, so that it can be serialized in saved games.
@@ -1438,6 +1444,8 @@ public class Game implements Serializable, IGame {
      * Resets this game.
      */
     public synchronized void reset() {
+        uuid = UUID.randomUUID();
+
         roundCount = 0;
 
         entities.clear();
@@ -3649,6 +3657,19 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
+    }
+
+    /**
+     * Get a string representation of the UUId for this game.
+     *
+     * @return
+     */
+    public String getUUIDString() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+        return uuid.toString();
+
     }
 
 }

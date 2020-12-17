@@ -32704,7 +32704,7 @@ public class Server implements Runnable {
         r.indent(0);
         vDesc.add(r);
 
-        int critRoll = 12;//Compute.d6(2);
+        int critRoll = Compute.d6(2);
         if (critRoll < 6) {
             r = new Report(3805);
             r.type = Report.PUBLIC;

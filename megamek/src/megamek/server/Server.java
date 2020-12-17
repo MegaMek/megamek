@@ -32704,7 +32704,7 @@ public class Server implements Runnable {
         r.indent(0);
         vDesc.add(r);
 
-        int critRoll = Compute.d6(2);
+        int critRoll = 12;//Compute.d6(2);
         if (critRoll < 6) {
             r = new Report(3805);
             r.type = Report.PUBLIC;
@@ -32820,6 +32820,15 @@ public class Server implements Runnable {
                 }
             }
             boom = (int) Math.floor(bldg.getDamageToScale() * boom);
+            
+            if (boom == 0) {
+                Report rNoAmmo = new Report(3831);
+                rNoAmmo.type = Report.PUBLIC;
+                rNoAmmo.indent(1);
+                vDesc.add(rNoAmmo);
+                return vDesc;
+            }
+            
             r.add(boom);
             int curCF = bldg.getCurrentCF(coords);
             curCF -= Math.min(curCF, boom);
@@ -32866,15 +32875,32 @@ public class Server implements Runnable {
                 vDesc.add(r);
             }
         } else if (critRoll == 12) {
-            // other
-            r = new Report(3835);
-            r.type = Report.PUBLIC;
-            r.indent(1);
+            // non-weapon equipment is hit
+            Vector<Mounted> equipmentList = new Vector<>();
+            for (GunEmplacement gun : guns) {
+                for (Mounted equipment : gun.getMisc()) {
+                    if (!equipment.isHit()) {
+                        equipmentList.add(equipment);
+                    }
+                }
+            }
+            
+            if (equipmentList.size() > 0) {
+                Mounted equipment = equipmentList.elementAt(Compute.randomInt(equipmentList.size()));
+                equipment.setHit(true);
+                r = new Report(3840);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                r.add(equipment.getDesc());
+            } else {
+                r = new Report(3835);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+            }
             vDesc.add(r);
         }
 
         return vDesc;
-
     }
 
     public void sendChangedBuildings(Vector<Building> buildings) {

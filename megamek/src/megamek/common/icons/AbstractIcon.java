@@ -34,7 +34,7 @@ public abstract class AbstractIcon implements Serializable {
     public static final String DEFAULT_ICON_FILENAME = "None";
 
     private String category;
-    protected String filename;
+    private String filename;
     //endregion Variable Declarations
 
     //region Constructors

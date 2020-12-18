@@ -15897,16 +15897,19 @@ public class AmmoType extends EquipmentType {
         
         AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
         
+        // Ammo of the same type and rack size should be allowed
         boolean ammoOfSameType = currentAmmoType.equalsAmmoTypeOnly(otherAmmo)
                 && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         // MMLs can swap between different specific ammo types, so we have a special case check here
         boolean mmlAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_MML)
-                && (otherAmmo.getAmmoType() == AmmoType.T_MML);
+                && (otherAmmo.getAmmoType() == AmmoType.T_MML)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         // LBXs can swap between cluster and slug ammo types
         boolean lbxAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX)
-                && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX);
+                && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
         boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;

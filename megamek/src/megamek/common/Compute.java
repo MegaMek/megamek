@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
@@ -215,6 +216,15 @@ public class Compute {
      */
     public static void setRNG(int type) {
         random = MMRandom.generate(type);
+    }
+
+    /**
+     * Sets the RNG to the specific instance.
+     * @param random A non-null instance of {@see MMRandom} to use
+     *               for all random number generation.
+     */
+    public static void setRNG(MMRandom random) {
+        Compute.random = Objects.requireNonNull(random);
     }
 
     /**

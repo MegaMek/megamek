@@ -1,7 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.47.16 (RC2)-SNAPSHOT
-+ Issue #2513: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill
++ Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill
 + Issue #2513, #907: Adjust message for gun emplacement ammo criticals to more clearly indicate if no damage has occurred; 
 		implement non-weapon/ammo critical hits (e.g. ECM) on gun emplacements
 

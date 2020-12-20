@@ -46,6 +46,7 @@ import javax.swing.border.TitledBorder;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.IPlayer;
 
 public final class UIUtil {
     
@@ -175,6 +176,21 @@ public final class UIUtil {
     }
     
     /** 
+     * Returns the Color associated with either enemies, allies or 
+     * oneself from the GUIPreferences depending on the relation
+     * of the given player1 and player2. 
+     */
+    public static Color teamColor(IPlayer player1, IPlayer player2) {
+        if (player1.getId() == player2.getId()) {
+            return GUIPreferences.getInstance().getMyUnitColor();
+        } else if (player1.isEnemyOf(player2)) {
+            return GUIPreferences.getInstance().getEnemyUnitColor();
+        } else {
+            return GUIPreferences.getInstance().getAllyUnitColor();
+        }
+    }
+    
+    /** 
      * Returns a green color suitable as a text color. The supplied
      * color depends on the UI look and feel and will be lighter for a 
      * dark UI LAF than for a light UI LAF.
@@ -290,6 +306,11 @@ public final class UIUtil {
         return new Dimension((int)(scale * dim.width), (int)(scale * dim.height));
     }
     
+    /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */ 
+    public static String scaleStringForGUI(String str) {
+        return "<HTML>" + UIUtil.guiScaledFontHTML() + str + "</FONT></HTML>";
+    }
+    
     public static void adjustDialog(Container contentPane) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         Component[] allComps = contentPane.getComponents();
@@ -387,7 +408,7 @@ public final class UIUtil {
     }
     
     /** Returns an HTML FONT Color String, e.g. COLOR=#FFFFFF according to the given color. */
-    private static String colorString(Color col) {
+    public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
     }
     

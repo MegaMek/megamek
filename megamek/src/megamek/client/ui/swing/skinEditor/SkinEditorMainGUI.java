@@ -456,11 +456,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             error.printStackTrace();
         }
 
-        // This is required because the ChatLounge adds the listener to the
-        // MechSummaryCache that must be removed explicitly.
-        if (chatlounge != null) {
-            chatlounge.die();
-        }
         TimerSingleton.getInstance().killTimer();
         
         if (menuBar != null) {

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.*;
 
 import megamek.client.ui.Messages;
@@ -34,7 +33,6 @@ import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 public class MekTableModel extends AbstractTableModel {
@@ -267,19 +265,11 @@ public class MekTableModel extends AbstractTableModel {
                 setForeground(table.getSelectionForeground());
                 setBackground(table.getSelectionBackground());
             } else {
+                setForeground(table.getForeground());
                 Color background = table.getBackground();
                 if (row % 2 != 0) {
-                    Color alternateColor = UIManager.getColor("Table.alternateRowColor");
-                    if (alternateColor == null) {
-                        // If we don't have an alternate row color, use 'controlHighlight'
-                        // as it is pretty reasonable across the various themes.
-                        alternateColor = UIManager.getColor("controlHighlight");
-                    }
-                    if (alternateColor != null) {
-                        background = alternateColor;
-                    }
+                    background = alternateTableBGColor();
                 }
-                setForeground(table.getForeground());
                 setBackground(background);
             }
             
@@ -319,7 +309,7 @@ public class MekTableModel extends AbstractTableModel {
                     }
                 }
             }
-
+            
             return this;
         }
     }

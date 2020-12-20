@@ -84,6 +84,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.lobby.ChatLounge;
+import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -1065,12 +1066,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         client.die();
 
-        // TODO Is there a better solution?
-        // This is required because the ChatLounge adds the listener to the
-        // MechSummaryCache that must be removed explicitly.
-        if (chatlounge != null) {
-            chatlounge.die();
-        }
         TimerSingleton.getInstance().killTimer();
         
         if (controller != null) {

@@ -101,7 +101,7 @@ public final class UnitToolTip {
     // dont show hotload as valid in popup for clan wps
     // Add confirm dlg for delete
     //TODO: TacOps/BMM minefields setting should affect lobby player table and player config
-    //TODO: remove path from board list
+    // remove path from board list
     // unit selector remember sizes #2428
     // add dialog before delete
     // hide deployment info for loaded units
@@ -112,6 +112,8 @@ public final class UnitToolTip {
     //TODO: Player removal with loaded units rbeaks the game
     //TODO: Table sorter not updated when it was prohibited and changed 
     //TODO: sorting use the UIManager char for ascending/descending
+    //TODO: scale a gridlayout hgap?
+    //TODO: do exclusive deploy zones need to be for players on a team?
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

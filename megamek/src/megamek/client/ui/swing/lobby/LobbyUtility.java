@@ -1,3 +1,16 @@
+/*  
+* MegaMek - Copyright (C) 2020 - The MegaMek Team  
+*  
+* This program is free software; you can redistribute it and/or modify it under  
+* the terms of the GNU General Public License as published by the Free Software  
+* Foundation; either version 2 of the License, or (at your option) any later  
+* version.  
+*  
+* This program is distributed in the hope that it will be useful, but WITHOUT  
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
+* details.  
+*/ 
 package megamek.client.ui.swing.lobby;
 
 import megamek.common.IGame;
@@ -11,35 +24,61 @@ public class LobbyUtility {
      * Returns true when the starting position of the given player is valid
      * in the given game. This is not the case only when the options "Double Blind"
      * and "Exclusive Starting Positions" are on and the starting position overlaps
-     * with that of other players.
+     * with that of other players, if "Teams Share Vision" is off, or enemy players,
+     * if "Teams Share Vision" is on.
      * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
      */
-    public static boolean isValidStartPos(IGame game, IPlayer player) {
-        return !(isExclusiveDeployment(game) 
-                && game.getPlayersVector().stream().filter(p -> !p.equals(player))
-                        .anyMatch(p -> startPosOverlap(player, p)));
+    static boolean isValidStartPos(IGame game, IPlayer player) {
+        return isValidStartPos(game, player, player.getStartingPos());
     }
 
+    /**
+     * Returns true when the given starting position pos is valid for the given player
+     * in the given game. This is not the case only when the options "Double Blind"
+     * and "Exclusive Starting Positions" are on and the starting position overlaps
+     * with that of other players, if "Teams Share Vision" is off, or enemy players,
+     * if "Teams Share Vision" is on.
+     * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
+     */
+    static boolean isValidStartPos(IGame game, IPlayer player, int pos) {
+        if (!isExclusiveDeployment(game)) {
+            return true;
+        } else {
+            if (isTeamsShareVision(game)) {
+                return !game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
+                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+            } else {
+                return !game.getPlayersVector().stream().filter(p -> !p.equals(player))
+                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+            }
+        }
+    }
+    
     /**
      * Returns true when double blind and exclusive deployment are on,
      * meaning that player's deployment zones may not overlap.
      */
-    public static boolean isExclusiveDeployment(IGame game) {
+    static boolean isExclusiveDeployment(IGame game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
-    }   
+    }  
     
-    private static boolean startPosOverlap(IPlayer player1, IPlayer player2) {
-        return startPosOverlap(player1.getStartingPos(), player2.getStartingPos());
-    }
+    /**
+     * Returns true when teams share vision is on, reagardless of whether
+     * double blind is on.
+     */
+    static boolean isTeamsShareVision(IGame game) {
+        final GameOptions gOpts = game.getOptions();
+        return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
+    } 
     
     /** 
      * Returns true when the two starting positions overlap, i.e.
      * if they are equal or adjacent (e.g. E and NE, SW and S).
      * ANY overlaps all others. 
      */
-    public static boolean startPosOverlap(int pos1, int pos2) {
+    private static boolean startPosOverlap(int pos1, int pos2) {
         if (pos1 > 10) {
             pos1 -= 10;
         }
@@ -53,9 +92,9 @@ public class LobbyUtility {
         int b = Math.min(pos1, pos2);
         // Out of bounds values:
         if (b < 0 || a > 10) {
-            return false;
+            throw new IllegalArgumentException("The given starting position is invalid!");
         }
-        // ANY overlaps all others, EDG overlaps all others but CTR
+        // ANY (0) overlaps all others, EDG (9) overlaps all others but CTR (10)
         if (b == 0 || a == 9) {
             return true;
         }

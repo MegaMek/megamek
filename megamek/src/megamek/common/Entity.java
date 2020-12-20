@@ -10197,9 +10197,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Get the direction the board that the unit will be deployed. If the unit
-     * is to be deployed onboard, the distance will be
-     * <code>IOffBoardDirections.NONE</code>, otherwise it will be one of the
+     * Returns the direction off the board that the unit will be deployed. If the unit
+     * is deployed onboard, IOffBoardDirections.NONE is returned, otherwise one of the
      * values:
      * <ul>
      * <li><code>IOffBoardDirections.NORTH</code></li>
@@ -10207,9 +10206,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <li><code>IOffBoardDirections.EAST</code></li>
      * <li><code>IOffBoardDirections.WEST</code></li>
      * </ul>
-     *
-     * @return the <code>int</code> direction from the board the unit will be
-     * deployed. Only valid values will be returned.
      */
     public OffBoardDirection getOffBoardDirection() {
         return offBoardDirection;

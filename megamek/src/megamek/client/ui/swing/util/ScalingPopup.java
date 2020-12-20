@@ -14,7 +14,6 @@
 package megamek.client.ui.swing.util;
 
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 /** 
  * A JPopupMenu that automatically scales with MegaMek's GUI Scaling value 
@@ -28,27 +27,10 @@ public class ScalingPopup extends JPopupMenu {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            applyGUIScale();
-        }
+            UIUtil.scaleJPopup(ScalingPopup.this);
+            pack();
+        } 
         super.setVisible(b);
     }
-
-    /** 
-     * Applies the GUI Scaling on AWT's event thread as demanded
-     * by {@link java.awt.Container#getComponent(int)}. 
-     */
-    public void applyGUIScale() {
-        SwingUtilities.invokeLater(guiScaler);
-    }
-
-    /** Scales the menu items etc. and calls pack() to refresh the popup size. */
-    private Runnable guiScaler = new Runnable() {
-
-        @Override
-        public void run() {
-            UIUtil.scaleJPopup(ScalingPopup.this);
-            ScalingPopup.this.pack();
-        }
-    };
 
 };

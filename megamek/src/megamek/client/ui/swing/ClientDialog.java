@@ -25,7 +25,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import megamek.client.ui.swing.util.UIUtil;
 
 /**
@@ -161,11 +160,21 @@ public class ClientDialog extends JDialog {
     @Override
     public void setVisible(boolean b) {
         if (isScaling && b) {
-            UIUtil.adjustDialog(getContentPane());
-            pack();
-            center();
+            guiScale();
+            super.setVisible(true);
+        } else {
+            super.setVisible(b);
         }
-        super.setVisible(b);
+    }
+    
+    /** 
+     * Applies the GUI Scaling on the event thread as demanded
+     * by {@link java.awt.Container#getComponent(int)}. 
+     */
+    public void guiScale() {
+        UIUtil.adjustDialog(getContentPane());
+        pack();
+        center();
     }
 
 }

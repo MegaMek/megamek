@@ -3041,7 +3041,6 @@ public class FireControl {
                 || AmmoType.M_PAINT_OBSCURANT == ammoType.getMunitionType()
                 || AmmoType.M_SMOKE == ammoType.getMunitionType()
                 || AmmoType.M_SMOKE_WARHEAD == ammoType.getMunitionType()
-                || AmmoType.M_SMOKEGRENADE == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER_ACTIVE == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER_AUGMENTED == ammoType.getMunitionType()

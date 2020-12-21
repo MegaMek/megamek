@@ -10317,7 +10317,7 @@ public class Server implements Runnable {
     }
 
     public void deliverSmokeGrenade(Coords coords, Vector<Report> vPhaseReport) {
-        Report r = new Report(5185, Report.PUBLIC);
+        Report r = new Report(5200, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);

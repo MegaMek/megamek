@@ -7341,6 +7341,30 @@ public abstract class Mech extends Entity {
     }
 
     /**
+     * Add the critical slots necessary for a standard gyro. Also set the gyro
+     * type variable. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addSuperheavyGyro() {
+        if (getEmptyCriticals(LOC_CT) < 2) {
+            return false;
+        }
+        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+            addCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+        } else {
+            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+        }
+        setGyroType(GYRO_SUPERHEAVY);
+        return true;
+    }
+
+    /**
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.

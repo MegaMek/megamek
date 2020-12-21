@@ -6,6 +6,7 @@ VERSION HISTORY:
 		implement non-weapon/ammo critical hits (e.g. ECM) on gun emplacements
 + Issue #2517: Ensure AmmoType::canSwitchToAmmo ignores munition types
 + PR #2519: Open up Compute and MMRandom to allow mocking in tests
++ Issue #2522: Vehicular Grenade Launchers smoke munitions not working
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

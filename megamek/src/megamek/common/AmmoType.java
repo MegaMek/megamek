@@ -341,7 +341,7 @@ public class AmmoType extends EquipmentType {
     // vehicular grenade launcher
     public static final long M_CHAFF = 1l << 54;
     public static final long M_INCENDIARY = 1l << 55;
-    public static final long M_SMOKEGRENADE = 1l << 56;
+    // Number 56 was M_SMOKEGRENADE, but that has now been merged with M_SMOKE
 
     // Number 57 is used for iATMs IMP ammo in the ATM section above.
     // and 58 for IIW

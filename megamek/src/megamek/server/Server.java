@@ -28146,12 +28146,6 @@ public class Server implements Runnable {
         }
 
         mounted.setShotsLeft(0);
-        Vector<Report> newReports = damageEntity(en, hit, damage, true);
-        for (Report rep : newReports) {
-            rep.indent(2);
-        }
-        vDesc.addAll(newReports);
-        Report.addNewline(vDesc);
 
         int pilotDamage = 2;
         if (en instanceof Aero) {
@@ -28178,6 +28172,13 @@ public class Server implements Runnable {
         } else {
             Report.addNewline(vDesc);
         }
+
+        Vector<Report> newReports = damageEntity(en, hit, damage, true);
+        for (Report rep : newReports) {
+            rep.indent(2);
+        }
+        vDesc.addAll(newReports);
+        Report.addNewline(vDesc);
 
         return vDesc;
     }

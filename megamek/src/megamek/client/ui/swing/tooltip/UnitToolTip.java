@@ -29,6 +29,8 @@ import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
+import megamek.common.preference.PreferenceManager;
+
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -57,21 +59,22 @@ public final class UnitToolTip {
     // remove load label from lobby
     //TODO: allow disconnecting C3 in lobby
     //TODO: config dialog de-crap
+    //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
+    //TODO: is hidden exclusive with late deploy?
     // show doomed status in lobby
     // show doomed status explicit in tooltip #2322
-    //TODO: better ECM source
+    // better ECM source
     //TODO: portraits after loading a mul are there in the mektable but not in the TT
     // reduce portrait and unit image to make the lines smaller in full mode
     // save column width
     // make gameyearlabels etc. follow the guiScale
     // remove the button "DeleteAll"
     //TODO: Externalize strings
-    //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
-    //TODO: is hidden exclusive with late deploy?
     // Add toggle button show ID
     // Dont show Altitude in space
-    //TODO: Loaded units have altitude?? Dont show alt/vel for loaded
-    //TODO: Show Hidden only when hidden rule active -- no, remove hidden when inactive
+    // Loaded units have altitude?? Dont show alt/vel for loaded
+    // remove hidden when inactive
+    // remove hidden, prone & hulldown when carried
     // Allow hiding unofficial and legacy options in Game options
     // No Altitude in space
     // No hidden in space
@@ -86,49 +89,58 @@ public final class UnitToolTip {
     // in the unit selector, the text filter gets cursor directly and content is marked
     // constant tooltip recalc calling BV() all the time in the mek list -> bad
     // tables no line breaks
-    //TODO: Show ID for loader
-    //TODO: When resizing table columns, dont switch sorter
+    // Show ID for loader
+    // When resizing table columns, dont switch sorter 
     // extract Mektablemodel, mektablepopup, mektableformatter, package lobby
     // Search Game Options switch legacy unoff.
-    //TODO: debug hotloading improved lrms
-    //TODO: Squadron Pilot name?
+    // debug hotloading improved lrms
+    // Squadron Pilot name?
     // Add developer quicksave and quickload Ctrl-S/L. Will save to quicksave.sav.gz, assumes no PW, no registering on load
     // Tooltip shows Hotload and Burst MG mode (format better!)
-    //TODO: squadron show actual fighters in them (icon)?
     // Button Player Settings, Bot Settings, 
     // remove popup on players
-    //TODO: add init and mindefields to table?
+    // add init and minefields to table? No, too big
     // dont show hotload as valid in popup for clan wps
     // Add confirm dlg for delete
-    //TODO: TacOps/BMM minefields setting should affect lobby player table and player config
+    //  TacOps/BMM minefields setting should affect lobby player table and player config
     // remove path from board list
     // unit selector remember sizes #2428
     // add dialog before delete
     // hide deployment info for loaded units
     // blind drop unit display "Medium Support Vehcles Vehicle...correction, generall< more specific (Light Vehicle)
     // corrected conventional fighter weight classes, use the same as ASF (50t = medium)
-    //TODO: Mark a carrier and an unrelated unit, select offload -> doesnt work; mark carrier alone: works
     // Remove bot with loaded units breaks...
     //TODO: Player removal with loaded units rbeaks the game
-    //TODO: Table sorter not updated when it was prohibited and changed 
-    //TODO: sorting use the UIManager char for ascending/descending
-    //TODO: scale a gridlayout hgap?
-    //TODO: do exclusive deploy zones need to be for players on a team?
+    // Table sorter not updated when it was prohibited and changed 
+    // sorting use the UIManager char for ascending/descending nope. its an icon, not a character
+    // do exclusive deploy zones need to be for players on a team? Depends on teams share vision
+    // Dont count the BV of fighters in quadrons twice for the total player BV, same for cost & tonnage
+    //TODO: CellFormatter -> StringBuilder
+    // Mek loaded onto Dropship shows Elevation 999
+    // add carried units to tooltip
+    // Position tooltips in mektable
+    // Add ECM to unit tooltip
+    //TODO: Add ECM to mektable
+    //TODO: Add name to pilot tooltip
+    //TODO: remove pilot tooltip when no advantages?
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
     
+    /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
             MapSettings mapSettings) {
         return getEntityTip(entity, localPlayer, true, mapSettings);
     }
     
+    /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, IPlayer localPlayer) {
         return getEntityTip(entity, localPlayer, false, null);
     }
 
     // PRIVATE
     
+    /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTip(Entity entity, IPlayer localPlayer, 
             boolean inLobby, @Nullable MapSettings mapSettings) {
         
@@ -174,6 +186,7 @@ public final class UnitToolTip {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML());
             result.append(weaponList(entity));
+            result.append(ecmInfo(entity));
             result.append("</FONT>");
         }
 
@@ -205,10 +218,17 @@ public final class UnitToolTip {
             result.append(partialList);
             result.append("</FONT>");
         }
+        
+        if (!entity.getLoadedUnits().isEmpty()) {
+            result.append(scaledHTMLSpacer(3));
+            result.append(carriedUnits(entity));
+        }
+        
 
         return result;
     }
     
+    /** Returns the graphical Armor reprentation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         GUIPreferences guip = GUIPreferences.getInstance();
         String armorChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_ARMOR_CHAR);
@@ -326,6 +346,7 @@ public final class UnitToolTip {
         return result;
     }
     
+    /** Returns the assembled weapons with ranges etc. */
     private static StringBuilder weaponList(Entity entity) {
         ArrayList<Mounted> weapons = entity.getWeaponList();
         HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
@@ -434,7 +455,22 @@ public final class UnitToolTip {
         result.append("<BR>");
         return result;
     }
-    
+
+    /** Returns a line showing ECM / ECCM. */
+    private static StringBuilder ecmInfo(Entity entity) {
+        StringBuilder result = new StringBuilder();
+        if (entity.hasActiveECM()) {
+            result.append("&nbsp;").append(ECM_SIGN).append(" ");
+            result.append(Messages.getString("BoardView1.ecmSource"));
+        }
+        if (entity.hasActiveECCM()) {
+            result.append("&nbsp;").append(ECM_SIGN).append(" ");
+            result.append(Messages.getString("BoardView1.eccmSource"));
+        }
+        return result;
+    }
+
+    /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, IPlayer localPlayer) {
         StringBuilder result = new StringBuilder();
         IGame game = entity.getGame();
@@ -506,20 +542,12 @@ public final class UnitToolTip {
         if (entity.isAero()) {
             result.append(guiScaledFontHTML(uiLightViolet()));
             Aero aero = (Aero) entity;
-//            if (inLounge) {
-//                addToTT("AeroStartingVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude());
-//            } else {
             result.append(addToTT("AeroVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude()));
             result.append("</FONT>");
-//            }
         } else if (entity.getElevation() != 0) {
             result.append(guiScaledFontHTML(uiLightViolet()));
-//            if (inLounge) {
-//                addToTT("StartingElev", BR, entity.getElevation());
-//            } else {
             result.append(addToTT("Elev", BR, entity.getElevation()));
             result.append("</FONT>");
-//            }
         }
 
         // Gun Emplacement Status
@@ -597,6 +625,7 @@ public final class UnitToolTip {
         return result;
     }
     
+    /** Returns unit values that are relevant in-game and in the lobby such as movement ability. */
     private static StringBuilder entityValues(Entity entity) {
         StringBuilder result = new StringBuilder();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
@@ -659,6 +688,28 @@ public final class UnitToolTip {
         result.append("</FONT>");
         return result;
     }
+    
+    /** Returns a list of units loaded onto this unit. */
+    private static StringBuilder carriedUnits(Entity entity) {
+        StringBuilder result = new StringBuilder();
+        
+        result.append(guiScaledFontHTML());
+        if (entity instanceof FighterSquadron) {
+            result.append("Fighters:");
+        } else {
+            result.append("Carried Units:");
+        }
+        for (Entity carried: entity.getLoadedUnits()) {
+            result.append("<BR>&nbsp;&nbsp;").append(carried.getShortNameRaw());
+            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+                result.append(" [" + carried.getId() + "]");
+            }
+
+        }
+        result.append("</FONT>");
+        return result;
+    }
+    
     
     /** Helper method to shorten repetitive calls. */
     private static StringBuilder addToTT(String tipName, boolean startBR, Object... ttO) {

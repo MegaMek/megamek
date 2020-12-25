@@ -29,6 +29,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -122,7 +123,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butRemoveBot;
     private JButton butBotSettings = new JButton("Bot Settings...");
     private JButton butConfigPlayer = new JButton("Configure Player...");
-    private JButton butChangeStart;
     private JTable tablePlayers;
     private JScrollPane scrPlayers;
     private PlayerTableModel playerModel;
@@ -252,7 +252,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void setupEntities() {
         mekModel = new MekTableModel(clientgui, this);
-        mekTable = new JTable(mekModel);
+        mekTable = new JTable(mekModel) {
+            @Override
+            public Point getToolTipLocation(MouseEvent event) {
+                int row = mekTable.rowAtPoint(event.getPoint());
+                int col = mekTable.columnAtPoint(event.getPoint());
+                Rectangle cellRect = mekTable.getCellRect(row, col, true);
+//                int x = -getLocation().x + cellRect.width + 10;
+//                int y = -getLocation().y + cellRect.height + 10;
+              int x = cellRect.x + cellRect.width + 10;
+              int y = cellRect.y + 10;
+                return new Point(x, y);
+            }
+        };
         setTableRowHeights();
         mekTable.setIntercellSpacing(new Dimension(0, 0));
         mekTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -458,9 +470,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         });
         camoDialog = new CamoChooserDialog(clientgui.getFrame());
         refreshCamos();
-
-        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); 
-        butChangeStart.addActionListener(lobbyListener);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -1057,6 +1066,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 entity.clearPartialRepairs();
             }
             
+            // Remove some deployment options when a unit is carried
+            if (entity.getTransportId() != Entity.NONE) { 
+                entity.setHidden(false);
+                entity.setProne(false);
+                entity.setHullDown(false);
+            }
+            
+            if (!opts.booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) { 
+                entity.setHidden(false);
+            }
+            
             // Handle the "Blind Drop" option. In blind drop, units must be added
             // but they will be obscured in the table. In real blind drop, units
             // don't even get added to the table. Teams see their units in any case.
@@ -1253,13 +1273,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** 
+     * Have the given entities offload all the units they are carrying.
+     * Returns a set of entities that need to be sent to the server. 
+     */
+    private void offloadAll(Collection<Entity> entities, Collection<Entity> updateCandidates) {
+        for (Entity carrier: editableEntities(entities)) {
+            offloadFrom(carrier, updateCandidates);
+        }
+    }
+    
+    /** 
      * Have the given entity offload all the units it is carrying.
      * Returns a set of entities that need to be sent to the server. 
      */
     private void offloadFrom(Entity entity, Collection<Entity> updateCandidates) {
-        for (Entity carriedUnit: entity.getLoadedUnits()) {
-            disembark(carriedUnit, updateCandidates);
-        } 
+        if (isEditable(entity)) {
+            for (Entity carriedUnit: entity.getLoadedUnits()) {
+                disembark(carriedUnit, updateCandidates);
+            } 
+        }
     }
     
     /** 
@@ -1924,7 +1956,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return true;
         }
         Entity randomEntry = entities.stream().findAny().get();
-        return entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
+        return !entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
     }
 
     private void createArmy() {
@@ -2058,8 +2090,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (isIgnoringEvents()) {
                 return;
             }
-
-            System.out.println("Action! " + ev.getSource());
             
             if (ev.getSource().equals(butAdd)) {
                 addUnit();
@@ -2115,17 +2145,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
-                
-            } else if (ev.getSource().equals(butChangeStart)) {
-                clientgui.getStartingPositionDialog().update();
-                Client c = getSelectedPlayer();
-                if (c == null) {
-                    clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-                            Messages.getString("ChatLounge.SelectBotOrPlayer"));  //$NON-NLS-2$
-                    return;
-                }
-                clientgui.getStartingPositionDialog().setClient(c);
-                clientgui.getStartingPositionDialog().setVisible(true);
                 
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current
@@ -2190,8 +2209,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 repaint();
                 
             } else if (ev.getSource() == butConditions) {
-                clientgui.getPlanetaryConditionsDialog().update(clientgui.getClient().getGame().getPlanetaryConditions());
-                clientgui.getPlanetaryConditionsDialog().setVisible(true);
+                PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(clientgui);
+                boolean userOkay = pcd.showDialog();
+                if (userOkay) {
+                    clientgui.getClient().sendPlanetaryConditions(pcd.getConditions());
+                }
                 
             } else if (ev.getSource() == butRandomMap) {
                 RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), mapSettings);
@@ -2481,7 +2503,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             Client selClient = getSelectedPlayer();
             comboTeam.setEnabled(selClient != null);
             butLoadList.setEnabled(selClient != null);
-            butChangeStart.setEnabled(selClient != null);
             butCamo.setEnabled(selClient != null);
             butConfigPlayer.setEnabled(selClient != null);
             refreshCamos();
@@ -2559,17 +2580,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         public void addPlayer(IPlayer player) {
             players.add(player);
-            int bv = 0;
             long cost = 0;
             double ton = 0;
             for (Entity entity : clientgui.getClient().getEntitiesVector()) {
-                if (entity.getOwner().equals(player)) {
-                    bv += entity.calculateBattleValue();
+                if (entity.getOwner().equals(player) && !entity.isPartOfFighterSquadron()) {
                     cost += entity.getCost(false);
                     ton += entity.getWeight();
                 }
             }
-            bvs.add(bv);
+            bvs.add(player.getBV());
             costs.add(cost);
             tons.add(ton);
             fireTableDataChanged();
@@ -2630,7 +2649,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 if (!isValidStartPos(clientgui.getClient().getGame(), player)) {
                     result.append(guiScaledFontHTML(uiYellow())); 
-                    result.append(MekTableCellFormatter.WARNING_SIGN + "</FONT>");
+                    result.append(WARNING_SIGN + "</FONT>");
                 }
             }
             return result.toString();
@@ -2693,7 +2712,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public void actionPerformed(ActionEvent action) {
             Entity entity = mekModel.getEntityAt(mekTable.getSelectedRow());
             List<Entity> entities = getSelectedEntities();
-            boolean oneSelected = entities.size() == 0;
+            boolean oneSelected = entities.size() == 1;
             if ((null == entity) || (entities.size() == 0)) {
                 return;
             }
@@ -2765,7 +2784,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 break;
                 
             case "UNLOADALL":
-                offloadFrom(entity, updateCandidates);
+                offloadAll(entities, updateCandidates);
                 sendUpdate(updateCandidates);
                 break;
                 
@@ -2780,6 +2799,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             case "SQUADRON":
                 createSquadron(entities);
+                break;
                 
             case "SWAP":
                 if (oneSelected) {
@@ -3135,7 +3155,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             tabCol.setHeaderValue(headerText);
         }
-        header.revalidate();
+        header.repaint();
         
         // The player table
         header = tablePlayers.getTableHeader();
@@ -3144,7 +3164,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             TableColumn tabCol = colMod.getColumn(i);
             tabCol.setHeaderValue(playerModel.getColumnName(i));
         }
-        header.revalidate();
+        header.repaint();
     }
 
     /** Returns the owner of the given entity. Should be used over entity.getowner(). */
@@ -3198,7 +3218,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butConfigPlayer.setFont(scaledFont);
         butBotSettings.setFont(scaledFont);
         butShowUnitID.setFont(scaledFont);
-        butChangeStart.setFont(scaledFont);
         butMapSize.setFont(scaledFont);
         butConditions.setFont(scaledFont);
         butRandomMap.setFont(scaledFont);

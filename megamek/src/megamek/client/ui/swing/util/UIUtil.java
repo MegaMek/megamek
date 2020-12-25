@@ -18,15 +18,21 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -39,11 +45,13 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToolTip;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.IPlayer;
@@ -52,6 +60,11 @@ public final class UIUtil {
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
+    public final static String ECM_SIGN = "\u25CE";
+    public final static String LOADED_SIGN = " \u26DF ";
+    public final static String UNCONNECTED_SIGN = " \u26AC";
+    public final static String CONNECTED_SIGN = " \u26AF ";
+    public final static String WARNING_SIGN = " \u26A0 ";
     
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();
@@ -364,6 +377,102 @@ public final class UIUtil {
                 comp.setFont(scaledFont);
                 scaleJMenuItem((JMenuItem)comp);
             } 
+        }
+    }
+    
+    /** A specialized panel for the header of a section. */
+    public static class Header extends JPanel {
+        private static final long serialVersionUID = -6235772150005269143L;
+        
+        public Header(String text) {
+            super();
+            setLayout(new GridLayout(1, 1, 0, 0));
+            add(new JLabel("\u29C9  " + Messages.getString(text)));
+            setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+            setBackground(alternateTableBGColor());
+        }
+    }
+    
+    /** A panel for the content of a subsection of the dialog. */
+    public static class Content extends JPanel {
+        private static final long serialVersionUID = -6605053283642217306L;
+
+        public Content(LayoutManager layout) {
+            this();
+            setLayout(layout);
+        }
+        
+        public Content() {
+            super();
+            setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
+            setAlignmentX(Component.LEFT_ALIGNMENT);
+        }
+    }
+    
+    /** A panel for a subsection of the dialog, e.g. Minefields. */
+    public static class OptionPanel extends JPanel {
+        private static final long serialVersionUID = -7168700339882132428L;
+
+        public OptionPanel(String header) {
+            super();
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            add(new Header(header));
+        }
+    }
+    
+    /** A JLabel with a specialized tooltip display. */
+    public static class TipLabel extends JLabel {
+        private static final long serialVersionUID = -338233022633675883L;
+        
+        private JDialog parentDialog;
+
+        public TipLabel(String text, int align, JDialog parent) {
+            super(text, align);
+            parentDialog = parent;
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            int x = -getLocation().x + parentDialog.getWidth();
+            int y = 0;
+            return new Point(x, y);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** A JButton with a specialized tooltip display. */
+    public static class TipButton extends JLabel {
+        private static final long serialVersionUID = 9076500965039634219L;
+        
+        private JDialog parentDialog;
+
+        public TipButton(String text, JDialog parent) {
+            super(text);
+            parentDialog = parent;
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            int x = -getLocation().x + parentDialog.getWidth();
+            int y = 0;
+            return new Point(x, y);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
         }
     }
     

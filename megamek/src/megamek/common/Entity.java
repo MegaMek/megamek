@@ -7468,8 +7468,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                 && ((game.getPlanetaryConditions()
                                         .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                                         || (game.getPlanetaryConditions()
-                                                .getWeather() == PlanetaryConditions.WE_BLIZZARD)
-                                        || (game.getPlanetaryConditions()
                                                 .getWindStrength() >= PlanetaryConditions.WI_STORM))))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
@@ -7891,8 +7889,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
                 roll.addModifier(+1, "fog/rain");
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
                 roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "snow");
             }
         }

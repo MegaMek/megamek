@@ -420,8 +420,9 @@ public final class Player extends TurnOrdered implements IPlayer {
         int bv = 0;
 
         for (Entity entity : game.getEntitiesVector()) {
+            // Squadrons have the BV of their fighters; avoid counting them twice
             if (equals(entity.getOwner()) && !entity.isDestroyed()
-                    && !entity.isTrapped()) {
+                    && !entity.isTrapped() && !entity.isPartOfFighterSquadron()) {
                 bv += entity.calculateBattleValue();
             }
         }
@@ -436,6 +437,7 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public int getFledBV() {
+        //TODO: I'm not sure how squadrons are treated here - see getBV()
         Enumeration<Entity> fledUnits = game.getRetreatedEntities();
         int bv = 0;
         while (fledUnits.hasMoreElements()) {

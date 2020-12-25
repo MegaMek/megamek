@@ -18,7 +18,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,13 +108,13 @@ public class PlayerSettingsDialog extends ClientDialog {
     
     private static final int TOOLTIP_WIDTH = 300;
     private static final String PSD = "PlayerSettingsDialog.";
-    private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT);
+    private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
     private JLabel labConventional = new JLabel(Messages.getString(PSD + "labConventional"), SwingConstants.RIGHT); 
     private JLabel labVibrabomb = new JLabel(Messages.getString(PSD + "labVibrabomb"), SwingConstants.RIGHT); 
     private JLabel labActive = new JLabel(Messages.getString(PSD + "labActive"), SwingConstants.RIGHT); 
     private JLabel labInferno = new JLabel(Messages.getString(PSD + "labInferno"), SwingConstants.RIGHT); 
 
-    private JTextField fldInit = new TipTextField(3);
+    private JTextField fldInit = new JTextField(3);
     private JTextField fldConventional = new JTextField(3);
     private JTextField fldVibrabomb = new JTextField(3);
     private JTextField fldActive = new JTextField(3);
@@ -162,7 +161,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
 
     private JPanel botSection() {
-        JPanel result = new OptionPanel("botPlayer");
+        JPanel result = new OptionPanel(PSD + "header.botPlayer");
         Content panContent = new Content(new FlowLayout());
         result.add(panContent);
         panContent.add(butBotSettings);
@@ -171,7 +170,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
     
     private JPanel startSection() {
-        JPanel result = new OptionPanel("startPos");
+        JPanel result = new OptionPanel(PSD + "header.startPos");
         Content panContent = new Content(new GridLayout(1, 1));
         result.add(panContent);
         setupStartGrid();
@@ -180,18 +179,17 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
     
     private JPanel initiativeSection() {
-        JPanel result = new OptionPanel("initMod");
+        JPanel result = new OptionPanel(PSD + "header.initMod");
         Content panContent = new Content(new GridLayout(1, 2, 10, 5));
         result.add(panContent);
         panContent.add(labInit);
         panContent.add(fldInit);
         labInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
-        fldInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
         return result;
     }
     
     private JPanel mineSection() {
-        JPanel result = new OptionPanel("minefields");
+        JPanel result = new OptionPanel(PSD + "header.minefields");
         Content panContent = new Content(new GridLayout(4, 2, 10, 5));
         result.add(panContent);
         panContent.add(labConventional);
@@ -322,95 +320,6 @@ public class PlayerSettingsDialog extends ClientDialog {
             }
         }
     };
-
-    /** A specialized panel for the header of a section. */
-    private static class Header extends JPanel {
-        private static final long serialVersionUID = -6235772150005269143L;
-        Header(String text) {
-            super();
-            setLayout(new GridLayout(1, 1, 0, 0));
-            add(new JLabel("\u29C9  " + Messages.getString(PSD + "header." + text)));
-            setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
-            setAlignmentX(Component.LEFT_ALIGNMENT);
-            setBackground(alternateTableBGColor());
-        }
-    }
-    
-    /** A panel for the content of a subsection of the dialog. */
-    private static class Content extends JPanel {
-        private static final long serialVersionUID = -6605053283642217306L;
-
-        Content(LayoutManager layout) {
-            this();
-            setLayout(layout);
-        }
-        
-        Content() {
-            super();
-            setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
-            setAlignmentX(Component.LEFT_ALIGNMENT);
-        }
-    }
-    
-    /** A panel for a subsection of the dialog, e.g. Minefields. */
-    private static class OptionPanel extends JPanel {
-        private static final long serialVersionUID = -7168700339882132428L;
-
-        OptionPanel(String header) {
-            super();
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-            add(new Header(header));
-        }
-    }
-    
-    /** A JTextField with a specialized tooltip display. */
-    private class TipTextField extends JTextField {
-        private static final long serialVersionUID = -8918021639314853562L;
-
-        public TipTextField(int cols) {
-            super(cols);
-        }
-
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-            PlayerSettingsDialog psd = PlayerSettingsDialog.this;
-            int x = -getLocation().x + psd.getWidth();
-            int y = -getLocation().y;
-            return new Point(x, y);
-        }
-        
-        @Override
-        public JToolTip createToolTip() {
-            JToolTip tip = super.createToolTip();
-            tip.setBackground(alternateTableBGColor());
-            return tip;
-        }
-    }
-    
-    /** A JLabel with a specialized tooltip display. */
-    private class TipLabel extends JLabel {
-        private static final long serialVersionUID = -338233022633675883L;
-
-        public TipLabel(String text, int align) {
-            super(text, align);
-        }
-
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-            PlayerSettingsDialog psd = PlayerSettingsDialog.this;
-            int x = -getLocation().x + psd.getWidth();
-            int y = -getLocation().y;
-            return new Point(x, y);
-        }
-        
-        @Override
-        public JToolTip createToolTip() {
-            JToolTip tip = super.createToolTip();
-            tip.setBackground(alternateTableBGColor());
-            return tip;
-        }
-    }
     
     /** A JButton with a specialized tooltip display. */
     private class TipButton extends JButton {
@@ -428,6 +337,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         public JToolTip createToolTip() {
             JToolTip tip = super.createToolTip();
             tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
     };
@@ -449,7 +359,7 @@ public class PlayerSettingsDialog extends ClientDialog {
      * HTML tags.
      */
     private String formatTooltip(String text) {
-        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + ">" + text;
+        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
         return scaleStringForGUI(result);
     }
     

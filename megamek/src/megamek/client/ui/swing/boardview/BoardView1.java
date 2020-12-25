@@ -6022,23 +6022,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     // Entity tooltip
                     txt.append(UnitToolTip.getEntityTipGame(eSprite.entity, getLocalPlayer()));
-
-                    // ECM and ECCM source
-                    if (eSprite.entity.hasActiveECM()) {
-                        txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
-                                + Configuration.widgetsDir()
-                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
-                        txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
-                        txt.append("</FONT>"); //$NON-NLS-1$
-                    }
-                    if (eSprite.entity.hasActiveECCM()) {
-                        txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
-                                + Configuration.widgetsDir()
-                                + "/Tooltip/ECM_BW.png>&nbsp;"); //$NON-NLS-1$
-                        txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
-                        txt.append("</FONT>");
-                    }
-
                     txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
                 }
             }

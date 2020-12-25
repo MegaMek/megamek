@@ -166,7 +166,7 @@ public final class ImageUtil {
 
     public static Image loadImageFromFile(String fileName) {
         if (null == fileName) {
-            return null;
+            return failStandardImage();
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
             Image img = loader.loadImage(fileName);
@@ -174,7 +174,7 @@ public final class ImageUtil {
                 return img;
             }
         }
-        return null;
+        return failStandardImage();
     }
 
     private ImageUtil() {}

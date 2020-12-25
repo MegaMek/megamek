@@ -54,18 +54,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -89,33 +78,11 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IPlayer;
-import megamek.common.MechSummaryCache;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Targetable;
-import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameMapQueryEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
@@ -243,7 +210,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
     private AbstractUnitSelectorDialog mechSelectorDialog;
-    private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
@@ -1088,13 +1054,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public AbstractUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
-    }
-
-    public StartingPositionDialog getStartingPositionDialog() {
-        if (startingPositionDialog == null) {
-            startingPositionDialog = new StartingPositionDialog(this);
-        }
-        return startingPositionDialog;
     }
 
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {

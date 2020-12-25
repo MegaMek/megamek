@@ -172,7 +172,7 @@ public class MekTableModel extends AbstractTableModel {
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         if (chatLounge.isCompact()) {
             unitCells.add(MekTableCellFormatter.formatUnitCompact(entity, hideEntity, chatLounge.mapSettings.getMedium()));
-            pilotCells.add(MekTableCellFormatter.formatPilotCompact(entity.getCrew(), hideEntity, rpgSkills));
+            pilotCells.add(MekTableCellFormatter.formatPilotCompact(entity, hideEntity, rpgSkills));
         } else {
             unitCells.add(MekTableCellFormatter.formatUnitFull(entity, hideEntity, chatLounge.mapSettings.getMedium()));
             pilotCells.add(MekTableCellFormatter.formatPilotFull(entity, hideEntity));

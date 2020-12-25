@@ -14520,18 +14520,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         this.camouflage = camouflage;
     }
 
+    @Deprecated
     public void setCamoCategory(String name) {
         getCamouflage().setCategory(name);
     }
 
+    @Deprecated
     public String getCamoCategory() {
         return getCamouflage().getCategory();
     }
 
+    @Deprecated
     public void setCamoFileName(String name) {
         getCamouflage().setFilename(name);
     }
 
+    @Deprecated
     public String getCamoFileName() {
         return getCamouflage().getFilename();
     }

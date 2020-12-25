@@ -1517,7 +1517,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
             }
             return new Color(codes[0], codes[1], codes[2]);
         }
-        return null;
+        return Color.BLUE;
     }
     //endregion Colours
 
@@ -1528,7 +1528,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static void AntiAliasifSet(Graphics graph) {
         if (getInstance().getAntiAliasing()) {
-            ((Graphics2D)graph).setRenderingHint(
+            ((Graphics2D) graph).setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }

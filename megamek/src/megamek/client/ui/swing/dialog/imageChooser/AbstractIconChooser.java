@@ -57,7 +57,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(JTree tree, AbstractIcon icon) {
+    public AbstractIconChooser(@Nullable JTree tree, @Nullable AbstractIcon icon) {
         initialize(tree);
 
         if ((tree != null) && (icon != null)) {

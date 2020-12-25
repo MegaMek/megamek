@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Configuration;
@@ -564,8 +563,7 @@ class EntitySprite extends Sprite {
                             graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
                         }
                     } else {
-                        graph.setColor(PlayerColors.getColor(
-                                entity.getOwner().getColorIndex(), false));
+                        graph.setColor(entity.getOwner().getColour().getColour(false));
                     }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
@@ -873,11 +871,8 @@ class EntitySprite extends Sprite {
         tooltipString = new StringBuffer();
 
         // Unit Chassis and Player
-        addToTT("Unit", NOBR,
-                Integer.toHexString(PlayerColors.getColorRGB(
-                        entity.getOwner().getColorIndex())),
-                entity.getChassis(),
-                entity.getOwner().getName());
+        addToTT("Unit", NOBR, entity.getOwner().getColour().getHexString(),
+                entity.getChassis(), entity.getOwner().getName());
 
         // Pilot Info
         //put everything in table to allow for a pilot photo in second column
@@ -1215,10 +1210,10 @@ class EntitySprite extends Sprite {
     
     public String getPlayerColor() {
         if (onlyDetectedBySensors()) {
+            // TODO : Make me customizable
             return "C0C0C0";
         } else {
-            return Integer.toHexString(PlayerColors.getColorRGB(entity
-                    .getOwner().getColorIndex()));
+            return entity.getOwner().getColour().getHexString();
         }
     }
     

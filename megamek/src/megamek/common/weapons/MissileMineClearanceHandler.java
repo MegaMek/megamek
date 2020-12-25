@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -39,11 +38,6 @@ import megamek.server.Server;
  * @author arlith
  */
 public class MissileMineClearanceHandler extends AmmoWeaponHandler {
-
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2753652169368638804L;
 
     /**
@@ -230,8 +224,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             // buildings
             if (Compute.isInBuilding(game, target, targetPos)) {
                 IPlayer tOwner = target.getOwner();
-                String colorcode = Integer.toHexString(PlayerColors.getColor(
-                        tOwner.getColorIndex()).getRGB() & 0x00f0f0f0);
+                String colorcode = tOwner.getColour().getHexString();
                 newReports = server.damageBuilding(bldg, damage, " shields "
                         + target.getShortName() + " (<B><font color='"
                         + colorcode + "'>" + tOwner.getName() + "</font></B>)"

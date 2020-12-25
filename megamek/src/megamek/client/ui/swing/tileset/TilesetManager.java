@@ -36,11 +36,10 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
 import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -589,7 +588,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      *  Loads a preview image of the unit into the BufferedPanel.
      */
-    public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
+    @Override
+    public Image loadPreviewImage(Entity entity, Image camo, PlayerColour tint, Component bp) {
         Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp, entity);
         entityImage.loadFacings();
@@ -599,9 +599,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         loadTracker.addImage(preview, 0);
         try {
             loadTracker.waitForID(0);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             // should never come here
-
         }
 
         return preview;
@@ -615,10 +614,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         IPlayer player = entity.getOwner();
-        int tint = PlayerColors.getColorRGB(player.getColorIndex());
+        PlayerColour tint = player.getColour();
 
-        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
-                ? entity.getCamouflage() : player.getCamouflage()).getImage();
+        Image camo = (entity.getCamouflage().hasDefaultCategory()
+                ? player.getCamouflage() : entity.getCamouflage()).getImage();
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded
@@ -652,6 +651,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      * Resets the started and loaded flags
      */
+    @Override
     public synchronized void reset() {
         loaded = false;
         started = false;

@@ -60,7 +60,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     public AbstractIconChooser(JTree tree, AbstractIcon icon) {
         initialize(tree);
 
-        if (icon != null) {
+        if ((tree != null) && (icon != null)) {
             setSelection(icon);
         }
     }
@@ -76,7 +76,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
 
         // set up the directory tree (left panel)
         treeCategories = tree;
-        treeCategories.addTreeSelectionListener(this);
+        if (treeCategories != null) {
+            treeCategories.addTreeSelectionListener(this);
+        }
         scrpTree = new JScrollPane(treeCategories);
         scrpTree.setBackground(UIManager.getColor("Table.background"));
 
@@ -185,7 +187,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @param newTree the new directory tree
      */
     protected void refreshDirectory(JTree newTree) {
-        treeCategories.removeTreeSelectionListener(this);
+        if (treeCategories != null) {
+            treeCategories.removeTreeSelectionListener(this);
+        }
         treeCategories = newTree;
         treeCategories.addTreeSelectionListener(this);
         scrpTree = new JScrollPane(treeCategories);

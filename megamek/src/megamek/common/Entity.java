@@ -189,8 +189,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int id = Entity.NONE;
 
-    protected String camoCategory = Camouflage.NO_CAMOUFLAGE;
-    protected String camoFileName = null;
+    protected Camouflage camouflage = new Camouflage();
 
     /**
      * ID settable by external sources (such as mm.net)
@@ -14513,24 +14512,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     // Deal with per entity camo
-    public AbstractIcon getCamouflage() {
-        return new Camouflage(getCamoCategory(), getCamoFileName());
+    public Camouflage getCamouflage() {
+        return camouflage;
+    }
+
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = camouflage;
     }
 
     public void setCamoCategory(String name) {
-        camoCategory = name;
+        getCamouflage().setCategory(name);
     }
 
     public String getCamoCategory() {
-        return camoCategory;
+        return getCamouflage().getCategory();
     }
 
     public void setCamoFileName(String name) {
-        camoFileName = name;
+        getCamouflage().setFilename(name);
     }
 
     public String getCamoFileName() {
-        return camoFileName;
+        return getCamouflage().getFilename();
     }
 
     public boolean getSelfDestructing() {

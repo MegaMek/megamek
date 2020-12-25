@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -67,7 +66,7 @@ class MovementSprite extends Sprite {
 
         // color?
         // player colors
-        moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
+        moveColor = en.getOwner().getColour().getColour();
         // TODO: Its not going transparent. Oh well, it is a minor issue at
         // the moment
         /*

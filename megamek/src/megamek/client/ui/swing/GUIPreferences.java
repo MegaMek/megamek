@@ -22,7 +22,7 @@ import java.awt.RenderingHints;
 import javax.swing.ToolTipManager;
 
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.ColorParser;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -812,18 +812,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
     }
-    
-    public Color getMyUnitColor() {
-        return getColor(MY_UNIT_COLOR);
-    }
-    
-    public Color getEnemyUnitColor() {
-        return getColor(ENEMY_UNIT_COLOR);
-    }
-    
-    public Color getAllyUnitColor() {
-        return getColor(ALLY_UNIT_COLOR);
-    }
 
     public Color getRulerColor1() {
         return getColor(RULER_COLOR_1);
@@ -947,14 +935,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
-    }
-    
-    public Color getWarningColor() {
-        return getColor(WARNING_COLOR);
-    }
-    
-    public void setWarningColor(Color color) {
-        store.setValue(WARNING_COLOR, getColorString(color));
     }
 
     public void setAntiAliasing(boolean state) {
@@ -1484,39 +1464,63 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
     }
-    
+
+    //region Colours
+    public Color getMyUnitColor() {
+        return getColor(MY_UNIT_COLOR);
+    }
+
     public void setMyUnitColor(Color col) {
         store.setValue(MY_UNIT_COLOR, getColorString(col));
     }
-    
+
     public void setEnemyUnitColor(Color col) {
         store.setValue(ENEMY_UNIT_COLOR, getColorString(col));
     }
-    
+
+    public Color getEnemyUnitColor() {
+        return getColor(ENEMY_UNIT_COLOR);
+    }
+
     public void setAllyUnitColor(Color col) {
         store.setValue(ALLY_UNIT_COLOR, getColorString(col));
     }
 
-    protected ColorParser p = new ColorParser();
+    public Color getAllyUnitColor() {
+        return getColor(ALLY_UNIT_COLOR);
+    }
 
-    protected String getColorString(Color color) {
-        StringBuffer b = new StringBuffer();
-        b.append(color.getRed()).append(" ");
-        b.append(color.getGreen()).append(" ");
-        b.append(color.getBlue());
-        return b.toString();
+    public Color getWarningColor() {
+        return getColor(WARNING_COLOR);
+    }
+
+    public void setWarningColor(Color color) {
+        store.setValue(WARNING_COLOR, getColorString(color));
     }
 
     public Color getColor(String name) {
-        String sresult = store.getString(name);
-        if (sresult != null) {
-            if (!p.parse(sresult)) {
-                return p.getColor();
-            }
-        }
-        return Color.black;
+        final String text = store.getString(name);
+        final Color colour = parseRGB(text);
+        return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
     }
-    
+
+    protected String getColorString(Color colour) {
+        return colour.getRed() + " " + colour.getGreen() + " " + colour.getBlue();
+    }
+
+    protected Color parseRGB(String text) {
+        final String[] codesText = text.split(" ");
+        if (codesText.length == 3) {
+            int[] codes = new int[codesText.length];
+            for (int i = 0; i < codesText.length; i++) {
+                codes[i] = Integer.parseInt(codesText[i]);
+            }
+            return new Color(codes[0], codes[1], codes[2]);
+        }
+        return null;
+    }
+    //endregion Colours
+
     /**
      * Activates AntiAliasing for the <code>Graphics</code> graph
      * if AA is activated in the Client settings. 

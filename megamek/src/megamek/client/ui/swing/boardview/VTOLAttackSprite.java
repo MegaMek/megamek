@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBomber;
@@ -20,7 +19,6 @@ import megamek.common.VTOL;
 
 /**
  * @author Neoancient
- *
  */
 class VTOLAttackSprite extends Sprite {
     
@@ -34,7 +32,7 @@ class VTOLAttackSprite extends Sprite {
         
         this.bv = boardView;
         this.entity = en;
-        spriteColor = PlayerColors.getColor(en.getOwner().getColorIndex());
+        spriteColor = en.getOwner().getColour().getColour();
         image = null;
         prepare();
     }

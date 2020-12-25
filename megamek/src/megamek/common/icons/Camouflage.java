@@ -20,7 +20,7 @@ package megamek.common.icons;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColour;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -30,11 +30,12 @@ public class Camouflage extends AbstractIcon {
     private static final long serialVersionUID = 1093277025745250375L;
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
+    public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
     //endregion Variable Declarations
 
     //region Constructors
     public Camouflage() {
-        super();
+        super(NO_CAMOUFLAGE);
     }
 
     public Camouflage(String category, String filename) {
@@ -42,15 +43,21 @@ public class Camouflage extends AbstractIcon {
     }
     //endregion Constructors
 
+
+    @Override
+    public boolean hasDefaultCategory() {
+        return super.hasDefaultCategory() || NO_CAMOUFLAGE.equals(getCategory());
+    }
+
     @Override
     public Image getBaseImage() {
         if (MMStaticDirectoryManager.getCamouflage() == null) {
             return null;
-        } else if (Camouflage.NO_CAMOUFLAGE.equals(getCategory())) {
-            return getColourCamouflageImage(PlayerColors.getColor(getFilename()));
+        } else if (COLOUR_CAMOUFLAGE.equals(getCategory()) || NO_CAMOUFLAGE.equals(getCategory())) {
+            return getColourCamouflageImage(PlayerColour.parseFromString(getFilename()).getColour());
         }
 
-        final String category = AbstractIcon.ROOT_CATEGORY.equals(getCategory()) ? "" : getCategory();
+        final String category = ROOT_CATEGORY.equals(getCategory()) ? "" : getCategory();
         Image camouflage = null;
 
         try {
@@ -72,5 +79,10 @@ public class Camouflage extends AbstractIcon {
         graphics.setColor(colour);
         graphics.fillRect(0, 0, 84, 72);
         return result;
+    }
+
+    @Override
+    public Camouflage clone() {
+        return new Camouflage(getCategory(), getFilename());
     }
 }

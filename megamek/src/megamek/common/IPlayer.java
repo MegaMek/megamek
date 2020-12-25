@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.icons.AbstractIcon;
 
 import java.util.Vector;
@@ -77,6 +78,10 @@ public interface IPlayer extends ITurnOrdered {
 
     String getCamoFileName();
 
+    PlayerColour getColour();
+
+    void setColour(PlayerColour colour);
+
     void setGame(IGame game);
 
     String getName();
@@ -108,10 +113,6 @@ public interface IPlayer extends ITurnOrdered {
     boolean canSeeAll();
 
     void setObserver(boolean observer);
-
-    int getColorIndex();
-
-    void setColorIndex(int index);
 
     int getStartingPos();
 

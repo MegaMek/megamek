@@ -42,6 +42,10 @@ public abstract class AbstractIcon implements Serializable {
         this(ROOT_CATEGORY, DEFAULT_ICON_FILENAME);
     }
 
+    protected AbstractIcon(String category) {
+        this(category, DEFAULT_ICON_FILENAME);
+    }
+
     protected AbstractIcon(String category, String filename) {
         setCategory(category);
         setFilename(filename);
@@ -77,7 +81,8 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     public boolean hasDefaultFilename() {
-        return DEFAULT_ICON_FILENAME.equals(getFilename());
+        // TODO : Java 11 : Swap to using isBlank()
+        return DEFAULT_ICON_FILENAME.equals(getFilename()) || getFilename().trim().isEmpty();
     }
     //endregion Boolean Methods
 

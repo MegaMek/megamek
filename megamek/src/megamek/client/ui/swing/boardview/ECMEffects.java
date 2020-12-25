@@ -2,15 +2,15 @@
  * MegaMek -
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.boardview;
 
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.ECMInfo;
 import megamek.common.IPlayer;
 
@@ -34,10 +33,8 @@ import megamek.common.IPlayer;
  * information.
  *
  * @author arlith
- *
  */
 public class ECMEffects {
-
     /**
      * A collection of <code>ECMInfo</code> instances that affect a location.
      */
@@ -165,7 +162,7 @@ public class ECMEffects {
 
         Color tint;
         if (player != null) {
-            tint = new Color(PlayerColors.getColorRGB(player.getColorIndex()));
+            tint = player.getColour().getColour();
         } else {
             tint = Color.gray;
         }

@@ -515,7 +515,7 @@ public class Compute {
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
-            && (entity.getMovementMode() != EntityMovementMode.VTOL)
+            && (destElevation == 0)
             && !isPavementStep
             && entity.canFall()) {
             return true;

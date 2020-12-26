@@ -3777,6 +3777,9 @@ public abstract class Mech extends Entity {
                         }
                     }
                 }
+            } else if (mounted.getType() instanceof HVACWeapon) {
+                // HVAC are only -1 total, regardless of number of crits. None are large enough to be splittable.
+                criticals = 1;
             } else {
                 criticals = mounted.getCriticals();
             }

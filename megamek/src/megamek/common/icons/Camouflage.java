@@ -43,11 +43,16 @@ public class Camouflage extends AbstractIcon {
     }
     //endregion Constructors
 
+    //region Boolean Methods
+    public boolean isColourCamouflage() {
+        return COLOUR_CAMOUFLAGE.equals(getCategory());
+    }
 
     @Override
     public boolean hasDefaultCategory() {
         return super.hasDefaultCategory() || NO_CAMOUFLAGE.equals(getCategory());
     }
+    //endregion Boolean Methods
 
     @Override
     public Image getBaseImage() {

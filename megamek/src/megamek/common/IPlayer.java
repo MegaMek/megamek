@@ -14,7 +14,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 
 import java.util.Vector;
 
@@ -68,7 +68,7 @@ public interface IPlayer extends ITurnOrdered {
 
     int getNbrMFInferno();
 
-    AbstractIcon getCamouflage();
+    Camouflage getCamouflage();
 
     void setCamoCategory(String name);
 

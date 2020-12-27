@@ -1046,7 +1046,31 @@ public class Server implements Runnable {
     public void validatePlayerInfo(int playerId) {
         final IPlayer player = getPlayer(playerId);
 
-        // TODO : check for duplicate or reserved names
+        if (player != null) {
+            // TODO : check for duplicate or reserved names
+
+            // Colour Assignment
+            final PlayerColour[] playerColours = PlayerColour.values();
+            boolean allUsed = true;
+            boolean[] colourUtilization = new boolean[playerColours.length];
+            for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
+                final IPlayer otherPlayer = i.nextElement();
+                if (otherPlayer.getId() != playerId) {
+                    colourUtilization[otherPlayer.getColour().ordinal()] = true;
+                } else {
+                    allUsed = false;
+                }
+            }
+
+            if (!allUsed && colourUtilization[player.getColour().ordinal()]) {
+                for (int i = 0; i < colourUtilization.length; i++) {
+                    if (!colourUtilization[i]) {
+                        player.setColour(playerColours[i]);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -30888,8 +30912,7 @@ public class Server implements Runnable {
      *                  <code>IllegalArgumentException</code> will be thrown.
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds,
-                                            int condition) {
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)

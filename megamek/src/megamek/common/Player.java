@@ -15,11 +15,11 @@ package megamek.common;
 
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
@@ -170,7 +170,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public AbstractIcon getCamouflage() {
+    public Camouflage getCamouflage() {
         return new Camouflage(getCamoCategory(), getCamoFileName());
     }
 
@@ -294,7 +294,11 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public void setColour(PlayerColour colour) {
+        Objects.requireNonNull(colour, "Colour cannot be set to null");
         this.colour = colour;
+        if (getCamouflage().isColourCamouflage()) {
+            setCamoFileName(colour.name());
+        }
     }
 
     @Override

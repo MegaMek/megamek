@@ -132,8 +132,7 @@ public class ECMEffects {
      * @return
      */
     public static Color getColorAverage(List<Color> colors) {
-        final int alpha = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
 
         int red, green, blue;
         red = green = blue = 0;
@@ -157,16 +156,8 @@ public class ECMEffects {
      * @return
      */
     public static Color getECMColor(IPlayer player) {
-        final int alpha = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
-
-        Color tint;
-        if (player != null) {
-            tint = player.getColour().getColour();
-        } else {
-            tint = Color.gray;
-        }
-
+        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        Color tint = (player == null) ? Color.GRAY : player.getColour().getColour();
         // Create a new color by adding transparency to the tint
         return new Color(tint.getRed(), tint.getGreen(), tint.getBlue(), alpha);
     }

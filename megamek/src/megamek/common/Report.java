@@ -315,7 +315,7 @@ public class Report implements Serializable {
             }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);
-            add("<B><font color='" + entity.getOwner().getColour().getHexString() + "'>"
+            add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
                     + entity.getOwner().getName() + "</font></B>");
         }
     }

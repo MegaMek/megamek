@@ -85,6 +85,10 @@ public enum PlayerColour {
     public String getHexString() {
         return Integer.toHexString(getHex());
     }
+
+    public String getHexString(int hex) {
+        return Integer.toHexString(getHex() & hex);
+    }
     //endregion Getters
 
     //region File I/O

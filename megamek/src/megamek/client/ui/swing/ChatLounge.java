@@ -80,6 +80,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Portrait;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -3415,8 +3416,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         public class Renderer extends MekInfo implements TableCellRenderer {
-
-            private static final String FILENAME_PORTRAIT_DEFAULT = "default.gif";
             private static final String FILENAME_UNKNOWN_UNIT = "unknown_unit.gif";
             private static final long serialVersionUID = -9154596036677641620L;
 
@@ -3451,7 +3450,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         } else {
                             Image image = getToolkit().getImage(
                                     new MegaMekFile(Configuration.portraitImagesDir(),
-                                            FILENAME_PORTRAIT_DEFAULT)
+                                            Portrait.DEFAULT_PORTRAIT_FILENAME)
                                             .toString());
                             image = image.getScaledInstance(-1, 50,
                                     Image.SCALE_DEFAULT);

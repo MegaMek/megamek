@@ -3808,7 +3808,7 @@ public class Server implements Runnable {
     }
 
     private static String getColorForPlayer(IPlayer p) {
-        return "<B><font color='" + p.getColour().getHexString() + "'>" + p.getName() + "</font></B>";
+        return "<B><font color='" + p.getColour().getHexString(0x00F0F0F0) + "'>" + p.getName() + "</font></B>";
     }
 
     /**

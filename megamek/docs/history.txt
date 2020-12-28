@@ -1,6 +1,13 @@
 VERSION HISTORY:
 ----------------
 0.47.16 (RC2)-SNAPSHOT
++ Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill
++ Issue #2513, #907: Adjust message for gun emplacement ammo criticals to more clearly indicate if no damage has occurred; 
+		implement non-weapon/ammo critical hits (e.g. ECM) on gun emplacements
++ Issue #2517: Ensure AmmoType::canSwitchToAmmo ignores munition types
++ PR #2519: Open up Compute and MMRandom to allow mocking in tests
++ Issue #2522: Vehicular Grenade Launchers smoke munitions not working
++ Issue #2533: Explosive Ammunition BV Penalty Errata
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

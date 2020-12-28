@@ -97,7 +97,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         
         for (Coords c : affectedCoords) {
             Building bldg = game.getBoard().getBuildingAt(c);
-            if (atype.getMunitionType() == AmmoType.M_SMOKEGRENADE) {
+            if (atype.getMunitionType() == AmmoType.M_SMOKE) {
                 server.deliverSmokeGrenade(c, vPhaseReport);
             } else if (atype.getMunitionType() == AmmoType.M_CHAFF) {
                 server.deliverChaffGrenade(c, vPhaseReport);

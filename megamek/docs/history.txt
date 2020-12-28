@@ -8,6 +8,8 @@ VERSION HISTORY:
 + PR #2519: Open up Compute and MMRandom to allow mocking in tests
 + Issue #2522: Vehicular Grenade Launchers smoke munitions not working
 + Issue #2533: Explosive Ammunition BV Penalty Errata
++ Issue #2537: Prevent soft-lock when processing nuclear blasts near the edge of the board; 
+		improved error recovery when loading games after processing failure in certain cases
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

@@ -980,9 +980,11 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
                 send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
             }
-            if (game.phaseHasTurns(game.getPhase())) {
+            if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
+            } else {
+                endCurrentPhase();
             }
 
             send(connId, createArtilleryPacket(player));
@@ -24288,6 +24290,11 @@ public class Server implements Runnable {
 
             // Iterate through the hexes.
             for (Coords myHexCoords: hexSet) {
+                // ignore out of bounds coordinates
+                if (!game.getBoard().contains(myHexCoords)) {
+                    continue;
+                }
+                
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
@@ -24402,7 +24409,12 @@ public class Server implements Runnable {
                 List<Coords> hexSet = position.allAtDistance(x);
 
                 // Iterate through the hexes.
-                for (Coords myHexCoords: hexSet) {
+                for (Coords myHexCoords : hexSet) {
+                    // ignore out of bounds coordinates
+                    if (!game.getBoard().contains(myHexCoords)) {
+                        continue;
+                    }
+                    
                     IHex myHex = game.getBoard().getHex(myHexCoords);
 
                     // For each 3000 damage, water level is reduced by 1.

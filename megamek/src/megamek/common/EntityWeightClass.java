@@ -252,7 +252,7 @@ public class EntityWeightClass {
             }
         } else if (en instanceof SmallCraft) {
             return WEIGHT_SMALL_CRAFT;
-        } else if (en instanceof Aero || en instanceof ConvFighter) {
+        } else if (en instanceof Aero) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;

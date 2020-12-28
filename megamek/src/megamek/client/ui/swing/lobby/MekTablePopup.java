@@ -56,9 +56,9 @@ class MekTablePopup {
         boolean unconfigSelected = entities.size() != configurableEntities.size();
         boolean canConfigureAny = configurableEntities.size() > 0;
         boolean canConfigureAll = entities.size() == configurableEntities.size();
-        boolean canConfigureDeployAll = lobby.canConfigureDeploymentAll(entities);
+        boolean canConfigureDeployAll = lobby.canConfigureMultipleDeployment(entities);
         boolean canSeeAll = lobby.canSeeAll(entities);
-        boolean oneSelected = configurableEntities.size() == 1;
+        boolean oneSelected = entities.size() == 1;
 
         // Find certain unit features among all units the player can access
         // i.e. his own units or his bots' units (not only selected units!)
@@ -359,7 +359,7 @@ class MekTablePopup {
                     int freeCollars = 0;
                     for (Transporter t : loader.getTransports()) {
                         if (t instanceof DockingCollar) {
-                            freeCollars += t.getUnused();
+                            freeCollars += (int)t.getUnused();
                         }
                     }
                     String name = loader.getShortName() + " (Free Collars: " + freeCollars + ")";

@@ -5739,7 +5739,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final Coords mcoords = getCoordsAt(point);
 
         if (!game.getBoard().contains(mcoords)) {
-            return "";
+            return null;
         } 
         IHex mhex = game.getBoard().getHex(mcoords);
 
@@ -6004,26 +6004,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int maxShown = 4;
 
         Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
-        Set<Entity> usedSet = new HashSet<Entity>(entitySprites.size());
-        for (EntitySprite eSprite : entitySprites) {
-            if ((eSprite.isInside(point) || coordEnts.contains(eSprite.entity))
-                    && !usedSet.contains(eSprite.entity)) {
-                usedSet.add(eSprite.entity);
-                entityCount++;
+        for (Entity entity: coordEnts) {
+            entityCount++;
 
-                // List only the first four units
-                if (entityCount <= maxShown) {
-                    // Table to add a bar to the left of an entity in
-                    // the player's color
-                    txt.append("<hr style=width:90%>"); //$NON-NLS-1$
-                    txt.append("<TABLE><TR><TD bgcolor=#"); //$NON-NLS-1$
-                    txt.append(eSprite.getPlayerColor());
-                    txt.append(" width=6></TD><TD>"); //$NON-NLS-1$
-
-                    // Entity tooltip
-                    txt.append(UnitToolTip.getEntityTipGame(eSprite.entity, getLocalPlayer()));
-                    txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+            // List only the first four units
+            if (entityCount <= maxShown) {
+                // Table to add a bar to the left of an entity in
+                // the player's color
+                txt.append("<hr style=width:90%>");
+                txt.append("<TABLE><TR><TD bgcolor=#");
+                String color = "C0C0C0";
+                if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+                    color = Integer.toHexString(PlayerColors.getColorRGB(
+                            entity.getOwner().getColorIndex()));
                 }
+                txt.append(color);
+                txt.append(" width=6></TD><TD>");
+
+                // Entity tooltip
+                txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
+                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }
         // Info block if there are more than 4 units in that hex

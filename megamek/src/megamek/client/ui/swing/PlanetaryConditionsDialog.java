@@ -96,6 +96,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     public void update(PlanetaryConditions planetConditions) {
         conditions = (PlanetaryConditions) planetConditions.clone();
         refreshValues();
+        adaptToWeatherAtmo();
     }
     
     // PRIVATE
@@ -163,7 +164,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         File iconFile = new MegaMekFile(Configuration.widgetsDir(), "Planetary.png").getFile();
         Image image = ImageUtil.loadImageFromFile(iconFile.toString());
         Icon planetIcon = new ImageIcon(image.getScaledInstance(scaleForGUI(40), -1, Image.SCALE_SMOOTH));
-        JLabel playerLabel = new JLabel("Planetary Conditions", planetIcon, SwingConstants.CENTER);
+        JLabel playerLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"), 
+                planetIcon, SwingConstants.CENTER);
         playerLabel.setIconTextGap(scaleForGUI(12));
         panContent.add(playerLabel);
         return result;
@@ -315,8 +317,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         conditions.setWeather(comWeather.getSelectedIndex());
         conditions.setWindStrength(comWind.getSelectedIndex());
         conditions.setWindDirection(comWindDirection.getSelectedIndex());
-        conditions.setMinWindStrength(comWindFrom.getSelectedIndex());
-        conditions.setMaxWindStrength(comWindTo.getSelectedIndex());
+        refreshWindRange();
         conditions.setAtmosphere(comAtmosphere.getSelectedIndex());
         conditions.setFog(comFog.getSelectedIndex());
         conditions.setBlowingSand(chkBlowingSands.isSelected());
@@ -338,19 +339,17 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         StringBuilder gravTip = new StringBuilder();
         StringBuilder windTip = new StringBuilder();
         StringBuilder atmoTip = new StringBuilder();
-        StringBuilder fogTip = new StringBuilder();
         StringBuilder sandTip = new StringBuilder();
         int weather = comWeather.getSelectedIndex();
-        int fog = comFog.getSelectedIndex();
         int temp = 0;
         float grav = (float) 1.0;
         try {
             temp = Integer.parseInt(fldTemp.getText());
         } catch (NumberFormatException er) {
-            tempTip.append("Please enter a whole number.<BR>");
+            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.integer"));
         }
         if ((temp > 200) || (temp < -200)) {
-            tempTip.append("The Temperature must be between -200 and 200 °C.<BR>");
+            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.tempRange"));
         }
         
         // Currently, MM does not automatically include the effects of -40, -50 or -60 °C
@@ -370,79 +369,52 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         try {
             grav = Float.parseFloat(fldGrav.getText());
         } catch (NumberFormatException er) {
-            gravTip.append("Please enter a number.<BR>");
+            gravTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.number"));
         }
         if ((grav < 0.1) || (grav > 10.0)) {
-            gravTip.append("Gravity must be between 0.1 g and 10 g.<BR>");
+            gravTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.gravRange"));
         }
         
         int wind = comWind.getSelectedIndex();
         int atmo = comAtmosphere.getSelectedIndex();
         
-        if ((atmo == ATMO_VACUUM) && (wind != WI_NONE)) {
-            atmoTip.append("In Vacuum, no wind is allowed.<BR>");
-        }
-
         if ((chkBlowingSands.isSelected()) && (wind < WI_MOD_GALE) 
                 && (!chkShiftWindStr.isSelected() 
                         || (conditions.getMinWindStrength() > WI_MOD_GALE) 
                         || (conditions.getMaxWindStrength() < WI_MOD_GALE))) {
-            windTip.append("The effects of Blowing Sands are lost when the wind is below Moderate Gale strength.<BR>");
-            sandTip.append("The effects of Blowing Sands are lost when the wind is below Moderate Gale strength.<BR>");
+            windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
+            sandTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.sandsLost"));
         }
 
         if ((atmo == ATMO_TRACE) && (wind == WI_LIGHT_GALE)) {
-            atmoTip.append("In Trace Atmosphere, Light Gale is not allowed.<BR>");
-            windTip.append("In Trace Atmosphere, Light Gale is not allowed.<BR>");
-        }
-        
-        if ((atmo == ATMO_VACUUM || atmo == ATMO_TRACE || atmo == ATMO_THIN)) {
-            if (weather != WE_NONE) {
-                atmoTip.append("Vacuum, Trace or Thin Atmosphere do not support weather.<BR>");
-                wthrTip.append("Vacuum, Trace or Thin Atmosphere do not support weather.<BR>");
-            }
-            if (fog != FOG_NONE) {
-                atmoTip.append("Vacuum, Trace or Thin Atmosphere do not allow fog.<BR>");
-                fogTip.append("Vacuum, Trace or Thin Atmosphere do not allow fog.<BR>");
-            }
-        }
-        
-        if ((weather == WE_GUSTING_RAIN) && (wind < WI_STRONG_GALE)) {
-            windTip.append("Gusting Rain includes the effects of Strong Gale and any wind setting less than Strong Gale has no effect.<BR>");
-            wthrTip.append("Gusting Rain includes the effects of Strong Gale and any wind setting less than Strong Gale has no effect.<BR>");
-        }
-        
-        if (((weather == WE_LIGHTNING_STORM) || (weather == WE_SNOW_FLURRIES)
-                || (weather == WE_ICE_STORM))
-                && (wind < WI_MOD_GALE)) {
-            windTip.append("This weather includes the effects of Moderate Gale and any wind setting less than Moderate Gale has no effect.<BR>");
-            wthrTip.append("This weather includes the effects of Moderate Gale and any wind setting less than Moderate Gale has no effect.<BR>");
+            atmoTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
+            windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.traceLightGale"));
         }
         
         // The following temperature checks are not exactly what the rules demand, but see the comment above.
         if (((weather == WE_LIGHT_SNOW) || (weather == WE_SLEET)
                 || (weather == WE_LIGHT_HAIL) || (weather == WE_HEAVY_HAIL))
                 && (temp > -40)) {
-            tempTip.append("This weather includes the effects of a temperature of -40 °C and any higher temperature setting does not take effect.<BR>");
-            wthrTip.append("This weather includes the effects of a temperature of -40 °C and any higher temperature setting does not take effect.<BR>");
+            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
+            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.lightSnowTemp"));
         }
         
         if (((weather == WE_HEAVY_SNOW) || (weather == WE_MOD_SNOW)
                 || (weather == WE_SNOW_FLURRIES))
                 && (temp > -50)) {
-            tempTip.append("This weather includes the effects of a temperature of -50 °C and any higher temperature setting does not take effect.<BR>");
-            wthrTip.append("This weather includes the effects of a temperature of -50 °C and any higher temperature setting does not take effect.<BR>");
+            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
+            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.modSnowTemp"));
         }
         
         if ((weather == WE_ICE_STORM) && (temp > -60)) {
-            tempTip.append("Ice Storm includes the effects of a temperature of -60 °C and any higher temperature setting does not take effect.<BR>");
-            wthrTip.append("Ice Storm includes the effects of a temperature of -60 °C and any higher temperature setting does not take effect.<BR>");
+            tempTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
+            wthrTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.iceStormTemp"));
         }
         
         if (chkShiftWindStr.isSelected()) {
             if ((comWind.getSelectedIndex() < conditions.getMinWindStrength()) 
                     || (comWind.getSelectedIndex() > conditions.getMaxWindStrength())) {
-                windTip.append("The current wind strength is outside the range of shifting wind strengths.");
+                windTip.append(Messages.getString("PlanetaryConditionsDialog.invalid.windRange"));
             }
         }
     
@@ -451,12 +423,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         refreshWarning(labAtmosphere, atmoTip);
         refreshWarning(labGrav, gravTip);
         refreshWarning(labWind, windTip);
-        refreshWarning(labFog, fogTip);
         refreshWarning(labBlowingSands, sandTip);
         
         return (tempTip.length() == 0) && (wthrTip.length() == 0) && (atmoTip.length() == 0) 
-                && (fogTip.length() == 0) && (sandTip.length() == 0) && (windTip.length() == 0) 
-                && (gravTip.length() == 0);
+                && (sandTip.length() == 0) && (windTip.length() == 0) && (gravTip.length() == 0);
     }
     
     /** 
@@ -593,6 +563,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         public void actionPerformed(ActionEvent e) {
             
             if (e.getSource() == butOkay) {
+                userResponse = true;
                 setConditions();
                 setVisible(false);
                 
@@ -647,7 +618,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         
         @Override
         public void focusLost(FocusEvent e) {
-            validateEntries();
+            butOkay.setEnabled(validateEntries());
         }
         
         @Override

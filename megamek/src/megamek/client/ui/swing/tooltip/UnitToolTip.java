@@ -48,7 +48,8 @@ public final class UnitToolTip {
     // make quirks multi per line
     // add settings for text size (overall?)
     // in lobby, change current vel to starting vel, starting alt / elev ?
-    //TODO: on hex edge, all adjacent units in both hexes are shown ????!??!?!??
+    // on hex edge, all adjacent units in both hexes are shown ????!??!?!??
+    // some hexes show units in adjacent hexes done.
     // test board editor names (clifftop, bldgs)
     // GUIScale to 0.7..2.4, 1 middle
     // Pilot: only 1 G/P for all, arrange portraits in 1 row
@@ -64,12 +65,12 @@ public final class UnitToolTip {
     // show doomed status in lobby
     // show doomed status explicit in tooltip #2322
     // better ECM source
-    //TODO: portraits after loading a mul are there in the mektable but not in the TT
+    // portraits after loading a mul are there in the mektable but not in the TT
     // reduce portrait and unit image to make the lines smaller in full mode
     // save column width
     // make gameyearlabels etc. follow the guiScale
     // remove the button "DeleteAll"
-    //TODO: Externalize strings
+    // Externalize strings
     // Add toggle button show ID
     // Dont show Altitude in space
     // Loaded units have altitude?? Dont show alt/vel for loaded
@@ -115,14 +116,16 @@ public final class UnitToolTip {
     // sorting use the UIManager char for ascending/descending nope. its an icon, not a character
     // do exclusive deploy zones need to be for players on a team? Depends on teams share vision
     // Dont count the BV of fighters in quadrons twice for the total player BV, same for cost & tonnage
-    //TODO: CellFormatter -> StringBuilder
+    // CellFormatter -> StringBuilder
     // Mek loaded onto Dropship shows Elevation 999
     // add carried units to tooltip
     // Position tooltips in mektable
     // Add ECM to unit tooltip
-    //TODO: Add ECM to mektable
-    //TODO: Add name to pilot tooltip
-    //TODO: remove pilot tooltip when no advantages?
+    // Add ECM to mektable
+    // Planetary CONditions dialog rework
+    // Disallow planetary conditions when in space
+    //TODO: COnfigure all allowed for remote units
+    //TODO: Why does load game not reinstate owned bots?
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

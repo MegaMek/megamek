@@ -158,6 +158,9 @@ public class MekTableModel extends AbstractTableModel {
         playerCells.add(playerCellContent(entity));
 
         IPlayer owner = ownerOf(entity);
+        // Note that units of a player's bots are obscured because they could be added from
+        // a MekHQ AtB campaign. Thus, the player can still configure them and so can identify
+        // the obscured units but has to actively decide to do it.
         boolean hideEntity = owner.isEnemyOf(clientGui.getClient().getLocalPlayer())
                 && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {

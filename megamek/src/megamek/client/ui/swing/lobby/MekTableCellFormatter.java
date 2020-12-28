@@ -75,7 +75,7 @@ public class MekTableCellFormatter {
             return value + guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER;
         }
         
-        StringBuilder result = new StringBuilder("<HTML><NOBR>" + guiScaledFontHTML());
+        StringBuilder result = new StringBuilder("<HTML><NOBR>&nbsp;&nbsp;" + guiScaledFontHTML());
         boolean isCarried = entity.getTransportId() != Entity.NONE;
         
         // Signs before the unit name
@@ -121,7 +121,7 @@ public class MekTableCellFormatter {
 
         // ECM
         if (entity.hasActiveECM()) {
-            result.append(DOT_SPACER + guiScaledFontHTML());
+            result.append(DOT_SPACER + guiScaledFontHTML(uiC3Color()));
             result.append("\u25CE");
             result.append("</FONT>");
         }
@@ -329,7 +329,7 @@ public class MekTableCellFormatter {
         
         // ECM
         if (entity.hasActiveECM()) {
-            result.append(DOT_SPACER + guiScaledFontHTML());
+            result.append(DOT_SPACER + guiScaledFontHTML(uiC3Color()));
             result.append(ECM_SIGN + " ");
             result.append(Messages.getString("BoardView1.ecmSource"));
             result.append("</FONT>");
@@ -411,7 +411,7 @@ public class MekTableCellFormatter {
                         result.append(DOT_SPACER);
                     }
                     subsequentElement = true;
-                    result.append(guiScaledFontHTML(uiC3Color()) + "C3 Slave" + UNCONNECTED_SIGN);
+                    result.append(guiScaledFontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
                     result.append("</FONT>");
                 } 
                 
@@ -421,7 +421,7 @@ public class MekTableCellFormatter {
                     }
                     subsequentElement = true;
 
-                    result.append(guiScaledFontHTML(uiC3Color()) + "C3 Master");
+                    result.append(guiScaledFontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3Master"));
                     int freeS = entity.calculateFreeC3Nodes();
                     if (freeS == 0) {
                         result.append(" (full)");
@@ -435,7 +435,7 @@ public class MekTableCellFormatter {
                     result.append(DOT_SPACER);
                 }
                 subsequentElement = true;
-                result.append(guiScaledFontHTML(uiC3Color()) + "C3 Company Commander");
+                result.append(guiScaledFontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3CC"));
                 if (entity.hasC3MM()) {
                     result.append(MessageFormat.format(" ({0}M, {1}S free)", 
                             entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
@@ -450,12 +450,12 @@ public class MekTableCellFormatter {
                 subsequentElement = true;
                 result.append(guiScaledFontHTML(uiC3Color()));
                 if (entity.hasC3S()) {
-                    result.append("C3 Slave" + CONNECTED_SIGN); 
+                    result.append(Messages.getString("ChatLounge.C3S") + CONNECTED_SIGN); 
                 } else {
-                    result.append("C3 Master");
+                    result.append(Messages.getString("ChatLounge.C3Master"));
                     int freeS = entity.calculateFreeC3Nodes();
                     if (freeS == 0) {
-                        result.append(" (full)");
+                        result.append(Messages.getString("ChatLounge.C3full"));
                     } else {
                         result.append(Messages.getString("ChatLounge.C3SNodes", entity.calculateFreeC3Nodes()));
                     }
@@ -474,7 +474,7 @@ public class MekTableCellFormatter {
             subsequentElement = true;
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
             result.append(guiScaledFontHTML(uiGreen()) + LOADED_SIGN);
-            result.append("<I> aboard " + loader.getChassis());
+            result.append("<I> " + Messages.getString("ChatLounge.aboard") + " " + loader.getChassis());
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 result.append(" [" + entity.getTransportId() + "]");
             }
@@ -581,7 +581,7 @@ public class MekTableCellFormatter {
         } 
 
         if (pilot.getSlotCount() > 1 || entity instanceof FighterSquadron) {
-            result.append("<I>Multiple Crewmembers</I>");
+            result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
         } else if ((pilot.getNickname(0) != null) && !pilot.getNickname(0).isEmpty()) {
             result.append(guiScaledFontHTML(uiNickColor()) + "<B>'"); 
             result.append(pilot.getNickname(0).toUpperCase() + "'</B></FONT>");
@@ -637,7 +637,7 @@ public class MekTableCellFormatter {
             }
             result.append("<BR>");
         } else { // Multi-person crew
-            result.append("<I>Multiple Crewmembers</I>");
+            result.append("<I>" + Messages.getString("ChatLounge.multipleCrew") + "</I>");
             result.append("<BR>");
         }
         result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": ");

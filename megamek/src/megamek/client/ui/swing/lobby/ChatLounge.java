@@ -173,8 +173,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
     
-    JButton debugButton = new JButton("<>");
-
     private CamoChooserDialog camoDialog;
 
     //region Action Commands
@@ -253,15 +251,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void setupEntities() {
         mekModel = new MekTableModel(clientgui, this);
         mekTable = new JTable(mekModel) {
+            private static final long serialVersionUID = -4054214297803021212L;
+
             @Override
             public Point getToolTipLocation(MouseEvent event) {
                 int row = mekTable.rowAtPoint(event.getPoint());
                 int col = mekTable.columnAtPoint(event.getPoint());
                 Rectangle cellRect = mekTable.getCellRect(row, col, true);
-//                int x = -getLocation().x + cellRect.width + 10;
-//                int y = -getLocation().y + cellRect.height + 10;
-              int x = cellRect.x + cellRect.width + 10;
-              int y = cellRect.y + 10;
+                int x = cellRect.x + cellRect.width + 10;
+                int y = cellRect.y + 10;
                 return new Point(x, y);
             }
         };
@@ -348,21 +346,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         c.gridx = 1;
         panUnitInfo.add(butShowUnitID, c);
-        c.gridx = 2;
-        panUnitInfo.add(debugButton, c);
-        debugButton.addActionListener(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Vector<IBasicOption> changed = new Vector<IBasicOption>();
-                changed.add(new BasicOption(OptionsConstants.BASE_BLIND_DROP, 
-                        !clientgui.getClient().getGame().getOptions().
-                        booleanOption(OptionsConstants.BASE_BLIND_DROP)));
-
-                clientgui.getClient().sendGameOptions("", changed);
-                
-            }
-        });
     }
 
     /**
@@ -900,6 +883,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lisBoardsAvailable.setEnabled(!inSpace);
         chkRotateBoard.setEnabled(!inSpace);
         butSpaceSize.setEnabled(inSpace);
+        butConditions.setEnabled(!inSpace);
         chkIncludeGround.addActionListener(lobbyListener);
         chkIncludeSpace.addActionListener(lobbyListener);
     }
@@ -1037,7 +1021,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     public void refreshEntities() {
         mekModel.clearData();
-        System.out.println("Refresh Units! "); // DEBUG
         ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
         Collections.sort(allEntities, activeSorter);
 
@@ -1443,6 +1426,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         entities.stream().filter(e -> isEditable(e)).forEach(e -> disembark(e, updateCandidates));
         sendUpdate(updateCandidates);
     }
+    
+    /** Returns true if the given entities all belong to the same player. */
+    private boolean haveSingleOwner(Collection<Entity> entities) {
+        return entities.stream().mapToInt(e -> e.getOwner().getId()).distinct().count() == 1;
+    }
 
     /**
      *
@@ -1450,22 +1438,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     public void customizeMechs(List<Entity> entities) {
         // Only call this for when selecting a valid list of entities
-        if (entities.size() < 1) {
+        if (entities.size() < 1 || !haveSingleOwner(entities)) {
             return;
         }
-        Set<String> owners = new HashSet<>();
-        String ownerName = "";
-        int ownerId = -1;
-        for (Entity e : entities) {
-            ownerName = e.getOwner().getName();
-            ownerId = e.getOwner().getId();
-            owners.add(ownerName);
-        }
-
-        // Error State
-        if (owners.size() > 1) {
-            return;
-        }
+        String ownerName = entities.get(0).getOwner().getName();
+        int ownerId = entities.get(0).getOwner().getId();
 
         boolean editable = clientgui.getBots().get(ownerName) != null;
         Client client;
@@ -2442,19 +2419,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**
      * Returns true if the given list of entities can be configured as a group.
      * This requires that they all have the same owner, and that none of the
-     * units are being transported.
-     *
-     * @param entities
-     * @return
+     * units are being transported. Also, the owner must be 
      */
-    boolean canConfigureDeploymentAll(Collection<Entity> entities) {
-        Set<Integer> owners = new HashSet<>();
-        boolean containsTransportedUnit = false;
-        for (Entity e : entities) {
-            containsTransportedUnit |= e.getTransportId() != Entity.NONE;
-            owners.add(e.getOwner().getId());
-        }
-        return (owners.size() == 1) && !containsTransportedUnit;
+    boolean canConfigureMultipleDeployment(Collection<Entity> entities) {
+        return haveSingleOwner(entities) && !containsTransportedUnit(entities);
+    }
+    
+    private boolean containsTransportedUnit(Collection<Entity> entities) {
+        return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
     }
     
     /**
@@ -2584,7 +2556,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             double ton = 0;
             for (Entity entity : clientgui.getClient().getEntitiesVector()) {
                 if (entity.getOwner().equals(player) && !entity.isPartOfFighterSquadron()) {
-                    cost += entity.getCost(false);
+                    cost += (long)entity.getCost(false);
                     ton += entity.getWeight();
                 }
             }
@@ -2692,14 +2664,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 deleteAction(entities);
             } else if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                if (entities.size() == 1) {
-                    mechReadout(entities.get(0));
-                }
+                mechReadoutAction(entities);
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
                 if (entities.size() == 1) {
                     customizeMech(entities.get(0));
-                } else if (canConfigureDeploymentAll(entities)) {
+                } else if (canConfigureMultipleDeployment(entities)) {
                     customizeMechs(entities);
                 }
             }
@@ -2724,9 +2694,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             switch (command) {
             case "VIEW":
-                if (oneSelected) {
-                    mechReadout(entity);
-                }
+                mechReadoutAction(entities);
                 break;
 
             case "BV":
@@ -2960,6 +2928,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
         sendUpdate(updateCandidates);
+    }
+    
+    private void mechReadoutAction(List<Entity> entities) {
+        if ((entities.size() == 1) && canSeeAll(entities)) {
+            mechReadout(entities.get(0));
+        }
     }
     
     public void load(List<Entity> entities, StringTokenizer st) {

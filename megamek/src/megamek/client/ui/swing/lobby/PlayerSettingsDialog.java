@@ -266,9 +266,6 @@ public class PlayerSettingsDialog extends ClientDialog {
         for (IPlayer player: client.getGame().getPlayersVector()) {
             int pos = player.getStartingPos(); 
             if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) { 
-                if (pos > 10) {
-                    pos -= 10;
-                }
                 int index = pos > 10 ? pos - 10 : pos;
                 butText[index].append(guiScaledFontHTML(teamColor(player, client.getLocalPlayer())));
                 butText[index].append("\u25A0</FONT>");

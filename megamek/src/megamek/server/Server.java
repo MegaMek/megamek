@@ -980,10 +980,11 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
                 send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
             }
+            
             if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else {
+            } else if (game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
                 endCurrentPhase();
             }
 

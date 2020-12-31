@@ -7503,7 +7503,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!lastPos.equals(curPos)
                 && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
-                && canFall()) {
+                && (step.getElevation() == 0) && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
             if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");

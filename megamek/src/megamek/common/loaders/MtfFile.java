@@ -689,7 +689,7 @@ public class MtfFile implements IMechLoader {
                 rearMounted = true;
                 critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 3).trim();
             }
-            if (critNameUpper.endsWith("(split)")) {
+            if (critNameUpper.endsWith("(SPLIT)")) {
                 critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 7).trim();
             }
             // keep track of facing for vehicular grenade launchers
@@ -797,7 +797,7 @@ public class MtfFile implements IMechLoader {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
-                            mount = mech.addEquipment(etype, etype2, loc, isOmniPod);
+                            mount = mech.addEquipment(etype, etype2, loc, isOmniPod, isArmored);
                         }
                         if (etype.isVariableSize()) {
                             if (size == 0.0) {

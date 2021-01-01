@@ -42,17 +42,58 @@ public class MtfFileTest {
     @Test
     public void testLoadEquipment() throws LocationFullException, EntityLoadingException {
         Mech mech = new BipedMech();
-        EquipmentType laser = EquipmentType.get("Medium Laser");
-        Mounted mount = mech.addEquipment(laser, Mech.LOC_LT, true);
+        Mounted mount = new Mounted(mech, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
         mount.setMechTurretMounted(true);
         mount.setArmored(true);
+        mech.addEquipment(mount, Mech.LOC_LT, true);
 
         MtfFile loader = toMtfFile(mech);
         Mounted found = loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount();
 
-        assertEquals(laser, found.getType());
+        assertEquals(mount.getType(), found.getType());
         assertTrue(found.isRearMounted());
         assertTrue(found.isMechTurretMounted());
+        assertTrue(found.isArmored());
+    }
+
+    @Test
+    public void setVGLFacing() throws LocationFullException, EntityLoadingException {
+        Mech mech = new BipedMech();
+        EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
+        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(0);
+        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(1);
+        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(2);
+        mech.addEquipment(vgl, Mech.LOC_LT, true).setFacing(3);
+        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(4);
+        mech.addEquipment(vgl, Mech.LOC_LT).setFacing(5);
+
+        MtfFile loader = toMtfFile(mech);
+        Entity loaded = loader.getEntity();
+
+        assertEquals(0, loaded.getCritical(Mech.LOC_LT, 0).getMount().getFacing());
+        assertEquals(1, loaded.getCritical(Mech.LOC_LT, 1).getMount().getFacing());
+        assertEquals(2, loaded.getCritical(Mech.LOC_LT, 2).getMount().getFacing());
+        assertEquals(3, loaded.getCritical(Mech.LOC_LT, 3).getMount().getFacing());
+        assertEquals(4, loaded.getCritical(Mech.LOC_LT, 4).getMount().getFacing());
+        assertEquals(5, loaded.getCritical(Mech.LOC_LT, 5).getMount().getFacing());
+    }
+
+    @Test
+    public void loadSuperheavyDoubleSlot() throws LocationFullException, EntityLoadingException {
+        Mech mech = new BipedMech();
+        mech.setWeight(120.0);
+        mech.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));
+        EquipmentType hs = EquipmentType.get(EquipmentTypeLookup.SINGLE_HS);
+        mech.addEquipment(hs, hs, Mech.LOC_LT, true, true);
+
+        MtfFile loader = toMtfFile(mech);
+        CriticalSlot slot = loader.getEntity().getCritical(Mech.LOC_LT, 0);
+
+        assertEquals(hs, slot.getMount().getType());
+        assertEquals(hs, slot.getMount2().getType());
+        assertTrue(slot.getMount().isOmniPodMounted());
+        assertTrue(slot.getMount2().isOmniPodMounted());
+        assertTrue(slot.isArmored());
     }
 }

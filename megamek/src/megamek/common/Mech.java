@@ -2953,11 +2953,13 @@ public abstract class Mech extends Entity {
     }
 
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc,  boolean omniPod) throws LocationFullException {
+            int loc,  boolean omniPod, boolean armored) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         Mounted mounted2 = new Mounted(this, etype2);
         mounted.setOmniPodMounted(omniPod);
         mounted2.setOmniPodMounted(omniPod);
+        mounted.setArmored(armored);
+        mounted2.setArmored(armored);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "

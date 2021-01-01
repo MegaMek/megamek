@@ -6882,7 +6882,7 @@ public class Server implements Runnable {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMech) {
-                        addReport(landAirMech((LandAirMech) entity, step.getPosition(), prevStep.getElevation(),
+                        addReport(landAirMech((LandAirMech) entity, step.getPosition(), elevation,
                                 distance));
                     } else if (entity instanceof Protomech) {
                         addReport(landGliderPM((Protomech) entity, step.getPosition(), elevation,

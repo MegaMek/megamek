@@ -11,6 +11,7 @@ VERSION HISTORY:
 + Issue #2537: Prevent soft-lock when processing nuclear blasts near the edge of the board; 
 		improved error recovery when loading games after processing failure in certain cases
 + Issue #2535: Remove nag for airborne unit entering rubble hex
++ Issue #2499: Separating Colour Camouflage and Player Colours
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

@@ -1030,7 +1030,8 @@ public class Server implements Runnable {
             if (p.getId() == newPlayer.getId()) {
                 continue;
             }
-            if ((p.getColour() == colour) && (colours.length < (colour.ordinal() + 1))) {
+
+            if ((p.getColour() == colour) && (colours.length > (colour.ordinal() + 1))) {
                 colour = colours[colour.ordinal() + 1];
             }
         }
@@ -1055,20 +1056,20 @@ public class Server implements Runnable {
             // Colour Assignment
             final PlayerColour[] playerColours = PlayerColour.values();
             boolean allUsed = true;
-            boolean[] colourUtilization = new boolean[playerColours.length];
+            Set<PlayerColour> colourUtilization = new HashSet<>();
             for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
                 final IPlayer otherPlayer = i.nextElement();
                 if (otherPlayer.getId() != playerId) {
-                    colourUtilization[otherPlayer.getColour().ordinal()] = true;
+                    colourUtilization.add(otherPlayer.getColour());
                 } else {
                     allUsed = false;
                 }
             }
 
-            if (!allUsed && colourUtilization[player.getColour().ordinal()]) {
-                for (int i = 0; i < colourUtilization.length; i++) {
-                    if (!colourUtilization[i]) {
-                        player.setColour(playerColours[i]);
+            if (!allUsed && colourUtilization.contains(player.getColour())) {
+                for (PlayerColour colour : playerColours) {
+                    if (!colourUtilization.contains(colour)) {
+                        player.setColour(colour);
                         break;
                     }
                 }

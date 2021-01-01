@@ -1845,8 +1845,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = (entity.getCamouflage().hasDefaultCategory()
-                ? player.getCamouflage() : entity.getCamouflage()).getImage();
+        Image camo = entity.getCamouflageOrElse(player.getCamouflage()).getImage();
         Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, player.getColour(), bp);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }

@@ -51,7 +51,6 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -14514,6 +14513,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     // Deal with per entity camo
     public Camouflage getCamouflage() {
         return camouflage;
+    }
+
+    public Camouflage getCamouflageOrElse(Camouflage camouflage) {
+        return getCamouflage().hasDefaultCategory() ? camouflage : getCamouflage();
     }
 
     public void setCamouflage(Camouflage camouflage) {

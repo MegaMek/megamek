@@ -616,8 +616,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         IPlayer player = entity.getOwner();
         PlayerColour tint = player.getColour();
 
-        Image camo = (entity.getCamouflage().hasDefaultCategory()
-                ? player.getCamouflage() : entity.getCamouflage()).getImage();
+        Image camo = entity.getCamouflageOrElse(player.getCamouflage()).getImage();
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded

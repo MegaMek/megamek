@@ -14,8 +14,6 @@
 
 package megamek.common.preference;
 
-import megamek.client.ui.swing.util.PlayerColour;
-
 import java.io.PrintWriter;
 import java.util.Locale;
 

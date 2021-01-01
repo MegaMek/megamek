@@ -117,10 +117,10 @@ public class MtfFile implements IMechLoader {
     public static final String BV = "bv:";
     public static final String WEAPONS = "weapons:";
     public static final String EMPTY = "-Empty-";
-    public static final String ARMORED = "(armored)";
-    public static final String OMNIPOD = "(omnipod)";
+    public static final String ARMORED = "(ARMORED)";
+    public static final String OMNIPOD = "(OMNIPOD)";
     public static final String NO_CRIT = "nocrit:";
-    public static final String SIZE = ":size:";
+    public static final String SIZE = ":SIZE:";
 
     /**
      * Creates new MtfFile
@@ -604,14 +604,14 @@ public class MtfFile implements IMechLoader {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
             if ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM)) {
-                String toCheck = critData[loc][3].toLowerCase().trim();
+                String toCheck = critData[loc][3].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {
                     toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
                 }
                 if (!toCheck.equalsIgnoreCase("Hand Actuator")) {
                     mech.setCritical(loc, 3, null);
                 }
-                toCheck = critData[loc][2].toLowerCase().trim();
+                toCheck = critData[loc][2].toUpperCase().trim();
                 if (toCheck.endsWith(ARMORED)) {
                     toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
                 }
@@ -628,7 +628,6 @@ public class MtfFile implements IMechLoader {
             String critName = critData[loc][i];
 
             critName = critName.trim();
-            String critNameLower = critName.toLowerCase();
             String critNameUpper = critName.toUpperCase();
             boolean rearMounted = false;
             boolean isArmored = false;
@@ -637,9 +636,10 @@ public class MtfFile implements IMechLoader {
             double size = 0.0;
 
             // Check for Armored Actuators
-            if (critNameLower.endsWith(ARMORED)) {
+            if (critNameUpper.endsWith(ARMORED)) {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
+                critNameUpper = critName.toUpperCase();
             }
 
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
@@ -672,44 +672,45 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
-            int sizeIndex = critNameLower.indexOf(SIZE);
+            int sizeIndex = critNameUpper.indexOf(SIZE);
             if (sizeIndex > 0) {
                 size = Double.parseDouble(critName.substring(sizeIndex + SIZE.length()));
-                critName = critName.substring(0, sizeIndex);
+                critNameUpper = critNameUpper.substring(0, sizeIndex);
             }
-            if (critNameLower.endsWith(OMNIPOD)) {
-                critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
+            if (critNameUpper.endsWith(OMNIPOD)) {
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - OMNIPOD.length()).trim();
                 isOmniPod = true;
             }
             if (critNameUpper.endsWith("(T)")) {
                 isTurreted = true;
-                critName = critName.substring(0, critName.length() - 3).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 3).trim();
             }
             if (critNameUpper.endsWith("(R)")) {
                 rearMounted = true;
-                critName = critName.substring(0, critName.length() - 3).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 3).trim();
             }
-            if (critNameLower.endsWith("(split)")) {
-                critName = critName.substring(0, critName.length() - 7).trim();
+            if (critNameUpper.endsWith("(split)")) {
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 7).trim();
             }
             // keep track of facing for vehicular grenade launchers
             int facing = -1;
             if (critNameUpper.endsWith("(FL)")) {
                 facing = 5;
-                critName = critName.substring(0, critName.length() - 4).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 4).trim();
             }
             if (critNameUpper.endsWith("(FR)")) {
                 facing = 1;
-                critName = critName.substring(0, critName.length() - 4).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 4).trim();
             }
             if (critNameUpper.endsWith("(RL)")) {
                 facing = 4;
-                critName = critName.substring(0, critName.length() - 4).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 4).trim();
             }
             if (critNameUpper.endsWith("(RR)")) {
                 facing = 2;
-                critName = critName.substring(0, critName.length() - 4).trim();
+                critNameUpper = critNameUpper.substring(0, critNameUpper.length() - 4).trim();
             }
+            critName = critName.substring(0, critNameUpper.length());
             EquipmentType etype2 = null;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);

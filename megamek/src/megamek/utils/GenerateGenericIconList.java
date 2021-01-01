@@ -74,12 +74,11 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         int genericCount = 0;
         Map<String, List<String>> typeNameMap = new HashMap<>();
         
-        System.out.println("\n"); //$NON-NLS-1$
-        System.out.println("Units using Generic Icons:"); //$NON-NLS-1$
+        System.out.println("\n");
+        System.out.println("Units using Generic Icons:");
         
         for (int i = 0; i < ms.length; i++) {
-            Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
-                    .getEntryName());
+            Entity entity = loadEntity(ms[i].getSourceFile(), ms[i].getEntryName());
             MechEntry entry = MMStaticDirectoryManager.getMechTileset().entryFor(entity, -1);
             MechEntry defaultEntry = MMStaticDirectoryManager.getMechTileset().genericFor(entity, -1);
             if (entry.equals(defaultEntry)) {

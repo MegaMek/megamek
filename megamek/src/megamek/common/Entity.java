@@ -51,7 +51,6 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -189,8 +188,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int id = Entity.NONE;
 
-    protected String camoCategory = Camouflage.NO_CAMOUFLAGE;
-    protected String camoFileName = null;
+    protected Camouflage camouflage = new Camouflage();
 
     /**
      * ID settable by external sources (such as mm.net)
@@ -14513,24 +14511,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     // Deal with per entity camo
-    public AbstractIcon getCamouflage() {
-        return new Camouflage(getCamoCategory(), getCamoFileName());
+    public Camouflage getCamouflage() {
+        return camouflage;
     }
 
+    public Camouflage getCamouflageOrElse(Camouflage camouflage) {
+        return getCamouflage().hasDefaultCategory() ? camouflage : getCamouflage();
+    }
+
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = camouflage;
+    }
+
+    @Deprecated
     public void setCamoCategory(String name) {
-        camoCategory = name;
+        getCamouflage().setCategory(name);
     }
 
+    @Deprecated
     public String getCamoCategory() {
-        return camoCategory;
+        return getCamouflage().getCategory();
     }
 
+    @Deprecated
     public void setCamoFileName(String name) {
-        camoFileName = name;
+        getCamouflage().setFilename(name);
     }
 
+    @Deprecated
     public String getCamoFileName() {
-        return camoFileName;
+        return getCamouflage().getFilename();
     }
 
     public boolean getSelfDestructing() {

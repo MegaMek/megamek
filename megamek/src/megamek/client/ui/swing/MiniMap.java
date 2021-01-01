@@ -2,17 +2,16 @@
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BasicStroke;
@@ -69,7 +68,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -112,13 +110,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * to return from method? -uses break-to-label -uses while-true
  */
 public class MiniMap extends JPanel {
-
-    // these indices match those in Terrains.java, and are therefore sensitive
-    // to any changes there
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6964529682842424060L;
     private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
@@ -1101,7 +1092,7 @@ public class MiniMap extends JPanel {
             yPoints[3] = yPoints[0] - 2;
             yPoints[2] = yPoints[1] - 2;
         }
-        g.setColor(PlayerColors.getColor(source.getOwner().getColorIndex()));
+        g.setColor(source.getOwner().getColour().getColour());
         g.fillPolygon(xPoints, yPoints, 4);
         g.setColor(Color.black);
         g.drawPolygon(xPoints, yPoints, 4);
@@ -1116,10 +1107,8 @@ public class MiniMap extends JPanel {
                         && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
-                    Entity attackTarget = m_game.getEntity(otherAttack
-                            .getEntityId());
-                    g.setColor(PlayerColors.getColor(attackTarget.getOwner()
-                            .getColorIndex()));
+                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
+                    g.setColor(attackTarget.getOwner().getColour().getColour());
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -1255,9 +1244,9 @@ public class MiniMap extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
         Stroke svStroke = g2.getStroke();
-        
+
         // Choose player or team color depending on preferences
-        Color iconColor = PlayerColors.getColor(entity.getOwner().getColorIndex(), false);
+        Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
             boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
             boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());

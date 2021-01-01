@@ -93,7 +93,7 @@ public class Client implements IClientCommandHandler {
     private IConnection connection;
 
     // the hash table of client commands
-    private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
+    private Hashtable<String, ClientCommand> commandsHash = new Hashtable<>();
 
     // some info about us and the server
     private boolean connected = false;
@@ -748,7 +748,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "player done" message to the server.
      */
     public synchronized void sendDone(boolean done) {
-        send(new Packet(Packet.COMMAND_PLAYER_READY, Boolean.valueOf(done)));
+        send(new Packet(Packet.COMMAND_PLAYER_READY, done));
         flushConn();
     }
 
@@ -764,9 +764,6 @@ public class Client implements IClientCommandHandler {
      */
     public void sendPlayerInfo() {
         IPlayer player = game.getPlayer(localPlayerNumber);
-        PreferenceManager.getClientPreferences().setLastPlayerColor(player.getColorIndex());
-        PreferenceManager.getClientPreferences().setLastPlayerCategory(player.getCamoCategory());
-        PreferenceManager.getClientPreferences().setLastPlayerCamoName(player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
@@ -917,10 +914,6 @@ public class Client implements IClientCommandHandler {
         } else {
             game.setPlayer(pindex, newPlayer);
         }
-
-        PreferenceManager.getClientPreferences().setLastPlayerColor(newPlayer.getColorIndex());
-        PreferenceManager.getClientPreferences().setLastPlayerCategory(newPlayer.getCamoCategory());
-        PreferenceManager.getClientPreferences().setLastPlayerCamoName(newPlayer.getCamoFileName());
     }
 
     /**

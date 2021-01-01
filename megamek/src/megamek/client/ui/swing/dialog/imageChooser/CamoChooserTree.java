@@ -27,15 +27,18 @@ import megamek.common.icons.Camouflage;
 public class CamoChooserTree extends AbstractIconChooserTree {
     private static final long serialVersionUID = -452869897803327464L;
 
-    public CamoChooserTree() {
+    public CamoChooserTree(boolean individualCamouflage) {
         super();
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        root.add(new DefaultMutableTreeNode(Camouflage.NO_CAMOUFLAGE));
         if (MMStaticDirectoryManager.getCamouflage() != null) {
+            if (individualCamouflage) {
+                root.add(new DefaultMutableTreeNode(Camouflage.NO_CAMOUFLAGE));
+            }
             if (MMStaticDirectoryManager.getCamouflage().getItemNames("").hasNext()) {
                 root.add(new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY));
             }
+            root.add(new DefaultMutableTreeNode(Camouflage.COLOUR_CAMOUFLAGE));
             Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
             while (catNames.hasNext()) {
                 String catName = catNames.next();

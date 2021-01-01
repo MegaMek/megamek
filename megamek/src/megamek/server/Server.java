@@ -56,7 +56,7 @@ import java.util.zip.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
@@ -731,7 +731,7 @@ public class Server implements Runnable {
         IPlayer player = (IPlayer) packet.getObject(0);
         IPlayer gamePlayer = game.getPlayer(connId);
         if (null != gamePlayer) {
-            gamePlayer.setColorIndex(player.getColorIndex());
+            gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamoCategory(player.getCamoCategory());
@@ -1022,23 +1022,22 @@ public class Server implements Runnable {
             team++;
         }
         IPlayer newPlayer = new Player(connId, name);
-        int colorInd = newPlayer.getColorIndex();
+        PlayerColour colour = newPlayer.getColour();
         Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements() && (colorInd < PlayerColors.COLOR_NAMES.length)) {
+        final PlayerColour[] colours = PlayerColour.values();
+        while (players.hasMoreElements()) {
             final IPlayer p = players.nextElement();
             if (p.getId() == newPlayer.getId()) {
                 continue;
             }
-            if (p.getColorIndex() == colorInd) {
-                colorInd++;
+
+            if ((p.getColour() == colour) && (colours.length > (colour.ordinal() + 1))) {
+                colour = colours[colour.ordinal() + 1];
             }
         }
-        if (colorInd == -1) {
-            colorInd = 0;
-        }
-        newPlayer.setColorIndex(colorInd);
-        newPlayer.setCamoCategory(Camouflage.NO_CAMOUFLAGE);
-        newPlayer.setCamoFileName(PlayerColors.COLOR_NAMES[colorInd]);
+        newPlayer.setColour(colour);
+        newPlayer.setCamoCategory(Camouflage.COLOUR_CAMOUFLAGE);
+        newPlayer.setCamoFileName(colour.name());
         newPlayer.setTeam(Math.min(team, 5));
         game.addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);
@@ -1051,26 +1050,31 @@ public class Server implements Runnable {
     public void validatePlayerInfo(int playerId) {
         final IPlayer player = getPlayer(playerId);
 
-        // TODO : check for duplicate or reserved names
+        if (player != null) {
+            // TODO : check for duplicate or reserved names
 
-        // make sure colorIndex is unique
-        boolean[] colorUsed = new boolean[PlayerColors.COLOR_NAMES.length];
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer otherPlayer = i.nextElement();
-            if (otherPlayer.getId() != playerId) {
-                colorUsed[otherPlayer.getColorIndex()] = true;
+            // Colour Assignment
+            final PlayerColour[] playerColours = PlayerColour.values();
+            boolean allUsed = true;
+            Set<PlayerColour> colourUtilization = new HashSet<>();
+            for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
+                final IPlayer otherPlayer = i.nextElement();
+                if (otherPlayer.getId() != playerId) {
+                    colourUtilization.add(otherPlayer.getColour());
+                } else {
+                    allUsed = false;
+                }
             }
-        }
-        if ((null != player) && colorUsed[player.getColorIndex()]) {
-            // find a replacement color;
-            for (int i = 0; i < colorUsed.length; i++) {
-                if (!colorUsed[i]) {
-                    player.setColorIndex(i);
-                    break;
+
+            if (!allUsed && colourUtilization.contains(player.getColour())) {
+                for (PlayerColour colour : playerColours) {
+                    if (!colourUtilization.contains(colour)) {
+                        player.setColour(colour);
+                        break;
+                    }
                 }
             }
         }
-
     }
 
     /**
@@ -3832,11 +3836,7 @@ public class Server implements Runnable {
     }
 
     private static String getColorForPlayer(IPlayer p) {
-        String colorCode = Integer.toHexString(PlayerColors.getColor(
-                p.getColorIndex()).getRGB() & 0x00f0f0f0);
-        return "<B><font color='" + colorCode + "'>" + p.getName()
-               + "</font></B>";
-
+        return "<B><font color='" + p.getColour().getHexString(0x00F0F0F0) + "'>" + p.getName() + "</font></B>";
     }
 
     /**
@@ -30926,8 +30926,7 @@ public class Server implements Runnable {
      *                  <code>IllegalArgumentException</code> will be thrown.
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds,
-                                            int condition) {
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)

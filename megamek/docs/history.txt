@@ -14,6 +14,7 @@ VERSION HISTORY:
 + Issue #2499: Separating Colour Camouflage and Player Colours
 + Issue #2544: Rear or turret-mounted weapons failing to load
 + Issue #2550: NPE when 'Go Down' is used by an elevation 1 AirMech
++ PR #2554: Fix TargetRoll description if negative modifier is first
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

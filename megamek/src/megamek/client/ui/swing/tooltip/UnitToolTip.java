@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -124,11 +123,12 @@ public final class UnitToolTip {
     // Add ECM to mektable
     // Planetary CONditions dialog rework
     // Disallow planetary conditions when in space
-    //TODO: COnfigure all allowed for remote units
+    // COnfigure all allowed for remote units
     //TODO: Why does load game not reinstate owned bots?
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
+    public static final String DOT_SPACER = " \u2B1D ";
     
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 
@@ -641,7 +641,7 @@ public final class UnitToolTip {
                 result.append("/" + entity.getJumpMP());
             }
             if (entity instanceof Tank) {
-                result.append(ChatLounge.DOT_SPACER + entity.getMovementModeAsString());
+                result.append(DOT_SPACER + entity.getMovementModeAsString());
             }
         }
         

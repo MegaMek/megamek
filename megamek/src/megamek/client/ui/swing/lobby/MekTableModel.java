@@ -293,7 +293,7 @@ public class MekTableModel extends AbstractTableModel {
                         Image image = getToolkit().getImage(DEF_PORTRAIT);
                         setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                     }
-                }
+                } 
             } else {
                 if (column == COL_UNIT) {
                     setToolTipText(unitTooltips.get(row));
@@ -310,6 +310,8 @@ public class MekTableModel extends AbstractTableModel {
                     if (!compact) {
                         setIcon(new ImageIcon(entity.getCrew().getPortrait(0).getImage(size)));
                     }
+                } else {
+                    setToolTipText(null);
                 }
             }
             

@@ -125,6 +125,7 @@ public class Client implements IClientCommandHandler {
 
     private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
+    /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
 
     //Hashtable for storing image tags containing base64Text src

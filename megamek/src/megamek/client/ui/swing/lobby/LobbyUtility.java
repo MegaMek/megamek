@@ -13,6 +13,10 @@
 */ 
 package megamek.client.ui.swing.lobby;
 
+import java.util.Collection;
+
+import megamek.MegaMek;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.options.GameOptions;
@@ -72,6 +76,37 @@ public class LobbyUtility {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
     } 
+    
+    /** Returns true if the given entities all belong to the same player. */
+    static boolean haveSingleOwner(Collection<Entity> entities) {
+        return entities.stream().mapToInt(e -> e.getOwner().getId()).distinct().count() == 1;
+    }
+    
+    /**
+     * Returns true if no two of the given entities are enemies. This is
+     * true when all entities belong to a single player. If they belong to 
+     * different players, it is true when all belong to the same team and 
+     * that team is one of Teams 1 through 5 (not "No Team").
+     * <P>Returns true when entities is empty or has only one entity. The case of
+     * entities being empty should be considered by the caller.  
+     */
+    static boolean areAllied(Collection<Entity> entities) {
+        if (entities.size() == 0) {
+            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied.");
+            return true;
+        }
+        Entity randomEntry = entities.stream().findAny().get();
+        return !entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
+    }
+    
+    /** Returns true if any of the given entities are embarked (transported by something). */ 
+    static boolean containsTransportedUnit(Collection<Entity> entities) {
+        return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
+    }
+    
+    // PRIVATE
+    
+    
     
     /** 
      * Returns true when the two starting positions overlap, i.e.

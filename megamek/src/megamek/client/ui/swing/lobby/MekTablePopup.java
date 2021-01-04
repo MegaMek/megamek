@@ -79,13 +79,8 @@ class MekTablePopup {
         }
 
         // Find what can be done with the entities
-        // When units are selected that can't be configured, then
-        // some actions should not be available regardless of the type
-        // of those units
         boolean allCapFighter = !unconfigSelected;
         boolean allDropships = !unconfigSelected;
-//        boolean allInfantry = !unconfigSelected;
-//        boolean allBattleArmor = !unconfigSelected;
         boolean allProtomeks = !unconfigSelected;
         boolean anyHotLoadOn = false;
         boolean anyHotLoadOff = false;
@@ -113,8 +108,6 @@ class MekTablePopup {
             }
             allProtomeks &= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
             allDropships &= en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
-//            allInfantry &= en.hasETypeFlag(Entity.ETYPE_INFANTRY);
-//            allBattleArmor &= en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
             if (optBurstMG) {
                 for (Mounted m: en.getWeaponList()) {
                     EquipmentType etype = m.getType();
@@ -135,43 +128,25 @@ class MekTablePopup {
             }
         }
         
-//        boolean allSamePlayer = true;
-//        boolean allSameEntityType = true;
-//        Entity prevEntity = null;
-//        int prevOwnerId = -1;
-//        for (Entity en : entities) {
-//            if ((prevOwnerId != -1) && (en.getOwnerId() != prevOwnerId)) {
-//                allSamePlayer = false;
-//            }
-//            if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
-//                allSameEntityType = false;
-//            }
-//            prevOwnerId = en.getOwnerId();
-//            prevEntity = en;
-//        }
-        
-        // listener menu uses the following Mnemonics:
-        // B, C, D, E, I, O, R, V
         ScalingPopup popup = new ScalingPopup();
         
         popup.add(menuItem("View...", "VIEW", oneSelected && canSeeAll, listener, KeyEvent.VK_V));
+        popup.add(menuItem("View BV Calculation...", "BV", oneSelected && canSeeAll, listener, KeyEvent.VK_B));
         popup.add(menuItem("Edit Damage...", "DAMAGE", oneSelected && canConfigureAny, listener, KeyEvent.VK_E));
 
         if (oneSelected) {
             popup.add(menuItem("Configure...", "CONFIGURE", canConfigureAny, listener, KeyEvent.VK_C));
         } else {
-            //TODO: CAN DO THIS FOR REMOTE PLAYERS!
             popup.add(menuItem("Configure all...", "CONFIGURE_ALL", canConfigureDeployAll, listener, KeyEvent.VK_C));
         }
         popup.add(spacer());
         popup.add(menuItem("Set individual camo...", "INDI_CAMO", canConfigureAny, listener, KeyEvent.VK_I));
         popup.add(menuItem("Delete", "DELETE", canConfigureAll, listener, KeyEvent.VK_D));
-        popup.add(randomizeMenu(canConfigureAny, listener)); //TODO: CAN DO THIS FOR REMOTE PLAYERS!
+        popup.add(randomizeMenu(canConfigureAny, listener));
         popup.add(changeOwnerMenu(canConfigureAny, clientGui, listener));
         popup.add(swapPilotMenu(oneSelected && canConfigureAny, entities.get(0), clientGui, listener));
         
         if (optBurstMG || optLRMHotLoad) {
-            //TODO: CAN DO THIS FOR REMOTE PLAYERS!
             popup.add(equipMenu(anyRapidFireMGOn, anyRapidFireMGOff, anyHotLoadOn, anyHotLoadOff, optLRMHotLoad, optBurstMG, listener));
         }
         
@@ -515,165 +490,3 @@ class MekTablePopup {
     }
 }
 
-
-//private static JMenu randomizeMenu(ClientGUI clientGui, Collection<Entity> entities, 
-//Entity entity, ActionListener listener, ChatLounge lobby) {
-//
-//JMenu menu;
-//// Loading Submenus
-//if (noneCarried) {
-//menu = new JMenu("Load...");
-//JMenu menuDocking = new JMenu("Dock With...");
-//JMenu menuSquadrons = new JMenu("Join...");
-//JMenu menuMounting = new JMenu("Mount...");
-//JMenu menuClamp = new JMenu("Mag Clamp...");
-//JMenu menuLoadAll = new JMenu("Load All Into");
-//boolean canLoad = false;
-//boolean allHaveMagClamp = true;
-//for (Entity b : entities) {
-//  if (b.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-//          || b.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-//      allHaveMagClamp &= b.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
-//  }
-//}
-//for (Entity loader : clientGui.getClient().getGame().getEntitiesVector()) {
-//  // TODO don't allow capital fighters to load one another
-//  // at the moment
-//  if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
-//      continue;
-//  }
-//  boolean loadable = true;
-//  for (Entity en : entities) {
-//      if (!loader.canLoad(en, false)
-//              || (loader.getId() == en.getId())
-//              //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
-//              || (loader.canTow(en.getId()))) {
-//          loadable = false;
-//          break;
-//      }
-//  }
-//  if (loadable) {
-//      canLoad = true;
-//      menuItem = new JMenuItem(loader.getShortName());
-//      menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-//      menuItem.addActionListener(listener);
-//      menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//      menuLoadAll.add(menuItem);
-//      JMenu subMenu = new JMenu(loader.getShortName());
-//      if ((loader instanceof FighterSquadron) && allCapFighter) {
-// 
-//      } else if ((loader instanceof Jumpship) && allDropships) {
-//
-//      } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()
-//              // Only load magclamps if applicable
-//              && loader.hasUnloadedClampMount()
-//              // Only choose MagClamps as last option
-//              && (loader.getUnused(entities.get(0)) < 2)) {
-//          for (Transporter t : loader.getTransports()) {
-//              if ((t instanceof ClampMountMech) || (t instanceof ClampMountTank)) {
-//                  menuItem = new JMenuItem("Onto " + loader.getShortName());
-//                  menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-//                  menuItem.addActionListener(listener);
-//                  menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//                  menuClamp.add(menuItem);
-//              }
-//          }
-//      } else if (allProtomechs && allHaveMagClamp
-//              && loader.hasETypeFlag(Entity.ETYPE_MECH)) {
-//          Transporter front = null;
-//          Transporter rear = null;
-//          for (Transporter t : loader.getTransports()) {
-//              if (t instanceof ProtomechClampMount) {
-//                  if (((ProtomechClampMount) t).isRear()) {
-//                      rear = t;
-//                  } else {
-//                      front = t;
-//                  }
-//              }
-//          }
-//          Entity en = entities.get(0);
-//          if ((front != null) && front.canLoad(en)
-//                  && ((en.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
-//                          || (rear == null) || rear.getLoadedUnits().isEmpty())) {
-//              menuItem = new JMenuItem("Onto Front");
-//              menuItem.setActionCommand("LOAD|" + loader.getId() + ":0");
-//              menuItem.addActionListener(listener);
-//              menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//              subMenu.add(menuItem);
-//          }
-//          boolean frontUltra = (front != null)
-//                  && front.getLoadedUnits().stream()
-//                  .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
-//          if ((rear != null) && rear.canLoad(en) && !frontUltra) {
-//              menuItem = new JMenuItem("Onto Rear");
-//              menuItem.setActionCommand("LOAD|" + loader.getId() + ":1");
-//              menuItem.addActionListener(listener);
-//              menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//              subMenu.add(menuItem);
-//          }
-//          if (subMenu.getItemCount() > 0) {
-//              menuClamp.add(subMenu);
-//          }
-//      } else if (allInfantry) {
-//          menuItem = new JMenuItem(loader.getShortName());
-//          menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
-//          menuItem.addActionListener(listener);
-//          menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//          menuMounting.add(menuItem);
-//      }
-//      Entity en = entities.get(0);
-//      if (allSameEntityType && !allDropships) {
-//          for (Transporter t : loader.getTransports()) {
-//              if (t.canLoad(en)) {
-//                  if (t instanceof Bay) {
-//                      Bay bay = (Bay) t;
-//                      menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
-//                              + "Slots: "
-//                              + (int) loader.getBayById(bay.getBayNumber()).getUnusedSlots()
-//                              + loader.getBayById(bay.getBayNumber()).getDefaultSlotDescription()
-//                              + ")");
-//                      menuItem.setActionCommand(
-//                              "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
-//                      menuItem.addActionListener(listener);
-//                      menuItem.setEnabled((isOwner || isBot) && noneCarried);
-//                      subMenu.add(menuItem);
-//                  }
-//              }
-//          }
-//          if (subMenu.getMenuComponentCount() > 0) {
-//              menu.add(subMenu);
-//          }
-//      }
-//  }
-//}
-//if (canLoad) {
-//  if (menu.getMenuComponentCount() > 0) {
-//      menu.setEnabled((isOwner || isBot) && noneCarried);
-//      MenuScroller.createScrollBarsOnMenus(menu);
-//      popup.add(menu);
-//  }
-
-//  if (menuMounting.getMenuComponentCount() > 0) {
-//      menuMounting.setEnabled((isOwner || isBot) && noneCarried);
-//      MenuScroller.createScrollBarsOnMenus(menuMounting);
-//      popup.add(menuMounting);
-//  }
-//  if (menuClamp.getMenuComponentCount() > 0) {
-//      menuClamp.setEnabled((isOwner || isBot) && noneCarried);
-//      MenuScroller.createScrollBarsOnMenus(menuClamp);
-//      popup.add(menuClamp);
-//  }
-//  boolean hasMounting = menuMounting.getMenuComponentCount() > 0;
-//  boolean hasSquadrons = menuSquadrons.getMenuComponentCount() > 0;
-//  boolean hasDocking = menuDocking.getMenuComponentCount() > 0;
-//  boolean hasLoad = menu.getMenuComponentCount() > 0;
-//  boolean hasClamp = menuClamp.getMenuComponentCount() > 0;
-//  if ((menuLoadAll.getMenuComponentCount() > 0)
-//          && !(hasMounting || hasSquadrons || hasDocking || hasLoad || hasClamp)) {
-//      menuLoadAll.setEnabled((isOwner || isBot) && noneCarried);
-//      MenuScroller.createScrollBarsOnMenus(menuLoadAll);
-//      popup.add(menuLoadAll);
-//  }
-//}
-//}
-//}

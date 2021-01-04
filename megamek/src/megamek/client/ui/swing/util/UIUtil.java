@@ -411,7 +411,7 @@ public final class UIUtil {
     }
     
     /** A panel for a subsection of the dialog, e.g. Minefields. */
-    public static class OptionPanel extends JPanel {
+    public static class OptionPanel extends FixedYPanel {
         private static final long serialVersionUID = -7168700339882132428L;
 
         public OptionPanel(String header) {
@@ -419,6 +419,26 @@ public final class UIUtil {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
             add(new Header(header));
+        }
+    }
+
+    /** A JPanel that does not stretch vertically beyond its preferred height. */
+    public static class FixedYPanel extends JPanel {
+        private static final long serialVersionUID = -8805710112708937089L;
+        
+        /** {@docRoot} */
+        public FixedYPanel(LayoutManager layout) {
+            super(layout);
+        }
+        
+        /** {@docRoot} */
+        public FixedYPanel() {
+            super();
+        }
+
+        @Override
+        public Dimension getMaximumSize() {
+            return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
         }
     }
     

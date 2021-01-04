@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -31,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
@@ -146,17 +149,17 @@ public class PlayerSettingsDialog extends ClientDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(Box.createVerticalGlue());
     }
     
     private JPanel headerSection() {
-        JPanel result = new JPanel();
+        JPanel result = new FixedYPanel();
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
-        Content panContent = new Content(new FlowLayout());
-        result.add(panContent);
         Icon playerIcon = client.getLocalPlayer().getCamouflage().getImageIcon(UIUtil.scaleForGUI(40));
         JLabel playerLabel = new JLabel(client.getLocalPlayer().getName(), playerIcon, SwingConstants.CENTER);
         playerLabel.setIconTextGap(UIUtil.scaleForGUI(12));
-        panContent.add(playerLabel);
+        playerLabel.setBorder(new EmptyBorder(15, 0, 10, 0));
+        result.add(playerLabel);
         return result;
     }
 

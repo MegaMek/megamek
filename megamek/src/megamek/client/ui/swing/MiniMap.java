@@ -153,16 +153,27 @@ public class MiniMap extends JPanel {
     // unit representation
     private Vector<int[]> roadHexIndexes = new Vector<int[]>();
     private int zoom = GUIPreferences.getInstance().getMinimapZoom();
-    private int[] fontSize = {6, 8, 10, 12, 14, 16};
-    private int[] hexSide = {3, 5, 6, 8, 10, 12};
-    private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
-    private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
-    private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
-    private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
-    private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
-    private int[] unitSizes = {5, 6, 7, 8, 9, 10};
-    private int[] stratZoom = {8, 9, 11, 12, 14, 16};
-    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
+//    private int[] fontSize = {6, 8, 10, 12, 14, 16};
+//    private int[] hexSide = {3, 5, 6, 8, 10, 12};
+//    private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
+//    private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
+//    private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
+//    private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
+//    private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
+//    private int[] unitSizes = {5, 6, 7, 8, 9, 10};
+//    private int[] stratZoom = {8, 9, 11, 12, 14, 16};
+//    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
+    
+    private int[] fontSize = {6, 6, 8, 10, 12, 14, 16};
+    private int[] hexSide = {2, 3, 5, 6, 8, 10, 12};
+    private int[] hexSideByCos30 = {2, 3, 4, 5, 7, 9, 10};
+    private int[] hexSideBySin30 = {1, 2, 2, 3, 4, 5, 6};
+    private int[] halfRoadWidthByCos30 = {0, 0, 0, 1, 2, 2, 3};
+    private int[] halfRoadWidthBySin30 = {0, 0, 0, 1, 1, 1, 2};
+    private int[] halfRoadWidth = {0, 0, 0, 1, 2, 3, 3};
+    private int[] unitSizes = {4, 5, 6, 7, 8, 9, 10};
+    private int[] stratZoom = {7, 8, 9, 11, 12, 14, 16};
+    private int[] unitBorder = {1, 1, 1, 1, 2, 2, 2};
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     Coords firstLOS;
@@ -1928,5 +1939,148 @@ public class MiniMap extends JPanel {
             // if (!minimized) initializeMap();
         }
     };
+    
+    public BufferedImage getImage() {
+        drawMapOrig();
+        return m_mapImage;
+    }
+    
+    // Used only internally for creating a minimap image
+    private MiniMap(IBoard board) throws IOException {
+        m_board = board;
+        initializeColors();
+    }
+    
+    //TODO: definitely integrate this with the normal drawMapOrig!!!!!
+    private void drawForImage() {
+        Graphics g = m_mapImage.getGraphics();
+        // Activate AA
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D)g).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+        
+        Color oldColor = g.getColor();
+        g.setColor(oldColor);
+        if (!minimized) {
+            roadHexIndexes.removeAllElements();
+            Graphics gg = terrainBuffer.getGraphics();
+            // Activate AA
+            if (GUIPreferences.getInstance().getAntiAliasing()) {
+                ((Graphics2D)gg).setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+            }
+            for (int j = 0; j < m_board.getWidth(); j++) {
+                for (int k = 0; k < m_board.getHeight(); k++) {
+                    IHex h = m_board.getHex(j, k);
+                    if (dirtyMap || dirty[j / 10][k / 10]) {
+                        gg.setColor(terrainColor(h, j, k));
+                        paintCoord(gg, j, k, true);
+                    }
+                    addRoadElements(h, j, k);
+                    // Color invalid hexes red when in the Map Editor
+                    if ((m_game != null) && 
+                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
+                            && !h.isValid(null)) {
+                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        paintCoord(gg, j, k, true);
+                    }
+                }
+            }
+            // draw backbuffer
+            g.drawImage(terrainBuffer, 0, 0, this);
+
+            if (!roadHexIndexes.isEmpty()) {
+                paintRoads(g);
+            }
+
+            if (SHOW_NO_HEIGHT != heightDisplayMode) {
+                for (int j = 0; j < m_board.getWidth(); j++) {
+                    for (int k = 0; k < m_board.getHeight(); k++) {
+                        IHex h = m_board.getHex(j, k);
+                        paintHeight(g, h, j, k);
+                    }
+                }
+            }
+
+        }
+
+    }
+    
+    private void initializeMapForImage() {
+        int currentHexSide = hexSide[zoom];
+        int currentHexSideByCos30 = hexSideByCos30[zoom];
+        int currentHexSideBySin30 = hexSideBySin30[zoom];
+        int requiredWidth = m_board.getWidth() * (currentHexSide + currentHexSideBySin30)
+                        + currentHexSideBySin30 ;
+        int requiredHeight = (((2 * m_board.getHeight()) + 1)
+                          * currentHexSideByCos30);
+
+        m_mapImage = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
+        terrainBuffer = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
+        Graphics gg = terrainBuffer.getGraphics();
+        gg.setColor(BACKGROUND);
+        gg.fillRect(0, 0, getSize().width, getSize().height);
+    }
+
+    public static Dimension getMinimapImageSize(IBoard board) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            int zoom = 6;
+            int currentHexSide = tempMM.hexSide[zoom];
+            int currentHexSideByCos30 = tempMM.hexSideByCos30[zoom];
+            int currentHexSideBySin30 = tempMM.hexSideBySin30[zoom];
+            int requiredWidth = board.getWidth() * (currentHexSide + currentHexSideBySin30)
+                    + currentHexSideBySin30 ;
+            int requiredHeight = (((2 * board.getHeight()) + 1)
+                    * currentHexSideByCos30);
+            return new Dimension(requiredWidth, requiredHeight);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Dimension(1,1);
+        }
+    }
+
+    public static Image getBoardMinimapImage(IBoard board) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = 1;
+            int largerEdge = Math.max(board.getWidth(), board.getHeight());
+            if (largerEdge > 30) {
+                tempMM.zoom = 2;
+            }
+            if (largerEdge > 60) {
+                tempMM.zoom = 0;
+            }
+            if (largerEdge < 20) {
+                tempMM.zoom = 3;
+            }
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            Image img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
+    
+    public static Image getBoardMinimapImageMaxZoom(IBoard board) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = 6;
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            Image img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
 
 }

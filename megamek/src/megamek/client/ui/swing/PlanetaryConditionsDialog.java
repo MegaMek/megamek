@@ -31,6 +31,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -42,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
@@ -152,22 +154,22 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         mainPanel.add(generalSection());
         mainPanel.add(weatherSection());
         mainPanel.add(dynamicSection());
+        mainPanel.add(Box.createVerticalGlue());
         
         setupCombos();
     }
     
     private JPanel headerSection() {
-        JPanel result = new JPanel();
+        JPanel result = new FixedYPanel();
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
-        Content panContent = new Content(new FlowLayout());
-        result.add(panContent);
         File iconFile = new MegaMekFile(Configuration.widgetsDir(), "Planetary.png").getFile();
         Image image = ImageUtil.loadImageFromFile(iconFile.toString());
         Icon planetIcon = new ImageIcon(image.getScaledInstance(scaleForGUI(40), -1, Image.SCALE_SMOOTH));
-        JLabel playerLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"), 
+        JLabel planetLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"), 
                 planetIcon, SwingConstants.CENTER);
-        playerLabel.setIconTextGap(scaleForGUI(12));
-        panContent.add(playerLabel);
+        planetLabel.setIconTextGap(scaleForGUI(12));
+        planetLabel.setBorder(new EmptyBorder(15, 0, 10, 0));
+        result.add(planetLabel);
         return result;
     }
 

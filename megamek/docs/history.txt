@@ -19,6 +19,7 @@ VERSION HISTORY:
 + Issue #2529: Dead-fire ammo wrong shots/ton
 + Issue #2527: Purchase list showing different items as same description
 + PR #2556: Remove duplicate boards.
++ Issue #2523: Ammo explosion should apply 1 hit of feedback damage even with auto-eject
 
 0.47.15 (RC1) (2020-12-14 2330 UTC)
 + Pr #2458: When loading saved games, drop down box allows selecting of player names present in game

@@ -1881,7 +1881,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
       
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN).setTechRating(RATING_C)
                     .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                     .setClanAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2191,7 +2191,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
               
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2435,7 +2435,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
               
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)

@@ -2026,11 +2026,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAGaussRifleGrandMauler());
 //        EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
 //        EquipmentType.addType(new ISBAMortarHeavy());
-//        EquipmentType.addType(new ISBARecoillessRifleHeavy());
         EquipmentType.addType(new ISBAGaussRifleKingDavidLight());
 //        EquipmentType.addType(new ISBAMortarLight());
-//        EquipmentType.addType(new ISBARecoillessRifleLight());
-//        EquipmentType.addType(new ISBARecoillessRifleMedium());
         EquipmentType.addType(new ISBAGrenadeLauncherMicro());
 //        EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());

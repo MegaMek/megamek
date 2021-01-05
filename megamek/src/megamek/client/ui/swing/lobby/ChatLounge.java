@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -32,12 +34,14 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
@@ -49,9 +53,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -82,7 +83,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 public class ChatLounge extends AbstractPhaseDisplay implements  
-        ListSelectionListener, MouseListener, IMapSettingsObserver, IPreferenceChangeListener {
+        ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
     private static final long serialVersionUID = 1454736776730903786L;
 
     // UI display control values
@@ -142,27 +143,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JComboBox<Comparable> comboMapSizes;
     private JButton butMapSize;
     private JButton butBoardPreview;
-//    private JScrollPane scrMapButtons;
     JPanel panMapButtons;
-    private JLabel lblBoardsSelected;
-    private JList<String> lisBoardsSelected;
-//    private JScrollPane scrBoardsSelected;
-    private JButton butChange;
-    private JLabel lblBoardsAvailable;
+    private JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
     private JScrollPane scrBoardsAvailable;
-    private JCheckBox chkRotateBoard;
     private JButton butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
     private Set<BoardDimensions> mapSizes = new TreeSet<>();
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
-//    private JPanel mapPreviewPanel;
-//    private MiniMap miniMap = null;
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
     private String cmdSelectedTab = null;
     
     private JSplitPane splGroundMap;
+    private JLabel searchLbl = new JLabel("Search: ");
     private JTextField fldSearch = new JTextField(20);
     
     private MekTableSorter activeSorter;
@@ -181,10 +175,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
     
+    private ImageLoader loader;
+    private Map<String, Image> baseImages = new HashMap<>();
+    
+    private MapListMouseAdapter mapListMouseListener = new MapListMouseAdapter(); 
+    
     private CamoChooserDialog camoDialog;
     
-    private boolean stopBackgroundWork = false;
-
     static final String NAME_COMMAND = "NAME";
     static final String CALLSIGN_COMMAND = "CALLSIGN";
 
@@ -230,12 +227,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
+        
+        loader = new ImageLoader();
+        loader.execute();
 
         tablePlayers.getSelectionModel().addListSelectionListener(this);
         tablePlayers.addMouseListener(new PlayerTableMouseAdapter());
         
         lisBoardsAvailable.addListSelectionListener(this);
-        lisBoardsAvailable.addMouseListener(this);
+        lisBoardsAvailable.addMouseListener(mapListMouseListener);
         
         mekTable.addMouseListener(new MekTableMouseAdapter());
         mekTable.getTableHeader().addMouseListener(mekTableHeaderMouseListener);
@@ -246,7 +246,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butArmy.addActionListener(lobbyListener);
         butBoardPreview.addActionListener(lobbyListener);
         butBotSettings.addActionListener(lobbyListener);
-        butChange.addActionListener(lobbyListener);
         butCompact.addActionListener(lobbyListener);
         butConditions.addActionListener(lobbyListener);
         butConfigPlayer.addActionListener(lobbyListener);
@@ -266,7 +265,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         chkIncludeGround.addActionListener(lobbyListener);
         chkIncludeSpace.addActionListener(lobbyListener);
-        chkRotateBoard.addActionListener(lobbyListener);
 
         comboMapType.addActionListener(lobbyListener);
         comboTeam.addActionListener(lobbyListener);
@@ -582,27 +580,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); 
         butBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));
 
-        butChange = new JButton("<<");
-
-        lblBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); 
-        lblBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), 
-                SwingConstants.CENTER);
-
-        lisBoardsSelected = new JList<String>(new DefaultListModel<String>());
-        lisBoardsSelected.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lisBoardsAvailable = new JList<String>(new DefaultListModel<String>());
         lisBoardsAvailable.setCellRenderer(new BoardNameRenderer());
         lisBoardsAvailable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         lisBoardsAvailable.setVisibleRowCount(-1);
         lisBoardsAvailable.setDragEnabled(true);
-        refreshBoardsSelected();
+        lisBoardsAvailable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         refreshBoardsAvailable();
-        lisBoardsAvailable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        
-
-        chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); 
-
         JPanel panMapPreview = new JPanel();
         
         // layout
@@ -661,36 +646,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         c.anchor = GridBagConstraints.NORTHWEST;
         panMapPreview.add(butAddY, c);
         
-        
-        
-        
-
-//        c.fill = GridBagConstraints.HORIZONTAL;
-//        c.weighty = 0.0;
-//        c.gridx = 2;
-//        c.gridy = 1;
-//        panGroundMap.add(lblBoardsSelected, c);
-
-//        scrBoardsSelected = new JScrollPane(lisBoardsSelected);
-//        c.fill = GridBagConstraints.BOTH;
-//        c.weightx = 1.0;
-//        c.weighty = 1.0;
-//        c.gridy = 2;
-//        c.gridheight = 5;
-//        panGroundMap.add(scrBoardsSelected, c);
-        
         JPanel panAvail = new JPanel();
         panAvail.setLayout(new BoxLayout(panAvail, BoxLayout.PAGE_AXIS));
 
-        c.fill = GridBagConstraints.BOTH;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        c.gridx = 2;
-        c.gridy = 5;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
-//        panGroundMap.add(butChange, c);
 
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
@@ -711,15 +674,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         c.gridy = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         panAvail.add(scrBoardsAvailable);
-//
-//        c.fill = GridBagConstraints.NONE;
-//        c.weightx = 0.0;
-//        c.weighty = 0.0;
-//        c.gridx = 5;
-//        c.gridy = 1;
-//        c.gridheight = 1;
-//        c.anchor = GridBagConstraints.CENTER;
-//        panGroundMap.add(chkRotateBoard, c);
 
         splGroundMap = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panMapPreview, panAvail);
         splGroundMap.addComponentListener(new ComponentAdapter() {
@@ -733,31 +687,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 splGroundMap.setDividerLocation(getDividerLocation());
             }
         });
-//        splGroundMap.setResizeWeight(0);
         panGroundMap.add(splGroundMap);
-//        mapPreviewPanel = new JPanel();
-//
-//        c.fill = GridBagConstraints.BOTH;
-//        c.weightx = 1.0;
-//        c.weighty = 1.0;
-//        c.gridx = 4;
-//        c.gridy = 2;
-//        c.gridwidth = 1;
-//        c.gridheight = 4;
-//        c.anchor = GridBagConstraints.NORTHWEST;
-//        panGroundMap.add(mapPreviewPanel, c);
-
-//        try {
-//            miniMap = new MiniMap(mapPreviewPanel, null);
-//            // Set a default size for the minimap object to ensure it will have
-//            // space on the screen to be drawn.
-//            miniMap.setSize(160, 200);
-//            miniMap.setZoom(2);
-//        } catch (IOException e) {
-//            JOptionPane.showMessageDialog(this, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
-//                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); 
-//        }
-//        mapPreviewPanel.add(miniMap);
 
         // setup the board preview window.
         boardPreviewW = new ClientDialog(clientgui.frame, 
@@ -789,7 +719,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JPanel searchPanel() {
         JPanel panel = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
 
-        JLabel searchLbl = new JLabel("Search: ");
         fldSearch = new JTextField(20);
         fldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -911,10 +840,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butMapSize.setEnabled(!inSpace);
         comboMapSizes.setEnabled(!inSpace);
         butBoardPreview.setEnabled(!inSpace);
-        lisBoardsSelected.setEnabled(!inSpace);
-        butChange.setEnabled(!inSpace);
         lisBoardsAvailable.setEnabled(!inSpace);
-        chkRotateBoard.setEnabled(!inSpace);
         butSpaceSize.setEnabled(inSpace);
         butConditions.setEnabled(!inSpace);
         
@@ -927,21 +853,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     private void refreshBoardsAvailable() {
+        lisBoardsAvailable.setFixedCellHeight(-1);
+        lisBoardsAvailable.setFixedCellWidth(-1);
         refreshBoardsAvailable(mapSettings.getBoardsAvailableVector());
-//        lisBoardsAvailable.removeListSelectionListener(this);
-//        int selectedRow = lisBoardsAvailable.getSelectedIndex();
-//        DefaultListModel<String> lisBAmodel = (DefaultListModel<String>) lisBoardsAvailable.getModel();
-//        lisBAmodel.removeAllElements();
-////        for (String s : mapSettings.getBoardsAvailableVector()) {
-//            lisBAmodel.addAll(mapSettings.getBoardsAvailableVector());
-////        }
-//        if (resetAvailBoardSelection) {
-//            lisBoardsAvailable.setSelectedIndex(0);
-//            resetAvailBoardSelection = false;
-//        } else {
-//            lisBoardsAvailable.setSelectedIndex(selectedRow);
-//        }
-//        lisBoardsAvailable.addListSelectionListener(this);
     }
     
     private void refreshBoardsAvailable(List<String> boardList) {
@@ -949,9 +863,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         int selectedRow = lisBoardsAvailable.getSelectedIndex();
         DefaultListModel<String> lisBAmodel = (DefaultListModel<String>) lisBoardsAvailable.getModel();
         lisBAmodel.removeAllElements();
-        for (String s : boardList) {
-            lisBAmodel.addElement(s);
-        }
+        lisBAmodel.addAll(boardList);
         if (resetAvailBoardSelection) {
             lisBoardsAvailable.setSelectedIndex(0);
             resetAvailBoardSelection = false;
@@ -961,35 +873,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lisBoardsAvailable.addListSelectionListener(this);
     }
 
-    private void refreshBoardsSelected() {
-//        int selectedRow = lisBoardsSelected.getSelectedIndex();
-//        ((DefaultListModel<String>) lisBoardsSelected.getModel()).removeAllElements();
-//        int index = 0;
-//        for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
-//            String boardName = i.next();
-//            ((DefaultListModel<String>) lisBoardsSelected.getModel()).addElement(index + ": " + boardName);
-////            if (!boardName.equals(MapSettings.BOARD_RANDOM)
-////                    && !boardName.equals(MapSettings.BOARD_SURPRISE)
-////                    && !boardName.equals(MapSettings.BOARD_GENERATED)
-////                    && mapButtons.get(index) != null) {
-////                IBoard board = new Board(16, 17);
-////                board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
-////                mapButtons.get(index).setImage(MiniMap.getBoardMinimapImageMaxZoom(board), boardName);
-////                mapButtons.get(index).setText("");
-////            } else {
-////                
-////            }
-//            index++;
-//        }
-//        lisBoardsSelected.setSelectedIndex(selectedRow);
-//        if (resetSelectedBoards) {
-//            lisBoardsSelected.setSelectedIndex(0);
-//            resetSelectedBoards = false;
-//        } else {
-//            lisBoardsSelected.setSelectedIndex(selectedRow);
-//        }
-    }
-
+static int count;
     /**
      * Fills the Map Buttons scroll pane with the appropriate amount of buttons
      * in the appropriate layout
@@ -1009,7 +893,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             panMapButtons.add(row);
             for (int j = 0; j < mapSettings.getMapWidth(); j++) {
                 int index = i * mapSettings.getMapWidth() + j;
-                MapPreviewButton button = new MapPreviewButton(Integer.toString(index), this);
+                MapPreviewButton button = new MapPreviewButton(Integer.toString(index), this, index);
                 Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
                 button.setFont(scaledFont);
                 String boardName = mapSettings.getBoardsSelectedVector().get(index);
@@ -1018,14 +902,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 mapButtons.add(button);
 
                 // Assign the board image, if possible
-                if (!boardName.equals(MapSettings.BOARD_RANDOM)
-                        && !boardName.equals(MapSettings.BOARD_SURPRISE)
-                        && !boardName.equals(MapSettings.BOARD_GENERATED)) {
+                if (isBoardFile(boardName)) {
                     IBoard board = new Board(16, 17);
                     board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
                     Image image = MiniMap.getBoardMinimapImageMaxZoom(board);
                     button.setImage(image, boardName);
-                    button.setText("");
                     buttonSize = optMapButtonSize(image);
                 } else {
                     button.setText(boardName);
@@ -1063,20 +944,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         comboMapSizes.addActionListener(lobbyListener);
 
-    }
-
-    public void previewMapsheet() {
-        String boardName = lisBoardsAvailable.getSelectedValue();
-        if (lisBoardsAvailable.getSelectedIndex() > 2) {
-            IBoard board = new Board(16, 17);
-            board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
-            if (chkRotateBoard.isSelected()) {
-                BoardUtilities.flip(board, true, true);
-            }
-            if (board.isValid()) {
-//                miniMap.setBoard(board);
-            }
-        }
     }
 
     public void previewGameBoard() {
@@ -2013,67 +1880,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
     }
 
-    /**
-     * Changes all selected boards to be the specified board
-     */
-    private void changeMap(String board) {
-        int[] selected = lisBoardsSelected.getSelectedIndices();
-        for (final int newVar : selected) {
-            String name = board;
-            if (!MapSettings.BOARD_RANDOM.equals(name) && !MapSettings.BOARD_SURPRISE.equals(name)
-                    && chkRotateBoard.isSelected()) {
-                name = Board.BOARD_REQUEST_ROTATION + name;
+    void changeMapDnD(String board, JButton button) {
+        // Validate the map
+        IBoard b = new Board(16, 17);
+        if (isBoardFile(board)) {
+            b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
+            if (!b.isValid()) {
+                JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
+                return;
             }
-
-            // Validate the map
-            IBoard b = new Board(16, 17);
-            if (!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board)
-                    && !MapSettings.BOARD_SURPRISE.equals(board)) {
-                b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
-                if (!b.isValid()) {
-                    JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
-                    return;
-                }
-            }
-            ((DefaultListModel<String>) lisBoardsSelected.getModel()).setElementAt(newVar + ": " + name, newVar); 
-            mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
-        lisBoardsSelected.setSelectedIndices(selected);
+        mapSettings.getBoardsSelectedVector().set(mapButtons.indexOf(button), board);
         clientgui.getClient().sendMapSettings(mapSettings);
         if (boardPreviewW.isVisible()) {
             previewGameBoard();
         }
     }
     
-    void changeMapDnD(String board, JButton button) {
-        int index = mapButtons.indexOf(button);
-//        int[] selected = lisBoardsSelected.getSelectedIndices();
-//        for (final int newVar : selected) {
-            String name = board;
-            if (!MapSettings.BOARD_RANDOM.equals(name) && !MapSettings.BOARD_SURPRISE.equals(name)
-                    && chkRotateBoard.isSelected()) {
-                name = Board.BOARD_REQUEST_ROTATION + name;
-            }
-
-            // Validate the map
-            IBoard b = new Board(16, 17);
-            if (!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board)
-                    && !MapSettings.BOARD_SURPRISE.equals(board)) {
-                b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
-                if (!b.isValid()) {
-                    JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
-                    return;
-                }
-            }
-//            ((DefaultListModel<String>) lisBoardsSelected.getModel()).setElementAt(index + ": " + name, index); 
-            mapSettings.getBoardsSelectedVector().set(index, name);
-//        }
-//        lisBoardsSelected.setSelectedIndices(selected);
-        clientgui.getClient().sendMapSettings(mapSettings);
-        if (boardPreviewW.isVisible()) {
-            previewGameBoard();
-        }
-    }
+    
 
     //
     // GameListener
@@ -2291,12 +2115,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), mapSettings);
                 rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
                 
-            } else if (ev.getSource().equals(butChange)) {
-                if (lisBoardsAvailable.getSelectedIndex() != -1) {
-                    changeMap(lisBoardsAvailable.getSelectedValue());
-                    lisBoardsSelected.setSelectedIndex(lisBoardsSelected.getSelectedIndex() + 1);
-                }
-                
+//            } else if (ev.getSource().equals(butChange)) {
+//                if (lisBoardsAvailable.getSelectedIndex() != -1) {
+//                    changeMap(lisBoardsAvailable.getSelectedValue());
+////                    lisBoardsSelected.setSelectedIndex(lisBoardsSelected.getSelectedIndex() + 1);
+//                }
+//                
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();
                 
@@ -2314,8 +2138,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     clientgui.getClient().sendMapSettings(mapSettings);
                 }
                 
-            } else if (ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
-                previewMapsheet();
+//            } else if (ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
+//                previewMapsheet();
                 
             } else if (ev.getSource().equals(comboMapType)) {
                 mapSettings.setMedium(comboMapType.getSelectedIndex());
@@ -2343,8 +2167,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
                 clientgui.getClient().sendMapDimensions(mapSettings);
                 
-            } else if (mapButtons.contains(ev.getSource())) {
-                lisBoardsSelected.setSelectedIndex(mapButtons.indexOf(ev.getSource()));
+//            } else if (mapButtons.contains(ev.getSource())) {
+//                lisBoardsSelected.setSelectedIndex(mapButtons.indexOf(ev.getSource()));
             } else if (ev.getSource() == butAddX) {
                 int newMapWidth = mapSettings.getMapWidth() + 1;
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
@@ -2358,38 +2182,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
 
-    @Override
-    public void mouseClicked(MouseEvent arg0) {
-        if ((arg0.getClickCount() == 1) && arg0.getSource().equals(lisBoardsAvailable)) {
-            previewMapsheet();
-        }
-        if ((arg0.getClickCount() == 2) && arg0.getSource().equals(lisBoardsAvailable)) {
-            if (lisBoardsAvailable.getSelectedIndex() != -1) {
-                changeMap(lisBoardsAvailable.getSelectedValue());
-            }
-        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent arg0) {
-        // ignore
-    }
-
-    @Override
-    public void mouseExited(MouseEvent arg0) {
-        // ignore
-    }
-
-    @Override
-    public void mousePressed(MouseEvent arg0) {
-        // ignore
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent arg0) {
-        // ignore
-    }
-
     /**
      * Updates to show the map settings that have, presumably, just been sent by
      * the server.
@@ -2400,7 +2192,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshMapButtons();
         refreshMapChoice();
         refreshSpaceGround();
-        refreshBoardsSelected();
         refreshBoardsAvailable();
         updateSearch(fldSearch.getText());
         refreshLabels();
@@ -2440,9 +2231,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
-        ListModel<String> model = lisBoardsSelected.getModel();
-        for (int i = 0; i < model.getSize(); i++) {
-            String map = model.getElementAt(i);
+//        ListModel<String> model = lisBoardsSelected.getModel();
+        
+//        for (int i = 0; i < model.getSize(); i++) {
+//            String map = model.getElementAt(i);
+        for (String map: mapSettings.getBoardsSelectedVector()) {
             selectedMaps.append("&nbsp;&nbsp;");
             selectedMaps.append(map);
             selectedMaps.append("<br>"); 
@@ -2521,11 +2314,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
         
+        if (loader != null) {
+            loader.cancel(true);
+        }
+        
         tablePlayers.getSelectionModel().removeListSelectionListener(this);
         tablePlayers.removeMouseListener(new PlayerTableMouseAdapter());
         
         lisBoardsAvailable.removeListSelectionListener(this);
-        lisBoardsAvailable.removeMouseListener(this);
+        lisBoardsAvailable.removeMouseListener(mapListMouseListener);
         
         mekTable.removeMouseListener(new MekTableMouseAdapter());
         mekTable.getTableHeader().removeMouseListener(mekTableHeaderMouseListener);
@@ -2536,7 +2333,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butArmy.removeActionListener(lobbyListener);
         butBoardPreview.removeActionListener(lobbyListener);
         butBotSettings.removeActionListener(lobbyListener);
-        butChange.removeActionListener(lobbyListener);
         butCompact.removeActionListener(lobbyListener);
         butConditions.removeActionListener(lobbyListener);
         butConfigPlayer.removeActionListener(lobbyListener);
@@ -2556,7 +2352,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         chkIncludeGround.removeActionListener(lobbyListener);
         chkIncludeSpace.removeActionListener(lobbyListener);
-        chkRotateBoard.removeActionListener(lobbyListener);
 
         comboMapType.removeActionListener(lobbyListener);
         comboTeam.removeActionListener(lobbyListener);
@@ -2633,8 +2428,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 butSaveList.setEnabled(hasUnits && unitsVisible(selPlayer));
                 setTeamSelectedItem(selPlayer.getTeam());
             }
-        } else if (event.getSource().equals(lisBoardsAvailable)) {
-            previewMapsheet();
         }
     }
     
@@ -2818,6 +2611,51 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     customizeMechs(entities);
                 }
             }
+        }
+    }
+    
+    
+    public class MapListMouseAdapter extends MouseInputAdapter implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent action) {
+            List<String> boards = lisBoardsAvailable.getSelectedValuesList();
+            String[] command = action.getActionCommand().split(":");
+
+            switch (command[0]) {
+            case "BOARD":
+                changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
+                break;
+
+            case "SURPRISE":
+                changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
+                break;
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                // If the right mouse button is pressed over an unselected map,
+                // clear the selection and select that entity instead
+                int index = lisBoardsAvailable.locationToIndex(e.getPoint());
+                if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
+                    if (!lisBoardsAvailable.isSelectedIndex(index)) {
+                        lisBoardsAvailable.setSelectedIndex(index);
+                    }
+                    showPopup(e);
+                }
+            }
+        }
+
+        /** Shows the right-click menu on the mek table */
+        private void showPopup(MouseEvent e) {
+            if (lisBoardsAvailable.isSelectionEmpty()) {
+                return;
+            }
+            List<String> boards = lisBoardsAvailable.getSelectedValuesList();
+            ScalingPopup popup = MapListPopup.mapListPopup(boards, mapButtons, this, ChatLounge.this);
+            popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 
@@ -3320,13 +3158,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshLabels();
         refreshCamoButton();
         refreshMapButtons();
-        refreshBoardsSelected();
         mekModel.refreshCells();
 
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
 
-        butChange.setFont(scaledFont);
+//        butChange.setFont(scaledFont);
         butCompact.setFont(scaledFont);
         butOptions.setFont(scaledFont);
         butLoadList.setFont(scaledFont);
@@ -3353,15 +3190,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         chkIncludeGround.setIconTextGap(UIUtil.scaleForGUI(5));
         chkIncludeSpace.setFont(scaledFont);
         chkIncludeSpace.setIconTextGap(UIUtil.scaleForGUI(5));
-        chkRotateBoard.setFont(scaledFont);
-        chkRotateBoard.setIconTextGap(UIUtil.scaleForGUI(5));
         lblBoardsAvailable.setFont(scaledFont);
-        lblBoardsSelected.setFont(scaledFont);
         lisBoardsAvailable.setFont(scaledFont);
-        lisBoardsSelected.setFont(scaledFont);
 
         butAdd.setFont(scaledBigFont);
         panTabs.setFont(scaledBigFont);
+        
+        searchLbl.setFont(scaledFont);
+        fldSearch.setFont(scaledFont);
         
         ((TitledBorder)panUnitInfo.getBorder()).setTitleFont(scaledFont);
         ((TitledBorder)panPlayerInfo.getBorder()).setTitleFont(scaledFont);
@@ -3551,117 +3387,172 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return clientgui.getClient().getLocalPlayer();
     }
     
-    private void redrawMapTable() {
-        DefaultListModel<String> model = (DefaultListModel<String>)lisBoardsAvailable.getModel();
-        for(int i = 0; i < model.size(); i++) {
-            model.setElementAt(model.getElementAt(i), i);
+    private void redrawMapTable(Image image) {
+        if (image != null) {
+            if (lisBoardsAvailable.getFixedCellHeight() != image.getHeight(null) 
+                    || lisBoardsAvailable.getFixedCellWidth() != image.getWidth(null)) {
+                lisBoardsAvailable.setFixedCellHeight(image.getHeight(null));
+                lisBoardsAvailable.setFixedCellWidth(image.getWidth(null));
             }
-        lisBoardsAvailable.repaint();
-        
+            lisBoardsAvailable.repaint();
+        }
     }
-    
-    private Map<String, ImageIcon> scaledIcons = new HashMap<>();
-    private Map<String, Image> baseImages = new HashMap<>();
-    
+
+
+
+    class ImageLoader extends SwingWorker<Void, Image> {
+
+        private BlockingQueue<String> boards = new LinkedBlockingQueue<String>();
+
+        private synchronized void add(String name) {
+            if (!boards.contains(name)) {
+                try {
+                    boards.put(name);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        private Image prepareImage(String boardName) {
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            if (boardFile.exists()) {
+                IBoard board = new Board(16, 17);
+                board.load(boardFile);
+                // Determine a minimap zoom from the board size and gui scale.
+                // This is very hacky but currently the minimap has only fixed zoom states.
+                int largerEdge = Math.max(board.getWidth(), board.getHeight());
+                int zoom = 3;
+                if (largerEdge < 17) {
+                    zoom = 4;
+                }
+                if (largerEdge > 20) {
+                    zoom = 2;
+                }
+                if (largerEdge > 30) {
+                    zoom = 1;
+                }
+                if (largerEdge > 40) {
+                    zoom = 0;
+                }
+                float scale = GUIPreferences.getInstance().getGUIScale();
+                zoom = (int)(scale*zoom);
+                if (zoom > 6) {
+                    zoom = 6;
+                }
+                if (zoom < 0) {
+                    zoom = 0;
+                }
+                BufferedImage bufImage = MiniMap.getBoardMinimapImage(board, zoom);
+                
+                //Add the board name (without path) to the image
+                String text = new File(boardName).getName();
+                String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " ";
+                if (text.startsWith(boardSize)) {
+                    text = text.substring(boardSize.length());
+                }
+                if (text.length() > 0) {
+                    Graphics2D g2 = (Graphics2D)bufImage.getGraphics();
+                    if (text.length() > 17) {
+                        text = text.substring(0, 15) + "...";
+                    }
+                    int size = Math.min(bufImage.getWidth(), bufImage.getHeight()) / Math.max(10, text.length()/2);
+                    GUIPreferences.AntiAliasifSet(g2);
+                    g2.setFont(new Font("Dialog", Font.PLAIN, size));
+                    FontMetrics fm = g2.getFontMetrics(g2.getFont());
+                    int cx = (bufImage.getWidth() - fm.stringWidth(text)) / 2;
+                    int th = fm.getAscent() + fm.getDescent();
+                    int cy = bufImage.getHeight() - th; 
+                    g2.setColor(new Color(250, 250, 250, 140));
+                    g2.fillRoundRect(cx - 3, cy - fm.getAscent(), bufImage.getWidth() - 2 * cx + 6, th, 3, 3);
+                    g2.setColor(Color.BLACK);
+                    g2.drawString(text, cx, cy);
+                    g2.dispose();
+                }
+                synchronized(baseImages) {
+                    baseImages.put(boardName, bufImage);
+                }
+                return bufImage;
+            } else {
+                return null;
+            }
+        }
+
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            Image image;
+            while (!isCancelled()) {
+                String boardName = boards.poll(1, TimeUnit.SECONDS);
+                if (boardName != null && !baseImages.containsKey(boardName)) {
+                    image = prepareImage(boardName);
+                    ChatLounge.this.redrawMapTable(image);
+                }
+            }
+            return null;
+        }
+    }
+
+    Map<String, ImageIcon> mapIcons = new HashMap<String, ImageIcon>();
     
     /** A renderer for the list of available boards that hides the directories. */
     public class BoardNameRenderer extends DefaultListCellRenderer  {
         private static final long serialVersionUID = -3218595828938299222L;
         
-        private final static int MIN_SIZE = 100;
         private float oldGUIScale = GUIPreferences.getInstance().getGUIScale();
-        private ImageLoader loader = new ImageLoader();
+        private Image image;
+        private ImageIcon icon;
         
-        public BoardNameRenderer() {
-            super();
-            loader.execute();
-        }
-
-        class ImageLoader extends SwingWorker<Object, Image> {
-
-            private BlockingQueue<String> boards = new LinkedBlockingQueue<String>();
-
-            private void add(String name) {
-                if (!boards.contains(name)) {
-                    try {
-                        boards.put(name);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            protected Object doInBackground() throws Exception {
-                while (!stopBackgroundWork) {
-                    String boardName = boards.take();
-                    File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
-                    IBoard board = new Board(16, 17);
-                    board.load(boardFile);
-                    synchronized(baseImages) {
-                        baseImages.put(boardName, MiniMap.getBoardMinimapImage(board));
-                        ChatLounge.this.redrawMapTable();
-                    }
-                }
-                return null;
-            }
-        }
-
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, 
                 int index, boolean isSelected, boolean cellHasFocus) {
 
-            if (GUIPreferences.getInstance().getGUIScale() != oldGUIScale) {
-                oldGUIScale = GUIPreferences.getInstance().getGUIScale();
-                scaledIcons.clear();
+            String board = (String)value;
+            
+            // If the gui scaling has changed, clear out all images, triggering a reload
+            float currentGUIScale = GUIPreferences.getInstance().getGUIScale();
+            if (currentGUIScale != oldGUIScale) {
+                oldGUIScale = currentGUIScale;
+                mapIcons.clear();
+                synchronized (baseImages) {
+                    baseImages.clear();
+                }
             }
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), (String)value+".board").getFile();
-            if (boardFile.exists()) {
-                if (!scaledIcons.containsKey(value)) {
-                    if (!baseImages.containsKey(value)) {
-                        loader.add((String)value);
-                        return super.getListCellRendererComponent(list, new File((String)value).getName(), index, isSelected, cellHasFocus);
-                    }
-                    
-//                    Image image = baseImages.get(value);
-//                    int w = image.getWidth(null);
-//                    int h = image.getHeight(null);
-//                    int smallerEdge = Math.min(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
-//                    double scaler = Math.sqrt((double)smallerEdge / 20);
-//                    scaler = Math.max(scaler, 1);
-//                    double realSize = scaler * MIN_SIZE;
-//                    realSize *= GUIPreferences.getInstance().getGUIScale();
-//                    float ratio = (float)w/h;
-//                    if (w > h) {
-//                        w = (int)(ratio * realSize);
-//                        h = (int)realSize;
-//                    } else {
-//                        h = (int)(1 / ratio * realSize);
-//                        w = (int)realSize;
-//                    }
-////                    System.out.println(w);
-////                    System.out.println(h);
-//                    Image scaledImage = image.getScaledInstance(w, h, Image.SCALE_SMOOTH);
-//                    scaledIcons.put((String)value, new ImageIcon(scaledImage));
-                    scaledIcons.put((String)value, new ImageIcon(baseImages.get(value)));
-                }
-                setIcon(scaledIcons.get(value));
-                setText("");
-                setToolTipText(scaleStringForGUI(value.toString()));
-                
-                if (isSelected) {
-                    setForeground(list.getSelectionForeground());
-                    setBackground(list.getSelectionBackground());
-                } else {
-                    setForeground(list.getForeground());
-                    setBackground(list.getBackground());
-                }
-                
-                return this;
+            
+            // If an icon is present for the current board, use it
+            icon = mapIcons.get(board);
+            if (icon != null) {
+                setIcon(icon);
             } else {
-                setToolTipText(null);
-                return super.getListCellRendererComponent(list, new File((String)value).getName(), index, isSelected, cellHasFocus);
+                // The icon is not present, see if there's a base image
+                synchronized (baseImages) {
+                    image = baseImages.get(board);
+                }
+                if (image == null) {
+                    // There's no base image: trigger loading it and, for now, return the base list's panel
+                    loader.add(board);
+                    return super.getListCellRendererComponent(list, new File(board).getName(), index, isSelected, cellHasFocus);
+                } else {
+                    // There is a base image: make it into an icon, store it and use it
+                    icon = new ImageIcon(image);
+                    mapIcons.put(board, icon);
+                    setIcon(icon);
+                }
             }
+            
+            // Found or created an icon; finish the panel
+            setText("");
+            setToolTipText(scaleStringForGUI(board));
+            
+            if (isSelected) {
+                setForeground(list.getSelectionForeground());
+                setBackground(list.getSelectionBackground());
+            } else {
+                setForeground(list.getForeground());
+                setBackground(list.getBackground());
+            }
+            
+            return this;
         }
     }
 

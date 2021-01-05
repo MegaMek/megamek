@@ -19,6 +19,7 @@ import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -102,6 +103,16 @@ public class LobbyUtility {
     /** Returns true if any of the given entities are embarked (transported by something). */ 
     static boolean containsTransportedUnit(Collection<Entity> entities) {
         return entities.stream().anyMatch(e -> e.getTransportId() != Entity.NONE);
+    }
+    
+    /** 
+     * Returns true when the given board name does not start with one of the control strings
+     * of MapSettings signalling a random, generated pr surprise board. 
+     */ 
+    static boolean isBoardFile(String board) {
+        return !board.startsWith(MapSettings.BOARD_GENERATED)
+                && !board.startsWith(MapSettings.BOARD_RANDOM)
+                && !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
     
     // PRIVATE

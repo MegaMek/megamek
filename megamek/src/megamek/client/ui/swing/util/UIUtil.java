@@ -426,12 +426,10 @@ public final class UIUtil {
     public static class FixedYPanel extends JPanel {
         private static final long serialVersionUID = -8805710112708937089L;
         
-        /** {@docRoot} */
         public FixedYPanel(LayoutManager layout) {
             super(layout);
         }
         
-        /** {@docRoot} */
         public FixedYPanel() {
             super();
         }

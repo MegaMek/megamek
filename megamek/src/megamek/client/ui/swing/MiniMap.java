@@ -2025,25 +2025,7 @@ public class MiniMap extends JPanel {
         gg.fillRect(0, 0, getSize().width, getSize().height);
     }
 
-    public static Dimension getMinimapImageSize(IBoard board) {
-        try {
-            MiniMap tempMM = new MiniMap(board);
-            int zoom = 6;
-            int currentHexSide = tempMM.hexSide[zoom];
-            int currentHexSideByCos30 = tempMM.hexSideByCos30[zoom];
-            int currentHexSideBySin30 = tempMM.hexSideBySin30[zoom];
-            int requiredWidth = board.getWidth() * (currentHexSide + currentHexSideBySin30)
-                    + currentHexSideBySin30 ;
-            int requiredHeight = (((2 * board.getHeight()) + 1)
-                    * currentHexSideByCos30);
-            return new Dimension(requiredWidth, requiredHeight);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Dimension(1,1);
-        }
-    }
-
-    public static Image getBoardMinimapImage(IBoard board) {
+    public static BufferedImage getBoardMinimapImage(IBoard board) {
         try {
             MiniMap tempMM = new MiniMap(board);
             tempMM.zoom = 1;
@@ -2059,7 +2041,7 @@ public class MiniMap extends JPanel {
             }
             tempMM.initializeMapForImage();
             tempMM.drawForImage();
-            Image img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
             tempMM.setEnabled(false);
             return img;
         } catch (Exception e) {
@@ -2068,13 +2050,28 @@ public class MiniMap extends JPanel {
         }
     }
     
-    public static Image getBoardMinimapImageMaxZoom(IBoard board) {
+    public static BufferedImage getBoardMinimapImageMaxZoom(IBoard board) {
         try {
             MiniMap tempMM = new MiniMap(board);
-            tempMM.zoom = 6;
+            tempMM.zoom = tempMM.hexSide.length-1;
             tempMM.initializeMapForImage();
             tempMM.drawForImage();
-            Image img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
+    
+    public static BufferedImage getBoardMinimapImage(IBoard board, int zoom) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = zoom;
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
             tempMM.setEnabled(false);
             return img;
         } catch (Exception e) {

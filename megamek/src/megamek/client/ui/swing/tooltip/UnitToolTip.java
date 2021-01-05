@@ -124,7 +124,15 @@ public final class UnitToolTip {
     // Planetary CONditions dialog rework
     // Disallow planetary conditions when in space
     // COnfigure all allowed for remote units
-    //TODO: Why does load game not reinstate owned bots?
+    // remake board assembly
+  //TODO: CLose the background image worker in lobby
+  //TODO: adjust the map zooms in the list
+  //TODO: board name in the preview improve
+  //TODO: layout search bar
+  //TODO: layout map size etc.
+  //TODO: add surprise function
+  //TODO: remove random/surprise entries
+  //TODO: preivew as list??
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

@@ -9763,7 +9763,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((phase == IGame.Phase.PHASE_DEPLOYMENT) == isDeployed()) {
             if ((isDeployed() == false) && isEligibleForTargetingPhase() && game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
-                    MegaMek.getLogger().info("Artillery Units Present and Advanced PreDesignate option enabled");
+                MegaMek.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;
             }

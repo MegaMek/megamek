@@ -179,7 +179,7 @@ public class LobbyUtility {
         }
         // Remove board sizes ("16x17")
         String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight();
-        return boardName.replace(boardSize, "").strip();
+        return boardName.replace(boardSize, "").trim();
     }
     
     /** 

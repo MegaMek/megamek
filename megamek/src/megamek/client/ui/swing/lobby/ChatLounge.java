@@ -850,9 +850,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshBoardsAvailable(List<String> boardList) {
         lisBoardsAvailable.removeListSelectionListener(this);
         int selectedRow = lisBoardsAvailable.getSelectedIndex();
-        DefaultListModel<String> lisBAmodel = (DefaultListModel<String>) lisBoardsAvailable.getModel();
-        lisBAmodel.removeAllElements();
-        lisBAmodel.addAll(boardList);
+        // Replace the data model (adding the elements one by one to the existing model
+        // in Java 8 style is sluggish because of event firing)
+        DefaultListModel<String> newModel = new DefaultListModel<>();
+        for (String s: boardList) {
+            newModel.addElement(s);
+        }
+        lisBoardsAvailable.setModel(newModel);
         if (resetAvailBoardSelection) {
             lisBoardsAvailable.setSelectedIndex(0);
             resetAvailBoardSelection = false;

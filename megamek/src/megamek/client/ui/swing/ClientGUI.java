@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -77,13 +77,11 @@ import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.*;
-import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
@@ -93,10 +91,10 @@ import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
+    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
+    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
+    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
     
     /** The smallest GUI scaling value; smaller will make text unreadable */  
     public static final float MIN_GUISCALE = 0.7f;
@@ -1834,16 +1832,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = ((entity.getCamoCategory() != null) && !Camouflage.NO_CAMOUFLAGE.equals(entity.getCamoCategory())
-                ? entity.getCamouflage() : player.getCamouflage()).getImage();
-        // This seems unnecessary as Camouflage will return an image for a playercolor:
-        int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
-        if (icon != null) {
-            bp.setIcon(new ImageIcon(icon));
-        } else {
-            bp.setIcon(null);
-        }
+        Image camo = entity.getCamouflageOrElse(player.getCamouflage()).getImage();
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, player.getColour(), bp);
+        bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }
 
     /**

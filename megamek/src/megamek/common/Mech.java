@@ -2953,11 +2953,13 @@ public abstract class Mech extends Entity {
     }
 
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc,  boolean omniPod) throws LocationFullException {
+            int loc,  boolean omniPod, boolean armored) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         Mounted mounted2 = new Mounted(this, etype2);
         mounted.setOmniPodMounted(omniPod);
         mounted2.setOmniPodMounted(omniPod);
+        mounted.setArmored(armored);
+        mounted2.setArmored(armored);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "
@@ -3777,6 +3779,9 @@ public abstract class Mech extends Entity {
                         }
                     }
                 }
+            } else if (mounted.getType() instanceof HVACWeapon) {
+                // HVAC are only -1 total, regardless of number of crits. None are large enough to be splittable.
+                criticals = 1;
             } else {
                 criticals = mounted.getCriticals();
             }
@@ -7337,6 +7342,30 @@ public abstract class Mech extends Entity {
         } else {
             setGyroType(GYRO_SUPERHEAVY);
         }
+        return true;
+    }
+
+    /**
+     * Add the critical slots necessary for a standard gyro. Also set the gyro
+     * type variable. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
+     *
+     * @return false if insufficient critical space
+     */
+    public boolean addSuperheavyGyro() {
+        if (getEmptyCriticals(LOC_CT) < 2) {
+            return false;
+        }
+        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+            addCritical(LOC_CT, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+        } else {
+            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
+        }
+        setGyroType(GYRO_SUPERHEAVY);
         return true;
     }
 

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.*;
 
 /**
@@ -534,8 +533,7 @@ class EntitySprite extends Sprite {
                             graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
                         }
                     } else {
-                        graph.setColor(PlayerColors.getColor(
-                                entity.getOwner().getColorIndex(), false));
+                        graph.setColor(entity.getOwner().getColour().getColour(false));
                     }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
@@ -692,10 +690,10 @@ class EntitySprite extends Sprite {
     
     public String getPlayerColor() {
         if (onlyDetectedBySensors()) {
+            // TODO : Make me customizable
             return "C0C0C0";
         } else {
-            return Integer.toHexString(PlayerColors.getColorRGB(entity
-                    .getOwner().getColorIndex()));
+            return entity.getOwner().getColour().getHexString();
         }
     }
     

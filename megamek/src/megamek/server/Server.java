@@ -56,7 +56,7 @@ import java.util.zip.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
@@ -731,7 +731,7 @@ public class Server implements Runnable {
         IPlayer player = (IPlayer) packet.getObject(0);
         IPlayer gamePlayer = game.getPlayer(connId);
         if (null != gamePlayer) {
-            gamePlayer.setColorIndex(player.getColorIndex());
+            gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamoCategory(player.getCamoCategory());
@@ -980,9 +980,12 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
                 send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
             }
-            if (game.phaseHasTurns(game.getPhase())) {
+            
+            if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
+            } else if (game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+                endCurrentPhase();
             }
 
             send(connId, createArtilleryPacket(player));
@@ -1019,23 +1022,22 @@ public class Server implements Runnable {
             team++;
         }
         IPlayer newPlayer = new Player(connId, name);
-        int colorInd = newPlayer.getColorIndex();
+        PlayerColour colour = newPlayer.getColour();
         Enumeration<IPlayer> players = game.getPlayers();
-        while (players.hasMoreElements() && (colorInd < PlayerColors.COLOR_NAMES.length)) {
+        final PlayerColour[] colours = PlayerColour.values();
+        while (players.hasMoreElements()) {
             final IPlayer p = players.nextElement();
             if (p.getId() == newPlayer.getId()) {
                 continue;
             }
-            if (p.getColorIndex() == colorInd) {
-                colorInd++;
+
+            if ((p.getColour() == colour) && (colours.length > (colour.ordinal() + 1))) {
+                colour = colours[colour.ordinal() + 1];
             }
         }
-        if (colorInd == -1) {
-            colorInd = 0;
-        }
-        newPlayer.setColorIndex(colorInd);
-        newPlayer.setCamoCategory(Camouflage.NO_CAMOUFLAGE);
-        newPlayer.setCamoFileName(PlayerColors.COLOR_NAMES[colorInd]);
+        newPlayer.setColour(colour);
+        newPlayer.setCamoCategory(Camouflage.COLOUR_CAMOUFLAGE);
+        newPlayer.setCamoFileName(colour.name());
         newPlayer.setTeam(Math.min(team, 5));
         game.addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);
@@ -1048,26 +1050,31 @@ public class Server implements Runnable {
     public void validatePlayerInfo(int playerId) {
         final IPlayer player = getPlayer(playerId);
 
-        // TODO : check for duplicate or reserved names
+        if (player != null) {
+            // TODO : check for duplicate or reserved names
 
-        // make sure colorIndex is unique
-        boolean[] colorUsed = new boolean[PlayerColors.COLOR_NAMES.length];
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer otherPlayer = i.nextElement();
-            if (otherPlayer.getId() != playerId) {
-                colorUsed[otherPlayer.getColorIndex()] = true;
+            // Colour Assignment
+            final PlayerColour[] playerColours = PlayerColour.values();
+            boolean allUsed = true;
+            Set<PlayerColour> colourUtilization = new HashSet<>();
+            for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
+                final IPlayer otherPlayer = i.nextElement();
+                if (otherPlayer.getId() != playerId) {
+                    colourUtilization.add(otherPlayer.getColour());
+                } else {
+                    allUsed = false;
+                }
             }
-        }
-        if ((null != player) && colorUsed[player.getColorIndex()]) {
-            // find a replacement color;
-            for (int i = 0; i < colorUsed.length; i++) {
-                if (!colorUsed[i]) {
-                    player.setColorIndex(i);
-                    break;
+
+            if (!allUsed && colourUtilization.contains(player.getColour())) {
+                for (PlayerColour colour : playerColours) {
+                    if (!colourUtilization.contains(colour)) {
+                        player.setColour(colour);
+                        break;
+                    }
                 }
             }
         }
-
     }
 
     /**
@@ -3828,11 +3835,7 @@ public class Server implements Runnable {
     }
 
     private static String getColorForPlayer(IPlayer p) {
-        String colorCode = Integer.toHexString(PlayerColors.getColor(
-                p.getColorIndex()).getRGB() & 0x00f0f0f0);
-        return "<B><font color='" + colorCode + "'>" + p.getName()
-               + "</font></B>";
-
+        return "<B><font color='" + p.getColour().getHexString(0x00F0F0F0) + "'>" + p.getName() + "</font></B>";
     }
 
     /**
@@ -6877,7 +6880,7 @@ public class Server implements Runnable {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMech) {
-                        addReport(landAirMech((LandAirMech) entity, step.getPosition(), prevStep.getElevation(),
+                        addReport(landAirMech((LandAirMech) entity, step.getPosition(), elevation,
                                 distance));
                     } else if (entity instanceof Protomech) {
                         addReport(landGliderPM((Protomech) entity, step.getPosition(), elevation,
@@ -10315,7 +10318,7 @@ public class Server implements Runnable {
     }
 
     public void deliverSmokeGrenade(Coords coords, Vector<Report> vPhaseReport) {
-        Report r = new Report(5185, Report.PUBLIC);
+        Report r = new Report(5200, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
@@ -24286,6 +24289,11 @@ public class Server implements Runnable {
 
             // Iterate through the hexes.
             for (Coords myHexCoords: hexSet) {
+                // ignore out of bounds coordinates
+                if (!game.getBoard().contains(myHexCoords)) {
+                    continue;
+                }
+                
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
                 myHex.setLevel((myHex.getLevel() - curDepth));
@@ -24400,7 +24408,12 @@ public class Server implements Runnable {
                 List<Coords> hexSet = position.allAtDistance(x);
 
                 // Iterate through the hexes.
-                for (Coords myHexCoords: hexSet) {
+                for (Coords myHexCoords : hexSet) {
+                    // ignore out of bounds coordinates
+                    if (!game.getBoard().contains(myHexCoords)) {
+                        continue;
+                    }
+                    
                     IHex myHex = game.getBoard().getHex(myHexCoords);
 
                     // For each 3000 damage, water level is reduced by 1.
@@ -28144,12 +28157,6 @@ public class Server implements Runnable {
         }
 
         mounted.setShotsLeft(0);
-        Vector<Report> newReports = damageEntity(en, hit, damage, true);
-        for (Report rep : newReports) {
-            rep.indent(2);
-        }
-        vDesc.addAll(newReports);
-        Report.addNewline(vDesc);
 
         int pilotDamage = 2;
         if (en instanceof Aero) {
@@ -28176,6 +28183,13 @@ public class Server implements Runnable {
         } else {
             Report.addNewline(vDesc);
         }
+
+        Vector<Report> newReports = damageEntity(en, hit, damage, true);
+        for (Report rep : newReports) {
+            rep.indent(2);
+        }
+        vDesc.addAll(newReports);
+        Report.addNewline(vDesc);
 
         return vDesc;
     }
@@ -30832,8 +30846,7 @@ public class Server implements Runnable {
      *                  <code>IllegalArgumentException</code> will be thrown.
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds,
-                                            int condition) {
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)
@@ -32737,6 +32750,15 @@ public class Server implements Runnable {
                 }
             }
             boom = (int) Math.floor(bldg.getDamageToScale() * boom);
+            
+            if (boom == 0) {
+                Report rNoAmmo = new Report(3831);
+                rNoAmmo.type = Report.PUBLIC;
+                rNoAmmo.indent(1);
+                vDesc.add(rNoAmmo);
+                return vDesc;
+            }
+            
             r.add(boom);
             int curCF = bldg.getCurrentCF(coords);
             curCF -= Math.min(curCF, boom);
@@ -32783,15 +32805,32 @@ public class Server implements Runnable {
                 vDesc.add(r);
             }
         } else if (critRoll == 12) {
-            // other
-            r = new Report(3835);
-            r.type = Report.PUBLIC;
-            r.indent(1);
+            // non-weapon equipment is hit
+            Vector<Mounted> equipmentList = new Vector<>();
+            for (GunEmplacement gun : guns) {
+                for (Mounted equipment : gun.getMisc()) {
+                    if (!equipment.isHit()) {
+                        equipmentList.add(equipment);
+                    }
+                }
+            }
+            
+            if (equipmentList.size() > 0) {
+                Mounted equipment = equipmentList.elementAt(Compute.randomInt(equipmentList.size()));
+                equipment.setHit(true);
+                r = new Report(3840);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                r.add(equipment.getDesc());
+            } else {
+                r = new Report(3835);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+            }
             vDesc.add(r);
         }
 
         return vDesc;
-
     }
 
     public void sendChangedBuildings(Vector<Building> buildings) {

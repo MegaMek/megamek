@@ -31,10 +31,10 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.icons.Camouflage;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -65,9 +65,10 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         m_typeChoices = new JComboBox[pa.length];
         m_camoButtons = new JButton[pa.length];
         playerTypes = new int[pa.length];
+        final PlayerColour[] colours = PlayerColour.values();
         for (int x = 0; x < pa.length; x++) {
             final IPlayer curPlayer = m_players[x];
-            curPlayer.setColorIndex(x);
+            curPlayer.setColour(colours[x % colours.length]);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
             m_typeChoices[x] = new JComboBox<String>();
             m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.me"));
@@ -78,23 +79,17 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn"));
             curButton.setPreferredSize(new Dimension(84, 72));
-            
-            CamoChooserDialog camoDialog = new CamoChooserDialog(frame);
             curButton.addActionListener(e -> {
-                int result = camoDialog.showDialog(curPlayer);
+                CamoChooserDialog ccd = new CamoChooserDialog(frame, curPlayer.getCamouflage());
 
                 // If the dialog was canceled or nothing selected, do nothing
-                if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
+                if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
                     return;
                 }
 
                 // Otherwise, update the player data from the selection
-                AbstractIcon selectedIcon = camoDialog.getSelectedItem();
-                String category = selectedIcon.getCategory();
-                if (Camouflage.NO_CAMOUFLAGE.equals(category)) {
-                    curPlayer.setColorIndex(camoDialog.getSelectedIndex());
-                }
-                curPlayer.setCamoCategory(category);
+                AbstractIcon selectedIcon = ccd.getSelectedItem();
+                curPlayer.setCamoCategory(selectedIcon.getCategory());
                 curPlayer.setCamoFileName(selectedIcon.getFilename());
                 curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
             });

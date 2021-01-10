@@ -26,10 +26,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -226,7 +224,7 @@ public class MekTableModel extends AbstractTableModel {
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);
         float size = chatLounge.isCompact() ? 0 : 0.2f;
         String sep = chatLounge.isCompact() ? DOT_SPACER : "<BR>";
-        result.append(guiScaledFontHTML(PlayerColors.getColor(owner.getColorIndex()), size));
+        result.append(guiScaledFontHTML(owner.getColour().getColour(), size));
         result.append(owner.getName());
         result.append("</FONT>" + guiScaledFontHTML(size) + sep + "</FONT>");
         result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen(), size));
@@ -298,12 +296,9 @@ public class MekTableModel extends AbstractTableModel {
                 if (column == COL_UNIT) {
                     setToolTipText(unitTooltips.get(row));
                     if (!compact) {
-                        Image camo = owner.getCamouflage().getImage();
-                        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(Camouflage.NO_CAMOUFLAGE)) {
-                            camo = entity.getCamouflage().getImage();
-                        } 
-                        Image image = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, 0, this);
-                        setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+                        Image camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage()).getImage();
+                        Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, entity.getOwner().getColour(), this);
+                        setIcon(new ImageIcon(icon.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                     }
                 } else if (column == COL_PILOT) {
                     setToolTipText(pilotTooltips.get(row));

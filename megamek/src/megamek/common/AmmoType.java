@@ -341,7 +341,7 @@ public class AmmoType extends EquipmentType {
     // vehicular grenade launcher
     public static final long M_CHAFF = 1l << 54;
     public static final long M_INCENDIARY = 1l << 55;
-    public static final long M_SMOKEGRENADE = 1l << 56;
+    // Number 56 was M_SMOKEGRENADE, but that has now been merged with M_SMOKE
 
     // Number 57 is used for iATMs IMP ammo in the ATM section above.
     // and 58 for IIW
@@ -1711,7 +1711,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
                 
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(3052).setPrototypeFactions(F_DC)
@@ -1881,7 +1881,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
       
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN).setTechRating(RATING_C)
                     .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                     .setClanAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2191,7 +2191,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
               
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2435,7 +2435,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
               
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)
@@ -15897,17 +15897,19 @@ public class AmmoType extends EquipmentType {
         
         AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
         
-        boolean ammoOfSameType = currentAmmoType.equals(otherAmmo);
+        // Ammo of the same type and rack size should be allowed
+        boolean ammoOfSameType = currentAmmoType.equalsAmmoTypeOnly(otherAmmo)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         // MMLs can swap between different specific ammo types, so we have a special case check here
-        boolean mmlAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_MML &&
-                otherAmmo.getAmmoType() == AmmoType.T_MML &&
-                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
+        boolean mmlAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_MML)
+                && (otherAmmo.getAmmoType() == AmmoType.T_MML)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         // LBXs can swap between cluster and slug ammo types
-        boolean lbxAmmoMatch = currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX &&
-                otherAmmo.getAmmoType() == AmmoType.T_AC_LBX &&
-                currentAmmoType.getRackSize() == otherAmmo.getRackSize();
+        boolean lbxAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX)
+                && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
         
         boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
         boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;

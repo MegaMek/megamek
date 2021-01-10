@@ -57,10 +57,10 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(JTree tree, AbstractIcon icon) {
+    public AbstractIconChooser(@Nullable JTree tree, @Nullable AbstractIcon icon) {
         initialize(tree);
 
-        if (icon != null) {
+        if ((tree != null) && (icon != null)) {
             setSelection(icon);
         }
     }
@@ -76,7 +76,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
 
         // set up the directory tree (left panel)
         treeCategories = tree;
-        treeCategories.addTreeSelectionListener(this);
+        if (treeCategories != null) {
+            treeCategories.addTreeSelectionListener(this);
+        }
         scrpTree = new JScrollPane(treeCategories);
         scrpTree.setBackground(UIManager.getColor("Table.background"));
 
@@ -164,12 +166,16 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         }
     }
 
-    /** Returns the selected AbstractIcon. May be null. */
+    /**
+     * Returns the selected AbstractIcon
+     */
     public @Nullable AbstractIcon getSelectedItem() {
         return imageList.getSelectedValue();
     }
 
-    /** Returns the index of the selected image. */
+    /**
+     * Returns the index of the selected image
+     */
     public int getSelectedIndex() {
         return imageList.getSelectedIndex();
     }
@@ -185,7 +191,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @param newTree the new directory tree
      */
     protected void refreshDirectory(JTree newTree) {
-        treeCategories.removeTreeSelectionListener(this);
+        if (treeCategories != null) {
+            treeCategories.removeTreeSelectionListener(this);
+        }
         treeCategories = newTree;
         treeCategories.addTreeSelectionListener(this);
         scrpTree = new JScrollPane(treeCategories);

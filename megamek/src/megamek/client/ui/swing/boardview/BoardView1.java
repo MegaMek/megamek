@@ -101,7 +101,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -2041,7 +2040,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 while (allP.hasMoreElements()) {
                     cp = allP.nextElement();
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
-                        Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
+                        Color bC = cp.getColour().getColour();
                         drawHexBorder(g, getHexLocation(c), bC, (bThickness+2)
                                 * pCount, bThickness);
                         pCount++;
@@ -5963,7 +5962,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader")); //$NON-NLS-1$
                     }
                     txt.append("<B><FONT COLOR=#"); //$NON-NLS-1$
-                    txt.append(Integer.toHexString(PlayerColors.getColorRGB(cp.getColorIndex())));
+                    txt.append(cp.getColour().getHexString());
                     txt.append(">&nbsp;&nbsp;"); //$NON-NLS-1$
                     txt.append(cp.getName());
                     txt.append("</FONT></B><BR>"); //$NON-NLS-1$
@@ -5972,11 +5971,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (foundPlayer) txt.append("<BR>"); //$NON-NLS-1$
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers); //$NON-NLS-1$
+            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
             if (!keybindText.isEmpty()) keybindText += "+";
-            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key); //$NON-NLS-1$
-            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint",  //$NON-NLS-1$
-                    new Object[] { keybindText }));
+            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
+            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText));
 
             txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
         }
@@ -6015,8 +6013,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 txt.append("<TABLE><TR><TD bgcolor=#");
                 String color = "C0C0C0";
                 if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-                    color = Integer.toHexString(PlayerColors.getColorRGB(
-                            entity.getOwner().getColorIndex()));
+                    color = entity.getOwner().getColour().getHexString();
                 }
                 txt.append(color);
                 txt.append(" width=6></TD><TD>");

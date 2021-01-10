@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -91,7 +92,7 @@ public class EntityImage {
     /** A smaller icon used for the unit overview. */
     private Image icon;
     /** A color used instead of a camo. */
-    int tint;
+    PlayerColour tint;
     private Image camo;
     private Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
@@ -115,17 +116,17 @@ public class EntityImage {
     /** True for tanks */
     private final boolean isTank;
 
-    public EntityImage(Image base, int tint, Image camo, Component comp, Entity entity) {
+    public EntityImage(Image base, PlayerColour tint, Image camo, Component comp, Entity entity) {
         this(base, null, tint, camo, comp, entity, -1, true);
     }
     
-    public EntityImage(Image base, Image wreck, int tint, Image camo,
-            Component comp, Entity entity, int secondaryPos) {
+    public EntityImage(Image base, Image wreck, PlayerColour tint, Image camo, Component comp,
+                       Entity entity, int secondaryPos) {
         this(base, wreck, tint, camo, comp, entity, secondaryPos, false);
     }
     
-    public EntityImage(Image base, Image wreck, int tint, Image camo,
-            Component comp, Entity entity, int secondaryPos, boolean preview) {
+    public EntityImage(Image base, Image wreck, PlayerColour tint, Image camo, Component comp,
+                       Entity entity, int secondaryPos, boolean preview) {
         this.base = base;
         this.tint = tint;
         this.camo = camo;
@@ -317,7 +318,7 @@ public class EntityImage {
             
             // Apply the camo only on the icon pixels, not on transparent pixels
             if (alpha != 0) {
-                int pixel1 = useCamo ? pCamo[i] : tint;
+                int pixel1 = useCamo ? pCamo[i] : tint.getHex();
                 int red1 = (pixel1 >> 16) & 0xff;
                 int green1 = (pixel1 >> 8) & 0xff;
                 int blue1 = (pixel1) & 0xff;
@@ -438,8 +439,7 @@ public class EntityImage {
                 return null;
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Could not load decal image.");
-            MegaMek.getLogger().error(e);
+            MegaMek.getLogger().error("Could not load decal image.", e);
         }
 
         return null;
@@ -474,8 +474,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0); 
         } catch (Exception e) {
-            MegaMek.getLogger().error("Could not load smoke/fire image.");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Could not load smoke/fire image.", e);
         }
         return null;
     }

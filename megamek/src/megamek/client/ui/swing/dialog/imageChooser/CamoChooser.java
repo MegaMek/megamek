@@ -19,7 +19,8 @@
 package megamek.client.ui.swing.dialog.imageChooser;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -27,41 +28,44 @@ import megamek.common.util.fileUtils.DirectoryItems;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class CamoChooser extends AbstractIconChooser {
     //region Variable Declarations
-    /** True when an individual camo is being selected for an entity. */
-    private boolean individualCamo = false;
-
-    /** When an individual camo is being selected, the player's camo is displayed as a reset option. */
-    private AbstractIcon entityOwnerCamo;
+    private AbstractIcon ownerCamouflage;
+    private AbstractIcon individualCamouflage;
     //endregion Variable Declarations
 
     //region Constructors
-    public CamoChooser() {
-        this(null);
-    }
-
-    public CamoChooser(AbstractIcon icon) {
-        super(new CamoChooserTree(), icon);
+    public CamoChooser(@Nullable AbstractIcon ownerCamouflage, AbstractIcon individualCamouflage) {
+        super(null, individualCamouflage);
+        setOwnerCamouflage(ownerCamouflage);
+        setIndividualCamouflage(individualCamouflage);
+        refreshDirectory(new CamoChooserTree(hasIndividualCamouflage()));
+        setSelection(individualCamouflage);
     }
     //endregion Constructors
 
     //region Getters/Setters
-    public boolean isIndividualCamo() {
-        return individualCamo;
+    public boolean hasIndividualCamouflage() {
+        return getOwnerCamouflage() != null;
     }
 
-    public void setIndividualCamo(boolean individualCamo) {
-        this.individualCamo = individualCamo;
+    public AbstractIcon getIndividualCamouflage() {
+        return individualCamouflage;
     }
 
-    public AbstractIcon getEntityOwnerCamo() {
-        return entityOwnerCamo;
+    public void setIndividualCamouflage(AbstractIcon individualCamouflage) {
+        Objects.requireNonNull(individualCamouflage, "Cannot open the Camo Chooser without a valid camouflage");
+        this.individualCamouflage = individualCamouflage;
     }
 
-    public void setEntityOwnerCamo(AbstractIcon entityOwnerCamo) {
-        this.entityOwnerCamo = entityOwnerCamo;
+    public AbstractIcon getOwnerCamouflage() {
+        return ownerCamouflage;
+    }
+
+    public void setOwnerCamouflage(@Nullable AbstractIcon ownerCamouflage) {
+        this.ownerCamouflage = ownerCamouflage;
     }
     //endregion Getters/Setters
 
@@ -78,35 +82,29 @@ public class CamoChooser extends AbstractIconChooser {
     @Override
     protected List<AbstractIcon> getItems(String category) {
         List<AbstractIcon> result = new ArrayList<>();
-
-        // If a player camo is being selected, the items presented in the
-        // NO_CAMO section are the available player colors.
-        // If an individual camo is being selected, then the only item presented
-        // in the NO_CAMO section is the owner's camo. This can be chosen
-        // to remove the individual camo.
-        if (category.startsWith(Camouflage.NO_CAMOUFLAGE)) {
-            if (individualCamo) {
-                result.add(entityOwnerCamo);
-            } else {
-                for (String color: PlayerColors.COLOR_NAMES) {
-                    result.add(createIcon(Camouflage.NO_CAMOUFLAGE, color));
-                }
-            }
-            return result;
-        }
-
-        // In any other camo section, the camos of the selected category are
-        // presented. When the includeSubDirs flag is true, all categories
-        // below the selected one are also presented.
-        if (includeSubDirs) {
-            for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-                String tcat = catNames.next();
-                if (tcat.startsWith(category)) {
-                    addCategoryItems(tcat, result);
-                }
+        if (hasIndividualCamouflage() && category.startsWith(Camouflage.NO_CAMOUFLAGE)) {
+            // This section is normally blank, but when there is an individual camouflage this is
+            // used to reset to the owner's camouflage
+            result.add(getOwnerCamouflage());
+        } else if (category.startsWith(Camouflage.COLOUR_CAMOUFLAGE)) {
+            // This section is a list of all colour camouflages supported
+            for (PlayerColour colour : PlayerColour.values()) {
+                result.add(createIcon(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
             }
         } else {
-            addCategoryItems(category, result);
+            // In any other camouflage section, the camos of the selected category are
+            // presented. When the includeSubDirs flag is true, all categories
+            // below the selected one are also presented.
+            if (includeSubDirs) {
+                for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
+                    String tcat = catNames.next();
+                    if (tcat.startsWith(category)) {
+                        addCategoryItems(tcat, result);
+                    }
+                }
+            } else {
+                addCategoryItems(category, result);
+            }
         }
         return result;
     }
@@ -115,6 +113,6 @@ public class CamoChooser extends AbstractIconChooser {
     @Override
     protected void refreshDirectory() {
         MMStaticDirectoryManager.refreshCamouflageDirectory();
-        refreshDirectory(new CamoChooserTree());
+        refreshDirectory(new CamoChooserTree(hasIndividualCamouflage()));
     }
 }

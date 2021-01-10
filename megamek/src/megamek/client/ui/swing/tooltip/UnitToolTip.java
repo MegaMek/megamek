@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
@@ -174,7 +173,7 @@ public final class UnitToolTip {
         
         // Unit Chassis and Player
         IPlayer owner = game.getPlayer(entity.getOwnerId());
-        result.append(guiScaledFontHTML(PlayerColors.getColor(owner.getColorIndex())));
+        result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         result.append(addToTT("ChassisPlayer", NOBR, entity.getChassis(), owner.getName()));
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));

@@ -152,6 +152,7 @@ import megamek.server.commands.ListSavesCommand;
 import megamek.server.commands.LoadGameCommand;
 import megamek.server.commands.LocalLoadGameCommand;
 import megamek.server.commands.LocalSaveGameCommand;
+import megamek.server.commands.ConvertMMSCommand;
 import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
@@ -494,6 +495,7 @@ public class Server implements Runnable {
         registerCommand(new AssignNovaNetServerCommand(this));
         registerCommand(new AllowTeamChangeCommand(this));
         registerCommand(new JoinTeamCommand(this));
+        registerCommand(new ConvertMMSCommand(this));
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));

@@ -13,9 +13,18 @@
 */ 
 package megamek.client.ui.swing.lobby;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-
 import megamek.MegaMek;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
@@ -107,7 +116,7 @@ public class LobbyUtility {
     
     /** 
      * Returns true when the given board name does not start with one of the control strings
-     * of MapSettings signalling a random, generated pr surprise board. 
+     * of MapSettings signalling a random, generated or surprise board. 
      */ 
     static boolean isBoardFile(String board) {
         return !board.startsWith(MapSettings.BOARD_GENERATED)
@@ -115,10 +124,103 @@ public class LobbyUtility {
                 && !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
     
+    /** 
+     * Draws the given text (the board name or special text) as a label on the
+     * lower edge of the image for which the graphics g is given.
+     */
+    static void drawMinimapLabel(String text, int w, int h, Graphics g) {
+        if (text.length() == 0) {
+            return;
+        }
+        GUIPreferences.AntiAliasifSet(g);
+        // The text size may grow with the width of the image, but no bigger than 16*guiscale
+        // to avoid huge text
+        int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
+        Font font = new Font("Dialog", Font.PLAIN, fontSize);
+        g.setFont(font);
+        FontMetrics fm = g.getFontMetrics(font);
+        int th = fm.getAscent() + fm.getDescent(); // The text height
+        int cx = (w - fm.stringWidth(text)) / 2; // The left edge for centered text
+        // When the text is wider than the image, let the text start close to the left edge 
+        cx = Math.max(w / 20, cx);
+        int cy = h - th / 2;
+        Color col = new Color(250, 250, 250, 140);
+        if (text.startsWith(Messages.getString("ChatLounge.MapSurprise"))) {
+            col = new Color(250, 250, 50, 140);
+        } else if (text.startsWith(Messages.getString("ChatLounge.MapGenerated"))) {
+            col = new Color(50, 50, 250, 140);
+        }
+        g.setColor(col);
+        g.fillRoundRect(cx - 3, cy - fm.getAscent(), w - 2 * cx + 6, th, fontSize/2, fontSize/2);
+        // Clip the text to inside the image with a margin of w/20
+        g.setClip(w / 20, 0, w - w / 10, h);
+        g.setColor(Color.BLACK);
+        g.drawString(text, cx, cy);
+        g.setClip(null);
+    }
+    
+    /** 
+     * Removes the board size ("16x17") and file path from the given board name if it is
+     * a board file. Also, reconstructs the text if it's a surprise map or generated map.
+     */
+    static String cleanBoardName(String boardName, MapSettings mapSettings) {
+        // Remove the file path
+        if (isBoardFile(boardName)) {
+            boardName = new File(boardName).getName();
+        }
+        // Construct the text if it's a surprise map
+        if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
+            int numBoards = extractSurpriseMaps(boardName).size();
+            boardName = Messages.getString("ChatLounge.MapSurprise") + " (" + numBoards + " boards)";
+        }
+        // Construct the text if it's a generated map
+        if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
+            boardName = Messages.getString("ChatLounge.MapGenerated");
+        }
+        // Remove board sizes ("16x17")
+        String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight();
+        return boardName.replace(boardSize, "").strip();
+    }
+    
+    /** 
+     * Specialized method that returns a list of board names from the given 
+     * boardsString that starts with the prefix for a Surprise board.  
+     */ 
+    public static ArrayList<String> extractSurpriseMaps(String boardsString) {
+        if (boardsString.startsWith(MapSettings.BOARD_SURPRISE)) {
+            boardsString = boardsString.substring(MapSettings.BOARD_SURPRISE.length());
+        }
+        String[] boards = boardsString.split("\n");
+        ArrayList<String> result = new ArrayList<String>();
+        result.addAll(Arrays.asList(boards));
+        return result;
+    }
+    
+    /** 
+     * Returns a string starting with MapSettings.BOARD_SURPRISE being followed by
+     * a newline and the boardname for each of the given boards. Specialized method
+     * for lobby map assembly. 
+     */ 
+    public static String assembleSurpriseBoards(Collection<String> boards) {
+//        String result = "";
+//        boolean first = true;
+//        for (String board: boards) {
+//            if (!first) {
+//                result += "\n";
+//            }
+//            result += board;
+//            first = false;
+//        }
+//        return result;
+        return String.join("\n", boards);
+    }
+    
+    
+    
     // PRIVATE
-    
-    
-    
+    //  
+    //
+
     /** 
      * Returns true when the two starting positions overlap, i.e.
      * if they are equal or adjacent (e.g. E and NE, SW and S).

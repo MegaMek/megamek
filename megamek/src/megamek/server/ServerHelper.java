@@ -1,25 +1,14 @@
 package megamek.server;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentMode;
-import megamek.common.FighterSquadron;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.Mounted;
-import megamek.common.PilotingRollData;
-import megamek.common.Report;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -449,4 +438,63 @@ public class ServerHelper {
             }
         }
     }
+    
+    /**
+     * Returns a list of path names of available boards of the size set in the given
+     * mapSettings. The path names are minus the '.board' extension and relative to
+     * the boards data directory.
+     */
+    static ArrayList<String> scanForBoards(MapSettings mapSettings) {
+        BoardDimensions boardSize = mapSettings.getBoardSize();
+        ArrayList<String> result = new ArrayList<>();
+        
+        // Scan the Megamek boards directory
+        File boardDir = Configuration.boardsDir();
+        scanForBoardsInDir(boardDir, "", boardSize, result);
+        
+        // Scan the userData directory
+        boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        if (boardDir.isDirectory()) {
+            scanForBoardsInDir(boardDir, "", boardSize, result);
+        }
+        
+        result.sort(StringUtil.stringComparator());
+        return result;
+    }
+    
+    /**
+     * Scans the given boardDir directory for map boards of the given size and
+     * returns them by adding them to the given boards list. Removes the .board extension.
+     */
+    static List<String> scanForBoardsInDir(final File boardDir, final String basePath,
+                                            final BoardDimensions dimensions, List<String> boards) {
+        if (boardDir == null) {
+            throw new IllegalArgumentException("must provide searchDir");
+        } else if (basePath == null) {
+            throw new IllegalArgumentException("must provide basePath");
+        } else if (dimensions == null) {
+            throw new IllegalArgumentException("must provide dimensions");
+        } else if (boards == null) {
+            throw new IllegalArgumentException("must provide boards");
+        }
+
+        String[] fileList = boardDir.list();
+        if (fileList != null) {
+            for (String filename : fileList) {
+                File filePath = new MegaMekFile(boardDir, filename).getFile();
+                if (filePath.isDirectory()) {
+                    scanForBoardsInDir(filePath, basePath + File.separator + filename, dimensions, boards);
+                } else {
+                    if (filename.endsWith(".board")) {
+                        if (Board.boardIsSize(filePath, dimensions)) {
+                            boards.add(basePath + File.separator + filename.substring(0, filename.lastIndexOf(".")));
+                        }
+                    }
+                }
+            }
+        }
+        return boards;
+    }
+    
+
 }

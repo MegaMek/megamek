@@ -49,7 +49,7 @@ class MapListPopup {
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + i, "BOARD:" + i + ":" + boards.get(0), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), "BOARD:" + i + ":" + boards.get(0), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -65,10 +65,10 @@ class MapListPopup {
         JMenu menu = new JMenu("Set Random Board...");
         menu.setEnabled(enabled);
         if (enabled) {
-            // Since it's not visible to the player, the random board can be chose here
+            // Since it's not visible to the player, the random board can already be chosen here
             int rnd = (int)(Math.random() * boards.size());
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + i, "BOARD:" + i + ":" + boards.get(rnd), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), "BOARD:" + i + ":" + boards.get(rnd), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -84,12 +84,9 @@ class MapListPopup {
         JMenu menu = new JMenu("Set Surprise Board...");
         menu.setEnabled(enabled);
         if (enabled) {
-            String boardList = "";
-            for (String board: boards) {
-                boardList += "\n" + board;
-            }
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + i, "SURPRISE:" + i + ":" + boardList, enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), "SURPRISE:" + i + ":" 
+                        + LobbyUtility.assembleSurpriseBoards(boards), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));

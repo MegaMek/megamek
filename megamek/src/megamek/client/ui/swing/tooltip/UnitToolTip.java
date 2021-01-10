@@ -125,14 +125,22 @@ public final class UnitToolTip {
     // Disallow planetary conditions when in space
     // COnfigure all allowed for remote units
     // remake board assembly
-  //TODO: CLose the background image worker in lobby
-  //TODO: adjust the map zooms in the list
-  //TODO: board name in the preview improve
-  //TODO: layout search bar
-  //TODO: layout map size etc.
-  //TODO: add surprise function
-  //TODO: remove random/surprise entries
-  //TODO: preivew as list??
+    //TODO: CLose the background image worker in lobby
+    // adjust the map zooms in the list
+    // board name in the preview improve
+    //TODO: layout search bar
+    //TODO: layout map size etc.
+    // add surprise function
+    // remove random/surprise entries
+    // dont reset maps upon size change
+    // keep Map BUttons alive
+    //TODO: Does the multiple selection "\n" work on Macs?
+    //TODO: Invalid boards treatment. 
+    //TODO:Server boards not on client
+    //TODO: Allow all board sizes
+    //TODO: Explanation
+    
+    
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;

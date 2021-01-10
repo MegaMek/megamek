@@ -23,8 +23,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -143,7 +142,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JComboBox<Comparable> comboMapSizes;
     private JButton butMapSize;
     private JButton butBoardPreview;
-    JPanel panMapButtons;
+    private JPanel panMapButtons = new JPanel();
     private JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
     private JScrollPane scrBoardsAvailable;
@@ -568,7 +567,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
         panGroundMap.setLayout(new GridLayout(1, 1));
 
-        panMapButtons = new JPanel();
+        panMapButtons.setLayout(new BoxLayout(panMapButtons, BoxLayout.PAGE_AXIS));
 
         comboMapType = new JComboBox<String>();
         setupMapChoice();
@@ -769,16 +768,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // are added to the list. Additionally, all items that contain
         // the search string are added.
         ArrayList<String> result = new ArrayList<>();
-        result.add(MapSettings.BOARD_GENERATED);
-        result.add(MapSettings.BOARD_RANDOM);
-        result.add(MapSettings.BOARD_SURPRISE);
         String lowerSearched = searchString.toLowerCase();
 
         for (String boardName: mapSettings.getBoardsAvailableVector()) {
-            if (!boardName.equals(MapSettings.BOARD_RANDOM)
-                    && !boardName.equals(MapSettings.BOARD_SURPRISE)
-                    && !boardName.equals(MapSettings.BOARD_GENERATED)
-                    && boardName.toLowerCase().contains(lowerSearched)) {
+            if (isBoardFile(boardName) && boardName.toLowerCase().contains(lowerSearched)) {
                 result.add(boardName);
             }
         }
@@ -855,7 +848,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshBoardsAvailable() {
         lisBoardsAvailable.setFixedCellHeight(-1);
         lisBoardsAvailable.setFixedCellWidth(-1);
-        refreshBoardsAvailable(mapSettings.getBoardsAvailableVector());
+        List<String> availBoards = new ArrayList<>(); 
+        availBoards.add(MapSettings.BOARD_GENERATED);
+        availBoards.addAll(mapSettings.getBoardsAvailableVector());
+        refreshBoardsAvailable(availBoards);
     }
     
     private void refreshBoardsAvailable(List<String> boardList) {
@@ -872,47 +868,75 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         lisBoardsAvailable.addListSelectionListener(this);
     }
+    
+    public boolean isMultipleBoards() {
+        return mapSettings.getMapHeight() * mapSettings.getMapWidth() > 1;
+    }
+    
+    MapSettings oldMapSettings = MapSettings.getInstance();
 
-static int count;
     /**
      * Fills the Map Buttons scroll pane with the appropriate amount of buttons
      * in the appropriate layout
      */
     private void refreshMapButtons() {
         panMapButtons.removeAll();
-        mapButtons.clear();
-        
         panMapButtons.setVisible(false);
-        panMapButtons.setLayout(new BoxLayout(panMapButtons, BoxLayout.PAGE_AXIS));
         panMapButtons.add(Box.createVerticalGlue());
-        
         Dimension buttonSize = null;
 
+        // If buttons are unused, remove their image so that they update when they're used once more
+        if (mapSettings.getMapHeight() * mapSettings.getMapWidth() < mapButtons.size()) {
+            for (MapPreviewButton button: mapButtons.subList(mapSettings.getMapHeight() * mapSettings.getMapWidth(), mapButtons.size())) {
+                button.reset();
+            }
+        }
+
+        // Add new map preview buttons if the map has grown
+        while (mapSettings.getMapHeight() * mapSettings.getMapWidth() > mapButtons.size()) {
+            mapButtons.add(new MapPreviewButton(this));
+        }
+
+        // Re-add the buttons to the panel and update them as necessary
         for (int i = 0; i < mapSettings.getMapHeight(); i++) {
             JPanel row = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
             panMapButtons.add(row);
             for (int j = 0; j < mapSettings.getMapWidth(); j++) {
                 int index = i * mapSettings.getMapWidth() + j;
-                MapPreviewButton button = new MapPreviewButton(Integer.toString(index), this, index);
-                Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
-                button.setFont(scaledFont);
-                String boardName = mapSettings.getBoardsSelectedVector().get(index);
-                button.setToolTipText(scaleStringForGUI(boardName));
+                MapPreviewButton button = mapButtons.get(index);
+                button.setIndex(index);
                 row.add(button);
-                mapButtons.add(button);
 
-                // Assign the board image, if possible
-                if (isBoardFile(boardName)) {
-                    IBoard board = new Board(16, 17);
-                    board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
-                    Image image = MiniMap.getBoardMinimapImageMaxZoom(board);
+                // Update the board base image if it's generated and the settings have changed
+                // or the board name has changed
+                String boardName = mapSettings.getBoardsSelectedVector().get(index);
+                if (!button.getBoard().equals(boardName) 
+                        || (!mapSettings.equalMapGenParameters(oldMapSettings) 
+                                && mapSettings.getMapWidth() == oldMapSettings.getMapWidth()
+                                && mapSettings.getMapHeight() == oldMapSettings.getMapHeight())) {
+                    IBoard buttonBoard; 
+                    // Generated and space boards use a generated example
+                    if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
+                            || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                        buttonBoard = BoardUtilities.generateRandom(mapSettings);
+                    } else { 
+                        String boardForImage = boardName;
+                        // For a surprise board, just use the first board as example
+                        if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
+                            List<String> boardList = extractSurpriseMaps(boardName);
+                            boardForImage = boardList.get(0);
+                        }
+                        buttonBoard = new Board(16, 17);
+                        buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile());
+                    }
+                    Image image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
                     button.setImage(image, boardName);
                     buttonSize = optMapButtonSize(image);
-                } else {
-                    button.setText(boardName);
                 }
+                button.scheduleRescale();
             }
         }
+        oldMapSettings = MapSettings.getInstance(mapSettings);
         
         if (buttonSize != null) {
             for (MapPreviewButton button: mapButtons) {
@@ -1881,12 +1905,25 @@ static int count;
     }
 
     void changeMapDnD(String board, JButton button) {
-        // Validate the map
-        IBoard b = new Board(16, 17);
-        if (isBoardFile(board)) {
-            b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
-            if (!b.isValid()) {
-                JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
+        if (board.contains("\n")) {
+            List<String> boardList = extractSurpriseMaps(board);
+            ArrayList<String> allowedBoards = new ArrayList<>();
+            for (String b: boardList) {
+                if (Board.isValid(b)) {
+                    allowedBoards.add(b);
+                }
+            }
+            if (allowedBoards.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "All selected boards are invalid, please select others.");
+                return;   
+            } else if (allowedBoards.size() == 1) {
+                board = allowedBoards.get(0);
+            } else {
+                board = MapSettings.BOARD_SURPRISE + assembleSurpriseBoards(allowedBoards);
+            }
+        } else if (!board.startsWith(MapSettings.BOARD_GENERATED)) {
+            if (!Board.isValid(board)) {
+                JOptionPane.showMessageDialog(this, "The selected board is invalid, please select another.");
                 return;
             }
         }
@@ -2619,7 +2656,6 @@ static int count;
         
         @Override
         public void actionPerformed(ActionEvent action) {
-            List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             String[] command = action.getActionCommand().split(":");
 
             switch (command[0]) {
@@ -2845,9 +2881,9 @@ static int count;
      * <P>See also {@link #isEditable(Entity)}
      * 
      */
-    private boolean isLoadable(Collection<Entity> entities, Entity carrier) {
-        return entities.stream().allMatch(e -> isLoadable(e, carrier));
-    }
+//    private boolean isLoadable(Collection<Entity> entities, Entity carrier) {
+//        return entities.stream().allMatch(e -> isLoadable(e, carrier));
+//    }
     
     /** 
      * Returns true if the given carrier and carried can be edited to have the 
@@ -2871,9 +2907,9 @@ static int count;
      * (The entities are not copies of course.)
      * <P>See also {@link #isLoadable(Entity)} 
      */
-    private Set<Entity> loadableEntities(Collection<Entity> entities, Entity carrier) {
-        return entities.stream().filter(e -> isLoadable(e, carrier)).collect(Collectors.toSet());
-    }
+//    private Set<Entity> loadableEntities(Collection<Entity> entities, Entity carrier) {
+//        return entities.stream().filter(e -> isLoadable(e, carrier)).collect(Collectors.toSet());
+//    }
 
     /** OK
      * Toggles hot loading LRMs for the given entities to the state given as hotLoadOn
@@ -3445,30 +3481,12 @@ static int count;
                 }
                 BufferedImage bufImage = MiniMap.getBoardMinimapImage(board, zoom);
                 
-                //Add the board name (without path) to the image
-                String text = new File(boardName).getName();
-                String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " ";
-                if (text.startsWith(boardSize)) {
-                    text = text.substring(boardSize.length());
-                }
-                if (text.length() > 0) {
-                    Graphics2D g2 = (Graphics2D)bufImage.getGraphics();
-                    if (text.length() > 17) {
-                        text = text.substring(0, 15) + "...";
-                    }
-                    int size = Math.min(bufImage.getWidth(), bufImage.getHeight()) / Math.max(10, text.length()/2);
-                    GUIPreferences.AntiAliasifSet(g2);
-                    g2.setFont(new Font("Dialog", Font.PLAIN, size));
-                    FontMetrics fm = g2.getFontMetrics(g2.getFont());
-                    int cx = (bufImage.getWidth() - fm.stringWidth(text)) / 2;
-                    int th = fm.getAscent() + fm.getDescent();
-                    int cy = bufImage.getHeight() - th; 
-                    g2.setColor(new Color(250, 250, 250, 140));
-                    g2.fillRoundRect(cx - 3, cy - fm.getAscent(), bufImage.getWidth() - 2 * cx + 6, th, 3, 3);
-                    g2.setColor(Color.BLACK);
-                    g2.drawString(text, cx, cy);
-                    g2.dispose();
-                }
+                // Add the board name label
+                String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
+                Graphics g = bufImage.getGraphics();
+                drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g);
+                g.dispose();
+                
                 synchronized(baseImages) {
                     baseImages.put(boardName, bufImage);
                 }
@@ -3495,7 +3513,7 @@ static int count;
 
     Map<String, ImageIcon> mapIcons = new HashMap<String, ImageIcon>();
     
-    /** A renderer for the list of available boards that hides the directories. */
+    /** A renderer for the list of available boards. */
     public class BoardNameRenderer extends DefaultListCellRenderer  {
         private static final long serialVersionUID = -3218595828938299222L;
         
@@ -3530,7 +3548,9 @@ static int count;
                 }
                 if (image == null) {
                     // There's no base image: trigger loading it and, for now, return the base list's panel
+                    // The [GENERATED] entry will always land here as well
                     loader.add(board);
+                    setToolTipText(null);
                     return super.getListCellRendererComponent(list, new File(board).getName(), index, isSelected, cellHasFocus);
                 } else {
                     // There is a base image: make it into an icon, store it and use it

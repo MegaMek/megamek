@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.MegaMek;
-import megamek.client.generator.RandomGenderGenerator;
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.generator.RandomGenderGenerator;;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -72,13 +69,11 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.enums.Gender;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ScenarioLoader {
@@ -624,100 +619,21 @@ public class ScenarioLoader {
     private void parseCommander(Entity entity, String commander) {
         entity.setCommander(Boolean.parseBoolean(commander));
     }
-
-    private String getValidCamoGroup(String camoGroup) {
-        // Translate base categories for userfriendliness.
-        if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
-            camoGroup = Camouflage.NO_CAMOUFLAGE;
-        } else if (camoGroup.equals("General")) {
-            camoGroup = AbstractIcon.ROOT_CATEGORY;
-        } else {
-            // If CamoGroup does not have a trailing slash, add one, since all
-            // subdirectories require it
-            if (camoGroup.charAt(camoGroup.length() - 1) != '/') {
-                camoGroup += "/"; //$NON-NLS-1$
-            }
-        }
-        
-        boolean validGroup = false;
-
-        if (Camouflage.NO_CAMOUFLAGE.equals(camoGroup) || AbstractIcon.ROOT_CATEGORY.equals(camoGroup)) {
-            validGroup = true;
-        } else {
-            Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
-            while (catNames.hasNext()) {
-                String s = catNames.next();
-                if (s.equals(camoGroup)) {
-                    validGroup = true;
-                }
-            }
-        }
-
-        return validGroup ? camoGroup : null;
-    }
-    
-    private String getValidCamoName(String camoGroup, String camoName) {
-        boolean validName = false;
-
-        // Validate CamoName
-        if (Camouflage.NO_CAMOUFLAGE.equals(camoGroup) && !StringUtil.isNullOrEmpty(camoGroup)) {
-            return PlayerColour.parseFromString(camoName).name();
-        } else {
-            Iterator<String> camoNames;
-            if (AbstractIcon.ROOT_CATEGORY.equals(camoGroup)) {
-                camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames("");
-            } else {
-                camoNames = MMStaticDirectoryManager.getCamouflage().getItemNames(camoGroup);
-            }
-            while (camoNames.hasNext()) {
-                String s = camoNames.next();
-                if (s.equals(camoName)) {
-                    validName = true;
-                }
-            }
-        }
-        
-        return validName ? camoName : null;
-    }
     
     /*
      * Camo Parser/Validator for Individual Entity Camo
      */
-    private void parseCamo(Entity entity, String camoString) throws ScenarioLoaderException {
+    private void parseCamo(Entity entity, String camoString) {
         String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
-        String camoGroup = getValidCamoGroup(camoData[0]);
-        if (camoGroup == null) {
-            throw new ScenarioLoaderException("invalidIndividualCamoGroup",
-                camoData[0], entity.getDisplayName());
-        }
-        String camoName = getValidCamoName(camoGroup, camoData[1]);
-        if (camoName == null) {
-            throw new ScenarioLoaderException("invalidIndividualCamoName",
-                camoData[1], camoGroup, entity.getDisplayName());
-        }
-
-        entity.setCamoCategory(camoGroup);
-        entity.setCamoFileName(camoName);
+        entity.setCamouflage(new Camouflage(camoData[0], camoData[1]));
     }
 
     /*
      * Camo Parser/Validator for Faction Camo
      */
-    private void parseCamo(IPlayer player, String camoString) throws ScenarioLoaderException {
+    private void parseCamo(IPlayer player, String camoString) {
         String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
-        String camoGroup = getValidCamoGroup(camoData[0]);
-        if (camoGroup == null) {
-            throw new ScenarioLoaderException("invalidFactionCamoGroup",
-                camoData[0], player.getName());
-        }
-        String camoName = getValidCamoName(camoGroup, camoData[1]);
-        if (camoName == null) {
-            throw new ScenarioLoaderException("invalidFactionCamoName",
-                camoData[1], camoGroup, player.getName());
-        }
-
-        player.setCamoCategory(camoGroup);
-        player.setCamoFileName(camoName);
+        player.setCamouflage(new Camouflage(camoData[0], camoData[1]));
     }
 
     private int findIndex(String[] sa, String s) {

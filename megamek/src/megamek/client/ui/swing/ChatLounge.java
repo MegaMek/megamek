@@ -80,6 +80,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -465,9 +466,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
 
             // Update the player from the camo selection
-            AbstractIcon selectedItem = ccd.getSelectedItem();
-            player.setCamoCategory(selectedItem.getCategory());
-            player.setCamoFileName(selectedItem.getFilename());
+            player.setCamouflage(ccd.getSelectedItem());
             butCamo.setIcon(player.getCamouflage().getImageIcon());
             getPlayerSelected().sendPlayerInfo();
         });
@@ -2354,23 +2353,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return;
         }
 
-        // Choosing the player camo resets the units to have no 
-        // individual camo.
-        AbstractIcon selectedItem = ccd.getSelectedItem();
-        IPlayer owner = entities.get(0).getOwner();
-        AbstractIcon ownerCamo = owner.getCamouflage();
-        boolean noIndividualCamo = selectedItem.equals(ownerCamo);
-        
+        // Choosing the player camo resets the units to have no individual camo.
+        final Camouflage selectedItem = ccd.getSelectedItem();
+        final boolean noIndividualCamo = selectedItem.equals(entities.get(0).getOwner().getCamouflage());
         // Update all allowed entities with the camo
         for (Entity ent : entities) {
             if (isEditable(ent)) {
-                if (noIndividualCamo) {
-                    ent.setCamoCategory(null);
-                    ent.setCamoFileName(null);
-                } else {
-                    ent.setCamoCategory(selectedItem.getCategory());
-                    ent.setCamoFileName(selectedItem.getFilename());
-                }
+                ent.setCamouflage(noIndividualCamo ? new Camouflage() : selectedItem.clone());
                 getLocalClient(ent).sendUpdateEntity(ent);
             }
         }

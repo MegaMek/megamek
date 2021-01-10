@@ -734,8 +734,7 @@ public class Server implements Runnable {
             gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
             gamePlayer.setTeam(player.getTeam());
-            gamePlayer.setCamoCategory(player.getCamoCategory());
-            gamePlayer.setCamoFileName(player.getCamoFileName());
+            gamePlayer.setCamouflage(player.getCamouflage().clone());
             gamePlayer.setNbrMFConventional(player.getNbrMFConventional());
             gamePlayer.setNbrMFCommand(player.getNbrMFCommand());
             gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
@@ -1036,8 +1035,7 @@ public class Server implements Runnable {
             }
         }
         newPlayer.setColour(colour);
-        newPlayer.setCamoCategory(Camouflage.COLOUR_CAMOUFLAGE);
-        newPlayer.setCamoFileName(colour.name());
+        newPlayer.setCamouflage(new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
         newPlayer.setTeam(Math.min(team, 5));
         game.addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);

@@ -815,22 +815,21 @@ public class EntityListFile {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }
-            if (null != entity.getCamoCategory()) {
+            if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" camoCategory=\"");
-                output.write(entity.getCamoCategory());
+                output.write(entity.getCamouflage().getCategory());
             }
-            if (null != entity.getCamoFileName()) {
+            if (!entity.getCamouflage().hasDefaultFilename()) {
                 output.write("\" camoFileName=\"");
-                output.write(entity.getCamoFileName());
+                output.write(entity.getCamouflage().getFilename());
             }
-            if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            if ((entity instanceof MechWarrior) && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" pickUpId=\"");
-                output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
+                output.write(((MechWarrior) entity).getPickedUpByExternalIdAsString());
             }
 
             // Save some values for conventional infantry
-            if ((entity instanceof Infantry)
-                    && !(entity instanceof BattleArmor)) {
+            if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
                 Infantry inf = (Infantry) entity;
                 if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");

@@ -70,13 +70,7 @@ public interface IPlayer extends ITurnOrdered {
 
     Camouflage getCamouflage();
 
-    void setCamoCategory(String name);
-
-    String getCamoCategory();
-
-    void setCamoFileName(String name);
-
-    String getCamoFileName();
+    void setCamouflage(Camouflage camouflage);
 
     PlayerColour getColour();
 

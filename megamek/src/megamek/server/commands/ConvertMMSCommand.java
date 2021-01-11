@@ -16,6 +16,7 @@
  * ConvertMMSCommand.java
  *
  * Created on Jan 10, 2020
+ * Version 0.2
  */
 
 package megamek.server.commands;
@@ -50,14 +51,11 @@ public class ConvertMMSCommand extends ServerCommand {
     private static final String SEPARATOR_SPACE = " ";
     private static final String SEPARATOR_COLON = ":";
     private static final String SEPARATOR_UNDERSCORE = "_";
-
     private static final String FILE_SUFFIX_BOARD = ".board";
-
     private static final String PARAM_MMSVERSION = "MMSVersion";
     private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile";
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
     private static final String PARAM_FACTIONS = "Factions";
-
     private static final String PARAM_MAP_WIDTH = "MapWidth";
     private static final String PARAM_MAP_HEIGHT = "MapHeight";
     private static final String PARAM_BOARD_WIDTH = "BoardWidth";
@@ -65,7 +63,6 @@ public class ConvertMMSCommand extends ServerCommand {
     private static final String PARAM_BRIDGE_CF = "BridgeCF";
     private static final String PARAM_MAPS = "Maps";
     private static final String PARAM_MAP_DIRECTORIES = "RandomDirs";
-
     private static final String PARAM_TEAM = "Team";
     private static final String PARAM_LOCATION = "Location";
     private static final String PARAM_MINEFIELDS = "Minefields";
@@ -82,7 +79,6 @@ public class ConvertMMSCommand extends ServerCommand {
     private static final String PARAM_DEPLOYMENT_ROUND = "DeploymentRound";
     private static final String PARAM_CAMO = "Camo";
     private static final String PARAM_ALTITUDE = "Altitude";
-
     private static final String MAP_RANDOM = "RANDOM";
     
     /** Creates a new instance of SaveGameCommand */
@@ -122,8 +118,13 @@ public class ConvertMMSCommand extends ServerCommand {
         sFinalFile = sDir + File.separator + sFinalFile;
         
         try {
+            // Setup the file to output to            
             BufferedWriter writer = new BufferedWriter(new FileWriter(sFinalFile));
+            
+            // Write the header
             writer.write("# Megamek Convert to MMS by James 'Roundtop' Magnan");
+            writer.newLine();
+            writer.write("# This does not output maps directly, but the map size. All maps are set as Random by default");
             writer.newLine();
             writer.write(PARAM_MMSVERSION + SEPARATOR_PROPERTY + "1");
             writer.newLine();
@@ -137,7 +138,9 @@ public class ConvertMMSCommand extends ServerCommand {
             writer.newLine();
             writer.write(PARAM_BOARD_WIDTH + SEPARATOR_PROPERTY + server.getGame().getBoard().getNumBoardsWidth());
             writer.newLine();
-            writer.write(PARAM_MAPS + SEPARATOR_PROPERTY + MAP_RANDOM);
+            
+            // Random only for now
+            writer.write(PARAM_MAPS+SEPARATOR_PROPERTY+MAP_RANDOM);
             writer.newLine();
             
             // Factions section.
@@ -172,27 +175,25 @@ public class ConvertMMSCommand extends ServerCommand {
                 ArrayList<Entity> PlayerUnits = server.getGame().getPlayerEntities(p, true);
                 
                 for (int counter = 0; counter < PlayerUnits.size(); counter++) {
-                    writer.write("Unit" + SEPARATOR_UNDERSCORE + p.getName() + (counter+1) + SEPARATOR_PROPERTY +
-                                 PlayerUnits.get(counter).getDisplayName() + SEPARATOR_COMMA +
+                    writer.write("Unit" + SEPARATOR_UNDERSCORE + p.getName() +
+                                 SEPARATOR_UNDERSCORE + (counter+1) + SEPARATOR_PROPERTY +
+                                 PlayerUnits.get(counter).getShortName() + SEPARATOR_COMMA +
                                  PlayerUnits.get(counter).getCrew().getName() + SEPARATOR_COMMA +
                                  PlayerUnits.get(counter).getCrew().getGunnery() + SEPARATOR_COMMA +
                                  PlayerUnits.get(counter).getCrew().getPiloting());
-                    // Need to get pilot name, Piloting and gunnery
-                    // writer.append(SEPARATOR_COMMA + PlayerUnits.get(counter).)
                     writer.newLine();
                 }
+                // Need to add lines to look up the mech position, and add it in terms of distance from NW corner (N,0,0 is NW corner)
+                // Values are X,Y
+                
+                // need to look at damage. For mechs this is DamageSpecific=N<X>:<remaining armor>
+                // eg: N0:5,N1:14,R1:3,N2:11,R2:3,N3:11,R3:3,N4:9,N5:9,N6:12,N7:12
+                // These are: N0=Head, N1=CT, R1=CTR, N2=RT,R2=RTR,N3=LT,R3=RTR,N4=RA,N5=LA,N6=RL,N7=RL
+                
+                
+                // For random damage, use Unit_<player>_<unitNum>_Damage=<amount>
             }
             
-            
-            // see fixed parameters above
-            // For units
-            // Unit_pname_num=<mech>,<pilotName>,g,p,  optional N,??,??
-            // For damaged units
-            // Unit_pname_num_DamageSpecific=N1:0, N2:0, N3,0
-            
-            // For random damage: 
-            // Unit_pname_num_Damage=<amount>
-            // End the file write
             writer.close();
         } catch (IOException e) {
             server.sendServerChat(connId, "file write failed");

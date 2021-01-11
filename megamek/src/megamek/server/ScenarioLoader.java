@@ -18,6 +18,8 @@ package megamek.server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -849,6 +851,17 @@ public class ScenarioLoader {
             allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
                     .split(SEPARATOR_COMMA, -1));
         }
+        File dirList = new File(Configuration.boardsDir(), "");
+        String[] directories = dirList.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File current, String name) {
+                return new File(current, name).isDirectory();
+            }
+        });
+        
+        for (int i=0; i < directories.length; i++) {
+            allDirs.add(directories[i]);
+        }
 
         for (String dir: allDirs) {
             File curDir = new File(Configuration.boardsDir(), dir);
@@ -864,6 +877,7 @@ public class ScenarioLoader {
         IBoard[] ba = new IBoard[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+        
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
@@ -880,11 +894,34 @@ public class ScenarioLoader {
                     board = board.substring(Board.BOARD_REQUEST_ROTATION.length());
                 }
 
-                String sBoardFile;
-                if (board.equals(MAP_RANDOM)) {
-                    sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
+                String sBoardFile ="";
+                
+                MegaMek.getLogger().info("Map Listing total:" + boards.size());
+                
+                if (board.equals(MAP_RANDOM)) { 
+                    boolean found = false;
+                    int count=0;
+                    while (!found) {
+                        sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
+                        try {
+                            File fileCheck = new File(Configuration.boardsDir(), sBoardFile);
+                            BufferedReader br = new BufferedReader(new FileReader(fileCheck));
+                            String testSize = br.readLine();
+                            String strArray[] = new String[3];
+                            strArray = testSize.split(" ");
+                            if ((Integer.parseInt(strArray[1]) == mapWidth) && (Integer.parseInt(strArray[2]) == mapHeight)) {
+                                found = true;
+                            }
+                            br.close();
+                        } catch (IOException e) {
+                            MegaMek.getLogger().info("Failed to read file");
+                        }
+                        count++;
+                        if (count == 100) { found=true; }
+                    } 
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
+                    MegaMek.getLogger().info("Loading board " +sBoardFile);
                 }
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {

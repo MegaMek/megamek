@@ -3,6 +3,7 @@ VERSION HISTORY:
 0.47.17 (RC3)-SNAPSHOT
 + Issue #2557 - SimonLandmine maps out of date.
 + Issue #2529: Dead-fire ammo wrong shots/ton (missed some)
++ Data: Updated unit_roles and RAT Gen files for RecGuides and Golden Century.
 
 0.47.16 (RC2) (2021-01-05 1700 UTC)
 + Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill

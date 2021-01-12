@@ -23,6 +23,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -82,6 +83,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.BoardIndex;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
@@ -805,13 +807,13 @@ public class ScenarioLoader {
     private IBoard createBoard(StringMultiMap p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
         if (p.getString(PARAM_MAP_WIDTH) == null) {
-            MegaMek.getLogger().info("No map width specified; using " + mapWidth);
+            MegaMek.getLogger().info("No map width specified; using " + mapWidth + "for random");
         } else {
             mapWidth = Integer.parseInt(p.getString(PARAM_MAP_WIDTH));
         }
 
         if (p.getString(PARAM_MAP_HEIGHT) == null) {
-            MegaMek.getLogger().info("No map height specified; using " + mapHeight);
+            MegaMek.getLogger().info("No map height specified; using " + mapHeight + "for random");
         } else {
             mapHeight = Integer.parseInt(p.getString(PARAM_MAP_HEIGHT));
         }
@@ -838,45 +840,14 @@ public class ScenarioLoader {
             cf = Integer.parseInt(p.getString(PARAM_BRIDGE_CF));
             MegaMek.getLogger().debug("Overriding map-defined bridge CFs with " + cf);
         }
-        // load available boards
-        // basically copied from Server.java. Should get moved somewhere neutral
-        List<String> boards = new ArrayList<>();
 
-        // Find subdirectories given in the scenario file
-        List<String> allDirs = new LinkedList<>();
-        // "" entry stands for the boards base directory 
-        allDirs.add("");
-
-        if (p.getString(PARAM_MAP_DIRECTORIES) != null) {
-            allDirs = Arrays.asList(p.getString(PARAM_MAP_DIRECTORIES)
-                    .split(SEPARATOR_COMMA, -1));
-        }
-        File dirList = new File(Configuration.boardsDir(), "");
-        String[] directories = dirList.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File current, String name) {
-                return new File(current, name).isDirectory();
-            }
-        });
+        // Create an index listing of the boards available
+        BoardIndex boards = new BoardIndex(p.getString(PARAM_MAP_DIRECTORIES));
         
-        for (int i=0; i < directories.length; i++) {
-            allDirs.add(directories[i]);
-        }
-
-        for (String dir: allDirs) {
-            File curDir = new File(Configuration.boardsDir(), dir);
-            if (curDir.exists()) {
-                for (String file : curDir.list()) {
-                    if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
-                        boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
-                    }
-                }
-            }
-        }
-
-        IBoard[] ba = new IBoard[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+                
+        IBoard[] ba = new IBoard[nWidth * nHeight];
         
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int x = 0; x < nWidth; x++) {
@@ -896,29 +867,11 @@ public class ScenarioLoader {
 
                 String sBoardFile ="";
                 
-                MegaMek.getLogger().info("Map Listing total:" + boards.size());
-                
                 if (board.equals(MAP_RANDOM)) { 
-                    boolean found = false;
-                    int count=0;
-                    while (!found) {
-                        sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
-                        try {
-                            File fileCheck = new File(Configuration.boardsDir(), sBoardFile);
-                            BufferedReader br = new BufferedReader(new FileReader(fileCheck));
-                            String testSize = br.readLine();
-                            String strArray[] = new String[3];
-                            strArray = testSize.split(" ");
-                            if ((Integer.parseInt(strArray[1]) == mapWidth) && (Integer.parseInt(strArray[2]) == mapHeight)) {
-                                found = true;
-                            }
-                            br.close();
-                        } catch (IOException e) {
-                            MegaMek.getLogger().info("Failed to read file");
-                        }
-                        count++;
-                        if (count == 100) { found=true; }
-                    } 
+                    
+                    sBoardFile = boards.getRandom(mapWidth, mapHeight);
+                    MegaMek.getLogger().info("Got map: " + sBoardFile);
+                    
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                     MegaMek.getLogger().info("Loading board " +sBoardFile);
@@ -941,8 +894,19 @@ public class ScenarioLoader {
         if (ba.length == 1) {
             return ba[0];
         }
+        
+        int checkWidth = ba[0].getWidth();
+        int checkHeight = ba[0].getHeight();
+        
+        for (int i = 1; i < ba.length; i++) {
+            if (!((checkWidth == ba[i].getHeight()) && (checkHeight == ba[i].getHeight()))){
+                MegaMek.getLogger().info("Map sizes do not match. Returning first map only");
+                return ba[0];
+            }            
+        }
+        
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
+        return BoardUtilities.combine(checkWidth, checkHeight, nWidth, nHeight, ba, rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
     private StringMultiMap load() throws ScenarioLoaderException {

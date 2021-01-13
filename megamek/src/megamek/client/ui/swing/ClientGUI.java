@@ -955,6 +955,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
+            // TODO : Salvage file name shouldn't be inline
             String fileName = "salvage.mul";
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 fileName = StringUtil.addDateTimeStamp(fileName);

@@ -29,7 +29,10 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import megamek.MegaMek;
 import megamek.common.util.*;
+
+import javax.imageio.ImageIO;
 
 /**
  * A FilenameFilter that produces image files (PNG, JPG/JPEG, GIF). 
@@ -122,29 +125,7 @@ public class ImageFileFactory implements ItemFileFactory {
         // Get ready to read from the item.
         try (InputStream in = new BufferedInputStream(zipFile.getInputStream(zipEntry),
                 (int) zipEntry.getSize())) {
-            // Make a buffer big enough to hold the item,
-            // read from the ZIP file, and write it to temp.
-            byte[] buffer = new byte[(int) zipEntry.getSize()];
-            in.read(buffer);
-
-            // Check the last 10 bytes. I've been having
-            // some problems with incomplete image files,
-            // and I want to detect it early and give advice
-            // to players for dealing with the problem.
-            int index = (int) zipEntry.getSize() - 10;
-            while (zipEntry.getSize() > index) {
-                if (buffer[index] == 0) {
-                    index++;
-                } else {
-                    break;
-                }
-            }
-
-            assert zipEntry.getSize() > index : "Error reading " + zipEntry.getName()
-                    + "\nYou may want to unzip " + zipFile.getName();
-
-            // Create the image from the buffer.
-            return Toolkit.getDefaultToolkit().createImage(buffer);
+            return ImageIO.read(in);
         }
     }
 

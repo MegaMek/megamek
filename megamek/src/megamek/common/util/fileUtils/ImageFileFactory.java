@@ -20,7 +20,6 @@
 package megamek.common.util.fileUtils;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -29,7 +28,6 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import megamek.MegaMek;
 import megamek.common.util.*;
 
 import javax.imageio.ImageIO;

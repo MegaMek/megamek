@@ -40,6 +40,8 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractIconChooser extends JPanel implements TreeSelectionListener {
     //region Variable Declarations
+    private AbstractIcon originalIcon;
+
     // display frames
     private JSplitPane splitPane;
 
@@ -57,12 +59,10 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(@Nullable JTree tree, @Nullable AbstractIcon icon) {
+    public AbstractIconChooser(JTree tree, @Nullable AbstractIcon icon) {
         initialize(tree);
-
-        if ((tree != null) && (icon != null)) {
-            setSelection(icon);
-        }
+        setOriginalIcon(icon);
+        setSelection(icon);
     }
     //endregion Constructors
 
@@ -133,6 +133,16 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     }
     //endregion Initialization
 
+    //region Getters/Setters
+    private AbstractIcon getOriginalIcon() {
+        return originalIcon;
+    }
+
+    private void setOriginalIcon(@Nullable AbstractIcon originalIcon) {
+        this.originalIcon = originalIcon;
+    }
+    //endregion Getters/Setters
+
     protected abstract DirectoryItems getDirectory();
 
     protected abstract AbstractIcon createIcon(String category, String filename);
@@ -199,6 +209,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         scrpTree = new JScrollPane(treeCategories);
         splitPane.setLeftComponent(scrpTree);
         splitPane.setDividerLocation(GUIPreferences.getInstance().getInt(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS));
+        setSelection(getOriginalIcon());
     }
 
     /**
@@ -242,7 +253,10 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * Selects the given category in the tree, updates the shown images to this
      * category and selects the item given by filename in the image list.
      */
-    protected void setSelection(AbstractIcon icon) {
+    protected void setSelection(@Nullable AbstractIcon icon) {
+        if ((treeCategories == null) || (icon == null)) {
+            return;
+        }
         // This cumbersome code takes the category name and transforms it into
         // a TreePath so it can be selected in the dialog
         // When the icon directory has changes, the previous selection might not be found

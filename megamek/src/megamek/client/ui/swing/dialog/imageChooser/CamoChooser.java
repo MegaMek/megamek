@@ -25,47 +25,30 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.DirectoryItems;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class CamoChooser extends AbstractIconChooser {
     //region Variable Declarations
-    private AbstractIcon ownerCamouflage;
-    private AbstractIcon individualCamouflage;
+    private boolean canHaveIndividualCamouflage;
     //endregion Variable Declarations
 
     //region Constructors
-    public CamoChooser(@Nullable AbstractIcon ownerCamouflage, AbstractIcon individualCamouflage) {
-        super(null, individualCamouflage);
-        setOwnerCamouflage(ownerCamouflage);
-        setIndividualCamouflage(individualCamouflage);
-        refreshDirectory(new CamoChooserTree(hasIndividualCamouflage()));
-        setSelection(individualCamouflage);
+    public CamoChooser(@Nullable AbstractIcon camouflage, boolean canHaveIndividualCamouflage) {
+        super(new CamoChooserTree(), camouflage);
+        setCanHaveIndividualCamouflage(canHaveIndividualCamouflage);
     }
     //endregion Constructors
 
     //region Getters/Setters
-    public boolean hasIndividualCamouflage() {
-        return getOwnerCamouflage() != null;
+    public boolean canHaveIndividualCamouflage() {
+        return canHaveIndividualCamouflage;
     }
 
-    public AbstractIcon getIndividualCamouflage() {
-        return individualCamouflage;
-    }
-
-    public void setIndividualCamouflage(AbstractIcon individualCamouflage) {
-        Objects.requireNonNull(individualCamouflage, "Cannot open the Camo Chooser without a valid camouflage");
-        this.individualCamouflage = individualCamouflage;
-    }
-
-    public AbstractIcon getOwnerCamouflage() {
-        return ownerCamouflage;
-    }
-
-    public void setOwnerCamouflage(@Nullable AbstractIcon ownerCamouflage) {
-        this.ownerCamouflage = ownerCamouflage;
+    public void setCanHaveIndividualCamouflage(boolean canHaveIndividualCamouflage) {
+        this.canHaveIndividualCamouflage = canHaveIndividualCamouflage;
     }
     //endregion Getters/Setters
 
@@ -82,11 +65,8 @@ public class CamoChooser extends AbstractIconChooser {
     @Override
     protected List<AbstractIcon> getItems(String category) {
         List<AbstractIcon> result = new ArrayList<>();
-        if (hasIndividualCamouflage() && category.startsWith(Camouflage.NO_CAMOUFLAGE)) {
-            // This section is normally blank, but when there is an individual camouflage this is
-            // used to reset to the owner's camouflage
-            result.add(getOwnerCamouflage());
-        } else if (category.startsWith(Camouflage.COLOUR_CAMOUFLAGE)) {
+
+        if (category.startsWith(Camouflage.COLOUR_CAMOUFLAGE)) {
             // This section is a list of all colour camouflages supported
             for (PlayerColour colour : PlayerColour.values()) {
                 result.add(createIcon(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
@@ -113,6 +93,11 @@ public class CamoChooser extends AbstractIconChooser {
     @Override
     protected void refreshDirectory() {
         MMStaticDirectoryManager.refreshCamouflageDirectory();
-        refreshDirectory(new CamoChooserTree(hasIndividualCamouflage()));
+        refreshDirectory(new CamoChooserTree());
+    }
+
+    @Override
+    protected void refreshDirectory(JTree newTree) {
+        super.refreshDirectory(newTree);
     }
 }

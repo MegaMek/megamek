@@ -79,7 +79,6 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.GameOptions;
@@ -2343,20 +2342,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return;
         }
 
+        final Entity entity = entities.get(0);
         // Display the CamoChooserDialog and await the result
         // The dialog is preset to the first selected unit's settings
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(),
-                entities.get(0).getOwner().getCamouflage(), entities.get(0).getCamouflage());
+                entity.getCamouflageOrElse(entity.getOwner().getCamouflage()), true);
 
         // If the dialog was canceled or nothing was selected, do nothing
         if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
             return;
         }
 
-        // Choosing the player camo resets the units to have no individual camo.
+        // Choosing the player camouflage resets the units to have no individual camouflage.
         final Camouflage selectedItem = ccd.getSelectedItem();
-        final boolean noIndividualCamo = selectedItem.equals(entities.get(0).getOwner().getCamouflage());
-        // Update all allowed entities with the camo
+        final boolean noIndividualCamo = selectedItem.equals(entity.getOwner().getCamouflage());
+        // Update all allowed entities with the camouflage
         for (Entity ent : entities) {
             if (isEditable(ent)) {
                 ent.setCamouflage(noIndividualCamo ? new Camouflage() : selectedItem.clone());

@@ -77,6 +77,7 @@ import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -256,7 +257,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$ 
+        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$
                 + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
@@ -401,7 +402,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public CommonMenuBar getMenuBar() {
         return menuBar;
     }
-    
+
 
 
     /**
@@ -410,7 +411,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public void actionPerformed(ActionEvent event) {
     }
 
- 
+
 
     /**
      * Saves the current settings to the cfg file.
@@ -460,7 +461,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
@@ -558,9 +559,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public void updateButtonPanel(IGame.Phase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
-        }        
+        }
     }
-    
+
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -612,7 +613,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(null);                
+                component = new DeploymentDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -717,7 +718,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
         return component;
     }
-  
+
     /**
      * Sets the visibility of the entity display window
      */
@@ -819,7 +820,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     @Override
     public void windowActivated(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
@@ -847,7 +848,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     @Override
     public void windowDeiconified(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
@@ -868,10 +869,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public JFrame getFrame() {
         return frame;
     }
-   
+
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = entity.getCamouflageOrElse(player.getCamouflage()).getImage();
-        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, player.getColour(), bp)));
+        final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
+        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }
 
    

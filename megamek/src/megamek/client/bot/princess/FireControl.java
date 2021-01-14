@@ -1351,31 +1351,31 @@ public class FireControl {
         return 0;
     }
 
-    private boolean isCommander(final Entity entity) {
+    protected boolean isCommander(final Entity entity) {
         if (owner.getFireControlState().commanderCached(entity)) {
             return owner.getFireControlState().isCommander(entity);
-        } else {
-            owner.getFireControlState().setCommander(entity, 
-                    entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
-                    (owner.getHighestEnemyInitiativeId() == entity.getId()));
+        } 
+
+        owner.getFireControlState().setCommander(entity, 
+                entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
+                (owner.getHighestEnemyInitiativeId() == entity.getId()));
             
-            return owner.getFireControlState().isCommander(entity);
-        }
+        return owner.getFireControlState().isCommander(entity);
     }
 
-    private boolean isSubCommander(final Entity entity) {
+    protected boolean isSubCommander(final Entity entity) {
         if (owner.getFireControlState().subCommanderCached(entity)) {
             return owner.getFireControlState().isSubCommander(entity);
-        } else {
-            final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();  //removed in IO + entity.getMDIniBonus()
-            owner.getFireControlState().setSubCommander(entity, 
-                    entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
-                   entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
-                   entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
-                   (0 < initBonus));
-            
-            return owner.getFireControlState().isSubCommander(entity);
         }
+
+        final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();
+        owner.getFireControlState().setSubCommander(entity, 
+                entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
+               entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
+               entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
+               (0 < initBonus));
+            
+        return owner.getFireControlState().isSubCommander(entity);
     }
 
     /**

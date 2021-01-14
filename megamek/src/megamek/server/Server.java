@@ -18917,7 +18917,7 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
         } else { // Target isn't building.
-            if (glancing) {
+            if (glancing && (te != null)) {
                 damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {

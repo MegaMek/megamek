@@ -294,11 +294,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public void setColour(PlayerColour colour) {
-        Objects.requireNonNull(colour, "Colour cannot be set to null");
-        this.colour = colour;
-        if (getCamouflage().isColourCamouflage()) {
-            setCamoFileName(colour.name());
-        }
+        this.colour = Objects.requireNonNull(colour, "Colour cannot be set to null");
     }
 
     @Override

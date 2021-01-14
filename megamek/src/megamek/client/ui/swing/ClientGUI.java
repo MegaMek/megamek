@@ -113,6 +113,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
@@ -206,7 +207,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
     private AccessibilityWindow aw;
-    private String helpFileName = 
+    private String helpFileName =
             SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
                     Messages.getString("CommonMenuBar.helpFilePath"));
 
@@ -274,7 +275,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-    
+
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -293,7 +294,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private int selectedEntityNum = Entity.NONE;
 
     /**
-     * Flag that indicates whether hotkeys should be ignored or not.  This is 
+     * Flag that indicates whether hotkeys should be ignored or not.  This is
      * used for disabling hot keys when various dialogs are displayed.
      */
     private boolean ignoreHotKeys = false;
@@ -327,7 +328,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public IBoardView getBoardView() {
         return bv;
     }
-    
+
     /**
      * Try to load the "bing" sound clip.
      */
@@ -356,11 +357,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         cb.systemMessage(message);
         cb2.addChatMessage("Megamek: " + message);
     }
-    
+
     /**
      * Returns the 'virtual bounds' of the screen.  That is, the union of the
      * displayable space on all available screen devices.
-     * 
+     *
      * @return
      */
     private Rectangle getVirtualBounds() {
@@ -478,7 +479,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 ignoreHotKeys = false;
                 if (savePrompt == JOptionPane.YES_OPTION) {
                     if (!saveGame()) {
-                        // When the user did not actually save the game, don't close MM 
+                        // When the user did not actually save the game, don't close MM
                         return;
                     }
                 }
@@ -659,7 +660,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // Show the help dialog.
         help.setVisible(true);
     }
-    
+
     private void showSkinningHowTo(){
         try {
             // Get the correct help file.
@@ -673,11 +674,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
             // Launch the help dialog.
             HelpDialog helpDialog = new HelpDialog(
-                    Messages.getString("ClientGUI.skinningHelpPath.title"), 
+                    Messages.getString("ClientGUI.skinningHelpPath.title"),
                     helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR",
                     JOptionPane.ERROR_MESSAGE);
             MegaMek.getLogger().error(e);
         }
@@ -709,7 +710,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
     }
-    
+
     public void customizePlayer() {
         PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
         psd.setVisible(true);
@@ -1045,12 +1046,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
+
         if (controller != null) {
             controller.removeAllActions();
             controller.clientgui = null;
         }
-        
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
@@ -1176,12 +1177,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void updateButtonPanel(IGame.Phase phase) {
-        if ((currPhaseDisplay != null) 
+        if ((currPhaseDisplay != null)
                 && client.getGame().getPhase().equals(phase)) {
             currPhaseDisplay.setupButtonPanel();
-        }        
+        }
     }
-    
+
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -1231,7 +1232,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(this);                
+                component = new DeploymentDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -1351,9 +1352,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.showPopup(popup, c);
         }
     }
-    
+
     /** Switches the Minimap and the MechDisplay an and off together.
-     *  If the MechDisplay is active, both will be hidden, else 
+     *  If the MechDisplay is active, both will be hidden, else
      *  both will be shown.
      */
     public void toggleMMUDDisplays() {
@@ -1375,7 +1376,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             frame.requestFocus();
         }
     }
-    
+
     /**
      * Toggles the accessibility window
      */
@@ -1572,7 +1573,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             String title = Messages.getString(
                     "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
             String msg = Messages.getString(
-                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+                    "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$
             JOptionPane.showMessageDialog(frame, msg, title,
                     JOptionPane.OK_OPTION, null);
             return;
@@ -1628,7 +1629,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (loadedUnits.size() > 0){
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
-                }                
+                }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1651,7 +1652,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         c.sendDeleteEntities(ids);
     }
-    
+
     private boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser("./savegames");
@@ -1736,10 +1737,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
     }
-    
+
     protected void saveVictoryList() {
         String filename = client.getLocalPlayer().getName();
-        
+
         // Build the "save unit" dialog, if necessary.
         if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
@@ -1845,8 +1846,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = entity.getCamouflageOrElse(player.getCamouflage()).getImage();
-        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camo, player.getColour(), bp);
+        final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
+        Image icon = bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp);
         bp.setIcon((icon == null) ? null : new ImageIcon(icon));
     }
 

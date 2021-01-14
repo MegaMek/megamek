@@ -254,27 +254,30 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * category and selects the item given by filename in the image list.
      */
     protected void setSelection(@Nullable AbstractIcon icon) {
-        if ((treeCategories == null) || (icon == null)) {
+        if (treeCategories == null) {
             return;
         }
+
         // This cumbersome code takes the category name and transforms it into
         // a TreePath so it can be selected in the dialog
         // When the icon directory has changes, the previous selection might not be found
         boolean found = false;
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeCategories.getModel().getRoot();
         DefaultMutableTreeNode currentNode = root;
-        for (String name : icon.getCategory().split(Pattern.quote("/"))) {
-            found = false;
-            for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
-                DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
-                if (name.equals(child.getUserObject())) {
-                    currentNode = child;
-                    found = true;
+        if (icon != null) {
+            for (String name : icon.getCategory().split(Pattern.quote("/"))) {
+                found = false;
+                for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
+                    DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
+                    if (name.equals(child.getUserObject())) {
+                        currentNode = child;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
                     break;
                 }
-            }
-            if (!found) {
-                break;
             }
         }
         // Select the root if the selection could not be found

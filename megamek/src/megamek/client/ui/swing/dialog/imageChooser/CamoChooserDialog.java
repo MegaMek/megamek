@@ -19,6 +19,7 @@ import java.awt.*;
 
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 
@@ -44,11 +45,11 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
 
     //region Constructors
     /** Creates a dialog that allows players to choose a camo pattern. */
-    public CamoChooserDialog(Window parent, AbstractIcon camouflage) {
+    public CamoChooserDialog(Window parent, @Nullable AbstractIcon camouflage) {
         this(parent, camouflage, false);
     }
 
-    public CamoChooserDialog(Window parent, AbstractIcon camouflage, boolean canHaveIndividualCamouflage) {
+    public CamoChooserDialog(Window parent, @Nullable AbstractIcon camouflage, boolean canHaveIndividualCamouflage) {
         super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"), new CamoChooser(camouflage, canHaveIndividualCamouflage));
     }
     //endregion Constructors

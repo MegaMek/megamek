@@ -1844,8 +1844,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set whether or not the mech's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
+        setArmsFlipped(armsFlipped, true);
+    }
+    
+    /**
+     * Set whether or not the mech's arms are flipped to the rear.
+     * Does not fire the game event, useful for when it's called repeatedly
+     * such as during bot turn calculations
+     */
+    public void setArmsFlipped(boolean armsFlipped, boolean fireEvent) {
         this.armsFlipped = armsFlipped;
-        game.processGameEvent(new GameEntityChangeEvent(this, this));
+        
+        if (fireEvent) {
+            game.processGameEvent(new GameEntityChangeEvent(this, this));
+        }
     }
 
     /**

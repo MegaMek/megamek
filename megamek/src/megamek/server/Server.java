@@ -14598,8 +14598,7 @@ public class Server implements Runnable {
             return;
         }
         EquipmentType equip = mount.getType();
-        if (!(equip instanceof WeaponType)
-            || !equip.hasFlag(WeaponType.F_B_POD)) {
+        if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponType.F_B_POD)) {
             MegaMek.getLogger().error("Expecting to find an B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + " but found " + equip.getName() + " instead!!!");
             return;
@@ -14629,18 +14628,14 @@ public class Server implements Runnable {
 
         // Is this an unarmored infantry platoon?
         if (target.isConventionalInfantry()) {
-
             // Roll d6 for damage.
             final int damage = Compute.d6();
 
             // Damage the platoon.
-            addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY),
-                                   damage));
+            addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
 
             // Damage from AP Pods is applied immediately.
             target.applyDamage();
-
-            // End target-is-unarmored
         } else if (target instanceof BattleArmor) {
             // 20 damage in 5 point clusters
             final int damage = 5;
@@ -14653,11 +14648,9 @@ public class Server implements Runnable {
 
             // Damage from B Pods is applied immediately.
             target.applyDamage();
-        }
-
-        // Nope, the target is immune.
-        // Don't make a log entry for the triggering entity.
-        else if (!entity.equals(target)) {
+        } else if (!entity.equals(target)) {
+            // Nope, the target is immune.
+            // Don't make a log entry for the triggering entity.
             r = new Report(3020);
             r.indent(2);
             r.subject = target.getId();
@@ -15478,11 +15471,7 @@ public class Server implements Runnable {
         } else {
             if (glancing) {
                 // Round up glancing blows against conventional infantry
-                if (te.isConventionalInfantry()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                } else {
-                    damage = (int) Math.floor(damage / 2.0);
-                }
+                damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -15493,7 +15482,7 @@ public class Server implements Runnable {
                     (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
-                                   false, throughFront));
+                    false, throughFront));
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
@@ -15745,11 +15734,7 @@ public class Server implements Runnable {
         } else {
             if (glancing) {
                 // Round up glancing blows against conventional infantry
-                if (te.isConventionalInfantry()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                } else {
-                    damage = (int) Math.floor(damage / 2.0);
-                }
+                damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -15999,11 +15984,7 @@ public class Server implements Runnable {
             } else {
                 if (glancing) {
                     // Round up glancing blows against conventional infantry
-                    if (te.isConventionalInfantry()) {
-                        damage = (int) Math.ceil(damage / 2.0);
-                    } else {
-                        damage = (int) Math.floor(damage / 2.0);
-                    }
+                    damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
                 }
                 if (directBlow) {
                     damage += toHit.getMoS() / 3;
@@ -16189,11 +16170,7 @@ public class Server implements Runnable {
         } else {
             if (glancing) {
                 // Round up glancing blows against conventional infantry
-                if (te.isConventionalInfantry()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                } else {
-                    damage = (int) Math.floor(damage / 2.0);
-                }
+                damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -16971,11 +16948,7 @@ public class Server implements Runnable {
         } else {
             if (glancing) {
                 // Round up glancing blows against conventional infantry
-                if (te.isConventionalInfantry()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                } else {
-                    damage = (int) Math.floor(damage / 2.0);
-                }
+                damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -16990,8 +16963,8 @@ public class Server implements Runnable {
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
-                                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                                            VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
+                        false, 0, false));
             }
         }
 
@@ -18282,11 +18255,7 @@ public class Server implements Runnable {
         int damageTaken = RamAttackAction.getDamageTakenBy(aero, te);
         if (glancing) {
             // Round up glancing blows against conventional infantry
-            if (te.isConventionalInfantry()) {
-                damage = (int) Math.ceil(damage / 2.0);
-            } else {
-                damage = (int) Math.floor(damage / 2.0);
-            }
+            damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
@@ -18383,17 +18352,13 @@ public class Server implements Runnable {
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on charge
             // or DFA is halved as well, assume yes. TODO : Check with PM
-            if (te.isConventionalInfantry()) {
-                damage = (int) Math.ceil(damage / 2.0);
-            } else {
-                damage = (int) Math.floor(damage / 2.0);
-            }
+            damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
         boolean bDirect = false;
         int directBlowCritMod = toHit.getMoS() / 3;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-            && ((toHit.getMoS() / 3) >= 1)) {
+                && ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
             bDirect = false;
         }
@@ -18952,13 +18917,8 @@ public class Server implements Runnable {
             // Damage any infantry in the hex.
             addReport(damageInfantryIn(bldg, damage, target.getPosition()));
         } else { // Target isn't building.
-
             if (glancing) {
-                if (te.isConventionalInfantry()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                } else {
-                    damage = (int) Math.floor(damage / 2.0);
-                }
+                damage = (int) (te.isConventionalInfantry() ? Math.ceil(damage / 2.0) : Math.floor(damage / 2.0));
             }
             if (directBlow) {
                 damage += toHit.getMoS() / 3;
@@ -33155,8 +33115,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;
             toHit = daa.toHit(game);
-            damage = DfaAttackAction.getDamageFor(ae,
-                    daa.getTarget(game).isConventionalInfantry());
+            damage = DfaAttackAction.getDamageFor(ae, daa.getTarget(game).isConventionalInfantry());
         } else if (aaa instanceof KickAttackAction) {
             KickAttackAction kaa = (KickAttackAction) aaa;
             toHit = kaa.toHit(game);

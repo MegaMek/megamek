@@ -54,18 +54,13 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * need to adjust the <code>target</code> state variable so damage is
      * applied properly.
      * 
-     * @param entityTarget
-     *            The target Entity
+     * @param entityTarget  The target Entity
      * @param vPhaseReport
      * @param hit
      * @param bldg
      * @param hits
      * @param nCluster
      * @param bldgAbsorbs
-     * 
-     * @see megamek.common.weapons.WeaponHandler#handlePartialCoverHit(Entity
-     *      entityTarget, Vector<Report> vPhaseReport, HitData hit, Building
-     *      bldg, int hits, int nCluster, int bldgAbsorbs)
      */
     @Override
     protected void handlePartialCoverHit(Entity entityTarget,
@@ -320,9 +315,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount Plasma Cannons
-        if (target.isConventionalInfantry()) {
-            return 1;
-        } else if (target.tracksHeat()) {
+        if (target.isConventionalInfantry() || target.tracksHeat()) {
             return 1;
         } else if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
             return 0;

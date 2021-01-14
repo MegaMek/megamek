@@ -5428,6 +5428,12 @@ Ice Ferret (Fenris) I:SCOUT
 Ice Ferret (Fenris) J:STRIKER
 Ice Ferret (Fenris) K:STRIKER
 Ice Ferret (Fenris) T:SCOUT
+Fenris (Ice Ferret) F:SNIPER
+Fenris (Ice Ferret) G:STRIKER
+Fenris (Ice Ferret) I:SCOUT
+Fenris (Ice Ferret) J:STRIKER
+Fenris (Ice Ferret) K:STRIKER
+Fenris (Ice Ferret) T:SCOUT
 Thresher II (Standard):SKIRMISHER
 Trebuchet TBT-9N:MISSILE BOAT
 Warhammer IIC 13:BRAWLER
@@ -5442,6 +5448,8 @@ Catapult CPLT-K6:MISSILE BOAT
 Conjurer (Hellhound) 7:SKIRMISHER
 Conjurer (Hellhound) 8:SKIRMISHER
 Conjurer (Hellhound):SKIRMISHER
+Hellhound (Conjurer) 7:SKIRMISHER
+Hellhound (Conjurer) 8:SKIRMISHER
 Crab CRB-54:SKIRMISHER
 Hammerhead (Standard):SKIRMISHER
 King Crab KGC-011:JUGGERNAUT
@@ -5451,6 +5459,10 @@ Marauder II MAD-6C:SNIPER
 Marauder II MAD-8K:SNIPER
 Marauder MAD-11D:SNIPER
 Marauder MAD-7R:SNIPER
+Mad Cat (Timber Wolf) M:BRAWLER
+Mad Cat (Timber Wolf) N:BRAWLER
+Mad Cat (Timber Wolf) T:MISSILE BOAT
+Mad Cat (Timber Wolf) W:JUGGERNAUT
 Timber Wolf (Mad Cat) M:MISSILE BOAT
 Timber Wolf (Mad Cat) N:MISSILE BOAT
 Timber Wolf (Mad Cat) T:MISSILE BOAT
@@ -5473,8 +5485,8 @@ Marauder MAD-7C:SNIPER
 Marauder MAD-7M:BRAWLER
 Marauder MAD-7R:SNIPER
 Marauder MAD-7S:SNIPER
-#Marauder Red Hunter 3146:UNDETERMINED
-#Marauder Red Hunter:UNDETERMINED
+Marauder Red Hunter 3146:JUGGERNAUT
+Marauder Red Hunter:JUGGERNAUT
 Nightstar NSR-10D:SNIPER
 Raven RVN-5L:SCOUT
 #ilClan Rec Guide 7
@@ -5511,6 +5523,70 @@ Warhammer WHM-7M:BRAWLER
 Warhammer WHM-7S:BRAWLER
 Warhammer WHM-8R:BRAWLER
 Warhammer WHM-9K:BRAWLER
+#ilClan Rec Guide 8
+Devil (Standard):SNIPER
+Fire Moth (Dasher) G:STRIKER
+Fire Moth (Dasher) I:SNIPER
+Fire Moth (Dasher) J:STRIKER
+Fire Moth (Dasher) M:STRIKER
+Fire Moth (Dasher) P:STRIKER
+Fire Moth (Dasher) R:SCOUT
+Fire Moth (Dasher) T:STRIKER
+Howler (Baboon) 4:SCOUT
+Howler (Baboon) 5:STRIKER
+Howler (Baboon) 6:STRIKER
+Howler (Baboon)(Standard):MISSILE BOAT
+Rifleman C 3:SNIPER
+Rifleman RFL-7G:SNIPER
+Rifleman RFL-7N:SNIPER
+Rifleman RFL-7N2:SNIPER
+Viper (Dragonfly) J:STRIKER
+Viper (Dragonfly) K:SCOUT
+Viper (Dragonfly) L:SNIPER
+Viper (Dragonfly) M:STRIKER
+Viper (Dragonfly) R:SCOUT
+Viper (Dragonfly) T:SCOUT
+#ilClan Rec Guide 9
+Executioner (Gladiator) F:SNIPER
+Executioner (Gladiator) G:SKIRMISHER
+Executioner (Gladiator) I:SKIRMISHER
+Executioner (Gladiator) J:JUGGERNAUT
+Executioner (Gladiator) L:SNIPER
+Executioner (Gladiator) T:SNIPER
+Inferno INF-NO:UNDETERMINED
+Inferno INF-NOA:BRAWLER
+Inferno INF-NOB:BRAWLER
+Inferno INF-NOC:MISSILE BOAT
+Inferno INF-NOR:MISSILE BOAT
+Shadow Cat D:STRIKER
+Shadow Cat I:STRIKER
+Shadow Cat M:STRIKER
+Shadow Cat T:SCOUT
+Valkyrie C:MISSILE BOAT
+Valkyrie VLK-QD6:MISSILE BOAT
+Valkyrie VLK-QDD:MISSILE BOAT
+Goshawk (Vapor Eagle)2:SKIRMISHER
+Goshawk (Vapor Eagle)5:SKIRMISHER
+Goshawk (Vapor Eagle)6:SKIRMISHER
+Goshawk (Vapor Eagle)7:SKIRMISHER
+Goshawk (Vapor Eagle)(Standard):SKIRMISHER
+#ilClan Rec Guide 10
+Archer ARC-4M2:MISSILE BOAT
+Archer ARC-7C:MISSILE BOAT
+Archer ARC-9R:MISSILE BOAT
+Centurion CN10-D:SNIPER
+Crucible (Standard):SNIPER
+Crucible 2:SNIPER
+Crucible 3:SNIPER
+Hermit Crab HMC-13:SCOUT
+Hermit Crab HMC-14:STRIKER
+Hermit Crab HMC-15:STRIKER
+Highlander HGN-740:SNIPER
+Mad Dog (Vulture) DD:BRAWLER
+Mad Dog (Vulture) G:BRAWLER
+Mad Dog (Vulture) I:SNIPER
+Mad Dog (Vulture) T:MISSILE BOAT
+Mad Dog (Vulture) V:MISSILE BOAT
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER
@@ -5677,7 +5753,7 @@ Stormcrow (Ryoken) Attwater:SNIPER
 Mad Dog (Vulture) S:SKIRMISHER
 Hellbringer (Loki) M:SNIPER
 Timber Wolf (Mad Cat) TC:SKIRMISHER
-Executioner (Gladiator) TC:SKIRMISHER
+Gladiator (Executioner) TC:SKIRMISHER
 Phoenix Hawk PXH-1bC:SKIRMISHER
 Shadow Hawk SHD-2Ht:SKIRMISHER
 Rifleman RFL-5CS:SNIPER

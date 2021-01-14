@@ -185,8 +185,7 @@ public class RandomSkillsGenerator implements Serializable {
             //Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
 
            //infantry anti-mech skill should be one higher unless foot
-            if(((e instanceof Infantry) && !(e instanceof BattleArmor))
-                    & (e.getMovementMode() != EntityMovementMode.INF_LEG)) {
+            if (e.isConventionalInfantry() && (e.getMovementMode() != EntityMovementMode.INF_LEG)) {
                 skills[1]++;
             }
 
@@ -208,8 +207,7 @@ public class RandomSkillsGenerator implements Serializable {
                     skills[1]++;
                 }
                 //gunnery is worse for infantry, conv fighters and small craft
-                if(((e instanceof Infantry) && !(e instanceof BattleArmor))
-                        || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
+                if (e.isConventionalInfantry() || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
                     skills[0]++;
                 }
             }

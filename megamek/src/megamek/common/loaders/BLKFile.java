@@ -593,7 +593,7 @@ public class BLKFile {
         }
         blk.writeBlockData("transporters", transporter_array);
 
-        if (!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
+        if (!t.isConventionalInfantry()) {
             if (t instanceof Aero){
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -774,7 +774,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
+            if (!(t.isConventionalInfantry() && (i == Infantry.LOC_INFANTRY))) {
                 blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
             }
         }

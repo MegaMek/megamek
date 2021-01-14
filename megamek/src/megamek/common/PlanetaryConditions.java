@@ -285,8 +285,8 @@ public class PlanetaryConditions implements Serializable {
      * to-hit penalty for weather
      */
     public int getWeatherHitPenalty(Entity en) {
-        if(((weatherConditions == WE_LIGHT_RAIN) || (weatherConditions == WE_LIGHT_SNOW))
-                && (en instanceof Infantry) && !(en instanceof BattleArmor)) {
+        if (((weatherConditions == WE_LIGHT_RAIN) || (weatherConditions == WE_LIGHT_SNOW))
+                && en.isConventionalInfantry()) {
             return 1;
         }
         else if((weatherConditions == WE_MOD_RAIN) || (weatherConditions == WE_HEAVY_RAIN)
@@ -547,7 +547,7 @@ public class PlanetaryConditions implements Serializable {
             }
             break;
         case (WI_MOD_GALE):
-            if((en instanceof Infantry) && !(en instanceof BattleArmor)) {
+            if (en.isConventionalInfantry()) {
                 mod -= 1;
             }
             break;
@@ -609,13 +609,13 @@ public class PlanetaryConditions implements Serializable {
             return "tornado";
         }
         if ((windStrength == WI_TORNADO_F13)
-                && (((en instanceof Infantry) && !(en instanceof BattleArmor))
+                && (en.isConventionalInfantry()
                         || ((en.getMovementMode() == EntityMovementMode.HOVER)
                     || (en.getMovementMode() == EntityMovementMode.WIGE)
                     || (en.getMovementMode() == EntityMovementMode.VTOL)))) {
             return "tornado";
         }
-        if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {
+        if((windStrength == WI_STORM) && en.isConventionalInfantry()) {
             return "storm";
         }
         if ((temperature > 50 || temperature < -30) && en.doomedInExtremeTemp()) {

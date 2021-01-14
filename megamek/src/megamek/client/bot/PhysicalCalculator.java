@@ -333,7 +333,7 @@ public final class PhysicalCalculator {
             return null;
         }
 
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             targetConvInfantry = true;
         }
 
@@ -559,7 +559,7 @@ public final class PhysicalCalculator {
         }
 
         // Conventional infantry in the open suffer double damage.
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             IHex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
@@ -609,7 +609,7 @@ public final class PhysicalCalculator {
             return 0.0;
         }
 
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             targetConvInfantry = true;
         }
 
@@ -799,7 +799,7 @@ public final class PhysicalCalculator {
             }
         }
         // If the target is conventional infantry
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             // Create a single element vector with total number of troopers
             max_index = 0;
             armor_values[0] = ((Infantry) target).getShootingStrength();

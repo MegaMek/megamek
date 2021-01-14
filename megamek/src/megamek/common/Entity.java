@@ -5349,19 +5349,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (!m.isInoperable()) {
                     // Beagle Isn't affected by normal ECM
                     if (type.getName().equals("Beagle Active Probe")) {
-
-                        if ((game != null)
-                            && checkECM
-                            && ComputeECM.isAffectedByAngelECM(this,
-                                                               getPosition(), getPosition())) {
-                            return false;
-                        }
-                        return true;
+                        return (game == null)
+                                || !checkECM
+                                || !ComputeECM.isAffectedByAngelECM(this, getPosition(), getPosition());
                     }
-                    return !checkECM
-                           || (game == null)
-                           || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                          getPosition());
+                    return !checkECM || (game == null)
+                            || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
                 }
             }
         }
@@ -5370,21 +5363,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
         	|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
         	|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
-        		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
+        		&& isConventionalInfantry())
             || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
             		&& (hasAbility(OptionsConstants.MD_VDNI)
-			|| hasAbility(OptionsConstants.MD_BVDNI))))
-
-        {
-            return !checkECM
-                   || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                  getPosition());
+			|| hasAbility(OptionsConstants.MD_BVDNI)))) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
         // check for quirk
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
-            return !checkECM
-                   || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                  getPosition());
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
         // check for SPA
         if (hasAbility(OptionsConstants.MISC_EAGLE_EYES)) {
@@ -5406,10 +5393,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        if ((hasAbility(OptionsConstants.MD_CYBER_IMP_AUDIO)
         		|| hasAbility(OptionsConstants.MD_MM_IMPLANTS))
         		|| hasAbility(OptionsConstants.MD_CYBER_IMP_VISUAL)
-                	&& (this instanceof Infantry) && !(this instanceof BattleArmor))
+                	&& isConventionalInfantry()
                 || (hasAbility(OptionsConstants.MD_MM_IMPLANTS)
                 	&& (hasAbility(OptionsConstants.MD_VDNI)
     			|| hasAbility(OptionsConstants.MD_BVDNI)))) {

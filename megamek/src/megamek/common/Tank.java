@@ -3798,8 +3798,6 @@ public class Tank extends Entity {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
-        boolean isInfantry = (ae instanceof Infantry)
-                && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");
@@ -3809,7 +3807,7 @@ public class Tank extends Entity {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
                 case RangeType.RANGE_SHORT:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(0, "stealth");
                     } else {
                         // must be infantry
@@ -3817,7 +3815,7 @@ public class Tank extends Entity {
                     }
                     break;
                 case RangeType.RANGE_MEDIUM:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(1, "stealth");
                     } else {
                         // must be infantry
@@ -3827,7 +3825,7 @@ public class Tank extends Entity {
                 case RangeType.RANGE_LONG:
                 case RangeType.RANGE_EXTREME:
                 case RangeType.RANGE_LOS:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(2, "stealth");
                     } else {
                         // must be infantry
@@ -3837,8 +3835,7 @@ public class Tank extends Entity {
                 case RangeType.RANGE_OUT:
                     break;
                 default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 

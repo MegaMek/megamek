@@ -2868,7 +2868,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Electro-Magnetic Interference
-        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+        if (game.getPlanetaryConditions().hasEMI() && !ae.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;
@@ -3914,7 +3914,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        if (ae.isConventionalInfantry()) {
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
@@ -4155,7 +4155,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
                 && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            if ((ghostTargetMod > -1) && !ae.isConventionalInfantry()) {
                 int bapMod = 0;
                 if (ae.hasBAP()) {
                     bapMod = 1;
@@ -4264,17 +4264,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Battle Armor targets are hard for Meks and Tanks to hit.
-        if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
+        if (!isAttackerInfantry && (te instanceof BattleArmor)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
         // infantry squads are also hard to hit
-        if (te != null && (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
+        if ((te != null) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
         }
 
         // Ejected MechWarriors are harder to hit
-        if ((te != null) && (te instanceof MechWarrior)) {
+        if (te instanceof MechWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
         

@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
@@ -75,7 +74,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         // Determine what coords get hit
         AmmoType atype = (AmmoType) ammo.getType();
         int facing = weapon.getFacing();
-        ArrayList<Coords> affectedCoords = new ArrayList<Coords>(3);
+        ArrayList<Coords> affectedCoords = new ArrayList<>(3);
         int af = ae.getFacing();
         if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
             af = ae.getSecondaryFacing();
@@ -164,18 +163,15 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                             waa.getAimingMode(), toHit.getCover());
                     hit.setAttackerId(getAttackerId());
                     
-                    Vector<Report> dmgReports = new Vector<Report>();
+                    Vector<Report> dmgReports = new Vector<>();
                     // Infantry take 2D6 burst damage
-                    if (!inBuilding && (entTarget instanceof Infantry) 
-                            && !(entTarget instanceof BattleArmor)) {
+                    if (!inBuilding && entTarget.isConventionalInfantry()) {
                         int infDmg = Compute.directBlowInfantryDamage(0, 0,
                                 WeaponType.WEAPON_BURST_2D6,
                                 ((Infantry) entTarget).isMechanized(),
                                 toHit.getThruBldg() != null);
-                        dmgReports = 
-                                server.damageEntity(entTarget, hit, infDmg);
-                    } else if (inBuilding && (entTarget instanceof Infantry) 
-                            && !(entTarget instanceof BattleArmor)) {
+                        dmgReports = server.damageEntity(entTarget, hit, infDmg);
+                    } else if (inBuilding && entTarget.isConventionalInfantry()) {
                         r = new Report(3417);
                         r.addDesc(entTarget);
                         r.indent(2);

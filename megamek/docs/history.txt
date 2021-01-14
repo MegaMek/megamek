@@ -6,6 +6,8 @@ VERSION HISTORY:
 + Data: Updated unit_roles and RAT Gen files for RecGuides and Golden Century.
 + Issues #1967/1968: Swapping to use ImageIO.read() for Portrait Zip File reads
 + PR #2567: Colour Camouflage: Fixing Colour Camouflage Tint Application and Colour Setter
++ Issue #2565: Bot performance improvement for situations where there are C3/ECM type units on the field
++ PR #2562: Prevent "mount" button from being active for grounded dropships, as it doesn't do anything and throws an exception when clicked
 
 0.47.16 (RC2) (2021-01-05 1700 UTC)
 + Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill

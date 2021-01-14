@@ -246,6 +246,9 @@ public class FireControlTest {
                .when(testFireControl)
                .getTargetMovementModifier(Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean(),
                                           Mockito.any(IGame.class));
+        
+        Mockito.doReturn(false).when(testFireControl).isCommander(Mockito.any(Entity.class));
+        Mockito.doReturn(false).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
 
         // AC5
         mockWeaponTypeAC5 = Mockito.mock(WeaponType.class);
@@ -2142,29 +2145,29 @@ public class FireControlTest {
         Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
 
         // Make the target a commander.
-        Mockito.when(mockTarget.isCommander()).thenReturn(true);
         testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
+        Mockito.doReturn(true).when(testFireControl).isCommander(Mockito.any(Entity.class));
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility * (1 + FireControl.COMMANDER_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
-        Mockito.when(mockTarget.isCommander()).thenReturn(false);
+        Mockito.doReturn(false).when(testFireControl).isCommander(Mockito.any(Entity.class));
 
         // Make the target a sub-commander.
-        Mockito.when(mockTarget.hasC3()).thenReturn(true);
         testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
+        Mockito.doReturn(true).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility * (1 + FireControl.SUB_COMMANDER_UTILITY), testFiringPlan.getUtility(),
                             TOLERANCE);
-        Mockito.when(mockTarget.hasC3()).thenReturn(false);
+        Mockito.doReturn(false).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
 
         // Make the target a Strategic Building Target.
         final BuildingTarget mockBuilding = Mockito.mock(BuildingTarget.class);

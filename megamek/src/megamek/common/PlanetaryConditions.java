@@ -165,6 +165,16 @@ public class PlanetaryConditions implements Serializable {
         throw new IllegalArgumentException("Unknown weather condition");
     }
 
+    public static String getTemperatureDisplayableName(int temp) {
+        if (isExtremeTemperature(temp) && (temp > 0)) {
+            return String.format("%d (%s)", temp, Messages.getString("PlanetaryConditions.ExtremeHeat"));
+        } else if (isExtremeTemperature(temp) && (temp <= 0)) {
+            return String.format("%d (%s)", temp,  Messages.getString("PlanetaryConditions.ExtremeCold"));
+        } else {
+            return String.valueOf(temp);
+        }
+    }
+
     public static String getWindDirDisplayableName(int type) {
         if ((type >= 0) && (type < DIR_SIZE)) {
             return Messages.getString("PlanetaryConditions." + dirNames[type]);
@@ -848,8 +858,12 @@ public class PlanetaryConditions implements Serializable {
         return (atmosphere == ATMO_VACUUM) || (atmosphere == ATMO_TRACE);
     }
 
-    public boolean isExtremeTemperature() {
+    public static boolean isExtremeTemperature(int temperature) {
         return (temperature > 50) || (temperature < -30);
+    }
+
+    public boolean isExtremeTemperature() {
+        return isExtremeTemperature(temperature);
     }
 
     public void setGravity(float f) {

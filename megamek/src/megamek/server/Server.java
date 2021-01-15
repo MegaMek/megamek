@@ -20157,9 +20157,18 @@ public class Server implements Runnable {
             r.choose(false);
             r.newlines = 1;
             addReport(r);
+            // gun emplacements have their own critical rules
+            if (entity instanceof GunEmplacement) {
+                Vector<GunEmplacement> gun = new Vector<>();
+                gun.add((GunEmplacement) entity);
+                
+                Building building = getGame().getBoard().getBuildingAt(entity.getPosition());
+                
+                Report.addNewline(vPhaseReport);
+                addReport(criticalGunEmplacement(gun, building, entity.getPosition()));            
             // Taharqa: TacOps rules, protos and vees no longer die instantly
             // (hurray!)
-            if (entity instanceof Tank) {
+            } else if (entity instanceof Tank) {
                 int bonus = -2;
                 if ((entity instanceof SupportTank)
                     || (entity instanceof SupportVTOL)) {

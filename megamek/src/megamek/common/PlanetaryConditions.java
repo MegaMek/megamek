@@ -618,7 +618,7 @@ public class PlanetaryConditions implements Serializable {
         if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {
             return "storm";
         }
-        if (this.isExtremeTemperature() && en.doomedInExtremeTemp() && !Compute.isInBuilding(game, en)) {
+        if (isExtremeTemperature() && en.doomedInExtremeTemp() && !Compute.isInBuilding(game, en)) {
             return "extreme temperature";
         }
         return null;
@@ -849,7 +849,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public boolean isExtremeTemperature() {
-        return temperature > 50 || temperature < -30;
+        return (temperature > 50) || (temperature < -30);
     }
 
     public void setGravity(float f) {

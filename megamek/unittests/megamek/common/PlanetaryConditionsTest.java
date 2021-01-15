@@ -3,8 +3,7 @@ package megamek.common;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class PlanetaryConditionsTest {
 
@@ -150,5 +149,28 @@ public class PlanetaryConditionsTest {
         Mockito.when(mockEntity.doomedInExtremeTemp()).thenReturn(true);
         assertEquals("extreme temperature", planetaryConditions.whyDoomed(mockEntity, mockGame));
         Mockito.reset(mockEntity, mockGame);
+    }
+
+    @Test
+    public void testIsExtremeTemperature() {
+        PlanetaryConditions planetaryConditions;
+
+        // Extreme temperature - Heat
+
+        planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setTemperature(51);
+        assertTrue(planetaryConditions.isExtremeTemperature());
+
+        // Extreme temperature - Cold
+
+        planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setTemperature(-31);
+        assertTrue(planetaryConditions.isExtremeTemperature());
+
+        // Not extreme temperature
+
+        planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setTemperature(25);
+        assertFalse(planetaryConditions.isExtremeTemperature());
     }
 }

@@ -23,12 +23,8 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,8 +42,20 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 public class MegaMekXmlUtil {
+    //region Variable Declarations
     private static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY;
     private static SAXParserFactory SAX_PARSER_FACTORY;
+
+    private static final String[] INDENTS = new String[] {
+            "",
+            "\t",
+            "\t\t",
+            "\t\t\t",
+            "\t\t\t\t",
+            "\t\t\t\t\t",
+            "\t\t\t\t\t\t"
+    };
+    //endregion Variable Declarations
 
     /**
      * Creates a DocumentBuilder safe from XML external entities
@@ -94,7 +102,7 @@ public class MegaMekXmlUtil {
      *
      * @see "https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#JAXB_Unmarshaller"
      */
-    @SuppressWarnings("nls")
+    @SuppressWarnings(value = "nls")
     public static XMLReader createSafeXMLReader() {
         if (SAX_PARSER_FACTORY == null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -129,41 +137,56 @@ public class MegaMekXmlUtil {
     public static Source createSafeXmlSource(InputStream inputStream) {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
+    //region XML Writing
+    //region Open Indented Line
+    public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {
+        writeSimpleXMLOpenIndentedLine(pw1, indent, name, null, null, null, null);
+    }
 
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
+    public static <T> void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name,
+                                                          String attr, T val) {
+        writeSimpleXMLOpenIndentedLine(pw1, indent, name, attr, val, null, null);
+    }
+
+    public static <T> void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name,
+                                                          String attr, T val, String classAttr, Class<?> c) {
+        final boolean hasVal = val != null;
+        final boolean hasClass = c != null;
+        pw1.print(indentStr(indent) + "<" + escape(name));
+        if (hasVal) {
+            pw1.print(" " + attr + "=\"" + val + "\"");
+        }
+
+        if (hasClass) {
+            pw1.print(" " + classAttr + "=\"" + c.getName() + "\"");
+        }
+        pw1.print(">\n");
+    }
+    //endregion Open Indented Line
+
+    //region Simple XML Tag
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, UUID val) {
         if (val != null) {
             writeSimpleXmlTag(pw1, indent, name, val.toString());
         }
     }
 
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
+    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, LocalDate val) {
         if (val != null) {
             writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
         }
     }
 
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
-    }
-
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, String... values) {
         if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+            pw1.println(indentStr(indent) + "<" + name + ">" + escape(StringUtils.join(values, ',')) + "</" + name + ">");
         }
-    }
-
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, int... values) {
         if (values.length > 0) {
             pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
         }
-    }
-
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, boolean... values) {
@@ -174,18 +197,10 @@ public class MegaMekXmlUtil {
         pw1.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
     }
 
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
-    }
-
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, long... values) {
         if (values.length > 0) {
             pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
         }
-    }
-
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, double... values) {
@@ -194,23 +209,44 @@ public class MegaMekXmlUtil {
         }
     }
 
-    public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "<" + escape(name) + ">");
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
+        if (val != null) {
+            writeSimpleXmlTag(pw1, indent, name, val.toString());
+        }
     }
 
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
+        pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
+    }
+
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+
+    @Deprecated
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
+        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+    }
+    //endregion Simple XML Tag
+
+    //region Close Indented Line
     public static void writeSimpleXMLCloseIndentedLine(PrintWriter pw1, int indent, String name) {
         pw1.println(indentStr(indent) + "</" + escape(name) + ">");
     }
-
-    private static final String[] INDENTS = new String[] {
-            "",
-            "\t",
-            "\t\t",
-            "\t\t\t",
-            "\t\t\t\t",
-            "\t\t\t\t\t",
-            "\t\t\t\t\t\t"
-    };
+    //endregion Close Indented Line
 
     public static String indentStr(int level) {
         if (level < INDENTS.length) {
@@ -220,6 +256,25 @@ public class MegaMekXmlUtil {
         }
     }
 
+    /**
+     * Formats a Date suitable for writing to an XML node.
+     * @param date The date to format for XML.
+     * @return A String suitable for writing a date to an XML node.
+     */
+    public static String saveFormattedDate(LocalDate date) {
+        return date.toString(); // ISO-8601
+    }
+
+    /** Escapes a string to store in an XML element.
+     * @param string The string to be encoded
+     * @return An encoded copy of the string
+     */
+    public static String escape(String string) {
+        return StringEscapeUtils.escapeXml10(string);
+    }
+    //endregion XML Writing
+
+    //region XML Parsing
     /**
      * Parse a date from an XML node's content.
      * @param value The date from an XML node's content.
@@ -252,21 +307,47 @@ public class MegaMekXmlUtil {
         }
     }
 
-    /**
-     * Formats a Date suitable for writing to an XML node.
-     * @param date The date to format for XML.
-     * @return A String suitable for writing a date to an XML node.
-     */
-    public static String saveFormattedDate(LocalDate date) {
-        return date.toString(); // ISO-8601
+    public static String parseString(String value) {
+        return unEscape(value);
+    }
+    public static String[] parseStringArray(String value) {
+        return unEscape(value).split(",");
     }
 
-    /** Escapes a string to store in an XML element.
-     * @param string The string to be encoded
-     * @return An encoded copy of the string
-     */
-    public static String escape(String string) {
-        return StringEscapeUtils.escapeXml10(string);
+    public static int[] parseIntArray(String value) {
+        final String[] values = value.split(",");
+        int[] ints = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            ints[i] = Integer.parseInt(values[i]);
+        }
+        return ints;
+    }
+
+    public static boolean[] parseBooleanArray(String value) {
+        final String[] values = value.split(",");
+        boolean[] booleans = new boolean[values.length];
+        for (int i = 0; i < values.length; i++) {
+            booleans[i] = Boolean.parseBoolean(values[i]);
+        }
+        return booleans;
+    }
+
+    public static long[] parseLongArray(String value) {
+        final String[] values = value.split(",");
+        long[] longs = new long[values.length];
+        for (int i = 0; i < values.length; i++) {
+            longs[i] = Long.parseLong(values[i]);
+        }
+        return longs;
+    }
+
+    public static double[] parseDoubleArray(String value) {
+        final String[] values = value.split(",");
+        double[] doubles = new double[values.length];
+        for (int i = 0; i < values.length; i++) {
+            doubles[i] = Double.parseDouble(values[i]);
+        }
+        return doubles;
     }
 
     /**
@@ -275,4 +356,5 @@ public class MegaMekXmlUtil {
     public static String unEscape(String string) {
         return StringEscapeUtils.unescapeXml(string);
     }
+    //endregion XML Parsing
 }

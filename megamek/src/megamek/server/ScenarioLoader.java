@@ -872,7 +872,7 @@ public class ScenarioLoader {
                     MegaMek.getLogger().info("Got map: " + sBoardFile);
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
-                    MegaMek.getLogger().info("Loading board " +sBoardFile);
+                    MegaMek.getLogger().info("Loading board " + sBoardFile);
                 }
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {

@@ -172,7 +172,7 @@ public class ConvertMMSCommand extends ServerCommand {
             for (Enumeration<IPlayer> players = server.getGame().getPlayers(); players.hasMoreElements();) {
                 IPlayer p = players.nextElement();
                 int numUnits = server.getGame().getEntitiesOwnedBy(p);
-                ArrayList<Entity> PlayerUnits = server.getGame().getPlayerEntities(p, true);
+                List<Entity> PlayerUnits = server.getGame().getPlayerEntities(p, true);
                 
                 for (int counter = 0; counter < PlayerUnits.size(); counter++) {
                     writer.write("Unit" + SEPARATOR_UNDERSCORE + p.getName() +

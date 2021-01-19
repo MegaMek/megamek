@@ -117,7 +117,6 @@ public class BoardIndex {
     
     // Create the index.
     private void runIndex() {
-        
         MegaMek.getLogger().info("Begin board indexing " + LocalDateTime.now());
 
 

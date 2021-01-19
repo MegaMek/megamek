@@ -35,8 +35,8 @@ public class BoardIndex {
     private static final String SEPARATOR_COMMA = ",";
     private static final String FILE_SUFFIX_BOARD = ".board";
     
-    private List<String> allDirs = new ArrayList<String>();
-    private List<String[]> index = new ArrayList<String[]>();
+    private List<String> allDirs = new ArrayList<>();
+    private List<String[]> index = new ArrayList<>();
     private String indexDir = "";
     
     // Constructor, stores the custom map directory, finds the directories in that location, and runs the indexing

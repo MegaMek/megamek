@@ -868,10 +868,8 @@ public class ScenarioLoader {
                 String sBoardFile ="";
                 
                 if (board.equals(MAP_RANDOM)) { 
-                    
                     sBoardFile = boards.getRandom(mapWidth, mapHeight);
                     MegaMek.getLogger().info("Got map: " + sBoardFile);
-                    
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                     MegaMek.getLogger().info("Loading board " +sBoardFile);

@@ -140,7 +140,7 @@ public class ConvertMMSCommand extends ServerCommand {
             writer.newLine();
             
             // Random only for now
-            writer.write(PARAM_MAPS+SEPARATOR_PROPERTY+MAP_RANDOM);
+            writer.write(PARAM_MAPS + SEPARATOR_PROPERTY + MAP_RANDOM);
             writer.newLine();
             
             // Factions section.

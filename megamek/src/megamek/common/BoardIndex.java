@@ -147,6 +147,6 @@ public class BoardIndex {
         }
 
         MegaMek.getLogger().info("All indexes read " + LocalDateTime.now());
-        MegaMek.getLogger().info("Map Listing total:" + index.size());
+        MegaMek.getLogger().info("Map Listing total: " + index.size());
     }
 }

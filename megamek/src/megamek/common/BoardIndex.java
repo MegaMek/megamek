@@ -67,7 +67,7 @@ public class BoardIndex {
     
     // Get a random board of specified width and height.
     public String getRandom(int width, int height) {
-        List<Integer> randMap = new ArrayList<Integer>();
+        List<Integer> randMap = new ArrayList<>();
 
         for (int i = 0; i < index.size(); i++) {
             String[] board = index.get(i);

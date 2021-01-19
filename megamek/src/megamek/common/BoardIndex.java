@@ -139,7 +139,7 @@ public class BoardIndex {
                             strStore[4] = dir + "/" + file.substring(0, file.length() - FILE_SUFFIX_BOARD.length());
                             index.add(strStore);
                         } catch (IOException e) {
-                            MegaMek.getLogger().info("Failed to read file " + file);
+                            MegaMek.getLogger().info("Failed to read file " + file, e);
                         }
                     }
                 }

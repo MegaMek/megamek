@@ -195,7 +195,7 @@ public class ConvertMMSCommand extends ServerCommand {
             }
             
             writer.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             server.sendServerChat(connId, "file write failed");
             return false;
         }

@@ -93,8 +93,7 @@ public class ConvertMMSCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId,
-                                  "Observers are restricted from loading games.");
+            server.sendServerChat(connId, "Observers are restricted from loading games.");
             return;
         }
         if (args.length > 1) {

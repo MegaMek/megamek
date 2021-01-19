@@ -108,7 +108,7 @@ public class BoardIndex {
             }
         });
 
-        for (int i=0; i < directories.length; i++) {
+        for (int i = 0; i < directories.length; i++) {
             addDir(directories[i]);
         }
 

@@ -71,7 +71,7 @@ public class BoardIndex {
 
         for (int i = 0; i < index.size(); i++) {
             String[] board = index.get(i);
-            if ((Integer.parseInt(board[1]) == width) && (Integer.parseInt(board[2])==height)) {
+            if ((Integer.parseInt(board[1]) == width) && (Integer.parseInt(board[2]) == height)) {
                 randMap.add(i);
             }
         }

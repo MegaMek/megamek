@@ -91,7 +91,6 @@ public class BoardIndex {
     
     // Index the directories. This calls addDir to add them and check for duplicates.
     private void indexDirs(String mapDir) {
- 
         addDir("");
 
         MegaMek.getLogger().info("Begin map directory index" +LocalDateTime.now());

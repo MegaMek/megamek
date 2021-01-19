@@ -897,7 +897,7 @@ public class ScenarioLoader {
         int checkHeight = ba[0].getHeight();
         
         for (int i = 1; i < ba.length; i++) {
-            if (!((checkWidth == ba[i].getHeight()) && (checkHeight == ba[i].getHeight()))){
+            if (!((checkWidth == ba[i].getHeight()) && (checkHeight == ba[i].getHeight()))) {
                 MegaMek.getLogger().info("Map sizes do not match. Returning first map only");
                 return ba[0];
             }            

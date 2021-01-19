@@ -93,7 +93,7 @@ public class BoardIndex {
     private void indexDirs(String mapDir) {
         addDir("");
 
-        MegaMek.getLogger().info("Begin map directory index" +LocalDateTime.now());
+        MegaMek.getLogger().info("Begin map directory index" + LocalDateTime.now());
         
         if (mapDir != null) {
             for (String customDir : mapDir.split(SEPARATOR_COMMA, -1)) {

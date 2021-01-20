@@ -34,7 +34,6 @@ import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.CrewSkillSummaryUtil;
 import static megamek.client.ui.swing.lobby.MekTableModel.DOT_SPACER;
@@ -130,8 +129,8 @@ public class MekTableCellFormatter {
         int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
         if (quirkCount > 0) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
-            result.append(Messages.getString("BT.Quirks") + ": ");
-            result.append(quirkCount + "</FONT>");
+            result.append(Messages.getString("BT.Quirks"));
+            result.append("</FONT>");
         }
         
         // C3 ...
@@ -340,15 +339,15 @@ public class MekTableCellFormatter {
         if (quirkCount > 0) {
             result.append(DOT_SPACER);
             result.append(guiScaledFontHTML(uiQuirksColor()));
-            result.append(Messages.getString("ChatLounge.Quirks") + ": ");
+            result.append(Messages.getString("ChatLounge.Quirks"));
             
-            int posQuirks = entity.countQuirks(Quirks.POS_QUIRKS);
-            String pos = posQuirks > 0 ? "+" + posQuirks : ""; 
-            int negQuirks = entity.countQuirks(Quirks.NEG_QUIRKS);
-            String neg = negQuirks > 0 ? "-" + negQuirks : "";
-            int wpQuirks = entity.countWeaponQuirks();
-            String wpq = wpQuirks > 0 ? "W" + wpQuirks : "";
-            result.append(arrangeInLine(" / ", pos, neg, wpq));
+//            int posQuirks = entity.countQuirks(Quirks.POS_QUIRKS);
+//            String pos = posQuirks > 0 ? "+" + posQuirks : ""; 
+//            int negQuirks = entity.countQuirks(Quirks.NEG_QUIRKS);
+//            String neg = negQuirks > 0 ? "-" + negQuirks : "";
+//            int wpQuirks = entity.countWeaponQuirks();
+//            String wpq = wpQuirks > 0 ? "W" + wpQuirks : "";
+//            result.append(arrangeInLine(" / ", pos, neg, wpq));
             
             result.append("</FONT>");
         }

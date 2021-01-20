@@ -144,16 +144,6 @@ public class MiniMap extends JPanel {
     // unit representation
     private Vector<int[]> roadHexIndexes = new Vector<int[]>();
     private int zoom = GUIPreferences.getInstance().getMinimapZoom();
-//    private int[] fontSize = {6, 8, 10, 12, 14, 16};
-//    private int[] hexSide = {3, 5, 6, 8, 10, 12};
-//    private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
-//    private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
-//    private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
-//    private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
-//    private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
-//    private int[] unitSizes = {5, 6, 7, 8, 9, 10};
-//    private int[] stratZoom = {8, 9, 11, 12, 14, 16};
-//    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
     
     private int[] fontSize = {6, 6, 8, 10, 12, 14, 16};
     private int[] hexSide = {2, 3, 5, 6, 8, 10, 12};
@@ -439,7 +429,7 @@ public class MiniMap extends JPanel {
         m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
         m_terrainColors[Terrains.FIELDS] = new Color(250, 255, 205);
         m_terrainColors[Terrains.INDUSTRIAL] = new Color(112, 138, 144);
-        m_terrainColors[Terrains.SPACE] = Color.gray;
+        m_terrainColors[Terrains.SPACE] = Color.BLACK;
 
         // now try to read in the config file
         int red;
@@ -729,7 +719,11 @@ public class MiniMap extends JPanel {
                     IHex h = m_board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h, j, k));
-                        paintCoord(gg, j, k, true);
+                        if (h.containsTerrain(Terrains.SPACE)) {
+                            paintSpaceCoord(gg, j, k, true);
+                        } else {
+                            paintCoord(gg, j, k, true);
+                        }
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
@@ -1051,6 +1045,37 @@ public class MiniMap extends JPanel {
             g.drawPolygon(xPoints, yPoints, 6);
             g.setColor(oldColor);
         }
+    }
+    
+    private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int[] xPoints = new int[6];
+        int[] yPoints = new int[6];
+        xPoints[0] = baseX;
+        yPoints[0] = baseY;
+        xPoints[1] = baseX + hexSideBySin30[zoom];
+        yPoints[1] = baseY + hexSideByCos30[zoom];
+        xPoints[2] = xPoints[1] + hexSide[zoom];
+        yPoints[2] = yPoints[1];
+        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
+        yPoints[3] = baseY;
+        xPoints[4] = xPoints[2];
+        yPoints[4] = baseY - hexSideByCos30[zoom];
+        xPoints[5] = xPoints[1];
+        yPoints[5] = yPoints[4];
+        g.fillPolygon(xPoints, yPoints, 6);
+        if (border) {
+            Color oldColor = g.getColor();
+            g.setColor(new Color(20,20,60));
+            g.drawPolygon(xPoints, yPoints, 6);
+            g.setColor(oldColor);
+        }
+        int dx = (int)(Math.random() * hexSide[zoom]);
+        int dy = (int)((Math.random()-0.5) * hexSideByCos30[zoom]);
+        int c = (int)(Math.random()* 180);
+        g.setColor(new Color(c,c,c));
+        g.fillRect(baseX+dx, baseY+dy, 1, 1);
     }
 
     /**
@@ -1966,7 +1991,11 @@ public class MiniMap extends JPanel {
                     IHex h = m_board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h, j, k));
-                        paintCoord(gg, j, k, true);
+                        if (h.containsTerrain(Terrains.SPACE)) {
+                            paintSpaceCoord(gg, j, k, true);
+                        } else {
+                            paintCoord(gg, j, k, true);
+                        }
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor

@@ -1981,4 +1981,13 @@ public class Board implements Serializable, IBoard {
                 || (c.getX() == (width - 1)) 
                 || (c.getY() == (height - 1));
     }
+    
+    public static Board createEmptyBoard(int width, int height) {
+        IHex[] hexes = new IHex[width * height];
+        for (int i = 0; i < width * height; i++) {
+            hexes[i] = new Hex();
+        }
+        Board result = new Board(width, height, hexes);
+        return result;
+    }
 }

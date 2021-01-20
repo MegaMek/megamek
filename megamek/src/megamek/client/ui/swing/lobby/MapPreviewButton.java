@@ -35,7 +35,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 import megamek.common.util.ImageUtil;
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 /** A specialized JButton for the map preview panel of the Lobby. */
 public class MapPreviewButton extends JButton {
@@ -105,17 +105,7 @@ public class MapPreviewButton extends JButton {
     }
     
     private void generateTooltip() {
-        String tooltip = "";
-        if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
-            tooltip = "This board is generated using the current Generated <BR>Map Settings when the game is started.";
-        } else if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-            tooltip = "This board is selected randomly from the following list <BR> of boards when the game is started:<BR>";
-            tooltip += boardName.substring(MapSettings.BOARD_SURPRISE.length()).replace("\n", "<BR>");
-        } else {
-            tooltip = boardName;
-        }
-        setToolTipText(scaleStringForGUI(tooltip));
-        return;
+        setToolTipText(scaleStringForGUI(lobby.createBoardTooltip(boardName)));
     }
     
     /** Returns true if this button has a base image stored, i.e. if a board file is set for it. */
@@ -168,11 +158,13 @@ public class MapPreviewButton extends JButton {
             if (lobby.isMultipleBoards()) {
                 drawIndex(g, w, h);
             }
-            if (isExample) {
+            if (isExample && lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
                 drawExample(g, w, h);
             }
-            String text = cleanBoardName(getText(), lobby.mapSettings);
-            drawMinimapLabel(text, w, h, g);
+            if (lobby.mapSettings.getMedium() != MapSettings.MEDIUM_SPACE) {
+                String text = cleanBoardName(getText(), lobby.mapSettings);
+                drawMinimapLabel(text, w, h, g, lobby.hasInvalidBoard(getText()));
+            }
             g.dispose();
             // Store the image and notify other buttons to redraw with the calculated size
             scaledImage = drawableImage;
@@ -190,11 +182,6 @@ public class MapPreviewButton extends JButton {
         if (scaledImage != null) {
             g.drawImage(scaledImage, 0, 0, null);
         }
-        
-//        if (hasFocus()) {
-//            g.setColor(Color.GREEN);
-//            g.drawRect(2, 2, getWidth()-6, getHeight()-6);
-//        }
     }
     
     private void drawIndex(Graphics g, int w, int h) {
@@ -211,12 +198,12 @@ public class MapPreviewButton extends JButton {
     
     private void drawExample(Graphics g, int w, int h) {
         String text = "Example board";
-        int cx = w / 20;
-        int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(14));
+        int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(25));
         g.setFont(new Font("Dialog", Font.ITALIC, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
-        int cy = h / 20 + fm.getAscent();
-        g.setColor(INDEX_COLOR);
+        int cx = (w - fm.stringWidth(text)) / 2;
+        int cy = h / 10 + fm.getAscent();
+        g.setColor(Color.BLACK);
         g.drawString(text, cx, cy);
     }
 
@@ -229,7 +216,6 @@ public class MapPreviewButton extends JButton {
         private static final long serialVersionUID = -1798418800717656572L;
 
         public final DataFlavor flavor = DataFlavor.stringFlavor;
-//        private String boardName;
         private MapPreviewButton button;
         private ChatLounge lobby;
 
@@ -243,11 +229,6 @@ public class MapPreviewButton extends JButton {
             return DnDConstants.ACTION_COPY;
         }
         
-        /** Assigns the given board name to this handler (this button) for later export. */
-//        protected void setBoardName(String name) {
-//            boardName = name;
-//        }
-
         @Override
         protected Transferable createTransferable(JComponent c) {
             // When multiple boards come from the available boards list, they 

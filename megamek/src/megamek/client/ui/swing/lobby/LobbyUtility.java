@@ -124,11 +124,17 @@ public class LobbyUtility {
                 && !board.startsWith(MapSettings.BOARD_SURPRISE);
     }
     
+    /** Returns a formatted and colored tooltip string warning that a board is invalid. */
+    static String invalidBoardTip() {
+        return UIUtil.guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())
+                + Messages.getString("ChatLounge.map.invalidTip") + "</FONT>";
+    }
+    
     /** 
      * Draws the given text (the board name or special text) as a label on the
      * lower edge of the image for which the graphics g is given.
      */
-    static void drawMinimapLabel(String text, int w, int h, Graphics g) {
+    static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
         if (text.length() == 0) {
             return;
         }
@@ -149,6 +155,9 @@ public class LobbyUtility {
             col = new Color(250, 250, 50, 140);
         } else if (text.startsWith(Messages.getString("ChatLounge.MapGenerated"))) {
             col = new Color(50, 50, 250, 140);
+        }
+        if (invalid) {
+            col = GUIPreferences.getInstance().getWarningColor();
         }
         g.setColor(col);
         g.fillRoundRect(cx - 3, cy - fm.getAscent(), w - 2 * cx + 6, th, fontSize/2, fontSize/2);
@@ -201,17 +210,8 @@ public class LobbyUtility {
      * a newline and the boardname for each of the given boards. Specialized method
      * for lobby map assembly. 
      */ 
+    @Deprecated
     public static String assembleSurpriseBoards(Collection<String> boards) {
-//        String result = "";
-//        boolean first = true;
-//        for (String board: boards) {
-//            if (!first) {
-//                result += "\n";
-//            }
-//            result += board;
-//            first = false;
-//        }
-//        return result;
         return String.join("\n", boards);
     }
     

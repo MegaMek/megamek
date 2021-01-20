@@ -595,9 +595,6 @@ public class MapSettings implements Serializable {
         // Change in height
         if (newHeight > mapHeight) {
             boardsSelected.addAll(Collections.nCopies(mapWidth * newHeight - boardsSelected.size(), null));
-//            while (boardsSelected.size() < (mapWidth * newHeight)) {
-//                boardsSelected.add(null);
-//            }
         } else if (newHeight < mapHeight) {
             boardsSelected.subList(mapWidth * newHeight, boardsSelected.size()).clear();
         }
@@ -609,9 +606,6 @@ public class MapSettings implements Serializable {
             // Add empty boards at the end of each row
             for (int row = mapHeight - 1; row >= 0; row--) {
                 boardsSelected.addAll(mapWidth * (row + 1), Collections.nCopies(newWidth - mapWidth, null));
-//                for (int i = 0; i < newWidth - mapWidth; i++) {
-//                    boardsSelected.add(mapWidth * (row + 1), null);
-//                }
             }
         } else if (newWidth < mapWidth) {
             // Remove boards at the end of each row
@@ -758,6 +752,7 @@ public class MapSettings implements Serializable {
 
     public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
+        this.boardsAvailable.add("TestServerside"+getBoardWidth()+getBoardHeight());
     }
 
     /**

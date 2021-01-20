@@ -127,17 +127,32 @@ public final class UnitToolTip {
     //TODO: CLose the background image worker in lobby
     // adjust the map zooms in the list
     // board name in the preview improve
-    //TODO: layout search bar
-    //TODO: layout map size etc.
+    // layout search bar
+    // layout map size etc.
     // add surprise function
     // remove random/surprise entries
     // dont reset maps upon size change
     // keep Map BUttons alive
     //TODO: Does the multiple selection "\n" work on Macs?
-    //TODO: Invalid boards treatment. 
-    //TODO:Server boards not on client
-    //TODO: Allow all board sizes
+    // Invalid boards treatment. 
+    // Server boards not on client
+    // Allow all board sizes ?? Nope, heavy change
     //TODO: Explanation
+    // Save map setup - > new object MapSetup-> XML save
+    // Teams Overview panel
+    //TODO: DOnt allowadvancing  double blind games where startin pos overlaps 
+    // Team Overview doesnt update data initially when cnnecting as remote player to a game
+    // Map list right click not available in space when disabled..., also no tooltip when disabled
+    // better space minimap?
+    // refresh maps when changing from space and ground
+    // do not reload map list when going to space
+    //TODO: custm board size only use 1 board like space and use the manual board size
+    //TODO: clean up minimap
+    // switch between space ground selectedboards remains at 6, popup shows board 1...6, even though 1 board on screen
+    // Use proper filechosers for map setup
+    // playertable summary team see through real blind drop
+    // Reduce Quirks display
+
     
     
     

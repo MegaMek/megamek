@@ -23,8 +23,7 @@ import megamek.client.ui.swing.util.ScalingPopup;
 
 class MapListPopup {
 
-    static ScalingPopup mapListPopup(List<String> boards, List<MapPreviewButton> mapButtons,
-            ActionListener listener, ChatLounge lobby) {
+    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, ChatLounge lobby) {
         
         if (boards.isEmpty()) {
             return new ScalingPopup();
@@ -33,9 +32,9 @@ class MapListPopup {
         boolean oneSelected = boards.size() == 1;
 
         ScalingPopup popup = new ScalingPopup();
-        popup.add(singleBoardMenu(oneSelected, listener, mapButtons.size(), boards));
-        popup.add(multiBoardRandomMenu(!oneSelected, listener, mapButtons.size(), boards));
-        popup.add(multiBoardSurpriseMenu(!oneSelected, listener, mapButtons.size(), boards));
+        popup.add(singleBoardMenu(oneSelected, listener, numButtons, boards));
+        popup.add(multiBoardRandomMenu(!oneSelected, listener, numButtons, boards));
+        popup.add(multiBoardSurpriseMenu(!oneSelected, listener, numButtons, boards));
         return popup;
     }
 

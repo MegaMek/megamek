@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,10 +33,18 @@ import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
@@ -51,6 +60,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import megamek.MegaMek;
 import megamek.client.Client;
@@ -69,6 +79,7 @@ import megamek.client.ui.swing.dialog.MMConfirmDialog.Response;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.util.*;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -88,16 +99,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final int MEKTABLE_ROWHEIGHT_COMPACT = 20;
     private static final int MEKTABLE_ROWHEIGHT_FULL = 65;
     private static final int PLAYERTABLE_ROWHEIGHT = 60;
+    private final static int TEAMOVERVIEW_BORDER = 45;
     
     private JTabbedPane panTabs;
     private JPanel panUnits = new JPanel();
     private JPanel panMap = new JPanel();
-
-    // Main panel top bar
-    private JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
+    private JPanel panTeam = new JPanel();
+    
+    
+    // Labels
     private JLabel lblMapSummary = new JLabel("");
     private JLabel lblGameYear = new JLabel("");
     private JLabel lblTechLevel = new JLabel("");
+
+    // Game Setup
+    private JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
+    private JToggleButton butGroundMap = new JToggleButton("Ground Map");
+    private JToggleButton butLowAtmoMap = new JToggleButton("Low Atmosphere Map");
+    private JToggleButton butHighAtmoMap = new JToggleButton("High Atmosphere Map");
+    private JToggleButton butSpaceMap = new JToggleButton("Space Map");
+    private ButtonGroup grpMap = new ButtonGroup();
 
     /* Unit Configuration Panel */
     private JPanel panUnitInfo = new JPanel();
@@ -128,19 +149,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private PlayerTableModel playerModel;
 
     /* Map Settings Panel */
+    private JLabel lblMapWidth = new JLabel("Map Width:");
+    private JButton butMapGrowW = new JButton(">");
+    private JButton butMapShrinkW = new JButton("<");
+    private JTextField fldMapWidth = new JTextField(3);
+    private JLabel lblMapHeight = new JLabel("Map Height:");
+    private JButton butMapGrowH = new JButton(">");
+    private JButton butMapShrinkH = new JButton("<");
+    private JTextField fldMapHeight = new JTextField(3);
+    private FixedYPanel panMapHeight = new FixedYPanel();
+    private FixedYPanel panMapWidth = new FixedYPanel();
+    
+    private JLabel lblSpaceBoardWidth = new JLabel("Board Width:");
+    private JTextField fldSpaceBoardWidth = new JTextField(3);
+    private JLabel lblSpaceBoardHeight = new JLabel("Board Height:");
+    private JTextField fldSpaceBoardHeight = new JTextField(3);
+    private FixedYPanel panSpaceBoardHeight = new FixedYPanel();
+    private FixedYPanel panSpaceBoardWidth = new FixedYPanel();
+    
+    private JLabel lblBoardSize = new JLabel("Board Size: ");
+   
     private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); 
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); 
-    private JCheckBox chkIncludeGround = new JCheckBox(Messages.getString("ChatLounge.IncludeGround")); 
-    private JCheckBox chkIncludeSpace = new JCheckBox(Messages.getString("ChatLounge.IncludeSpace"));
     ArrayList<MapPreviewButton> mapButtons = new ArrayList<>(20);
     MapSettings mapSettings;
     private JPanel panGroundMap;
-    private JPanel panSpaceMap;
-    private JComboBox<String> comboMapType;
+//    private JComboBox<String> comboMapType;
     @SuppressWarnings("rawtypes")
-    private JComboBox<Comparable> comboMapSizes;
-    private JButton butMapSize;
-    private JButton butBoardPreview;
+    private JComboBox<Comparable> comMapSizes;
+    private JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
     private JPanel panMapButtons = new JPanel();
     private JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
@@ -152,10 +189,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
     private String cmdSelectedTab = null;
+    Dimension currentMapButtonSize = new Dimension(0,0);
+    
+    private ArrayList<String> invalidBoards = new ArrayList<>();
+    private ArrayList<String> serverBoards = new ArrayList<>();
     
     private JSplitPane splGroundMap;
-    private JLabel searchLbl = new JLabel("Search: ");
-    private JTextField fldSearch = new JTextField(20);
+    private JLabel lblSearch = new JLabel("Search: ");
+    private JTextField fldSearch = new JTextField(10);
+    private JButton butCancelSearch = new JButton("X");
     
     private MekTableSorter activeSorter;
     private ArrayList<MekTableSorter> unitSorters = new ArrayList<>();
@@ -163,7 +205,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private JButton butAddY = new JButton("+");
     private JButton butAddX = new JButton("+");
-
+    private JButton butSaveMapSetup = new JButton(Messages.getString("ChatLounge.map.saveMapSetup") + " *");
+    private JButton butLoadMapSetup = new JButton(Messages.getString("ChatLounge.map.loadMapSetup"));
+    
+    /* Team Overview Panel */
+    private TeamOverviewPanel panTeamOverview;
+    JButton butDetach = new JButton("Detach to Window");
+    ClientDialog teamOverviewWindow;
+    
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
         public void doneLoading() {
@@ -189,10 +238,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         setLayout(new BorderLayout());
         panTabs = new JTabbedPane();
         panTabs.add("Select Units", panUnits); 
-        panTabs.add("Select Map", panMap); 
+        panTabs.add("Select Map", panMap);
+        panTabs.add("Team Overview", panTeam); 
         add(panTabs, BorderLayout.CENTER);
-
+        
         setupSorters();
+        setupTeamOverview();
         setupPlayerInfo();
         refreshGameSettings();
         setupEntities();
@@ -201,16 +252,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         setupMapPanel();
         refreshLabels();
         adaptToGUIScale();
-
         setupListeners();
-        
-        panMapButtons.addComponentListener(new ComponentAdapter() {
-            
-            @Override
-            public void componentResized(ComponentEvent e) {
-                updateMapButtons();
-            }
-        });
     }
     
     /** Sets up all the listeners that the lobby works with. */
@@ -246,7 +288,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butConditions.addActionListener(lobbyListener);
         butConfigPlayer.addActionListener(lobbyListener);
         butLoadList.addActionListener(lobbyListener);
-        butMapSize.addActionListener(lobbyListener);
         butNames.addActionListener(lobbyListener);
         butOptions.addActionListener(lobbyListener);
         butRandomMap.addActionListener(lobbyListener);
@@ -258,13 +299,46 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butCamo.addActionListener(camoListener);
         butAddX.addActionListener(lobbyListener);
         butAddY.addActionListener(lobbyListener);
+        butMapGrowW.addActionListener(lobbyListener);
+        butMapShrinkW.addActionListener(lobbyListener);
+        butMapGrowH.addActionListener(lobbyListener);
+        butMapShrinkH.addActionListener(lobbyListener);
+        butGroundMap.addActionListener(lobbyListener);
+        butLowAtmoMap.addActionListener(lobbyListener);
+        butHighAtmoMap.addActionListener(lobbyListener);
+        butSpaceMap.addActionListener(lobbyListener);
+        butLoadMapSetup.addActionListener(lobbyListener);
+        butSaveMapSetup.addActionListener(lobbyListener);
+        butDetach.addActionListener(lobbyListener);
+        butCancelSearch.addActionListener(lobbyListener);
         
-        chkIncludeGround.addActionListener(lobbyListener);
-        chkIncludeSpace.addActionListener(lobbyListener);
-
-        comboMapType.addActionListener(lobbyListener);
+        fldMapWidth.addActionListener(lobbyListener);
+        fldMapHeight.addActionListener(lobbyListener);
+        fldMapWidth.addFocusListener(focusListener);
+        fldMapHeight.addFocusListener(focusListener);
+        fldSpaceBoardWidth.addActionListener(lobbyListener);
+        fldSpaceBoardHeight.addActionListener(lobbyListener);
+        fldSpaceBoardWidth.addFocusListener(focusListener);
+        fldSpaceBoardHeight.addFocusListener(focusListener);
+        
         comboTeam.addActionListener(lobbyListener);
     }
+
+    FocusListener focusListener = new FocusAdapter() {
+        
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (e.getSource() == fldMapWidth) {
+                setManualMapWidth();
+            } else if (e.getSource() == fldMapHeight) {
+                setManualMapHeight();
+            } else if (e.getSource() == fldSpaceBoardWidth) {
+                setManualBoardWidth();
+            } else if (e.getSource() == fldSpaceBoardHeight) {
+                setManualBoardHeight();
+            } 
+        };
+    }; 
     
     ActionListener camoListener = e -> {
         // Show the CamoChooser for the selected player
@@ -283,6 +357,34 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butCamo.setIcon(player.getCamouflage().getImageIcon());
         getSelectedClient().sendPlayerInfo();
     };
+    
+    private void setupTeamOverview() {
+        panTeamOverview = new TeamOverviewPanel(clientgui);
+        FixedYPanel panDetach = new FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        panDetach.add(butDetach);
+        
+        panTeam.setLayout(new BoxLayout(panTeam, BoxLayout.PAGE_AXIS));
+        panTeam.add(panDetach);
+        panTeam.add(panTeamOverview);
+        
+        // setup (but don't show) the detached team overview window
+        teamOverviewWindow = new ClientDialog(clientgui.frame, "Team Overview", false);
+        teamOverviewWindow.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                remove(panTeamOverview);
+                int i = panTabs.indexOfTab("Team Overview");
+                
+                Component cp = panTabs.getComponentAt(i);
+                if (cp instanceof JPanel) {
+                    ((JPanel)cp).add(panTeamOverview);
+                }
+                butDetach.setEnabled(true);
+                panTabs.repaint();
+            }
+        });
+        teamOverviewWindow.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
+    }
     
     /**OK Initializes the Mek Table sorters. */
     private void setupSorters() {
@@ -449,7 +551,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panUnits.setLayout(gridbag);
-
+        
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(5, 1, 5, 1);
         c.gridx = 0;
@@ -457,8 +559,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
-        gridbag.setConstraints(butOptions, c);
-        panUnits.add(butOptions);
+//        gridbag.setConstraints(butOptions, c);
+        panUnits.add(butOptions, c);
 
         JPanel panel1 = new JPanel(new GridBagLayout());
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -512,65 +614,96 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private void setupMapPanel() {
         mapSettings = MapSettings.getInstance(clientgui.getClient().getMapSettings());
-        setupGroundMap();
-        setupSpaceMap();
-        refreshSpaceGround();
+        setupMapAssembly();
+        refreshMapUI();
 
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panMap.setLayout(gridbag);
+        panMap.setLayout(new BoxLayout(panMap, BoxLayout.PAGE_AXIS));
+        
+        // Ground, Atmo, Space Map Buttons
+        FixedYPanel panMapType = new FixedYPanel();
+        panMapType.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        panMapType.add(butGroundMap);
+        panMapType.add(butLowAtmoMap);
+//        panMapType.add(butHighAtmoMap);
+        panMapType.add(butSpaceMap);
+        grpMap.add(butGroundMap);
+        grpMap.add(butLowAtmoMap);
+        grpMap.add(butHighAtmoMap);
+        grpMap.add(butSpaceMap);
+        panMap.add(panMapType);
+        
+        // Planetary Conditions and Random Map Settings buttons
+        FixedYPanel panSettings = new FixedYPanel();
+        panSettings.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        panSettings.add(butConditions);
+        panSettings.add(butRandomMap);
+        panMap.add(panSettings);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(5, 1, 5, 1);
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.EAST;
-        panMap.add(butConditions, c);
+        // Main part: Map Assembly
+        panMap.add(panGroundMap);
 
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.WEST;
-        panMap.add(butRandomMap, c);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(4, 4, 4, 4);
-        c.weightx = 1.0;
-        c.weighty = 0.75;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panMap.add(panGroundMap, c);
-
-        c.weighty = 0.1;
-        c.gridy = 2;
-        panMap.add(panSpaceMap, c);
     }
 
     /**
      * Sets up the ground map selection panel
      */
     @SuppressWarnings("rawtypes")
-    private void setupGroundMap() {
+    private void setupMapAssembly() {
 
-        panGroundMap = new JPanel();
-        panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
-        panGroundMap.setLayout(new GridLayout(1, 1));
+        panGroundMap = new JPanel(new GridLayout(1, 1));
+        panGroundMap.setBorder(new EmptyBorder(20, 10, 10, 10));
 
         panMapButtons.setLayout(new BoxLayout(panMapButtons, BoxLayout.PAGE_AXIS));
+        // Resize the preview buttons when the panel is resized
+        panMapButtons.addComponentListener(new ComponentAdapter() {
 
-        comboMapType = new JComboBox<String>();
-        setupMapChoice();
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateMapButtons();
+            }
+        });
+        
+        panMapWidth.add(lblMapWidth);
+        panMapWidth.add(butMapShrinkW);
+        panMapWidth.add(fldMapWidth);
+        panMapWidth.add(butMapGrowW);
+        
+        panMapHeight.add(lblMapHeight);
+        panMapHeight.add(butMapShrinkH);
+        panMapHeight.add(fldMapHeight);
+        panMapHeight.add(butMapGrowH);
+        
+        panSpaceBoardWidth.add(lblSpaceBoardWidth);
+        panSpaceBoardWidth.add(fldSpaceBoardWidth);
+        panSpaceBoardWidth.setVisible(false);
+        
+        panSpaceBoardHeight.add(lblSpaceBoardHeight);
+        panSpaceBoardHeight.add(fldSpaceBoardHeight);
+        panSpaceBoardHeight.setVisible(false);
+        
+        FixedYPanel bottomPanel = new FixedYPanel();
+        bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+        bottomPanel.add(butBoardPreview);
+        bottomPanel.add(butSaveMapSetup);
+        bottomPanel.add(butLoadMapSetup);
 
-        butMapSize = new JButton(Messages.getString("ChatLounge.MapSize")); 
-        comboMapSizes = new JComboBox<Comparable>();
-        refreshMapSizes();
-
-        butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); 
         butBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));
+//        butBoardPreview.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+
+        // The left side panel including the game map preview
+        JPanel panMapPreview = new JPanel();
+        panMapPreview.setLayout(new BoxLayout(panMapPreview, BoxLayout.PAGE_AXIS));
+        
+        panMapPreview.add(panMapWidth);
+        panMapPreview.add(panMapHeight);
+        panMapPreview.add(panSpaceBoardWidth);
+        panMapPreview.add(panSpaceBoardHeight);
+        panMapPreview.add(panMapButtons);
+        panMapPreview.add(bottomPanel);
+        
+        // The right side panel including the list of available boards
+        comMapSizes = new JComboBox<Comparable>();
+        refreshMapSizes();
 
         lisBoardsAvailable = new JList<String>(new DefaultListModel<String>());
         lisBoardsAvailable.setCellRenderer(new BoardNameRenderer());
@@ -578,95 +711,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lisBoardsAvailable.setVisibleRowCount(-1);
         lisBoardsAvailable.setDragEnabled(true);
         lisBoardsAvailable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
         refreshBoardsAvailable();
-        
-        JPanel panMapPreview = new JPanel();
-        
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panMapPreview.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.3;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panMapPreview.add(chkIncludeGround, c);
-
-        c.gridy = 1;
-        panMapPreview.add(comboMapType, c);
-
-        c.gridy = 2;
-        panMapPreview.add(comboMapSizes, c);
-
-        c.gridy = 3;
-        panMapPreview.add(butMapSize, c);
-
-        c.gridy = 4;
-        panMapPreview.add(butBoardPreview, c);
-
-        
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 0.01;
-        c.weighty = 1.0;
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panMapPreview.add(panMapButtons, c);
-        
-        c.fill = GridBagConstraints.VERTICAL;
-        c.weightx = 0;
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panMapPreview.add(butAddX, c);
-        
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridx = 0;
-        c.gridy = 6;
-        c.gridwidth = 2;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panMapPreview.add(butAddY, c);
         
         JPanel panAvail = new JPanel();
         panAvail.setLayout(new BoxLayout(panAvail, BoxLayout.PAGE_AXIS));
-
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
-
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 0;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panAvail.add(lblBoardsAvailable);
-        
-        c.fill = GridBagConstraints.NONE;
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        panAvail.add(searchPanel());
-
-        scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridwidth = 2;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.NORTHWEST;
+        panAvail.setBorder(new EmptyBorder(0, 20, 0, 0));
+        panAvail.add(setupAvailTopPanel());
         panAvail.add(scrBoardsAvailable);
-
+        
+        // The splitpane holding the left and right side panels
         splGroundMap = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panMapPreview, panAvail);
         splGroundMap.addComponentListener(new ComponentAdapter() {
             @Override
@@ -686,7 +740,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 Messages.getString("BoardSelectionDialog.ViewGameBoard"), 
                 false);
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
-        boardPreviewW.setVisible(false);
+//        boardPreviewW.setVisible(false);
 
         try {
             BoardView1 bv = new BoardView1(boardPreviewGame, null, null);
@@ -708,10 +762,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshMapButtons();
     }
     
-    private JPanel searchPanel() {
-        JPanel panel = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-
-        fldSearch = new JTextField(20);
+    /** 21OK
+     *  Sets up and returns the panel above the available boards list 
+     *  containing the search bar and the map size chooser.  
+     */
+    private JPanel setupAvailTopPanel() {
+        FixedYPanel result = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
+        result.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
         fldSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -728,117 +786,155 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 updateSearch(fldSearch.getText());
             }
         });
-        panel.add(searchLbl);
-        panel.add(fldSearch);
+        
+        result.add(lblBoardSize);
+        result.add(comMapSizes);
+        result.add(new JLabel("    "));
+        result.add(lblSearch);
+        result.add(fldSearch);
+        result.add(butCancelSearch);
 
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        return panel;
-    }
-    
-    /**
-     * Reacts to changes in the search field, showing searched items
-     * for the search string given by contents when at least
-     * 3 characters are present in the search field
-     * and reverting to the selected category when the search field is
-     * empty.
-     */
-    private void updateSearch(String contents) {
-        if (contents.isEmpty()) {
-            refreshBoardsAvailable();
-        } else if (contents.length() > 2) {
-            refreshBoardsAvailable(getSearchedItems(contents));
-        }
-    }
-    
-    /**
-     * Called when at least 3 characters are entered into the search bar.
-     *
-     * @param searchString the string to search for
-     * @return a list of icons that fit the provided search string
-     */
-    protected ArrayList<String> getSearchedItems(String searchString) {
-        // For a category that contains the search string, all its items
-        // are added to the list. Additionally, all items that contain
-        // the search string are added.
-        ArrayList<String> result = new ArrayList<>();
-        String lowerSearched = searchString.toLowerCase();
-
-        for (String boardName: mapSettings.getBoardsAvailableVector()) {
-            if (isBoardFile(boardName) && boardName.toLowerCase().contains(lowerSearched)) {
-                result.add(boardName);
-            }
-        }
         return result;
     }
     
+    /** 21OK
+     * Reacts to changes in the available boards search field, showing matching boards
+     * for the search string when it has at least 3 characters
+     * and reverting to all boards when the search string is empty.
+     */
+    private void updateSearch(String searchString) {
+        if (searchString.isEmpty()) {
+            refreshBoardsAvailable();
+        } else if (searchString.length() > 2) {
+            refreshBoardsAvailable(getSearchedItems(searchString));
+        }
+    }
+    
+    /** 21OK
+     * Returns the available boards that match the given search string
+     * (path or file name contains the search string.) 
+     */
+    protected List<String> getSearchedItems(String searchString) {
+        String lowerCaseSearchString = searchString.toLowerCase();
+        return mapSettings.getBoardsAvailableVector().stream()
+                .filter(b -> b.toLowerCase().contains(lowerCaseSearchString) && isBoardFile(b))
+                .collect(Collectors.toList());
+    }
+    
+    /** 21OK
+     * Returns a suitable divider location for the splitpane that contains
+     * the available boards list and the map preview. The divider location
+     * gives between 30% and 50% of space to the map preview depending
+     * on the width of the game map.
+     */
     private double getDividerLocation() {
         double base = 0.3;
         int width = mapSettings.getBoardWidth() * mapSettings.getMapWidth();
         int height = mapSettings.getBoardHeight() * mapSettings.getMapHeight();
-        int wAspect = Math.max(1,  width/height + 1);
+        int wAspect = Math.max(1, width / height + 1);
         return Math.min(base + wAspect * 0.05, 0.5);
-    }
-
-    /**OK Sets up the space map section of the map panel. */
-    private void setupSpaceMap() {
-        panSpaceMap = new JPanel();
-        panSpaceMap.setBorder(new TitledBorder(Messages.getString("ChatLounge.spaceMap")));
-        
-        panSpaceMap.setLayout(new BoxLayout(panSpaceMap, BoxLayout.PAGE_AXIS));
-        panSpaceMap.add(chkIncludeSpace);
-        panSpaceMap.add(butSpaceSize);   
-    }
-
-    /**OK Initializes the ground map type chooser (ground/atmosphere map). */
-    private void setupMapChoice() {
-        comboMapType.addItem(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
-        comboMapType.addItem(MapSettings.getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
-        refreshMapChoice();
     }
 
     /**OK Updates the ground map type chooser (ground/atmosphere map). */
     private void refreshMapChoice() {
-        comboMapType.removeActionListener(lobbyListener);
-        if (mapSettings.getMedium() < MapSettings.MEDIUM_SPACE) {
-            comboMapType.setSelectedIndex(mapSettings.getMedium());
+        // refresh UI possibly from a server update
+//        comboMapType.removeActionListener(lobbyListener);
+//        if (mapSettings.getMedium() < MapSettings.MEDIUM_SPACE) {
+//            comboMapType.setSelectedIndex(mapSettings.getMedium());
+//        }
+//        comboMapType.addActionListener(lobbyListener);
+        JToggleButton button = butGroundMap;
+        if (mapSettings.getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
+            button = butLowAtmoMap;
+        } else if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+            button = butSpaceMap;
         }
-        comboMapType.addActionListener(lobbyListener);
+        
+        if (!button.isSelected()) {
+            button.removeActionListener(lobbyListener);
+            button.setSelected(true);
+            button.addActionListener(lobbyListener);
+        }
     }
     
     /**OK Updates the list of available map sizes. */
     private void refreshMapSizes() {
-        int oldSelection = comboMapSizes.getSelectedIndex();
+        int oldSelection = comMapSizes.getSelectedIndex();
         mapSizes = clientgui.getClient().getAvailableMapSizes();
-        comboMapSizes.removeActionListener(lobbyListener);
-        comboMapSizes.removeAllItems();
+        comMapSizes.removeActionListener(lobbyListener);
+        comMapSizes.removeAllItems();
         for (BoardDimensions size : mapSizes) {
-            comboMapSizes.addItem(size);
+            comMapSizes.addItem(size);
         }
-        comboMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
-        comboMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
-        comboMapSizes.addActionListener(lobbyListener);
+        comMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
+        comMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
+        comMapSizes.addActionListener(lobbyListener);
     }
 
-    /**OK Updates enabled and selected states to the space / ground map choice. */
-    private void refreshSpaceGround() {
+    /**
+     * Refreshes the map assembly UI from the current map settings. Does NOT trigger further
+     * changes or result in packets to the server. 
+     */
+    private void refreshMapUI() {
         boolean inSpace = mapSettings.getMedium() == MapSettings.MEDIUM_SPACE;
-        comboMapType.setEnabled(!inSpace);
-        butMapSize.setEnabled(!inSpace);
-        comboMapSizes.setEnabled(!inSpace);
-        butBoardPreview.setEnabled(!inSpace);
+        boolean onGround = mapSettings.getMedium() == MapSettings.MEDIUM_GROUND;
+        boolean customSize = comMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"));
         lisBoardsAvailable.setEnabled(!inSpace);
-        butSpaceSize.setEnabled(inSpace);
+        mapIcons.clear();
         butConditions.setEnabled(!inSpace);
+        fldSearch.setEnabled(!inSpace);
+        butRandomMap.setEnabled(!inSpace);
+        panMapHeight.setVisible(!inSpace);
+        panMapWidth.setVisible(!inSpace);
+        panSpaceBoardWidth.setVisible(inSpace || customSize);
+        panSpaceBoardHeight.setVisible(inSpace || customSize);
+        comMapSizes.setEnabled(!inSpace);
+        lblSearch.setEnabled(!inSpace);
+        lblBoardSize.setEnabled(!inSpace);
+        butSaveMapSetup.setEnabled(!inSpace);
+        butLoadMapSetup.setEnabled(!inSpace);
+        butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
+        butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
         
-        chkIncludeGround.removeActionListener(lobbyListener);
-        chkIncludeSpace.removeActionListener(lobbyListener);
-        chkIncludeSpace.setSelected(inSpace);
-        chkIncludeGround.setSelected(!inSpace);
-        chkIncludeGround.addActionListener(lobbyListener);
-        chkIncludeSpace.addActionListener(lobbyListener);
+        butGroundMap.removeActionListener(lobbyListener);
+        butLowAtmoMap.removeActionListener(lobbyListener);
+        butHighAtmoMap.removeActionListener(lobbyListener);
+        butSpaceMap.removeActionListener(lobbyListener);
+        if (onGround) {
+            butGroundMap.setSelected(true);
+        } else if (inSpace) {
+            butSpaceMap.setSelected(true);
+        } else {
+            butLowAtmoMap.setSelected(true);
+        }
+        butGroundMap.addActionListener(lobbyListener);
+        butLowAtmoMap.addActionListener(lobbyListener);
+        butHighAtmoMap.addActionListener(lobbyListener);
+        butSpaceMap.addActionListener(lobbyListener);
+        
+        fldMapWidth.removeActionListener(lobbyListener);
+        fldMapHeight.removeActionListener(lobbyListener);
+        fldSpaceBoardWidth.removeActionListener(lobbyListener);
+        fldSpaceBoardHeight.removeActionListener(lobbyListener);
+        fldMapWidth.setText(Integer.toString(mapSettings.getMapWidth()));
+        fldMapHeight.setText(Integer.toString(mapSettings.getMapHeight()));
+        fldSpaceBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
+        fldSpaceBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
+        fldMapWidth.addActionListener(lobbyListener);
+        fldMapHeight.addActionListener(lobbyListener);
+        fldSpaceBoardWidth.addActionListener(lobbyListener);
+        fldSpaceBoardHeight.addActionListener(lobbyListener);
     }
 
+    /** 
+     * Refreshes the list of available boards with all available boards plus
+     * GENERATED. Useful for first setup, when the server transmits new
+     * map settings and when the text search field is empty.
+     */
     private void refreshBoardsAvailable() {
+        if (!lisBoardsAvailable.isEnabled()) {
+            return;
+        }
         lisBoardsAvailable.setFixedCellHeight(-1);
         lisBoardsAvailable.setFixedCellWidth(-1);
         List<String> availBoards = new ArrayList<>(); 
@@ -847,9 +943,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshBoardsAvailable(availBoards);
     }
     
+    /** 
+     * Refreshes the list of available maps with the given list of boards. 
+     */
     private void refreshBoardsAvailable(List<String> boardList) {
         lisBoardsAvailable.removeListSelectionListener(this);
-        int selectedRow = lisBoardsAvailable.getSelectedIndex();
         // Replace the data model (adding the elements one by one to the existing model
         // in Java 8 style is sluggish because of event firing)
         DefaultListModel<String> newModel = new DefaultListModel<>();
@@ -857,12 +955,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             newModel.addElement(s);
         }
         lisBoardsAvailable.setModel(newModel);
-        if (resetAvailBoardSelection) {
-            lisBoardsAvailable.setSelectedIndex(0);
-            resetAvailBoardSelection = false;
-        } else {
-            lisBoardsAvailable.setSelectedIndex(selectedRow);
-        }
+        lisBoardsAvailable.clearSelection();
         lisBoardsAvailable.addListSelectionListener(this);
     }
     
@@ -908,25 +1001,41 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // or the board name has changed
                 String boardName = mapSettings.getBoardsSelectedVector().get(index);
                 if (!button.getBoard().equals(boardName) 
+                        || oldMapSettings.getMedium() != mapSettings.getMedium()
                         || (!mapSettings.equalMapGenParameters(oldMapSettings) 
                                 && mapSettings.getMapWidth() == oldMapSettings.getMapWidth()
                                 && mapSettings.getMapHeight() == oldMapSettings.getMapHeight())) {
                     IBoard buttonBoard; 
+                    Image image;
                     // Generated and space boards use a generated example
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
                             || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                         buttonBoard = BoardUtilities.generateRandom(mapSettings);
+                        image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
                     } else { 
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-                            List<String> boardList = extractSurpriseMaps(boardName);
-                            boardForImage = boardList.get(0);
+                            boardForImage = extractSurpriseMaps(boardName).get(0);
                         }
-                        buttonBoard = new Board(16, 17);
-                        buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile());
+                        File boardFile = new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile();
+                        if (boardFile.exists()) {
+                            buttonBoard = new Board(16, 17);
+                            buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile());
+                            StringBuffer errs = new StringBuffer();
+                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile())) {
+                                buttonBoard.load(is, errs, true);
+                            } catch (IOException ex) {
+                                buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                            }
+                            image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
+                        } else {
+                            buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                            BufferedImage emptyBoardMap = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
+                            markServerSideBoard(emptyBoardMap);
+                            image = emptyBoardMap;
+                        }
                     }
-                    Image image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
                     button.setImage(image, boardName);
                     buttonSize = optMapButtonSize(image);
                 }
@@ -947,55 +1056,64 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         lblBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " "
                 + Messages.getString("BoardSelectionDialog.mapsAvailable"));
-        comboMapSizes.removeActionListener(lobbyListener);
-        int items = comboMapSizes.getItemCount();
+        comMapSizes.removeActionListener(lobbyListener);
+        int items = comMapSizes.getItemCount();
 
         boolean mapSizeSelected = false;
         for (int i = 0; i < (items - 1); i++) {
-            BoardDimensions size = (BoardDimensions) comboMapSizes.getItemAt(i);
+            BoardDimensions size = (BoardDimensions) comMapSizes.getItemAt(i);
 
             if ((size.width() == mapSettings.getBoardWidth()) && (size.height() == mapSettings.getBoardHeight())) {
-                comboMapSizes.setSelectedIndex(i);
+                comMapSizes.setSelectedIndex(i);
                 mapSizeSelected = true;
             }
         }
         // If we didn't select a size, select the last item: 'Custom Size'
         if (!mapSizeSelected) {
-            comboMapSizes.setSelectedIndex(items - 1);
+            comMapSizes.setSelectedIndex(items - 1);
         }
-        comboMapSizes.addActionListener(lobbyListener);
+        comMapSizes.addActionListener(lobbyListener);
 
+    }
+    
+    private void markServerSideBoard(BufferedImage image) {
+        Graphics g = image.getGraphics();
+        GUIPreferences.AntiAliasifSet(g);
+        int w = image.getWidth();
+        int h = image.getHeight();
+        String text = "Server-side board";
+        int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
+        g.setFont(new Font("Dialog", Font.ITALIC, fontSize));
+        FontMetrics fm = g.getFontMetrics(g.getFont());
+        int cx = (w - fm.stringWidth(text)) / 2;
+        int cy = h / 10 + fm.getAscent();
+        g.setColor(GUIPreferences.getInstance().getWarningColor());
+        g.drawString(text, cx, cy);
+        g.dispose();
     }
 
     public void previewGameBoard() {
-        MapSettings temp = mapSettings;
-        temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-        temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        IBoard[] sheetBoards = new IBoard[temp.getMapWidth() * temp.getMapHeight()];
+        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
-        for (int i = 0; i < (temp.getMapWidth() * temp.getMapHeight()); i++) {
+        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
-            String name = temp.getBoardsSelectedVector().get(i);
-            boolean isRotated = false;
-            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                // only rotate boards with an even width
-                if ((temp.getBoardWidth() % 2) == 0) {
-                    isRotated = true;
-                }
-                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
-            }
-            if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                sheetBoards[i] = BoardUtilities.generateRandom(temp);
+            String name = mapSettings.getBoardsSelectedVector().get(i);
+            if (name.startsWith(MapSettings.BOARD_GENERATED) 
+                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
-                        + ".board").getFile());
-                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
+                if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
+                    List<String> boardList = extractSurpriseMaps(name);
+                    int rnd = (int)(Math.random() * boardList.size());
+                    name = boardList.get(rnd);
+                }
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
             }
-            rotateBoard.add(isRotated);
         }
 
-        IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp.getMapWidth(),
-                temp.getMapHeight(), sheetBoards, rotateBoard, temp.getMedium());
+        IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
+                mapSettings.getMapHeight(), sheetBoards, rotateBoard, mapSettings.getMedium());
         
         boardPreviewGame.setBoard(newBoard);
         boardPreviewW.setVisible(true);
@@ -1083,17 +1201,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (c != null) {
             selPlayer = c.getLocalPlayer().getName();
         }
-        
+
         // Empty and refill the player table
         playerModel.clearData();
-        for (Enumeration<IPlayer> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
-            final IPlayer player = i.nextElement();
-            if (player == null) {
-                continue;
-            }
+        for (IPlayer player: clientgui.getClient().getGame().getPlayersVector()) {
             playerModel.addPlayer(player);
         }
-        
+
         // re-select the previously selected player, if possible
         if (c != null && playerModel.getRowCount() > 0) {
             for (int row = 0; row < playerModel.getRowCount(); row++) {
@@ -1903,26 +2017,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     void changeMapDnD(String board, JButton button) {
         if (board.contains("\n")) {
-            List<String> boardList = extractSurpriseMaps(board);
-            ArrayList<String> allowedBoards = new ArrayList<>();
-            for (String b: boardList) {
-                if (Board.isValid(b)) {
-                    allowedBoards.add(b);
-                }
-            }
-            if (allowedBoards.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "All selected boards are invalid, please select others.");
-                return;   
-            } else if (allowedBoards.size() == 1) {
-                board = allowedBoards.get(0);
-            } else {
-                board = MapSettings.BOARD_SURPRISE + assembleSurpriseBoards(allowedBoards);
-            }
-        } else if (!board.startsWith(MapSettings.BOARD_GENERATED)) {
-            if (!Board.isValid(board)) {
-                JOptionPane.showMessageDialog(this, "The selected board is invalid, please select another.");
-                return;
-            }
+            board = MapSettings.BOARD_SURPRISE + board;
         }
         mapSettings.getBoardsSelectedVector().set(mapButtons.indexOf(button), board);
         clientgui.getClient().sendMapSettings(mapSettings);
@@ -1947,6 +2042,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshPlayerInfo();
         refreshCamoButton();
         refreshEntities();
+        panTeamOverview.refreshData();
     }
 
     @Override
@@ -1962,6 +2058,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             refreshTeams();
             refreshCamoButton();
             refreshEntities();
+            panTeamOverview.refreshData();
         }
     }
 
@@ -1973,6 +2070,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         refreshEntities();
         refreshPlayerInfo();
+        panTeamOverview.refreshData();
     }
 
     @Override
@@ -1983,6 +2081,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         refreshEntities();
         refreshPlayerInfo();
+        panTeamOverview.refreshData();
     }
 
     @Override
@@ -2000,6 +2099,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshEntities();
         refreshPlayerInfo();
         refreshMapSizes();
+        updateMapSettings(clientgui.getClient().getMapSettings());
+        panTeamOverview.refreshData();
     }
 
     @Override
@@ -2146,72 +2247,225 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), mapSettings);
                 rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
                 
-//            } else if (ev.getSource().equals(butChange)) {
-//                if (lisBoardsAvailable.getSelectedIndex() != -1) {
-//                    changeMap(lisBoardsAvailable.getSelectedValue());
-////                    lisBoardsSelected.setSelectedIndex(lisBoardsSelected.getSelectedIndex() + 1);
-//                }
-//                
             } else if (ev.getSource().equals(butBoardPreview)) {
                 previewGameBoard();
                 
-            } else if (ev.getSource().equals(butMapSize) || ev.getSource().equals(butSpaceSize)) {
-                MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui, mapSettings);
-                mdd.setVisible(true);
-                
-            } else if (ev.getSource().equals(comboMapSizes)) {
-                if ((comboMapSizes.getSelectedItem() != null)
-                        && !comboMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))) {
-                    BoardDimensions size = (BoardDimensions) comboMapSizes.getSelectedItem();
+            } else if (ev.getSource().equals(comMapSizes)) {
+                if (comMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))) {
+                    refreshMapUI();
+                } else if (comMapSizes.getSelectedItem() != null) {
+                    BoardDimensions size = (BoardDimensions) comMapSizes.getSelectedItem();
                     mapSettings.setBoardSize(size.width(), size.height());
                     resetAvailBoardSelection = true;
                     resetSelectedBoards = true;
                     clientgui.getClient().sendMapSettings(mapSettings);
-                }
+                } 
                 
-//            } else if (ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
-//                previewMapsheet();
+//            } else if (ev.getSource().equals(comboMapType)) {
+//                mapSettings.setMedium(comboMapType.getSelectedIndex());
+//                clientgui.getClient().sendMapSettings(mapSettings);
                 
-            } else if (ev.getSource().equals(comboMapType)) {
-                mapSettings.setMedium(comboMapType.getSelectedIndex());
+            } else if (ev.getSource() == butGroundMap) {
+                mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
+                refreshMapUI();
                 clientgui.getClient().sendMapSettings(mapSettings);
                 
-            } else if (ev.getSource().equals(chkIncludeGround)) {
-                if (chkIncludeGround.isSelected()) {
-                    mapSettings.setMedium(comboMapType.getSelectedIndex());
-                } else {
-                    mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
-                    // set default size for space maps
-                    mapSettings.setBoardSize(50, 50);
-                    mapSettings.setMapSize(1, 1);
-                }
+            } else if (ev.getSource() == butSpaceMap) {
+                mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
+                mapSettings.setBoardSize(50, 50);
+                mapSettings.setMapSize(1, 1);
+                refreshMapUI();
                 clientgui.getClient().sendMapDimensions(mapSettings);
                 
-            } else if (ev.getSource().equals(chkIncludeSpace)) {
-                if (chkIncludeSpace.isSelected()) {
-                    mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
-                    // set default size for space maps
-                    mapSettings.setBoardSize(50, 50);
-                    mapSettings.setMapSize(1, 1);
-                } else {
-                    mapSettings.setMedium(comboMapType.getSelectedIndex());
-                }
-                clientgui.getClient().sendMapDimensions(mapSettings);
+            } else if (ev.getSource() == butLowAtmoMap) {
+                mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
+                refreshMapUI();
+                clientgui.getClient().sendMapSettings(mapSettings);
                 
-//            } else if (mapButtons.contains(ev.getSource())) {
-//                lisBoardsSelected.setSelectedIndex(mapButtons.indexOf(ev.getSource()));
-            } else if (ev.getSource() == butAddX) {
+            } else if (ev.getSource() == butAddX || ev.getSource() == butMapGrowW) {
                 int newMapWidth = mapSettings.getMapWidth() + 1;
                 mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                 clientgui.getClient().sendMapDimensions(mapSettings);
-            } else if (ev.getSource() == butAddY) {
+                
+            } else if (ev.getSource() == butAddY || ev.getSource() == butMapGrowH) {
                 int newMapHeight = mapSettings.getMapHeight() + 1;
                 mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
                 clientgui.getClient().sendMapDimensions(mapSettings);
-            }
+                
+            } else if (ev.getSource() == butSaveMapSetup) {
+                saveMapSetup();
+                
+            } else if (ev.getSource() == butLoadMapSetup) {
+                loadMapSetup();
+                
+            } else if (ev.getSource() == fldMapWidth) {
+                setManualMapWidth();
+                
+            } else if (ev.getSource() == fldMapHeight) {
+                setManualMapHeight();
+                
+            } else if (ev.getSource() == fldSpaceBoardWidth) {
+                setManualBoardWidth();
+                
+            } else if (ev.getSource() == fldSpaceBoardHeight) {
+                setManualBoardHeight();
+                
+            } else if (ev.getSource() == butMapShrinkW) {
+                if (mapSettings.getMapWidth() > 1) {
+                    int newMapWidth = mapSettings.getMapWidth() - 1;
+                    mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
+                    clientgui.getClient().sendMapDimensions(mapSettings);
+                }
+            } else if (ev.getSource() == butMapShrinkH) {
+                if (mapSettings.getMapHeight() > 1) {
+                    int newMapHeight = mapSettings.getMapHeight() - 1;
+                    mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
+                    clientgui.getClient().sendMapDimensions(mapSettings);
+                }
+            } else if (ev.getSource() == butDetach) {
+                butDetach.setEnabled(false);
+                panTeam.remove(panTeamOverview);
+                panTeam.repaint();
+                teamOverviewWindow.add(panTeamOverview);
+                teamOverviewWindow.center();
+                teamOverviewWindow.setVisible(true);
+                
+            } else if (ev.getSource() == butCancelSearch) {
+                fldSearch.setText("");
+            } 
                 
         }
     };
+    
+    /** 
+     * Opens a file chooser and saves the current map setup to the file,
+     * if any was chosen.
+     * @see MapSetup 
+     */
+    private void saveMapSetup() {
+        JFileChooser fc = new JFileChooser(Configuration.dataDir() + "/mapsetup");
+        fc.setDialogTitle(Messages.getString("ChatLounge.map.saveMapSetup"));
+        fc.setMultiSelectionEnabled(false);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileFilter(XMLFileFilter);
+
+        int returnVal = fc.showSaveDialog(clientgui.frame);
+        File selectedFile = fc.getSelectedFile();
+        if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
+            selectedFile = new File(selectedFile.getPath() + ".xml");
+        }
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (selectedFile == null)) {
+            return;
+        }
+        if (selectedFile.exists()) {
+            String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
+            Response confirmed = MMConfirmDialog.confirm(clientgui.frame, "Confirm replace", msg);
+            if (confirmed == Response.NO) {
+                return;
+            }
+        }
+        try(OutputStream os = new FileOutputStream(selectedFile)) {
+            MapSetup.save(os, mapSettings);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(clientgui.frame, 
+                    "There was a problem while saving the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(ex);
+        }
+    }
+
+    /** 
+     * Opens a file chooser and loads a new map setup from the file,
+     * if any was chosen.
+     * @see MapSetup 
+     */
+    private void loadMapSetup() {
+        JFileChooser fc = new JFileChooser(Configuration.dataDir() + "/mapsetup");
+        fc.setDialogTitle(Messages.getString("ChatLounge.map.loadMapSetup"));
+        fc.setMultiSelectionEnabled(false);
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileFilter(XMLFileFilter);
+
+        int returnVal = fc.showOpenDialog(clientgui.frame);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
+            return;
+        }
+        if (!fc.getSelectedFile().exists()) {
+            JOptionPane.showMessageDialog(clientgui.frame, "File not found.");
+            return;
+        }
+        try(InputStream os = new FileInputStream(fc.getSelectedFile())) {
+            MapSetup setup = MapSetup.load(os);
+            mapSettings.setMapSize(setup.getMapWidth(), setup.getMapHeight());
+            mapSettings.setBoardSize(setup.getBoardWidth(), setup.getBoardHeight());
+            mapSettings.setBoardsSelectedVector(setup.getBoards());
+            clientgui.getClient().sendMapSettings(mapSettings);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(clientgui.frame, 
+                    "There was a problem while loading the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(ex);
+        }
+    }
+    
+    // Put a filter on the files that the user can select the proper file.
+    FileFilter XMLFileFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return (f.getPath().toLowerCase().endsWith(".xml") || f.isDirectory());
+        }
+
+        @Override
+        public String getDescription() {
+            return "Map Setup XML files";
+        }
+    };
+    
+    private void setManualMapWidth() {
+        try {
+            int newMapWidth = Integer.parseInt(fldMapWidth.getText());
+            if (newMapWidth >= 1 && newMapWidth <= 20) {
+                mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
+                clientgui.getClient().sendMapDimensions(mapSettings);
+            }
+        } catch (NumberFormatException e) {
+            // no number, no new map width
+        }
+    }
+    
+    private void setManualMapHeight() {
+        try {
+            int newMapHeight = Integer.parseInt(fldMapHeight.getText());
+            if (newMapHeight >= 1 && newMapHeight <= 20) {
+                mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
+                clientgui.getClient().sendMapDimensions(mapSettings);
+            }
+        } catch (NumberFormatException e) {
+            // no number, no new map height
+        }
+    }
+    
+    private void setManualBoardWidth() {
+        try {
+            int newBoardWidth = Integer.parseInt(fldSpaceBoardWidth.getText());
+            if (newBoardWidth >= 5 && newBoardWidth <= 200) {
+                mapSettings.setBoardSize(newBoardWidth, mapSettings.getBoardHeight());
+                clientgui.getClient().sendMapSettings(mapSettings);
+            }
+        } catch (NumberFormatException e) {
+            // no number, no new board width
+        }
+    }
+    
+    private void setManualBoardHeight() {
+        try {
+            int newBoardHeight = Integer.parseInt(fldSpaceBoardHeight.getText());
+            if (newBoardHeight >= 5 && newBoardHeight <= 200) {
+                mapSettings.setBoardSize(mapSettings.getBoardWidth(), newBoardHeight);
+                clientgui.getClient().sendMapSettings(mapSettings);
+            }
+        } catch (NumberFormatException e) {
+            // no number, no new board height
+        }
+    }
 
     /**
      * Updates to show the map settings that have, presumably, just been sent by
@@ -2222,7 +2476,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mapSettings = MapSettings.getInstance(newSettings);
         refreshMapButtons();
         refreshMapChoice();
-        refreshSpaceGround();
+        refreshMapUI();
         refreshBoardsAvailable();
         updateSearch(fldSearch.getText());
         refreshLabels();
@@ -2252,23 +2506,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         txt = Messages.getString("ChatLounge.MapSummary"); 
         txt += (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " 
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
-        if (chkIncludeGround.isSelected()) {
-            txt += " " + (String) comboMapType.getSelectedItem();
+        if (butGroundMap.isSelected()) {
+            txt += " Ground Map";
+        } else if (butLowAtmoMap.isSelected()) {
+            txt += " Atmospheric Map";
         } else {
-            txt += " Space Map"; 
+            txt += " Space Map";
         }
         lblMapSummary.setText(txt);
         lblMapSummary.setFont(scaledFont);
 
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
-//        ListModel<String> model = lisBoardsSelected.getModel();
-        
-//        for (int i = 0; i < model.getSize(); i++) {
-//            String map = model.getElementAt(i);
         for (String map: mapSettings.getBoardsSelectedVector()) {
             selectedMaps.append("&nbsp;&nbsp;");
-            selectedMaps.append(map);
+            if (map.startsWith(MapSettings.BOARD_SURPRISE)) {
+                selectedMaps.append(MapSettings.BOARD_SURPRISE);
+            } else {
+                selectedMaps.append(map);
+            }
             selectedMaps.append("<br>"); 
         }
         lblMapSummary.setToolTipText(scaleStringForGUI(selectedMaps.toString()));
@@ -2368,7 +2624,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butConditions.removeActionListener(lobbyListener);
         butConfigPlayer.removeActionListener(lobbyListener);
         butLoadList.removeActionListener(lobbyListener);
-        butMapSize.removeActionListener(lobbyListener);
         butNames.removeActionListener(lobbyListener);
         butOptions.removeActionListener(lobbyListener);
         butRandomMap.removeActionListener(lobbyListener);
@@ -2380,11 +2635,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butCamo.removeActionListener(camoListener);
         butAddX.removeActionListener(lobbyListener);
         butAddY.removeActionListener(lobbyListener);
+        butMapGrowW.removeActionListener(lobbyListener);
+        butMapShrinkW.removeActionListener(lobbyListener);
+        butMapGrowH.removeActionListener(lobbyListener);
+        butMapShrinkH.removeActionListener(lobbyListener);
+        butGroundMap.removeActionListener(lobbyListener);
+        butLowAtmoMap.removeActionListener(lobbyListener);
+        butHighAtmoMap.removeActionListener(lobbyListener);
+        butSpaceMap.removeActionListener(lobbyListener);
+        butLoadMapSetup.removeActionListener(lobbyListener);
+        butSaveMapSetup.removeActionListener(lobbyListener);
+        butDetach.removeActionListener(lobbyListener);
+        butCancelSearch.removeActionListener(lobbyListener);
         
-        chkIncludeGround.removeActionListener(lobbyListener);
-        chkIncludeSpace.removeActionListener(lobbyListener);
-
-        comboMapType.removeActionListener(lobbyListener);
+        fldMapWidth.removeActionListener(lobbyListener);
+        fldMapHeight.removeActionListener(lobbyListener);
+        fldSpaceBoardWidth.removeActionListener(lobbyListener);
+        fldSpaceBoardHeight.removeActionListener(lobbyListener);
+        
         comboTeam.removeActionListener(lobbyListener);
     }
 
@@ -2560,7 +2828,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public Object getValueAt(int row, int col) {
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             IPlayer player = getPlayerAt(row);
-            boolean realBlindDrop = !player.equals(getLocalPlayer()) 
+            boolean realBlindDrop = player.isEnemyOf(getLocalPlayer()) 
                     && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
 
             if (col == COL_FORCE) {
@@ -2665,7 +2933,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger()) {
+            if (e.isPopupTrigger() && lisBoardsAvailable.isEnabled()) {
                 // If the right mouse button is pressed over an unselected map,
                 // clear the selection and select that entity instead
                 int index = lisBoardsAvailable.locationToIndex(e.getPoint());
@@ -2684,7 +2952,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
-            ScalingPopup popup = MapListPopup.mapListPopup(boards, mapButtons, this, ChatLounge.this);
+            int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
+            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -3189,11 +3458,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshCamoButton();
         refreshMapButtons();
         mekModel.refreshCells();
+        panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
 
-//        butChange.setFont(scaledFont);
         butCompact.setFont(scaledFont);
         butOptions.setFont(scaledFont);
         butLoadList.setFont(scaledFont);
@@ -3206,35 +3475,51 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butConfigPlayer.setFont(scaledFont);
         butBotSettings.setFont(scaledFont);
         butShowUnitID.setFont(scaledFont);
-        butMapSize.setFont(scaledFont);
         butConditions.setFont(scaledFont);
         butRandomMap.setFont(scaledFont);
         butSpaceSize.setFont(scaledFont);
         butBoardPreview.setFont(scaledFont);
         butAddX.setFont(scaledFont);
         butAddY.setFont(scaledFont);
-        comboMapSizes.setFont(scaledFont);
-        comboMapType.setFont(scaledFont);
+        comMapSizes.setFont(scaledFont);
         comboTeam.setFont(scaledFont);
-        chkIncludeGround.setFont(scaledFont);
-        chkIncludeGround.setIconTextGap(UIUtil.scaleForGUI(5));
-        chkIncludeSpace.setFont(scaledFont);
-        chkIncludeSpace.setIconTextGap(UIUtil.scaleForGUI(5));
         lblBoardsAvailable.setFont(scaledFont);
-        lisBoardsAvailable.setFont(scaledFont);
+        lblMapWidth.setFont(scaledFont);
+        butMapGrowW.setFont(scaledFont);
+        butMapShrinkW.setFont(scaledFont);
+        fldMapWidth.setFont(scaledFont);
+        lblMapHeight.setFont(scaledFont);
+        butMapGrowH.setFont(scaledFont);
+        butMapShrinkH.setFont(scaledFont);
+        fldMapHeight.setFont(scaledFont);
+        lblSpaceBoardWidth.setFont(scaledFont);
+        lblSpaceBoardHeight.setFont(scaledFont);
+        fldSpaceBoardWidth.setFont(scaledFont);
+        fldSpaceBoardHeight.setFont(scaledFont);
+        butGroundMap.setFont(scaledFont);
+        butLowAtmoMap.setFont(scaledFont);
+        butHighAtmoMap.setFont(scaledFont);
+        butSpaceMap.setFont(scaledFont);
+        lblBoardSize.setFont(scaledFont);
+        butSaveMapSetup.setFont(scaledFont);
+        butLoadMapSetup.setFont(scaledFont);
+        butDetach.setFont(scaledFont);
+        butCancelSearch.setFont(scaledFont);
 
         butAdd.setFont(scaledBigFont);
         panTabs.setFont(scaledBigFont);
         
-        searchLbl.setFont(scaledFont);
+        lblSearch.setFont(scaledFont);
         fldSearch.setFont(scaledFont);
         
         ((TitledBorder)panUnitInfo.getBorder()).setTitleFont(scaledFont);
         ((TitledBorder)panPlayerInfo.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder)panGroundMap.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder)panSpaceMap.getBorder()).setTitleFont(scaledFont);
+        
+        int scaledBorder = UIUtil.scaleForGUI(TEAMOVERVIEW_BORDER);
+        panTeam.setBorder(new EmptyBorder(scaledBorder, scaledBorder, scaledBorder, scaledBorder));
 
-        butBoardPreview.setToolTipText(scaleStringForGUI(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip")));
+        butBoardPreview.setToolTipText(scaleMessageForGUI("BoardSelectionDialog.ViewGameBoardTooltip"));
+        butSaveMapSetup.setToolTipText(scaleMessageForGUI("ChatLounge.map.saveMapSetupTip"));
 
         // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)
         ToolTipManager manager = ToolTipManager.sharedInstance();
@@ -3427,8 +3712,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             lisBoardsAvailable.repaint();
         }
     }
-
-
+    
 
     class ImageLoader extends SwingWorker<Void, Image> {
 
@@ -3446,48 +3730,62 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         private Image prepareImage(String boardName) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            IBoard board;
+            StringBuffer errs = new StringBuffer();
             if (boardFile.exists()) {
-                IBoard board = new Board(16, 17);
-                board.load(boardFile);
-                // Determine a minimap zoom from the board size and gui scale.
-                // This is very hacky but currently the minimap has only fixed zoom states.
-                int largerEdge = Math.max(board.getWidth(), board.getHeight());
-                int zoom = 3;
-                if (largerEdge < 17) {
-                    zoom = 4;
+                board = new Board();
+                try (InputStream is = new FileInputStream(boardFile)) {
+                    board.load(is, errs, true);
+                } catch (IOException ex) {
+                    board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                 }
-                if (largerEdge > 20) {
-                    zoom = 2;
-                }
-                if (largerEdge > 30) {
-                    zoom = 1;
-                }
-                if (largerEdge > 40) {
-                    zoom = 0;
-                }
-                float scale = GUIPreferences.getInstance().getGUIScale();
-                zoom = (int)(scale*zoom);
-                if (zoom > 6) {
-                    zoom = 6;
-                }
-                if (zoom < 0) {
-                    zoom = 0;
-                }
-                BufferedImage bufImage = MiniMap.getBoardMinimapImage(board, zoom);
-                
-                // Add the board name label
-                String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
-                Graphics g = bufImage.getGraphics();
-                drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g);
-                g.dispose();
-                
-                synchronized(baseImages) {
-                    baseImages.put(boardName, bufImage);
-                }
-                return bufImage;
             } else {
-                return null;
+                board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
             }
+
+            // Determine a minimap zoom from the board size and gui scale.
+            // This is very magic numbers but currently the minimap has only fixed zoom states.
+            int largerEdge = Math.max(board.getWidth(), board.getHeight());
+            int zoom = 3;
+            if (largerEdge < 17) {
+                zoom = 4;
+            }
+            if (largerEdge > 20) {
+                zoom = 2;
+            }
+            if (largerEdge > 30) {
+                zoom = 1;
+            }
+            if (largerEdge > 40) {
+                zoom = 0;
+            }
+            float scale = GUIPreferences.getInstance().getGUIScale();
+            zoom = (int)(scale*zoom);
+            if (zoom > 6) {
+                zoom = 6;
+            }
+            if (zoom < 0) {
+                zoom = 0;
+            }
+            BufferedImage bufImage = MiniMap.getBoardMinimapImage(board, zoom);
+
+            // Add the board name label and the server-side board label if necessary
+            String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
+            Graphics g = bufImage.getGraphics();
+            if (errs.length() != 0) {
+                invalidBoards.add(boardName);
+            }
+            drawMinimapLabel(text, bufImage.getWidth(), bufImage.getHeight(), g, errs.length() != 0);
+            if (!boardFile.exists() && !boardName.startsWith(MapSettings.BOARD_GENERATED)) {
+                serverBoards.add(boardName);
+                markServerSideBoard(bufImage);
+            }
+            g.dispose();
+
+            synchronized(baseImages) {
+                baseImages.put(boardName, bufImage);
+            }
+            return bufImage;
         }
 
 
@@ -3520,6 +3818,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 int index, boolean isSelected, boolean cellHasFocus) {
 
             String board = (String)value;
+            // For generated boards, add the size to have different images for different sizes
+            if (board.startsWith(MapSettings.BOARD_GENERATED)) {
+                board += mapSettings.getBoardSize().toString();
+            }
             
             // If the gui scaling has changed, clear out all images, triggering a reload
             float currentGUIScale = GUIPreferences.getInstance().getGUIScale();
@@ -3548,7 +3850,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     return super.getListCellRendererComponent(list, new File(board).getName(), index, isSelected, cellHasFocus);
                 } else {
                     // There is a base image: make it into an icon, store it and use it
+                    if (!lisBoardsAvailable.isEnabled()) {
+                        ImageFilter filter = new GrayFilter(true, 50);  
+                        ImageProducer producer = new FilteredImageSource(image.getSource(), filter);  
+                        image = Toolkit.getDefaultToolkit().createImage(producer); 
+                    }
                     icon = new ImageIcon(image);
+                    
                     mapIcons.put(board, icon);
                     setIcon(icon);
                 }
@@ -3556,7 +3864,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             
             // Found or created an icon; finish the panel
             setText("");
-            setToolTipText(scaleStringForGUI(board));
+            if (lisBoardsAvailable.isEnabled()) {
+                setToolTipText(scaleStringForGUI(createBoardTooltip(board)));
+            } else {
+                setToolTipText(null);
+            }
             
             if (isSelected) {
                 setForeground(list.getSelectionForeground());
@@ -3654,7 +3966,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    Dimension currentMapButtonSize = new Dimension(0,0);
+    
     
     void updateMapButtons(Dimension size) {
         if (!currentMapButtonSize.equals(size)) {
@@ -3681,6 +3993,65 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         int h = (int)(factor * image.getHeight(null));
         return new Dimension(w, h);
     }
+    
+    /** 
+     * Returns true when the string boardName contains an invalid board. boardName may
+     * denote a generated board (which is never invalid) or a surprise board
+     * with several actual board names attached which will return true when at least
+     * one of the boards is invalid.
+     */
+    boolean hasInvalidBoard(String boardName) {
+        return hasSpecialBoard(boardName, invalidBoards);
+    }
+    
+    /** 
+     * Returns true when the string boardName contains a board that isn't present on 
+     * the client (pnly on the server). boardName may denote a generated board 
+     * (which is never serverside) or a surprise board with several actual board names 
+     * attached which will return true when at least one of the boards is serverside.
+     */
+    boolean hasServerSideBoard(String boardName) {
+        return hasSpecialBoard(boardName, serverBoards);
+    }
+    
+    /** 
+     * Returns true when boardName (if a single board) or any of the boards contained
+     * in boardName (if a surprise board list) is contained in the provided list. Returns
+     * false for generated boards.
+     */
+    private boolean hasSpecialBoard(String boardName, Collection<String> list) {
+        if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
+            return false;
+        } else if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
+            return !Collections.disjoint(extractSurpriseMaps(boardName), list);
+        } else {
+            return list.contains(boardName);
+        }
+    }
+
+    /** 
+     * Returns a tooltip for the provided boardName that may be a single board or 
+     * a generated or surprise board. Adds info for serverside or invalid boards.
+     */
+    String createBoardTooltip(String boardName) {
+        String result = "";
+        if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
+            result = "This board is generated using the current Generated <BR>Map Settings when the game is started.";
+        } else if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
+            result = "This board is selected randomly from the following list <BR> of boards when the game is started:<BR>";
+            result += boardName.substring(MapSettings.BOARD_SURPRISE.length()).replace("\n", "<BR>");
+        } else {
+            result = boardName;
+        }
+        if (hasInvalidBoard(boardName)) {
+            result += invalidBoardTip();
+        }
+        if (hasServerSideBoard(boardName)) {
+            result += Messages.getString("ChatLounge.map.serverSideTip");
+        }
+        return result;
+    }
+    
 
 }
 

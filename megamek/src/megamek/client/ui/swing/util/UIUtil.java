@@ -106,6 +106,16 @@ public final class UIUtil {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + colorString(col) + ">";
     }
     
+    /** Returns the yellow and gui-scaled warning sign. */
+    public static String warningSign() {
+        return guiScaledFontHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
+    }
+    
+    /** Returns the (usually) red and gui-scaled warning sign. */
+    public static String criticalSign() {
+        return guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
+    }
+    
     /** 
      * Helper method to place Strings in lines according to length. The Strings
      * in origList will be added to one line with separator sep between them as 
@@ -156,15 +166,6 @@ public final class UIUtil {
             String sep, boolean sepAtEnd, String... origList) {
         
         return arrangeInLines(Arrays.asList(origList), maxLength, sep, sepAtEnd);
-    }
-    
-    public static String arrangeInLine(String sep, String... origList) {
-        ArrayList<String> result = arrangeInLines(Arrays.asList(origList), Integer.MAX_VALUE, sep, false);
-        if (!result.isEmpty()) {
-            return result.get(0);
-        } else {
-            return "";
-        }
     }
     
     /** 
@@ -322,6 +323,11 @@ public final class UIUtil {
     /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */ 
     public static String scaleStringForGUI(String str) {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + str + "</FONT></HTML>";
+    }
+    
+    /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */ 
+    public static String scaleMessageForGUI(String str) {
+        return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
     public static void adjustDialog(Container contentPane) {

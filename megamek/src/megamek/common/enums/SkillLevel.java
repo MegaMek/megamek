@@ -44,6 +44,32 @@ public enum SkillLevel {
     }
     //endregion Constructors
 
+    //region Boolean Comparisons
+    public boolean isNone() {
+        return this == NONE;
+    }
+
+    public boolean isUltraGreen() {
+        return this == ULTRA_GREEN;
+    }
+
+    public boolean isGreen() {
+        return this == GREEN;
+    }
+
+    public boolean isRegular() {
+        return this == REGULAR;
+    }
+
+    public boolean isVeteran() {
+        return this == VETERAN;
+    }
+
+    public boolean isElite() {
+        return this == ELITE;
+    }
+    //endregion Boolean Comparisons
+
     @Override
     public String toString() {
         return name;

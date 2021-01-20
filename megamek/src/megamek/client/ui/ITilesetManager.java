@@ -20,15 +20,15 @@ import java.awt.Component;
 import java.awt.Image;
 import java.util.Set;
 
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
+import megamek.common.icons.Camouflage;
 
 /**
  * @author jwalt
  */
 public interface ITilesetManager {
     Image iconFor(Entity e);
-    Image loadPreviewImage(Entity entity, Image camo, PlayerColour tint, Component bp);
+    Image loadPreviewImage(Entity entity, Camouflage camouflage, Component bp);
     Set<String> getThemes();
     void reset();
 }

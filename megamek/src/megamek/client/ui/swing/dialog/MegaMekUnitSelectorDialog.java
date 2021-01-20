@@ -36,6 +36,8 @@ import java.awt.*;
 import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
+
+    private static final long serialVersionUID = -5717009055093904636L;
     //region Variable Declarations
     private ClientGUI clientGUI;
     private JComboBox<String> comboPlayer = new JComboBox<>();
@@ -76,8 +78,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose = new JButton(Messages.getString("Close"));
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, new GridBagConstraints());
-
-        updatePlayerChoice();
 
         JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
@@ -197,7 +197,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // Set the cursor in the text filter and mark the content so it can be directly replaced
         textFilter.grabFocus();
         textFilter.select(0, textFilter.getText().length());
-        super.setVisible(visible);
         updatePlayerChoice();
+        super.setVisible(visible);
     }
 }

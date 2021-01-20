@@ -85,7 +85,7 @@ class MapListPopup {
         if (enabled) {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), "SURPRISE:" + i + ":" 
-                        + LobbyUtility.assembleSurpriseBoards(boards), enabled, listener));
+                        + String.join("\n", boards), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));

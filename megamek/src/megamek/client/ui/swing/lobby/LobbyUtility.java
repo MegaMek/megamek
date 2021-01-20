@@ -205,17 +205,6 @@ public class LobbyUtility {
         return result;
     }
     
-    /** 
-     * Returns a string starting with MapSettings.BOARD_SURPRISE being followed by
-     * a newline and the boardname for each of the given boards. Specialized method
-     * for lobby map assembly. 
-     */ 
-    @Deprecated
-    public static String assembleSurpriseBoards(Collection<String> boards) {
-        return String.join("\n", boards);
-    }
-    
-    
     
     // PRIVATE
     //  

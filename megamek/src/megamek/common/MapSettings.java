@@ -730,7 +730,7 @@ public class MapSettings implements Serializable {
                     } else if (remainingBoards.size() == 1) {
                         boardsSelected.set(i, remainingBoards.get(0));   
                     } else {
-                        String remBoards = LobbyUtility.assembleSurpriseBoards(remainingBoards);
+                        String remBoards = String.join("\n", boards); 
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
                     }
                 } else {
@@ -752,7 +752,6 @@ public class MapSettings implements Serializable {
 
     public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
-        this.boardsAvailable.add("TestServerside"+getBoardWidth()+getBoardHeight());
     }
 
     /**

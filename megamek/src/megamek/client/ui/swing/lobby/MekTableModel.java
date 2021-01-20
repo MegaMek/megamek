@@ -28,6 +28,7 @@ import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -296,8 +297,8 @@ public class MekTableModel extends AbstractTableModel {
                 if (column == COL_UNIT) {
                     setToolTipText(unitTooltips.get(row));
                     if (!compact) {
-                        Image camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage()).getImage();
-                        Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, entity.getOwner().getColour(), this);
+                        Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
+                        Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, this);
                         setIcon(new ImageIcon(icon.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                     }
                 } else if (column == COL_PILOT) {

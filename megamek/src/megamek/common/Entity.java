@@ -11476,25 +11476,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     engineHitsThisPhase++;
                 }
                 
+                boolean mountOneIsHittable = (cs.getMount() != null) && cs.getMount().getType().isHittable();
+                boolean mountTwoIsHittable = (cs.getMount2() != null) && cs.getMount2().getType().isHittable();
+                
                 if (blownOff) {
                     cs.setMissing(true);
                     
-                    if (cs.getMount() != null) {
+                    if (mountOneIsHittable) {
                         cs.getMount().setMissing(true);
                     }
                     
-                    if (cs.getMount2() != null) {
+                    if (mountTwoIsHittable) {
                         cs.getMount2().setMissing(true);
                     }
                     
                 } else {
                     cs.setHit(true);
                     
-                    if (cs.getMount() != null) {
+                    if (mountOneIsHittable) {
                         cs.getMount().setHit(true);
                     }
                     
-                    if (cs.getMount2() != null) {
+                    if (mountTwoIsHittable) {
                         cs.getMount2().setHit(true);
                     }
                 }

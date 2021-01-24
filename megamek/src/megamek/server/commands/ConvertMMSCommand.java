@@ -86,8 +86,7 @@ public class ConvertMMSCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId,
-                                  "Observers are restricted from loading games.");
+            server.sendServerChat(connId, "Observers are restricted from loading games.");
             return;
         }
         if (args.length > 1) {
@@ -133,7 +132,7 @@ public class ConvertMMSCommand extends ServerCommand {
             writer.newLine();
             
             // Random only for now
-            writer.write(PARAM_MAPS+SEPARATOR_PROPERTY+MAP_RANDOM);
+            writer.write(PARAM_MAPS + SEPARATOR_PROPERTY + MAP_RANDOM);
             writer.newLine();
             
             // Factions section.
@@ -165,7 +164,7 @@ public class ConvertMMSCommand extends ServerCommand {
             for (Enumeration<IPlayer> players = server.getGame().getPlayers(); players.hasMoreElements();) {
                 IPlayer p = players.nextElement();
                 int numUnits = server.getGame().getEntitiesOwnedBy(p);
-                ArrayList<Entity> PlayerUnits = server.getGame().getPlayerEntities(p, true);
+                List<Entity> PlayerUnits = server.getGame().getPlayerEntities(p, true);
                 
                 for (int counter = 0; counter < PlayerUnits.size(); counter++) {
                     writer.write("Unit" + SEPARATOR_UNDERSCORE + p.getName() +
@@ -188,12 +187,11 @@ public class ConvertMMSCommand extends ServerCommand {
             }
             
             writer.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             server.sendServerChat(connId, "file write failed");
             return false;
         }
-        server.sendServerChat(connId, "File saved as "+sFinalFile);       
+        server.sendServerChat(connId, "File saved as " + sFinalFile);       
         return true;
     }
 }
-

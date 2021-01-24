@@ -35,8 +35,8 @@ public class BoardIndex {
     private static final String SEPARATOR_COMMA = ",";
     private static final String FILE_SUFFIX_BOARD = ".board";
     
-    private List<String> allDirs = new ArrayList<String>();
-    private List<String[]> index = new ArrayList<String[]>();
+    private List<String> allDirs = new ArrayList<>();
+    private List<String[]> index = new ArrayList<>();
     private String indexDir = "";
     
     // Constructor, stores the custom map directory, finds the directories in that location, and runs the indexing
@@ -67,11 +67,11 @@ public class BoardIndex {
     
     // Get a random board of specified width and height.
     public String getRandom(int width, int height) {
-        List<Integer> randMap = new ArrayList<Integer>();
+        List<Integer> randMap = new ArrayList<>();
 
         for (int i = 0; i < index.size(); i++) {
             String[] board = index.get(i);
-            if ((Integer.parseInt(board[1]) == width) && (Integer.parseInt(board[2])==height)) {
+            if ((Integer.parseInt(board[1]) == width) && (Integer.parseInt(board[2]) == height)) {
                 randMap.add(i);
             }
         }
@@ -91,10 +91,9 @@ public class BoardIndex {
     
     // Index the directories. This calls addDir to add them and check for duplicates.
     private void indexDirs(String mapDir) {
- 
         addDir("");
 
-        MegaMek.getLogger().info("Begin map directory index" +LocalDateTime.now());
+        MegaMek.getLogger().info("Begin map directory index" + LocalDateTime.now());
         
         if (mapDir != null) {
             for (String customDir : mapDir.split(SEPARATOR_COMMA, -1)) {
@@ -109,7 +108,7 @@ public class BoardIndex {
             }
         });
 
-        for (int i=0; i < directories.length; i++) {
+        for (int i = 0; i < directories.length; i++) {
             addDir(directories[i]);
         }
 
@@ -118,7 +117,6 @@ public class BoardIndex {
     
     // Create the index.
     private void runIndex() {
-        
         MegaMek.getLogger().info("Begin board indexing " + LocalDateTime.now());
 
 
@@ -141,14 +139,14 @@ public class BoardIndex {
                             strStore[4] = dir + "/" + file.substring(0, file.length() - FILE_SUFFIX_BOARD.length());
                             index.add(strStore);
                         } catch (IOException e) {
-                            MegaMek.getLogger().info("Failed to read file " + file);
+                            MegaMek.getLogger().info("Failed to read file " + file, e);
                         }
                     }
                 }
             }
         }
 
-        MegaMek.getLogger().info("All indexes read" + LocalDateTime.now());
-        MegaMek.getLogger().info("Map Listing total:" + index.size());
+        MegaMek.getLogger().info("All indexes read " + LocalDateTime.now());
+        MegaMek.getLogger().info("Map Listing total: " + index.size());
     }
 }

@@ -868,13 +868,11 @@ public class ScenarioLoader {
                 String sBoardFile ="";
                 
                 if (board.equals(MAP_RANDOM)) { 
-                    
                     sBoardFile = boards.getRandom(mapWidth, mapHeight);
                     MegaMek.getLogger().info("Got map: " + sBoardFile);
-                    
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
-                    MegaMek.getLogger().info("Loading board " +sBoardFile);
+                    MegaMek.getLogger().info("Loading board " + sBoardFile);
                 }
                 File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {
@@ -899,7 +897,7 @@ public class ScenarioLoader {
         int checkHeight = ba[0].getHeight();
         
         for (int i = 1; i < ba.length; i++) {
-            if (!((checkWidth == ba[i].getHeight()) && (checkHeight == ba[i].getHeight()))){
+            if (!((checkWidth == ba[i].getHeight()) && (checkHeight == ba[i].getHeight()))) {
                 MegaMek.getLogger().info("Map sizes do not match. Returning first map only");
                 return ba[0];
             }            

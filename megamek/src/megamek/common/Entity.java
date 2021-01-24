@@ -9761,8 +9761,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleFor(IGame.Phase phase) {
         // only deploy in deployment phase
         if ((phase == IGame.Phase.PHASE_DEPLOYMENT) == isDeployed()) {
-            if ((isDeployed() == false) && isEligibleForTargetingPhase() && game.getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
+            if ((isDeployed() == false) && isEligibleForTargetingPhase()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
                     MegaMek.getLogger().info("Artillery Units Present and Advanced PreDesignate option enabled");
             } else {
                 return false;

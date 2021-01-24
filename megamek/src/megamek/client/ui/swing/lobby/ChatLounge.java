@@ -45,6 +45,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
@@ -168,6 +170,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private FixedYPanel panSpaceBoardWidth = new FixedYPanel();
     
     private JLabel lblBoardSize = new JLabel("Board Size: ");
+    private JButton butHelp = new JButton(" ? ");
    
     private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); 
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); 
@@ -311,6 +314,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butSaveMapSetup.addActionListener(lobbyListener);
         butDetach.addActionListener(lobbyListener);
         butCancelSearch.addActionListener(lobbyListener);
+        butHelp.addActionListener(lobbyListener);
         
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
@@ -398,6 +402,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
         unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.ASCENDING));
         unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.DESCENDING));
+        unitSorters.add(new C3IDSorter(clientgui));
         bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
         bvSorters.add(new PlayerBVSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
         bvSorters.add(new BVSorter(MekTableSorter.Sorting.ASCENDING));
@@ -630,15 +635,28 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         grpMap.add(butLowAtmoMap);
         grpMap.add(butHighAtmoMap);
         grpMap.add(butSpaceMap);
-        panMap.add(panMapType);
+//        panMap.add(panMapType);
         
         // Planetary Conditions and Random Map Settings buttons
         FixedYPanel panSettings = new FixedYPanel();
         panSettings.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         panSettings.add(butConditions);
         panSettings.add(butRandomMap);
-        panMap.add(panSettings);
+//        panMap.add(panSettings);
 
+        FixedYPanel panTopRows = new FixedYPanel();
+        panTopRows.setLayout(new BoxLayout(panTopRows, BoxLayout.PAGE_AXIS));
+        panTopRows.add(panMapType);
+        panTopRows.add(panSettings);
+        
+        JPanel panHelp = new JPanel(new GridLayout(1,1));
+        panHelp.add(butHelp);
+        
+        FixedYPanel panTopRowsHelp = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
+        panTopRowsHelp.add(panTopRows);
+        panTopRowsHelp.add(panHelp);
+        panMap.add(panTopRowsHelp);
+        
         // Main part: Map Assembly
         panMap.add(panGroundMap);
 
@@ -2332,8 +2350,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             } else if (ev.getSource() == butCancelSearch) {
                 fldSearch.setText("");
-            } 
-                
+
+            } else if (ev.getSource() == butHelp) {
+                File helpfile = new File("docs/Boards Stuff/MapAssemblyHelp.html");
+                new CommonHelpDialog(clientgui.frame, helpfile).setVisible(true);
+            }  
+
         }
     };
     
@@ -2647,6 +2669,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butSaveMapSetup.removeActionListener(lobbyListener);
         butDetach.removeActionListener(lobbyListener);
         butCancelSearch.removeActionListener(lobbyListener);
+        butHelp.removeActionListener(lobbyListener);
         
         fldMapWidth.removeActionListener(lobbyListener);
         fldMapHeight.removeActionListener(lobbyListener);
@@ -3084,6 +3107,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             case "HOTLOAD_OFF":
                 toggleHotLoad(entities, command.equals("HOTLOAD_ON"));
                 break;
+                
+            case "C3":
+                applyC3(entities, st);
+                break;
+                
+            case "DEPLOY":
+                applyDeployment(entities, st);
             } 
         }
 
@@ -3123,6 +3153,48 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
+    
+    private void applyDeployment(List<Entity> entities, StringTokenizer st) {
+        Set<Entity> updateCandidates = new HashSet<>();
+        int newRound = Integer.parseInt(st.nextToken());
+        for (Entity entity: editableEntities(entities)) {
+            if (entity.getDeployRound() != newRound) {
+                entity.setDeployRound(newRound);
+                updateCandidates.add(entity);
+            }
+        }
+        sendUpdate(updateCandidates);
+    }
+    
+    private void applyC3(List<Entity> entities, StringTokenizer st) {
+        if (entities.size() != 1) {
+            return;
+        }
+        Entity entity = entities.get(0);
+        String command = st.nextToken();
+        if (command.equals("DISCONNECT")) {
+            entity.setC3Master(null, true);
+        } else if (command.equals("C3CC")) {
+            entity.setC3Master(entity.getId(), true);
+        } else if (command.equals("C3IM")) {
+            entity.setC3Master(-1, true);
+        } else if (command.equals("CREATE")) {
+            entity.setC3NetIdSelf();
+        } else if (command.equals("JOIN")) {
+            // Join means NC3 or C3i
+            int id = Integer.parseInt(st.nextToken());
+            entity.setC3NetId(clientgui.getClient().getEntity(id));
+        } else if (command.equals("CONNECT")) {
+            // Connect means normal C3M/MM/S
+            int id = Integer.parseInt(st.nextToken());
+            entity.setC3Master(id, true);
+        } else {
+            return;
+        }
+        getLocalClient(entity).sendUpdateEntity(entity);
+    }
+    
+    
     
     /** OK
      * Returns a Collection that contains only those of the given entities
@@ -3505,7 +3577,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadMapSetup.setFont(scaledFont);
         butDetach.setFont(scaledFont);
         butCancelSearch.setFont(scaledFont);
-
+        
         butAdd.setFont(scaledBigFont);
         panTabs.setFont(scaledBigFont);
         
@@ -3520,6 +3592,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         butBoardPreview.setToolTipText(scaleMessageForGUI("BoardSelectionDialog.ViewGameBoardTooltip"));
         butSaveMapSetup.setToolTipText(scaleMessageForGUI("ChatLounge.map.saveMapSetupTip"));
+        
+        Font scaledHelpFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
+        butHelp.setFont(scaledHelpFont);
 
         // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)
         ToolTipManager manager = ToolTipManager.sharedInstance();

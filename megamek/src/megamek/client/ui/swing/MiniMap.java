@@ -28,7 +28,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -369,10 +368,8 @@ public class MiniMap extends JPanel {
                 size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
                 updateSize = true;
             }
-            if (size.height < GUIPreferences.getInstance()
-                                            .getMinimumSizeHeight()) {
-                size.height = GUIPreferences.getInstance()
-                                            .getMinimumSizeHeight();
+            if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
+                size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
                 updateSize = true;
             }
             if (updateSize) {
@@ -568,8 +565,7 @@ public class MiniMap extends JPanel {
 
         // ensure its on screen
         Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
@@ -696,24 +692,14 @@ public class MiniMap extends JPanel {
         }
 
         Graphics g = m_mapImage.getGraphics();
-        // Activate AA
-        if (GUIPreferences.getInstance().getAntiAliasing()) {
-            ((Graphics2D)g).setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        GUIPreferences.AntiAliasifSet(g);
         
         Color oldColor = g.getColor();
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
             Graphics gg = terrainBuffer.getGraphics();
-            // Activate AA
-            if (GUIPreferences.getInstance().getAntiAliasing()) {
-                ((Graphics2D)gg).setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-            }
+            GUIPreferences.AntiAliasifSet(gg);
             for (int j = 0; j < m_board.getWidth(); j++) {
                 for (int k = 0; k < m_board.getHeight(); k++) {
                     IHex h = m_board.getHex(j, k);
@@ -839,7 +825,7 @@ public class MiniMap extends JPanel {
         ((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
         
         g.drawRect(
-                (int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+                (int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
                 (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
                 (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
                 (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
@@ -999,45 +985,41 @@ public class MiniMap extends JPanel {
             }
         }
     }
+    
+    private int[] xPoints(int x, int y) {
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int[] xPoints = new int[6];
+        xPoints[0] = baseX;
+        xPoints[1] = baseX + hexSideBySin30[zoom];
+        xPoints[2] = xPoints[1] + hexSide[zoom];
+        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
+        xPoints[4] = xPoints[2];
+        xPoints[5] = xPoints[1];
+        return xPoints;
+    }
+    
+    private int[] yPoints(int x, int y) {
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int[] yPoints = new int[6];
+        yPoints[0] = baseY;
+        yPoints[1] = baseY + hexSideByCos30[zoom];
+        yPoints[2] = yPoints[1];
+        yPoints[3] = baseY;
+        yPoints[4] = baseY - hexSideByCos30[zoom];
+        yPoints[5] = yPoints[4];
+        return yPoints;
+    }
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        yPoints[1] = baseY + hexSideByCos30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        yPoints[2] = yPoints[1];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-        yPoints[3] = baseY;
-        xPoints[4] = xPoints[2];
-        yPoints[4] = baseY - hexSideByCos30[zoom];
-        xPoints[5] = xPoints[1];
-        yPoints[5] = yPoints[4];
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
         g.setColor(c);
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        yPoints[1] = baseY + hexSideByCos30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        yPoints[2] = yPoints[1];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-        yPoints[3] = baseY;
-        xPoints[4] = xPoints[2];
-        yPoints[4] = baseY - hexSideByCos30[zoom];
-        xPoints[5] = xPoints[1];
-        yPoints[5] = yPoints[4];
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
             Color oldColor = g.getColor();
@@ -1050,20 +1032,8 @@ public class MiniMap extends JPanel {
     private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
         int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
         int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        yPoints[1] = baseY + hexSideByCos30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        yPoints[2] = yPoints[1];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-        yPoints[3] = baseY;
-        xPoints[4] = xPoints[2];
-        yPoints[4] = baseY - hexSideByCos30[zoom];
-        xPoints[5] = xPoints[1];
-        yPoints[5] = yPoints[4];
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
             Color oldColor = g.getColor();
@@ -1071,11 +1041,18 @@ public class MiniMap extends JPanel {
             g.drawPolygon(xPoints, yPoints, 6);
             g.setColor(oldColor);
         }
+        // Drop in a star
         int dx = (int)(Math.random() * hexSide[zoom]);
-        int dy = (int)((Math.random()-0.5) * hexSideByCos30[zoom]);
-        int c = (int)(Math.random()* 180);
+        int dy = (int)((Math.random() - 0.5) * hexSideByCos30[zoom]);
+        int c = (int)(Math.random() * 180);
         g.setColor(new Color(c,c,c));
-        g.fillRect(baseX+dx, baseY+dy, 1, 1);
+        if (Math.random() < 0.1) {
+            g.setColor(new Color(c,c/10,c/10)); // red star
+        } else if (Math.random() < 0.1) {
+            int factor = (int)(Math.random()*10) + 1;
+            g.setColor(new Color(c/factor,c/factor,c)); // blue star
+        }
+        g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }
 
     /**
@@ -1152,13 +1129,10 @@ public class MiniMap extends JPanel {
                     yPoints[1] = yPoints[2];
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
-                    if (((source.getPosition().getX() > target.getPosition()
-                            .getX()) && (source.getPosition().getY() < target
-                            .getPosition().getY()))
-                            || ((source.getPosition().getX() < target
-                                    .getPosition().getX()) && (source
-                                    .getPosition().getY() > target
-                                    .getPosition().getY()))) {
+                    if (((source.getPosition().getX() > target.getPosition().getX()) 
+                            && (source.getPosition().getY() < target.getPosition().getY()))
+                            || ((source.getPosition().getX() < target.getPosition().getX()) 
+                                    && (source.getPosition().getY() > target.getPosition().getY()))) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -1646,14 +1620,6 @@ public class MiniMap extends JPanel {
                 return new Color(r, g, b);
 
         }
-        /*
-         * if (terrain < 5){ level = (int) Math.abs(x.floor()); // By experiment
-         * it is possible to make only 6 distinctive color steps if (level > 5)
-         * level = 5; int r = terrColor.getRed()-level30; int g =
-         * terrColor.getGreen()-level30; int b = terrColor.getBlue()-level30; if
-         * (r < 0) r = 0; if (g < 0) g = 0; if (b < 0) b = 0; return new
-         * Color(r, g, b); }
-         */
         return terrColor;
     }
 
@@ -1692,12 +1658,6 @@ public class MiniMap extends JPanel {
                 }
             }
         }
-        /*
-         * restX = hexSideBySin30[zoom] + hexSide[zoom] - restX; restY -=
-         * hexSideByCos30[zoom]; if (hexSideBySin30[zoom]restX >
-         * hexSideByCos30[zoom]restY) gridX ++; if (-hexSideBySin30[zoom]restX >
-         * hexSideByCos30[zoom]restY) gridY --;
-         */
         if (gridX < 0) {
             gridX = 0;
         }
@@ -1969,23 +1929,14 @@ public class MiniMap extends JPanel {
     private void drawForImage() {
         Graphics g = m_mapImage.getGraphics();
         // Activate AA
-        if (GUIPreferences.getInstance().getAntiAliasing()) {
-            ((Graphics2D)g).setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        GUIPreferences.AntiAliasifSet(g);
         
         Color oldColor = g.getColor();
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
             Graphics gg = terrainBuffer.getGraphics();
-            // Activate AA
-            if (GUIPreferences.getInstance().getAntiAliasing()) {
-                ((Graphics2D)gg).setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-            }
+            GUIPreferences.AntiAliasifSet(gg);
             for (int j = 0; j < m_board.getWidth(); j++) {
                 for (int k = 0; k < m_board.getHeight(); k++) {
                     IHex h = m_board.getHex(j, k);

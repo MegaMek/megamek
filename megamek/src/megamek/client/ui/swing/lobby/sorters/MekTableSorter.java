@@ -30,7 +30,9 @@ public interface MekTableSorter extends Comparator<Entity> {
     }
     
     /** Returns the sorting direction. */
-    Sorting getSortingDirection();
+    default Sorting getSortingDirection() {
+        return null;
+    };
     
     /** Returns 1 if dir is ASCENDING, -1 otherwise. */
     default int bigger(Sorting dir) {

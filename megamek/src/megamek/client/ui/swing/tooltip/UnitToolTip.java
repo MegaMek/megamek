@@ -16,7 +16,9 @@ package megamek.client.ui.swing.tooltip;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -56,6 +58,8 @@ public final class UnitToolTip {
     // blind drop tooltips!
     // compact mode: partial repairs/damaged, C3 complete, 
     // remove load label from lobby
+    //TODO: clean up minimap
+    // Deploy dialog:
     //TODO: allow disconnecting C3 in lobby
     //TODO: config dialog de-crap
     //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
@@ -137,21 +141,25 @@ public final class UnitToolTip {
     // Invalid boards treatment. 
     // Server boards not on client
     // Allow all board sizes ?? Nope, heavy change
-    //TODO: Explanation
+    // Explanation
     // Save map setup - > new object MapSetup-> XML save
     // Teams Overview panel
-    //TODO: DOnt allowadvancing  double blind games where startin pos overlaps 
+    // DOnt allowadvancing  double blind games where startin pos overlaps 
     // Team Overview doesnt update data initially when cnnecting as remote player to a game
     // Map list right click not available in space when disabled..., also no tooltip when disabled
-    // better space minimap?
+    // better space minimap
     // refresh maps when changing from space and ground
     // do not reload map list when going to space
-    //TODO: custm board size only use 1 board like space and use the manual board size
-    //TODO: clean up minimap
     // switch between space ground selectedboards remains at 6, popup shows board 1...6, even though 1 board on screen
     // Use proper filechosers for map setup
     // playertable summary team see through real blind drop
     // Reduce Quirks display
+    // C3 popup menu
+    //TODO: C3 popup for mulitple units?
+    //TODO: Deploy hidden/hull/prone popup menu
+    // C3 cant connect to enemy, check when changing sides
+    // show C3 network somehow
+    // Popup: set deployment turn
 
     
     
@@ -257,7 +265,10 @@ public final class UnitToolTip {
             result.append(carriedUnits(entity));
         }
         
-
+        if (inLobby && entity.hasAnyC3System()) {
+            result.append(scaledHTMLSpacer(3));
+            result.append(c3Info(entity));
+        }
         return result;
     }
     
@@ -743,6 +754,48 @@ public final class UnitToolTip {
         return result;
     }
     
+    /** Returns an overview of the C3 system the unit is in. */
+    private static StringBuilder c3Info(Entity entity) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(guiScaledFontHTML());
+        List<String> members = entity.getGame().getEntitiesVector().stream()
+                .filter(e -> e.onSameC3NetworkAs(entity))
+                .sorted(Comparator.comparingInt(e -> e.getId()))
+                .map(e -> c3UnitName(e, entity)).collect(Collectors.toList());
+        if (members.size() > 1) {
+            result.append(guiScaledFontHTML(uiC3Color(), -0.2f));
+            if (entity.hasNC3OrC3i()) {
+                result.append(entity.hasC3i() ? "C3i" : "NC3");
+            } else {
+                result.append("C3");
+            }
+            result.append(" Network: <BR>&nbsp;&nbsp;");
+            result.append(String.join("<BR>&nbsp;&nbsp;", members));
+            result.append("<BR>");
+        }
+
+        result.append("</FONT>");
+        return result;
+    }
+
+    private static String c3UnitName(Entity c3member, Entity entity) {
+        StringBuilder result = new StringBuilder();
+        result.append(guiScaledFontHTML(uiGray(), -0.2f));
+        result.append(" [" + c3member.getId() + "] <I>");
+        if (c3member.isC3CompanyCommander()) {
+            result.append("C3CC");
+        } else if (c3member.hasC3M()) {
+            result.append("C3M");
+        }
+        result.append("</I></FONT> ");
+        result.append(c3member.getShortNameRaw());
+        result.append(guiScaledFontHTML(uiGray(), -0.2f));
+        result.append(c3member.equals(entity) ? "<I> (This unit)</I>" : "");
+        result.append("</FONT>");
+        return result.toString();    
+    }
+
     
     /** Helper method to shorten repetitive calls. */
     private static StringBuilder addToTT(String tipName, boolean startBR, Object... ttO) {

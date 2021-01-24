@@ -5746,6 +5746,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
+    
+    /** Returns true if the unit has a Naval C3 or C3i. */
+    public boolean hasNC3OrC3i() {
+        return hasC3i() || hasNavalC3();
+    }
+    
+    /** Returns true if the unit has a standard C3M/S, a Naval C3 or C3i. */
+    public boolean hasAnyC3System() {
+        return hasC3() || hasC3i() || hasNavalC3();
+    }
 
     public String getC3NetId() {
         if (c3NetIdString == null) {
@@ -14459,6 +14469,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return pos;
+    }
+    
+    public boolean isC3CompanyCommander() {
+        return getC3MasterId() == id;
+    }
+    
+    public boolean isC3IndependentMaster() {
+        return getC3MasterId() == -1;
     }
 
     /**

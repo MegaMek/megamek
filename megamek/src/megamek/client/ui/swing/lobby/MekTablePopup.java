@@ -16,6 +16,7 @@ package megamek.client.ui.swing.lobby;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -139,12 +140,15 @@ class MekTablePopup {
         } else {
             popup.add(menuItem("Configure all...", "CONFIGURE_ALL", canConfigureDeployAll, listener, KeyEvent.VK_C));
         }
+        popup.add(deployMenu(canConfigureAny, listener));
         popup.add(spacer());
         popup.add(menuItem("Set individual camo...", "INDI_CAMO", canConfigureAny, listener, KeyEvent.VK_I));
         popup.add(menuItem("Delete", "DELETE", canConfigureAll, listener, KeyEvent.VK_D));
         popup.add(randomizeMenu(canConfigureAny, listener));
         popup.add(changeOwnerMenu(canConfigureAny, clientGui, listener));
         popup.add(swapPilotMenu(oneSelected && canConfigureAny, entities.get(0), clientGui, listener));
+        
+        popup.add(c3Menu(oneSelected && canConfigureAny, entities.get(0), clientGui, listener));
         
         if (optBurstMG || optLRMHotLoad) {
             popup.add(equipMenu(anyRapidFireMGOn, anyRapidFireMGOff, anyHotLoadOn, anyHotLoadOff, optLRMHotLoad, optBurstMG, listener));
@@ -346,6 +350,27 @@ class MekTablePopup {
         MenuScroller.createScrollBarsOnMenus(menu);
         return menu;
     }
+    
+    /**
+     * Returns the "Deploy" submenu, allowing late deployment
+     */
+    private static JMenu deployMenu(boolean enabled, ActionListener listener) {
+
+        JMenu menu = new JMenu("Deploy");
+        if (enabled) {
+            menu.add(menuItem("At game start", "DEPLOY|0", enabled, listener));
+            for (int i = 2; i < 11; i++) {
+                menu.add(menuItem("Before round " + i, "DEPLOY|" + i, enabled, listener));
+            }
+            JMenu subMenu = new JMenu("Later");
+            for (int i = 11; i < 41; i++) {
+                subMenu.add(menuItem("Before round " + i, "DEPLOY|" + i, enabled, listener));
+            }
+            menu.add(subMenu);
+        }
+        menu.setEnabled(enabled);
+        return menu;
+    }
 
     /**
      * Returns the "Randomize" submenu, allowing to randomly assign
@@ -363,6 +388,109 @@ class MekTablePopup {
         menu.add(menuItem("Callsign", ChatLounge.CALLSIGN_COMMAND, enabled, listener, KeyEvent.VK_C));
         menu.add(menuItem("Skills", "SKILLS", enabled, listener, KeyEvent.VK_S));
         return menu;
+    }
+    
+    /**
+     * Returns the "C3" submenu, allowing C3 changes
+     */
+    private static JMenu c3Menu(boolean enabled, Entity entity, ClientGUI cg, ActionListener listener) {
+        JMenu menu = new JMenu("C3");
+        enabled = enabled && (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3());
+        menu.setEnabled(enabled);
+
+        if ((entity.hasC3i() || entity.hasNavalC3()) && entity.calculateFreeC3Nodes() < 5 
+                && !isC3iOwner(entity)) {
+            menu.add(menuItem("Disconnect", "C3|CREATE", enabled, listener));
+            
+        } else if (entity.hasC3MM() || entity.hasC3M()) {
+            if (!entity.isC3CompanyCommander()) {
+                String item = "Set as C3 Company Commander";
+                menu.add(menuItem(item, "C3|C3CC", enabled, listener));
+            }
+
+            if (!entity.isC3IndependentMaster()) {
+                String item = "Set as independent C3 Master";
+                menu.add(menuItem(item, "C3|C3IM", enabled, listener));
+            }
+        }
+        
+        ArrayList<String> usedNetIds = new ArrayList<String>();
+        for (Entity other : cg.getClient().getEntitiesVector()) {
+            // ignore enemies and self; only link the same type of C3
+            if (entity.isEnemyOf(other) || entity.equals(other)
+                    || (entity.hasC3i() != other.hasC3i())
+                    || (entity.hasNavalC3() != other.hasNavalC3())
+                    || (entity.hasNovaCEWS() != other.hasNovaCEWS())
+                    ) {
+                continue;
+            }
+            // maximum depth of a c3 network is 2 levels.
+            Entity eCompanyMaster = other.getC3Master();
+            if ((eCompanyMaster != null)
+                    && (eCompanyMaster.getC3Master() != eCompanyMaster)) {
+                continue;
+            }
+            int nodes = other.calculateFreeC3Nodes();
+            if (other.hasC3MM() && entity.hasC3M() && other.C3MasterIs(other)) {
+                nodes = other.calculateFreeC3MNodes();
+            }
+            if (entity.C3MasterIs(other) && !entity.equals(other)) {
+                nodes++;
+            }
+            if ((entity.hasC3i() || entity.hasNavalC3())
+                    && (entity.onSameC3NetworkAs(other) || entity.equals(other))) {
+                nodes++;
+            }
+            if (nodes == 0) {
+                continue;
+            }
+            
+            if (other.hasNC3OrC3i()) {
+                // Don't add the following checks to the line above
+                if (!entity.onSameC3NetworkAs(other) && !usedNetIds.contains(other.getC3NetId())) {
+                    String item = Messages.getString("CustomMechDialog.join1", 
+                            other.getShortNameRaw(), other.getC3NetId(), nodes);
+                    menu.add(menuItem(item, "C3|JOIN|" + other.getId(), enabled, listener));
+                    usedNetIds.add(other.getC3NetId());
+                }
+                
+            } else if (other.C3MasterIs(other) && other.hasC3MM()) {
+                // Company masters with 2 computers can have *both* sub-masters AND slave units.
+                String item = Messages.getString("CustomMechDialog.connect2", 
+                        other.getShortNameRaw(), other.getC3NetId(), nodes);
+                menu.add(menuItem(item, "C3|CONNECT|" + other.getId(), enabled, listener));
+                
+            } else if (other.C3MasterIs(other) != entity.hasC3M()) {
+                // If we're a slave-unit, we can only connect to sub-masters,
+                // not main masters; likewise, if we're a master unit, we can
+                // only connect to main master units, not sub-masters.
+            } else if (entity.C3MasterIs(other)) {
+            } else {
+                // Make sure the limit of 12 units in a C3 network is maintained
+                int entC3nodeCount = cg.getClient().getGame().getC3SubNetworkMembers(entity).size();
+                int choC3nodeCount = cg.getClient().getGame().getC3NetworkMembers(other).size();
+                if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
+                    String item = Messages.getString("CustomMechDialog.connect2", 
+                            other.getShortNameRaw(), nodes);
+                    menu.add(menuItem(item, "C3|CONNECT|" + other.getId(), enabled, listener));
+                }
+            }
+        }
+        
+        if (entity.getC3Master() != null && !entity.isC3CompanyCommander()) {
+            menu.add(menuItem("Disconnect", "C3|DISCONNECT", enabled, listener));
+        }
+    
+        return menu;
+    }
+    
+    /** 
+     * Returns true when this entity is the "owner" of this C3i or NC3 network
+     * which (only) means that the network id uses this entity's id.
+     */
+    private static boolean isC3iOwner(Entity entity) {
+        return (entity.hasC3i() && entity.getC3NetId().equals("C3i." + entity.getId()))
+                || (entity.hasNavalC3() && entity.getC3NetId().equals("NC3." + entity.getId()));
     }
 
     /**

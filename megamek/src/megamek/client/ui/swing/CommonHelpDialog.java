@@ -17,22 +17,23 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
-public class CommonHelpDialog extends JDialog {
+public class CommonHelpDialog extends ClientDialog {
 
     private static final long serialVersionUID = 5189627839475444823L;
 
@@ -41,7 +42,7 @@ public class CommonHelpDialog extends JDialog {
      * from the indicated <code>File</code>.
      */
     public CommonHelpDialog(JFrame parentFrame, File helpfile) {
-        super(parentFrame);
+        super(parentFrame, Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName(), true, true);
 
         setLayout(new BorderLayout());
         JEditorPane helpPane = new JEditorPane();
@@ -50,11 +51,12 @@ public class CommonHelpDialog extends JDialog {
         // Get the help content file if possible
         try {
             helpPane.setPage(helpfile.toURI().toURL());
-            setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName()); //$NON-NLS-1$
+            helpPane.setFont(new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+            setTitle(Messages.getString("CommonHelpDialog.helpFile") + helpfile.getName());
         } catch (Exception exc) {
-            helpPane.setText(Messages.getString("CommonHelpDialog.errorReading") //$NON-NLS-1$
+            helpPane.setText(Messages.getString("CommonHelpDialog.errorReading")
                     + exc.getMessage());
-            setTitle(Messages.getString("CommonHelpDialog.noHelp.title")); //$NON-NLS-1$
+            setTitle(Messages.getString("CommonHelpDialog.noHelp.title"));
             exc.printStackTrace();
         }
 
@@ -65,12 +67,13 @@ public class CommonHelpDialog extends JDialog {
         getContentPane().add(new JScrollPane(helpPane), BorderLayout.CENTER);
         getContentPane().add(butClose, BorderLayout.SOUTH);
         
+        pack();
+        center();
+        
         // Make the window half the screensize and center on screen
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         Dimension windowSize = new Dimension(gd.getDisplayMode().getWidth() / 2,
                 gd.getDisplayMode().getHeight() / 2);
-        pack();
-        setSize(windowSize);
-        setLocationRelativeTo(null);
+        setPreferredSize(windowSize);
     }
 }

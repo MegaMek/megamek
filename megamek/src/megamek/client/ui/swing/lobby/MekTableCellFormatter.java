@@ -48,7 +48,7 @@ public class MekTableCellFormatter {
     static String formatUnitCompact(Entity entity, boolean blindDrop, int mapType) {
         
         if (blindDrop) {
-            String value = "<HTML><NOBR>";
+            String value = "<HTML><NOBR>&nbsp;&nbsp;";
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 value += guiScaledFontHTML(uiGray());
                 value += MessageFormat.format("[{0}] </FONT>", entity.getId());
@@ -592,11 +592,9 @@ public class MekTableCellFormatter {
         }
 
         result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
-        int advs = pilot.countOptions();
-        if (advs > 0) {
+        if (pilot.countOptions() > 0) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
-            String msg = "ChatLounge.compact." + (advs == 1 ? "advantage" : "advantages");
-            result.append(pilot.countOptions() + Messages.getString(msg));
+            result.append(Messages.getString("ChatLounge.abilities"));
         }
 
         result.append("</FONT>");
@@ -646,7 +644,6 @@ public class MekTableCellFormatter {
         if (crew.countOptions() > 0) {
             result.append(guiScaledFontHTML(uiQuirksColor(), overallScale));
             result.append(Messages.getString("ChatLounge.abilities"));
-            result.append(" " + crew.countOptions());
             result.append("</FONT>");
         }
         result.append("</FONT>");

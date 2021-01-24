@@ -35,6 +35,7 @@ public class IDSorter implements MekTableSorter {
     public int getColumnIndex() {
         return MekTableModel.COL_UNIT;
     }
+    
     @Override
     public Sorting getSortingDirection() {
         return direction;

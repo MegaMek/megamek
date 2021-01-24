@@ -78,10 +78,4 @@ public class PlayerTransportIDSorter implements MekTableSorter {
         }
     }
 
-    @Override
-    public Sorting getSortingDirection() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

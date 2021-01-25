@@ -32,13 +32,10 @@ import java.util.*;
 
 /**
  * Saves the current game to MMS format
- *
- * @author James Magnan
  */
 public class ConvertMMSCommand extends ServerCommand {
 
     private static final String COMMENT_MARK = "#";
-
     private static final String SEPARATOR_PROPERTY = "=";
     private static final String SEPARATOR_COMMA = ",";
     private static final String SEPARATOR_SPACE = " ";
@@ -73,37 +70,51 @@ public class ConvertMMSCommand extends ServerCommand {
     private static final String PARAM_CAMO = "Camo";
     private static final String PARAM_ALTITUDE = "Altitude";
     private static final String MAP_RANDOM = "RANDOM";
-    
-    /** Creates a new instance of SaveGameCommand */
+
+    /**
+     * Creates a new instance of SaveGameCommand
+     * @param server
+     */
     public ConvertMMSCommand(Server server) {
         super(server, "convertMMS",
               "Converts a savegame to an MMS scenario. Usage: /convertMMS [scenario filename]");
     }
 
     /**
-     * Run this command with the arguments supplied
+     * Run the command to create the MMS file
+     * @param connId
+     * @param args
      */
     @Override
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId, "Observers are restricted from loading games.");
+            server.sendServerChat(connId, "Observers cannot save the game.");
             return;
         }
         if (args.length > 1) {
             makeMMS(connId, args[1]);
         } else {
-            server.sendServerChat(connId, "You must provided a scenario file name");
+            server.sendServerChat(connId, "You must provide an output scenario file name");
         }
     }
-    
+
+    /**
+     * Create the MMS output file
+     * @param connId
+     * @param scenarioFile
+     * @return
+     */
     private boolean makeMMS(int connId, String scenarioFile) {
         String localPath = "data" + File.separator + "scenarios" + File.separator;
-
         String sFinalFile = scenarioFile;
+        
+        // Validate the filename
         if (!sFinalFile.endsWith(".mms")) {
             sFinalFile = scenarioFile + ".mms";
         }
         File sDir = new File("." + File.separator + "data" + File.separator + "scenarios");
+        
+        // Create the directory for the file if it doesn't exist
         if (!sDir.exists()) {
             sDir.mkdir();
         }
@@ -114,7 +125,7 @@ public class ConvertMMSCommand extends ServerCommand {
             BufferedWriter writer = new BufferedWriter(new FileWriter(sFinalFile));
             
             // Write the header
-            writer.write("# Megamek Convert to MMS by James 'Roundtop' Magnan");
+            writer.write("# Megamek Convert to MMS");
             writer.newLine();
             writer.write("# This does not output maps directly, but the map size. All maps are set as Random by default");
             writer.newLine();
@@ -125,17 +136,39 @@ public class ConvertMMSCommand extends ServerCommand {
             writer.write("Description=ChangeMe");
             writer.newLine();
             
-            // Maps section
+            /* Maps section. Get the number of boards and output them. this does not work.
             writer.write(PARAM_BOARD_HEIGHT + SEPARATOR_PROPERTY + server.getGame().getBoard().getNumBoardsHeight());
             writer.newLine();
             writer.write(PARAM_BOARD_WIDTH + SEPARATOR_PROPERTY + server.getGame().getBoard().getNumBoardsWidth());
+            writer.newLine();
+             */
+            
+            final int hexWidth = server.getGame().getBoard().getWidth();
+            final int hexHeight = server.getGame().getBoard().getHeight();  
+            int numBoardsWidth = 1;
+            int numBoardsHeight = 1;
+            
+            // Check for standard battletech width and height, and break into sub-maps
+            if (((hexWidth % 16) == 0) && ((hexHeight % 17) == 0))  {
+                numBoardsWidth = hexWidth / 16;
+                numBoardsHeight = hexHeight / 17;
+            }
+            
+            writer.write(PARAM_BOARD_HEIGHT + SEPARATOR_PROPERTY + numBoardsHeight);
+            writer.newLine();
+            writer.write(PARAM_BOARD_WIDTH + SEPARATOR_PROPERTY + numBoardsWidth);
+            writer.newLine();
+            
+            writer.write(PARAM_MAP_WIDTH + SEPARATOR_PROPERTY + (hexWidth / numBoardsWidth));
+            writer.newLine();
+            writer.write(PARAM_MAP_HEIGHT + SEPARATOR_PROPERTY + (hexHeight / numBoardsHeight));
             writer.newLine();
             
             // Random only for now
             writer.write(PARAM_MAPS + SEPARATOR_PROPERTY + MAP_RANDOM);
             writer.newLine();
             
-            // Factions section.
+            // Factions section. This is the list of players. Output the list to file, and index the starting positions
             String[] factions = {};
             int[] playerPos = {};
             writer.write(PARAM_FACTIONS + SEPARATOR_PROPERTY);
@@ -152,15 +185,14 @@ public class ConvertMMSCommand extends ServerCommand {
             }
             writer.newLine();
             
-            // Starting Locations
+            // Output the starting locations for the players
             for (int i = 0; i < factions.length; i++) {
                 writer.write(PARAM_LOCATION + SEPARATOR_UNDERSCORE + factions[i] + SEPARATOR_PROPERTY + 
                              IStartingPositions.START_LOCATION_NAMES[playerPos[i]]);
                 writer.newLine();
             }
             
-            // Units output
-            
+            // Output the units for each player
             for (Enumeration<IPlayer> players = server.getGame().getPlayers(); players.hasMoreElements();) {
                 IPlayer p = players.nextElement();
                 int numUnits = server.getGame().getEntitiesOwnedBy(p);
@@ -182,13 +214,12 @@ public class ConvertMMSCommand extends ServerCommand {
                 // eg: N0:5,N1:14,R1:3,N2:11,R2:3,N3:11,R3:3,N4:9,N5:9,N6:12,N7:12
                 // These are: N0=Head, N1=CT, R1=CTR, N2=RT,R2=RTR,N3=LT,R3=RTR,N4=RA,N5=LA,N6=RL,N7=RL
                 
-                
                 // For random damage, use Unit_<player>_<unitNum>_Damage=<amount>
             }
             
             writer.close();
         } catch (IOException ignored) {
-            server.sendServerChat(connId, "file write failed");
+            server.sendServerChat(connId, "file write failed.");
             return false;
         }
         server.sendServerChat(connId, "File saved as " + sFinalFile);       

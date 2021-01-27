@@ -32509,16 +32509,20 @@ public class Server implements Runnable {
         // Build the collapse and update vectors as you go.
         // N.B. never, NEVER, collapse buildings while you are walking through
         // the Enumeration from megamek.common.Board#getBuildings.
-        Map<Building, Vector<Coords>> collapse = new HashMap<>();
-        Map<Building, Vector<Coords>> update = new HashMap<>();
+        Vector<Coords> collapseCoords = new Vector<>();
+        Vector<Coords> updateCoords = new Vector<>();
+        Vector<Building> buildingsToUpdate = new Vector<>();
+
         Enumeration<Building> buildings = game.getBoard().getBuildings();
         while (buildings.hasMoreElements()) {
             Building bldg = buildings.nextElement();
-            Vector<Coords> collapseCoords = new Vector<>();
-            Vector<Coords> updateCoords = new Vector<>();
             Enumeration<Coords> buildingCoords = bldg.getCoords();
+            
+            boolean buildingUpdated = false;
+            
             while (buildingCoords.hasMoreElements()) {
                 Coords coords = buildingCoords.nextElement();
+                
                 // If the CF is zero, the building should fall.
                 if (bldg.getCurrentCF(coords) == 0) {
                     collapseCoords.addElement(coords);
@@ -32527,52 +32531,46 @@ public class Server implements Runnable {
                 else if (bldg.getPhaseCF(coords) != bldg.getCurrentCF(coords)) {
                     bldg.setPhaseCF(bldg.getCurrentCF(coords), coords);
                     updateCoords.addElement(coords);
+                    buildingUpdated = true;
                 }
             }
-            collapse.put(bldg, collapseCoords);
-            update.put(bldg, updateCoords);
+            
+            // if we've updated the building without collapsing it, keep track of that
+            if (buildingUpdated) {
+                buildingsToUpdate.add(bldg);
+            }
         } // Handle the next building
 
         // If we have any buildings to collapse, collapse them now.
-        if (!collapse.isEmpty()) {
+        if (!collapseCoords.isEmpty()) {
 
             // Get the position map of all entities in the game.
             Hashtable<Coords, Vector<Entity>> positionMap = game
                     .getPositionMap();
 
             // Walk through the hexes that have collapsed.
-            for (Building bldg : collapse.keySet()) {
-                Vector<Coords> coordsVector = collapse.get(bldg);
-                for (Coords coords : coordsVector) {
-                    Report r = new Report(6460, Report.PUBLIC);
-                    r.add(bldg.getName());
-                    addReport(r);
-                    collapseBuilding(bldg, positionMap, coords, vPhaseReport);
-                }
+            for (Coords coords : collapseCoords) {
+                Building bldg = game.getBoard().getBuildingAt(coords);
+                Report r = new Report(6460, Report.PUBLIC);
+                r.add(bldg.getName());
+                addReport(r);
+                collapseBuilding(bldg, positionMap, coords, vPhaseReport);
             }
         }
 
         // check for buildings which should collapse due to being overloaded now
         // CF is reduced
-        if (!update.isEmpty()) {
+        if (!updateCoords.isEmpty()) {
             Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
-            for (Building bldg : update.keySet()) {
-                Vector<Coords> updateCoords = update.get(bldg);
-                Vector<Coords> coordsToRemove = new Vector<>();
-                for (Coords coords : updateCoords) {
-                    if (checkForCollapse(bldg, positionMap, coords, false,
-                                         vPhaseReport)) {
-                        coordsToRemove.add(coords);
-                    }
-                }
-                updateCoords.removeAll(coordsToRemove);
-                update.put(bldg, updateCoords);
+            for (Coords coords : updateCoords) {
+                Building bldg = game.getBoard().getBuildingAt(coords);
+                checkForCollapse(bldg, positionMap, coords, false, vPhaseReport);
             }
         }
 
         // If we have any buildings to update, send the message.
-        if (!update.isEmpty()) {
-            sendChangedBuildings(new Vector<>(update.keySet()));
+        if (!buildingsToUpdate.isEmpty()) {
+            sendChangedBuildings(buildingsToUpdate);
         }
     }
 

@@ -297,10 +297,13 @@ public class Building implements Serializable {
      */
     public Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
-        // The ID of the building will be the hashcode of the coords.
+        // The ID of the building will be deterministic based on the
+        // position of its first hex. 9,999 hexes in the Y direction
+        // ought to be enough for anyone.
+        //
         // ASSUMPTION: this will be unique ID across ALL the building's
         // hexes for ALL the clients of this board.
-        id = coords.hashCode();
+        id = coords.getX() * 10000 + coords.getY();
 
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);

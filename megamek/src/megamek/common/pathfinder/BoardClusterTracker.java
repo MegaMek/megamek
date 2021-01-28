@@ -372,7 +372,7 @@ public class BoardClusterTracker {
                 return false;
             }
             
-            int buildingCF = board.getBuildingAt(coords).getCurrentCF(coords);
+            int buildingCF = building.getCurrentCF(coords);
             
             return entity.getWeight() > buildingCF;            
         } else if ((relevantMovementType != MovementType.Flyer) &&

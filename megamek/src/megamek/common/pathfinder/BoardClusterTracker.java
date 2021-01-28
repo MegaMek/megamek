@@ -366,7 +366,7 @@ public class BoardClusterTracker {
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
             return false;
         } else if (relevantMovementType == MovementType.Walker) {
-            Building building = board.getBuildingAt(coords);
+            final Building building = board.getBuildingAt(coords);
             
             if (building == null) {
                 return false;

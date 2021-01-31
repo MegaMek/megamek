@@ -7542,10 +7542,12 @@ public class Server implements Runnable {
                     int targetType;
                     int targetID;
                     
-                    // if it's a valid target, then simply
+                    // if it's a valid target, then simply pass along the type and ID
                     if (target != null) {    
                         targetID = target.getTargetId();
                         targetType = target.getTargetType();
+                    // if the target has become invalid somehow, or was incorrectly declared in the first place
+                    // log the error, then put some defaults in for the DFA and proceed as if the target had been moved/destroyed
                     } else {
                         String errorMessage = "Illegal DFA by " + entity.getDisplayName() + " against non-existent entity at " + step.getTargetPosition(); 
                         sendServerChat(errorMessage);

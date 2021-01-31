@@ -5,7 +5,8 @@ MAD-11D
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3150
-rules level:2
+source:Dark Age
+rules level:3
 
 mass:75
 engine:300 XL Engine(IS)

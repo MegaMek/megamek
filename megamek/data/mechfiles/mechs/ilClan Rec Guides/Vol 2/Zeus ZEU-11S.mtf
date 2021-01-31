@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:Compact Gyro
 
-heat sinks:13 Double
+heat sinks:13 IS Double
 walk mp:4
 jump mp:0
 
@@ -59,7 +59,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLLRM15
 CLLRM15
-CLArtemisIV
+ISArtemisIV
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
@@ -151,6 +151,6 @@ IS Ferro-Fibrous
 -Empty-
 -Empty-
 
-manufacturer:Defiance Industries 
+manufacturer:Defiance Industries
 primaryfactory:Hesperus II
 

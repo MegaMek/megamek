@@ -4,7 +4,8 @@ MAD-7R
 
 Config:Biped
 techbase:Inner Sphere
-era:3145
+era:3150
+source:Dark Age
 rules level:2
 
 mass:75

@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:Compact Gyro
 
-heat sinks:11 Double
+heat sinks:11 IS Double
 walk mp:3
 jump mp:0
 
@@ -33,15 +33,15 @@ RTR armor:13
 RTC armor:19
 
 Weapons:9
-ATM 9, Right Torso
-ER Medium Laser, Head
+Anti-BattleArmor Pods (B-Pods), Rear Left Leg
+Anti-BattleArmor Pods (B-Pods), Rear Right Leg
+Anti-BattleArmor Pods (B-Pods), Front Left Leg
+Anti-BattleArmor Pods (B-Pods), Front Right Leg
+Gauss Rifle, Left Torso
 ER Large Laser, Left Torso
 Micro Pulse Laser, Left Torso
-Gauss Rifle, Left Torso
-Anti-BattleArmor Pods (B-Pods), Front Right Leg
-Anti-BattleArmor Pods (B-Pods), Front Left Leg
-Anti-BattleArmor Pods (B-Pods), Rear Right Leg
-Anti-BattleArmor Pods (B-Pods), Rear Left Leg
+ATM 9, Right Torso
+ER Medium Laser, Head
 
 Front Left Leg:
 Hip
@@ -78,9 +78,9 @@ CLGaussRifle (T)
 CLGaussRifle (T)
 CLGaussRifle (T)
 CLGaussRifle (T)
-Clan Gauss Ammo
 CLERLargeLaser (T)
 CLMicroPulseLaser (T)
+Clan Gauss Ammo
 Clan Ammo ATM-9
 ISQuadTurret
 CLCASEII

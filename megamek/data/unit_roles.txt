@@ -5553,7 +5553,7 @@ Executioner (Gladiator) I:SKIRMISHER
 Executioner (Gladiator) J:JUGGERNAUT
 Executioner (Gladiator) L:SNIPER
 Executioner (Gladiator) T:SNIPER
-Inferno INF-NO:UNDETERMINED
+Inferno INF-NO:BRAWLER
 Inferno INF-NOA:BRAWLER
 Inferno INF-NOB:BRAWLER
 Inferno INF-NOC:MISSILE BOAT

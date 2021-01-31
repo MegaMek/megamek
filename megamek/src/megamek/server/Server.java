@@ -7538,13 +7538,20 @@ public class Server implements Runnable {
                 if (entity.canDFA()) {
                     checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
-                    DfaAttackAction daa = new DfaAttackAction(entity.getId(),
-                            target.getTargetType(), target.getTargetId(),
-                            target.getPosition());
-                    entity.setDisplacementAttack(daa);
-                    entity.setElevation(step.getElevation());
-                    game.addCharge(daa);
-                    charge = daa;
+                    
+                    if (target != null) {                    
+                        DfaAttackAction daa = new DfaAttackAction(entity.getId(),
+                                target.getTargetType(), target.getTargetId(),
+                                target.getPosition());
+                        entity.setDisplacementAttack(daa);
+                        entity.setElevation(step.getElevation());
+                        game.addCharge(daa);
+                        charge = daa;
+                    } else {
+                        String errorMessage = "Illegal DFA by " + entity.getDisplayName() + " against non-existent entity at " + step.getTargetPosition(); 
+                        sendServerChat(errorMessage);
+                        MegaMek.getLogger().error(errorMessage);
+                    }
                 } else {
                     sendServerChat("Illegal DFA!! I don't think "
                             + entity.getDisplayName()
@@ -7557,6 +7564,7 @@ public class Server implements Runnable {
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
+                
                 break;
             }
 

@@ -4161,7 +4161,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         for (Entity ent : game.getEntitiesVector(pos)) {
-            if (!ce.equals(ent)) {
+            if ((ce == null) || !ce.equals(ent)) {
                 targets.add(ent);
             }
         }

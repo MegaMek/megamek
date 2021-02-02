@@ -303,19 +303,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         waa.getAimingMode(), toHit.getCover());
                 hit.setAttackerId(getAttackerId());
                 // BA gets damage to all troopers
-                if (entity instanceof BattleArmor) {
-                    BattleArmor ba = (BattleArmor) entity;
-                    for (int loc = 1; loc <= ba.getTroopers(); loc++) {
-                        hit.setLocation(loc);
-                        vPhaseReport.addAll(server.damageEntity(entity, hit,
-                                ratedDamage, false, DamageType.NONE, false,
-                                true, throughFront, underWater));
-                    }
-                } else {
-                    vPhaseReport.addAll(server.damageEntity(entity, hit,
+                vPhaseReport.addAll(server.damageEntity(entity, hit,
                             ratedDamage, false, DamageType.NONE, false, true,
                             throughFront, underWater));
-                }
                 server.creditKill(entity, ae);
             }
         }

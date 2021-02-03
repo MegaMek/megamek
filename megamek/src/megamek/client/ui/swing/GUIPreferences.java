@@ -212,6 +212,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
+    public static final String RND_ARMY_SIZE_HEIGHT = "RndArmySizeHeight";
+    public static final String RND_ARMY_SIZE_WIDTH = "RndArmySizeWidth";
+    public static final String RND_ARMY_POS_X = "RndArmyPosX";
+    public static final String RND_ARMY_POS_Y = "RndArmyPosY";
+    public static final String RND_ARMY_SPLIT_POS = "RndArmySplitPos";
     public static final String RND_MAP_POS_X = "RndMapPosX";
     public static final String RND_MAP_POS_Y = "RndMapPosY";
     public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
@@ -377,6 +382,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_POS_X, 200);
         store.setDefault(MECH_SELECTOR_POS_Y, 200);
         store.setDefault(MECH_SELECTOR_SPLIT_POS, 300);
+        store.setDefault(RND_ARMY_SIZE_HEIGHT, 600);
+        store.setDefault(RND_ARMY_SIZE_WIDTH, 800);
+        store.setDefault(RND_ARMY_POS_X, 200);
+        store.setDefault(RND_ARMY_POS_Y, 200);
+        store.setDefault(RND_ARMY_SPLIT_POS, 300);
         
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
@@ -698,6 +708,26 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public int getMechSelectorSplitPos() {
         return store.getInt(MECH_SELECTOR_SPLIT_POS);
+    }
+    
+    public int getRndArmySizeHeight() {
+        return store.getInt(RND_ARMY_SIZE_HEIGHT);
+    }
+
+    public int getRndArmySizeWidth() {
+        return store.getInt(RND_ARMY_SIZE_WIDTH);
+    }
+    
+    public int getRndArmyPosX() {
+        return store.getInt(RND_ARMY_POS_X);
+    }
+    
+    public int getRndArmyPosY() {
+        return store.getInt(RND_ARMY_POS_Y);
+    }
+    
+    public int getRndArmySplitPos() {
+        return store.getInt(RND_ARMY_SPLIT_POS);
     }
 
     public String getMinimapColours() {
@@ -1171,6 +1201,26 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setMechSelectorPosY(int i) {
         store.setValue(MECH_SELECTOR_POS_Y, i);
+    }
+    
+    public void setRndArmySizeHeight(int i) {
+        store.setValue(RND_ARMY_SIZE_HEIGHT, i);
+    }
+
+    public void setRndArmySizeWidth(int i) {
+        store.setValue(RND_ARMY_SIZE_WIDTH, i);
+    }
+    
+    public void setRndArmyPosX(int i) {
+        store.setValue(RND_ARMY_POS_X, i);
+    }
+    
+    public void setRndArmySplitPos(int i) {
+        store.setValue(RND_ARMY_SPLIT_POS, i);
+    }
+    
+    public void setRndArmyPosY(int i) {
+        store.setValue(RND_ARMY_POS_Y, i);
     }
 
     public void setMinimapEnabled(boolean b) {

@@ -9,7 +9,7 @@ public class C3IDSorter implements MekTableSorter {
     
     private ClientGUI clientGui;
     
-    /** A Lobby Mek Table sorter that sorts by 1) player 2) transported units 3) ID. */
+    /** A Lobby Mek Table sorter that sorts mainly by association to C3 networks */
     public C3IDSorter(ClientGUI cg) {
         clientGui = cg;
     }
@@ -94,36 +94,6 @@ public class C3IDSorter implements MekTableSorter {
                 return a_id - b_id;
             }
         }
-            
-            
-//        } else if (!p_a.equals(p_b)) {
-//            return p_a.getName().compareTo(p_b.getName());
-//        } else {
-//            // loaded units should be put immediately below their parent unit
-//            // if a unit's transport ID is not none, then it should
-//            // replace their actual id
-//            if (tr_a == tr_b) {
-//                // either they are both not being transported, or they
-//                // are being transported by the same unit
-//                return a_id - b_id;
-//            }
-//
-//            if (tr_b != Entity.NONE) {
-//                if (tr_b == a_id) {
-//                    // b is loaded on a
-//                    return -1;
-//                }
-//                b_id = tr_b;
-//            }
-//            if (tr_a != Entity.NONE) {
-//                if (tr_a == b_id) {
-//                    // a is loaded on b
-//                    return 1;
-//                }
-//                a_id = tr_a;
-//            }
-//            return a_id - b_id;
-//        }
     }
 
 }

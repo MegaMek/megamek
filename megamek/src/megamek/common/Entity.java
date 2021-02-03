@@ -849,6 +849,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     private Set<Integer> offBoardShotObservers;
     
+    /** 
+     * A String representation of the force hierarchy this entity belongs to.
+     * The string corresponds to MekHQ's Force.getFullName() that links the force
+     * names of the force and parents with ", ". 
+     */
+    private String force;
+    
     /**
      * Generates a new, blank, entity.
      */
@@ -16038,6 +16045,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isOffBoardObserved(int teamID) {
         return offBoardShotObservers.contains(teamID);
+    }
+    
+    public String getForce() {
+        return force;
+    }
+    
+    public void setForce(String f) {
+        force = f;
     }
 
 }

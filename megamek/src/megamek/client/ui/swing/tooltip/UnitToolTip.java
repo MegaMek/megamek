@@ -16,11 +16,14 @@ package megamek.client.ui.swing.tooltip;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -30,6 +33,10 @@ import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.LegAttack;
+import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.SwarmAttack;
+import megamek.common.weapons.SwarmWeaponAttack;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -155,11 +162,32 @@ public final class UnitToolTip {
     // playertable summary team see through real blind drop
     // Reduce Quirks display
     // C3 popup menu
-    //TODO: C3 popup for mulitple units?
     //TODO: Deploy hidden/hull/prone popup menu
-    // C3 cant connect to enemy, check when changing sides
+    //TODO: C3 cant connect to enemy, check when changing sides
+    //TODO: Remove C3 networks when switching teams (like loading)
+    //TODO: check C3 behaviour when deleting units
+    //TODO: do C3 load from MUL?
+    //TODO: allow multiunit C3 popup
     // show C3 network somehow
     // Popup: set deployment turn
+    // Make BV centered
+    //TODO: Deploymnet options
+    // Need the Cost/BV/Ton in the player list?
+    //TODO: Remove gridbag from lobby
+    // popup menu on player list (config, team, remove bot, config bot)
+    // Random Army window size
+    // Team Overview in detached mode write smaller text, otherwise larger
+    // Look at displaying ammo
+    //TODO: Make C3MM look right (Cyclops CP-11-C2) 
+    // Remove C3 from weapon list
+    //TODO: Client Setttings NPW when changing armor visual
+    //TODO: armor visual does not react when damaging units in lobby
+    //TODO: Quirks: Remove "Weapon Quirk", only: SRM 6 - stable... in one line Crusader CRD-2R Enforcer 4R
+    // display 4xMed Laser only when there is at least one weapon at least twice, not all "1x" Vulcan VL-2T
+    // display Hotload for ammo
+    //TODO: Ammo on Pocket Warships Arondight
+    // remove Swarm Attacks...
+    //  TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
 
     
     
@@ -244,7 +272,8 @@ public final class UnitToolTip {
                 String wpQuirksList = getOptionList(weapon.getQuirks().getGroups(), 
                         grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), inLobby);
                 if (!wpQuirksList.isEmpty()) {
-                    result.append("Weapon Quirk: " + wpQuirksList);
+                    // Line breaks not useful here
+                    result.append(wpQuirksList.replace("<BR>", "")).append("<BR>");
                 }
             }
             result.append("</FONT>");
@@ -390,113 +419,245 @@ public final class UnitToolTip {
         return result;
     }
     
+    private static class WeaponInfo {
+        String name;
+        String sortString;
+        String range;
+        int count = 1;
+        boolean isClan;
+        boolean isFiring = false;
+        boolean isHotloaded = false;
+        boolean isRapidFire = false;
+        HashMap<String, Integer> ammos = new HashMap<>();
+        int ammoActiveWeaponCount;
+    }
+    
+    /** 
+     * Returns true if the weapontype should be excluded from the Tooltip. 
+     * This is true for C3 computers (only Masters are weapons) and 
+     * special Infantry attacks (Swarm Attacks and the like).
+     */ 
+    private static boolean isNotTTRelevant(WeaponType wtype) {
+        return wtype.hasFlag(WeaponType.F_C3M) || wtype.hasFlag(WeaponType.F_C3MBS)
+                || wtype instanceof LegAttack || wtype instanceof SwarmAttack
+                || wtype instanceof StopSwarmAttack || wtype instanceof SwarmWeaponAttack;
+    }
+    
+    private static final String RAPIDFIRE = "|RF|";
+    
     /** Returns the assembled weapons with ranges etc. */
     private static StringBuilder weaponList(Entity entity) {
         ArrayList<Mounted> weapons = entity.getWeaponList();
-        HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
+        HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
         // Gather names, counts, Clan/IS
-        // When clan then the number will be stored as negative
+        WeaponInfo currentWp;
         for (Mounted curWp: weapons) {
-            String weapDesc = curWp.getDesc();
-            // Append ranges
             WeaponType wtype = (WeaponType)curWp.getType();
-            int ranges[];
-            if (entity.isAero()) {
-                ranges = wtype.getATRanges();
+            if (isNotTTRelevant(wtype)) {
+                continue;
+            }
+            String weapDesc = curWp.getDesc();
+            // Distinguish equal weapons with and without rapid fire
+            if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire()) {
+                weapDesc += RAPIDFIRE;
+            }
+            if (wpInfos.containsKey(weapDesc)) {
+                currentWp = wpInfos.get(weapDesc);
+                currentWp.count++;
+                wpInfos.put(weapDesc, currentWp);
+                if (!curWp.isDestroyed() && wpInfos.containsKey(curWp.getName() + "Ammo")) {
+                    WeaponInfo currAmmo = wpInfos.get(curWp.getName() + "Ammo");
+                    currAmmo.ammoActiveWeaponCount++;
+                } 
             } else {
-                ranges = wtype.getRanges(curWp);
-            } 
-            String rangeString = " \u22EF ";
-            if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
-                    && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
-                rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
-            }
-            int maxRange = RangeType.RANGE_LONG;
-            if (entity.getGame().getOptions().booleanOption(
-                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
-                maxRange = RangeType.RANGE_EXTREME;
-            }
-            for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
-                rangeString += ranges[i];
-                if (i != maxRange) {
-                    rangeString += "\u2B1D";
+                currentWp = new WeaponInfo();
+                currentWp.name = weapDesc;
+                currentWp.sortString = curWp.getName();
+                // Sort active weapons below destroyed to keep them close to their ammo
+                if (!curWp.isDestroyed()) {
+                    currentWp.sortString += "1";
+                }
+                currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
+
+                // Create the ranges String
+                int ranges[];
+                if (entity.isAero()) {
+                    ranges = wtype.getATRanges();
+                } else {
+                    ranges = wtype.getRanges(curWp);
+                } 
+                String rangeString = " \u22EF ";
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
+                    rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
+                }
+                int maxRange = RangeType.RANGE_LONG;
+                if (entity.getGame().getOptions().booleanOption(
+                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                    maxRange = RangeType.RANGE_EXTREME;
+                }
+                for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
+                    rangeString += ranges[i];
+                    if (i != maxRange) {
+                        rangeString += "\u2B1D";
+                    }
+                }
+                currentWp.range = rangeString;
+                
+                WeaponType wpT = ((WeaponType)curWp.getType());
+                currentWp.isClan = (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear())));
+                wpInfos.put(weapDesc, currentWp);
+
+                // Add ammo info if the weapon has ammo 
+                // Check wpInfos for dual entries to avoid displaying ammo twice for non/rapid-fire  
+                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                        && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                        && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
+                    
+                    if (wpInfos.containsKey(curWp.getName() + "Ammo")) {
+                        if (!curWp.isDestroyed()) {
+                            WeaponInfo currAmmo = wpInfos.get(curWp.getName() + "Ammo");
+                            currAmmo.ammoActiveWeaponCount++;
+                        }
+                    } else {
+                        WeaponInfo currAmmo = new WeaponInfo();
+                        currAmmo.sortString = curWp.getName() + "ZZ"; // Sort ammo after the weapons
+                        currAmmo.ammoActiveWeaponCount = curWp.isDestroyed() ? 0 : 1;
+                        for (Mounted amounted : entity.getAmmo()) {
+                            boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(curWp, (AmmoType) amounted.getType());
+                            if (canSwitchToAmmo && !amounted.isDumping()) {
+                                String name = amounted.getName()
+                                        .replace("Ammo", "").replace("[IS]", "").replace("[Clan]", "")
+                                        .replace("(Clan)", "").replace("[Half]", "").replace("Half", "")
+                                        .replace(curWp.getDesc(), "").strip();
+                                if (name.length() == 0) {
+                                    name = "Standard";
+                                }
+                                if (amounted.isHotLoaded()) {
+                                    name += " (Hot-Loaded)";
+                                }
+                                int count = amounted.getUsableShotsLeft();
+                                count += currAmmo.ammos.containsKey(name) ? currAmmo.ammos.get(name) : 0;
+                                currAmmo.ammos.put(name, count);
+                            }
+                        }
+                        wpInfos.put(curWp.getName() + "Ammo", currAmmo);
+                    }
                 }
             }
-            weapDesc += rangeString;
-            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                    && curWp.isHotLoaded()) {
-                weapDesc += " \u22EF<I> Hot-loaded</I>";
-            }
-            if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)
-                    && curWp.isRapidfire()) {
-                weapDesc += " \u22EF<I> Rapid-fire</I>";
-            }
-            if (wpNames.containsKey(weapDesc)) {
-                int number = wpNames.get(weapDesc);
-                if (number > 0) 
-                    wpNames.put(weapDesc, number + 1);
-                else 
-                    wpNames.put(weapDesc, number - 1);
-            } else {
-                WeaponType wpT = ((WeaponType)curWp.getType());
-                if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
-                    wpNames.put(weapDesc, -1);
-                else
-                    wpNames.put(weapDesc, 1);
-            }
-        }
 
+        }
+        
         // Print to Tooltip
         StringBuilder result = new StringBuilder();
-        boolean subsequentLine = false;
-        for (Entry<String, Integer> entry : wpNames.entrySet()) {
+        boolean subsequentLine = false; 
+        // Display sorted by weapon name
+        ArrayList<WeaponInfo> wps = new ArrayList<UnitToolTip.WeaponInfo>(wpInfos.values());
+        wps.sort((w1, w2) -> w1.sortString.compareTo(w2.sortString));
+        int totalWeaponCount = wpInfos.values().stream().mapToInt(wp -> wp.count).sum();
+        boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);
+        for (WeaponInfo currentEquip : wps) {
+            // This WeaponInfo is ammo
+            if (!currentEquip.ammos.isEmpty()) {
+                result.append(createAmmoEntry(currentEquip));
+            } else {
+
+            // This WeaponInfo is a weapon
+
+            
             // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
             // Also remove "+", means currently selected for firing
-            boolean wpDest = false;
-            String nameStr = entry.getKey();
-            if (entry.getKey().startsWith("x ")) { 
-                nameStr = entry.getKey().substring(2, entry.getKey().length());
-                wpDest = true;
+            boolean isDestroyed = false;
+            String nameStr = currentEquip.name;
+            if (nameStr.startsWith("x ")) { 
+                nameStr = nameStr.substring(2);
+                isDestroyed = true;
             }
 
-            if (entry.getKey().startsWith("*")) { 
-                nameStr = entry.getKey().substring(1, entry.getKey().length());
-                wpDest = true;
+            if (nameStr.startsWith("*")) { 
+                nameStr = nameStr.substring(1);
+                isDestroyed = true;
             }
 
-            if (entry.getKey().startsWith("+")) { 
-                nameStr = entry.getKey().substring(1, entry.getKey().length());
-                nameStr = nameStr.concat(" <I>(Firing)</I>");
+            if (nameStr.startsWith("+")) { 
+                nameStr = nameStr.substring(1);
+                currentEquip.isFiring = true;
             }
+            
+            // Remove the rapid fire marker (used only to distinguish weapons set to different modes)
+            nameStr = nameStr.replace(RAPIDFIRE, "");
+            nameStr += currentEquip.range;
 
             result.append(guiScaledFontHTML(uiTTWeaponColor()));
-            if (wpDest) {
+            if (isDestroyed) {
                 result.append("<S>");
             }
 
-            String clanStr = "";
-            if (entry.getValue() < 0) { 
-                clanStr = Messages.getString("BoardView1.Tooltip.Clan");
-            }
+            String clanStr = currentEquip.isClan ? Messages.getString("BoardView1.Tooltip.Clan") : "";
 
             // when more than 5 weapons are present, they will be grouped
             // and listed with a multiplier
-            if (weapons.size() > 5) {
-                result.append(addToTT("WeaponN", subsequentLine, Math.abs(entry.getValue()), clanStr, nameStr));
+            if (totalWeaponCount > 5 && hasMultiples) {
+                result.append(addToTT("WeaponN", subsequentLine, currentEquip.count, clanStr, nameStr));
                 subsequentLine = true;
             } else { // few weapons: list each weapon separately
-                for (int i = 0; i < Math.abs(entry.getValue()); i++) {
-                    result.append(addToTT("Weapon", subsequentLine, Math.abs(entry.getValue()), clanStr, nameStr));
+                for (int i = 0; i < currentEquip.count; i++) {
+                    result.append(addToTT("Weapon", subsequentLine, currentEquip.count, clanStr, nameStr));
                     subsequentLine = true;
                 }
             }
             // Weapon destroyed? End strikethrough
-            if (wpDest) {
+            if (isDestroyed) {
                 result.append("</S>");
+            } else {
+                // Not destroyed
+                // In-game and set to fire this round?
+                if (currentEquip.isFiring) {
+                    result.append(" \u22EF<I> (Firing)</I>");
+                }
+                // TacOps Modifiers
+                if (currentEquip.isHotloaded) {
+                    result.append(" \u22EF<I> Hot-loaded</I>");
+                }
+                if (currentEquip.isRapidFire) {
+                    result.append(" \u22EF<I> Rapid-fire</I>");
+                }
             }
             result.append("</FONT>"); 
-        }
+        }}
         result.append("<BR>");
+        return result;
+    }
+    
+    /** Returns the ammo line(s) for the ammo of one weapon type. */
+    private static StringBuilder createAmmoEntry(WeaponInfo ammoInfo) {
+        StringBuilder result = new StringBuilder();
+        result.append(guiScaledFontHTML(-0.2f));
+        
+        int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
+        if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
+            result.append("<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Out of Ammo!");
+        } else {
+            for (Entry<String, Integer> ammo: ammoInfo.ammos.entrySet()) {
+                String ammoName = ammo.getKey().equals("Standard") && ammoInfo.ammos.size() == 1 ? "" : ammo.getKey() + ": ";
+                // No entry when no ammo of this type left but some other type left
+                if (ammo.getValue() == 0) {
+                    continue;
+                } 
+                
+                result.append("<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"); 
+                if (ammoInfo.ammoActiveWeaponCount > 1) { 
+                    // Remaining ammo and multiple weapons using it
+                    result.append(ammoName);
+                    result.append(ammo.getValue() / ammoInfo.ammoActiveWeaponCount).append(" turns");
+                    result.append(" (" + ammo.getValue() + " shots)");
+                } else { 
+                    // Remaining ammo and only one weapon using it
+                    result.append(ammoName).append(ammo.getValue()).append(" shots");
+                }
+            }
+        }
+        result.append("</FONT>");
         return result;
     }
 
@@ -809,6 +970,16 @@ public final class UnitToolTip {
             result.append(Messages.getString("BoardView1.Tooltip." + tipName));
         }
         return result;
+    }
+    
+    /** Returns true when Hot-Loading LRMs is on. */
+    static boolean isHotLoadActive(IGame game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
+    }
+    
+    /** Returns true when Hot-Loading LRMs is on. */
+    static boolean isRapidFireActive(IGame game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
     }
 
 }

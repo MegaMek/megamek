@@ -55,6 +55,7 @@ public class TeamOverviewPanel extends JPanel {
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final JScrollPane scrTeams = new JScrollPane(teamOverviewTable);
     private final ClientGUI clientGui;
+    private boolean isDetached;
 
     /** Constructs the team overview panel; the given ClientGUI is used to access the game data. */ 
     public TeamOverviewPanel(ClientGUI cg) {
@@ -69,12 +70,20 @@ public class TeamOverviewPanel extends JPanel {
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.COST.ordinal()).setCellRenderer(centerRenderer);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.BV.ordinal()).setCellRenderer(centerRenderer);
+        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrTeams.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrTeams);
 
         adaptToGUIScale();
         refreshData();
+    }
+    
+    public void setDetached(boolean state) {
+        if (state != isDetached) {
+            isDetached = state;
+            refreshTableHeader();
+        }
     }
     
     /** Adapts the row heights and headers to the current GUI scaling. */
@@ -244,7 +253,8 @@ public class TeamOverviewPanel extends JPanel {
         @Override
         public String getColumnName(int column) {
             String text = Messages.getString("ChatLounge.teamOverview.COL" + TOMCOLS.values()[column]);
-            return "<HTML>" + UIUtil.guiScaledFontHTML(0.2f) + text;
+            float textSizeDelta = isDetached ? 0f : 0.3f;
+            return "<HTML><NOBR>" + UIUtil.guiScaledFontHTML(textSizeDelta) + text;
         }
 
         @Override
@@ -254,18 +264,19 @@ public class TeamOverviewPanel extends JPanel {
 
         @Override
         public Object getValueAt(int row, int col) {
+            float textSizeDelta = isDetached ? -0.1f : 0.2f;
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
             case TEAM:
                 boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
                 Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
-                result.append(guiScaledFontHTML(color, 0.1f) + "&nbsp;");
+                result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
                 result.append(teamNames.get(row) + "</FONT>");
                 break;
 
             case TONNAGE:
-                result.append(guiScaledFontHTML(0.1f) + "<CENTER>");
+                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
                 double ton = (double)tons.get(row) / 1000;
                 if (ton < 10) {
                     result.append(String.format("%.2f", ton) + " Tons");
@@ -276,7 +287,7 @@ public class TeamOverviewPanel extends JPanel {
                 break;
 
             case COST:
-                result.append(guiScaledFontHTML(0.1f) + "<CENTER>");
+                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
                 if (costs.get(row) < 10000000) {
                     result.append(String.format("%,d", costs.get(row)) + " C-Bills");
                 } else {
@@ -289,16 +300,16 @@ public class TeamOverviewPanel extends JPanel {
                 return teams.get(row).getPlayersVector();
 
             case BV:
-                result.append(guiScaledFontHTML(0.1f) + "<CENTER>");
+                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
                 result.append(bvs.get(row));
                 result.append(relativeValue(bvs, row));
                 break;
                 
             case UNITS:
                 if (!seeTeam(row)) {
-                    return "<HTML>" + guiScaledFontHTML() + "&nbsp;<I>Unknown</I>";
+                    return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
                 }
-                result.append(guiScaledFontHTML());
+                result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
                 result.append(units.get(row));
                 break;
                 
@@ -355,17 +366,20 @@ public class TeamOverviewPanel extends JPanel {
             }
             removeAll();
             add(Box.createVerticalGlue());
-            for (Object obj: (Vector<?>)value) {
+            Vector<?> playerList = (Vector<?>)value;
+            int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
+            int size = scaleForGUI(2 * baseSize);
+            Font font = new Font("Dialog", Font.PLAIN, scaleForGUI(baseSize));
+            for (Object obj: playerList) {
                 if (!(obj instanceof IPlayer)) {
                     continue;
                 }
                 IPlayer player = (IPlayer)obj;
                 JLabel lblPlayer = new JLabel(player.getName());
                 lblPlayer.setBorder(new EmptyBorder(3, 3, 3, 3));
-                lblPlayer.setFont(new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1)));
+                lblPlayer.setFont(font);
                 lblPlayer.setIconTextGap(scaleForGUI(5));
                 Image camo = player.getCamouflage().getImage();
-                int size = scaleForGUI(14);
                 lblPlayer.setIcon(new ImageIcon(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                 add(lblPlayer);
             }

@@ -23,9 +23,4 @@ public class TypeSorter implements MekTableSorter {
         return MekTableModel.COL_UNIT;
     }
 
-    @Override
-    public Sorting getSortingDirection() {
-        return Sorting.ASCENDING;
-    }
-    
 }

@@ -22,6 +22,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -446,6 +447,24 @@ public final class UIUtil {
         }
     }
     
+    /** A JPanel that does not stretch horizontally beyond its preferred width. */
+    public static class FixedXPanel extends JPanel {
+        private static final long serialVersionUID = -4634244641653743910L;
+
+        public FixedXPanel(LayoutManager layout) {
+            super(layout);
+        }
+        
+        public FixedXPanel() {
+            super();
+        }
+
+        @Override
+        public Dimension getMaximumSize() {
+            return new Dimension(getPreferredSize().width, super.getMaximumSize().height);
+        }
+    }
+    
     /** A JLabel with a specialized tooltip display. */
     public static class TipLabel extends JLabel {
         private static final long serialVersionUID = -338233022633675883L;
@@ -499,6 +518,36 @@ public final class UIUtil {
             return tip;
         }
     }
+    
+    /**
+     * Returns a single menu item with the given text, the given command string
+     * cmd, the given enabled state, and assigned the given listener.
+     */
+    public static JMenuItem menuItem(String text, String cmd, boolean enabled, 
+            ActionListener listener) {
+
+        return menuItem(text, cmd, enabled, listener, Integer.MIN_VALUE);
+    }
+
+    /**
+     * Returns a single menu item with the given text, the given command string
+     * cmd, the given enabled state, and assigned the given listener. Also assigns
+     * the given key mnemonic.
+     */
+    public static JMenuItem menuItem(String text, String cmd, boolean enabled, 
+            ActionListener listener, int mnemonic) {
+
+        JMenuItem result = new JMenuItem(text);
+        result.setActionCommand(cmd);
+        result.addActionListener(listener);
+        result.setEnabled(enabled);
+        if (mnemonic != Integer.MIN_VALUE) {
+            result.setMnemonic(mnemonic);
+        }
+        return result;
+    }
+    
+    
     
     // PRIVATE 
     

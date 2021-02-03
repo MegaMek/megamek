@@ -13,7 +13,6 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -22,16 +21,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.ScalingPopup;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 class MekTablePopup {
 
@@ -141,7 +138,7 @@ class MekTablePopup {
             popup.add(menuItem("Configure all...", "CONFIGURE_ALL", canConfigureDeployAll, listener, KeyEvent.VK_C));
         }
         popup.add(deployMenu(canConfigureAny, listener));
-        popup.add(spacer());
+        popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Set individual camo...", "INDI_CAMO", canConfigureAny, listener, KeyEvent.VK_I));
         popup.add(menuItem("Delete", "DELETE", canConfigureAll, listener, KeyEvent.VK_D));
         popup.add(randomizeMenu(canConfigureAny, listener));
@@ -158,7 +155,7 @@ class MekTablePopup {
             popup.add(quirksMenu(canSeeAll, listener));
         }
         
-        popup.add(spacer());
+        popup.add(ScalingPopup.spacer());
 
         popup.add(loadMenu(clientGui, canConfigureAny && !allEmbarked, listener, entities));
         
@@ -185,24 +182,12 @@ class MekTablePopup {
             boolean prEnabled = oneSelected && canConfigureAny && allProtomeks && noneEmbarked && allHaveMagClamp;
             popup.add(protoMenu(clientGui, prEnabled, listener, entities.get(0)));
         }
+        
+//        if (canConfigureAll) {  
+//            popup.add(lanceMenu(clientGui, true, listener));
+//        }
 
         return popup;
-    }
-
-    /** Returns a spacer (empty, small menu item) for the popup. */
-    private static JMenuItem spacer() {
-
-        JMenuItem result = new JMenuItem() {
-            private static final long serialVersionUID = 1249257644704746075L;
-
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension s = super.getPreferredSize();
-                return new Dimension(s.width, UIUtil.scaleForGUI(8));
-            }
-        };
-        result.setEnabled(false);
-        return result;
     }
 
     /**
@@ -389,6 +374,22 @@ class MekTablePopup {
         menu.add(menuItem("Skills", "SKILLS", enabled, listener, KeyEvent.VK_S));
         return menu;
     }
+    
+    /**
+     * Returns the "Lance" submenu, allowing assignment to forces
+     */
+//    private static JMenu lanceMenu(ClientGUI clientGui, boolean enabled, ActionListener listener) {
+//        JMenu menu = new JMenu("Force");
+//        menu.setEnabled(enabled);
+//
+//        menu.add(menuItem("Create new Force...", "LANCE|CREATE", enabled, listener));
+//        menu.add(menuItem("Create new Top-Level Force...", "LANCE|CREATESUPER", enabled, listener));
+//        for (String f: Forces.getAvailableForces(clientGui.getClient().getGame(), clientGui.getClient().getLocalPlayer())) {
+//            menu.add(menuItem("Add to " + f, "LANCE|ADD|" + f, enabled, listener));
+//        }
+//        menu.add(menuItem("Remove from Force", "LANCE|REMOVE", enabled, listener));
+//        return menu;
+//    }
     
     /**
      * Returns the "C3" submenu, allowing C3 changes
@@ -589,32 +590,5 @@ class MekTablePopup {
         return menu;
     }
 
-    /**
-     * Returns a single menu item with the given text, the given command string
-     * cmd, the given enabled state, and assigned the given listener.
-     */
-    private static JMenuItem menuItem(String text, String cmd, boolean enabled, 
-            ActionListener listener) {
-
-        return menuItem(text, cmd, enabled, listener, Integer.MIN_VALUE);
-    }
-
-    /**
-     * Returns a single menu item with the given text, the given command string
-     * cmd, the given enabled state, and assigned the given listener. Also assigns
-     * the given key mnemonic.
-     */
-    private static JMenuItem menuItem(String text, String cmd, boolean enabled, 
-            ActionListener listener, int mnemonic) {
-
-        JMenuItem result = new JMenuItem(text);
-        result.setActionCommand(cmd);
-        result.addActionListener(listener);
-        result.setEnabled(enabled);
-        if (mnemonic != Integer.MIN_VALUE) {
-            result.setMnemonic(mnemonic);
-        }
-        return result;
-    }
 }
 

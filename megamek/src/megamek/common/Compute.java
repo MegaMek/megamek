@@ -6705,10 +6705,17 @@ public class Compute {
         return acceptable;
     }
 
-    public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos,
-                                                      int elev, IGame game) {
-
-        ArrayList<Entity> mountable = new ArrayList<Entity>();
+    /**
+     * Builds a list of all adjacent units that can load the given Entity.
+     * @param en   The entity to load
+     * @param pos  The coordinates of the hex to load from
+     * @param elev The absolute elevation of the unit at the point of loading (surface
+     *             of the hex + elevation over the surface)
+     * @param game The game object
+     * @return     All adjacent units that can mount the Entity
+     */
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader

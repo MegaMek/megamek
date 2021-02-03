@@ -188,6 +188,7 @@ public final class UnitToolTip {
     //TODO: Ammo on Pocket Warships Arondight
     // remove Swarm Attacks...
     //  TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
+    // Ammo: xx turns (200 rounds)
 
     
     
@@ -529,7 +530,7 @@ public final class UnitToolTip {
                                 String name = amounted.getName()
                                         .replace("Ammo", "").replace("[IS]", "").replace("[Clan]", "")
                                         .replace("(Clan)", "").replace("[Half]", "").replace("Half", "")
-                                        .replace(curWp.getDesc(), "").strip();
+                                        .replace(curWp.getDesc(), "").trim();
                                 if (name.length() == 0) {
                                     name = "Standard";
                                 }

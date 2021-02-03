@@ -6714,10 +6714,8 @@ public class Compute {
      * @param game The game object
      * @return     All adjacent units that can mount the Entity
      */
-    public static List<Entity> getMountableUnits(Entity en, Coords pos,
-                                                      int elev, IGame game) {
-
-        ArrayList<Entity> mountable = new ArrayList<>();
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader

@@ -16,6 +16,9 @@ VERSION HISTORY:
 + Issue #2619: Prevent unwanted turn skip if loading a save game with only one unit left to move
 + Issue #2598: Dropship can't mount(load units) if on hexes higher than level 2
 + Issue #2620: Homing Arrow IV no longer deals excessive splash damage to battle armor
++ Data: Fixing issues #2623, #2612, #2603, #2602, #2600, #2582, #2566, #2064, #2036
++ Data: New Sprites
++ Data: Updating SimonLandmine's map pack and adding strategoslevel3 Tukkayid maps.
 
 0.47.16 (RC2) (2021-01-05 1700 UTC)
 + Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill

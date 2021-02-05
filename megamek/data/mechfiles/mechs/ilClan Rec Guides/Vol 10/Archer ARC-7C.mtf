@@ -5,14 +5,14 @@ ARC-7C
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3119
-rules level:2
+rules level:4
 
 mass:70
 engine:350 XL Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:14 Double
+heat sinks:14 IS Double
 walk mp:5
 jump mp:0
 
@@ -30,12 +30,12 @@ RTR armor:6
 RTC armor:10
 
 Weapons:6
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-LRM 20, Right Torso
+ER Medium Laser, Right Arm
 LRM 20, Left Torso
+LRM 20, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder

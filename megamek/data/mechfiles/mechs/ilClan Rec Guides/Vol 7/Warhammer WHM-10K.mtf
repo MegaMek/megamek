@@ -4,16 +4,16 @@ WHM-10K
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
+era:3147
 source:Dark Age
-rules level:3
+rules level:4
 
 mass:70
 engine:280 Light Engine(IS)
 structure:IS Endo-Composite
 myomer:Standard
 
-heat sinks:16 Double
+heat sinks:16 Clan Double
 walk mp:4
 jump mp:0
 

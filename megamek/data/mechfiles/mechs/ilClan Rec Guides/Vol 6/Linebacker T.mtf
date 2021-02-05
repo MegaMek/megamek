@@ -4,15 +4,15 @@ T
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
-rules level:2
+era:3142
+rules level:4
 
 mass:65
 engine:390 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:14 Double
+heat sinks:14 Clan Double
 base chassis heat sinks:14
 walk mp:6
 jump mp:0
@@ -31,19 +31,19 @@ RTR armor:8
 RTC armor:10
 
 Weapons:5
-Plasma Cannon, Right Arm
 Plasma Cannon, Left Arm
-Flamer, Right Torso
-Streak SRM 4, Right Torso
+Plasma Cannon, Right Arm
 Streak LRM 5, Left Torso
+Streak SRM 4, Right Torso
+Flamer, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLPlasmaCannon (omnipod)
-CLPlasmaCannonAmmo (omnipod)
-CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannon (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -55,9 +55,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLPlasmaCannon (omnipod)
-CLPlasmaCannonAmmo (omnipod)
-CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannon (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -68,8 +68,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakLRM5 (omnipod)
-Clan Streak LRM 5 Ammo (omnipod)
+CLStreakLRM5 (OMNIPOD)
+Clan Streak LRM 5 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -82,9 +82,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM4 (omnipod)
-Clan Streak SRM 4 Ammo (omnipod)
-CLFlamer (R) (omnipod)
+CLStreakSRM4 (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
+CLFlamer (R) (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLActiveProbe (omnipod)
+CLActiveProbe (OMNIPOD)
 Clan Endo Steel
 
 Head:

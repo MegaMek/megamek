@@ -6,14 +6,14 @@ Config:Biped
 techbase:Inner Sphere
 era:3115
 source:Dark Age
-rules level:3
+rules level:4
 
 mass:90
 engine:270 Fusion Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:15 Double
+heat sinks:15 IS Double
 walk mp:3
 jump mp:3
 

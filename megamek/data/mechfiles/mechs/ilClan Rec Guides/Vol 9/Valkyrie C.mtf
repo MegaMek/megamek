@@ -6,7 +6,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3139
 source:Dark Age
-rules level:2
+rules level:4
 
 mass:30
 engine:150 XL Engine(IS)
@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:10 Double
+heat sinks:10 IS Double
 walk mp:5
 jump mp:8
 

@@ -4,7 +4,7 @@ Marauder IIC
 
 Config:Biped
 techbase:Clan
-era:3045
+era:2831
 rules level:2
 
 mass:85
@@ -12,7 +12,7 @@ engine:340 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:22 Double
+heat sinks:22 Clan Double
 walk mp:4
 jump mp:0
 

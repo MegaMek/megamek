@@ -6,14 +6,14 @@ Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3110
 source:Dark Age
-rules level:2
+rules level:4
 
 mass:40
 engine:320 XL (Clan) Engine
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:8
 jump mp:8

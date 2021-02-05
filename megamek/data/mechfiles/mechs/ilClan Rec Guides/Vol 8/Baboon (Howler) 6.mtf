@@ -6,14 +6,14 @@ Config:Biped
 techbase:Clan
 era:3086
 source:Dark Age
-rules level:3
+rules level:4
 
 mass:20
 engine:140 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:7
 jump mp:0
 

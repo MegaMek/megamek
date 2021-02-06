@@ -42,14 +42,14 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
     private Coords selectedTarget;
     private JTextField inputField;
-    private String[] args;
     private LinkedList<String> history;
     private int historyBookmark = -1;
 
-    public AccessibilityWindow(ChatterBox cb, ClientGUI clientgui) {
-        super(clientgui.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
-        client = clientgui.getClient();
-        gui = clientgui;
+    public AccessibilityWindow(ClientGUI clientGUI) {
+        super();
+        setTitle(Messages.getString("ClientGUI.ChatWindow"));
+        client = clientGUI.getClient();
+        gui = clientGUI;
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerConnected(GamePlayerConnectedEvent e) {
@@ -130,32 +130,32 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
         history = new LinkedList<>();
 
+        setLayout(new BorderLayout());
+
         chatArea = new JTextArea(
                 " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
         chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-        inputField = new JTextField();
-
-        Container cp = this.getContentPane();
-        cp.setLayout(new BorderLayout());
-        cp.add(new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        add(new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        cp.add(inputField, BorderLayout.SOUTH);
+
+        inputField = new JTextField();
         inputField.addKeyListener(this);
+        add(inputField, BorderLayout.SOUTH);
     }
 
     // Stolen in principle from the MapMenu.
     private void processAccessibleGUI() {
-        args = inputField.getText().split(" ");
+        final String[] args = inputField.getText().split(" ");
         if (args.length == 3) {
             selectedTarget = new Coords(Integer.parseInt(args[1]) - 1,
-                Integer.parseInt(args[2]) - 1);
+                    Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
             gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
-            //CLick.
+            // Click.
             ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
         }
     }
@@ -177,9 +177,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         }
     }
 
-    //
-    // KeyListener
-    //
+    //region Key Listener
     @Override
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -194,7 +192,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             } else {
                 client.sendChat(inputField.getText());
             }
-            inputField.setText(""); //$NON-NLS-1$
+            inputField.setText("");
 
             if (history.size() > MAX_HISTORY) {
                 history.removeLast();
@@ -212,10 +210,10 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     /**
      * Pull a bookmarked item from the history.
      */
-    public void fetchHistory() {
+    private void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (IndexOutOfBoundsException ignored) {
             inputField.setText("");
             historyBookmark = -1;
         }
@@ -230,5 +228,5 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     public void keyTyped(KeyEvent ev) {
         //ignored
     }
-
+    //endregion Key Listener
 }

@@ -1,8 +1,24 @@
+/*
+ * Copyright (c) 2019-2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
@@ -17,7 +33,6 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 public class AccessibilityWindow extends JDialog implements KeyListener {
-
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
@@ -113,10 +128,10 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             }
         });
 
-        history = new LinkedList<String>();
+        history = new LinkedList<>();
 
         chatArea = new JTextArea(
-                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
+                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
@@ -125,7 +140,8 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
         Container cp = this.getContentPane();
         cp.setLayout(new BorderLayout());
-        cp.add(chatArea, BorderLayout.CENTER);
+        cp.add(new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         cp.add(inputField, BorderLayout.SOUTH);
         inputField.addKeyListener(this);
     }
@@ -138,7 +154,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
-            ((BoardView1) gui.bv).mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
+            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
             //CLick.
             ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
         }
@@ -164,6 +180,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     //
     // KeyListener
     //
+    @Override
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
             history.addFirst(inputField.getText());
@@ -194,21 +211,22 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
     /**
      * Pull a bookmarked item from the history.
-     *
      */
     public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
         } catch (IndexOutOfBoundsException ioobe) {
-            inputField.setText(""); //$NON-NLS-1$
+            inputField.setText("");
             historyBookmark = -1;
         }
     }
 
+    @Override
     public void keyReleased(KeyEvent ev) {
         //ignored
     }
 
+    @Override
     public void keyTyped(KeyEvent ev) {
         //ignored
     }

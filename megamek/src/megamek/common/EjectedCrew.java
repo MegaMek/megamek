@@ -45,7 +45,7 @@ public class EjectedCrew extends Infantry {
         //setWeight(1); // Copied from original MechWarrior code, but does this really do anything?
 
         // Generate the display name, then add the original ride's name.
-        setDisplayName(getDisplayName() + " " + originalRide.getDisplayName());
+        setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());

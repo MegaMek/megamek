@@ -9829,7 +9829,7 @@ v0.29.83 (2005-07-10 11:00am)
 + Bug 1235226: Applied change to Condor MPT.
 + Bug 1235229: Applied change to Interloper UST.
 + Bug 1235232, 1235233, 1235234, 1235235: Made IS M.A.S.H. trucks Level 3.
- HQ (Kurita) Level 3.
++ Bug 1235238: Made Mobile HQ (Kurita) Level 3.
 + Bug 1235240: Applied change to Rommel II(C) (SSRM).
 + Bug 1235242: Applied change to Skimmer.
 + Fixed Java 1.1 incompatibility introduced by fix for bug 1002223.

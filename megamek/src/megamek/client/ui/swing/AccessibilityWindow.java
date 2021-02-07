@@ -46,8 +46,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     private int historyBookmark = -1;
 
     public AccessibilityWindow(ClientGUI clientGUI) {
-        super();
-        setTitle(Messages.getString("ClientGUI.ChatWindow"));
+        super(clientGUI.getFrame(), Messages.getString("ClientGUI.ChatWindow"));
         client = clientGUI.getClient();
         gui = clientGUI;
         client.getGame().addGameListener(new GameListenerAdapter() {

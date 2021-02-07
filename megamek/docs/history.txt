@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.47.18 (RC4)-SNAPSHOT
+
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557 - SimonLandmine maps out of date.
 + Issue #2529: Dead-fire ammo wrong shots/ton (missed some)

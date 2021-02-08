@@ -189,6 +189,9 @@ public final class UnitToolTip {
     // remove Swarm Attacks...
     //  TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
     // Ammo: xx turns (200 rounds)
+    //TODO Mark units assault dropping
+    //TODO Hide Enemy Unit button ?? Hide them always
+    //TODO C3 and force side-by-side, when marking one unit in one, mnark it on the other
 
     
     

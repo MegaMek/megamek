@@ -56,6 +56,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -94,6 +97,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     // UI display control values
     static final int MEKTABLE_ROWHEIGHT_COMPACT = 20;
     static final int MEKTABLE_ROWHEIGHT_FULL = 65;
+    static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private static final int PLAYERTABLE_ROWHEIGHT = 60;
     private final static int TEAMOVERVIEW_BORDER = 45;
     
@@ -101,7 +105,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JPanel panUnits = new JPanel();
     private JPanel panMap = new JPanel();
     private JPanel panTeam = new JPanel();
-    
     
     // Labels
     private JLabel lblMapSummary = new JLabel("");
@@ -124,13 +127,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
     private JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
     private JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
-    private JToggleButton butShowUnitID = new JToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
 
     /* Unit Table */
     private JTable mekTable;
     private JScrollPane scrMekTable;
     private JToggleButton butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact"));
+    private JToggleButton butShowUnitID = new JToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    private JToggleButton butListView = new JToggleButton("Sortable View");
+    private JToggleButton butForceView = new JToggleButton("Force View");
+    private JToggleButton butC3View = new JToggleButton("C3 View");
+    private JToggleButton butTransportsView = new JToggleButton("Transports View");
     private MekTableModel mekModel;
+    
+    /* Unit Trees */
+    private MekTreeC3Model mekTreeC3Model;
+    private JTree mekC3Tree;
+    private MekTreeForceModel mekTreeForceModel;
+    private JTree mekForceTree;
+    private MekForceTreeMouseAdapter mekForceTreeMouseListener = new MekForceTreeMouseAdapter();
 
     /* Player Configuration Panel */
     private FixedYPanel panPlayerInfo;
@@ -140,6 +154,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private JButton butBotSettings = new JButton("Bot Settings...");
     private JButton butConfigPlayer = new JButton("Configure Player...");
+    
+    private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
     private JTable tablePlayers = new PlayerTable(playerModel);
     private JScrollPane scrPlayers = new JScrollPane(tablePlayers);
@@ -264,9 +280,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         teamOverviewWindow.addWindowListener(teamOverviewWindowListener);
         
-        mekTable.addMouseListener(new MekTableMouseAdapter());
+        mekTable.addMouseListener(mekTableMouseAdapter);
         mekTable.getTableHeader().addMouseListener(mekTableHeaderMouseListener);
-        mekTable.addKeyListener(new MekTableKeyAdapter());
+        mekTable.addKeyListener(mekTableKeyListener);
+        
+        mekC3Tree.addKeyListener(mekTreeKeyListener);
+        mekForceTree.addMouseListener(mekForceTreeMouseListener);
         
         butAdd.addActionListener(lobbyListener);
         butAddBot.addActionListener(lobbyListener);
@@ -301,6 +320,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butDetach.addActionListener(lobbyListener);
         butCancelSearch.addActionListener(lobbyListener);
         butHelp.addActionListener(lobbyListener);
+        butListView.addActionListener(lobbyListener);
+        butC3View.addActionListener(lobbyListener);
+        butForceView.addActionListener(lobbyListener);
+        butTransportsView.addActionListener(lobbyListener);
         
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
@@ -424,6 +447,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             setColumnWidth(column);
         }
+
+        mekTreeC3Model = new MekTreeC3Model(game(), this); 
+        mekC3Tree = new JTree(mekTreeC3Model);
+        mekC3Tree.setRootVisible(false);
+        mekC3Tree.setDragEnabled(true);
+        mekC3Tree.setTransferHandler(mekTreeC3Model.getTransferHandler());
+        mekC3Tree.setCellRenderer(mekTreeC3Model.MekTreeC3Renderer());
+        mekC3Tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+        mekTreeForceModel = new MekTreeForceModel();
+        mekTreeForceModel.setForces(game().getForces());
+        mekForceTree = new JTree(mekTreeForceModel);
+        mekForceTree.setRootVisible(false);
+        mekForceTree.setDragEnabled(true);
+//        mekForceTree.setTransferHandler(mekTreeC3Model.getTransferHandler());
+        mekForceTree.setCellRenderer(mekTreeForceModel.MekForceTreeRenderer(this));
+        mekForceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
         scrMekTable = new JScrollPane(mekTable);
         scrMekTable.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     }
@@ -497,9 +538,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         refreshPlayerInfo();
     }
+    
+    private void setupMekTreeView() {
+//        TreeModel mekTreeModel = new MekTreeModel(clientgui.getClient().getGame().getforces()); 
+//        JTree mekTree = new JTree(mekTreeModel);
+//        JScrollPane scrMekTree = new JScrollPane(mekTree);
+    }
 
     /** Sets up the lobby main panel (units/players). */
     private void setupUnitsPanel() {
+        ButtonGroup viewGroup = new ButtonGroup();
+        viewGroup.add(butListView);
+        viewGroup.add(butForceView);
+        viewGroup.add(butC3View);
+        viewGroup.add(butTransportsView);
+        butListView.setSelected(true);
+        
         lblGameYear.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         lblTechLevel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         butOptions.setAlignmentX(JPanel.CENTER_ALIGNMENT);
@@ -518,6 +572,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         leftSide.add(scrPlayers);
         
         JPanel topRight = new FixedYPanel();
+        topRight.add(butListView);
+        topRight.add(butForceView);
+        topRight.add(butC3View);
+        topRight.add(butTransportsView);
+        topRight.add(Box.createHorizontalStrut(30));
         topRight.add(butCompact);
         topRight.add(butShowUnitID);
         
@@ -1063,6 +1122,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Refreshes the Mek Table contents 
      */
     public void refreshEntities() {
+        mekTreeC3Model.refreshData(editableEntities(clientgui.getClient().getEntitiesVector()));
+        mekTreeForceModel.refreshData();
+        for (int i = 0; i < mekC3Tree.getRowCount(); i++) {
+            mekC3Tree.expandRow(i);
+        }
+        for (int i = 0; i < mekForceTree.getRowCount(); i++) {
+            mekForceTree.expandRow(i);
+        }
+        
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
         Collections.sort(allEntities, activeSorter);
@@ -2244,7 +2312,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File("docs/Boards Stuff/MapAssemblyHelp.html");
                 new CommonHelpDialog(clientgui.frame, helpfile).setVisible(true);
-            }  
+                
+            } else if (ev.getSource() == butListView) {
+                scrMekTable.setViewportView(mekTable);
+                
+            } else if (ev.getSource() == butC3View) {
+                scrMekTable.setViewportView(mekC3Tree);
+                
+            } else if (ev.getSource() == butForceView) {
+                scrMekTable.setViewportView(mekForceTree);
+            }   
 
         }
     };
@@ -2558,9 +2635,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         teamOverviewWindow.removeWindowListener(teamOverviewWindowListener);
         
-        mekTable.removeMouseListener(new MekTableMouseAdapter());
+        mekTable.removeMouseListener(mekTableMouseAdapter);
+        mekForceTree.removeMouseListener(mekForceTreeMouseListener);
         mekTable.getTableHeader().removeMouseListener(mekTableHeaderMouseListener);
-        mekTable.removeKeyListener(new MekTableKeyAdapter());
+        mekTable.removeKeyListener(mekTableKeyListener);
+        mekC3Tree.removeKeyListener(mekTreeKeyListener);
         
         butAdd.removeActionListener(lobbyListener);
         butAddBot.removeActionListener(lobbyListener);
@@ -2595,6 +2674,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butDetach.removeActionListener(lobbyListener);
         butCancelSearch.removeActionListener(lobbyListener);
         butHelp.removeActionListener(lobbyListener);
+        butListView.removeActionListener(lobbyListener);
+        butC3View.removeActionListener(lobbyListener);
+        butForceView.removeActionListener(lobbyListener);
+        butTransportsView.removeActionListener(lobbyListener);
         
         fldMapWidth.removeActionListener(lobbyListener);
         fldMapHeight.removeActionListener(lobbyListener);
@@ -2892,7 +2975,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
 
-    public class MekTableKeyAdapter extends KeyAdapter {
+    KeyListener mekTableKeyListener = new KeyAdapter() {
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -2916,7 +2999,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
             }
         }
-    }
+    };
+    
+    KeyListener mekTreeKeyListener = new KeyAdapter() {
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            TreePath path = mekC3Tree.getSelectionPath();
+            if (path == null || !(path.getLastPathComponent() instanceof Entity)) {
+                return;
+            }
+            Entity entity = (Entity) mekC3Tree.getSelectionPath().getLastPathComponent();
+            int code = e.getKeyCode();
+            if (code == KeyEvent.VK_SPACE) {
+                e.consume();
+                mechReadoutAction(List.of(entity));
+            } else if (code == KeyEvent.VK_ENTER) {
+                e.consume();
+                customizeMech(entity);
+            }
+        }
+    };
     
     
     public class MapListMouseAdapter extends MouseInputAdapter implements ActionListener {
@@ -2962,6 +3065,76 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
+    
+    public class MekForceTreeMouseAdapter extends MouseInputAdapter implements ActionListener {
+        
+        @Override
+        public void actionPerformed(ActionEvent action) {
+            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
+            String command = st.nextToken();
+
+            switch (command) {
+            case "CREATETOP":
+                createTopForce();
+                break;
+                
+            case "CREATESUB":
+                int parentId = Integer.parseInt(st.nextToken());
+                createSubForce(parentId);  
+                break;
+                
+            case "ADDTO":
+                int entityId = Integer.parseInt(st.nextToken());
+                int forceId = Integer.parseInt(st.nextToken());
+                addToForce(entityId, forceId);
+                break;
+                
+            case "RENAME":
+                renameForce(st.nextToken());  
+                break;
+            } 
+        }
+
+//        @Override
+//        public void mouseClicked(MouseEvent e) {
+//            if (e.getClickCount() == 2) {
+//                int row = mekTable.rowAtPoint(e.getPoint());
+//                Entity entity = mekModel.getEntityAt(row);
+//                if (entity != null && isEditable(entity)) {
+//                    customizeMech(entity);
+//                }
+//            }
+//        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                // If the right mouse button is pressed over an unselected entity,
+                // clear the selection and select that entity instead
+                Point p = e.getPoint();
+                int row = mekForceTree.getClosestRowForLocation(p.x, p.y);
+//                int row = mekTable.rowAtPoint(e.getPoint());
+                if (!mekForceTree.isRowSelected(row)) {
+                    mekForceTree.setSelectionRow(row);
+//                    mekForceTree.changeSelection(row, row, false, false);
+                }
+                showPopup(e);
+            }
+        }
+
+        /** Shows the right-click menu on the mek table */
+        private void showPopup(MouseEvent e) {
+//            Object selection = mekForceTree.getLastSelectedPathComponent();
+//            if (!(selection instanceof Entity)) {
+////            if ((mekForceTree.getSelectionCount() != 1) || (mekForceTree.getMinSelectionRow() == -1)) {
+//                return;
+//            }
+            TreePath selection = mekForceTree.getSelectionPath();
+            ScalingPopup popup = MekForceTreePopup.getPopup(clientgui, selection, this, ChatLounge.this);
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
+
 
     public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
         
@@ -3097,9 +3270,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             case "DEPLOY":
                 applyDeployment(entities, st);
                 break;
-                
-            case "LANCE":
-                applyLance(entities, st);
             } 
         }
 
@@ -3152,60 +3322,62 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         sendUpdate(updateCandidates);
     }
     
-    private void applyLance(List<Entity> entities, StringTokenizer st) {
-        Set<Entity> updateCandidates = new HashSet<>();
-        String command = st.nextToken();
-        if (command.equals("CREATE")) {
-            // Ask for a name
-            String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
-            if ((name == null) || (name.trim().length() == 0)) {
-                name = "Alpha";
-            }
-            for (Entity entity: editableEntities(entities)) {
-                entity.setForce(name);
-                getLocalClient(entity).sendUpdateEntity(entity);
-            }
-        } else if (command.equals("REMOVE")) {
-            for (Entity entity: editableEntities(entities)) {
-                entity.setForce(null);
-                getLocalClient(entity).sendUpdateEntity(entity);
-            }
-        } else if (command.equals("CREATESUPER")) {
-            // Ask for a name
-//            String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
-//            if ((name == null) || (name.trim().length() == 0)) {
-//                name = "Alpha";
-//            }
-//            // Find the highest present force and all involved forces
-//            int level = 0;
-//            Set<String> forces = new HashSet<>();
-//            for (Entity entity: editableEntities(entities)) {
-//                level = Math.max(level, Forces.forceLevel(entity));
-//                if (Forces.hasForce(entity)) {
-//                    forces.add(entity.getForce());
-//                }
-//            }
-//            level++;
-//            // Cycle all(!) entities and update all those whose force is affected
-//            for (Entity entity: clientgui.getClient().getGame().getEntitiesVector()) {
-//                if (forces.contains(entity.getForce()) || entities.contains(entity)) {
-//                    Forces.addToNewTopLevelForce(entity, name, level);
-//                    updateCandidates.add(entity);
-//                }
-//            }
-//            sendUpdate(updateCandidates);
-            
-        } else if (command.equals("ADD")) {
-            
-            String target = st.nextToken();
-            while (st.hasMoreTokens()) {
-                target += "|" + st.nextToken();
-            }
-            for (Entity entity: editableEntities(entities)) {
-                entity.setForce(target);
-                getLocalClient(entity).sendUpdateEntity(entity);
-            }
+    /**
+     * Asks for a new name for the provided forceId and applies it. 
+     */
+    private void renameForce(String forceId) {
+        int id = Integer.parseInt(forceId);
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
         }
+        game().getForces().renameForce(name, id);
+        refreshTrees();
+    }
+   
+    /** Refreshes all of the Mek Tree views and expands all rows.  */
+    private void refreshTrees() {
+        mekTreeForceModel.refreshData();
+        //TODO Probably not good to always expand upon update
+        for (int i = 0; i < mekForceTree.getRowCount(); i++) {
+            mekForceTree.expandRow(i);
+        }
+    }
+    
+    /**
+     * Asks for a name and creates a new top-level force of that name. 
+     */
+    private void createTopForce() {
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
+        }
+        game().getForces().addForce(name);
+        refreshTrees();
+    }
+    
+    /**
+     * Asks for a name and creates a new subforce of that name for the force given
+     * as the parentId. 
+     */
+    private void createSubForce(int parentId) {
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
+        }
+        game().getForces().addForce(name, parentId);
+        refreshTrees();
+    }
+    
+    /**
+     * Add the provided entity to the provided force.
+     */
+    private void addToForce(int entityId, int forceId) {
+        game().getForces().addEntity(game().getEntity(entityId), forceId);
+        refreshTrees();
     }
     
     private void applyC3(List<Entity> entities, StringTokenizer st) {
@@ -3215,7 +3387,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Entity entity = entities.get(0);
         String command = st.nextToken();
         if (command.equals("DISCONNECT")) {
-            entity.setC3Master(null, true);
+            disconnectC3FromNetwork(entity);
         } else if (command.equals("C3CC")) {
             entity.setC3Master(entity.getId(), true);
         } else if (command.equals("C3IM")) {
@@ -3225,15 +3397,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } else if (command.equals("JOIN")) {
             // Join means NC3 or C3i
             int id = Integer.parseInt(st.nextToken());
-            entity.setC3NetId(clientgui.getClient().getEntity(id));
+            joinC3i(entity, id);
         } else if (command.equals("CONNECT")) {
             // Connect means normal C3M/MM/S
             int id = Integer.parseInt(st.nextToken());
-            entity.setC3Master(id, true);
+            connectToC3(entity, id);
+//            entity.setC3Master(id, true);
         } else {
             return;
         }
         getLocalClient(entity).sendUpdateEntity(entity);
+    }
+    
+    void disconnectC3FromNetwork(Entity entity) {
+        if (isEditable(entity) && entity.hasAnyC3System()) {
+            entity.setC3Master(null, true);
+            getLocalClient(entity).sendUpdateEntity(entity);
+        }
+    }
+
+    void joinC3i(Entity entity, int masterID) {
+        if (isEditable(entity) && entity.hasAnyC3System()) {
+            entity.setC3NetId(clientgui.getClient().getEntity(masterID));
+            getLocalClient(entity).sendUpdateEntity(entity);
+        }
+    }
+    
+    void connectToC3(Entity entity, int masterID) {
+        if (isEditable(entity) && entity.hasAnyC3System()) {
+            entity.setC3Master(masterID, true);
+            getLocalClient(entity).sendUpdateEntity(entity);
+        }
     }
     
     
@@ -3520,6 +3714,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void setTableRowHeights() {
         int rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTABLE_ROWHEIGHT_FULL;
         mekTable.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
+        rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
+        mekC3Tree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         tablePlayers.setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
     }
 
@@ -3632,6 +3828,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadMapSetup.setFont(scaledFont);
         butDetach.setFont(scaledFont);
         butCancelSearch.setFont(scaledFont);
+        butListView.setFont(scaledFont);
+        butC3View.setFont(scaledFont);
+        butForceView.setFont(scaledFont);
+        butTransportsView.setFont(scaledFont);
         
         butAdd.setFont(scaledBigFont);
         panTabs.setFont(scaledBigFont);
@@ -4232,6 +4432,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
     };
+    
+    private IGame game() {
+        return clientgui.getClient().getGame();
+    }
     
 }
 

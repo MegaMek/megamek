@@ -52,6 +52,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -851,10 +852,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     /** 
      * A String representation of the force hierarchy this entity belongs to.
-     * The string corresponds to MekHQ's Force.getFullName() that links the force
-     * names of the force and parents with ", ". 
+     * The String contains all forces from top to bottom separated by backslash
+     * with no backslash at beginning or end. Each force is followed by a unique id
+     * separated by the vertical bar. E.g.
+     * Regiment|1\Battalion B|11\Alpha Company|18\Battle Lance II|112
+     * <P>If this is not empty, the server will attempt to resconstruct the force
+     * hierarchy when it receives this entity and will empty the string.
+     * This should be used for loading/saving MULs or transfer from other sources that
+     * don't have access to the current MM game's forces, such as MekHQ or the Force
+     * Generators. At all other times, forceId should be used instead. 
      */
-    private String force;
+    private String force = "";
+    
+    /** The force this entity belongs to. */
+    private int forceId = Force.NO_FORCE;
     
     /**
      * Generates a new, blank, entity.
@@ -16047,12 +16058,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return offBoardShotObservers.contains(teamID);
     }
     
-    public String getForce() {
+    public String getForceString() {
         return force;
     }
     
-    public void setForce(String f) {
+    public void setForceString(String f) {
         force = f;
+    }
+    
+    public int getForceId() {
+        return forceId;
+    }
+    
+    public void setForceId(int newId) {
+        forceId = newId;
+    }
+    
+    public boolean partOfForce() {
+        return forceId != Force.NO_FORCE;
     }
 
 }

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
-import megamek.common.Force;
 import megamek.common.IPlayer;
+import megamek.common.force.Force;
 
 public class ForceSorter implements MekTableSorter {
 
@@ -35,10 +35,10 @@ private ClientGUI clientGui;
         final int localteam = localPlayer.getTeam();
         final int team_a = p_a.getTeam();
         final int team_b = p_b.getTeam();
-        String force_a = a.getForce();
-        String force_b = b.getForce();
-        force_a = (force_a == null ? "" : force_a);
-        force_b = (force_b == null ? "" : force_b);
+//        String force_a = a.getForce();
+//        String force_b = b.getForce();
+//        force_a = (force_a == null ? "" : force_a);
+//        force_b = (force_b == null ? "" : force_b);
 //        boolean a_alone = !Force.hasForce(a);
 //        boolean b_alone = !Force.hasForce(b);
 //        int a_id = a.getId();

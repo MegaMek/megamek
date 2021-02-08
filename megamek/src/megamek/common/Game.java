@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import megamek.MegaMek;
 import megamek.common.GameTurn.SpecificEntityTurn;
@@ -49,6 +50,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -173,6 +175,12 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
+    
+    /** 
+     * The forces present in the game. The top level force holds all forces and force-less
+     * entities and should therefore not be shown.
+     */
+    Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
@@ -3670,6 +3678,16 @@ public class Game implements Serializable, IGame {
         }
         return uuid.toString();
 
+    }
+
+    @Override
+    public Forces getForces() {
+        return forces;
+    }
+
+    @Override
+    public Stream<Entity> getEntitiesStream() {
+        return getEntitiesVector().stream();
     }
 
 }

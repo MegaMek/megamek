@@ -183,9 +183,9 @@ class MekTablePopup {
             popup.add(protoMenu(clientGui, prEnabled, listener, entities.get(0)));
         }
         
-//        if (canConfigureAll) {  
-//            popup.add(lanceMenu(clientGui, true, listener));
-//        }
+        if (canConfigureAll) {  
+            popup.add(lanceMenu(clientGui, true, listener));
+        }
 
         return popup;
     }
@@ -378,18 +378,18 @@ class MekTablePopup {
     /**
      * Returns the "Lance" submenu, allowing assignment to forces
      */
-//    private static JMenu lanceMenu(ClientGUI clientGui, boolean enabled, ActionListener listener) {
-//        JMenu menu = new JMenu("Force");
-//        menu.setEnabled(enabled);
-//
-//        menu.add(menuItem("Create new Force...", "LANCE|CREATE", enabled, listener));
-//        menu.add(menuItem("Create new Top-Level Force...", "LANCE|CREATESUPER", enabled, listener));
+    private static JMenu lanceMenu(ClientGUI clientGui, boolean enabled, ActionListener listener) {
+        JMenu menu = new JMenu("Force");
+        menu.setEnabled(enabled);
+
+        menu.add(menuItem("Create new Force...", "LANCE|CREATE", enabled, listener));
+        menu.add(menuItem("Create new Top-Level Force...", "LANCE|CREATESUPER", enabled, listener));
 //        for (String f: Forces.getAvailableForces(clientGui.getClient().getGame(), clientGui.getClient().getLocalPlayer())) {
 //            menu.add(menuItem("Add to " + f, "LANCE|ADD|" + f, enabled, listener));
 //        }
-//        menu.add(menuItem("Remove from Force", "LANCE|REMOVE", enabled, listener));
-//        return menu;
-//    }
+        menu.add(menuItem("Remove from Force", "LANCE|REMOVE", enabled, listener));
+        return menu;
+    }
     
     /**
      * Returns the "C3" submenu, allowing C3 changes

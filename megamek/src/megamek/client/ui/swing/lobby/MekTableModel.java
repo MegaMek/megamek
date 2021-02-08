@@ -62,7 +62,7 @@ public class MekTableModel extends AbstractTableModel {
     
     
     /** Control value for the size of camo and portraits in the table at GUI scale == 1. */
-    private static final int MEKTABLE_IMGHEIGHT = 60;
+    static final int MEKTABLE_IMGHEIGHT = 60;
     
     private static final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();

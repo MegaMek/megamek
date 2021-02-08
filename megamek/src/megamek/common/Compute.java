@@ -2447,7 +2447,7 @@ public class Compute {
     public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
                                                       final ToHitData toHit, final IGame game) {
         if ((attacker instanceof Mech) && attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
-            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
+            toHit.addModifier(-1, "melee specialist");
         }
 
         if (((attacker instanceof Mech) || (attacker instanceof Protomech))

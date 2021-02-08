@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 0.47.18 (RC4)-SNAPSHOT
 + PR #2638, #2640: Turret data fixes
++ Data: Updating Snub PPC per Errata.
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

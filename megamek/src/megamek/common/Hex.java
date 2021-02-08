@@ -727,19 +727,7 @@ public class Hex implements IHex, Serializable {
         if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF, 
                 Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE)
                 && !containsAllTerrainsOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF)) {
-//        if ((containsTerrain(Terrains.BUILDING) && !containsTerrain(Terrains.BLDG_ELEV))
-//                || (containsTerrain(Terrains.BLDG_ELEV) && !containsTerrain(Terrains.BUILDING))) {
             valid = false;
-//            StringBuilder missingType = new StringBuilder();
-//            if (!containsTerrain(Terrains.BUILDING)) {
-//                missingType.append(Terrains.getName(Terrains.BUILDING));
-//            }
-//            if (!containsTerrain(Terrains.BLDG_ELEV)) {
-//                if (missingType.length() > 0) {
-//                    missingType.append(", ");
-//                }
-//                missingType.append(Terrains.getName(Terrains.BLDG_ELEV));
-//            }
             errBuff.append("Incomplete Building! A hex with any building terrain must at least contain "
                     + "a building type, building elevation and building CF.\n");
         }
@@ -747,63 +735,24 @@ public class Hex implements IHex, Serializable {
         // Bridges must have all of BRIDGE, BRIDGE_ELEV and BRIDGE_CF
         if (containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)
                 && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
-//        if ((containsTerrain(Terrains.BRIDGE) && !containsTerrain(Terrains.BRIDGE_ELEV))
-//                || (containsTerrain(Terrains.BRIDGE_ELEV) && !containsTerrain(Terrains.BRIDGE))) {
             valid = false;
-//            StringBuilder missingType = new StringBuilder();
-//            if (!containsTerrain(Terrains.BRIDGE)) {
-//                missingType.append(Terrains.getName(Terrains.BRIDGE));
-//            }
-//            if (!containsTerrain(Terrains.BRIDGE_ELEV)) {
-//                if (missingType.length() > 0) {
-//                    missingType.append(", ");
-//                }
-//                missingType.append(Terrains.getName(Terrains.BRIDGE_ELEV));
-//            }
-//            errBuff.append("Incomplete bridge! Missing terrain(s): " + missingType + "\n");
             errBuff.append("Incomplete Bridge! A hex with any bridge terrain must contain "
                     + "all of bridge type, bridge elevation and bridge CF.\n");
         }
 
-        // Fuel Tank
+        // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
         if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
                 Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
                 && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
                         Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
-//        boolean hasFuelTank = containsTerrain(Terrains.FUEL_TANK);
-//        boolean hasFuelTankCF = containsTerrain(Terrains.FUEL_TANK_CF);
-//        boolean hasFuelTankElev = containsTerrain(Terrains.FUEL_TANK_ELEV);
-//        boolean hasFuelTankMag = containsTerrain(Terrains.FUEL_TANK_MAGN);
-//        if ((hasFuelTank && (!hasFuelTankCF || !hasFuelTankElev || !hasFuelTankMag))
-//                || (hasFuelTankCF && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankMag))
-//                || (hasFuelTankElev && (!hasFuelTank || !hasFuelTankCF || !hasFuelTankMag))
-//                || (hasFuelTankMag && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankCF))) {
             valid = false;
-//            StringBuilder missingType = new StringBuilder();
-//            if (!hasFuelTank) {
-//                missingType.append(Terrains.getName(Terrains.FUEL_TANK));
-//            }
-//            if (!hasFuelTankCF) {
-//                if (missingType.length() > 0) {
-//                    missingType.append(", ");
-//                }
-//                missingType.append(Terrains.getName(Terrains.FUEL_TANK_CF));
-//            }
-//            if (!hasFuelTankElev) {
-//                if (missingType.length() > 0) {
-//                    missingType.append(", ");
-//                }
-//                missingType.append(Terrains.getName(Terrains.FUEL_TANK_ELEV));
-//            }
-//            if (!hasFuelTankMag) {
-//                if (missingType.length() > 0) {
-//                    missingType.append(", ");
-//                }
-//                missingType.append(Terrains.getName(Terrains.FUEL_TANK_MAGN));
-//            }
-//            errBuff.append("Incomplete fuel tank!  Missing terrain(s): " + missingType + "\n");
             errBuff.append("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
                     + "all of fuel tank type, elevation, CF and magnitude.\n");
+        }
+        
+        if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {
+            valid = false;
+            errBuff.append("A Hex cannot have both a Building and a Fuel Tank.\n");
         }
 
         return valid;

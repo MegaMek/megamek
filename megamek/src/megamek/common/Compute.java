@@ -2450,10 +2450,9 @@ public class Compute {
             toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
-        final IHex curHex = game.getBoard().getHex(attacker.getPosition());
         if (((attacker instanceof Mech) || (attacker instanceof Protomech))
                 && attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                && (curHex.terrainLevel(Terrains.WATER) > 1)) {
+                && (game.getBoard().getHex(attacker.getPosition()).terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
 

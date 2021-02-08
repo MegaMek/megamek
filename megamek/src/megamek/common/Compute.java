@@ -2450,7 +2450,7 @@ public class Compute {
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
+            toHit.addModifier(-1, "melee specialist");
         }
 
         if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)

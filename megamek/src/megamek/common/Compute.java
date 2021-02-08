@@ -2444,17 +2444,15 @@ public class Compute {
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-    public static void modifyPhysicalBTHForAdvantages(Entity attacker,
-                                                      Entity target, ToHitData toHit, IGame game) {
-
-        if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
-                && (attacker instanceof Mech)) {
+    public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
+                                                      final ToHitData toHit, final IGame game) {
+        if ((attacker instanceof Mech) && attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
             toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
-        IHex curHex = game.getBoard().getHex(attacker.getPosition());
-        if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
-                && ((attacker instanceof Mech) || (attacker instanceof Protomech))
+        final IHex curHex = game.getBoard().getHex(attacker.getPosition());
+        if (((attacker instanceof Mech) || (attacker instanceof Protomech))
+                && attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && (curHex.terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
@@ -2463,11 +2461,9 @@ public class Compute {
             toHit.addModifier(1, "clan pilot training");
         }
 
-        // Mek targets that are dodging are harder to hit.
-
-        if ((target != null)
-            && (target instanceof Mech)
-            && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
+        // Mek targets that are dodging are harder to hit
+        if ((target instanceof Mech)
+                && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && target.dodging) {
             toHit.addModifier(2, "target is dodging");
         }
     }

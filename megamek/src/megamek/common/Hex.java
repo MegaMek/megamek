@@ -737,7 +737,7 @@ public class Hex implements IHex, Serializable {
                 && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
             valid = false;
             errBuff.append("Incomplete Bridge! A hex with any bridge terrain must contain "
-                    + "all of bridge type, bridge elevation and bridge CF.\n");
+                    + "the bridge type, bridge elevation and the bridge CF.\n");
         }
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
@@ -747,7 +747,7 @@ public class Hex implements IHex, Serializable {
                         Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
             valid = false;
             errBuff.append("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
-                    + "all of fuel tank type, elevation, CF and magnitude.\n");
+                    + "the fuel tank type, elevation, CF and the fuel tank magnitude.\n");
         }
         
         if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {

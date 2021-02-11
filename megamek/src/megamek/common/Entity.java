@@ -2541,14 +2541,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return A display name for the entity.
      */
     private String createDisplayName(int duplicateMarker) {
-        StringBuilder nbuf = new StringBuilder();
-        nbuf.append(createShortName(duplicateMarker));
+        StringBuilder builder = new StringBuilder();
+        builder.append(createShortName(duplicateMarker));
 
         if (getOwner() != null) {
-            nbuf.append(" (").append(getOwner().getName()).append(")");
+            builder.append(" (").append(getOwner().getName()).append(")");
         }
 
-        return nbuf.toString();
+        return builder.toString();
     }
 
     /**
@@ -2581,18 +2581,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return A short name for the entity.
      */
     private String createShortName(int duplicateMarker) {
-        StringBuilder nbuf = new StringBuilder();
-        nbuf.append(getShortNameRaw());
+        StringBuilder builder = new StringBuilder();
+        builder.append(getShortNameRaw());
         // if show unit id is on, append the id
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(getId());
+            builder.append(" ID:").append(getId());
         } else if (duplicateMarker > 1) {
             // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
-            nbuf.append(" #" + duplicateMarker);
+            builder.append(" #" + duplicateMarker);
         }
 
-        return nbuf.toString();
+        return builder.toString();
     }
 
     public String getShortNameRaw() {

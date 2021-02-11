@@ -7536,13 +7536,33 @@ public class Server implements Runnable {
                 if (entity.canDFA()) {
                     checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
+                    
+                    int targetType;
+                    int targetID;
+                    
+                    // if it's a valid target, then simply pass along the type and ID
+                    if (target != null) {    
+                        targetID = target.getTargetId();
+                        targetType = target.getTargetType();
+                    // if the target has become invalid somehow, or was incorrectly declared in the first place
+                    // log the error, then put some defaults in for the DFA and proceed as if the target had been moved/destroyed
+                    } else {
+                        String errorMessage = "Illegal DFA by " + entity.getDisplayName() + " against non-existent entity at " + step.getTargetPosition(); 
+                        sendServerChat(errorMessage);
+                        MegaMek.getLogger().error(errorMessage);
+                        targetID = Entity.NONE; 
+                        // doesn't really matter, DFA processing will cut out early if target resolves as null
+                        targetType = Targetable.TYPE_ENTITY; 
+                    }
+                    
                     DfaAttackAction daa = new DfaAttackAction(entity.getId(),
-                            target.getTargetType(), target.getTargetId(),
-                            target.getPosition());
+                            targetType, targetID,
+                            step.getPosition());
                     entity.setDisplacementAttack(daa);
                     entity.setElevation(step.getElevation());
                     game.addCharge(daa);
                     charge = daa;
+                    
                 } else {
                     sendServerChat("Illegal DFA!! I don't think "
                             + entity.getDisplayName()
@@ -7555,6 +7575,7 @@ public class Server implements Runnable {
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
+                
                 break;
             }
 
@@ -18786,10 +18807,6 @@ public class Server implements Runnable {
 
         Report r;
 
-        // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(daa.getTargetPos());
-
-
         final int direction = ae.getFacing();
 
         if (lastEntityId != daa.getEntityId()) {
@@ -18946,6 +18963,9 @@ public class Server implements Runnable {
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
             || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
 
+            // Which building takes the damage?
+            Building bldg = game.getBoard().getBuildingAt(daa.getTargetPos());
+            
             // The building takes the full brunt of the attack.
             Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
@@ -20155,9 +20175,18 @@ public class Server implements Runnable {
             r.choose(false);
             r.newlines = 1;
             addReport(r);
+            // gun emplacements have their own critical rules
+            if (entity instanceof GunEmplacement) {
+                Vector<GunEmplacement> gun = new Vector<>();
+                gun.add((GunEmplacement) entity);
+                
+                Building building = getGame().getBoard().getBuildingAt(entity.getPosition());
+                
+                Report.addNewline(vPhaseReport);
+                addReport(criticalGunEmplacement(gun, building, entity.getPosition()));            
             // Taharqa: TacOps rules, protos and vees no longer die instantly
             // (hurray!)
-            if (entity instanceof Tank) {
+            } else if (entity instanceof Tank) {
                 int bonus = -2;
                 if ((entity instanceof SupportTank)
                     || (entity instanceof SupportVTOL)) {

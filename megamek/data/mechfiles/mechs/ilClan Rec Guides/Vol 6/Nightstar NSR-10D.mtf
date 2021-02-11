@@ -4,8 +4,8 @@ NSR-10D
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:2
+era:3144
+rules level:4
 
 mass:95
 engine:285 XL Engine(IS)
@@ -14,7 +14,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:16 Double
+heat sinks:16 IS Double
 walk mp:3
 jump mp:0
 

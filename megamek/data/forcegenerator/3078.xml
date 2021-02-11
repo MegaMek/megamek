@@ -13006,18 +13006,18 @@
 	</chassis>
 	<chassis name='Purifier Adaptive Battle Armor' unitType='BattleArmor'>
 		<availability>WOB:6,MH:4,CIR:4,TC:4</availability>
-		<model name='[Laser] (RAF)' mechanized='true'>
+		<model name='(RAF)[Laser]' mechanized='true'>
 			<availability>General:7</availability>
 		</model>
 		<model name='[TAG]' mechanized='true'>
 			<roles>spotter</roles>
 			<availability>CS:5,WOB:5,Periphery:5</availability>
 		</model>
-		<model name='[TAG] (RAF)' mechanized='true'>
+		<model name='(RAF)[TAG]' mechanized='true'>
 			<roles>spotter</roles>
 			<availability>General:5</availability>
 		</model>
-		<model name='[Narc] (RAF)' mechanized='true'>
+		<model name='(RAF)[Narc]' mechanized='true'>
 			<availability>General:4</availability>
 		</model>
 		<model name='[Laser]' mechanized='true'>
@@ -13026,7 +13026,7 @@
 		<model name='[Narc]' mechanized='true'>
 			<availability>CS:4,WOB:4,Periphery:4</availability>
 		</model>
-		<model name='[PPC] (RAF)' mechanized='true'>
+		<model name='(RAF)[PPC]' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
 		<model name='[PPC]' mechanized='true'>

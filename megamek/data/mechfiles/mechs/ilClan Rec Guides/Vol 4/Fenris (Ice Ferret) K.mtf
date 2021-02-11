@@ -4,7 +4,7 @@ K
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
+era:3135
 rules level:2
 
 mass:45
@@ -12,7 +12,7 @@ engine:360 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 base chassis heat sinks:12
 walk mp:8
 jump mp:0
@@ -32,9 +32,9 @@ RTC armor:8
 
 Weapons:5
 Large Pulse Laser, Left Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
 ER Small Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 Laser AMS, Center Torso
 
 Left Arm:
@@ -42,9 +42,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-CLERSmallLaser (omnipod)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,8 +56,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLaserAntiMissileSystem (omnipod)
+CLLaserAntiMissileSystem (OMNIPOD)
 Clan Endo Steel
 
 Head:

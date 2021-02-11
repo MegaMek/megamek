@@ -1351,17 +1351,31 @@ public class FireControl {
         return 0;
     }
 
-    private boolean isCommander(final Entity entity) {
-        return entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
-               (owner.getHighestEnemyInitiativeId() == entity.getId());
+    protected boolean isCommander(final Entity entity) {
+        if (owner.getFireControlState().commanderCached(entity)) {
+            return owner.getFireControlState().isCommander(entity);
+        } 
+
+        owner.getFireControlState().setCommander(entity, 
+                entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
+                (owner.getHighestEnemyInitiativeId() == entity.getId()));
+            
+        return owner.getFireControlState().isCommander(entity);
     }
 
-    private boolean isSubCommander(final Entity entity) {
-        final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();  //removed in IO + entity.getMDIniBonus()
-        return entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
+    protected boolean isSubCommander(final Entity entity) {
+        if (owner.getFireControlState().subCommanderCached(entity)) {
+            return owner.getFireControlState().isSubCommander(entity);
+        }
+
+        final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();
+        owner.getFireControlState().setSubCommander(entity, 
+                entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
-               (0 < initBonus);
+               (0 < initBonus));
+            
+        return owner.getFireControlState().isSubCommander(entity);
     }
 
     /**
@@ -2062,14 +2076,14 @@ public class FireControl {
                                                     ammoConservation, game);
         
         if(shooter.canFlipArms()) {
-            shooter.setArmsFlipped(true);
+            shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
             betaStrike.setFlipArms(true);
             if(betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
-            shooter.setArmsFlipped(false);
+            shooter.setArmsFlipped(false, false);
         }
         
         // Although they don't track heat, infantry/BA do need to make tradeoffs
@@ -2125,7 +2139,7 @@ public class FireControl {
                                                        target, targetState, game);
         
         if(shooter.canFlipArms()) {
-            shooter.setArmsFlipped(true);
+            shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
                                                         target, targetState, game);
             betaStrike.setFlipArms(true);
@@ -2133,7 +2147,7 @@ public class FireControl {
                 alphaStrike = betaStrike;
             }
             
-            shooter.setArmsFlipped(false);
+            shooter.setArmsFlipped(false, false);
         }
         
         // Infantry and BA may have alternative options, so we need to consider

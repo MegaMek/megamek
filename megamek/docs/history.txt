@@ -1,11 +1,35 @@
 VERSION HISTORY:
 ----------------
-0.47.17 (RC3)-SNAPSHOT
-+ Issue #2557 - SimonLandmine maps out of date.
+0.47.18 (RC4)-SNAPSHOT
++ PR #2638, #2640: Turret data fixes
++ Data: Updating Snub PPC per Errata.
++ Data: Fixing possible range issue with Clan HMG.
++ Issue #2639: Melee Specialist SPA Description Uses Internal Name
++ Issue #2512: Check Small Pilot ability for LAM and Aero Piloting Skill Rolls
+
+0.47.17 (RC3) (2021-02-075 2015 UTC)
++ Issue #2557: SimonLandmine maps out of date.
 + Issue #2529: Dead-fire ammo wrong shots/ton (missed some)
 + Data: Updated unit_roles and RAT Gen files for RecGuides and Golden Century.
 + Issues #1967/1968: Swapping to use ImageIO.read() for Portrait Zip File reads
 + PR #2567: Colour Camouflage: Fixing Colour Camouflage Tint Application and Colour Setter
++ Issue #2565: Bot performance improvement for situations where there are C3/ECM type units on the field
++ PR #2562: Prevent "mount" button from being active for grounded dropships, as it doesn't do anything and throws an exception when clicked
++ Issue #2584: UnitSelectorDialog: Player ComboBox now properly updates on load
++ Issue #2585, 2586: When destroying locations, multi-location equipment (e.g. Chameleon, Null-Sig) is now properly destroyed
++ Issue #2580: Fix non-unique IDs for Buildings
++ Issue #2609: Fix for bot deployment hang on maps with phantom buildings
++ Issue #2613: Graceful failure for DFA attacks against improperly picked targets (no DFA occurs, rather than the game locking up)
++ Issue #2619: Prevent unwanted turn skip if loading a save game with only one unit left to move
++ Issue #2598: Dropship can't mount(load units) if on hexes higher than level 2
++ Issue #2620: Homing Arrow IV no longer deals excessive splash damage to battle armor
++ Data: Fixing issues #2623, #2612, #2603, #2602, #2600, #2582, #2566, #2064, #2036
++ Data: New Sprites
++ Data: Updating SimonLandmine's map pack and adding strategoslevel3 Tukkayid maps.
++ PR #2627: Accessibility Window Shortcut of Alt - V - A
++ PR #2628: Scrollable Accessibility Window
++ PR #2630: Fixing Infantry TRO Secondary Weapon Name
++ Issue #2625: Preventing Key Bindings when using the Accessibility Window 
 
 0.47.16 (RC2) (2021-01-05 1700 UTC)
 + Issue #2510: Prevent bot from directly targeting gun emplacements with physical attacks for an insta-kill

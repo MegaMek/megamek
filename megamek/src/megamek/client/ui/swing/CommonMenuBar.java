@@ -338,10 +338,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu.add(filePrint);
 
         // *** Create the view menu.
-        menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu")); //$NON-NLS-1$
+        menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(KeyEvent.VK_V);
         add(menu);
-        viewMekDisplay = new JMenuItem(Messages.getString("CommonMenuBar.viewMekDisplay")); //$NON-NLS-1$
+        viewMekDisplay = new JMenuItem(Messages.getString("CommonMenuBar.viewMekDisplay"));
         viewMekDisplay.addActionListener(this);
         viewMekDisplay.setActionCommand(ClientGUI.VIEW_MEK_DISPLAY);
         viewMekDisplay.setMnemonic(KeyEvent.VK_D);
@@ -349,7 +349,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMekDisplay);
         
-        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow")); //$NON-NLS-1$
+        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow"));
+        viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         viewAccessibilityWindow.addActionListener(this);
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);

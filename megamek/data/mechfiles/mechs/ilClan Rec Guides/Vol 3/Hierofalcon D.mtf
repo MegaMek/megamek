@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Hierofalcon
 D
 
@@ -13,7 +13,7 @@ engine:270 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:6
 jump mp:0
@@ -33,8 +33,8 @@ RTC armor:7
 
 Weapons:6
 ER Medium Pulse Laser, Left Arm
-ER Medium Pulse Laser, Right Arm
 ER Medium Laser, Left Arm
+ER Medium Pulse Laser, Right Arm
 ER Medium Laser, Right Arm
 ATM 6, Left Torso
 ATM 6, Right Torso
@@ -42,9 +42,9 @@ ATM 6, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumPulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -56,9 +56,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumPulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -70,29 +70,29 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-CLCASEII (omnipod)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+Clan Ammo ATM-6 HE (OMNIPOD)
+Clan Ammo ATM-6 (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-CLCASEII (omnipod)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLPartialWing (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+Clan Ammo ATM-6 ER (OMNIPOD)
+Clan Ammo ATM-6 (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Ferro-Fibrous
 
 Center Torso:
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger (Clan) (omnipod)
+Supercharger (Clan) (OMNIPOD)
 Clan Ferro-Fibrous
 
 Head:

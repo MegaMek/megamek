@@ -1,0 +1,151 @@
+Version:1.2
+Hatchetman
+HCT-8S
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3140
+source:ilClan Vol 12 - Dark Age
+rules level:3
+
+mass:45
+engine:225 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Clan)
+LA armor:13
+RA armor:13
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:3
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+LB 10-X AC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+Hatchet
+Hatchet
+Hatchet
+ISAES
+ISAES
+IS Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

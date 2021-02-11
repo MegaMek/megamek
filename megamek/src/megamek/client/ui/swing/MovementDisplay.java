@@ -2773,6 +2773,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setUnloadEnabled((ce.getUnitsUnloadableFromBays().size() > 0)
                              && !ce.isAirborne());
             setLoadEnabled(false);
+            setMountEnabled(false);
             return;
         }
 
@@ -2787,9 +2788,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             mpUsed = cmd.getMpUsed();
         }
         if (!ce.isAirborne()
-            && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
-            && (Compute.getMountableUnits(ce, pos, elev,
-                                          game).size() > 0)) {
+                && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && !Compute.getMountableUnits(ce, pos,
+                    elev + game.getBoard().getHex(pos).surface(), game).isEmpty()) {
             setMountEnabled(true);
         }
 
@@ -2902,11 +2903,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             elev += hex.getLevel();
         }
 
-        ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos,
-                                                                     elev, clientgui.getClient().getGame());
+        List<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().getGame());
 
         // Handle error condition.
-        if (mountableUnits.size() == 0) {
+        if (mountableUnits.isEmpty()) {
             System.err.println("MovementDisplay#getMountedUnit() " +
                                "called without mountable units."); //$NON-NLS-1$
         }
@@ -4160,7 +4160,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         for (Entity ent : game.getEntitiesVector(pos)) {
-            if (!ce.equals(ent)) {
+            if ((ce == null) || !ce.equals(ent)) {
                 targets.add(ent);
             }
         }
@@ -5318,7 +5318,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
-        updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
         updateLandButtons();

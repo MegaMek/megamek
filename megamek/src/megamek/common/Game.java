@@ -698,7 +698,7 @@ public class Game implements Serializable, IGame {
      * Returns true if there is a turn after the current one
      */
     public boolean hasMoreTurns() {
-        return turnVector.size() > (turnIndex + 1);
+        return turnVector.size() > turnIndex;
     }
 
     /**

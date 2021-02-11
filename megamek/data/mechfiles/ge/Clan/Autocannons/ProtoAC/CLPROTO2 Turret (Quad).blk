@@ -1,6 +1,6 @@
 #Guns block data file
 <BlockVersion>
-1
+1.1
 </BlockVersion>
 #Write the version number just in case...
 <Version>
@@ -13,7 +13,7 @@ GunEmplacement
 ProtoMech AC/2 Turret
 </Name>
 <model>
-(Triple)
+(Quad)
 </model>
 <Year>
 3145

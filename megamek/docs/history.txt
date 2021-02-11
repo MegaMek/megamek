@@ -5,6 +5,7 @@ VERSION HISTORY:
 + Data: Updating Snub PPC per Errata.
 + Data: Fixing possible range issue with Clan HMG.
 + Issue #2639: Melee Specialist SPA Description Uses Internal Name
++ Issue #2512: Check Small Pilot ability for LAM and Aero Piloting Skill Rolls
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

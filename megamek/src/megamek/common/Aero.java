@@ -2685,7 +2685,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 

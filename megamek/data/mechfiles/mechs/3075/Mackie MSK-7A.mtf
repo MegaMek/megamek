@@ -1,40 +1,40 @@
-Version:1.0
+Version:1.1
 Mackie
 MSK-7A
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2470
-Source:RS 3075U
-Rules Level:1
+techbase:Inner Sphere
+era:2488
+source:RS 3075U
+rules level:1
 
-Mass:100
-Engine:300 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:21 Single
-Walk MP:3
-Jump MP:0
+heat sinks:21 Single
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:50
-HD Armor:9
-LL Armor:41
-RL Armor:41
-RTL Armor:10
-RTR Armor:10
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:50
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:11
 
 Weapons:4
-Large Laser, Left Torso
-Large Laser, Right Torso
 PPC, Left Arm
 AC/20, Right Arm
+Large Laser, Left Torso
+Large Laser, Right Torso
 
 Left Arm:
 Shoulder

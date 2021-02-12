@@ -1,0 +1,155 @@
+Version:1.0
+Man O' War (Gargoyle)
+K
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3145
+rules level:2
+source:ilClan Vol 11 - Dark Age
+
+mass:80
+engine:400 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Double
+base chassis heat sinks:16
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:23
+RA armor:23
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:7
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Streak SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Streak SRM 4, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+CLActiveProbe (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM4 (omnipod)
+Supercharger (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

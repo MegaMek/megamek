@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Shadow Cat III
 C
 
@@ -13,7 +13,7 @@ engine:270 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:6
 jump mp:0
@@ -32,19 +32,19 @@ RTR armor:4
 RTC armor:6
 
 Weapons:2
+LB 20-X AC, Left Torso
 Improved Heavy Large Laser, Right Arm
-LB 20-X AC, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -52,9 +52,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -66,10 +66,10 @@ Clan Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLBXAC20 (omnipod)
-CLLBXAC20 (omnipod)
-Clan LB 20-X AC Ammo (omnipod)
-Clan LB 20-X AC Ammo (omnipod)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -80,7 +80,7 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Supercharger (Clan) (omnipod)
+Supercharger (Clan) (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

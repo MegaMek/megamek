@@ -4,8 +4,8 @@ RWN-01
 
 Config:Biped
 techbase:Inner Sphere
-era:3150
-rules level:3
+era:3132
+rules level:4
 
 mass:30
 engine:210 XXL Engine(IS)
@@ -14,7 +14,7 @@ myomer:Standard
 cockpit:Small Cockpit
 gyro:XL Gyro
 
-heat sinks:10 Double
+heat sinks:10 IS Double
 walk mp:7
 jump mp:6
 
@@ -32,8 +32,8 @@ RTR armor:3
 RTC armor:3
 
 Weapons:2
-Light PPC, Right Torso
 Light PPC, Left Torso
+Light PPC, Right Torso
 
 Left Arm:
 Shoulder

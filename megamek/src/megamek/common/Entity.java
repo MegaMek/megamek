@@ -11462,19 +11462,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 setArmor(IArmorState.ARMOR_DOOMED, loc, true);
             }
         }
-        // equipment marked missing
-        for (Mounted mounted : getEquipment()) {
-            if (((mounted.getLocation() == loc) && mounted.getType()
-                                                          .isHittable())
-                || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
-                if (blownOff) {
-                    mounted.setMissing(true);
-                } else {
-                    mounted.setHit(true);
-                }
-            }
-        }
+
         // all critical slots set as missing
+        // while we're here, if something is mounted in those crits, set it as hit, 
+        // instead of looping through all equipment in the unit
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = getCritical(loc, i);
             if (cs != null) {
@@ -11484,13 +11475,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && !cs.isDamaged()) {
                     engineHitsThisPhase++;
                 }
+                
+                final boolean mountOneIsHittable = (cs.getMount() != null) && cs.getMount().getType().isHittable();
+                final boolean mountTwoIsHittable = (cs.getMount2() != null) && cs.getMount2().getType().isHittable();
+                
                 if (blownOff) {
                     cs.setMissing(true);
+                    
+                    if (mountOneIsHittable) {
+                        cs.getMount().setMissing(true);
+                    }
+                    
+                    if (mountTwoIsHittable) {
+                        cs.getMount2().setMissing(true);
+                    }
+                    
                 } else {
                     cs.setHit(true);
+                    
+                    if (mountOneIsHittable) {
+                        cs.getMount().setHit(true);
+                    }
+                    
+                    if (mountTwoIsHittable) {
+                        cs.getMount2().setHit(true);
+                    }
                 }
             }
         }
+        
         // dependent locations destroyed, unless they are already destroyed
         if ((getDependentLocation(loc) != Entity.LOC_NONE)
             && !(getInternal(getDependentLocation(loc)) < 0)) {

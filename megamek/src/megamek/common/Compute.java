@@ -2444,18 +2444,18 @@ public class Compute {
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-    public static void modifyPhysicalBTHForAdvantages(Entity attacker,
-                                                      Entity target, ToHitData toHit, IGame game) {
+    public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
+                                                      final ToHitData toHit, final IGame game) {
+        Objects.requireNonNull(attacker);
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
+            toHit.addModifier(-1, "melee specialist");
         }
 
-        IHex curHex = game.getBoard().getHex(attacker.getPosition());
         if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((attacker instanceof Mech) || (attacker instanceof Protomech))
-                && (curHex.terrainLevel(Terrains.WATER) > 1)) {
+                && (game.getBoard().getHex(attacker.getPosition()).terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
 
@@ -2464,10 +2464,8 @@ public class Compute {
         }
 
         // Mek targets that are dodging are harder to hit.
-
-        if ((target != null)
-            && (target instanceof Mech)
-            && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
+        if ((target instanceof Mech)
+                && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && target.dodging) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -6705,10 +6703,17 @@ public class Compute {
         return acceptable;
     }
 
-    public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos,
-                                                      int elev, IGame game) {
-
-        ArrayList<Entity> mountable = new ArrayList<Entity>();
+    /**
+     * Builds a list of all adjacent units that can load the given Entity.
+     * @param en   The entity to load
+     * @param pos  The coordinates of the hex to load from
+     * @param elev The absolute elevation of the unit at the point of loading (surface
+     *             of the hex + elevation over the surface)
+     * @param game The game object
+     * @return     All adjacent units that can mount the Entity
+     */
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader

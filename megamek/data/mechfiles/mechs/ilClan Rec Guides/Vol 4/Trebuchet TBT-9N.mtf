@@ -4,8 +4,8 @@ TBT-9N
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:2
+era:3136
+rules level:4
 
 mass:50
 engine:300 XL Engine(IS)
@@ -14,7 +14,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:11 Double
+heat sinks:11 IS Double
 walk mp:6
 jump mp:0
 
@@ -32,10 +32,10 @@ RTR armor:6
 RTC armor:7
 
 Weapons:5
+LRM 15, Left Arm
 Medium VSP Laser, Left Arm
 Medium VSP Laser, Right Arm
 Medium VSP Laser, Right Arm
-LRM 15, Left Arm
 LRM 15, Right Torso
 
 Left Arm:

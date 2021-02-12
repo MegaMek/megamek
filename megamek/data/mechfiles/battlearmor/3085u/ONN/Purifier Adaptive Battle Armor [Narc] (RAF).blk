@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,12 +17,16 @@ Purifier Adaptive Battle Armor
 </Name>
 
 <Model>
-[Narc] (RAF)
+(RAF)[Narc]
 </Model>
 
 <year>
 3086
 </year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 1
@@ -45,37 +52,37 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-IS BA Mimetic:RA
-IS BA Mimetic:Body
-IS BA Mimetic:Body
-IS BA Mimetic:LA
-IS BA Mimetic:Body
-IS BA Mimetic:Body
-IS BA Mimetic:RA
-BABattleClaw:LA
+BA Mimetic:RA
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:LA
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+BABattleClaw:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
-ISBACompactNarc:LA
+CLBACompactNarc:LA
 BA-Compact Narc Ammo:LA:Shots2#
 </Trooper 1 Equipment>
 
 <Trooper 2 Equipment>
-ISBACompactNarc:LA
+CLBACompactNarc:LA
 BA-Compact Narc Ammo:LA:Shots2#
 </Trooper 2 Equipment>
 
 <Trooper 3 Equipment>
-ISBACompactNarc:LA
+CLBACompactNarc:LA
 BA-Compact Narc Ammo:LA:Shots2#
 </Trooper 3 Equipment>
 
 <Trooper 4 Equipment>
-ISBACompactNarc:LA
+CLBACompactNarc:LA
 BA-Compact Narc Ammo:LA:Shots2#
 </Trooper 4 Equipment>
 
@@ -102,3 +109,4 @@ biped
 <weightclass>
 2
 </weightclass>
+

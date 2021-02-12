@@ -4,8 +4,9 @@ MAD-11D
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:2
+era:3140
+source:Dark Age
+rules level:4
 
 mass:75
 engine:300 XL Engine(IS)
@@ -14,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:17 Double
+heat sinks:17 IS Double
 walk mp:4
 jump mp:0
 

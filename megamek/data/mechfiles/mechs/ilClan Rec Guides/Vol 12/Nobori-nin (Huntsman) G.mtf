@@ -1,0 +1,154 @@
+Version:1.0
+Nobori-nin (Huntsman)
+G
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3139
+rules level:3
+source:ilClan Vol 12 - Dark Age
+
+mass:50
+engine:250 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:11 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:5
+
+armor:Ferro-Fibrous(Clan)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:25
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:7
+
+Weapons:6
+Small Pulse Laser, Right Leg
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Supercharger (Clan) (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+CLActiveProbe (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+CLSmallPulseLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -32,17 +32,7 @@ import javax.swing.*;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.commands.AddBotCommand;
-import megamek.client.commands.AssignNovaNetworkCommand;
-import megamek.client.commands.ClientCommand;
-import megamek.client.commands.DeployCommand;
-import megamek.client.commands.FireCommand;
-import megamek.client.commands.HelpCommand;
-import megamek.client.commands.MoveCommand;
-import megamek.client.commands.RulerCommand;
-import megamek.client.commands.ShowEntityCommand;
-import megamek.client.commands.ShowTileCommand;
-import megamek.client.commands.SitrepCommand;
+import megamek.client.commands.*;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
@@ -135,6 +125,8 @@ public class Client implements IClientCommandHandler {
 
     ConnectionHandler packetUpdate;
 
+    private Coords currentHex;
+
     private class ConnectionHandler implements Runnable {
 
         boolean shouldStop = false;
@@ -225,6 +217,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
         registerCommand(new SitrepCommand(this));
+        registerCommand(new LookCommand(this));
 
         rsg = new RandomSkillsGenerator();
     }
@@ -1768,5 +1761,25 @@ public class Client implements IClientCommandHandler {
 
     public IGame getGame() {
         return game;
+    }
+
+    /**
+     * Return the Current Hex, used by client commands for the visually impaired
+     * @return the current Hex
+     */
+    public Coords getCurrentHex() {
+        return currentHex;
+    }
+
+    /**
+     * Set the Current Hex, used by client commands for the visually impaired
+     */
+    public void setCurrentHex(IHex hex) {
+        if(hex != null) {
+            currentHex = hex.getCoords();
+        }
+    }
+    public void setCurrentHex(Coords hex) {
+        currentHex = hex;
     }
 }

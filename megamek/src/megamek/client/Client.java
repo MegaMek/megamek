@@ -213,11 +213,17 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowEntityCommand(this));
         registerCommand(new FireCommand(this));
         registerCommand(new DeployCommand(this));
-        registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
         registerCommand(new SitrepCommand(this));
         registerCommand(new LookCommand(this));
+        registerCommand(new ChatCommand(this));
+        registerCommand(new DoneCommand(this));
+        ShowTileCommand tileCommand = new ShowTileCommand(this);
+        registerCommand(tileCommand);
+        for(String direction : ShowTileCommand.directions) {
+            commandsHash.put(direction.toLowerCase(), tileCommand);
+        }
 
         rsg = new RandomSkillsGenerator();
     }
@@ -1732,6 +1738,7 @@ public class Client implements IClientCommandHandler {
      * Registers a new command in the client command table
      */
     public void registerCommand(ClientCommand command) {
+        //Warning, the special direction commands are registered seperatly
         commandsHash.put(command.getName(), command);
     }
 

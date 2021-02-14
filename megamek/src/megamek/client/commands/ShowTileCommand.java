@@ -21,7 +21,7 @@ import megamek.common.options.OptionsConstants;
  */
 
 public class ShowTileCommand extends ClientCommand {
-    private final static Set<String> directions = new HashSet<>();
+    public final static Set<String> directions = new HashSet<>();
     {
         directions.add("N");
         directions.add("NW");
@@ -53,7 +53,10 @@ public class ShowTileCommand extends ClientCommand {
             int i = 3;
             String str = "", report = "";
             Coords coord;
-            if(directions.contains(args[1]) ) {
+            if(args.length >= 1 && directions.contains(args[0].toUpperCase())) {
+                i = 1;
+                coord = getClient().getCurrentHex().translated(args[0]);
+            } else if(args.length > 1 && directions.contains(args[1].toUpperCase()) ) {
                 i = 2;
                 coord = getClient().getCurrentHex().translated(args[1]);
             } else {
@@ -105,5 +108,4 @@ public class ShowTileCommand extends ClientCommand {
 
         return "Error parsing the command.";
     }
-
 }

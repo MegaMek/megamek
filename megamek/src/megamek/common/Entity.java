@@ -9313,12 +9313,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public String statusToString() {
         // should include additional information like imobile.
-        String str = "Entity [" + getDisplayName() + ", " + getId() + "]: ";
+        String str = "Entity [" + getDisplayName() + ", " + getId() + "]:";
         if (getPosition() != null) {
             str = str + "Location: (" + (getPosition().getX() + 1) + ", "
                   + (getPosition().getY() + 1) + ") ";
+            str += "Facing: " + Facing.valueOfInt(getFacing()).name();
         }
-        str = str + "Owner: " + owner.getName() + " Armor: " + getTotalArmor()
+
+        str += " MP: " + getWalkMP();
+        if(getOriginalJumpMP() > 0 ) {
+            str += " Jump: " + getJumpMP();
+        }
+        str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
               + "/" + getTotalOArmor() + " Internal Structure: "
               + getTotalInternal() + "/" + getTotalOInternal();
 
@@ -9350,10 +9356,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "No location given.";
         }
 
-        return getLocationName(loc) + " (" + getLocationAbbr(loc)
+        String str = getLocationName(loc) + " (" + getLocationAbbr(loc)
                + "): Armor: " + getArmorString(loc) + "/" + getOArmor(loc)
                + " Structure: " + getInternalString(loc) + "/"
-               + getOInternal(loc);
+               + getOInternal(loc) + "\n ";
+        for(CriticalSlot cs : crits[loc]) {
+            if(cs != null) {
+                Mounted mount = cs.getMount();
+                if(mount != null) {
+                    str += mount.getDesc() + "\n ";
+                }
+            }
+        }
+        return str;
     }
 
     /**

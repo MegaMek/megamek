@@ -19,7 +19,7 @@ public class LookCommand extends ClientCommand {
     }
 
     public LookCommand(Client client) {
-        super(client, "look","Look around the current hex.");
+        super(client, "look", "Look around the current hex.");
     }
 
     @Override
@@ -30,12 +30,12 @@ public class LookCommand extends ClientCommand {
         if (hex != null) {
             str = "Looking around hex (" + (pos.getX() + 1) + ", "
                     + (pos.getY() + 1) + ")\n";
-            for(String dir : directions) {
+            for (String dir : directions) {
                 Coords coord = pos.translated(dir);
                 str += "To the " + dir  + " (" + (coord.getX() + 1) + ", "
                         + (coord.getY() + 1) + "): ";
                 hex = getClient().getGame().getBoard().getHex(coord);
-                if(hex != null) {
+                if (hex != null) {
                     str += hex.toString();
                 } else {
                     str += "off map.\n";

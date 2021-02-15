@@ -53,10 +53,10 @@ public class ShowTileCommand extends ClientCommand {
             int i = 3;
             String str = "", report = "";
             Coords coord;
-            if(args.length >= 1 && directions.contains(args[0].toUpperCase())) {
+            if ((args.length >= 1) && directions.contains(args[0].toUpperCase())) {
                 i = 1;
                 coord = getClient().getCurrentHex().translated(args[0]);
-            } else if(args.length > 1 && directions.contains(args[1].toUpperCase()) ) {
+            } else if ((args.length > 1) && directions.contains(args[1].toUpperCase()) ) {
                 i = 2;
                 coord = getClient().getCurrentHex().translated(args[1]);
             } else {

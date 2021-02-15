@@ -221,7 +221,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DoneCommand(this));
         ShowTileCommand tileCommand = new ShowTileCommand(this);
         registerCommand(tileCommand);
-        for(String direction : ShowTileCommand.directions) {
+        for (String direction : ShowTileCommand.directions) {
             commandsHash.put(direction.toLowerCase(), tileCommand);
         }
 
@@ -1782,10 +1782,11 @@ public class Client implements IClientCommandHandler {
      * Set the Current Hex, used by client commands for the visually impaired
      */
     public void setCurrentHex(IHex hex) {
-        if(hex != null) {
+        if (hex != null) {
             currentHex = hex.getCoords();
         }
     }
+
     public void setCurrentHex(Coords hex) {
         currentHex = hex;
     }

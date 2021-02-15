@@ -68,21 +68,21 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 systemEvent("The player " + name + " has disconnected.");
             }
 
-            @java.lang.Override
+            @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 systemEvent("Phase changed it is now " + IGame.Phase.getDisplayableName(e.getNewPhase()) + ".");
-                if(client.phaseReport != null) {
+                if (client.phaseReport != null) {
                     systemEvent(cleanHtml(client.phaseReport));
                 }
             }
 
-            @java.lang.Override
+            @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 systemEvent("Turn changed it is now " + e.getPlayer().getName() + "'s turn.");
                 //systemEvent(cleanHtml(client.roundReport));
             }
 
-            @java.lang.Override
+            @Override
             public void gameReport(GameReportEvent e) {
                 systemEvent(e.getReport());
             }
@@ -92,7 +92,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 systemEvent("The game ended. Goodbye.");
             }
 
-            @java.lang.Override
+            @Override
             public void gameBoardChanged(GameBoardChangeEvent e) {
             }
 

@@ -50,7 +50,7 @@ public class RulerCommand extends ClientCommand {
             String toHit1 = "", toHit2 = "";
             ToHitData thd;
 
-            if(args.length == 3) {
+            if (args.length == 3) {
                 start = client.getCurrentHex();
                 end = new Coords(Integer.parseInt(args[1]) - 1, Integer
                         .parseInt(args[2]) - 1);

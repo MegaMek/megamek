@@ -579,7 +579,9 @@ public class BoardEditor extends JComponent
             button.setToolTipText(tt);
         }
         button.setMargin(new Insets(0,0,0,0));
-        if (bList != null) bList.add(button);
+        if (bList != null) {
+            bList.add(button);
+        }
         return button;
     }
     

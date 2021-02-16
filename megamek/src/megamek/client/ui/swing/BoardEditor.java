@@ -752,6 +752,12 @@ public class BoardEditor extends JComponent
         // Mouse wheel behaviour for the BUILDINGS button
         // Always ADDS the building. 
         buttonBu.addMouseWheelListener(e -> {
+            // If we don't have at least one of the building values, overwrite the current hex
+            if (!curHex.containsTerrain(Terrains.BLDG_CF)
+                    && !curHex.containsTerrain(Terrains.BLDG_ELEV)
+                    && !curHex.containsTerrain(Terrains.BUILDING)) {
+                curHex.removeAllTerrains();
+            }
             // Restore mandatory building parts if some are missing
             setBasicBuilding(false);
             int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1;
@@ -788,6 +794,12 @@ public class BoardEditor extends JComponent
 
         // Mouse wheel behaviour for the BRIDGE button
         buttonBr.addMouseWheelListener(e -> {
+            // If we don't have at least one of the bridge values, overwrite the current hex
+            if (!curHex.containsTerrain(Terrains.BRIDGE_CF)
+                    && !curHex.containsTerrain(Terrains.BRIDGE_ELEV)
+                    && !curHex.containsTerrain(Terrains.BRIDGE)) {
+                curHex.removeAllTerrains();
+            }
             setBasicBridge();
             int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1;
             int terrainType;
@@ -817,6 +829,13 @@ public class BoardEditor extends JComponent
 
         // Mouse wheel behaviour for the FUELTANKS button
         buttonFT.addMouseWheelListener(e -> {
+            // If we don't have at least one of the fuel tank values, overwrite the current hex
+            if (!curHex.containsTerrain(Terrains.FUEL_TANK)
+                    && !curHex.containsTerrain(Terrains.FUEL_TANK_CF)
+                    && !curHex.containsTerrain(Terrains.FUEL_TANK_ELEV)
+                    && !curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
+                curHex.removeAllTerrains();
+            }
             setBasicFuelTank();
             int wheelDir = (e.getWheelRotation() < 0) ? 1 : -1;
             int terrainType;
@@ -1369,8 +1388,8 @@ public class BoardEditor extends JComponent
             curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 1, ALT_Held, 0));
         }
 
-        // When clicked with ALT and a Building is present, only toggle the exits
-        if (curHex.containsTerrain(Terrains.BUILDING) && ALT_Held) {
+        // When clicked with ALT, only toggle the exits
+        if (ALT_Held) {
             ITerrain curTerr = curHex.getTerrain(Terrains.BUILDING);
             curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 
                     curTerr.getLevel(), !curTerr.hasExitsSpecified(), curTerr.getExits()));
@@ -2059,8 +2078,7 @@ public class BoardEditor extends JComponent
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
             buttonUpDn.setSelected(false);
-            if (((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0)
-                    && ((ae.getModifiers() & ActionEvent.ALT_MASK) == 0)) {
+            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                 curHex.removeAllTerrains();
             }
             setBasicBuilding((ae.getModifiers() & ActionEvent.ALT_MASK) != 0);

@@ -7,6 +7,7 @@ VERSION HISTORY:
 + Issue #2639: Melee Specialist SPA Description Uses Internal Name
 + Issue #2512: Check Small Pilot ability for LAM and Aero Piloting Skill Rolls
 + Issue #2625: Change the default toggle chat to backquote / grave
++ Issue #2662: Prevent error logging from crashing server when checking whether LAM with bomb bays has inferno ordnance
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

@@ -2,56 +2,85 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Chevalier Light Tank
 </Name>
+
 <Model>
 (Speed)
 </Model>
-<Tonnage>
-35
-</Tonnage>
+
+<year>
+3051
+</year>
+
+<originalBuildYear>
+3051
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 7
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 18
 14
 14
 10
 16
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Streak SRM 2 Ammo
+</Body Equipment>
+
 <Front Equipment>
 ISStreakSRM2
 </Front Equipment>
-<Body Equipment>
-ISStreakSRM2 Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3051
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISERLargeLaser
+</Turret Equipment>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

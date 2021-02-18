@@ -6,7 +6,7 @@ Config:Biped Omnimech
 techbase:Mixed (IS Chassis)
 era:3146
 source:Dark Age
-rules level:2
+rules level:4
 
 mass:75
 engine:300 Fusion Engine(IS)
@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:Compact Gyro
 
-heat sinks:19 Double
+heat sinks:19 IS Double
 base chassis heat sinks:12
 walk mp:4
 jump mp:0

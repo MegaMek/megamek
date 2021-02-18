@@ -1,35 +1,35 @@
 Version:1.0
-Dasher (Fire Moth) 
+Dasher (Fire Moth)
 G
 
 Config:Biped Omnimech
-techbase:Clan
-era:3098
-source:RS 3145 NTNU - Early Republic
-rules level:2
+TechBase:Clan
+Era:3098
+Source:RS 3145 NTNU - Early Republic
+Rules Level:2
 
-mass:20
-engine:200 XL (Clan) Engine(IS)
-structure:Clan Endo Steel
-myomer:Standard
+Mass:20
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
-heat sinks:10 Double
-base chassis heat sinks:8
-walk mp:10
-jump mp:0
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
+Walk MP:10
+Jump MP:0
 
-armor:Ferro-Fibrous(Clan)
-LA armor:3
-RA armor:3
-LT armor:4
-RT armor:4
-CT armor:5
-HD armor:5
-LL armor:4
-RL armor:4
-RTL armor:2
-RTR armor:2
-RTC armor:2
+Armor:Ferro-Fibrous(Clan)
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:5
+LL Armor:4
+RL Armor:4
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
 
 Weapons:4
 Improved Heavy Medium Laser, Left Arm
@@ -70,7 +70,7 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Supercharger (Clan) (omnipod)
+CL Super Charger (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -85,7 +85,7 @@ Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLTargeting Computer (omnipod)
-Coolant Pod (omnipod)
+Clan Coolant Pod (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

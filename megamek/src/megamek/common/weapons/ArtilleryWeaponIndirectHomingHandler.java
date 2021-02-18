@@ -256,6 +256,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             vPhaseReport.addElement(r);
             return false;
         }
+        
+        boolean targetingHex = false;
+        
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
@@ -271,6 +274,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
+            targetingHex = true;
         }
 
         Coords coords = target.getPosition();
@@ -281,13 +285,16 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             ratedDamage = 0;
         }
         
+        // homing artillery splash damage is area effect.
+        // do damage to woods, 2 * normal damage (TW page 112)
+        // on the other hand, if the hex *is* the target, do full damage
+        int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
+        
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        // assumption: homing artillery splash damage is area effect.
-        // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
+        handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Entity entity : game.getEntitiesVector(coords)) {
@@ -303,19 +310,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         waa.getAimingMode(), toHit.getCover());
                 hit.setAttackerId(getAttackerId());
                 // BA gets damage to all troopers
-                if (entity instanceof BattleArmor) {
-                    BattleArmor ba = (BattleArmor) entity;
-                    for (int loc = 1; loc <= ba.getTroopers(); loc++) {
-                        hit.setLocation(loc);
-                        vPhaseReport.addAll(server.damageEntity(entity, hit,
-                                ratedDamage, false, DamageType.NONE, false,
-                                true, throughFront, underWater));
-                    }
-                } else {
-                    vPhaseReport.addAll(server.damageEntity(entity, hit,
+                vPhaseReport.addAll(server.damageEntity(entity, hit,
                             ratedDamage, false, DamageType.NONE, false, true,
                             throughFront, underWater));
-                }
                 server.creditKill(entity, ae);
             }
         }

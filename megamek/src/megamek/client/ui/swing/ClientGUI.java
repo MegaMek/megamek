@@ -28,44 +28,17 @@ import java.awt.GridBagConstraints;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -123,12 +96,13 @@ import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
+    //region Variable Declarations
+    private static final long serialVersionUID = 3913466735610109147L;
+
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
-
-    private static final long serialVersionUID = 3913466735610109147L;
 
     //region action commands
     //region main menu
@@ -163,25 +137,25 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //endregion file menu
 
     //region view menu
-    public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
-    public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow"; //$NON-NLS-1$
+    public static final String VIEW_MEK_DISPLAY = "viewMekDisplay";
+    public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
-    public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
-    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview"; //$NON-NLS-1$
-    public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
-    public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight"; //$NON-NLS-1$
-    public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
-    public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
-    public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
-    public static final String VIEW_CHANGE_THEME = "viewChangeTheme"; //$NON-NLS-1$
+    public static final String VIEW_MINI_MAP = "viewMiniMap";
+    public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
+    public static final String VIEW_ZOOM_IN = "viewZoomIn";
+    public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
+    public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire";
+    public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
+    public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
+    public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
+    public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
+    public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope";
+    public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
     public static final String VIEW_GAME_OPTIONS = "viewGameOptions";
     public static final String VIEW_CLIENT_SETTINGS = "viewClientSettings";
-    public static final String VIEW_LOS_SETTING = "viewLOSSetting"; //$NON-NLS-1$
+    public static final String VIEW_LOS_SETTING = "viewLOSSetting";
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
@@ -212,8 +186,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     Messages.getString("CommonMenuBar.helpFilePath"));
 
     public MegaMekController controller;
-    // keep me
-    ChatterBox cb;
+    private ChatterBox cb;
     public ChatterBox2 cb2;
     public BoardView1 bv;
     private Component bvc;
@@ -229,7 +202,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private OffBoardTargetOverlay offBoardOverlay;
 
     // some dialogs...
-    GameOptionsDialog gameOptionsDialog;
+    private GameOptionsDialog gameOptionsDialog;
     private AbstractUnitSelectorDialog mechSelectorDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
@@ -286,7 +259,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Map phase component names to phase component objects.
      */
-    Map<String, JComponent> phaseComponents = new HashMap<>();
+    private Map<String, JComponent> phaseComponents = new HashMap<>();
 
     /**
      * Current Selected entity
@@ -304,6 +277,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * shot.
      */
     private int pointblankEID = Entity.NONE;
+    //endregion Variable Declarations
 
     /**
      * Construct a client which will display itself in a new frame. It will not
@@ -339,12 +313,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
-                System.err.println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
+                MegaMek.getLogger().error("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename());
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -359,10 +333,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     /**
-     * Returns the 'virtual bounds' of the screen.  That is, the union of the
-     * displayable space on all available screen devices.
-     *
-     * @return
+     * @return the 'virtual bounds' of the screen. That is, the union of the displayable space on
+     * all available screen devices.
      */
     private Rectangle getVirtualBounds() {
         Rectangle virtualBounds = new Rectangle();
@@ -381,7 +353,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        frame = new JFrame(Messages.getString("ClientGUI.title"));
         menuBar.setGame(client.getGame());
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = getVirtualBounds();
@@ -459,8 +431,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
         } catch (Exception e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            MegaMek.getLogger().fatal(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message") + e);
             die();
         }
 
@@ -483,8 +456,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         return;
                     }
                 }
-                if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
-                {
+                if ((savePrompt == JOptionPane.NO_OPTION) || (savePrompt == JOptionPane.YES_OPTION)) {
                     frame.setVisible(false);
                     saveSettings();
                     die();
@@ -496,22 +468,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
-        aw = new AccessibilityWindow(cb, this);
+
+        aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
         aw.addWindowListener(this);
         aw.setSize(300, 300);
+
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
         int x;
         int y;
         int h;
         int w;
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) { //$NON-NLS-1$
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
             /**
              * In addition to the default Dialog processKeyEvent, this method
              * dispatches a KeyEvent to the client gui.
@@ -528,7 +497,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     super.processKeyEvent(e);
                 }
             }
-        }; //$NON-NLS-1$
+        };
         Rectangle virtualBounds = getVirtualBounds();
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
@@ -568,12 +537,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
         // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) { //$NON-NLS-1$
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
+        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) {
             /**
              * In addition to the default Dialog processKeyEvent, this method
              * dispatches a KeyEvent to the client gui.
@@ -588,15 +552,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     super.processKeyEvent(e);
                 }
             }
-        }; //$NON-NLS-1$
+        };
 
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
-            e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            MegaMek.getLogger().fatal(e);
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
+                    Messages.getString("ClientGUI.FatalError.message1") + e);
             die();
         }
         h = minimap.getSize().height;
@@ -964,9 +929,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             try {
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+            } catch (IOException e) {
+                MegaMek.getLogger().error(e);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
             }
         }
     }
@@ -1780,17 +1745,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    //
-    // WindowListener
-    //
+    //region Window Listeners
+    @Override
     public void windowActivated(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowClosed(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowClosing(WindowEvent windowEvent) {
         if (windowEvent.getWindow().equals(minimapW)) {
             setMapVisible(false);
@@ -1799,21 +1765,26 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
+    @Override
     public void windowDeactivated(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowDeiconified(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowIconified(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowOpened(WindowEvent windowEvent) {
         // ignored
     }
+    //endregion Window Listeners
 
     /**
      * @return the frame this client is displayed in
@@ -1982,7 +1953,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             } // End user-wants-a-MUL
 
             // save all destroyed units in a separate "salvage MUL"
-            ArrayList<Entity> destroyed = new ArrayList<Entity>();
+            ArrayList<Entity> destroyed = new ArrayList<>();
             Enumeration<Entity> graveyard = getClient().getGame().getGraveyardEntities();
             while (graveyard.hasMoreElements()) {
                 Entity entity = graveyard.nextElement();
@@ -2004,9 +1975,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 try {
                     // Save the destroyed entities to the file.
                     EntityListFile.saveTo(unitFile, destroyed);
-                } catch (IOException excep) {
-                    excep.printStackTrace(System.err);
-                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                } catch (IOException ex) {
+                    MegaMek.getLogger().error(ex);
+                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
                 }
             }
 
@@ -2049,8 +2020,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     stepBackward.compile(client.getGame(), e, false);
                     
                     String title = Messages.getString("CFRDomino.Title");
-                    String msg = Messages.getString("CFRDomino.Message",
-                            new Object[] { e.getDisplayName() });
+                    String msg = Messages.getString("CFRDomino.Message", e.getDisplayName());
                     int choice;
                     Object[] options;
                     MovePath[] paths;
@@ -2059,10 +2029,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                             && stepBackward.isMoveLegal()){
                         options = new Object[3];
                         paths = new MovePath[3];
-                        options[0] = Messages.getString("CFRDomino.Forward",
-                                new Object[] { stepForward.getMpUsed() });
-                        options[1] = Messages.getString("CFRDomino.Backward",
-                                new Object[] { stepForward.getMpUsed() });
+                        options[0] = Messages.getString("CFRDomino.Forward", stepForward.getMpUsed());
+                        options[1] = Messages.getString("CFRDomino.Backward", stepForward.getMpUsed());
                         options[2] = Messages.getString("CFRDomino.NoAction");
                         paths[0] = stepForward;
                         paths[1] = stepBackward;
@@ -2182,12 +2150,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     bv.highlight(attacker.getPosition());
                     bv.select(target.getPosition());
                     bv.cursor(target.getPosition());
-                    msg = Messages.getString(
-                            "ClientGUI.PointBlankShot.Message",
-                            new Object[] { target.getShortName(),
-                                    attacker.getShortName() });
-                    title = Messages
-                            .getString("ClientGUI.PointBlankShot.Title");
+                    msg = Messages.getString("ClientGUI.PointBlankShot.Message",
+                            target.getShortName(), attacker.getShortName());
+                    title = Messages.getString("ClientGUI.PointBlankShot.Title");
                     // Ask whether the player wants to take a PBS or not
                     int pbsChoice = JOptionPane.showConfirmDialog(frame, msg,
                             title, JOptionPane.YES_NO_OPTION,
@@ -2327,9 +2292,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // save!
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-        } catch (IOException ex) {
-            System.err.println("error opening file to save!"); //$NON-NLS-1$
-            System.err.println(ex);
+        } catch (IOException e) {
+            MegaMek.getLogger().error("Error opening file to save!", e);
         }
     }
 
@@ -2341,10 +2305,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             boardSaveAsImage(ignoreUnits);
             return;
         }
-        JDialog waitD = new JDialog(frame, Messages
-                .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
-        waitD.add(new JLabel(Messages
-                .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
+        JDialog waitD = new JDialog(frame, Messages.getString("BoardEditor.waitDialog.title"));
+        waitD.add(new JLabel(Messages.getString("BoardEditor.waitDialog.message")));
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
@@ -2381,9 +2343,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         curfileBoard = fc.getSelectedFile();
 
         // make sure the file ends in board
-        if (!curfileBoard.getName().toLowerCase().endsWith(".board")) { //$NON-NLS-1$
+        if (!curfileBoard.getName().toLowerCase(Locale.ENGLISH).endsWith(".board")) {
             try {
-                curfileBoard = new File(curfileBoard.getCanonicalPath() + ".board"); //$NON-NLS-1$
+                curfileBoard = new File(curfileBoard.getCanonicalPath() + ".board");
             } catch (IOException ie) {
                 // failure!
                 return;
@@ -2403,7 +2365,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
+                return (dir.getName().endsWith(".png") || dir.isDirectory());
             }
 
             @Override
@@ -2419,9 +2381,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         curfileBoardImage = fc.getSelectedFile();
 
         // make sure the file ends in png
-        if (!curfileBoardImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+        if (!curfileBoardImage.getName().toLowerCase(Locale.ENGLISH).endsWith(".png")) {
             try {
-                curfileBoardImage = new File(curfileBoardImage.getCanonicalPath() + ".png"); //$NON-NLS-1$
+                curfileBoardImage = new File(curfileBoardImage.getCanonicalPath() + ".png");
             } catch (IOException ie) {
                 // failure!
                 return;
@@ -2430,36 +2392,44 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         boardSaveImage(ignoreUnits);
     }
 
+    @Override
     public void hexMoused(BoardViewEvent b) {
         if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
             showBoardPopup(b.getCoords());
         }
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
         // ignored
     }
 
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }
@@ -2472,18 +2442,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public boolean shouldIgnoreHotKeys(){
         return ignoreHotKeys 
-                || (gameOptionsDialog != null && gameOptionsDialog.isVisible())
-                || (about != null && about.isVisible()) 
-                || (help != null && help.isVisible()) 
-                || (setdlg != null && setdlg.isVisible());
+                || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
+                || ((about != null) && about.isVisible())
+                || ((help != null) && help.isVisible())
+                || ((setdlg != null) && setdlg.isVisible())
+                || ((aw != null) && aw.isVisible());
     }
 
     @Override
     public void componentHidden(ComponentEvent arg0) {
+
     }
 
     @Override
     public void componentMoved(ComponentEvent arg0) {
+
     }
 
     @Override
@@ -2493,6 +2466,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     @Override
     public void componentShown(ComponentEvent arg0) {
+
     }
 
     void replacePlayer() {

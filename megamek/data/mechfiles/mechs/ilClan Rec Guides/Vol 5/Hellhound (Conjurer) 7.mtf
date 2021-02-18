@@ -4,7 +4,7 @@ Hellhound (Conjurer)
 
 Config:Biped
 techbase:Clan
-era:2900
+era:2836
 source:TRO 3055 - Succession Wars
 rules level:2
 
@@ -13,7 +13,7 @@ engine:300 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:6
 

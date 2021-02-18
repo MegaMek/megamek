@@ -4,15 +4,15 @@ AWS-11H
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:2
+era:3142
+rules level:3
 
 mass:80
 engine:240 Fusion Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:23 Double
+heat sinks:23 Clan Double
 walk mp:3
 jump mp:0
 
@@ -31,8 +31,8 @@ RTC armor:15
 
 Weapons:4
 Heavy PPC, Right Arm
-Heavy PPC, Right Torso
 Heavy PPC, Left Torso
+Heavy PPC, Right Torso
 ER Small Laser, Head
 
 Left Arm:

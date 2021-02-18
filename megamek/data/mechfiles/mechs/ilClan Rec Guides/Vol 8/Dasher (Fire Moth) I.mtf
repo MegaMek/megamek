@@ -1,19 +1,19 @@
 Version:1.0
-Dasher (Fire Moth) 
+Dasher (Fire Moth)
 I
 
 Config:Biped Omnimech
 techbase:Clan
 era:3139
 source:Dark Age
-rules level:2
+rules level:4
 
 mass:20
 engine:200 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:8
 walk mp:10
 jump mp:0

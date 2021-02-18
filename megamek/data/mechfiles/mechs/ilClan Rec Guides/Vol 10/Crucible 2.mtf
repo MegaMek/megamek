@@ -5,14 +5,14 @@ Crucible
 Config:Biped
 techbase:Clan
 era:3149
-rules level:2
+rules level:4
 
 mass:100
 engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:14 Double
+heat sinks:14 Clan Double
 walk mp:3
 jump mp:3
 

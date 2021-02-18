@@ -1,0 +1,153 @@
+Version:1.2
+Axman
+AXM-5N
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3148
+source:ilClan Vol 12 - Dark Age
+rules level:2
+
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
+ejection:Full Head Ejection System
+
+heat sinks:10 Double
+walk mp:4
+jump mp:4
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:23
+RT armor:23
+CT armor:33
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:5
+ER PPC, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+HAG/20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERPPC
+CLERPPC
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+ISCASEII
+IS Light Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

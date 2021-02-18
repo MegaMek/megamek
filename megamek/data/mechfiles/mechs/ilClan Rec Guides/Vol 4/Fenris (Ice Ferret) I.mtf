@@ -4,15 +4,15 @@ I
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
-era:3150
-rules level:2
+era:3099
+rules level:4
 
 mass:45
 engine:360 XL (Clan) Engine
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 base chassis heat sinks:12
 walk mp:8
 jump mp:0
@@ -31,19 +31,19 @@ RTR armor:7
 RTC armor:8
 
 Weapons:5
-SRM 6, Right Arm
 SRM 6, Left Arm
-ER Small Laser, Center Torso
-M-Pod, Right Arm
 M-Pod, Left Arm
+SRM 6, Right Arm
+M-Pod, Right Arm
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLSRM6 (omnipod)
-ISMPod (omnipod)
+CLSRM6 (OMNIPOD)
+ISMPod (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,8 +56,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLSRM6 (omnipod)
-ISMPod (omnipod)
+CLSRM6 (OMNIPOD)
+ISMPod (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -68,8 +68,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo SRM-6 (omnipod)
-Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -82,9 +82,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-BloodhoundActiveProbe (omnipod)
-BloodhoundActiveProbe (omnipod)
-BloodhoundActiveProbe (omnipod)
+BloodhoundActiveProbe (OMNIPOD)
+BloodhoundActiveProbe (OMNIPOD)
+BloodhoundActiveProbe (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallLaser (omnipod)
+CLERSmallLaser (OMNIPOD)
 Clan Endo Steel
 
 Head:

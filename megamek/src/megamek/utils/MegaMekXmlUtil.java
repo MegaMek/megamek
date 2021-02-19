@@ -287,11 +287,11 @@ public class MegaMekXmlUtil {
      * @param attributeValue the value of the attribute
      * @param values the String or String[] to write to XML
      */
-    public static <T>void writeSimpleXMLAttributedTag(final PrintWriter pw, final int indent,
-                                                      final String name,
-                                                      final @Nullable String attributeName,
-                                                      final @Nullable T attributeValue,
-                                                      final String... values) {
+    public static <T> void writeSimpleXMLAttributedTag(final PrintWriter pw, final int indent,
+                                                       final String name,
+                                                       final @Nullable String attributeName,
+                                                       final @Nullable T attributeValue,
+                                                       final String... values) {
         if (values.length > 0) {
             final boolean hasAttribute = attributeValue != null;
             pw.print(indentStr(indent) + "<" + name);

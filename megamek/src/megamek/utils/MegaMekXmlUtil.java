@@ -140,16 +140,16 @@ public class MegaMekXmlUtil {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
     //region XML Writing
-    //region Open Indented Line
+    //region Open Tag
     /**
      * This writes an open XML tag
      * @param pw the PrintWriter to use
      * @param indent the indent to write at
      * @param name the name of the XML tag
      */
-    public static void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
-                                                      final String name) {
-        writeSimpleXMLOpenIndentedLine(pw, indent, name, null, null, null, null);
+    public static void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                             final String name) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, null, null);
     }
 
     /**
@@ -160,10 +160,10 @@ public class MegaMekXmlUtil {
      * @param attribute the attribute to write as part of the XML tag
      * @param value the value of the attribute
      */
-    public static <T> void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
-                                                          final String name, final String attribute,
-                                                          final T value) {
-        writeSimpleXMLOpenIndentedLine(pw, indent, name, attribute, value, null, null);
+    public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                                 final String name, final String attribute,
+                                                 final T value) {
+        writeSimpleXMLOpenTag(pw, indent, name, attribute, value, null, null);
     }
 
     /**
@@ -174,10 +174,10 @@ public class MegaMekXmlUtil {
      * @param classAttribute the class attribute to write as part of the tag
      * @param c the class to write as part of the tag
      */
-    public static void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
-                                                      final String name, final String classAttribute,
-                                                      final Class<?> c) {
-        writeSimpleXMLOpenIndentedLine(pw, indent, name, null, null, classAttribute, c);
+    public static void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                             final String name, final String classAttribute,
+                                             final Class<?> c) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, classAttribute, c);
     }
 
     /**
@@ -191,12 +191,12 @@ public class MegaMekXmlUtil {
      * @param classAttribute the class attribute to write as part of the tag
      * @param c the class to write as part of the tag
      */
-    public static <T> void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
-                                                          final String name,
-                                                          final @Nullable String attribute,
-                                                          final @Nullable T value,
-                                                          final @Nullable String classAttribute,
-                                                          final @Nullable Class<?> c) {
+    public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                                 final String name,
+                                                 final @Nullable String attribute,
+                                                 final @Nullable T value,
+                                                 final @Nullable String classAttribute,
+                                                 final @Nullable Class<?> c) {
         final boolean hasValue = value != null;
         final boolean hasClass = c != null;
         pw.print(indentStr(indent) + "<" + name);
@@ -209,7 +209,7 @@ public class MegaMekXmlUtil {
         }
         pw.print(">\n");
     }
-    //endregion Open Indented Line
+    //endregion Open Tag
 
     //region Simple XML Tag
     /**
@@ -361,6 +361,27 @@ public class MegaMekXmlUtil {
             pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
         }
     }
+    //endregion Simple XML Tag
+
+    //region Close Tag
+    /**
+     * This writes a XML close tag to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     */
+    public static void writeSimpleXMLCloseTag(final PrintWriter pw, final int indent,
+                                              final String name) {
+        pw.println(indentStr(indent) + "</" + name + ">");
+    }
+    //endregion Close Tag
+
+    //region Deprecated Tag Writers
+    @Deprecated
+    public static void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
+                                                      final String name) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, null, null);
+    }
 
     @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
@@ -385,28 +406,16 @@ public class MegaMekXmlUtil {
     }
 
     @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
+    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
     @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
-    }
-    //endregion Simple XML Tag
-
-    //region Close Indented Line
-    /**
-     * This writes a XML close tag to file
-     * @param pw the PrintWriter to use
-     * @param indent the indent to write at
-     * @param name the name of the XML tag
-     */
     public static void writeSimpleXMLCloseIndentedLine(final PrintWriter pw, final int indent,
                                                        final String name) {
-        pw.println(indentStr(indent) + "</" + name + ">");
+        writeSimpleXMLCloseTag(pw, indent, name);
     }
-    //endregion Close Indented Line
+    //endregion Deprecated Tag Writers
 
     /**
      * @param level the level to indent up to

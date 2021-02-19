@@ -7853,6 +7853,7 @@ public class Server implements Runnable {
                     psrFailed = (0 < doSkillCheckWhileMoving(entity,
                             lastElevation, lastPos, lastPos, rollTarget, false));
                 }
+
                 // Does the entity skid?
                 if (psrFailed) {
 
@@ -32093,6 +32094,11 @@ public class Server implements Runnable {
                         if (entityElev > numFloors) {
                             continue;
                         }
+                    }
+                    
+                    // if we're under a bridge, we can't collapse the bridge
+                    if (entityElev < bridgeEl) {
+                        continue;
                     }
 
                     if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL)

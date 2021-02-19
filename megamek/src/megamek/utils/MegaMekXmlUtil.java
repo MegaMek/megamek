@@ -157,13 +157,13 @@ public class MegaMekXmlUtil {
      * @param pw the PrintWriter to use
      * @param indent the indent to write at
      * @param name the name of the XML tag
-     * @param attribute the attribute to write as part of the XML tag
-     * @param value the value of the attribute
+     * @param attributeName the attribute to write as part of the XML tag
+     * @param attributeValue the value of the attribute
      */
     public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
-                                                 final String name, final String attribute,
-                                                 final T value) {
-        writeSimpleXMLOpenTag(pw, indent, name, attribute, value, null, null);
+                                                 final String name, final String attributeName,
+                                                 final T attributeValue) {
+        writeSimpleXMLOpenTag(pw, indent, name, attributeName, attributeValue, null, null);
     }
 
     /**
@@ -186,22 +186,22 @@ public class MegaMekXmlUtil {
      * @param pw the PrintWriter to use
      * @param indent the indent to write at
      * @param name the name of the XML tag
-     * @param attribute the attribute to write as part of the XML tag
-     * @param value the value of the attribute
+     * @param attributeName the attribute to write as part of the XML tag
+     * @param attributeValue the value of the attribute
      * @param classAttribute the class attribute to write as part of the tag
      * @param c the class to write as part of the tag
      */
     public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
                                                  final String name,
-                                                 final @Nullable String attribute,
-                                                 final @Nullable T value,
+                                                 final @Nullable String attributeName,
+                                                 @Nullable T attributeValue,
                                                  final @Nullable String classAttribute,
                                                  final @Nullable Class<?> c) {
-        final boolean hasValue = value != null;
+        final boolean hasValue = attributeValue != null;
         final boolean hasClass = c != null;
         pw.print(indentStr(indent) + "<" + name);
         if (hasValue) {
-            pw.print(" " + attribute + "=\"" + value + "\"");
+            pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
         }
 
         if (hasClass) {
@@ -222,7 +222,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final UUID... values) {
         if (values.length > 0) {
-            final StringJoiner stringJoiner = new StringJoiner(",", "", "");
+            final StringJoiner stringJoiner = new StringJoiner(",");
             for (final UUID value : values) {
                 stringJoiner.add(value.toString());
             }
@@ -240,7 +240,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final LocalDate... values) {
         if (values.length > 0) {
-            final StringJoiner stringJoiner = new StringJoiner(",", "", "");
+            final StringJoiner stringJoiner = new StringJoiner(",");
             for (final LocalDate value : values) {
                 stringJoiner.add(value.toString());
             }
@@ -259,9 +259,9 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final Collection<?> values) {
         if (values.size() > 0) {
-            final StringJoiner stringJoiner = new StringJoiner(",", "", "");
+            final StringJoiner stringJoiner = new StringJoiner(",");
             values.forEach(v -> stringJoiner.add(v.toString()));
-            pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            pw.println(indentStr(indent) + "<" + name + ">" + escape(stringJoiner.toString()) + "</" + name + ">");
         }
     }
 
@@ -287,16 +287,16 @@ public class MegaMekXmlUtil {
      * @param attributeValue the value of the attribute
      * @param values the String or String[] to write to XML
      */
-    public static void writeSimpleXMLAttributedTag(final PrintWriter pw, final int indent,
-                                                   final String name,
-                                                   final @Nullable String attributeName,
-                                                   final @Nullable String attributeValue,
-                                                   final String... values) {
+    public static <T>void writeSimpleXMLAttributedTag(final PrintWriter pw, final int indent,
+                                                      final String name,
+                                                      final @Nullable String attributeName,
+                                                      final @Nullable T attributeValue,
+                                                      final String... values) {
         if (values.length > 0) {
             final boolean hasAttribute = attributeValue != null;
             pw.print(indentStr(indent) + "<" + name);
             if (hasAttribute) {
-                pw.print(" " + attributeName + "=\"" + attributeValue + "\"");
+                pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
             }
             pw.print(">" + escape(StringUtils.join(values, ',')) + "</" + name + ">\n");
         }
@@ -326,7 +326,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final boolean... values) {
         if (values.length > 0) {
-            final StringJoiner stringJoiner = new StringJoiner(",", "", "");
+            final StringJoiner stringJoiner = new StringJoiner(",");
             for (final boolean value : values) {
                 stringJoiner.add(Boolean.toString(value));
             }

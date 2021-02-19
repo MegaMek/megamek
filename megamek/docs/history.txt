@@ -9,7 +9,7 @@ VERSION HISTORY:
 + Issue #2625: Change the default toggle chat to backquote / grave
 + Issue #2662: Prevent error logging from crashing server when checking whether LAM with bomb bays has inferno ordnance
 + Issue #2666: Take into account center torso when checking LAMs for available bomb bays to load bombs into
-+ PR #2668: Prevent skidding units from collapsing bridges when going under them
++ PR #2668: Prevent skidding units from collapsing bridge "basements" when going under them
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

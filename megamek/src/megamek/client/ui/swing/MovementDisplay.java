@@ -1246,6 +1246,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             // clear board cursors
+            clientgui.getBoardView().select(cmd.getFinalCoords());
+            clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
             clientgui.bv.setWeaponFieldofFire(entity, cmd);
 

@@ -93,21 +93,13 @@ public class GameTurn implements Serializable {
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(Entity entity, IGame game, 
-            boolean useValidNonInfantryCheck) {
-
-        return (entity != null) && (entity.getOwnerId() == playerId)
-            && entity.isSelectableThisTurn()
-            // This next bit enforces the "A players Infantry/Protos
-            // move after that players other units" options.
-            && !(useValidNonInfantryCheck &&
-                 (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                 && (((entity instanceof Infantry) && 
-                      game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) 
-                    || 
-                    ((entity instanceof Protomech) && 
-                     game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER))) 
-                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
+    public boolean isValidEntity(final Entity entity, final IGame game, final boolean useValidNonInfantryCheck) {
+        return (entity != null) && (entity.getOwnerId() == playerId) && entity.isSelectableThisTurn()
+                && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
+                && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
+                || ((entity instanceof Protomech)&& game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
+                && game.checkForValidNonInfantryAndOrProtomechs(playerId));
     }    
 
     /**
@@ -314,48 +306,40 @@ public class GameTurn implements Serializable {
      * @return the <code>int</code> code for the entity's class.
      */
     public static int getClassCode(Entity entity) {
-        int classCode = 0;
         // Start with subclasses of Aero
-        if ( entity instanceof SpaceStation ) {
-            classCode = GameTurn.CLASS_SPACE_STATION;
-        } else if ( entity instanceof Warship ) {
-            classCode = GameTurn.CLASS_WARSHIP;
-        }  else if ( entity instanceof Jumpship ) {
-            classCode = GameTurn.CLASS_JUMPSHIP;
-        } else if ( entity instanceof Dropship) {
-            if(entity.isAirborne()) {
-                classCode = GameTurn.CLASS_DROPSHIP;
-            } else {
-                classCode = GameTurn.CLASS_TANK;
-            }
-        } else if ( entity instanceof SmallCraft && entity.isAirborne()) {
-            classCode = GameTurn.CLASS_SMALL_CRAFT;
+        if (entity instanceof SpaceStation) {
+            return CLASS_SPACE_STATION;
+        } else if (entity instanceof Warship) {
+            return CLASS_WARSHIP;
+        }  else if (entity instanceof Jumpship) {
+            return CLASS_JUMPSHIP;
+        } else if (entity instanceof Dropship) {
+            return entity.isAirborne() ? CLASS_DROPSHIP : CLASS_TANK;
+        } else if (entity instanceof SmallCraft && entity.isAirborne()) {
+            return CLASS_SMALL_CRAFT;
         // Anything else that's still airborne is treated as an Aero 
-        // (VTOLs aren't considered airborne, since it's based on altitude and 
-        //      not elevation)
+        // (VTOLs aren't considered airborne, since it's based on altitude and not elevation)
         } else if (entity.isAirborne()) {
-                classCode = GameTurn.CLASS_AERO;            
+            return CLASS_AERO;
         } else if (entity instanceof Infantry) {
-            classCode = GameTurn.CLASS_INFANTRY;
+            return CLASS_INFANTRY;
         } else if (entity instanceof Protomech) {
-            classCode = GameTurn.CLASS_PROTOMECH;
+            return CLASS_PROTOMECH;
         } else if (entity instanceof Tank || entity.isAero()) {
-            classCode = GameTurn.CLASS_TANK;
+            return CLASS_TANK;
         } else if (entity instanceof Mech) {
-            classCode = GameTurn.CLASS_MECH;
+            return CLASS_MECH;
         } else if (entity instanceof GunEmplacement) {
-            classCode = GameTurn.CLASS_GUN_EMPLACEMENT;
+            return CLASS_GUN_EMPLACEMENT;
+        } else {
+            return 0;
         }
-        return classCode;
     }
 
     /**
      * A type of game turn that allows only certain types of units to move.
      */
     public static class EntityClassTurn extends GameTurn {
-        /**
-         *
-         */
         private static final long serialVersionUID = 1305684619846966124L;
         private final int mask;
 
@@ -380,13 +364,11 @@ public class GameTurn implements Serializable {
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
-                boolean useValidNonInfantryCheck) {
-            // The entity must be in the mask, and pass
-            // the requirements of the parent class.
-            return ((GameTurn.getClassCode(entity) & mask) != 0)
-                    && super.isValidEntity(entity, game, 
-                            useValidNonInfantryCheck);
+        public boolean isValidEntity(final Entity entity, final IGame game,
+                                     final boolean useValidNonInfantryCheck) {
+            // The entity must pass the requirements of the parent class and be in the mask.
+            return ((getClassCode(entity) & mask) != 0)
+                    && super.isValidEntity(entity, game, useValidNonInfantryCheck);
         }
         
         

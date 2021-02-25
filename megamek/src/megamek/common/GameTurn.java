@@ -24,6 +24,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -93,10 +94,11 @@ public class GameTurn implements Serializable {
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(final Entity entity, final IGame game, final boolean useValidNonInfantryCheck) {
+    public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
+                                 final boolean useValidNonInfantryCheck) {
         return (entity != null) && (entity.getOwnerId() == playerId) && entity.isSelectableThisTurn()
-                && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
                 // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
+                && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
@@ -364,7 +366,7 @@ public class GameTurn implements Serializable {
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(final Entity entity, final IGame game,
+        public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
                                      final boolean useValidNonInfantryCheck) {
             // The entity must pass the requirements of the parent class and be in the mask.
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
@@ -525,9 +527,8 @@ public class GameTurn implements Serializable {
          * Returns true if the player and entity are both valid.
          */
         @Override
-        public boolean isValid(int playerId, Entity entity, IGame game) {
-            return ((null != entity) && (entity.getOwnerId() == playerId) && isValidEntity(
-                    entity, game));
+        public boolean isValid(final int playerId, final @Nullable Entity entity, final IGame game) {
+            return isValidEntity(entity, game) && (entity.getOwnerId() == playerId);
         }
 
         /**

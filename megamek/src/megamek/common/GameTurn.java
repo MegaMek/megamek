@@ -305,7 +305,7 @@ public class GameTurn implements Serializable {
      * @param entity the <code>Entity</code> whose class code is needed.
      * @return the <code>int</code> code for the entity's class.
      */
-    public static int getClassCode(Entity entity) {
+    public static int getClassCode(final Entity entity) {
         // Start with subclasses of Aero
         if (entity instanceof SpaceStation) {
             return CLASS_SPACE_STATION;
@@ -315,7 +315,7 @@ public class GameTurn implements Serializable {
             return CLASS_JUMPSHIP;
         } else if (entity instanceof Dropship) {
             return entity.isAirborne() ? CLASS_DROPSHIP : CLASS_TANK;
-        } else if (entity instanceof SmallCraft && entity.isAirborne()) {
+        } else if ((entity instanceof SmallCraft) && entity.isAirborne()) {
             return CLASS_SMALL_CRAFT;
         // Anything else that's still airborne is treated as an Aero 
         // (VTOLs aren't considered airborne, since it's based on altitude and not elevation)
@@ -325,12 +325,12 @@ public class GameTurn implements Serializable {
             return CLASS_INFANTRY;
         } else if (entity instanceof Protomech) {
             return CLASS_PROTOMECH;
-        } else if (entity instanceof Tank || entity.isAero()) {
+        } else if (entity instanceof GunEmplacement) {
+            return CLASS_GUN_EMPLACEMENT;
+        } else if ((entity instanceof Tank) || entity.isAero()) {
             return CLASS_TANK;
         } else if (entity instanceof Mech) {
             return CLASS_MECH;
-        } else if (entity instanceof GunEmplacement) {
-            return CLASS_GUN_EMPLACEMENT;
         } else {
             return 0;
         }

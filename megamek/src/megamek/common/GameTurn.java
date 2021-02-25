@@ -98,7 +98,7 @@ public class GameTurn implements Serializable {
                 && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
                 // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
-                || ((entity instanceof Protomech)&& game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
+                || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
     }    
 
@@ -367,11 +367,9 @@ public class GameTurn implements Serializable {
         public boolean isValidEntity(final Entity entity, final IGame game,
                                      final boolean useValidNonInfantryCheck) {
             // The entity must pass the requirements of the parent class and be in the mask.
-            return ((getClassCode(entity) & mask) != 0)
-                    && super.isValidEntity(entity, game, useValidNonInfantryCheck);
+            return super.isValidEntity(entity, game, useValidNonInfantryCheck)
+                    && isValidClass(getClassCode(entity));
         }
-        
-        
 
         /**
          * Determine if entities of the given class get to move.
@@ -391,6 +389,7 @@ public class GameTurn implements Serializable {
             return mask;
         }
         
+        @Override
         public String toString() {
             return super.toString() + " mask: " + mask;
         }

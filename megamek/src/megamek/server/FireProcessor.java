@@ -121,11 +121,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         bldg.setPhaseCF(cf, coords);
                     }
                 }
-
             }
-         }
-
-        debugTime("resolve fire 1", true);
+        }
 
         // Cycle through all hexes, checking for fire and the spread of fire
         for (int currentXCoord = 0; currentXCoord < width; currentXCoord++) {
@@ -133,7 +130,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 Coords currentCoords = new Coords(currentXCoord, currentYCoord);
                 IHex currentHex = board.getHex(currentXCoord, currentYCoord);
 
-                if(currentHex.containsTerrain(Terrains.FIRE)) {
+                if (currentHex.containsTerrain(Terrains.FIRE)) {
                     //If the woods has been cleared, or the building
                     // has collapsed put non-inferno fires out.
                     if ((currentHex.terrainLevel(Terrains.FIRE)
@@ -144,7 +141,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
 
                     //only check spread for fires that didn't start this turn
-                    if(currentHex.getFireTurn() > 0) {
+                    if (currentHex.getFireTurn() > 0) {
                         //optional rule, woods burn down
                         Vector<Report> burnReports = null;
                         if ((currentHex.containsTerrain(Terrains.WOODS) || currentHex
@@ -168,8 +165,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         if (burnReports != null) {
                             vPhaseReport.addAll(burnReports);
                         }
-                        spreadFire(currentXCoord, currentYCoord, windDirection,
-                                windStrength);
+                        spreadFire(currentXCoord, currentYCoord, windDirection, windStrength);
                     }
                 }
             }
@@ -261,21 +257,20 @@ public class FireProcessor extends DynamicTerrainProcessor {
         //This means that a fire cannot spread from a level 6 building at base level 0 to
         //a level 1 building at base level 0, for example.
 
-        int curHeight = game.getBoard().getHex(src).ceiling();
+        final int curHeight = game.getBoard().getHex(src).ceiling();
 
         TargetRoll directroll = new TargetRoll(9, "spread downwind");
         TargetRoll obliqueroll = new TargetRoll(11, "spread 60 degrees to downwind");
 
-        if((windStr > PlanetaryConditions.WI_NONE) && (windStr < PlanetaryConditions.WI_STRONG_GALE)) {
+        if ((windStr > PlanetaryConditions.WI_NONE) && (windStr < PlanetaryConditions.WI_STRONG_GALE)) {
             directroll.addModifier(-2, "light/moderate gale");
             obliqueroll.addModifier(-1, "light/moderate gale");
-        }
-        else if(windStr > PlanetaryConditions.WI_MOD_GALE) {
+        } else if (windStr > PlanetaryConditions.WI_MOD_GALE) {
             directroll.addModifier(-3, "strong gale+");
             directroll.addModifier(-2, "strong gale+");
         }
 
-        spreadFire(nextCoords, directroll, curHeight);
+        spreadFire(src, nextCoords, directroll, curHeight);
 
         // Spread to the next hex downwind on a 12 if the first hex wasn't
         // burning...
@@ -286,34 +281,37 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 && ((curHeight >= nextHex.ceiling()) || (jumpHex.ceiling() >= nextHex.ceiling()))) {
             // we've already gone one step in the wind direction, now go another
             directroll.addModifier(3, "crossing non-burning hex");
-            spreadFire(nextCoords.translated(windDir), directroll, curHeight);
+            spreadFire(src, nextCoords.translated(windDir), directroll, curHeight);
         }
 
         // spread fire 60 degrees clockwise....
-        spreadFire(src.translated((windDir + 1) % 6), obliqueroll, curHeight);
+        spreadFire(src, src.translated((windDir + 1) % 6), obliqueroll, curHeight);
 
         // spread fire 60 degrees counterclockwise
-        spreadFire(src.translated((windDir + 5) % 6), obliqueroll, curHeight);
+        spreadFire(src, src.translated((windDir + 5) % 6), obliqueroll, curHeight);
     }
 
     /**
      * Spreads the fire, and reports the spread, to the specified hex, if
      * possible, if the hex isn't already on fire, and the fire roll is made.
+     *
+     * @param origin the origin coordinates
+     * @param coords the coordinates to check to see if the fire spreads to them
+     * @param roll the target number for roll for fire to spread
+     * @param height the height of the origin hex
      */
-    public void spreadFire(Coords coords, TargetRoll roll, int height) {
+    public void spreadFire(final Coords origin, final Coords coords, final TargetRoll roll,
+                           final int height) {
         IHex hex = game.getBoard().getHex(coords);
-        if (hex == null) {
-            // Don't attempt to spread fire off the board.
-            return;
-        }
-
-        if(Math.abs(hex.ceiling() - height) > 4) {
+        if ((hex == null) || (Math.abs(hex.ceiling() - height) > 4)) {
+            // Don't attempt to spread fire off the board or for large differences in height
             return;
         }
 
         if (!(hex.containsTerrain(Terrains.FIRE)) && server.checkIgnition(coords, roll)) {
             Report r = new Report(5150, Report.PUBLIC);
             r.add(coords.getBoardNum());
+            r.add(origin.getBoardNum());
             vPhaseReport.addElement(r);
         }
     }

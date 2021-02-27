@@ -11865,7 +11865,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         playerPickedPassThrough.put(attackerId, c);
     }
 
-    public Coords getPlayerPickedPassThrough(int attackerId) {
+    public @Nullable Coords getPlayerPickedPassThrough(int attackerId) {
         if (playerPickedPassThrough == null) {
             playerPickedPassThrough = new HashMap<>();
         }

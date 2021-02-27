@@ -1677,12 +1677,10 @@ public class Compute {
             }
         }
 
-        if (Compute.isGroundToAir(attacker, target)
-                && (target instanceof Entity)) {
+        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
-            distance = attacker.getPosition().distance(
-                    getClosestFlightPath(attacker.getId(),
-                            attacker.getPosition(), (Entity) target));
+            distance = attacker.getPosition().distance(getClosestFlightPath(attacker.getId(),
+                    attacker.getPosition(), (Entity) target));
 
             // if the ground attacker uses weapon bays and we are on a
             // ground map, then we will divide this distance by 16
@@ -1703,7 +1701,7 @@ public class Compute {
 
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
-        // TODO: should the player be explcitly notified?
+        // TODO: should the player be explicitly notified?
         if (Compute.isInSameBuilding(game, attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
@@ -1746,8 +1744,7 @@ public class Compute {
      * @param te
      * @return
      */
-    public static Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
-
+    public static @Nullable Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
         Coords finalPos = te.getPosition();
         if (te.getPlayerPickedPassThrough(attackerId) != null) {
             finalPos = te.getPlayerPickedPassThrough(attackerId);

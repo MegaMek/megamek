@@ -255,7 +255,7 @@ public class Coords implements Serializable {
 
     /**
      * @param d the destination coordinate.
-     * @return Returns the degree direction of another Coords
+     * @return the degree direction of another Coords
      */
     public int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));

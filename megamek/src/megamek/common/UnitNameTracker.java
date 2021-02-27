@@ -14,10 +14,10 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import megamek.common.annotations.Nullable;
@@ -28,14 +28,14 @@ import megamek.common.annotations.Nullable;
  * @implNote This API is not thread safe.
  */
 public class UnitNameTracker {
-    private final Map<String, Set<Entity>> entityMap = new HashMap<>();
+    private final Map<String, List<Entity>> entityMap = new HashMap<>();
 
     /**
      * Adds an entity to the name tracker.
      * @param entity The entity to track for name collisions.
      */
     public void add(Entity entity) {
-        Set<Entity> entities = entityMap.computeIfAbsent(entity.getShortNameRaw(), k -> new HashSet<>());
+        List<Entity> entities = entityMap.computeIfAbsent(entity.getShortNameRaw(), k -> new ArrayList<>());
         entities.add(entity);
         entity.setDuplicateMarker(entities.size());
     }
@@ -61,7 +61,7 @@ public class UnitNameTracker {
         int removedDuplicateMarker = entity.getDuplicateMarker();
 
         // Decrease the number of duplicate names, removing it if there was only one left
-        Set<Entity> entities = entityMap.get(rawName);
+        List<Entity> entities = entityMap.get(rawName);
         if ((entities == null) || !entities.remove(entity)) {
             return false;
         }

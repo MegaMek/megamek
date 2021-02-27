@@ -242,7 +242,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Protects: displayName, shortName, duplicateMarker.
      */
-    private final transient Object nameLock = new Object();
     private String displayName = null;
     private String shortName = null;
     private int duplicateMarker = 1;
@@ -966,10 +965,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setId(int id) {
         this.id = id;
-        synchronized (nameLock) {
-            displayName = null;
-            shortName = null;
-        }
+        displayName = null;
+        shortName = null;
     }
 
     /**
@@ -2459,10 +2456,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * from others with the same name. These are monotonically
      * increasing values, starting from one.
      */
-    public int getDuplicateMarker() {
-        synchronized (nameLock) {
-            return duplicateMarker;
-        }
+    public synchronized int getDuplicateMarker() {
+        return duplicateMarker;
     }
 
     /**
@@ -2472,13 +2467,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param duplicateMarker A marker to disambiguate this entity
      *                        from others with the same name.
      */
-    public void setDuplicateMarker(int duplicateMarker) {
-        synchronized (nameLock) {
-            this.duplicateMarker = duplicateMarker;
-            if (duplicateMarker > 1) {
-                shortName = createShortName(duplicateMarker);
-                displayName = createDisplayName(duplicateMarker);
-            }
+    public synchronized void setDuplicateMarker(int duplicateMarker) {
+        this.duplicateMarker = duplicateMarker;
+        if (duplicateMarker > 1) {
+            shortName = createShortName(duplicateMarker);
+            displayName = createDisplayName(duplicateMarker);
         }
     }
 
@@ -2490,17 +2483,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return A value indicating whether or not this entity
      *         updated its duplicate marker.
      */
-    public boolean updateDuplicateMarkerAfterDelete(int removedMarker) {
-        synchronized (nameLock) {
-            if (duplicateMarker > removedMarker) {
-                duplicateMarker--;
-                shortName = createShortName(duplicateMarker);
-                displayName = createDisplayName(duplicateMarker);
-                return true;
-            }
-
-            return false;
+    public synchronized boolean updateDuplicateMarkerAfterDelete(int removedMarker) {
+        if (duplicateMarker > removedMarker) {
+            duplicateMarker--;
+            shortName = createShortName(duplicateMarker);
+            displayName = createDisplayName(duplicateMarker);
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -2528,10 +2519,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model] ([Player Name]).
      */
-    public void generateDisplayName() {
-        synchronized (nameLock) {
-            displayName = createDisplayName(duplicateMarker);
-        }
+    public synchronized void generateDisplayName() {
+        displayName = createDisplayName(duplicateMarker);
      }
 
     /**
@@ -2568,10 +2557,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model].
      */
-    public void generateShortName() {
-        synchronized (nameLock) {
-            shortName = createShortName(duplicateMarker);
-        }
+    public synchronized void generateShortName() {
+        shortName = createShortName(duplicateMarker);
     }
 
     /**

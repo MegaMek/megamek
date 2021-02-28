@@ -12,6 +12,7 @@ VERSION HISTORY:
 + PR #2668: Prevent skidding units from collapsing bridge "basements" when going under them
 + Issue #2681: Fixing GameTurn Entity Check NPE
 + Issue #2528: Undo during movement recalculates LOS
++ PR #2686: Distance Null Coordinate NPE
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

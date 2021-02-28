@@ -13,6 +13,8 @@ VERSION HISTORY:
 + Issue #2681: Fixing GameTurn Entity Check NPE
 + Issue #2528: Undo during movement recalculates LOS
 + PR #2686: Distance Null Coordinate NPE
++ Data: Lots of new spites, new boards (Flynn, SimonLandmine), unit file fixes
++ Removing Print text and disabling the "Bing"
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

@@ -401,6 +401,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
+        store.setDefault(SOUND_MUTE, true);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);

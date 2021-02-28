@@ -37,7 +37,7 @@ public class CLHeavyMG extends MGWeapon {
         super();
 
         this.name = "Heavy Machine Gun";
-        this.setInternalName("CLHeavyMG");
+        this.setInternalName(this.name);
         this.addLookupName("Clan Heavy Machine Gun");
         this.heat = 0;
         this.damage = 3;

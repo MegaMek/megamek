@@ -732,7 +732,7 @@ class EntitySprite extends Sprite {
         String internalChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniISChar");
         String destroyedChar = GUIPreferences.getInstance().getString("AdvancedArmorMiniDestroyedChar");
         String fontSize = Integer.toString(GUIPreferences.getInstance().getInt("AdvancedArmorMiniFrontSizeMod"));
-        // HTML color String from MMPreferences
+        // HTML color String from Preferences
         String colorIntact = Integer
                 .toHexString(GUIPreferences.getInstance()
                         .getColor("AdvancedArmorMiniColorIntact").getRGB() & 0xFFFFFF);

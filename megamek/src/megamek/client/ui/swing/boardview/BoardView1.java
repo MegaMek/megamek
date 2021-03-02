@@ -2806,7 +2806,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        // Set the text color according to Preferences or Light Gray in space
+        // Set the text color according to MMPreferences or Light Gray in space
         g.setColor(guip.getMapTextColor());
         if (game.getBoard().inSpace())
             g.setColor(Color.LIGHT_GRAY);

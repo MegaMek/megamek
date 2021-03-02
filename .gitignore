@@ -38,6 +38,7 @@ build/
 /megamek/mmconf/*.properties
 !/megamek/mmconf/shared.properties
 /megamek/mmconf/*.properties.bak
+/megamek/mmconf/*.preferences
 
 # UserData
 /megamek/userdata/

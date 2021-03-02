@@ -16,6 +16,7 @@ VERSION HISTORY:
 + Data: Lots of new spites, new boards (Flynn, SimonLandmine), unit file fixes
 + Removing Print text and disabling the "Bing"
 + PR #2689: Random Skill Generator: Fixing AND Comparison
++ Issue #2676: Clan Heavy Machine Guns - No Range
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

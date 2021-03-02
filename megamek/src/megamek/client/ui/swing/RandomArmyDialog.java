@@ -780,18 +780,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
             m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
-            m_clientgui.getRandomSkillDialog().showDialog();
+            new RandomSkillDialog(m_clientgui.getFrame(), m_clientgui).showDialog();
         }
     }
 
+    @Override
     public void windowActivated(WindowEvent arg0) {
         //ignored
     }
 
+    @Override
     public void windowClosed(WindowEvent arg0) {
         //ignored
     }
 
+    @Override
     public void windowClosing(WindowEvent arg0) {
         setVisible(false);
     }
@@ -968,7 +971,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
-                int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                int[] skills = m_client.getSkillGenerator().generateRandomSkills(e, true);
     
                 int gunnery = skills[0];
                 int piloting = skills[1];
@@ -977,7 +980,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
                 e.getCrew().setPiloting(piloting, i);
 
                 if (e.getCrew() instanceof LAMPilot) {
-                    skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    skills = m_client.getSkillGenerator().generateRandomSkills(e, true);
                     ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
                     ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }

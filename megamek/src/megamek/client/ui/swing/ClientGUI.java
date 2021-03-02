@@ -234,7 +234,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
-    private RandomSkillDialog randomSkillDialog;
     private PlanetaryConditionsDialog conditionsDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -620,7 +619,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
-        randomSkillDialog = new RandomSkillDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
         frame.setVisible(true);
     }
@@ -2307,10 +2305,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return randomArmyDialog;
     }
 
-    public RandomSkillDialog getRandomSkillDialog() {
-        return randomSkillDialog;
-    }
-
     public RandomNameDialog getRandomNameDialog() {
         return new RandomNameDialog(this);
     }
@@ -2327,9 +2321,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // save!
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
-        } catch (IOException ex) {
-            System.err.println("error opening file to save!"); //$NON-NLS-1$
-            System.err.println(ex);
+        } catch (IOException e) {
+            MegaMek.getLogger().error("Error opening file to save!", e);
         }
     }
 

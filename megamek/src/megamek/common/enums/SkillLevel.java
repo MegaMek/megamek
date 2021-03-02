@@ -18,6 +18,7 @@
  */
 package megamek.common.enums;
 
+import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 
 import java.util.ResourceBundle;
@@ -69,6 +70,30 @@ public enum SkillLevel {
         return this == ELITE;
     }
     //endregion Boolean Comparisons
+
+    /**
+     * This returns the default skill values by level. This should never return the value for NONE,
+     * as NONE means one does not have the skill.
+     * @return the default skill array pairing
+     */
+    public int[] getDefaultSkillValues() {
+        switch (this) {
+            case NONE:
+                MegaMek.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 10, 10 }");
+                return new int[]{ 10, 10 };
+            case ULTRA_GREEN:
+                return new int[]{ 6, 7 };
+            case GREEN:
+                return new int[]{ 5, 6 };
+            case VETERAN:
+                return new int[]{ 3, 4 };
+            case ELITE:
+                return new int[]{ 2, 3 };
+            case REGULAR:
+            default:
+                return new int[]{ 4, 5 };
+        }
+    }
 
     @Override
     public String toString() {

@@ -2554,10 +2554,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
-    public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
-    }
-
     public void loadRandomNames() {
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
     }
@@ -2697,7 +2693,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else if (ev.getSource().equals(butArmy)) {
             loadArmy();
         } else if (ev.getSource().equals(butSkills)) {
-            loadRandomSkills();
+            new RandomSkillDialog(clientgui.getFrame(), clientgui).showDialog(clientgui.getClient().getGame().getEntitiesVector());
         } else if (ev.getSource().equals(butNames)) {
             loadRandomNames();
         } else if (ev.getSource().equals(tableEntities)) {
@@ -3616,11 +3612,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 for (Entity e : entities) {
                     for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                        int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                        int[] skills = c.getSkillGenerator().generateRandomSkills(e, true);
                         e.getCrew().setGunnery(skills[0], i);
                         e.getCrew().setPiloting(skills[1], i);
                         if (e.getCrew() instanceof LAMPilot) {
-                            skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                            skills = c.getSkillGenerator().generateRandomSkills(e, true);
                             ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
                             ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                         }

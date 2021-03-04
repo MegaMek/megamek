@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ MIT24 MASH Vehicle
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 6
@@ -52,21 +59,11 @@ Wheeled
 </armor>
 
 <Body Equipment>
-MASH core component
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
+MASH Equipment:SIZE:11.0
 </Body Equipment>
 
 <Front Equipment>
-Vehicle Flamer
+Flamer
 </Front Equipment>
 
 <Right Equipment>
@@ -85,3 +82,4 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 35.0
 </tonnage>
+

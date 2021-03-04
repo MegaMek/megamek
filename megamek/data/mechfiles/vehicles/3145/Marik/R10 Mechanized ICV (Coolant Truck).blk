@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ R10 Mechanized ICV
 3097
 </year>
 
+<originalBuildYear>
+3097
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -57,11 +64,14 @@ Wheeled
 </armor>
 
 <Body Equipment>
+IS Vehicle Flamer Ammo
+IS Vehicle Flamer Ammo
+Liquid Storage:SIZE:20.0
 </Body Equipment>
 
 <Front Equipment>
-Vehicle Flamer
-Vehicle Flamer
+Flamer (Vehicle)
+Flamer (Vehicle)
 </Front Equipment>
 
 <Right Equipment>
@@ -76,10 +86,6 @@ Vehicle Flamer
 <Turret Equipment>
 </Turret Equipment>
 
-<transporters>
-liquidcargobay:20.93:1
-</tranporters>
-
 <source>
 TRO 3145 Free Worlds League - Early Republic
 </source>
@@ -87,3 +93,4 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 45.0
 </tonnage>
+

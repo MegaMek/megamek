@@ -1551,5 +1551,11 @@ public interface IGame {
 
     public abstract String getUUIDString();
     
-    public abstract Forces getForces();
+    abstract Forces getForces();
+    
+    /** 
+     * Overwrites the current forces object with the provided object.
+     * Called from server messages when loading a game.
+     */
+    abstract void setForces(Forces forces);
 }

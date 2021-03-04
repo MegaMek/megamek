@@ -16,21 +16,18 @@ package megamek.client.ui.swing.tooltip;
 import java.awt.Color;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
+import megamek.common.force.Force;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.LegAttack;
@@ -191,7 +188,33 @@ public final class UnitToolTip {
     // Ammo: xx turns (200 rounds)
     //TODO Mark units assault dropping
     //TODO Hide Enemy Unit button ?? Hide them always
-    //TODO C3 and force side-by-side, when marking one unit in one, mnark it on the other
+    //TODO: Attach force, 
+    // Unify popup
+    // allow multiselect
+    // attach force to server
+    //TODO change owner
+    //TODO: change opwner to server
+    //TODO: Add force to server, 
+    //TODO delete force
+    //TODO delete force to server
+    //TODO: DND
+    //TODO: remove forces when a player leaves during the lobby but not after
+    //TODO: other forcegens?
+    //TODO formatting
+    //TODO: Popup MG burst fire doesnt work or isnt shown correctly in the tooltip
+    //TODO Force updates can only contain entities of one player and that player client must send them
+    //TODO Make sure game events fire upon force updates
+    //TODO Make tooltip appear only over unit icon
+    //TODO SHow Griffin C >>#2<<? 
+    // Hide enemy forces and units in real blind drop
+    // Sort forceless before enemy forces
+    //TODO: Allow deployment options for blind drop units? and multi-config? = deployment - show deployment?
+    //            NO: you don't see the result - swap pilot shows other units! - dont care for names/callsign
+    //TODO: Team Overview: % Hidden
+    //TODO: Organizational Changes: Team Switch, Change Owner, C3, Load, Force->
+    //TODO: Deleting units too slow!
+    //TODO: WHen dnd units to force-less units = remove from force
+    
 
     
     
@@ -225,7 +248,7 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         IGame game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
-        
+
         // Unit Chassis and Player
         IPlayer owner = game.getPlayer(entity.getOwnerId());
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
@@ -461,6 +484,9 @@ public final class UnitToolTip {
                 continue;
             }
             String weapDesc = curWp.getDesc();
+            if (weapDesc == null) {
+                int h = 22;
+            }
             // Distinguish equal weapons with and without rapid fire
             if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire()) {
                 weapDesc += RAPIDFIRE;
@@ -573,6 +599,9 @@ public final class UnitToolTip {
             // Also remove "+", means currently selected for firing
             boolean isDestroyed = false;
             String nameStr = currentEquip.name;
+            if (nameStr == null) {
+                nameStr = "NULL Weapon Name!"; // Happens with Vehicle Flamers! 
+            }
             if (nameStr.startsWith("x ")) { 
                 nameStr = nameStr.substring(2);
                 isDestroyed = true;
@@ -930,7 +959,7 @@ public final class UnitToolTip {
                 .map(e -> c3UnitName(e, entity)).collect(Collectors.toList());
         if (members.size() > 1) {
             result.append(guiScaledFontHTML(uiC3Color(), -0.2f));
-            if (entity.hasNC3OrC3i()) {
+            if (entity.hasNhC3()) {
                 result.append(entity.hasC3i() ? "C3i" : "NC3");
             } else {
                 result.append("C3");

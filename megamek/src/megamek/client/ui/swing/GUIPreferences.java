@@ -93,6 +93,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
+    public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     /* --End advanced settings-- */
 
 
@@ -299,6 +300,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(WARNING_COLOR, Color.RED);
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
+        setDefault(ADVANCED_NO_SAVE_NAG, false);
 
         setDefault(ADVANCED_MOVE_FONT_TYPE, Font.SANS_SERIF);
         setDefault(ADVANCED_MOVE_FONT_SIZE, 26);

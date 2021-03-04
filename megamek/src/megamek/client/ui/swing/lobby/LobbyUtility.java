@@ -21,6 +21,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -29,9 +32,15 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MapSettings;
+import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
+/** 
+ * This class provides static helper functions for the Lobby aka ChatLounge. 
+ * @author Simon
+ *
+ */
 public class LobbyUtility {
 
     /**
@@ -79,6 +88,22 @@ public class LobbyUtility {
     }  
     
     /**
+     * Returns true when blind drop is on.
+     */
+    static boolean isBlindDrop(IGame game) {
+        final GameOptions gOpts = game.getOptions();
+        return gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+    } 
+    
+    /**
+     * Returns true when real blind drop is on.
+     */
+    static boolean isRealBlindDrop(IGame game) {
+        final GameOptions gOpts = game.getOptions();
+        return gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+    }  
+    
+    /**
      * Returns true when teams share vision is on, reagardless of whether
      * double blind is on.
      */
@@ -102,7 +127,7 @@ public class LobbyUtility {
      */
     static boolean areAllied(Collection<Entity> entities) {
         if (entities.size() == 0) {
-            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied.");
+            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
             return true;
         }
         Entity randomEntry = entities.stream().findAny().get();
@@ -118,6 +143,7 @@ public class LobbyUtility {
      * Returns true when the given board name does not start with one of the control strings
      * of MapSettings signalling a random, generated or surprise board. 
      */ 
+    @SuppressWarnings("deprecation")
     static boolean isBoardFile(String board) {
         return !board.startsWith(MapSettings.BOARD_GENERATED)
                 && !board.startsWith(MapSettings.BOARD_RANDOM)
@@ -204,6 +230,42 @@ public class LobbyUtility {
         result.addAll(Arrays.asList(boards));
         return result;
     }
+    
+    /** 
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
+     * Ignores entity ids that don't exist. The resulting list may be empty but not null. 
+     */ 
+    public static HashSet<Entity> getEntities(IGame game, String idList) {
+        StringTokenizer st = new StringTokenizer(idList, ",");
+        HashSet<Entity> result = new HashSet<>();
+        while (st.hasMoreTokens()) {
+            int id = Integer.parseInt(st.nextToken());
+            Entity entity = game.getEntity(id);
+            if (entity != null) {
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+    
+    /** 
+     * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
+     * Ignores force ids that don't exist. The resulting list may be empty but not null. 
+     */ 
+    public static HashSet<Force> getForces(IGame game, String idList) {
+        StringTokenizer st = new StringTokenizer(idList, ",");
+        HashSet<Force> result = new HashSet<>();
+        while (st.hasMoreTokens()) {
+            int id = Integer.parseInt(st.nextToken());
+            Force force = game.getForces().getForce(id);
+            if (force != null) {
+                result.add(force);
+            }
+        }
+        return result;
+    }
+    
+
     
     
     // PRIVATE

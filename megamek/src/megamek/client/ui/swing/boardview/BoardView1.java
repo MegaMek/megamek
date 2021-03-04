@@ -4280,7 +4280,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawCenteredText(g2D, text, (float)pos.x,(float)pos.y-(1.0f)/(float)scY, Color.BLACK, false);
     }
 
-    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent) {
         FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
         // Center the text around pos
@@ -4294,7 +4294,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     // This method is used to draw text shadows even when the g2D is scaled
-    public void drawCenteredText(Graphics2D g2D, String text, float posx, float posy,
+    public static void drawCenteredText(Graphics2D g2D, String text, float posx, float posy,
             Color color, boolean translucent) {
         FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
         // Center the text around pos
@@ -4307,13 +4307,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         g2D.drawString(text, cx, cy);
     }
 
-    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent, Font font) {
         g2D.setFont(font);
         drawCenteredText(g2D, text, pos, color, translucent);
     }
 
-    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+    public static void drawCenteredText(Graphics2D g2D, String text, Point pos,
             Color color, boolean translucent, int fontSize) {
         g2D.setFont(g2D.getFont().deriveFont(fontSize));
         drawCenteredText(g2D, text, pos, color, translucent);

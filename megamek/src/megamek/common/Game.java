@@ -180,7 +180,7 @@ public class Game implements Serializable, IGame {
      * The forces present in the game. The top level force holds all forces and force-less
      * entities and should therefore not be shown.
      */
-    Forces forces = new Forces(this);
+    private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
@@ -1402,11 +1402,6 @@ public class Game implements Serializable, IGame {
     public synchronized void removeEntity(int id, int condition) {
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
-            // This next statement has been cluttering up double-blind
-            // logs for quite a while now. I'm assuming it's no longer
-            // useful.
-            // System.err.println("Game#removeEntity: could not find entity to
-            // remove");
             return;
         }
 
@@ -3688,6 +3683,12 @@ public class Game implements Serializable, IGame {
     @Override
     public Stream<Entity> getEntitiesStream() {
         return getEntitiesVector().stream();
+    }
+
+    @Override
+    public synchronized void setForces(Forces fs) {
+        forces = fs;
+        forces.setGame(this);
     }
 
 }

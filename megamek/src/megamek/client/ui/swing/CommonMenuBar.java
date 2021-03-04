@@ -77,7 +77,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileUnitsOpen;
-    private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
     /**
      * The <code>Entity</code> current selected. This value may be
@@ -332,11 +331,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsOpen.addActionListener(this);
         fileUnitsOpen.setActionCommand(ClientGUI.FILE_UNITS_OPEN);
         submenu.add(fileUnitsOpen);
-        fileUnitsClear = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsClear")); //$NON-NLS-1$
-        fileUnitsClear.addActionListener(this);
-        fileUnitsClear.setActionCommand(ClientGUI.FILE_UNITS_CLEAR);
-        submenu.add(fileUnitsClear);
         fileUnitsSave = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsSave")); //$NON-NLS-1$
         fileUnitsSave.addActionListener(this);
@@ -961,14 +955,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         // then we can still perform all unit list actions.
         if (hasUnitList) {
             fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
           //  fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
         }
         // If we don't have a unit list, but we are in the lounge,
         // then we can open a unit list.
         else {
             fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(false);
           //  fileUnitsSave.setEnabled(false);
         }
         // Reinforcements cannot be added in the lounge!

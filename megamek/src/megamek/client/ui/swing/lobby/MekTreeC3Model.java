@@ -331,7 +331,7 @@ public class MekTreeC3Model extends DefaultTreeModel {
                 try {
                     int masterID = Integer.parseInt(netID);
                     if (isC3i) {
-                        lobby.joinC3i(e, masterID);
+                        lobby.joinNhC3(e, masterID);
                     } else {
                         lobby.connectToC3(e, masterID);
                     }
@@ -351,7 +351,7 @@ public class MekTreeC3Model extends DefaultTreeModel {
                 try {
                     int masterID = Integer.parseInt(netID);
                     if (isC3i) {
-                        lobby.joinC3i(e, masterID);
+                        lobby.joinNhC3(e, masterID);
                     } else {
                         lobby.connectToC3(e, masterID);
                     }

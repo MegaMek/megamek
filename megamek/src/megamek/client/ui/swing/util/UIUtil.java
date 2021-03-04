@@ -27,12 +27,14 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -46,7 +48,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolTip;
+import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -61,11 +65,12 @@ public final class UIUtil {
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
-    public final static String ECM_SIGN = "\u25CE";
+    public final static String ECM_SIGN = " \u24BA ";
     public final static String LOADED_SIGN = " \u26DF ";
     public final static String UNCONNECTED_SIGN = " \u26AC";
     public final static String CONNECTED_SIGN = " \u26AF ";
     public final static String WARNING_SIGN = " \u26A0 ";
+    public final static String QUIRKS_SIGN = " \u24E0 ";
     
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();
@@ -321,6 +326,34 @@ public final class UIUtil {
         return new Dimension((int)(scale * dim.width), (int)(scale * dim.height));
     }
     
+    /** 
+     * Returns the provided color with its alpha value set to the provided alpha.
+     * alpha should be from 0 to 255 with 0 meaning transparent. 
+     */
+    public static Color addAlpha(Color color, int alpha) {
+        Objects.requireNonNull(color);
+        if (alpha < 0 || alpha > 255) {
+            throw new IllegalArgumentException("Alpha value out of range: " + alpha);
+        }
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+    }
+    
+    /** 
+     * Returns a grayed-out version of the given color. gray should be from 0 to 255
+     * with 255 meaning completely gray. Does not change the brightness, nor alpha. 
+     */
+    public static Color addGray(Color color, int gray) {
+        Objects.requireNonNull(color);
+        if (gray < 0 || gray > 255) {
+            throw new IllegalArgumentException("Gray value out of range: " + gray);
+        }
+        int mid = (color.getRed() + color.getGreen() + color.getBlue()) * gray / 3;
+        int red = (color.getRed() * (255 - gray) + mid) / 255;
+        int green = (color.getGreen() * (255 - gray) + mid) / 255;
+        int blue = (color.getBlue() * (255 - gray) + mid) / 255;
+        return new Color(red, green, blue, color.getAlpha());
+    }
+    
     /** Returns the given String str enclosed in HTML tags and with a font tag according to the guiScale. */ 
     public static String scaleStringForGUI(String str) {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + str + "</FONT></HTML>";
@@ -339,12 +372,12 @@ public final class UIUtil {
                     || (comp instanceof JComboBox<?>) || (comp instanceof JCheckBox)
                     || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JRadioButton)
-                    || (comp instanceof JTextArea)) {
+                    || (comp instanceof JTextArea) || (comp instanceof JTextPane)) {
                 comp.setFont(scaledFont);
             }
             if (comp instanceof JScrollPane 
-                    && ((JScrollPane)comp).getViewport().getView() instanceof JPanel) {
-                adjustDialog((JPanel)((JScrollPane)comp).getViewport().getView());
+                    && ((JScrollPane)comp).getViewport().getView() instanceof JComponent) {
+                adjustDialog((JViewport)((JScrollPane)comp).getViewport());
             }
             if (comp instanceof JPanel) {
                 JPanel panel = (JPanel)comp;

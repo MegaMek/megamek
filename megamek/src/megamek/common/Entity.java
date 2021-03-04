@@ -507,10 +507,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected EntityMovementMode movementMode = EntityMovementMode.NONE;
 
-    /**
-     * Flag that determines if this Entity is a hidden unit or not (see TW pg
-     * 259).
-     */
+    /** Flag that determines if this Entity is a hidden unit or not (see TW pg 259). */
     protected boolean isHidden = false;
 
     /**
@@ -5765,14 +5762,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
     
-    /** Returns true if the unit has a Naval C3 or C3i. */
-    public boolean hasNC3OrC3i() {
-        return hasC3i() || hasNavalC3();
+    /** Returns true if the unit has a nonhierarchic C3 system (C3i, NC3 or Nova CEWS). */
+    public boolean hasNhC3() {
+        return hasC3i() || hasNavalC3() || hasNovaCEWS();
     }
     
-    /** Returns true if the unit has a standard C3M/S, a Naval C3 or C3i. */
+    /** Returns true if the unit has a standard C3M/S, a Naval C3 or C3i or a Nova CEWS. */
     public boolean hasAnyC3System() {
-        return hasC3() || hasC3i() || hasNavalC3();
+        return hasC3() || hasNhC3();
     }
 
     public String getC3NetId() {
@@ -6096,17 +6093,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set another <code>Entity</code> as our C3 Master
+     * Set another <code>Entity</code> as C3 Master. Pass (null, true) to disconnect
+     * the entity from a C3 network that isn't its own (C3 Net id with its own id).
      *
      * @param e - the <code>Entity</code> that should be set as our C3 Master.
      */
     public void setC3Master(Entity e, boolean reset) {
         if (e == null) {
             setC3Master(NONE, reset);
-        } else {
-            if (isEnemyOf(e)) {
-                return;
-            }
+        } else if (!isEnemyOf(e)) {
             setC3Master(e.id, reset);
         }
     }
@@ -11388,15 +11383,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public abstract boolean isNuclearHardened();
 
-    /**
-     * Set the isHidden state of this entity (used for hidden units rules, TW
-     * pg 259).
-     * @param inVal
-     */
+    /** Set the hidden state of this entity (used for hidden units rules, TW pg 259). */
     public void setHidden(boolean inVal) {
         isHidden = inVal;
     }
-
+    
     public void setMadePointblankShot(boolean inVal) {
         madePointblankShot = inVal;
     }
@@ -11410,10 +11401,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         hiddenActivationPhase = phase;
     }
 
-    /**
-     * Returns true if this unit is currently hidden (hidden units, TW pg 259).
-     * @return
-     */
+    /** Returns true if this unit is currently hidden (hidden units, TW pg 259). */
     public boolean isHidden() {
         return isHidden;
     }

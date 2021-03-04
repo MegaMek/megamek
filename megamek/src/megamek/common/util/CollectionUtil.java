@@ -14,6 +14,7 @@
 package megamek.common.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /** Some utility methods for Collections. */
@@ -27,5 +28,13 @@ public class CollectionUtil {
         List<T> result = new ArrayList<T>(c1);
         result.addAll(c2);
         return result;
+    }
+    
+    /** 
+     * Returns a random element of the collection or the element if it has only one.
+     * Throws a NoSuchElement exception if it is empty.
+     */
+    public static final <T> T randomElement(Collection<T> collection) {
+        return collection.stream().findFirst().get();
     }
 }

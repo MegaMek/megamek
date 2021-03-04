@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -101,6 +100,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
@@ -582,6 +583,8 @@ public class Server implements Runnable {
                 ((WeaponHandler) handler).restore();
             }
         }
+        
+        game.getForces().setGame(game);
 
     }
 
@@ -29772,7 +29775,9 @@ public class Server implements Runnable {
         List<Integer> entityIds = new ArrayList<>(entities.size());
         // Map client-received to server-given IDs: 
         Map<Integer, Integer> idMap = new HashMap<>();
-
+        // Map MUL force ids to real Server-given force ids;
+        Map<Integer, Integer> forceMapping = new HashMap<>();
+        
         for (final Entity entity : entities) {
 
             // Verify the entity's design
@@ -29932,6 +29937,31 @@ public class Server implements Runnable {
             if (game.getPhase() != Phase.PHASE_LOUNGE) {
                 entity.getOwner().increaseInitialBV(entity.calculateBattleValue(false, false));
             }
+            
+            // Restore forces from MULs or other external sources from the forceString, if any
+            if (entity.getForceString().length() > 0) {
+                ArrayList<Force> forceList = Forces.parseForceString(entity);
+                int realId = Force.NO_FORCE;
+                boolean topLevel = true;
+
+                for (Force force: forceList) {
+                    if (!forceMapping.containsKey(force.getId())) {
+                        if (topLevel) {
+                            realId = game.getForces().addTopLevelForce(force.getName(), entity.getOwner());
+                        } else {
+                            Force parent = game.getForces().getForce(realId);
+                            realId = game.getForces().addSubForce(force.getName(), parent);
+                        }
+                        forceMapping.put(force.getId(), realId);
+                    } else {
+                        realId = forceMapping.get(force.getId());
+                    }
+                    topLevel = false;
+                }
+                entity.setForceString("");
+                game.getForces().addEntity(entity, realId);
+            }
+
         }
         
         // Cycle through the entities again and update any carried units
@@ -30010,7 +30040,9 @@ public class Server implements Runnable {
             }
         }
 
-        send(createAddEntityPacket(entityIds));
+        List<Integer> changedForces = new ArrayList<Integer>(forceMapping.values());
+        
+        send(createAddEntityPacket(entityIds, changedForces));
     }
 
     /**
@@ -30063,27 +30095,121 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
-                StringBuilder message = new StringBuilder();
-                if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
-                    message.append("A Unit ");
-                    message.append('(').append(entity.getOwner().getName()).append(')');
-                } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
-                    message.append("Unit ");
-                    if (!entity.getExternalIdAsString().equals("-1")) {
-                        message.append('[')
-                               .append(entity.getExternalIdAsString())
-                               .append("] ");
-                    }
-                    message.append(entity.getId()).append(" (")
-                           .append(entity.getOwner().getName()).append(')');
-                } else {
-                    message.append("Unit ");
-                    message.append(entity.getDisplayName());
-                }
-                message.append(" has been customized.");
-                sendServerChat(message.toString());
+                sendServerChat(ServerHelper.entityUpdateMessage(entity, game));
             }
         }
+    }
+    
+    /**
+     * Updates multiple entities with the info from the client. Only valid 
+     * during the lobby phase!
+     * Will only update units that are teammates of the sender. Other entities
+     * remain unchanged but still be sent back to overwrite incorrect client changes.
+     */
+    private void receiveEntitiesUpdate(Packet c, int connIndex) {
+        if (game.getPhase() != Phase.PHASE_LOUNGE) {
+            MegaMek.getLogger().error("Multi entity updates should not be used outside the lobby phase!");
+        }
+        Set<Entity> newEntities = new HashSet<>();
+        @SuppressWarnings("unchecked")
+        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
+        for (Entity entity: entities) {
+            Entity oldEntity = game.getEntity(entity.getId());
+            // Only update entities that existed and are owned by a teammate of the sender
+            if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
+                game.setEntity(entity.getId(), entity);
+                sendServerChat(ServerHelper.entityUpdateMessage(entity, game));
+                newEntities.add(game.getEntity(entity.getId()));
+            }
+        }
+        send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, newEntities));
+    }
+    
+    /**
+     * Adds a force with the info from the client. Only valid during the lobby phase.
+     * @param c the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveForceAdd(Packet c, int connIndex) {
+        Force force = (Force) c.getObject(0);
+        if (!ServerHelper.isNewForceValid(game, force)) {
+            return;
+        }
+
+        List<Integer> changedForces = new ArrayList<>();
+        if (force.isTopLevel()) {
+            changedForces.add(game.getForces().addTopLevelForce(force.getName(), getPlayer(connIndex)));
+        } else {
+            Force parent = game.getForces().getForce(force.getParentId()); 
+            changedForces.add(force.getParentId());
+            changedForces.add(game.getForces().addSubForce(force.getName(), parent));
+        }
+        send(createAddEntityPacket(new ArrayList<Integer>(), changedForces));
+    }
+    
+    /**
+     * Handles a packet detailing removal of a list of forces. Only valid during the lobby phase.
+     * @param c the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveForcesDelete(Packet c, int connIndex) {
+        @SuppressWarnings("unchecked")
+        List<Integer> forceList = (List<Integer>) c.getObject(0);
+        List<Integer> deletedForces = new ArrayList<>();
+        Forces forcesClone = game.getForces().clone();
+        for (int id: forceList) {
+            if (forcesClone.contains(id)) {
+                forcesClone.deleteForce(id);
+            }
+        }
+        if (forcesClone.isValid()) {
+            // All OK, so finalize the changes 
+            game.setForces(forcesClone);
+            send(createForcesDeletePacket(deletedForces));
+        }
+    }
+
+    /**
+     * Updates a force with the info from the client. This method is currently only usable for
+     * the lobby phase. E.g. it does not consider double blind. Blind drop is handled in the client. 
+     * @param c the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveForceUpdate(Packet c, int connIndex) {
+        @SuppressWarnings("unchecked")
+        Collection<Force> forceList = (Collection<Force>) c.getObject(0);
+        @SuppressWarnings("unchecked")
+        Collection<Entity> entityList = (Collection<Entity>) c.getObject(1);
+
+        // Check if the entity update is valid (cannot add entities and can 
+        // only change one's own and the team's units 
+        boolean entitiesValid = true;
+        for (Entity entity: entityList) {
+            Entity oldEntity = game.getEntity(entity.getId());
+            if ((oldEntity == null) || (oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
+                entitiesValid = false;
+            }
+        }
+        
+        // Use a forces clone to check if the updated Forces and Entities are valid
+        // The update must send all affected forces and all affected entities
+        Forces forcesClone = game.getForces().clone();
+        for (Force force: forceList) {
+            forcesClone.replace(force.getId(), force);
+        }
+        if (forcesClone.isValid(entityList) && entitiesValid) {
+            // All OK, so finalize the changes 
+            game.setForces(forcesClone);
+            for (Entity entity: entityList) {
+                game.setEntity(entity.getId(), entity);
+            }
+        } else {
+            MegaMek.getLogger().warning("Invalid forces update received");
+            forceList = game.getForces().getAllForces();
+            entityList = new ArrayList<>(game.getEntitiesVector());
+        }
+        
+        send(createForceUpdatePacket(forceList, entityList));
     }
 
     /**
@@ -30394,11 +30520,14 @@ public class Server implements Runnable {
     private void receiveEntityDelete(Packet c, int connIndex) {
         @SuppressWarnings("unchecked")
         List<Integer> ids = (List<Integer>) c.getObject(0);
+        ArrayList<Force> affectedForces = new ArrayList<>();
         for (Integer entityId : ids) {
             final Entity entity = game.getEntity(entityId);
 
-            // Only allow players to delete their *own* entities.
-            if ((entity != null) && (entity.getOwner() == getPlayer(connIndex))) {
+            // Players can delete units of their teammates
+            if ((entity != null) && (!entity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
+                
+                affectedForces.addAll(game.getForces().removeEntityFromForces(entity));
 
                 // If we're deleting a ProtoMech, recalculate unit numbers.
                 if (entity instanceof Protomech) {
@@ -30453,7 +30582,7 @@ public class Server implements Runnable {
 
         // during deployment this absolutely must be called before game.removeEntity(), otherwise the game hangs
         // when a unit is removed. Cause unknown.
-        send(createRemoveEntityPacket(ids, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+        send(createRemoveEntityPacket(ids, affectedForces, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
 
         // Prevents deployment hanging. Only do this during deployment.
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
@@ -30762,9 +30891,10 @@ public class Server implements Runnable {
      * Creates a packet containing all current and out-of-game entities
      */
     private Packet createFullEntitiesPacket() {
-        final Object[] data = new Object[2];
+        final Object[] data = new Object[3];
         data[0] = game.getEntitiesVector();
         data[1] = game.getOutOfGameEntitiesVector();
+        data[2] = game.getForces();
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
     }
 
@@ -30783,32 +30913,66 @@ public class Server implements Runnable {
      * the player in a blind game
      */
     private Packet createFilteredFullEntitiesPacket(IPlayer p) {
-        final Object[] data = new Object[2];
+        final Object[] data = new Object[3];
         data[0] = filterEntities(p, game.getEntitiesVector(), null);
         data[1] = game.getOutOfGameEntitiesVector();
+        data[2] = game.getForces();
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
     }
 
     private Packet createAddEntityPacket(int entityId) {
         ArrayList<Integer> entityIds = new ArrayList<>(1);
         entityIds.add(entityId);
-        return createAddEntityPacket(entityIds);
+        return createAddEntityPacket(entityIds, new ArrayList<Integer>());
     }
 
     /**
      * Creates a packet detailing the addition of an entity
      */
-    private Packet createAddEntityPacket(List<Integer> entityIds) {
+    private Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
         ArrayList<Entity> entities = new ArrayList<>(entityIds.size());
         for (Integer id : entityIds) {
             entities.add(game.getEntity(id));
         }
-        final Object[] data = new Object[2];
+        ArrayList<Force> forceList = new ArrayList<>(forceIds.size());
+        for (Integer id : forceIds) {
+            forceList.add(game.getForces().getForce(id));
+        }
+        final Object[] data = new Object[3];
         data[0] = entityIds;
         data[1] = entities;
+        data[2] = forceList;
         return new Packet(Packet.COMMAND_ENTITY_ADD, data);
     }
-
+    
+    /**
+     * Creates a packet detailing a force update. Force updates must contain all
+     * affected forces and all affected entities.
+     */
+    private Packet createForceUpdatePacket(Collection<Force> forces, Collection<Entity> entities) {
+        final Object[] data = new Object[2];
+        data[0] = forces;
+        data[1] = entities;
+        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
+    }
+    
+    /**
+     * Creates a packet detailing a force delete. Force updates must contain all
+     * affected forces and all affected entities.
+     */
+    private Packet createForceDeletePacket(Force force) {
+        return new Packet(Packet.COMMAND_FORCE_DELETE, force);
+    }
+    
+    /**
+     * Creates a packet detailing a force delete. Force updates must contain all
+     * affected forces and all affected entities.
+     */
+    private Packet createForcesDeletePacket(List<Integer> toDelete) {
+        return new Packet(Packet.COMMAND_FORCE_DELETE, toDelete);
+    }
+    
+    
     /**
      * Creates a packet detailing the removal of an entity. Maintained for
      * backwards compatibility.
@@ -30821,7 +30985,8 @@ public class Server implements Runnable {
     }
 
     /**
-     * Creates a packet detailing the removal of an entity.
+     * Creates a packet detailing the removal of an entity. Determines which force
+     * is affected and adds it to the packet.
      *
      * @param entityId  - the <code>int</code> ID of the entity being removed.
      * @param condition - the <code>int</code> condition the unit was in. This value
@@ -30833,7 +30998,7 @@ public class Server implements Runnable {
     private Packet createRemoveEntityPacket(int entityId, int condition) {
         List<Integer> ids = new ArrayList<>(1);
         ids.add(entityId);
-        return createRemoveEntityPacket(ids, condition);
+        return createRemoveEntityPacket(ids, game.getForces().removeEntityFromForces(entityId), condition);
     }
 
     /**
@@ -30844,9 +31009,11 @@ public class Server implements Runnable {
      *                  must be one of constants in
      *                  <code>IEntityRemovalConditions</code>, or an
      *                  <code>IllegalArgumentException</code> will be thrown.
+     * @param affectedForces - a list of forces that are affected by the removal and
+     *                  must be updated
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds, int condition) {
+    private Packet createRemoveEntityPacket(List<Integer> entityIds, List<Force> affectedForces, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)
@@ -30857,9 +31024,10 @@ public class Server implements Runnable {
                 && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
             throw new IllegalArgumentException("Unknown unit condition: " + condition);
         }
-        Object[] array = new Object[2];
+        Object[] array = new Object[3];
         array[0] = entityIds;
         array[1] = condition;
+        array[2] = affectedForces;
         return new Packet(Packet.COMMAND_ENTITY_REMOVE, array);
     }
 
@@ -31278,6 +31446,22 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_UPDATE:
                 receiveEntityUpdate(packet, connId);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_ENTITY_MULTIUPDATE:
+                receiveEntitiesUpdate(packet, connId);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_UPDATE:
+                receiveForceUpdate(packet, connId);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_ADD:
+                receiveForceAdd(packet, connId);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_DELETE:
+                receiveForcesDelete(packet, connId);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_ENTITY_LOAD:

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -495,6 +496,45 @@ public class ServerHelper {
         }
         return boards;
     }
-    
 
+
+    /**
+     * Returns true when the given new force (that is not part of the given game's forces)
+     * can be integrated into game's forces without error; i.e.:
+     * if the force's parent exists or it is top-level, 
+     * if it has no entities and no subforces,
+     * if the client sending it is the owner
+     */
+    static boolean isNewForceValid(IGame game, Force force) {
+        if ((!force.isTopLevel() && !game.getForces().contains(force.getParentId()))
+                || (force.getChildCount() != 0)) {
+            return false;
+        }
+        return true;
+    }
+    
+    static String entityUpdateMessage(Entity entity, IGame game) {
+    StringBuilder result = new StringBuilder();
+    if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
+        result.append("A Unit of ");
+        result.append(entity.getOwner().getName());
+        result.append(" has been customized.");
+        
+    } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
+        result.append("Unit ");
+        if (!entity.getExternalIdAsString().equals("-1")) {
+            result.append('[').append(entity.getExternalIdAsString()).append("] ");
+        }
+        result.append(entity.getId());
+        result.append('(').append(entity.getOwner().getName()).append(')');
+        result.append(" has been customized.");
+        
+    } else {
+        result.append("Unit ");
+        result.append(entity.getDisplayName());
+        result.append(" has been customized.");
+    }
+    return result.toString();
+    }
+  
 }

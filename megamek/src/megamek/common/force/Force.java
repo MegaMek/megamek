@@ -13,41 +13,74 @@
 */ 
 package megamek.common.force;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import megamek.common.Entity;
+import megamek.common.IPlayer;
 
 /**
- * Helper functions for the current (simple) implementation of forces that is 
- * only String-based instead of Force and Lance of MekHQ.
+ * A representation of a force or part of a force. Very similar to MHQ's Force.
+ * A Force in MM belongs to a player. It can hold units of the owner's team.
  * @author Simon
  */
-public final class Force {
+public final class Force implements Serializable {
     
-    /** A top levevl force object to hold all forces of all teams and force-less entities. */
-    public static final String TOPLEVEL_FORCE = "TopLevel";
+    private static final long serialVersionUID = -3870731687743542253L;
+
     public static final int NO_FORCE = -1;
     
     private String name;
     private int id;
-
+    private int ownerId = -1;
     private int parent = NO_FORCE;
     private ArrayList<Integer> entities = new ArrayList<>();
     private ArrayList<Integer> subForces = new ArrayList<>();
-
+    
     /** Creates a top-level force, i.e. one with no parent force. */
-    public Force(String n) {
-        Objects.requireNonNull(n);
-        name = n;
+    Force(String n, int nId, IPlayer owner) {
+        this(n, nId);
+        Objects.requireNonNull(owner);
+        ownerId = owner.getId();
     }
 
-    public Force(String n, int nId, int fParent) {
-        this(n);
+    /** Creates a subforce. */
+    Force(String n, int nId, Force fParent) {
+        this(n, nId);
+        Objects.requireNonNull(fParent);
+        parent = fParent.getId();
+        ownerId = fParent.getOwnerId();
+    }
+    
+    /** 
+     * Creates a force with name n and id nId. Without either a parent or owner
+     * this force is a stub and should not be added to a Forces object. Used to
+     * parse the forceString, e.g. when loading a MUL. 
+     */
+    Force(String n, int nId) {
+        Objects.requireNonNull(n);
+        name = n;
         id = nId;
-        parent = fParent;
+    }
+    
+    /**
+     * Creates a force object that is not integrated into any forces. Used
+     * to send a new force to the server. In other cases, use Forces.add.
+     */
+    public static Force createSubforce(String name, Force fParent) {
+        return new Force(name, -1, fParent);
+    }
+    
+    /**
+     * Creates a force object that is not integrated into any forces. Used
+     * to send a new force to the server. In other cases, use Forces.add.
+     */
+    public static Force createToplevelForce(String name, IPlayer owner) {
+        return new Force(name, -1, owner);
     }
 
     public String getName() {
@@ -62,9 +95,20 @@ public final class Force {
         return id;
     }
     
+    public int getOwnerId() {
+        return ownerId;
+    }
     
-    public int getParent() {
+    void setOwnerId(int newOwner) {
+        ownerId = newOwner;
+    }
+    
+    public int getParentId() {
         return parent;
+    }
+    
+    void setParent(int newParentId) {
+        parent = newParentId;
     }
     
     public boolean isTopLevel() {
@@ -79,8 +123,17 @@ public final class Force {
         return entities.size();
     }
     
+    /** 
+     * Returns the number of direct children of this force, i.e. the
+     * number of direct members + the number of direct subforces. 
+     */
     public int getChildCount() {
         return entities.size() + subForces.size();
+    }
+    
+    /** Returns true if the force contains neither units nor subforces. */
+    public boolean isEmpty() {
+        return getChildCount() == 0;
     }
     
     /** 
@@ -106,7 +159,15 @@ public final class Force {
      * Does NOT check if the entity is part of any subforce. 
      */
     public boolean containsEntity(Entity entity) {
-        return entities.contains(entity.getId());
+        return containsEntity(entity.getId());
+    }
+    
+    /** 
+     * Returns true if the provided entity is among the force's direct members. 
+     * Does NOT check if the entity is part of any subforce. 
+     */
+    public boolean containsEntity(int id) {
+        return entities.contains(id);
     }
     
     /** 
@@ -136,11 +197,11 @@ public final class Force {
         subForces.add(subForce.getId());
     }
     
-    List<Integer> getEntities() {
+    public List<Integer> getEntities() {
         return Collections.unmodifiableList(entities);
     }
     
-    List<Integer> getSubForces() {
+    public List<Integer> getSubForces() {
         return Collections.unmodifiableList(subForces);
     }
     
@@ -150,5 +211,84 @@ public final class Force {
     
     void removeEntity(Entity entity) {
         entities.remove((Integer)entity.getId());
+    }
+    
+    void removeEntity(int id) {
+        entities.remove((Integer)id);
+    }
+    
+    /** Removes the given id from the list of (direct) subforces. */
+    void removeSubForce(int id) {
+        subForces.remove((Integer)id);
+    }
+    
+    protected Force clone() {
+        Force clone = new Force(name, id);
+        clone.parent = parent;
+        clone.ownerId = ownerId;
+        clone.subForces = new ArrayList<Integer>(subForces);
+        clone.entities = new ArrayList<Integer>(entities);
+        return clone;
+    }
+    
+    @Override
+    public String toString() {
+        List<String> en = entities.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
+        List<String> sf = subForces.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
+        return name + ": [" + id + "]; Parent: " + parent + "; Entities: " 
+                + String.join(",", en) + "; Subforces: " + String.join(",", sf)
+                + "; Owner: " + ownerId;
+    }
+    
+    /** Moves up the given entityId by one position if possible. Returns true when an actual change occurred. */
+    boolean moveUp(int entityId) {
+        if (!containsEntity(entityId)) {
+            return false;
+        }
+        int index = entities.indexOf(entityId);
+        if (index > 0) {
+            Collections.swap(entities, index, index - 1);
+            return true;
+        }
+        return false;
+    }
+    
+    /** Moves down the given entityId by one position if possible. Returns true when an actual change occurred. */
+    boolean moveDown(int entityId) {
+        if (!containsEntity(entityId)) {
+            return false;
+        }
+        int index = entities.indexOf(entityId);
+        if (index < entities.size() - 1) {
+            Collections.swap(entities, index, index + 1);
+            return true;
+        }
+        return false;
+    }
+    
+    /** Moves up the given subforce by one position if possible. Returns true when an actual change occurred. */
+    boolean moveUp(Force subforce) {
+        if (!containsSubForce(subforce)) {
+            return false;
+        }
+        int index = subForces.indexOf(subforce.getId());
+        if (index > 0) {
+            Collections.swap(subForces, index, index - 1);
+            return true;
+        }
+        return false;
+    }
+    
+    /** Moves down the given subforce by one position if possible. Returns true when an actual change occurred. */
+    boolean moveDown(Force subforce) {
+        if (!containsSubForce(subforce)) {
+            return false;
+        }
+        int index = subForces.indexOf(subforce.getId());
+        if (index < subForces.size() - 1) {
+            Collections.swap(subForces, index, index + 1);
+            return true;
+        }
+        return false;
     }
 }

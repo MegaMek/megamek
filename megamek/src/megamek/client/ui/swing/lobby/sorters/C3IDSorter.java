@@ -65,7 +65,7 @@ public class C3IDSorter implements MekTableSorter {
                 return tr_a.compareTo(tr_b);
             }
             // The units are on the same network; sort by hierarchy (for standard C3) and ID
-            if (a.hasNC3OrC3i()) {
+            if (a.hasNhC3()) {
                 return a_id - b_id;    
             } else {
                 // The Company Commander on top

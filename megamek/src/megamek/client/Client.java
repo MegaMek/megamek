@@ -61,11 +61,14 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -803,7 +806,7 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Sends an "add entity" packet that contains a collection of Entity
-     * objections.
+     * objects.
      *
      * @param entities
      *            The collection of Entity objects to add.
@@ -844,6 +847,14 @@ public class Client implements IClientCommandHandler {
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(Packet.COMMAND_ENTITY_UPDATE, entity));
     }
+    
+    /**
+     * Sends a packet containing multiple entity updates. Should only be used 
+     * in the lobby phase.
+     */
+    public void sendUpdateEntity(Collection<Entity> entities) {
+        send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities));
+    }
 
     /**
      * Sends an "update entity" packet
@@ -851,6 +862,34 @@ public class Client implements IClientCommandHandler {
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
         Object data[] = { loader.getId(), loaded.getId() };
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY_UNLOAD, data));
+    }
+    
+    /**
+     * Sends an "Update force" packet
+     */
+    public void sendUpdateForce(Collection<Force> changedForces, Collection<Entity> changedEntities) {
+        send(new Packet(Packet.COMMAND_FORCE_UPDATE, new Object[] { changedForces, changedEntities }));
+    }
+    
+    /**
+     * Sends an "Update force" packet
+     */
+    public void sendUpdateForce(Collection<Force> changedForces) {
+        send(new Packet(Packet.COMMAND_FORCE_UPDATE, new Object[] { changedForces, new ArrayList<>() }));
+    }
+        
+    /** Sends a packet to the Server requesting to delete the given forces. */
+    public void sendDeleteForces(List<Force> toDelete) {
+        List<Integer> forceIds = new ArrayList<>();
+        toDelete.stream().mapToInt(f -> f.getId()).forEach(forceIds::add);
+        send(new Packet(Packet.COMMAND_FORCE_DELETE, forceIds));
+    }
+    
+    /**
+     * Sends an "Add force" packet
+     */
+    public void sendAddForce(Force force) {
+        send(new Packet(Packet.COMMAND_FORCE_ADD, force));
     }
 
     /**
@@ -869,6 +908,7 @@ public class Client implements IClientCommandHandler {
         sendDeleteEntities(ids);
     }
 
+    /** Sends an update to the server to delete the entities of the given ids. */
     public void sendDeleteEntities(List<Integer> ids) {
         checkDuplicateNamesDuringDelete(ids);
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, ids));
@@ -940,7 +980,11 @@ public class Client implements IClientCommandHandler {
     protected void receiveEntities(Packet c) {
         List<Entity> newEntities = (List<Entity>) c.getObject(0);
         List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
+        Forces forces = (Forces) c.getObject(2);
         // Replace the entities in the game.
+        if (forces != null) {
+            game.setForces(forces);
+        }
         game.setEntitiesVector(newEntities);
         if (newOutOfGame != null) {
             game.setOutOfGameEntitiesVector(newOutOfGame);
@@ -953,7 +997,31 @@ public class Client implements IClientCommandHandler {
             cacheImgTag(e);
         }
     }
-
+    
+    /**
+     * Receives a force-related update containing affected forces and affected entities
+     */
+    @SuppressWarnings("unchecked")
+    protected void receiveForceUpdate(Packet c) {
+        Collection<Force> forces = (Collection<Force>) c.getObject(0);
+        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+        for (Force force: forces) {
+            game.getForces().replace(force.getId(), force);
+        }
+        for (Entity entity: entities) {
+            game.setEntity(entity.getId(), entity);
+        }
+    }
+    
+    /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
+    protected void receiveForcesDelete(Packet c) {
+        @SuppressWarnings("unchecked")
+        List<Integer> toDelete = (List<Integer>) c.getObject(0);
+        toDelete.stream().forEach(game.getForces()::deleteForce);
+        // This is a fake event used to update the display in the lobby
+        game.processGameEvent(new GamePlayerChangeEvent(this, getLocalPlayer()));
+    }
+    
     /**
      * Loads entity update data from the data in the net command.
      */
@@ -965,27 +1033,51 @@ public class Client implements IClientCommandHandler {
         // Replace this entity in the game.
         game.setEntity(eindex, entity, movePath);
     }
+    
+    /**
+     * Update multiple entities from the server. Used only in the lobby phase. 
+     */
+    @SuppressWarnings("unchecked")
+    protected void receiveEntitiesUpdate(Packet c) {
+        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+        for (Entity entity: entities) {
+            game.setEntity(entity.getId(), entity);
+        }
+    }
+    
+    
 
     protected void receiveEntityAdd(Packet packet) {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         @SuppressWarnings("unchecked")
         List<Entity> entities = (List<Entity>) packet.getObject(1);
+        @SuppressWarnings("unchecked")
+        List<Force> forces = (List<Force>) packet.getObject(2);
 
+        for (Force force: forces) {
+            game.getForces().replace(force.getId(), force);
+        }
         assert(entityIds.size() == entities.size());
         for (int i = 0; i < entityIds.size(); i++) {
             assert(entityIds.get(i) == entities.get(i).getId());
         }
         game.addEntities(entities);
+        
     }
 
     protected void receiveEntityRemove(Packet packet) {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         int condition = packet.getIntValue(1);
+        @SuppressWarnings("unchecked")
+        List<Force> forces = (List<Force>) packet.getObject(2);
         //create a final image for the entity
         for(int id: entityIds) {
             cacheImgTag(game.getEntity(id));
+        }
+        for (Force force: forces) {
+            game.getForces().replace(force.getId(), force);
         }
         // Move the unit to its final resting place.
         game.removeEntities(entityIds, condition);
@@ -1319,6 +1411,12 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
             receiveEntityVisibilityIndicator(c);
+            break;
+        case Packet.COMMAND_FORCE_UPDATE:
+            receiveForceUpdate(c);
+            break;
+        case Packet.COMMAND_FORCE_DELETE:
+            receiveForcesDelete(c);
             break;
         case Packet.COMMAND_SENDING_MINEFIELDS:
             receiveSendingMinefields(c);

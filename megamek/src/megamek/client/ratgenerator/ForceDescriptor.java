@@ -860,7 +860,7 @@ public class ForceDescriptor {
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
             id = 17 * id + ancestor.index + 1;
-            forceString += "\\" + ancestor.name + "|" + id;
+            forceString += "\\" + ancestor.parseName() + "|" + id;
         }
         // Remove the backslash at the start
         if (forceString.length() > 0) {
@@ -1623,7 +1623,6 @@ public class ForceDescriptor {
 
     public void addAttached(ForceDescriptor fd) {
         attached.add(fd);
-        fd.setParent(this);
     }
 
     public double getDropshipPct() {

@@ -132,7 +132,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
-    public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
     //file menu
     public static final String FILE_PRINT = "filePrint";
@@ -447,21 +446,28 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                ignoreHotKeys = true;
-                int savePrompt = JOptionPane.showConfirmDialog(null,
-                        "Do you want to save the game before quitting MegaMek?",
-                        "Save First?",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                ignoreHotKeys = false;
-                if (savePrompt == JOptionPane.YES_OPTION) {
-                    if (!saveGame()) {
-                        // When the user did not actually save the game, don't close MM
-                        return;
+                if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
+                    ignoreHotKeys = true;
+                    int savePrompt = JOptionPane.showConfirmDialog(null,
+                            "Do you want to save the game before quitting MegaMek?",
+                            "Save First?",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    ignoreHotKeys = false;
+                    if (savePrompt == JOptionPane.YES_OPTION) {
+                        if (!saveGame()) {
+                            // When the user did not actually save the game, don't close MM
+                            return;
+                        }
                     }
-                }
-                if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
-                {
+
+                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
+                    {
+                        frame.setVisible(false);
+                        saveSettings();
+                        die();
+                    }
+                } else {
                     frame.setVisible(false);
                     saveSettings();
                     die();
@@ -753,9 +759,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 ignoreHotKeys = true;
                 loadListFile();
                 ignoreHotKeys = false;
-                break;
-            case FILE_UNITS_CLEAR:
-                deleteAllUnits(client);
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
@@ -1620,16 +1623,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             client.getGame().setupRoundDeployment();
             client.sendResetRoundDeployment();
         }
-    }
-
-    public void deleteAllUnits(Client c) {
-        ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
-                c.getLocalPlayer(), false);
-        ArrayList<Integer> ids = new ArrayList<>(currentUnits.size());
-        for (Entity e : currentUnits){
-            ids.add(e.getId());
-        }
-        c.sendDeleteEntities(ids);
     }
 
     private boolean saveGame() {

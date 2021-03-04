@@ -47,8 +47,9 @@ public class CLImprovedSRM2 extends SRMWeapon {
         flags = flags.or(F_NO_FIRES);
         ammoType = AmmoType.T_SRM_IMP;
         cost = 10000;
-        shortAV = 2;
-        maxRange = RANGE_SHORT;
+        this.shortAV = 3;
+        this.medAV = 3;
+        this.maxRange = RANGE_MED;
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)

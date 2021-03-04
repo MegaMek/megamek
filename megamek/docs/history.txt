@@ -18,6 +18,9 @@ VERSION HISTORY:
 + PR #2689: Random Skill Generator: Fixing AND Comparison
 + Issue #2676: Clan Heavy Machine Guns - No Range
 + PR #2690: Orphan control for destroyed entities to prevent soft-lock when loading save after destroying a unit
++ Data: Fixes for #2693, #2680, #2679, #2678, #2677, #2674, #2653, #2644, #2629
++ Data: New Sprites
++ Data: Improved SRM's range and Aero damage wrong.
 
 0.47.17 (RC3) (2021-02-075 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.

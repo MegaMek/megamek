@@ -18,11 +18,8 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.text.MessageFormat;
 
-import com.sun.xml.bind.v2.runtime.reflect.Accessor.SetterOnlyReflection;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Crew;

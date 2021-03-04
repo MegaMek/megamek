@@ -706,7 +706,7 @@ public class Game implements Serializable, IGame {
      * Returns true if there is a turn after the current one
      */
     public boolean hasMoreTurns() {
-        return turnVector.size() > (turnIndex + 1);
+        return turnVector.size() > turnIndex;
     }
 
     /**
@@ -1400,12 +1400,15 @@ public class Game implements Serializable, IGame {
      * (probably due to double-blind) ignore it.
      */
     public synchronized void removeEntity(int id, int condition) {
+        // always attempt to remove the entity with this ID from the entities collection
+        // as it may have gotten stuck there.
+        entities.removeIf(ent -> (ent.getId() == id));
+        
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             return;
         }
 
-        entities.remove(toRemove);
         entityIds.remove(Integer.valueOf(id));
         removeEntityPositionLookup(toRemove);
 

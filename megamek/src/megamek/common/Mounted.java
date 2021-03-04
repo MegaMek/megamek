@@ -1261,8 +1261,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return 0;
         }
         // um, otherwise, I'm not sure
-        System.err.println("mounted: unable to determine explosion damage for "
-                + getName());
+        MegaMek.getLogger().error("mounted: unable to determine explosion damage for " + typeName);
         return 0;
     }
 

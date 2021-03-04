@@ -2021,21 +2021,13 @@ public class Jumpship extends Aero {
         }
 
         // now I need to determine base armor points by type and weight
-        double baseArmor = 0.8;
-        if (isClan()) {
-            baseArmor = 1.0;
-        }
+        boolean clan = TechConstants.isClan(getArmorTechLevel(firstArmorIndex()));
+        double baseArmor = clan ? 1.0 : 0.8;
 
         if (weight >= 250000) {
-            baseArmor = 0.4;
-            if (isClan()) {
-                baseArmor = 0.5;
-            }
+            baseArmor = clan ? 0.5 : 0.4;
         } else if (weight >= 150000) {
-            baseArmor = 0.6;
-            if (isClan()) {
-                baseArmor = 0.7;
-            }
+            baseArmor = clan ? 0.7 : 0.6;
         }
 
         if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {

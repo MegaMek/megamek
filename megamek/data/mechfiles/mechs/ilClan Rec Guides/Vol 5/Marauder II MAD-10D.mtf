@@ -4,8 +4,8 @@ MAD-10D
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:3
+era:3141
+rules level:4
 
 mass:100
 engine:400 XL Engine(IS)
@@ -14,7 +14,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:20 Double
+heat sinks:20 IS Double
 walk mp:4
 jump mp:4
 

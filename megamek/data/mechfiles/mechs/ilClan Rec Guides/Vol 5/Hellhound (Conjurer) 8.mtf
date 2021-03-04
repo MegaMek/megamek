@@ -4,15 +4,15 @@ Hellhound (Conjurer)
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:3150
-rules level:2
+era:3142
+rules level:3
 
 mass:50
 engine:250 XL Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:5
 jump mp:5
 
@@ -30,10 +30,10 @@ RTR armor:5
 RTC armor:7
 
 Weapons:4
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Torso
 Rotary AC/5, Right Arm
 Streak SRM 6, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder

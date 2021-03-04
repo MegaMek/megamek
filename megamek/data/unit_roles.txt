@@ -5364,7 +5364,7 @@ Loki (Hellbringer) F:STRIKER
 Loki (Hellbringer) G:STRIKER
 Loki (Hellbringer) J:SCOUT
 Loki (Hellbringer) T:SNIPER
-Dominator:SKIRMISHER
+Dominator (Standard):SKIRMISHER
 Dominator 2:SNIPER
 Grasshopper GHR-8K:SKIRMISHER
 Goliath C:SNIPER
@@ -5547,13 +5547,13 @@ Viper (Dragonfly) M:STRIKER
 Viper (Dragonfly) R:SCOUT
 Viper (Dragonfly) T:SCOUT
 #ilClan Rec Guide 9
-Executioner (Gladiator) F:SNIPER
-Executioner (Gladiator) G:SKIRMISHER
-Executioner (Gladiator) I:SKIRMISHER
-Executioner (Gladiator) J:JUGGERNAUT
-Executioner (Gladiator) L:SNIPER
-Executioner (Gladiator) T:SNIPER
-Inferno INF-NO:UNDETERMINED
+Gladiator (Executioner) F:SNIPER
+Gladiator (Executioner) G:SKIRMISHER
+Gladiator (Executioner) I:SKIRMISHER
+Gladiator (Executioner) J:JUGGERNAUT
+Gladiator (Executioner) L:SNIPER
+Gladiator (Executioner) T:SNIPER
+Inferno INF-NO:BRAWLER
 Inferno INF-NOA:BRAWLER
 Inferno INF-NOB:BRAWLER
 Inferno INF-NOC:MISSILE BOAT
@@ -5565,10 +5565,10 @@ Shadow Cat T:SCOUT
 Valkyrie C:MISSILE BOAT
 Valkyrie VLK-QD6:MISSILE BOAT
 Valkyrie VLK-QDD:MISSILE BOAT
-Goshawk (Vapor Eagle)2:SKIRMISHER
-Goshawk (Vapor Eagle)5:SKIRMISHER
-Goshawk (Vapor Eagle)6:SKIRMISHER
-Goshawk (Vapor Eagle)7:SKIRMISHER
+Goshawk (Vapor Eagle) 2:SKIRMISHER
+Goshawk (Vapor Eagle) 5:SKIRMISHER
+Goshawk (Vapor Eagle) 6:SKIRMISHER
+Goshawk (Vapor Eagle) 7:SKIRMISHER
 Goshawk (Vapor Eagle)(Standard):SKIRMISHER
 #ilClan Rec Guide 10
 Archer ARC-4M2:MISSILE BOAT
@@ -5582,11 +5582,70 @@ Hermit Crab HMC-13:SCOUT
 Hermit Crab HMC-14:STRIKER
 Hermit Crab HMC-15:STRIKER
 Highlander HGN-740:SNIPER
-Mad Dog (Vulture) DD:BRAWLER
-Mad Dog (Vulture) G:BRAWLER
-Mad Dog (Vulture) I:SNIPER
-Mad Dog (Vulture) T:MISSILE BOAT
-Mad Dog (Vulture) V:MISSILE BOAT
+Vulture (Mad Dog) DD:BRAWLER
+Vulture (Mad Dog) G:BRAWLER
+Vulture (Mad Dog) I:SNIPER
+Vulture (Mad Dog) T:MISSILE BOAT
+Vulture (Mad Dog) V:MISSILE BOAT
+#ilClan Rec Guide 11
+Butcherbird (Ion Sparrow) Prime:SCOUT
+Butcherbird (Ion Sparrow) A:SCOUT
+Butcherbird (Ion Sparrow) B:SCOUT
+Butcherbird (Ion Sparrow) C:SCOUT
+Butcherbird (Ion Sparrow) D:SCOUT
+Uller (Kit Fox) T:SCOUT
+Uller (Kit Fox) G:SNIPER
+Uller (Kit Fox) J:STRIKER
+Uller (Kit Fox) K:STRIKER
+Uller (Kit Fox) R:STRIKER
+Uller (Kit Fox) V:MISSILE BOAT
+Peregrine (Horned Owl) (Standard):STRIKER
+Peregrine (Horned Owl) 2:MISSILE BOAT
+Peregrine (Horned Owl) 3:SNIPER
+Peregrine (Horned Owl) 6:STRIKER
+Peregrine (Horned Owl) 7:STRIKER
+Phoenix Hawk PXH-2K:STRIKER
+Phoenix Hawk PXH-3D:STRIKER
+Phoenix Hawk PXH-3K:STRIKER
+Phoenix Hawk PXH-3M:STRIKER
+Phoenix Hawk PXH-3S:STRIKER
+Phoenix Hawk PXH-4M:STRIKER
+Phoenix Hawk PXH-9:STRIKER
+Phoenix Hawk C:STRIKER
+Phoenix Hawk C 2:STRIKER
+Man O' War (Gargoyle) T:SKIRMISHER
+Man O' War (Gargoyle) F:BRAWLER
+Man O' War (Gargoyle) I:SNIPER
+Man O' War (Gargoyle) J:SKIRMISHER
+Man O' War (Gargoyle) K:SKIRMISHER
+Man O' War (Gargoyle) P:SKIRMISHER
+#ilClan Rec Guide 12
+Carrion Crow Prime:STRIKER
+Carrion Crow A:STRIKER
+Carrion Crow B:SNIPER
+Carrion Crow C:STRIKER
+Carrion Crow D:STRIKER
+Hatchetman HCT-8S:STRIKER
+Nobori-nin (Huntsman) T:SKIRMISHER
+Nobori-nin (Huntsman) E:SKIRMISHER
+Nobori-nin (Huntsman) G:SKIRMISHER
+Nobori-nin (Huntsman) I:SNIPER
+Shadow Hawk SHD-2D2:BRAWLER
+Shadow Hawk SHD-2Hb:SKIRMISHER
+Shadow Hawk SHD-4H:SNIPER
+Shadow Hawk SHD-5M:MISSILE BOAT
+Shadow Hawk SHD-5S:MISSILE BOAT
+Shadow Hawk SHD-5R:SCOUT
+Shadow Hawk SHD-6D:SKIRMISHER
+Shadow Hawk SHD-7H:SKIRMISHER
+Shadow Hawk C:SKIRMISHER
+Axman AXM-5N:SKIRMISHER
+Black Knight BL-18-KNT:BRAWLER
+Black Python (Viper) (Standard):SKIRMISHER
+Black Python (Viper) 2:SKIRMISHER
+Viper (Black Python) 5:SKIRMISHER
+White Raven (Standard):SKIRMISHER
+White Raven 2:SKIRMISHER
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER
@@ -5750,7 +5809,7 @@ Adder (Puma) TC:STRIKER
 Shadow Cat TC:SCOUT
 Stormcrow (Ryoken) TC:SKIRMISHER
 Stormcrow (Ryoken) Attwater:SNIPER
-Mad Dog (Vulture) S:SKIRMISHER
+Vulture (Mad Dog) S:SKIRMISHER
 Hellbringer (Loki) M:SNIPER
 Timber Wolf (Mad Cat) TC:SKIRMISHER
 Gladiator (Executioner) TC:SKIRMISHER

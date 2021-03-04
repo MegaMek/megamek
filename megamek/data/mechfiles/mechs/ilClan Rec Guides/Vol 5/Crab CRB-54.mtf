@@ -4,15 +4,15 @@ CRB-54
 
 Config:Biped
 techbase:Inner Sphere
-era:3150
-rules level:3
+era:3144
+rules level:4
 
 mass:50
 engine:350 XXL Engine(IS)
 structure:IS Composite
 myomer:Standard
 
-heat sinks:15 Double
+heat sinks:15 IS Double
 walk mp:7
 jump mp:0
 

@@ -2491,7 +2491,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * of the entities are not his own.
      */
     boolean canSee(Entity entity) {
-        return canSeeAll(List.of(entity));
+        return canSeeAll(Arrays.asList(entity));
     }
     
     boolean entityInLocalTeam(Entity entity) {

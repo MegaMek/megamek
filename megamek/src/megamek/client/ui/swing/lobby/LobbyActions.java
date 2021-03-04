@@ -15,6 +15,7 @@ package megamek.client.ui.swing.lobby;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -258,7 +259,7 @@ public class LobbyActions {
      * @param entity
      */
     public void customizeMech(Entity entity) {
-        if (!validateUpdate(List.of(entity))) {
+        if (!validateUpdate(Arrays.asList(entity))) {
             return;
         }
         boolean editable = clientGui.getBots().get(entity.getOwner().getName()) != null;
@@ -571,13 +572,13 @@ public class LobbyActions {
             return;
         }
         Entity selected = CollectionUtil.randomElement(entities);
-        if (!validateUpdate(List.of(target, selected))) {
+        if (!validateUpdate(Arrays.asList(target, selected))) {
             return;
         }
         Crew temp = target.getCrew();
         target.setCrew(selected.getCrew());
         selected.setCrew(temp);
-        sendUpdates(List.of(target, selected));
+        sendUpdates(Arrays.asList(target, selected));
     }
     
     /** Change the given entities' controller to the player with ID newOwnerId. */

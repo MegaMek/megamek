@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.49.0-SNAPSHOT
+
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes
 + Data: Updating Snub PPC per Errata.

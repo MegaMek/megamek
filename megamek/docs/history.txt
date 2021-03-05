@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 0.49.0-SNAPSHOT
++ Issue #2614: Improved Building Validation
++ Issue #2592: Random Army Creation Tech Level Max Index Comparison Issue
++ Issue #2272: Fixing Alt-Click on Building and Mouse Wheel Over Building/Bridge/Fuel Tank Not Clearing Tile
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

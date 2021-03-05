@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 BattleMaster
 C 3
 
@@ -13,7 +13,7 @@ engine:340 Fusion (Clan) Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:18 Double
+heat sinks:18 Clan Double
 walk mp:4
 jump mp:0
 
@@ -47,11 +47,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLMG
 CLMG
 Clan Machine Gun Ammo - Half
--Empty-
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -73,6 +73,8 @@ CLERPPC
 Left Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLStreakSRM6
 CLStreakSRM6
 CLERMediumLaser
@@ -81,10 +83,10 @@ CLERMediumLaser (R)
 Clan Streak SRM 6 Ammo
 -Empty-
 -Empty-
--Empty-
--Empty-
 
 Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLERMediumLaser
@@ -93,8 +95,6 @@ CLERMediumLaser (R)
 CLTargeting Computer
 CLTargeting Computer
 CLTargeting Computer
--Empty-
--Empty-
 -Empty-
 -Empty-
 
@@ -109,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+-Empty-
+-Empty-
 
 Head:
 Life Support
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

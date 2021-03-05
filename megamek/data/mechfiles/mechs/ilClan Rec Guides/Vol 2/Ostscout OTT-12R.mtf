@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Ostscout
 OTT-12R
 
@@ -13,11 +13,11 @@ engine:280 Light Engine(IS)
 structure:IS Endo-Composite
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 IS Double
 walk mp:8
 jump mp:8
 
-armor:Standard(Inner Sphere)
+armor:Stealth(Inner Sphere)
 LA armor:6
 RA armor:6
 LT armor:9
@@ -38,8 +38,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +52,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -72,8 +72,8 @@ IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 
 Right Torso:
 Fusion Engine
@@ -86,8 +86,8 @@ ISGuardianECMSuite
 ISGuardianECMSuite
 IS Endo-Composite
 IS Endo-Composite
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 
 Center Torso:
 Fusion Engine
@@ -122,8 +122,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -136,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-

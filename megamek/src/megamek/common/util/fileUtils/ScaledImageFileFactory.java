@@ -85,18 +85,18 @@ public class ScaledImageFileFactory extends ImageFileFactory {
 
         // Construct an anonymous class that gets an Image for the file.
         return new ItemFile() {
-            private File itemFile = file; // copy the file entry
-            private Image image = null; // cache the Image
-
             @Override
             public Object getItem() {
                 // Cache the image on first use.
-                if (image == null) {
-                    String name = itemFile.getAbsolutePath();
-                    image = ImageUtil.getScaledImage(ImageUtil.loadImageFromFile(name), getWidth(), getHeight());
+                if (isNullOrEmpty()) {
+                    String name = file.getAbsolutePath();
+                    item = ImageUtil.loadImageFromFile(name);
+                    // Only if we load a non-null image can we scale it
+                    if (!isNullOrEmpty()) {
+                        item = ImageUtil.getScaledImage((Image) item, getWidth(), getHeight());
+                    }
                 }
-                // Return the image.
-                return image;
+                return item;
             }
         };
     }
@@ -118,17 +118,17 @@ public class ScaledImageFileFactory extends ImageFileFactory {
 
         // Construct an anonymous class that gets an Image for the file.
         return new ItemFile() {
-            private ZipEntry itemEntry = zipEntry; // copy the ZipEntry
-            private Image image = null; // cache the Image
-
             @Override
             public Object getItem() throws Exception {
                 // Cache the image on first use.
-                if (image == null) {
-                    image = ImageUtil.getScaledImage(createZippedImage(itemEntry, zipFile),
-                            getWidth(), getHeight());
+                if (isNullOrEmpty()) {
+                    item = createZippedImage(zipEntry, zipFile);
+                    // Only if we load a non-null image can we scale it
+                    if (!isNullOrEmpty()) {
+                        item = ImageUtil.getScaledImage((Image) item, getWidth(), getHeight());
+                    }
                 }
-                return image;
+                return item;
             }
         };
     }

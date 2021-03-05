@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.2
 Thor (Summoner)
 D
 
@@ -86,10 +86,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer (omnipod)
-CLTargeting Computer (omnipod)
-CLAntiMissileSystem (omnipod)
 CLMG (omnipod)
+CLAntiMissileSystem (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -152,3 +152,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+

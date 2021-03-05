@@ -4,7 +4,7 @@ Warhammer IIC
 
 Config:Biped
 techbase:Clan
-era:3079
+era:3150
 rules level:2
 
 mass:80
@@ -12,7 +12,7 @@ engine:320 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:21 Double
+heat sinks:21 Clan Double
 walk mp:4
 jump mp:0
 
@@ -30,16 +30,16 @@ RTR armor:6
 RTC armor:9
 
 Weapons:10
-ER PPC, Right Arm
 ER PPC, Left Arm
+ER PPC, Right Arm
+LRM 15, Left Torso
 Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+LRM 15, Right Torso
+SRM 6, Right Torso
 Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Head
-SRM 6, Right Torso
-LRM 15, Left Torso
-LRM 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -76,8 +76,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLLRM15
 CLLRM15
-ISMediumPulseLaser
-ISMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
 Clan Ammo LRM-15
 Clan Endo Steel
 Clan Endo Steel
@@ -91,8 +91,8 @@ CLDoubleHeatSink
 CLLRM15
 CLLRM15
 CLSRM6
-ISMediumPulseLaser
-ISMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
 Clan Ammo LRM-15
 Clan Ammo LRM-15
 Clan Ammo SRM-6
@@ -115,7 +115,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISMediumPulseLaser
+CLMediumPulseLaser
 Sensors
 Life Support
 -Empty-

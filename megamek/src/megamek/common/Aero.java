@@ -869,7 +869,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
-            return 80 * primitiveFuelFactor();
+            return 80 / primitiveFuelFactor();
         }
         return 80;
     }
@@ -1363,8 +1363,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        // For Aeros other than SmallCraft ignore their Wings and Fuselage for armor in BV calcs
-        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 2)); loc++) {
+        // Ignore any hull/fuselage or capital fighter wing locations
+        for (int loc = 0; loc < locations() - ((this instanceof SmallCraft) ? 1 : 2); loc++) {
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
                 if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
@@ -1375,25 +1375,28 @@ public class Aero extends Entity implements IAero, IBomber {
             // total armor points
 
             switch (getArmorType(loc)) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-            case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                armorMultiplier = 1.2;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+            if (hasBARArmor(loc)) {
+                armorMultiplier *= getBARRating(loc) / 10.0;
             }
 
             if (blueShield) {
@@ -1617,6 +1620,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // subtract for explosive ammo
         double explosivePenalty = 0;
+        // FIXME: Consider new AmmoType::equals / BombType::equals
         Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
@@ -1837,14 +1841,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : weapon.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -1990,14 +1994,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             // artemis bumps up the value
             // PPC caps do, too
@@ -2029,7 +2033,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }
@@ -2681,7 +2685,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 

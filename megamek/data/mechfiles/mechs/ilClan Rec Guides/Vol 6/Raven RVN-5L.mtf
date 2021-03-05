@@ -4,8 +4,8 @@ RVN-5L
 
 Config:Biped
 techbase:Inner Sphere
-era:3150
-rules level:2
+era:3125
+rules level:4
 
 mass:35
 engine:280 XL Engine(IS)
@@ -14,7 +14,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:10 Double
+heat sinks:10 IS Double
 walk mp:8
 jump mp:0
 

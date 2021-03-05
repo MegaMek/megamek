@@ -1,11 +1,10 @@
-Version:1.0
+Version:1.1
 Masauwu
-(Standard)
 
 
 Config:Biped
 techbase:Clan
-era:2846
+era:2832
 source:Succession Wars
 rules level:2
 
@@ -74,10 +73,10 @@ Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
+CLERSmallLaser
 CLStreakSRM2
 Clan Streak SRM 2 Ammo
 Clan Endo Steel
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -108,7 +107,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLECMSuite
-CLERSmallLaser
+-Empty-
 
 Head:
 Life Support

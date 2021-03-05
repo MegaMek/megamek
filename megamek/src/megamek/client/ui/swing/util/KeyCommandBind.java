@@ -33,7 +33,7 @@ public enum KeyCommandBind {
     // Toggles isometric view on/off
     TOGGLE_ISO("toggleIso",false, KeyEvent.VK_T, 0),// Default: T
     // Activates chat box
-    TOGGLE_CHAT("toggleChat",false, KeyEvent.VK_ENTER, 0), // Default: Enter
+    TOGGLE_CHAT("toggleChat",false, KeyEvent.VK_BACK_QUOTE, 0), // Default: ` (back quote/grave)
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", false, KeyEvent.VK_SLASH, 0), // Default: /
     // Change facing one hexside to the left

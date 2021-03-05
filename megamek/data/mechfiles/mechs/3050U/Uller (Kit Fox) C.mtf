@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.2
 Uller (Kit Fox)
 C
 
@@ -47,9 +47,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLERLargeLaser (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
 CLSmallPulseLaser (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -152,3 +152,5 @@ CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
+
+

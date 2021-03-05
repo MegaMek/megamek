@@ -56,6 +56,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
+        allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);
         gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
     }
 
@@ -75,8 +76,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose = new JButton(Messages.getString("Close"));
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, new GridBagConstraints());
-
-        updatePlayerChoice();
 
         JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
@@ -193,7 +192,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         updatePlayerChoice();
+        super.setVisible(visible);
     }
 }

@@ -2,17 +2,16 @@
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BasicStroke;
@@ -46,6 +45,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -67,7 +68,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -86,6 +86,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.IGame.Phase;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -98,6 +99,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -108,13 +110,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * to return from method? -uses break-to-label -uses while-true
  */
 public class MiniMap extends JPanel {
-
-    // these indices match those in Terrains.java, and are therefore sensitive
-    // to any changes there
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6964529682842424060L;
     private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
@@ -132,7 +127,7 @@ public class MiniMap extends JPanel {
     private static final int SCROLL_PANE_WIDTH = 160;
     private static final int SCROLL_PANE_HEIGHT = 200;
 
-    private Image m_mapImage;
+    private BufferedImage m_mapImage;
     private IBoardView m_bview;
     private IGame m_game;
     private IBoard m_board;
@@ -633,7 +628,7 @@ public class MiniMap extends JPanel {
             ((JDialog) m_dialog).pack();
         }
         // m_dialog.setVisible(true);
-        m_mapImage = createImage(getSize().width, getSize().height);
+        m_mapImage = ImageUtil.createAcceleratedImage(getSize().width, getSize().height);
 
         terrainBuffer = createImage(getSize().width, getSize().height);
         Graphics gg = terrainBuffer.getGraphics();
@@ -1097,7 +1092,7 @@ public class MiniMap extends JPanel {
             yPoints[3] = yPoints[0] - 2;
             yPoints[2] = yPoints[1] - 2;
         }
-        g.setColor(PlayerColors.getColor(source.getOwner().getColorIndex()));
+        g.setColor(source.getOwner().getColour().getColour());
         g.fillPolygon(xPoints, yPoints, 4);
         g.setColor(Color.black);
         g.drawPolygon(xPoints, yPoints, 4);
@@ -1112,10 +1107,8 @@ public class MiniMap extends JPanel {
                         && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
-                    Entity attackTarget = m_game.getEntity(otherAttack
-                            .getEntityId());
-                    g.setColor(PlayerColors.getColor(attackTarget.getOwner()
-                            .getColorIndex()));
+                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
+                    g.setColor(attackTarget.getOwner().getColour().getColour());
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -1251,9 +1244,9 @@ public class MiniMap extends JPanel {
 
         Graphics2D g2 = (Graphics2D)g;
         Stroke svStroke = g2.getStroke();
-        
+
         // Choose player or team color depending on preferences
-        Color iconColor = PlayerColors.getColor(entity.getOwner().getColorIndex(), false);
+        Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
             boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
             boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());
@@ -1699,7 +1692,7 @@ public class MiniMap extends JPanel {
         if (y > (getSize().height - 14) && !dragging) {
             if (minimized) {
                 setSize(getSize().width, heightBufer);
-                m_mapImage = createImage(getSize().width, heightBufer);
+                m_mapImage =  ImageUtil.createAcceleratedImage(getSize().width, heightBufer);
                 minimized = false;
                 initializeMap();
             } else {
@@ -1722,7 +1715,9 @@ public class MiniMap extends JPanel {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
-                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
+
+                    m_mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
+
                     minimized = true;
                     initializeMap();
                 }  
@@ -1783,6 +1778,22 @@ public class MiniMap extends JPanel {
     protected GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesMMDir(), m_game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+				File imgFile = new File(dir, "round_" + m_game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                try {
+                    ImageIO.write(m_mapImage, "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
             drawMap();
         }
 

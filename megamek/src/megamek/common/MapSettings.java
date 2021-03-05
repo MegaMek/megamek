@@ -574,6 +574,11 @@ public class MapSettings implements Serializable {
         if ((mapWidth <= 0) || (mapHeight <= 0)) {
             throw new IllegalArgumentException("Total map area must be positive");
         }
+        
+        // If the map has become smaller, shrink the list by removing surplus elements
+        if (mapWidth * mapHeight < boardsSelected.size()) {
+            boardsSelected.subList(mapWidth * mapHeight, boardsSelected.size()).clear();
+        }
 
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
@@ -584,6 +589,8 @@ public class MapSettings implements Serializable {
                 boardsSelected.set(i, null);
             }
         }
+        
+        // Fill the list with null elements if the map has grown
         while (boardsSelected.size() < (mapWidth * mapHeight)) {
             boardsSelected.add(null);
         }

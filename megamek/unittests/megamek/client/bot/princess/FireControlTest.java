@@ -246,6 +246,9 @@ public class FireControlTest {
                .when(testFireControl)
                .getTargetMovementModifier(Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean(),
                                           Mockito.any(IGame.class));
+        
+        Mockito.doReturn(false).when(testFireControl).isCommander(Mockito.any(Entity.class));
+        Mockito.doReturn(false).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
 
         // AC5
         mockWeaponTypeAC5 = Mockito.mock(WeaponType.class);
@@ -277,6 +280,23 @@ public class FireControlTest {
         Mockito.when(mockAmmoAc5Flechette.getType()).thenReturn(mockAmmoTypeAc5Flechette);
         Mockito.when(mockAmmoAc5Flechette.isAmmoUsable()).thenReturn(true);
 
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Std).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Std));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Std).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Flak));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Std).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Incendiary));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Std).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAc5Flechette));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Flak).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Std));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Flak).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Flak));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Flak).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Incendiary));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Flak).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAc5Flechette));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Incendiary).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Std));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Incendiary).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Flak));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Incendiary).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Incendiary));
+        Mockito.doReturn(true).when(mockAmmoTypeAC5Incendiary).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAc5Flechette));
+        Mockito.doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Std));
+        Mockito.doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Flak));
+        Mockito.doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAC5Incendiary));
+        Mockito.doReturn(true).when(mockAmmoTypeAc5Flechette).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAc5Flechette));
+
         // LB10X
         mockLB10X = Mockito.mock(WeaponType.class);
         mockAmmoTypeLB10XSlug = Mockito.mock(AmmoType.class);
@@ -294,6 +314,11 @@ public class FireControlTest {
         Mockito.when(mockAmmoTypeLB10XCluster.getMunitionType()).thenReturn(AmmoType.M_CLUSTER);
         Mockito.when(mockAmmoLB10XCluster.getType()).thenReturn(mockAmmoTypeLB10XCluster);
         Mockito.when(mockAmmoLB10XCluster.isAmmoUsable()).thenReturn(true);
+
+        Mockito.doReturn(true).when(mockAmmoTypeLB10XSlug).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLB10XSlug));
+        Mockito.doReturn(true).when(mockAmmoTypeLB10XSlug).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLB10XCluster));
+        Mockito.doReturn(true).when(mockAmmoTypeLB10XCluster).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLB10XSlug));
+        Mockito.doReturn(true).when(mockAmmoTypeLB10XCluster).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLB10XCluster));
 
         // MML
         mockMML5 = Mockito.mock(MMLWeapon.class);
@@ -327,6 +352,23 @@ public class FireControlTest {
         Mockito.when(mockAmmoTypeLrm5Frag.getAmmoType()).thenReturn(AmmoType.T_MML);
         Mockito.when(mockAmmoLrm5Frag.getType()).thenReturn(mockAmmoTypeLrm5Frag);
         Mockito.when(mockAmmoLrm5Frag.isAmmoUsable()).thenReturn(true);
+
+        Mockito.doReturn(true).when(mockAmmoTypeSRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeSRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeSRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeSRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeInferno5));
+        Mockito.doReturn(true).when(mockAmmoTypeSRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLrm5Frag));
+        Mockito.doReturn(true).when(mockAmmoTypeLRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeSRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeLRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeLRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeInferno5));
+        Mockito.doReturn(true).when(mockAmmoTypeLRM5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLrm5Frag));
+        Mockito.doReturn(true).when(mockAmmoTypeInferno5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeSRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeInferno5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeInferno5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeInferno5));
+        Mockito.doReturn(true).when(mockAmmoTypeInferno5).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLrm5Frag));
+        Mockito.doReturn(true).when(mockAmmoTypeLrm5Frag).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeSRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeLrm5Frag).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLRM5));
+        Mockito.doReturn(true).when(mockAmmoTypeLrm5Frag).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeInferno5));
+        Mockito.doReturn(true).when(mockAmmoTypeLrm5Frag).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeLrm5Frag));
 
         // ATM
         mockAtm5Weapon = Mockito.mock(Mounted.class);
@@ -362,6 +404,23 @@ public class FireControlTest {
         Mockito.when(mockAmmoTypeAtm5Inferno.getRackSize()).thenReturn(5);
         Mockito.when(mockAmmoAtm5Inferno.getType()).thenReturn(mockAmmoTypeAtm5Inferno);
         Mockito.when(mockAmmoAtm5Inferno.isAmmoUsable()).thenReturn(true);
+
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5He).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5He));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5He).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5St));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5He).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Er));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5He).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Inferno));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5St).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5He));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5St).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5St));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5St).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Er));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5St).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Inferno));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Er).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5He));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Er).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5St));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Er).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Er));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Er).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Inferno));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Inferno).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5He));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Inferno).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5St));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Inferno).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Er));
+        Mockito.doReturn(true).when(mockAmmoTypeAtm5Inferno).equalsAmmoTypeOnly(Mockito.eq(mockAmmoTypeAtm5Inferno));
 
         shooterWeapons = new ArrayList<>(3);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
@@ -2086,29 +2145,29 @@ public class FireControlTest {
         Assert.assertEquals(baseUtility, testFiringPlan.getUtility(), TOLERANCE);
 
         // Make the target a commander.
-        Mockito.when(mockTarget.isCommander()).thenReturn(true);
         testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
+        Mockito.doReturn(true).when(testFireControl).isCommander(Mockito.any(Entity.class));
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility * (1 + FireControl.COMMANDER_UTILITY), testFiringPlan.getUtility(), TOLERANCE);
-        Mockito.when(mockTarget.isCommander()).thenReturn(false);
+        Mockito.doReturn(false).when(testFireControl).isCommander(Mockito.any(Entity.class));
 
         // Make the target a sub-commander.
-        Mockito.when(mockTarget.hasC3()).thenReturn(true);
         testFiringPlan = Mockito.spy(new FiringPlan(mockTarget));
         Mockito.doReturn(15.0).when(testFiringPlan).getExpectedDamage();
         Mockito.doReturn(0.46129).when(testFiringPlan).getExpectedCriticals();
         Mockito.doReturn(0.02005).when(testFiringPlan).getKillProbability();
         Mockito.doReturn(0).when(testFiringPlan).getHeat();
         Mockito.doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(Mockito.any(Targetable.class), Mockito.anyDouble());
+        Mockito.doReturn(true).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility * (1 + FireControl.SUB_COMMANDER_UTILITY), testFiringPlan.getUtility(),
                             TOLERANCE);
-        Mockito.when(mockTarget.hasC3()).thenReturn(false);
+        Mockito.doReturn(false).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
 
         // Make the target a Strategic Building Target.
         final BuildingTarget mockBuilding = Mockito.mock(BuildingTarget.class);

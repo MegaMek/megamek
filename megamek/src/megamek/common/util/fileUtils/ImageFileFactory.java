@@ -20,7 +20,6 @@
 package megamek.common.util.fileUtils;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -30,6 +29,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.util.*;
+
+import javax.imageio.ImageIO;
 
 /**
  * A FilenameFilter that produces image files (PNG, JPG/JPEG, GIF). 
@@ -64,17 +65,16 @@ public class ImageFileFactory implements ItemFileFactory {
 
         // Construct an anonymous class that gets an Image for the file.
         return new ItemFile() {
-            private File itemFile = file; // copy the file entry
-            private Image image = null; // cache the Image
-
             @Override
             public Object getItem() {
                 // Cache the image on first use.
-                if (image == null) {
-                    String name = itemFile.getAbsolutePath();
-                    image = ImageUtil.loadImageFromFile(name);
+                if (isNullOrEmpty()) {
+                    item = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+                    if (!isNullOrEmpty()) {
+                        item = ImageUtil.createAcceleratedImage((Image) item);
+                    }
                 }
-                return ImageUtil.createAcceleratedImage(image);
+                return item;
             }
         };
     }
@@ -96,17 +96,16 @@ public class ImageFileFactory implements ItemFileFactory {
 
         // Construct an anonymous class that gets an Image for the file.
         return new ItemFile() {
-            private ZipEntry itemEntry = zipEntry; // copy the ZipEntry
-            private Image image = null; // cache the Image
-
             @Override
             public Object getItem() throws Exception {
                 // Cache the image on first use.
-                if (image == null) {
-                    image = createZippedImage(itemEntry, zipFile);
+                if (isNullOrEmpty()) {
+                    item = createZippedImage(zipEntry, zipFile);
+                    if (!isNullOrEmpty()) {
+                        item = ImageUtil.createAcceleratedImage((Image) item);
+                    }
                 }
-
-                return ImageUtil.createAcceleratedImage(image);
+                return item;
             }
         };
     }
@@ -117,36 +116,14 @@ public class ImageFileFactory implements ItemFileFactory {
      *                 must not be <code>null</code>.
      * @param zipFile The <code>ZipFile</code> object that contains the <code>ZipEntry</code>
      *                that will produce the item. This value must not be <code>null</code>.
-     * @return
+     * @return the image created from a zipped image
      * @throws Exception if there is an error reading the file
      */
     protected Image createZippedImage(final ZipEntry zipEntry, final ZipFile zipFile) throws Exception {
         // Get ready to read from the item.
         try (InputStream in = new BufferedInputStream(zipFile.getInputStream(zipEntry),
                 (int) zipEntry.getSize())) {
-            // Make a buffer big enough to hold the item,
-            // read from the ZIP file, and write it to temp.
-            byte[] buffer = new byte[(int) zipEntry.getSize()];
-            in.read(buffer);
-
-            // Check the last 10 bytes. I've been having
-            // some problems with incomplete image files,
-            // and I want to detect it early and give advice
-            // to players for dealing with the problem.
-            int index = (int) zipEntry.getSize() - 10;
-            while (zipEntry.getSize() > index) {
-                if (buffer[index] == 0) {
-                    index++;
-                } else {
-                    break;
-                }
-            }
-
-            assert zipEntry.getSize() > index : "Error reading " + zipEntry.getName()
-                    + "\nYou may want to unzip " + zipFile.getName();
-
-            // Create the image from the buffer.
-            return Toolkit.getDefaultToolkit().createImage(buffer);
+            return ImageIO.read(in);
         }
     }
 

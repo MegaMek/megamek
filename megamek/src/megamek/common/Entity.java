@@ -51,7 +51,6 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -189,8 +188,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int id = Entity.NONE;
 
-    protected String camoCategory = Camouflage.NO_CAMOUFLAGE;
-    protected String camoFileName = null;
+    protected Camouflage camouflage = new Camouflage();
 
     /**
      * ID settable by external sources (such as mm.net)
@@ -1745,7 +1743,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     @Override
     public boolean isImmobile() {
-        return isShutDown() || ((crew != null) && crew.isUnconscious());
+        return isImmobile(true);
+    }
+
+    /**
+     * Is this entity shut down, or if applicable is the crew unconscious?
+     * @param checkCrew If true, consider the fitness of the crew when determining
+     *                  if the entity is immobile.
+     */
+    public boolean isImmobile(boolean checkCrew) {
+        return isShutDown() || (checkCrew && (crew != null) && crew.isUnconscious());
     }
 
     /**
@@ -1837,8 +1844,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set whether or not the mech's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
+        setArmsFlipped(armsFlipped, true);
+    }
+    
+    /**
+     * Set whether or not the mech's arms are flipped to the rear.
+     * Does not fire the game event, useful for when it's called repeatedly
+     * such as during bot turn calculations
+     */
+    public void setArmsFlipped(boolean armsFlipped, boolean fireEvent) {
         this.armsFlipped = armsFlipped;
-        game.processGameEvent(new GameEntityChangeEvent(this, this));
+        
+        if (fireEvent) {
+            game.processGameEvent(new GameEntityChangeEvent(this, this));
+        }
     }
 
     /**
@@ -3758,6 +3777,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getTotalAmmoOfType(EquipmentType et) {
         int totalShotsLeft = 0;
         for (Mounted amounted : getAmmo()) {
+            // FIXME: Consider new AmmoType::equals / BombType::equals
             if (amounted.getType().equals(et) && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getUsableShotsLeft();
             }
@@ -4047,9 +4067,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         AmmoType atype = (AmmoType) mountedAmmo.getType();
         Mounted oldammo = mounted.getLinked();
 
-        if ((oldammo != null)
-            && (!((AmmoType) oldammo.getType()).equals(atype) || (((AmmoType) oldammo
-                .getType()).getMunitionType() != atype.getMunitionType()))) {
+        if ((oldammo != null) && (oldammo.getType() instanceof AmmoType)
+                && !((AmmoType) oldammo.getType()).equals(atype)) {
             return false;
         }
 
@@ -4124,6 +4143,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         EquipmentType altBomb = EquipmentType.get(IBomber.ALT_BOMB_ATTACK);
         EquipmentType diveBomb = EquipmentType.get(IBomber.DIVE_BOMB_ATTACK);
         for (Mounted eq : equipmentList) {
+            // FIXME: Consider new BombType::equals
             if (eq.getType().equals(spaceBomb) || eq.getType().equals(altBomb)
                     || eq.getType().equals(diveBomb)) {
                 bombAttacksToRemove.add(eq);
@@ -7494,7 +7514,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!lastPos.equals(curPos)
                 && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
-                && canFall()) {
+                && (step.getElevation() == 0) && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
             if (hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                 roll.addModifier(-1, "Mountaineer");
@@ -9364,12 +9384,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
-        // also set this for any transported units
-        for (Transporter transport : getTransports()) {
-            for (Entity e : transport.getLoadedUnits()) {
-                e.setDeployRound(deployRound);
-            }
-        }
 
         // Entity's that deploy after the start can set their own deploy zone
         // If the deployRound is being set back to 0, make sure we reset the
@@ -11448,19 +11462,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 setArmor(IArmorState.ARMOR_DOOMED, loc, true);
             }
         }
-        // equipment marked missing
-        for (Mounted mounted : getEquipment()) {
-            if (((mounted.getLocation() == loc) && mounted.getType()
-                                                          .isHittable())
-                || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
-                if (blownOff) {
-                    mounted.setMissing(true);
-                } else {
-                    mounted.setHit(true);
-                }
-            }
-        }
+
         // all critical slots set as missing
+        // while we're here, if something is mounted in those crits, set it as hit, 
+        // instead of looping through all equipment in the unit
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = getCritical(loc, i);
             if (cs != null) {
@@ -11470,13 +11475,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     && !cs.isDamaged()) {
                     engineHitsThisPhase++;
                 }
+                
+                final boolean mountOneIsHittable = (cs.getMount() != null) && cs.getMount().getType().isHittable();
+                final boolean mountTwoIsHittable = (cs.getMount2() != null) && cs.getMount2().getType().isHittable();
+                
                 if (blownOff) {
                     cs.setMissing(true);
+                    
+                    if (mountOneIsHittable) {
+                        cs.getMount().setMissing(true);
+                    }
+                    
+                    if (mountTwoIsHittable) {
+                        cs.getMount2().setMissing(true);
+                    }
+                    
                 } else {
                     cs.setHit(true);
+                    
+                    if (mountOneIsHittable) {
+                        cs.getMount().setHit(true);
+                    }
+                    
+                    if (mountTwoIsHittable) {
+                        cs.getMount2().setHit(true);
+                    }
                 }
             }
         }
+        
         // dependent locations destroyed, unless they are already destroyed
         if ((getDependentLocation(loc) != Entity.LOC_NONE)
             && !(getInternal(getDependentLocation(loc)) < 0)) {
@@ -11838,7 +11865,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         playerPickedPassThrough.put(attackerId, c);
     }
 
-    public Coords getPlayerPickedPassThrough(int attackerId) {
+    public @Nullable Coords getPlayerPickedPassThrough(int attackerId) {
         if (playerPickedPassThrough == null) {
             playerPickedPassThrough = new HashMap<>();
         }
@@ -14509,24 +14536,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     // Deal with per entity camo
-    public AbstractIcon getCamouflage() {
-        return new Camouflage(getCamoCategory(), getCamoFileName());
+    public Camouflage getCamouflage() {
+        return camouflage;
     }
 
+    public Camouflage getCamouflageOrElse(Camouflage camouflage) {
+        return getCamouflage().hasDefaultCategory() ? camouflage : getCamouflage();
+    }
+
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = camouflage;
+    }
+
+    @Deprecated
     public void setCamoCategory(String name) {
-        camoCategory = name;
+        getCamouflage().setCategory(name);
     }
 
+    @Deprecated
     public String getCamoCategory() {
-        return camoCategory;
+        return getCamouflage().getCategory();
     }
 
+    @Deprecated
     public void setCamoFileName(String name) {
-        camoFileName = name;
+        getCamouflage().setFilename(name);
     }
 
+    @Deprecated
     public String getCamoFileName() {
-        return camoFileName;
+        return getCamouflage().getFilename();
     }
 
     public boolean getSelfDestructing() {

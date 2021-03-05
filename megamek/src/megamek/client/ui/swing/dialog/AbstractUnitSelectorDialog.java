@@ -142,6 +142,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean enableYearLimits = false;
     protected int allowedYear = ALLOWED_YEAR_ANY;
     protected boolean canonOnly = false;
+    protected boolean allowInvalid = true;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
     //endregion Variable Declarations
@@ -574,6 +575,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             (!enableYearLimits || (mech.getYear() <= allowedYear))
                             /* Canon */
                             && (!canonOnly || mech.isCanon())
+                            /* Invalid units */
+                            && (allowInvalid || !mech.getLevel().equals("F"))
                             /* Weight */
                             && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
                             /* Technology Level */

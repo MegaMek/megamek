@@ -18,7 +18,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +54,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @author arlith
  * @since 2012-05-20
  */
-public class EquipChoicePanel extends JPanel implements Serializable {
+public class EquipChoicePanel extends JPanel {
     static final long serialVersionUID = 672299770230285567L;
 
     private final Entity entity;
@@ -643,8 +642,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
-            Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at
-                    .getAmmoType());
+            Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;
             }
@@ -1060,7 +1058,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             private List<AmmoType> m_vTypes;
 
-            private JComboBox<String> m_choice;
+            private JComboBox<AmmoType> m_choice;
             
             @SuppressWarnings("rawtypes")
             private JComboBox m_num_shots;
@@ -1086,12 +1084,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_mounted = m;
                 
                 AmmoType curType = (AmmoType) m.getType();
-                m_choice = new JComboBox<String>();
+                m_choice = new JComboBox<AmmoType>();
                 Iterator<AmmoType> e = m_vTypes.iterator();
                 for (int x = 0; e.hasNext(); x++) {
                     AmmoType at = e.next();
-                    m_choice.addItem(at.getName());
-                    if (at.getInternalName() == curType.getInternalName()) {
+                    m_choice.addItem(at);
+                    if (at.equals(curType)) {
                         m_choice.setSelectedIndex(x);
                     }
                 }
@@ -1106,16 +1104,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
                 int stepSize = 1;
-                if (entity instanceof BattleArmor){
+                // Protomechs and BattleArmor are limited to the number of shots allocated in construction
+                if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                    shotsPerTon = m.getOriginalShots();
+                    // BA tube artillery always comes in pairs
                     if (curType.getAmmoType() == AmmoType.T_BA_TUBE) {
-                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT_TA;
                         stepSize = 2;
-                    } else {
-                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
                     }
-                    // Protomechs are limited to the number of shots allocated in construction
-                } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                    shotsPerTon = m.getBaseShotsLeft();
                 }
                 for (int i = 0; i <= shotsPerTon; i += stepSize){
                     m_num_shots.addItem(i);
@@ -1127,16 +1122,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     @Override
                     public void itemStateChanged(ItemEvent evt) {
                         m_num_shots.removeItemListener(numShotsListener);
-                        int currShots = (Integer)m_num_shots.getSelectedItem();
+                        int currShots = (Integer) m_num_shots.getSelectedItem();
                         m_num_shots.removeAllItems();
                         int shotsPerTon = m_vTypes.get(m_choice.getSelectedIndex()).getShots();
                         
-                        // BA always have a certain number of shots per slot
-                        if (entity instanceof BattleArmor){
-                            shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
-                            // Protomechs are limited to number of shots added during construction
-                        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                            shotsPerTon = m.getBaseShotsLeft();
+                        // Protomechs are limited to number of shots added during construction
+                        if ((entity instanceof BattleArmor) || (entity instanceof Protomech)) {
+                            shotsPerTon = m.getOriginalShots();
                         }
                         for (int i = 0; i <= shotsPerTon; i++){
                             m_num_shots.addItem(i);
@@ -1206,7 +1198,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 }
                 AmmoType at = m_vTypes.get(n);
                 m_mounted.changeAmmoType(at);
-                m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                
+                // set # shots only for non-one shot weapons
+                if (m_mounted.getLocation() != Entity.LOC_NONE) {
+                    m_mounted.setShotsLeft((Integer)m_num_shots.getSelectedItem());
+                }
+                
                 if (chDump.isSelected()) {
                     m_mounted.setShotsLeft(0);
                 }
@@ -1349,7 +1346,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 } else {
                     for (Mounted ammoBin : weapon.getEntity().getAmmo()) {
                         if ((ammoBin.getLocation() != Entity.LOC_NONE)
-                            && ((WeaponType) weapon.getType()).getAmmoType() == ((AmmoType) ammoBin.getType()).getAmmoType()) {
+                            && AmmoType.canSwitchToAmmo(weapon, (AmmoType) ammoBin.getType())) {
                             matchingAmmoBins.add(ammoBin);
                         }
                     }

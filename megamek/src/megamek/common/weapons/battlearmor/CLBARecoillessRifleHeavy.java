@@ -35,7 +35,7 @@ public class CLBARecoillessRifleHeavy extends Weapon {
      */
     public CLBARecoillessRifleHeavy() {
         super();
-        name = "Recoilless Rifle (Heavy)";
+        name = "BA Recoilless Rifle (Heavy)";
         setInternalName("CLBAHeavy Recoilless Rifle");
         addLookupName("CLBAHeavy Recoilless Rifle");
         addLookupName("CLBAHeavyRecoillessRifle");

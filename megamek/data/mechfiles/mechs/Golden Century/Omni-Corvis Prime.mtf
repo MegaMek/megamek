@@ -1,47 +1,48 @@
-Version:1.0
+Version:1.1
 Omni-Corvis
 Prime
 
-Config:Biped
-TechBase:Clan
-Era:2921
-Source:Succession Wars
-Rules Level:2
+Config:Biped Omnimech
+techbase:Clan
+era:2921
+source:Succession Wars
+rules level:2
 
-Mass:50
-Engine:250 Fusion (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:50
+engine:250 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:5
-Jump MP:0
+heat sinks:12 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:15
-RA Armor:15
-LT Armor:16
-RT Armor:16
-CT Armor:24
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:15
+RA armor:15
+LT armor:16
+RT armor:16
+CT armor:24
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:3
-Ultra AC/10, Right Arm
 ER Large Laser, Left Arm
 ER Medium Laser, Left Arm
+Ultra AC/10, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-CLERMediumLaser
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -52,20 +53,20 @@ CLERMediumLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+-Empty-
+-Empty-
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -78,8 +79,8 @@ Clan Endo Steel
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -148,8 +149,5 @@ Clan Ferro-Fibrous
 -Empty-
 
 manufacturer:Niles Industriplex Alpha
-primaryFactory:Tokasha, Niles
-systemmodel:CHASSIS:Model MH-50
-systemmodel:ARMOR:Compound H17/1 Ferro-Fibrous
-systemmodel:TARGETING:Version Gamma-V TTS
+primaryfactory:Tokasha, Niles
 

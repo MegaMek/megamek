@@ -4,15 +4,15 @@ Hammerhead
 
 Config:Biped
 techbase:Clan
-era:3145
-rules level:3
+era:3149
+rules level:4
 
 mass:45
 engine:270 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:0
 
@@ -30,9 +30,9 @@ RTR armor:3
 RTC armor:5
 
 Weapons:3
+Streak SRM 6, Left Torso
 Large Pulse Laser, Right Torso
 ER Medium Laser, Center Torso
-Streak SRM 6, Left Torso
 
 Left Arm:
 Shoulder
@@ -146,11 +146,11 @@ ISAES
 -Empty-
 -Empty-
 
-manufacturer: Manufacturing Plant SFF-IT1 
+manufacturer: Manufacturing Plant SFF-IT1
 primaryfactory: Itabaiana
-systemmanufacturer:CHASSIS: SFAM Endo Steel
-systemmanufacturer:ENGINE: Firebox 270 XL
-systemmanufacturer:ARMOR: Double-Forged ZX20 Hardened
-systemmanufacturer:COMMUNICATIONS: Comset 1
+systemmanufacturer:CHASSIS:SFAM Endo Steel
+systemmanufacturer:ENGINE:Firebox 270 XL
+systemmanufacturer:ARMOR:Double-Forged ZX20 Hardened
+systemmanufacturer:COMMUNICATIONS:Comset 1
 systemmanufacturer:TARGETING:Dtrac Suite 4
 

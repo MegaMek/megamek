@@ -45,8 +45,8 @@
     </KeyBind>
 
     <KeyBind>
-        <command>toggleChat</command> <!-- Enter -->
-        <keyCode>10</keyCode>
+        <command>toggleChat</command> <!-- Backquote/grave -->
+        <keyCode>192</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

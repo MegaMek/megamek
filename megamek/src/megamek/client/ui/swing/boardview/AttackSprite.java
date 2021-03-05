@@ -9,7 +9,6 @@ import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -33,12 +32,9 @@ import megamek.common.actions.WeaponAttackAction;
  * arrow. Arrow becoming cut in half when two Meks attacking each other.
  */
 class AttackSprite extends Sprite {
-    /**
-     * 
-     */
     private final BoardView1 boardView1;
 
-    private ArrayList<AttackAction> attacks = new ArrayList<AttackAction>();
+    private ArrayList<AttackAction> attacks = new ArrayList<>();
 
     private Point a;
 
@@ -77,7 +73,7 @@ class AttackSprite extends Sprite {
         target = this.boardView1.game.getTarget(targetType, targetId);
 
         // color?
-        attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
+        attackColor = ae.getOwner().getColour().getColour();
         // angle of line connecting two hexes
         Coords targetPosition;
         if (Compute.isGroundToAir(ae, target)) {

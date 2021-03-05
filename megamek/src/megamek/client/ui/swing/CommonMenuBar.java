@@ -86,7 +86,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      * Record the current phase of the game.
      */
     private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
-    private JMenuItem filePrint;
+    //private JMenuItem filePrint;
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
     private JMenuItem viewAccessibilityWindow;
@@ -330,18 +330,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         submenu.add(fileUnitsSave);
 
         // Finish off the File menu.
-        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
-        filePrint.addActionListener(this);
-        filePrint.setActionCommand(ClientGUI.FILE_PRINT);
-        filePrint.setEnabled(false);
+//        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
+//        filePrint.addActionListener(this);
+//        filePrint.setActionCommand(ClientGUI.FILE_PRINT);
+//        filePrint.setEnabled(false);
         menu.addSeparator();
-        menu.add(filePrint);
+//        menu.add(filePrint);
 
         // *** Create the view menu.
-        menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu")); //$NON-NLS-1$
+        menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(KeyEvent.VK_V);
         add(menu);
-        viewMekDisplay = new JMenuItem(Messages.getString("CommonMenuBar.viewMekDisplay")); //$NON-NLS-1$
+        viewMekDisplay = new JMenuItem(Messages.getString("CommonMenuBar.viewMekDisplay"));
         viewMekDisplay.addActionListener(this);
         viewMekDisplay.setActionCommand(ClientGUI.VIEW_MEK_DISPLAY);
         viewMekDisplay.setMnemonic(KeyEvent.VK_D);
@@ -349,7 +349,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMekDisplay);
         
-        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow")); //$NON-NLS-1$
+        viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow"));
+        viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         viewAccessibilityWindow.addActionListener(this);
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);
@@ -888,7 +889,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         }
 
         // As of 2003-09-04, we can't ever print.
-        filePrint.setEnabled(false);
+//        filePrint.setEnabled(false);
 
         // the Client doesn't have any board actions
         if (client != null) {

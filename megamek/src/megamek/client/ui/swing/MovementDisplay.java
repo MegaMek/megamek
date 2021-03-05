@@ -1954,40 +1954,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantDFA"),
-                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MovementDisplay.NoTarget"));
                     clear();
                     computeMovementEnvelope(ce);
                     return;
                 }
 
                 // check if it's a valid DFA
-                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient()
-                                                                 .getGame(), cen, target, cmd);
+                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient().getGame(), cen, target, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
-                    if (clientgui
-                            .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.title",
-                                            new Object[] { target
-                                                    .getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
-                                                    Double.valueOf(
-                                                            Compute.oddsAbove(toHit
-                                                                    .getValue())),
-                                                    toHit.getDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageFor(
-                                                                            ce,
-                                                                            (target instanceof Infantry)
-                                                                                    && !(target instanceof BattleArmor))),
-                                                    toHit.getTableDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageTakenBy(ce)) }))) {
+                    if (clientgui.doYesNoDialog(
+                            Messages.getString("MovementDisplay.DFADialog.title",
+                                    target.getDisplayName()),
+                            Messages.getString("MovementDisplay.DFADialog.message",
+                                    toHit.getValueAsString(), Compute.oddsAbove(toHit.getValue()),
+                                    toHit.getDesc(),
+                                    DfaAttackAction.getDamageFor(ce, target.isConventionalInfantry()),
+                                    toHit.getTableDesc(), DfaAttackAction.getDamageTakenBy(ce)))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1998,13 +1982,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     return;
                 }
                 // if not valid, tell why
-                clientgui.doAlertDialog(
-                        Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
-                        toHit.getDesc());
+                clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), toHit.getDesc());
                 clear();
                 return;
             }
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
+            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
             updateProneButtons();
             updateRACButton();
             updateSearchlightButton();

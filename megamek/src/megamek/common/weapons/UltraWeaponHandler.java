@@ -1,26 +1,21 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 29, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -35,11 +30,9 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
+ * Created on Sep 29, 2004
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
     private final boolean twoRollsUltra; // Tracks whether or not this is an
@@ -107,7 +100,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount UACS/RACs
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             return 1;
         }
 
@@ -186,7 +179,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             if (howManyShots > 1) { // Is this a cluser attack?
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * wtype.getDamage();

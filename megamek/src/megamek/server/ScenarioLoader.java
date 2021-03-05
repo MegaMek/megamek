@@ -208,8 +208,7 @@ public class ScenarioLoader {
                     MegaMek.getLogger().error(String.format("\tInvalid location specified %d", specDamage.loc));
                 } else {
                     // Infantry only take damage to "internal"
-                    if (specDamage.internal
-                        || ((damagePlan.entity instanceof Infantry) && !(damagePlan.entity instanceof BattleArmor))) {
+                    if (specDamage.internal || damagePlan.entity.isConventionalInfantry()) {
                         if (damagePlan.entity.getOInternal(specDamage.loc) > specDamage.setArmorTo) {
                             damagePlan.entity.setInternal(specDamage.setArmorTo, specDamage.loc);
                             MegaMek.getLogger().debug(String.format("\tSet armor value for (internal %s) to %d",

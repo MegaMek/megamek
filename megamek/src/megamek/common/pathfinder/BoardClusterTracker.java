@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.common.Building;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -365,7 +366,13 @@ public class BoardClusterTracker {
         if (!hex.containsTerrain(Terrains.BLDG_CF) && !hex.containsExit(Terrains.FUEL_TANK_CF)) {
             return false;
         } else if (relevantMovementType == MovementType.Walker) {
-            int buildingCF = board.getBuildingAt(coords).getCurrentCF(coords);
+            final Building building = board.getBuildingAt(coords);
+            
+            if (building == null) {
+                return false;
+            }
+            
+            int buildingCF = building.getCurrentCF(coords);
             
             return entity.getWeight() > buildingCF;            
         } else if ((relevantMovementType != MovementType.Flyer) &&

@@ -14,15 +14,12 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.util.ColorParser;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -115,8 +112,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
+    public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
+    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
-    public static final String UNIT_LABEL_BORDER_TEAM = "EntityTeamLabelColor";
+    public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -249,9 +249,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     protected GUIPreferences() {
-
-        store = PreferenceManager.getInstance().getPreferenceStore(
-                getClass().getName());
+        store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
@@ -264,40 +262,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
         store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_MOVE_DEFAULT_CLIMB_MODE, true);
-        setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
-        setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
-        setDefault(ADVANCED_MOVE_JUMP_COLOR, "red");
+        setDefault(ADVANCED_MOVE_DEFAULT_COLOR, Color.CYAN);
+        setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, Color.DARK_GRAY);
+        setDefault(ADVANCED_MOVE_JUMP_COLOR, Color.RED);
         setDefault(ADVANCED_MOVE_MASC_COLOR, new Color(255, 140, 0));
-        setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
+        setDefault(ADVANCED_MOVE_RUN_COLOR, Color.YELLOW);
         setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
         setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, new Color(255,0,255));
-        setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, "cyan");
-        setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, "cyan");
-        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, "red");
+        setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, Color.CYAN);
+        setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, Color.CYAN);
+        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, Color.RED);
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
-        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2588");     // █
-        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u2593");       //  ▓
-        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2327");
-        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(0, 0, 0)); // HTML hex #008000
-        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(221, 96, 0));  // HTML hex #DD6000
-        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(255, 204, 204));  // HTML hex #FFCCCC
+        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square    
+        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot     
+        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x 
+        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(100, 180, 100)); // medium green 
+        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, new Color(180, 180, 100));  // medium yellow
+        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(150, 80, 80));  // medium dark red  
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(WARNING_COLOR, Color.RED);
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
 
-
-        setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
-        setDefault(ADVANCED_MOVE_FONT_SIZE,26);
-        setDefault(ADVANCED_MOVE_FONT_STYLE,java.awt.Font.BOLD);
-
+        setDefault(ADVANCED_MOVE_FONT_TYPE, Font.SANS_SERIF);
+        setDefault(ADVANCED_MOVE_FONT_SIZE, 26);
+        setDefault(ADVANCED_MOVE_FONT_STYLE, Font.BOLD);
 
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 50);
-        store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
-        setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
+        store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, false);
+        setDefault(ADVANCED_MAPSHEET_COLOR, Color.BLUE);
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
-        setDefault(ADVANCED_BUILDING_TEXT_COLOR, "blue");
+        setDefault(ADVANCED_BUILDING_TEXT_COLOR, Color.BLUE);
         setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(255, 255, 255));
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
@@ -305,21 +301,27 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);        
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
-        store.setDefault(ADVANCED_SHOW_FPS, "false");
-        store.setDefault(ADVANCED_SHOW_COORDS, "true");
+        store.setDefault(ADVANCED_SHOW_FPS, false);
+        store.setDefault(ADVANCED_SHOW_COORDS, true);
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
-
+        store.setDefault(FOV_HIGHLIGHT, false);
+        store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
+        store.setDefault(FOV_DARKEN, true);
+        store.setDefault(FOV_DARKEN_ALPHA, 100);
+        store.setDefault(FOV_STRIPES, 35);
+        store.setDefault(FOV_GRAYSCALE, false);
 
         store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
-        store.setDefault(SHADOWMAP, false);
+        store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);
         store.setDefault(FLOATINGISO, false);
         store.setDefault(LEVELHIGHLIGHT, false);
+
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -327,22 +329,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
+        store.setDefault(GAME_SUMMARY_MINI_MAP, false);
+        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
-        store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
-        store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
-        store.setDefault(FIRING_SOLUTIONS,true);
-        store.setDefault(FOV_HIGHLIGHT,false);
-        store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
-        store.setDefault(FOV_DARKEN,true);
-        store.setDefault(FOV_DARKEN_ALPHA, 100);
-        store.setDefault(FOV_STRIPES, 35);
-        store.setDefault(FOV_GRAYSCALE, "false");
+        store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
+        store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
+        store.setDefault(FIRING_SOLUTIONS, true);
+
         store.setDefault(IMAGE_CHOOSER_POS_X, 200);
         store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
         store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
         store.setDefault(IMAGE_CHOOSER_SIZE_HEIGHT, 400);
         store.setDefault(IMAGE_CHOOSER_SPLIT_POS, 50);
-        setDefault(MAP_TEXT_COLOR, Color.black);
+
+        setDefault(MAP_TEXT_COLOR, Color.BLACK);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
@@ -351,24 +352,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
-        store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
-        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
-        store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
+        store.setDefault(MECH_SELECTOR_UNIT_TYPE, 0);
+        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS, 15);
+        store.setDefault(MECH_SELECTOR_RULES_LEVELS, "[0]");
         store.setDefault(MECH_SELECTOR_SORT_COLUMN, 0);
         store.setDefault(MECH_SELECTOR_SORT_ORDER, "ASCENDING");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
-        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
-        store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
+        store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
+        store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
+
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
+
         store.setDefault(MINI_REPORT_POS_X, 200);
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
-        store.setDefault(MOUSE_WHEEL_ZOOM, false);
-        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, false);
+
+        store.setDefault(MOUSE_WHEEL_ZOOM, true);
+        store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
+
         store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
@@ -382,39 +387,51 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
         store.setDefault(NAG_FOR_DOOMED, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
-        setDefault(RULER_COLOR_1, Color.cyan);
-        setDefault(RULER_COLOR_2, Color.magenta);
+
+        setDefault(RULER_COLOR_1, Color.CYAN);
+        setDefault(RULER_COLOR_2, Color.MAGENTA);
         store.setDefault(RULER_POS_X, 0);
         store.setDefault(RULER_POS_Y, 0);
         store.setDefault(RULER_SIZE_HEIGHT, 300);
         store.setDefault(RULER_SIZE_WIDTH, 500);
+
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_FIELD_OF_FIRE, true);
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
         store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
+        store.setDefault(SOUND_MUTE, true);
+
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
+        store.setDefault(SHOW_WPS_IN_TT, true);
+        store.setDefault(SHOW_ARMOR_MINIVIS_TT, true);
+        store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);
+
+        store.setDefault(USE_ISOMETRIC, false);
+
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
+
         store.setDefault(RND_MAP_SIZE_HEIGHT, 500);
         store.setDefault(RND_MAP_SIZE_WIDTH, 500);
         store.setDefault(RND_MAP_POS_X, 400);
         store.setDefault(RND_MAP_POS_Y, 400);
         store.setDefault(RND_MAP_ADVANCED, false);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
+        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
+
         store.setDefault(SHOW_MAPSHEETS, false);
-        store.setDefault(SHOW_WPS_IN_TT, false);
-        store.setDefault(SHOW_ARMOR_MINIVIS_TT, false);
-        store.setDefault(SHOW_PILOT_PORTRAIT_TT, false);
-        store.setDefault(USE_ISOMETRIC, false);
+
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
+        store.setDefault(DEFAULT_WEAP_SORT_ORDER, Entity.WeaponSortOrder.DEFAULT.ordinal());
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
-        store.setDefault(UI_THEME, javax.swing.UIManager.getSystemLookAndFeelClassName());
+        store.setDefault(UI_THEME, UIManager.getSystemLookAndFeelClassName());
 
         store.setDefault(RAT_TECH_LEVEL, 0);
         store.setDefault(RAT_BV_MIN, "5800");
@@ -427,25 +444,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MAX, "3150");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
-        
-        store.setDefault(BOARDEDIT_LOAD_SIZE_WIDTH, 400);
-        store.setDefault(BOARDEDIT_LOAD_SIZE_HEIGHT, 300);
-        
-        store.setDefault(DEFAULT_WEAP_SORT_ORDER,
-                Entity.WeaponSortOrder.DEFAULT.ordinal());
-        
-        setDefault(ALLY_UNIT_COLOR, new Color(80, 250, 250));
-        setDefault(ENEMY_UNIT_COLOR, new Color(220, 20, 20));
-        setDefault(MY_UNIT_COLOR, new Color(20, 220, 20));
-        setDefault(UNIT_LABEL_BORDER_TEAM, true);
+
+        setDefault(ALLY_UNIT_COLOR, new Color(60, 140, 240));  // greenish blue
+        setDefault(ENEMY_UNIT_COLOR, new Color(200, 40, 40)); // red
+        setDefault(MY_UNIT_COLOR, new Color(40, 210, 40));  // light green
+        setDefault(TEAM_COLORING, true);
+
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
-        
     }
 
     public void setDefault(String name, Color color) {
         store.setDefault(name, getColorString(color));
     }
 
+    @Override
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
     }
@@ -482,8 +494,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(AUTO_END_FIRING);
     }
     
-    public boolean getUnitLabelBorderTeam() {
-        return store.getBoolean(UNIT_LABEL_BORDER_TEAM);
+    public boolean getTeamColoring() {
+        return store.getBoolean(TEAM_COLORING);
     }
 
     public boolean getAutoDeclareSearchlight() {
@@ -516,6 +528,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDisplaySizeWidth() {
         return store.getInt(DISPLAY_SIZE_WIDTH);
+    }
+
+    public boolean getGameSummaryBoardView() {
+        return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
+    }
+
+    public boolean getGameSummaryMiniMap() {
+        return store.getBoolean(GAME_SUMMARY_MINI_MAP);
+    }
+
+    public boolean getEntityOwnerLabelColor() {
+        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
 
     public boolean getUnitLabelBorder() {
@@ -782,18 +806,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForWiGELanding() {
         return store.getBoolean(NAG_FOR_WIGE_LANDING);
     }
-    
-    public Color getMyUnitColor() {
-        return getColor(MY_UNIT_COLOR);
-    }
-    
-    public Color getEnemyUnitColor() {
-        return getColor(ENEMY_UNIT_COLOR);
-    }
-    
-    public Color getAllyUnitColor() {
-        return getColor(ALLY_UNIT_COLOR);
-    }
 
     public Color getRulerColor1() {
         return getColor(RULER_COLOR_1);
@@ -918,14 +930,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
-    
-    public Color getWarningColor() {
-        return getColor(WARNING_COLOR);
-    }
-    
-    public void setWarningColor(Color color) {
-        store.setValue(WARNING_COLOR, getColorString(color));
-    }
 
     public void setAntiAliasing(boolean state) {
         store.setValue(ANTIALIASING, state);
@@ -997,6 +1001,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplaySizeWidth(int i) {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setGameSummaryBoardView(boolean state) {
+        store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
+    }
+
+    public void setGameSummaryMiniMap(boolean state) {
+        store.setValue(GAME_SUMMARY_MINI_MAP, state);
+    }
+
+    public void setEntityOwnerLabelColor(boolean i) {
+        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
 
     public void setUnitLabelBorder(boolean i) {
@@ -1151,8 +1167,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARDEDIT_LOAD_SIZE_WIDTH, i);
     }
     
-    public void setUnitLabelBorderTeam(boolean bt) {
-        store.setValue(UNIT_LABEL_BORDER_TEAM, bt);
+    public void setTeamColoring(boolean bt) {
+        store.setValue(TEAM_COLORING, bt);
     }
 
     public void setMiniReportSizeHeight(int i) {
@@ -1442,39 +1458,63 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setBoardEdRndStart(boolean b) {
         store.setValue(BOARDEDIT_RNDDIALOG_START, b);
     }
-    
+
+    //region Colours
+    public Color getMyUnitColor() {
+        return getColor(MY_UNIT_COLOR);
+    }
+
     public void setMyUnitColor(Color col) {
         store.setValue(MY_UNIT_COLOR, getColorString(col));
     }
-    
+
     public void setEnemyUnitColor(Color col) {
         store.setValue(ENEMY_UNIT_COLOR, getColorString(col));
     }
-    
+
+    public Color getEnemyUnitColor() {
+        return getColor(ENEMY_UNIT_COLOR);
+    }
+
     public void setAllyUnitColor(Color col) {
         store.setValue(ALLY_UNIT_COLOR, getColorString(col));
     }
 
-    protected ColorParser p = new ColorParser();
+    public Color getAllyUnitColor() {
+        return getColor(ALLY_UNIT_COLOR);
+    }
 
-    protected String getColorString(Color color) {
-        StringBuffer b = new StringBuffer();
-        b.append(color.getRed()).append(" ");
-        b.append(color.getGreen()).append(" ");
-        b.append(color.getBlue());
-        return b.toString();
+    public Color getWarningColor() {
+        return getColor(WARNING_COLOR);
+    }
+
+    public void setWarningColor(Color color) {
+        store.setValue(WARNING_COLOR, getColorString(color));
     }
 
     public Color getColor(String name) {
-        String sresult = store.getString(name);
-        if (sresult != null) {
-            if (!p.parse(sresult)) {
-                return p.getColor();
-            }
-        }
-        return Color.black;
+        final String text = store.getString(name);
+        final Color colour = parseRGB(text);
+        return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
     }
-    
+
+    protected String getColorString(Color colour) {
+        return colour.getRed() + " " + colour.getGreen() + " " + colour.getBlue();
+    }
+
+    protected Color parseRGB(String text) {
+        final String[] codesText = text.split(" ");
+        if (codesText.length == 3) {
+            int[] codes = new int[codesText.length];
+            for (int i = 0; i < codesText.length; i++) {
+                codes[i] = Integer.parseInt(codesText[i]);
+            }
+            return new Color(codes[0], codes[1], codes[2]);
+        }
+        return Color.BLUE;
+    }
+    //endregion Colours
+
     /**
      * Activates AntiAliasing for the <code>Graphics</code> graph
      * if AA is activated in the Client settings. 
@@ -1482,10 +1522,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static void AntiAliasifSet(Graphics graph) {
         if (getInstance().getAntiAliasing()) {
-            ((Graphics2D)graph).setRenderingHint(
+            ((Graphics2D) graph).setRenderingHint(
                     RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
-
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Mechanized Hover Platoon
 </Model>
 
 <year>
-3065
+3057
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -58,8 +58,3 @@ Auto-Rifle
 <Secondary>
 LRM Launcher (FarShot)
 </Secondary>
-
-<armorKit>
-GenericKit
-</armorKit>
-

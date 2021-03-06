@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,6 +65,11 @@ public class Game implements Serializable, IGame {
      *
      */
     private static final long serialVersionUID = 8376320092671792532L;
+
+    /**
+     * A UUID to identify this game instance.
+     */
+    public UUID uuid = UUID.randomUUID();
 
     /**
      * Stores the version of MM, so that it can be serialized in saved games.
@@ -692,7 +698,7 @@ public class Game implements Serializable, IGame {
      * Returns true if there is a turn after the current one
      */
     public boolean hasMoreTurns() {
-        return turnVector.size() > (turnIndex + 1);
+        return turnVector.size() > turnIndex;
     }
 
     /**
@@ -1386,6 +1392,10 @@ public class Game implements Serializable, IGame {
      * (probably due to double-blind) ignore it.
      */
     public synchronized void removeEntity(int id, int condition) {
+        // always attempt to remove the entity with this ID from the entities collection
+        // as it may have gotten stuck there.
+        entities.removeIf(ent -> (ent.getId() == id));
+        
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             // This next statement has been cluttering up double-blind
@@ -1396,7 +1406,6 @@ public class Game implements Serializable, IGame {
             return;
         }
 
-        entities.remove(toRemove);
         entityIds.remove(Integer.valueOf(id));
         removeEntityPositionLookup(toRemove);
 
@@ -1438,6 +1447,8 @@ public class Game implements Serializable, IGame {
      * Resets this game.
      */
     public synchronized void reset() {
+        uuid = UUID.randomUUID();
+
         roundCount = 0;
 
         entities.clear();
@@ -3649,6 +3660,19 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
+    }
+
+    /**
+     * Get a string representation of the UUId for this game.
+     *
+     * @return
+     */
+    public String getUUIDString() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
+        return uuid.toString();
+
     }
 
 }

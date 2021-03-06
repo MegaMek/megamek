@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -24,9 +23,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
@@ -34,9 +34,6 @@ import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
  * You know what tanks are, silly.
  */
 public class Tank extends Entity {
-    /**
-     *
-     */
     private static final long serialVersionUID = -857210851169206264L;
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
@@ -59,7 +56,7 @@ public class Tank extends Entity {
     private boolean moderateMovementDamage = false;
     private boolean heavyMovementDamage = false;
     private boolean infernoFire = false;
-    private ArrayList<Mounted> jammedWeapons = new ArrayList<Mounted>();
+    private ArrayList<Mounted> jammedWeapons = new ArrayList<>();
     protected boolean engineHit = false;
 
     // locations
@@ -508,17 +505,17 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean isImmobile() {
+    public boolean isImmobile(boolean checkCrew) {
         if ((game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
-            return super.isImmobile();
+            return super.isImmobile(checkCrew);
         }
         //Towed trailers need to reference the tractor, or they return Immobile due to 0 MP...
         //We do run into some double-blind entityList differences though, so include a null check
-        if (isTrailer() && getTractor() != Entity.NONE) {
-            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile() : super.isImmobile() || m_bImmobile);
+        if (isTrailer() && (getTractor() != Entity.NONE)) {
+            return (game.getEntity(getTractor()) != null ? game.getEntity(getTractor()).isImmobile(checkCrew) : super.isImmobile(checkCrew) || m_bImmobile);
         }
-        return super.isImmobile() || m_bImmobile;
+        return m_bImmobile || super.isImmobile(checkCrew);
     }
     
     /**
@@ -718,14 +715,23 @@ public class Tank extends Entity {
 
     @Override
     public void applyDamage() {
+        applyMovementDamage();
+
+        super.applyDamage();
+    }
+
+    /**
+     * Applies movement damage to the Tank.
+     */
+    public void applyMovementDamage() {
         m_bImmobile |= m_bImmobileHit;
-        //Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
-        if (isTrailer() && getTractor() != Entity.NONE && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
+
+        // Towed trailers need to use the values of the tractor, or they return Immobile due to 0 MP...
+        if (isTrailer() && (getTractor() != Entity.NONE) && game.getEntity(getTractor()).hasETypeFlag(Entity.ETYPE_TANK)) {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit = Tractor.m_bImmobileHit;
         }
-        super.applyDamage();
     }
 
     @Override
@@ -1307,7 +1313,7 @@ public class Tank extends Entity {
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * (getBARRating(loc) / 10);
+            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * (getBARRating(loc) / 10.0);
             bvText.append(armorBV);
             dbv += armorBV;
             bvText.append(endColumn);
@@ -1562,7 +1568,7 @@ public class Tank extends Entity {
         boolean hasTargComp = hasTargComp();
         double targetingSystemBVMod = 1.0;
 
-        if ((this instanceof SupportTank) || (this instanceof SupportVTOL)) {
+        if (isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 targetingSystemBVMod = 1.0;
             } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
@@ -1617,15 +1623,14 @@ public class Tank extends Entity {
 
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
 
             bvText.append(weaponName);
@@ -1657,8 +1662,8 @@ public class Tank extends Entity {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
-                    bvText.append(" x 1.25 RISC Laser Pulse Module");
+                    dBV *= 1.15;
+                    bvText.append(" x 1.15 RISC Laser Pulse Module");
                 }
             }
             if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
@@ -1671,8 +1676,7 @@ public class Tank extends Entity {
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
                 bvText.append(" x 1.25 Direct Fire and TC");
-            } else if ((this instanceof SupportTank)
-                    && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
+            } else if (isSupportVehicle() && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMod;
                 bvText.append(" x ");
                 bvText.append(targetingSystemBVMod);
@@ -1909,6 +1913,7 @@ public class Tank extends Entity {
                     || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_BULLDOZER)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)
                     || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;
@@ -1976,7 +1981,7 @@ public class Tank extends Entity {
         double runMP = getRunMP(false, true, true);
 
         // Trains use cruise instead of flank MP for speed factor
-        if (getMovementMode() == EntityMovementMode.RAIL) {
+        if (getMovementMode().equals(EntityMovementMode.RAIL) || getMovementMode().equals(EntityMovementMode.MAGLEV)) {
             runMP = getWalkMP(false, true, true);
         }
         // trailers have original run MP of 0, but should count at 1 for speed
@@ -2288,6 +2293,14 @@ public class Tank extends Entity {
             return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
         }
         return Integer.toString(getSprintMP());
+    }
+
+    @Override
+    public int getRunningGravityLimit() {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return getSprintMP(false, false, false);
+        }
+        return getRunMP(false, false, false);
     }
 
     @Override
@@ -2699,28 +2712,19 @@ public class Tank extends Entity {
         }
 
         double freeHeatSinks = (hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0);
-        int sinks = 0;
+        int sinks = TestEntity.calcHeatNeutralHSRequirement(this);
         double turretWeight = 0;
-        double paWeight = 0;
+        double paWeight = getPowerAmplifierWeight();
         for (Mounted m : getWeaponList()) {
-            WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
-                sinks += wt.getHeat();
-                paWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoTurret() && (m.getLocation() == getLocTurret())) {
+            if ((m.getLocation() == getLocTurret()) || (m.getLocation() == getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
-            }
-            if (!hasNoDualTurret() && (m.getLocation() == getLocTurret2())) {
-                turretWeight += m.getTonnage() / 10.0;
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
+                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    turretWeight += m.getLinkedBy().getTonnage() / 10.0;
+                }
             }
         }
-        paWeight = Math.ceil(paWeight * 2) / 2;
-        if ((hasEngine() && (getEngine().isFusion() || getEngine().getEngineType() == Engine.FISSION))
-                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            paWeight = 0;
-        }
-        turretWeight = Math.ceil(turretWeight * 2) / 2;
+        turretWeight = RoundWeight.standard(turretWeight, this);
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
@@ -3496,6 +3500,8 @@ public class Tank extends Entity {
         minorMovementDamage = false;
         moderateMovementDamage = false;
         heavyMovementDamage = false;
+        m_bImmobileHit = false;
+        m_bImmobile = false;
     }
 
     public void unlockTurret() {
@@ -3792,8 +3798,6 @@ public class Tank extends Entity {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
-        boolean isInfantry = (ae instanceof Infantry)
-                && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");
@@ -3803,7 +3807,7 @@ public class Tank extends Entity {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
                 case RangeType.RANGE_SHORT:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(0, "stealth");
                     } else {
                         // must be infantry
@@ -3811,7 +3815,7 @@ public class Tank extends Entity {
                     }
                     break;
                 case RangeType.RANGE_MEDIUM:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(1, "stealth");
                     } else {
                         // must be infantry
@@ -3821,7 +3825,7 @@ public class Tank extends Entity {
                 case RangeType.RANGE_LONG:
                 case RangeType.RANGE_EXTREME:
                 case RangeType.RANGE_LOS:
-                    if (isStealthActive() && !isInfantry) {
+                    if (isStealthActive() && !ae.isConventionalInfantry()) {
                         result = new TargetRoll(2, "stealth");
                     } else {
                         // must be infantry
@@ -3831,8 +3835,7 @@ public class Tank extends Entity {
                 case RangeType.RANGE_OUT:
                     break;
                 default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -4025,56 +4028,32 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean isCrippled() {
+        return isCrippled(true);
+    }
+
+    @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front armor destroyed.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Right armor destroyed.");
-            }
+        } else if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Left armor destroyed.");
-            }
+        } else if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
-        }
-        if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Turret destroyed.");
-            }
+        } else if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
-        }
-
-        if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Front Turret destroyed.");
-            }
+        } else if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
             return true;
-        }
-        if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Rear armor destroyed.");
-            }
+        } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
-        }
-
-        if (isPermanentlyImmobilized(checkCrew)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out
-                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
-            }
+        } else if (isPermanentlyImmobilized(checkCrew)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -4088,27 +4067,23 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: has no more viable weapons.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
     }
 
     @Override
-    public boolean isCrippled() {
-        return isCrippled(true);
-    }
-
-    @Override
     public boolean isDmgHeavy() {
-        if (((double) getWalkMP() / getOriginalWalkMP()) <= 0.5) {
+        // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
+        if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
-        }
-
-        if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.33.");
             return true;
         }
 
@@ -4131,6 +4106,9 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.67.");
             return true;
         }
 
@@ -4153,11 +4131,15 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgLight() {
-        if (getWalkMP() < getOriginalWalkMP()) {
+        // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
+        if (getMotiveDamage() > 0) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;
-        }
-
-        if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+        } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.8.");
             return true;
         }
 

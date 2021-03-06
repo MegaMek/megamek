@@ -23,7 +23,6 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -74,7 +73,7 @@ public class MultiTargetFireControl extends FireControl {
         facingChanges.add(0); // "no facing change"
         
         for(int currentTwist : facingChanges) {
-            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
             
             FiringPlan currentPlan = calculateFiringPlan(shooter, weaponList);
             currentPlan.setTwist(currentTwist);
@@ -100,7 +99,7 @@ public class MultiTargetFireControl extends FireControl {
         }
         
         // put it back as we found it
-        shooter.setSecondaryFacing(originalFacing);        
+        shooter.setSecondaryFacing(originalFacing, false);        
         
         return bestPlan;
     }
@@ -116,7 +115,7 @@ public class MultiTargetFireControl extends FireControl {
         for(Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
             if(owner.getHonorUtil().isEnemyBroken(target.getTargetId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
-                owner.log(getClass(), "MultiTargetFireControl.getBestShot", LogLevel.INFO, target.getDisplayName() + " is broken - ignoring");
+                owner.getLogger().info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
             

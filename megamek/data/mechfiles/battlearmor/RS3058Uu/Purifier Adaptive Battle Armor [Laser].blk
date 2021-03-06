@@ -24,6 +24,10 @@ Purifier Adaptive Battle Armor
 3062
 </year>
 
+<originalBuildYear>
+3062
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 1
@@ -45,19 +52,19 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BABattleClaw:LA
 ISBAERSmallLaser:LA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-IS BA Mimetic:RA
-IS BA Mimetic:Body
-IS BA Mimetic:RA
-IS BA Mimetic:Body
-IS BA Mimetic:Body
-IS BA Mimetic:Body
-IS BA Mimetic:RA
+BA Mimetic:RA
+BA Mimetic:Body
+BA Mimetic:RA
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:RA
+BABattleClaw:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

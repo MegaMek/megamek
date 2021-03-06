@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -27,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
@@ -35,9 +35,6 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * Taharqa's attempt at creating an Aerospace entity
  */
 public class Aero extends Entity implements IAero, IBomber {
-    /**
-     *
-     */
     private static final long serialVersionUID = 7196307097459255187L;
 
     // locations
@@ -118,6 +115,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int engineHits = 0;
     private int avionicsHits = 0;
     private int cicHits = 0;
+    private boolean fuelTankHit = false;
     private boolean gearHit = false;
     private int structIntegrity;
     private int orig_structIntegrity;
@@ -295,7 +293,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
-        if (getCockpitTechAdvancement() != null) {
+        if (isFighter() && (getCockpitTechAdvancement() != null)) {
             ctl.addComponent(getCockpitTechAdvancement());
         }
     }
@@ -677,6 +675,14 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         fcsHits = hits;
     }
+    
+    public boolean fuelTankHit() {
+        return fuelTankHit;
+    }
+    
+    public void setFuelTankHit(boolean value) {
+        fuelTankHit = value;
+    }
 
     public void setCICHits(int hits) {
         if (hits > 3) {
@@ -863,7 +869,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
-            return 80 * primitiveFuelFactor();
+            return 80 / primitiveFuelFactor();
         }
         return 80;
     }
@@ -1357,8 +1363,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 0; loc < (this instanceof SmallCraft ? locations() : (locations() - 1)); loc++) {
-
+        // Ignore any hull/fuselage or capital fighter wing locations
+        for (int loc = 0; loc < locations() - ((this instanceof SmallCraft) ? 1 : 2); loc++) {
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
                 if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
@@ -1369,25 +1375,28 @@ public class Aero extends Entity implements IAero, IBomber {
             // total armor points
 
             switch (getArmorType(loc)) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-            case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                armorMultiplier = 1.2;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+            if (hasBARArmor(loc)) {
+                armorMultiplier *= getBARRating(loc) / 10.0;
             }
 
             if (blueShield) {
@@ -1611,6 +1620,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // subtract for explosive ammo
         double explosivePenalty = 0;
+        // FIXME: Consider new AmmoType::equals / BombType::equals
         Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
@@ -1652,6 +1662,8 @@ public class Aero extends Entity implements IAero, IBomber {
             if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
+                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC)
                     || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }
@@ -1829,14 +1841,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : weapon.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -1982,14 +1994,14 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                double mgBV = 0;
+                for (int eqNum : mounted.getBayWeapons()) {
+                    Mounted mg = getEquipment(eqNum);
+                    if ((mg != null) && (!mg.isDestroyed())) {
+                        mgBV += mg.getType().getBV(this);
                     }
                 }
-                dBV = mgaBV * 0.67;
+                dBV = mgBV * 0.67;
             }
             // artemis bumps up the value
             // PPC caps do, too
@@ -2021,7 +2033,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.25;
+                    dBV *= 1.15;
                     name = name.concat(" with RISC Laser Pulse Module");
                 }
             }
@@ -2673,7 +2685,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -3250,7 +3263,6 @@ public class Aero extends Entity implements IAero, IBomber {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
-        boolean isInfantry = (ae instanceof Infantry) && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");
@@ -3261,14 +3273,14 @@ public class Aero extends Entity implements IAero, IBomber {
             switch (range) {
             case RangeType.RANGE_MINIMUM:
             case RangeType.RANGE_SHORT:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(0, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");
                 }
                 break;
             case RangeType.RANGE_MEDIUM:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(1, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");
@@ -3277,7 +3289,7 @@ public class Aero extends Entity implements IAero, IBomber {
             case RangeType.RANGE_LONG:
             case RangeType.RANGE_EXTREME:
             case RangeType.RANGE_LOS:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(2, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");
@@ -3943,35 +3955,32 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isCrippled() {
-        double internalPercent = getInternalRemainingPercent();
-        String msg = getDisplayName() + " CRIPPLED: ";
-        
+        return isCrippled(true);
+    }
+
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
         if (isEjecting()) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
             return true;
-        }
-        if (internalPercent < 0.5) {
-            System.out.println(msg + "only " + NumberFormat.getPercentInstance().format(internalPercent)
-                    + " internals remaining.");
+        } else if (getInternalRemainingPercent() < 0.5) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(getInternalRemainingPercent()) + " internals remaining.");
             return true;
-        }
-        if (getEngineHits() > 0) {
-            System.out.println(msg + engineHits + " Engine Hits.");
+        } else if (getEngineHits() > 0) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
-        }
-        if (getPotCrit() == CRIT_FUEL_TANK) {
-            System.out.println(msg + " Fuel Tank Hit.");
+        } else if (fuelTankHit()) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
-        }
-        if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println(msg + getCrew().getHits() + " Crew Hits.");
+        } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
             return true;
-        }
-        if (getFCSHits() >= 3) {
-            System.out.println(msg + fcsHits + " Fire Control Destroyed.");
+        } else if (getFCSHits() >= 3) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
             return true;
-        }
-        if (getCICHits() >= 3) {
-            System.out.println(msg + cicHits + " Combat Information Center Destroyed.");
+        } else if (getCICHits() >= 3) {
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
             return true;
         }
 
@@ -3981,27 +3990,28 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (!hasViableWeapons()) {
-            System.out.println(msg + " no more viable weapons.");
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
             return true;
+        } else {
+            return false;
         }
-        return false;
-    }
-
-    @Override
-    public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
     }
 
     @Override
     public boolean isDmgHeavy() {
         if (getArmorRemainingPercent() <= 0.33) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.33.");
             return true;
-        }
-
-        if (getInternalRemainingPercent() < 0.67) {
+        } else if (getInternalRemainingPercent() < 0.67) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Heavily Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
+                    + " is less than 0.67.");
             return true;
-        }
-        if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+        } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + "Moderately Damaged: The crew has taken a minimum of three hits.");
             return true;
         }
 
@@ -4024,14 +4034,18 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.5) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.50.");
             return true;
-        }
-
-        if (getInternalRemainingPercent() < 0.75) {
+        } else if (getInternalRemainingPercent() < 0.75) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Moderately Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
+                    + " is less than 0.75.");
             return true;
-        }
-
-        if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+        } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Moderately Damaged: The crew has taken a minimum of two hits.");
             return true;
         }
 
@@ -4053,14 +4067,18 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgLight() {
         if (getArmorRemainingPercent() <= 0.75) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
+                    + " is less than or equal to 0.75.");
             return true;
-        }
-
-        if (getInternalRemainingPercent() < 0.9) {
+        } else if (getInternalRemainingPercent() < 0.9) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
+                    + " is less than 0.9.");
             return true;
-        }
-
-        if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+        } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+            MegaMek.getLogger().debug(getDisplayName()
+                    + " Lightly Damaged: The crew has taken a minimum of one hit.");
             return true;
         }
 

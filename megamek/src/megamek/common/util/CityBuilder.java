@@ -287,14 +287,11 @@ public class CityBuilder {
     private void buildMetroCity(int maxX, int maxY) {
         int midX = maxX / 2;
         int midY = maxY / 2;
-
-        cityPlan.add(new Coords(midX, midY));
-
         // have the city hub be the mid point with all the hexes around it
         // cleared out
-        for (int hex = 0; hex < 6; hex++)
-            cityPlan.add(new Coords(Coords.xInDir(midX, midY, hex), Coords
-                    .yInDir(midX, midY, hex)));
+        Coords mid = new Coords(midX, midY);
+        cityPlan.add(mid);
+        cityPlan.addAll(mid.allAdjacent());
 
         // first east west road
         Coords coords = new Coords(-1, midY / 2);
@@ -320,8 +317,8 @@ public class CityBuilder {
     }
 
     private Coords selectNextGrid(int dir, Coords coords) {
-        int x = Coords.xInDir(coords.getX(), coords.getY(), dir);
-        int y = Coords.yInDir(coords.getX(), coords.getY(), dir);
+        int x = coords.xInDir(dir);
+        int y = coords.yInDir(dir);
 
         if (dir == E) {
             x++;

@@ -458,7 +458,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);

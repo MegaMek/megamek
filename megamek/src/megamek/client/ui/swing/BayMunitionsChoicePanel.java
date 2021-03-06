@@ -31,6 +31,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
@@ -40,7 +41,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -108,8 +108,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             entity.addEquipment(mounted, row.bay.getLocation(), row.bay.isRearMounted());
                             row.bay.addAmmoToBay(entity.getEquipmentNum(mounted));
                         } catch (LocationFullException e) {
-                            DefaultMmLogger.getInstance().error(BayMunitionsChoicePanel.class,
-                                    "apply()", e);
+                            MegaMek.getLogger().error(e);
                         }
 
                     } else {

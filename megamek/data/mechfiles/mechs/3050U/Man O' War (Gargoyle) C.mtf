@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Man O' War (Gargoyle)
 C
 
@@ -31,7 +31,7 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:7
+Weapons:8
 Ultra AC/20, Left Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
@@ -39,6 +39,7 @@ ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -87,7 +88,7 @@ Fusion Engine
 Fusion Engine
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -107,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+CLERSmallLaser (omnipod)
 -Empty-
 
 Head:
@@ -144,7 +145,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 CLAntiPersonnelPod (omnipod)
-CLAntiPersonnelPod (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

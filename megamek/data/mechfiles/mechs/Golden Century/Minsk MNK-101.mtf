@@ -1,10 +1,10 @@
-Version:1.0
+Version:1.1
 Minsk
 MNK-101
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:2829
+era:2830
 source:Succession Wars
 rules level:4
 
@@ -13,7 +13,7 @@ engine:210 Fusion (Clan) Engine
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:3
 jump mp:0
 
@@ -76,12 +76,12 @@ CLLRM10
 CLSRM6
 CLSmallPulseLaser
 CLMG
-Clan Machine Gun Ammo - Full
 Clan Ammo LRM-10
 Clan Ammo SRM-6
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
+-Empty-
 
 Right Torso:
 CLDoubleHeatSink
@@ -89,13 +89,13 @@ CLDoubleHeatSink
 CLSRM6
 CLSmallPulseLaser
 CLMG
+Clan Machine Gun Ammo - Full
 Clan Ammo SRM-6
 BeagleActiveProbe
 BeagleActiveProbe
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
 
 Center Torso:
 Fusion Engine

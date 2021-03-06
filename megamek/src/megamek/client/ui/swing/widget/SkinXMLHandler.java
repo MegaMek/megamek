@@ -72,7 +72,7 @@ public class SkinXMLHandler {
         sb.append("  NOTE: All locations should be in data/images/widgets\n");
         sb.append("-->\n");
         sb.append("<skin xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-        sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsl\">\n");
+        sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsd\">\n");
         SKIN_HEADER = sb.toString();
     }
 

@@ -24,6 +24,10 @@ MIT23 MASH Vehicle
 3067
 </year>
 
+<originalBuildYear>
+3067
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -52,6 +59,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
+MASH Equipment:SIZE:7
 </Body Equipment>
 
 <Front Equipment>

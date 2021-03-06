@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -112,4 +112,3 @@ H:Operation Klondyke - Star League
 <tonnage>
 75.0
 </tonnage>
-

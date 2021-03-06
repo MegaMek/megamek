@@ -1,19 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 23, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -26,7 +22,6 @@ import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -36,11 +31,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * Created on Sep 23, 2004
  */
 public class FlamerHandler extends WeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = -7348456582587703751L;
 
     /**
@@ -103,13 +96,12 @@ public class FlamerHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         int toReturn = super.calcDamagePerHit();
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             // pain shunted infantry get half damage
             if (((Entity) target).hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
-        } else if ((target instanceof BattleArmor)
-                && ((BattleArmor) target).isFireResistant()) {
+        } else if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
             toReturn = 0;
         }
         return toReturn;

@@ -58,9 +58,11 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -76,8 +78,8 @@ import javax.swing.ToolTipManager;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalTheme;
 
+import megamek.MegaMek;
 import megamek.client.TimerSingleton;
-import megamek.client.bot.princess.BotGeometry;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
 import megamek.client.bot.princess.Princess;
@@ -98,7 +100,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -533,18 +534,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent we) {
                 Point mousePoint = we.getPoint();
-                Point dispPoint = new Point();
-                dispPoint.setLocation(mousePoint.x + getBounds().x,
-                        mousePoint.y + getBounds().y);
+                Point dispPoint = new Point(mousePoint.x + getBounds().x, mousePoint.y + getBounds().y);
+                
+                // If the mouse is over an IDisplayable, have it react instead of the board
+                // Currently only implemented for the ChatterBox
                 for (int i = 0; i < displayables.size(); i++) {
                     IDisplayable disp = displayables.get(i);
                     if (!(disp instanceof ChatterBox2)) {
-                        break;
+                        continue;
                     }
-                    double width = scrollpane.getViewport().getSize()
-                                             .getWidth();
-                    double height = scrollpane.getViewport().getSize()
-                                              .getHeight();
+                    double width = scrollpane.getViewport().getSize().getWidth();
+                    double height = scrollpane.getViewport().getSize().getHeight();
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
                     // we need to adjust the point, because it should be against
@@ -560,6 +560,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         return;
                     }
                 }
+                
                 // calculate a few things to reposition the map
                 Coords zoomCenter = getCoordsAt(we.getPoint());
                 Point hexL = getCentreHexLocation(zoomCenter);
@@ -569,57 +570,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 double ihdx = ((double)inhexDelta.x)/((double)HEX_W)/scale;
                 double ihdy = ((double)inhexDelta.y)/((double)HEX_H)/scale;
                 int oldzoomIndex = zoomIndex;
+                
+                boolean ZoomNoCtrl = GUIPreferences.getInstance().getMouseWheelZoom();
+                boolean wheelFlip = GUIPreferences.getInstance().getMouseWheelZoomFlip();
+                boolean zoomIn = (we.getWheelRotation() > 0) ^ wheelFlip; // = XOR
+                boolean doZoom = ZoomNoCtrl ^ we.isControlDown(); // = XOR
+                boolean horizontalScroll = !doZoom && we.isShiftDown();
 
-                if (GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
-                            .getInstance().getMouseWheelZoomFlip())
-                                     || ((we.getWheelRotation() <= 0) && GUIPreferences
-                            .getInstance().getMouseWheelZoomFlip());
+                if (doZoom) {
                     if (zoomIn) {
                         zoomIn();
                     } else {
                         zoomOut();
                     }
-                    if (zoomIndex != oldzoomIndex)
+                    if (zoomIndex != oldzoomIndex) {
                         adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-
-                } else {
-                    if (we.isControlDown()) {
-                        boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
-                                .getInstance().getMouseWheelZoomFlip())
-                                         || ((we.getWheelRotation() <= 0) && GUIPreferences
-                                .getInstance().getMouseWheelZoomFlip());
-                        if (zoomIn) {
-                            zoomOut();
-                        } else {
-                            zoomIn();
-                        }
-                        if (zoomIndex != oldzoomIndex)
-                            adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
-                    } else if (we.isShiftDown()) {
-                        int notches = we.getWheelRotation();
-                        if (notches < 0) {
-                            hbar.setValue((int) (hbar.getValue() - (HEX_H
-                                                                    * scale * (-1 * notches))));
-
-                        } else {
-                            hbar.setValue((int) (hbar.getValue() + (HEX_H
-                                                                    * scale * (notches))));
-                        }
-                        stopSoftCentering();
-                    } else {
-                        int notches = we.getWheelRotation();
-                        if (notches < 0) {
-                            vbar.setValue((int) (vbar.getValue() - (HEX_H
-                                                                    * scale * (-1 * notches))));
-
-                        } else {
-                            vbar.setValue((int) (vbar.getValue() + (HEX_H
-                                                                    * scale * (notches))));
-                        }
-                        stopSoftCentering();
                     }
+                } else { // SCROLL
+                    if (horizontalScroll) {
+                        hbar.setValue((int) (hbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                    } else {
+                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (we.getWheelRotation()))));
+                    }
+                    stopSoftCentering();
                 }
+                
                 pingMinimap();
             }
         });
@@ -756,11 +731,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -777,11 +748,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -805,11 +772,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -856,11 +819,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -888,11 +847,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -920,11 +875,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -952,11 +903,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -984,11 +931,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1006,11 +949,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1037,11 +976,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return !shouldIgnoreKeyCommands();
                     }
 
                     @Override
@@ -1049,6 +984,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         toggleKeybindsOverlay();
                     }
                 });
+        
+        // Register the action for TOGGLE_HEX_COORDS
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_HEX_COORDS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        return !shouldIgnoreKeyCommands();
+                    }
+
+                    @Override
+                    public void performAction() {
+                        boolean coordsShown = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS);
+                        GUIPreferences.getInstance().setValue(GUIPreferences.ADVANCED_SHOW_COORDS, !coordsShown);
+                    }
+
+                });
+
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1105,8 +1058,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
                 || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
-                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER_TEAM)
-                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)) {
+                || e.getName().equals(GUIPreferences.TEAM_COLORING)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)
+                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
             updateEntityLabels();
             for (Sprite s: wreckSprites) {
                 s.prepare();
@@ -1117,7 +1071,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
-                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)) {
+                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
+                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN)
+                || e.getName().equals(GUIPreferences.FOV_DARKEN_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_GRAYSCALE)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)
+                || e.getName().equals(GUIPreferences.FOV_STRIPES)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB)
+                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII)
+                || e.getName().equals(GUIPreferences.SHADOWMAP)) {
             clearHexImageCache();
             repaint();
         }
@@ -1258,11 +1222,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (x == 0) {
                         xRem = clipping.x % w;
                     }
-                    if (xRem != 0 || yRem != 0) {
-                        g.drawImage(
-                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
-                                        h - yRem),
-                                clipping.x + x, clipping.y + y, this);
+                    if ((xRem > 0) || (yRem > 0)) {
+                        try {
+                            g.drawImage(
+                                    bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                            h - yRem),
+                                    clipping.x + x, clipping.y + y, this);
+                        } catch (Exception e) {
+                            // if we somehow messed up the math, log the error and simply act as if we have no background image.
+                            Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
+                            
+                            String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
+                                    rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
+                                    xRem, yRem, w - xRem, h - yRem);
+                            MegaMek.getLogger().error(this, errorData);
+                        }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
                                 this);
@@ -1502,7 +1476,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
-        Set<Coords> donut = BotGeometry.getHexDonut(coords, radius);
+        List<Coords> donut = coords.allAtDistance(radius);
 
         for(Coords donutCoords : donut) {
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
@@ -2040,7 +2014,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 while (allP.hasMoreElements()) {
                     cp = allP.nextElement();
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
-                        Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
+                        Color bC = cp.getColour().getColour();
                         drawHexBorder(g, getHexLocation(c), bC, (bThickness+2)
                                 * pCount, bThickness);
                         pCount++;
@@ -2352,6 +2326,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * mapsheets), draws the hexes onto it, and returns that image.
      */
     public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+        // Set zoom to base, so we get a consist board image
+
+        int oldZoom = zoomIndex;
+        zoomIndex = BASE_ZOOM_INDEX;
+        zoom();
+
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
         boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
@@ -2359,6 +2339,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
+
+        if (shadowMap == null) {
+            updateShadowMap();
+        }
+
         // Draw hexes
         drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
 
@@ -2452,8 +2437,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-
         boardGraph.dispose();
+
+        // Restore the zoom setting
+        zoomIndex = oldZoom;
+        zoom();
+
         return (BufferedImage) entireBoard;
     }
 
@@ -5333,6 +5322,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryBoardView() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+                        + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                try {
+                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
             refreshAttacks();
 
             // Clear some information regardless of what phase it is
@@ -5778,6 +5783,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             new Object[] { distance }));
                 }
 
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+                    LosEffects los = fovHighlightingAndDarkening.getCachedLosEffects(selectedEntity.getPosition(), mcoords);
+                    int bracket = Compute.getSensorRangeBracket(selectedEntity, null,
+                            fovHighlightingAndDarkening.cachedAllECMInfo);
+                    int range = Compute.getSensorRangeByBracket(game, selectedEntity, null, los);
+
+                    int maxSensorRange = bracket * range;
+                    int minSensorRange = Math.max((bracket - 1) * range, 0);
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
+                        minSensorRange = 0;
+                    }
+                    txt.append("<BR>");
+                    if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
+                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexInRange"));
+                    } else {
+                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange"));
+                    }
+                }
+
                 if ((game.getPhase() == Phase.PHASE_MOVEMENT) &&
                         (movementTarget != null)) {
                     txt.append("<BR>");
@@ -5789,6 +5813,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 new Object[] { disPM }));
                     }
                 }
+
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
 
@@ -5948,7 +5973,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader")); //$NON-NLS-1$
                     }
                     txt.append("<B><FONT COLOR=#"); //$NON-NLS-1$
-                    txt.append(Integer.toHexString(PlayerColors.getColorRGB(cp.getColorIndex())));
+                    txt.append(cp.getColour().getHexString());
                     txt.append(">&nbsp;&nbsp;"); //$NON-NLS-1$
                     txt.append(cp.getName());
                     txt.append("</FONT></B><BR>"); //$NON-NLS-1$
@@ -5957,11 +5982,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (foundPlayer) txt.append("<BR>"); //$NON-NLS-1$
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers); //$NON-NLS-1$
+            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
             if (!keybindText.isEmpty()) keybindText += "+";
-            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key); //$NON-NLS-1$
-            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint",  //$NON-NLS-1$
-                    new Object[] { keybindText }));
+            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
+            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText));
 
             txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
         }
@@ -6662,7 +6686,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             fieldFire.add(new HashSet<Coords>());
             // Add all hexes up to the weapon range to separate lists
             while (range<=fieldofFireRanges[fieldofFireWpUnderwater][bracket]) {
-                fieldFire.get(bracket).addAll(Compute.coordsAtRange(c, range));
+                fieldFire.get(bracket).addAll(c.allAtDistance(range));
                 range++;
                 if (range>100) break; // only to avoid hangs
             }

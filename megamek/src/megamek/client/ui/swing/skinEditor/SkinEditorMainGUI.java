@@ -2,15 +2,15 @@
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.skinEditor;
 
@@ -67,9 +67,7 @@ import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.tileset.CamoManager;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -79,22 +77,19 @@ import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-public class SkinEditorMainGUI extends JPanel implements WindowListener,
-        BoardViewListener, ActionListener, ComponentListener {
-
-    /**
-     * 
-     */
+public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardViewListener,
+        ActionListener, ComponentListener {
     private static final long serialVersionUID = 5625499617779156289L;
 
-    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
-    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
+    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
+    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
+    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     // a frame, to show stuff in
     private JFrame frame;
@@ -121,7 +116,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap<String, String> mainNames = new HashMap<String, String>();
+    private HashMap<String, String> mainNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the main display area.
@@ -136,7 +131,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
+    private HashMap<String, String> secondaryNames = new HashMap<>();
 
     /**
      * The <code>JPanel</code> containing the secondary display area.
@@ -153,7 +148,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Map phase component names to phase component objects.
      */
-    HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
+    HashMap<String, JComponent> phaseComponents = new HashMap<>();
 
     public SkinEditorMainGUI() {
         super(new BorderLayout());
@@ -220,7 +215,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame.setMinimumSize(new Dimension(640, 480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        List<Image> iconList = new ArrayList<Image>();
+        List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
                         .toString()));
@@ -262,7 +257,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$ 
+        frame.setTitle(Messages.getString("MegaMek.SkinEditor.label") //$NON-NLS-1$
                 + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
@@ -407,7 +402,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public CommonMenuBar getMenuBar() {
         return menuBar;
     }
-    
+
 
 
     /**
@@ -416,7 +411,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public void actionPerformed(ActionEvent event) {
     }
 
- 
+
 
     /**
      * Saves the current settings to the cfg file.
@@ -466,7 +461,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             chatlounge.die();
         }
         TimerSingleton.getInstance().killTimer();
-        
+
         if (menuBar != null) {
             menuBar.die();
             menuBar = null;
@@ -564,9 +559,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public void updateButtonPanel(IGame.Phase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
-        }        
+        }
     }
-    
+
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -618,7 +613,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
-                component = new DeploymentDisplay(null);                
+                component = new DeploymentDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
@@ -723,7 +718,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         }
         return component;
     }
-  
+
     /**
      * Sets the visibility of the entity display window
      */
@@ -822,19 +817,22 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     //
     // WindowListener
     //
+    @Override
     public void windowActivated(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
         frame.setState(Frame.NORMAL);
     }
 
+    @Override
     public void windowClosed(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowClosing(WindowEvent windowEvent) {
         if (windowEvent.getWindow().equals(skinSpecEditorD)) {
             setDisplayVisible(false);
@@ -842,13 +840,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         }
     }
 
+    @Override
     public void windowDeactivated(WindowEvent windowEvent) {
         // ignored
     }
 
+    @Override
     public void windowDeiconified(WindowEvent windowEvent) {
         // TODO: this is a kludge to fix a window iconify issue
-        // For some reason when I click on the window button, the main UI 
+        // For some reason when I click on the window button, the main UI
         // window doesn't deiconify.  This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
@@ -869,36 +869,36 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     public JFrame getFrame() {
         return frame;
     }
-   
+
     public void loadPreviewImage(JLabel bp, Entity entity, IPlayer player) {
-        Image camo = CamoManager.getPlayerCamoImage(player);
-        if ((entity.getCamoCategory() != null) && !entity.getCamoCategory().equals(IPlayer.NO_CAMO)) {
-            camo = CamoManager.getEntityCamoImage(entity);
-        }
-        int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(
-                entity, camo, tint, bp)));
+        final Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
+        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }
 
    
+    @Override
     public void hexMoused(BoardViewEvent b) {
         if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
             
         }
     }
 
+    @Override
     public void hexCursor(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
         // ignored
     }
 
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
         // ignored
     }

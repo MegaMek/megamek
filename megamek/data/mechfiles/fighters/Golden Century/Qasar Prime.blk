@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,8 +21,12 @@ Prime
 </Model>
 
 <year>
-3000
+2905
 </year>
+
+<originalBuildYear>
+2905
+</originalBuildYear>
 
 <type>
 Clan Level 2
@@ -99,4 +103,3 @@ Succession Wars
 <tonnage>
 80.0
 </tonnage>
-

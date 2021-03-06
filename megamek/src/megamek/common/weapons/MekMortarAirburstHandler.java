@@ -1,21 +1,20 @@
-/**
+/*
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -26,7 +25,6 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -38,10 +36,6 @@ import megamek.server.Server;
  * @author arlith
  */
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2073773899108954657L;
 
     /**
@@ -192,8 +186,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             // Units in a building apply damage to building
             if (Compute.isInBuilding(game, target, targetPos)) {
                 IPlayer tOwner = target.getOwner();
-                String colorcode = Integer.toHexString(PlayerColors.getColor(
-                        tOwner.getColorIndex()).getRGB() & 0x00f0f0f0);
+                String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
                 newReports = server.damageBuilding(bldg, numRounds, " shields "
                         + target.getShortName() + " (<B><font color='"
                         + colorcode + "'>" + tOwner.getName()
@@ -203,8 +196,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 vPhaseReport.addAll(newReports);
             } else {
                 // Conventional Inf take burst-fire damage
-                if ((target instanceof Infantry) 
-                        && !(target instanceof BattleArmor)) {
+                if (target.isConventionalInfantry()) {
                     // Infantry take a bit more damage
                     int damage = 0;
                     // Roll 1d6 for each shell

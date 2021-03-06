@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,11 +20,11 @@ Manticore Heavy Tank EC
 </Model>
 
 <year>
-2818
+2823
 </year>
 
 <originalBuildYear>
-2818
+2823
 </originalBuildYear>
 
 <type>
@@ -93,4 +93,3 @@ Succession Wars
 <tonnage>
 60.0
 </tonnage>
-

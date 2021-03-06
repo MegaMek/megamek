@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Rhino Fire Support Tank EC
 </Model>
 
 <year>
-2818
+2824
 </year>
 
 <originalBuildYear>
-2818
+2824
 </originalBuildYear>
 
 <type>
@@ -101,4 +101,3 @@ Succession Wars
 <tonnage>
 80.0
 </tonnage>
-

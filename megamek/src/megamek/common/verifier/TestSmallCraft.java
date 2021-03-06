@@ -140,8 +140,8 @@ public class TestSmallCraft extends TestAero {
         AerospaceArmor a = AerospaceArmor.getArmor(sc.getArmorType(0),
                 TechConstants.isClan(sc.getArmorTechLevel(0)));
         if (null != a) {
-            return (int)Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc))
-                    + sc.get0SI() * 4;
+            return (int) Math.floor(a.pointsPerTon(sc) * maxArmorWeight(sc)
+                    + sc.get0SI() * (sc.isPrimitive() ? 2.64 : 4));
         } else {
             return 0;
         }
@@ -291,9 +291,9 @@ public class TestSmallCraft extends TestAero {
     public static double dropshipEngineMultiplier(int year) {
         if (year >= 2500) {
             return 0.065;
-        } else if (year >= 2400) {
-            return 0.0715;
         } else if (year >= 2351) {
+            return 0.0715;
+        } else if (year >= 2300) {
             return 0.0845;
         } else if (year >= 2251) {
             return 0.091;
@@ -309,9 +309,9 @@ public class TestSmallCraft extends TestAero {
     public static double dropshipControlMultiplier(int year) {
         if (year >= 2500) {
             return 0.0075;
-        } else if (year >= 2400) {
-            return 0.009;
         } else if (year >= 2351) {
+            return 0.009;
+        } else if (year >= 2300) {
             return 0.00975;
         } else if (year >= 2251) {
             return 0.0105;
@@ -613,6 +613,9 @@ public class TestSmallCraft extends TestAero {
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = smallCraft.getEquipment(wNum);
+                if (w.isOneShotWeapon()) {
+                    continue;
+                }
                 if (w.getType() instanceof WeaponType) {
                     ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {
@@ -862,13 +865,8 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
-        return buff.toString();
-    }
 
-    @Override
-    public boolean correctCriticals(StringBuffer buff) {
         double[] extra = extraSlotCost(getSmallCraft());
-        
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {
@@ -879,9 +877,9 @@ public class TestSmallCraft extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return super.correctCriticals(buff);
+        return buff.toString();
     }
-    
+
     @Override
     public String getName() {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {

@@ -145,7 +145,7 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        if (en instanceof Infantry && !(en instanceof BattleArmor)) {
+        if (en.isConventionalInfantry()) {
             return false;
         }
 

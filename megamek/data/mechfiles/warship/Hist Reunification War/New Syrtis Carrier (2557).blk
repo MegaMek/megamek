@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -338,4 +338,3 @@ Hist:RW - Age of War
 <escape_pod>
 90
 </escape_pod>
-

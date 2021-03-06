@@ -698,8 +698,10 @@ public class TestAdvancedAerospace extends TestAero {
         boolean correct = true;
         double maxArmor = maxArmorWeight(vessel);
         if (vessel.getLabArmorTonnage() > maxArmor) {
-            buff.append("Total armor," + vessel.getLabArmorTonnage() + 
-                    " tons, is greater than the maximum: " + maxArmor + "\n");
+            buff.append("Total armor, ")
+                    .append(vessel.getLabArmorTonnage())
+                    .append(" tons, is greater than the maximum: ")
+                    .append(maxArmor).append("\n");
             correct = false;
         }
 
@@ -770,17 +772,20 @@ public class TestAdvancedAerospace extends TestAero {
         // ten shots of ammo for each ammo-using weapon in the bay.
         for (Mounted bay : vessel.getWeaponBayList()) {
             if (bay.getBayWeapons().size() == 0) {
-                buff.append("Bay " + bay.getName() + " has no weapons\n");
+                buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
             Map<Integer,Integer> ammoWeaponCount = new HashMap<>();
             Map<Integer,Integer> ammoTypeCount = new HashMap<>();
             for (Integer wNum : bay.getBayWeapons()) {
                 final Mounted w = vessel.getEquipment(wNum);
+                if (w.isOneShotWeapon()) {
+                    continue;
+                }
                 if (w.getType() instanceof WeaponType) {
                     ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {
-                    buff.append(w.getName() + " in bay " + bay.getName() + " is not a weapon\n");
+                    buff.append(w.getName()).append(" in bay ").append(bay.getName()).append(" is not a weapon\n");
                     illegal = true;
                 }
             }
@@ -790,7 +795,7 @@ public class TestAdvancedAerospace extends TestAero {
                     ammoTypeCount.merge(((AmmoType)a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);
                 } else {
-                    buff.append(a.getName() + " in bay " + bay.getName() + " is not ammo\n");
+                    buff.append(a.getName()).append(" in bay ").append(bay.getName()).append(" is not ammo\n");
                     illegal = true;
                 }
             }
@@ -804,7 +809,7 @@ public class TestAdvancedAerospace extends TestAero {
                     }
                     if (!ammoTypeCount.containsKey(at)
                             || ammoTypeCount.get(at) < needed) {
-                        buff.append("Bay " + bay.getName() + " does not have the minimum 10 shots of ammo for each weapon\n");
+                        buff.append("Bay ").append(bay.getName()).append(" does not have the minimum 10 shots of ammo for each weapon\n");
                         illegal = true;
                         break;
                     }
@@ -812,7 +817,7 @@ public class TestAdvancedAerospace extends TestAero {
             }
             for (Integer at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
-                    buff.append("Bay " + bay.getName() + " has ammo for a weapon not in the bay\n");
+                    buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
                     illegal = true;
                     break;
                 }
@@ -1140,34 +1145,26 @@ public class TestAdvancedAerospace extends TestAero {
     
     @Override
     public String printLocations() {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder buff = new StringBuilder();
         for (int i = 0; i < getEntity().locations(); i++) {
             String locationName = getEntity().getLocationName(i);
-            buff.append(locationName + ":");
-            buff.append("\n");
+            buff.append(locationName).append(":").append("\n");
             for (int j = 0; j < getEntity().getNumberOfCriticals(i); j++) {
                 CriticalSlot slot = getEntity().getCritical(i, j);
                 if (slot == null) {
                     j = getEntity().getNumberOfCriticals(i);                    
                 } else if (slot.getType() == CriticalSlot.TYPE_SYSTEM) {
-                        buff.append(Integer.toString(j)
-                                + ". UNKNOWN SYSTEM NAME");
+                        buff.append(j).append(". UNKNOWN SYSTEM NAME");
                         buff.append("\n");
                 } else if (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     EquipmentType e = getEntity().getEquipmentType(slot);
-                    buff.append(Integer.toString(j) + ". "
-                            + e.getInternalName());
+                    buff.append(j).append(". ").append(e.getInternalName());
                     buff.append("\n");
                 }
             }
         }
-        return buff.toString();
-    }
-    
-    @Override
-    public boolean correctCriticals(StringBuffer buff) {
+
         double[] extra = extraSlotCost(vessel);
-        
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {
@@ -1178,7 +1175,8 @@ public class TestAdvancedAerospace extends TestAero {
                 buff.append(" requires ").append(extra[i]).append(" tons of additional fire control.\n");
             }
         }
-        return super.correctCriticals(buff);
+
+        return buff.toString();
     }
     
     @Override

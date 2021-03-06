@@ -1,54 +1,55 @@
-Version:1.0
+Version:1.2
 Hatchetman
 HCT-6S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3064
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3064
+source:TRO 3050 - Civil War
+rules level:2
 
-Mass:45
-Engine:180 Light Engine
-Structure:Standard
-Myomer:Standard
+mass:45
+engine:180 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
+heat sinks:10 Double
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
 Weapons:4
-1 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Left Arm
-1 ISLBXAC10, Right Torso, Ammo:20
-1 ISERMediumLaser, Left Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Torso
+LB 10-X AC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -59,24 +60,24 @@ Hatchet
 Hatchet
 Hatchet
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -87,10 +88,10 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 Ammo
-ISLBXAC10 Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
 ISCASE
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -147,3 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+

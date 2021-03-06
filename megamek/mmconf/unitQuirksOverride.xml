@@ -41,7 +41,6 @@ The proper names for quirks can be found in the
   "Anti-Aircraft Targeting" quirk to a unit, you will find the following entry in the messages.properties file:
     QuirksInfo.option.anti_air.displayableName
   The name you want to include in this file for the <quirk> entry is "anti_air".
-
 If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of "none".
 
 Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:
@@ -52,7 +51,7 @@ Example:  If you wish to declare that all Atlas variants do not have the Command
     </unit>
 
 Example: If you decide only the AS7-D Atlas, but no other variant, should have the Command Mech quirk:
-    <unit>
+        <unit>
         <chassis>Atlas</chassis>
         <model>all</model>
         <quirk>none</quirk>
@@ -88,10 +87,10 @@ Example: You can define quirks that affect all units of a given chassis and then
     </unit>
 -->
 
-<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsl">
-    <unit> <!-- Placeholder that is exactly the same as in canon file because we need to have at least one entry. -->
-        <chassis>Atlas</chassis>
-        <model>all</model>
-        <quirk>command_mech</quirk>
-    </unit>
+<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsd">
+	<unit>
+		<chassis>Atlas</chassis>
+		<unitType>Mech</unitType>
+		<quirk>command_mech</quirk>
+	</unit>
 </unitQuirks>

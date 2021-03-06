@@ -13,7 +13,7 @@
  */
 package megamek.common.util;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Vector;
@@ -117,7 +117,7 @@ public class StringUtil {
      * @return the filename with date/time stamp added
      */
     public static String addDateTimeStamp(String filename) {
-        String current = LocalDate.now().format(DateTimeFormatter.ofPattern(
+        String current = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
                 PreferenceManager.getClientPreferences().getStampFormat()));
         if (filename.lastIndexOf(".") == -1) {
             return filename + current;

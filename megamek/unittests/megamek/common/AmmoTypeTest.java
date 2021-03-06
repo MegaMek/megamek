@@ -64,8 +64,10 @@ public class AmmoTypeTest {
         Mockito.when(mockAC5AmmoType.getRackSize()).thenReturn(5);
         Mockito.when(mockSRM4AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
         Mockito.when(mockSRM4AmmoType.getRackSize()).thenReturn(4);
+        Mockito.when(mockSRM4AmmoType.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
         Mockito.when(mockInferno4AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
         Mockito.when(mockInferno4AmmoType.getRackSize()).thenReturn(4);
+        Mockito.when(mockInferno4AmmoType.getMunitionType()).thenReturn(AmmoType.M_INFERNO);
         Mockito.when(mockAC10AmmoType.getAmmoType()).thenReturn(AmmoType.T_AC);
         Mockito.when(mockAC10AmmoType.getRackSize()).thenReturn(10);
         Mockito.when(mockSRM6AmmoType.getAmmoType()).thenReturn(AmmoType.T_SRM);
@@ -85,6 +87,11 @@ public class AmmoTypeTest {
         Mockito.when(mockAmmoAC5Empty.isAmmoUsable()).thenReturn(false);
 
         Mockito.when(mockNotAmmo.getType()).thenReturn(notAmmoType);
+
+        Mockito.doReturn(true).when(mockSRM4AmmoType).equalsAmmoTypeOnly(Mockito.eq(mockSRM4AmmoType));
+        Mockito.doReturn(true).when(mockSRM4AmmoType).equalsAmmoTypeOnly(Mockito.eq(mockInferno4AmmoType));
+        Mockito.doReturn(true).when(mockInferno4AmmoType).equalsAmmoTypeOnly(Mockito.eq(mockInferno4AmmoType));
+        Mockito.doReturn(true).when(mockInferno4AmmoType).equalsAmmoTypeOnly(Mockito.eq(mockSRM4AmmoType));
     }
 
     @Test
@@ -111,5 +118,15 @@ public class AmmoTypeTest {
 
         // Test something that's not ammo.
         Assert.assertFalse(AmmoType.isAmmoValid(mockNotAmmo, mockAC5));
+    }
+
+    @Test
+    public void testCanSwitchToAmmo() {
+        Mounted mockWeapon = Mockito.mock(Mounted.class);
+        Mockito.when(mockWeapon.getLinked()).thenReturn(mockAmmoSrm4);
+
+        Assert.assertTrue(AmmoType.canSwitchToAmmo(mockWeapon, mockInferno4AmmoType));
+
+        Assert.assertFalse(AmmoType.canSwitchToAmmo(mockWeapon, mockSRM6AmmoType));
     }
 }

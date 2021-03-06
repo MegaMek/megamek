@@ -14,9 +14,9 @@
  */
 
 package megamek.common.verifier;
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -725,8 +725,8 @@ public class TestSupportVehicle extends TestEntity {
                 if (null != mod) {
                     weight *= mod.multiplier;
                 } else {
-                    DefaultMmLogger.getInstance().warning(getClass(), "getWeightStructure()",
-                            "Could not find multiplier for " + m.getType().getName() + " chassis mod.");
+                    MegaMek.getLogger().warning("Could not find multiplier for " 
+                            + m.getType().getName() + " chassis mod.");
                 }
             }
         }
@@ -1066,10 +1066,12 @@ public class TestSupportVehicle extends TestEntity {
             if ((m.getType() instanceof MiscType) && !m.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
                 buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
-            } else if ((m.getType() instanceof WeaponType)
-                    && (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
-                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)) {
-                buff.append("Small support vehicles cannot mount heavy weapons.\n");
+            } else if ((supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && (((m.getType() instanceof WeaponType)
+                        && !m.getType().hasFlag(WeaponType.F_INFANTRY))
+                    || ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAVY_EQUIPMENT)))) {
+                buff.append("Small support vehicles cannot mount heavy weapons or equipment (")
+                        .append(m.getName()).append(").\n");
                 correct = false;
             } else if ((m.getType() instanceof WeaponType)
                     && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)

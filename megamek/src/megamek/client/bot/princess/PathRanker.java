@@ -83,73 +83,65 @@ public abstract class PathRanker implements IPathRanker {
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                     double fallTolerance, int startingHomeDistance,
                                     List<Entity> enemies, List<Entity> friends) {
-        final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            // No point in ranking an empty list.
-            if (movePaths.isEmpty()) {
-                return new ArrayList<>();
-            }
-
-            // the cached path probability data is really only relevant for one iteration through this method
-            getPathRankerState().getPathSuccessProbabilities().clear();
-            
-            // Let's try to whittle down this list.
-            List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
-                                                               movePaths.size() + " possible paths.");
-
-            Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
-
-            ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
-            final BigDecimal numberPaths = new BigDecimal(validPaths.size());
-            BigDecimal count = BigDecimal.ZERO;
-            BigDecimal interval = new BigDecimal(5);
-            
-            boolean pathsHaveExpectedDamage = false;
-            
-            for (MovePath path : validPaths) {
-                count = count.add(BigDecimal.ONE);
-                
-                RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
-                        allyCenter);
-                
-                returnPaths.add(rankedPath);
-                
-                // we want to keep track of if any of the paths we've considered have some kind of damage potential
-                pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
-                
-                BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
-                                          .round(new MathContext(0, RoundingMode.DOWN));
-                if (percent.compareTo(interval) >= 0) {
-                    getOwner().sendChat("... " + percent.intValue() + "% complete.", LogLevel.INFO);
-                    interval = percent.add(new BigDecimal(5));
-                }
-            }
-            
-            Entity mover = movePaths.get(0).getEntity();
-            UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
-            boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
-            
-            // if we're trying to fight, but aren't going to be doing any damage no matter how we move
-            // then let's try to get closer
-            if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
-                
-                behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
-                return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
-                        startingHomeDistance, enemies, friends);
-            }
-            
-            return returnPaths;
-        } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+        // No point in ranking an empty list.
+        if (movePaths.isEmpty()) {
+            return new ArrayList<>();
         }
+
+        // the cached path probability data is really only relevant for one iteration through this method
+        getPathRankerState().getPathSuccessProbabilities().clear();
+        
+        // Let's try to whittle down this list.
+        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
+        getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
+                movePaths.size() + " possible paths.");
+
+        Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+
+        ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
+        final BigDecimal numberPaths = new BigDecimal(validPaths.size());
+        BigDecimal count = BigDecimal.ZERO;
+        BigDecimal interval = new BigDecimal(5);
+        
+        boolean pathsHaveExpectedDamage = false;
+        
+        for (MovePath path : validPaths) {
+            count = count.add(BigDecimal.ONE);
+            
+            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+                    allyCenter);
+            
+            returnPaths.add(rankedPath);
+            
+            // we want to keep track of if any of the paths we've considered have some kind of damage potential
+            pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
+            
+            BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
+                                      .round(new MathContext(0, RoundingMode.DOWN));
+            if (percent.compareTo(interval) >= 0) {
+                getOwner().sendChat("... " + percent.intValue() + "% complete.", LogLevel.INFO);
+                interval = percent.add(new BigDecimal(5));
+            }
+        }
+        
+        Entity mover = movePaths.get(0).getEntity();
+        UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
+        boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage && (FireControl.getMaxDamageAtRange(mover, 1, false, false) > 0);
+        
+        // if we're trying to fight, but aren't going to be doing any damage no matter how we move
+        // then let's try to get closer
+        if(noDamageButCanDoDamage && behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged) {
+            
+            behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
+            return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
+                    startingHomeDistance, enemies, friends);
+        }
+        
+        return returnPaths;
     }
 
     private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
                                          double fallTolerance, int startingHomeDistance) {
-        final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -232,7 +224,7 @@ public abstract class PathRanker implements IPathRanker {
                 msg.append("\n\tVALID.");
                 returnPaths.add(path);
             } finally {
-                getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
+                getOwner().getLogger().log(logLevel, msg.toString(), null);
             }
         }
 
@@ -251,17 +243,10 @@ public abstract class PathRanker implements IPathRanker {
      * @return "Best" out of those paths
      */
     public RankedPath getBestPath(List<RankedPath> ps) {
-        final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
-
-        try {
-            if (ps.size() == 0) {
-                return null;
-            }
-            return Collections.max(ps);
-        } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+        if (ps.size() == 0) {
+            return null;
         }
+        return Collections.max(ps);
     }
 
 
@@ -281,49 +266,42 @@ public abstract class PathRanker implements IPathRanker {
      * Find the closest enemy to a unit with a path
      */
     public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
-        final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
-
-        try {
-            int range = 9999;
-            Targetable closest = null;
-            List<Entity> enemies = getOwner().getEnemyEntities();
-            for (Entity e : enemies) {
-                // Skip airborne aero units as they're further away than they seem and hard to catch.
-                // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-                if (e.isAirborneAeroOnGroundMap() || 
-                        getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
-                    continue;
-                }
-
-                // If a unit has not moved, assume it will move away from me.
-                int unmovedDistMod = 0;
-                if (e.isSelectableThisTurn() && !e.isImmobile()) {
-                    unmovedDistMod = e.getWalkMP(true, false, false);
-                }
-
-                int distance = position.distance(e.getPosition());
-                if ((distance + unmovedDistMod) < range) {
-                    range = distance;
-                    closest = e;
-                }
+        int range = 9999;
+        Targetable closest = null;
+        List<Entity> enemies = getOwner().getEnemyEntities();
+        for (Entity e : enemies) {
+            // Skip airborne aero units as they're further away than they seem and hard to catch.
+            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
+            if (e.isAirborneAeroOnGroundMap() || 
+                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                continue;
             }
-            
-            // if specified, we also consider strategic targets
-            if(includeStrategicTargets) {
-                for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
-                    int distance = position.distance(t.getPosition());
-                    if(distance < range) {
-                        range = distance;
-                        closest = t;
-                    }
-                }
+
+            // If a unit has not moved, assume it will move away from me.
+            int unmovedDistMod = 0;
+            if (e.isSelectableThisTurn() && !e.isImmobile()) {
+                unmovedDistMod = e.getWalkMP(true, false, false);
             }
-            
-            return closest;
-        } finally {
-            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
+
+            int distance = position.distance(e.getPosition());
+            if ((distance + unmovedDistMod) < range) {
+                range = distance;
+                closest = e;
+            }
         }
+        
+        // if specified, we also consider strategic targets
+        if(includeStrategicTargets) {
+            for(Targetable t : getOwner().getFireControlState().getAdditionalTargets()) {
+                int distance = position.distance(t.getPosition());
+                if(distance < range) {
+                    range = distance;
+                    closest = t;
+                }
+            }
+        }
+        
+        return closest;
     }
 
     /**
@@ -381,41 +359,34 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            Coords edgeCoords;
-            int boardHeight = game.getBoard().getHeight();
-            int boardWidth = game.getBoard().getWidth();
-            StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-            if (CardinalEdge.NORTH.equals(homeEdge)) {
-                msg.append("North");
-                edgeCoords = new Coords(position.getX(), 0);
-            } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
-                msg.append("South");
-                edgeCoords = new Coords(position.getX(), boardHeight);
-            } else if (CardinalEdge.WEST.equals(homeEdge)) {
-                msg.append("West");
-                edgeCoords = new Coords(0, position.getY());
-            } else if (CardinalEdge.EAST.equals(homeEdge)) {
-                msg.append("East");
-                edgeCoords = new Coords(boardWidth, position.getY());
-            } else {
-                msg.append("Default");
-                getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-                edgeCoords = new Coords(boardWidth / 2, 0);
-            }
-            msg.append(edgeCoords.toFriendlyString());
-
-            int distance = edgeCoords.distance(position);
-            msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
-
-            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
-            return distance;
-        } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+        Coords edgeCoords;
+        int boardHeight = game.getBoard().getHeight();
+        int boardWidth = game.getBoard().getWidth();
+        StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
+        if (CardinalEdge.NORTH.equals(homeEdge)) {
+            msg.append("North");
+            edgeCoords = new Coords(position.getX(), 0);
+        } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
+            msg.append("South");
+            edgeCoords = new Coords(position.getX(), boardHeight);
+        } else if (CardinalEdge.WEST.equals(homeEdge)) {
+            msg.append("West");
+            edgeCoords = new Coords(0, position.getY());
+        } else if (CardinalEdge.EAST.equals(homeEdge)) {
+            msg.append("East");
+            edgeCoords = new Coords(boardWidth, position.getY());
+        } else {
+            msg.append("Default");
+            getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
+            edgeCoords = new Coords(boardWidth / 2, 0);
         }
+        msg.append(edgeCoords.toFriendlyString());
+
+        int distance = edgeCoords.distance(position);
+        msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
+
+        getOwner().getLogger().debug(msg.toString());
+        return distance;
     }
 
     private String validRange(Coords finalCoords, Targetable target, int startingTargetDistance, int maxRange,
@@ -533,8 +504,8 @@ public abstract class PathRanker implements IPathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR,
-                           "Center of ally group " + center.toFriendlyString() + " not within board boundaries.");
+            getOwner().getLogger().error("Center of ally group " + center.toFriendlyString() 
+                    + " not within board boundaries.");
             return null;
         }
 

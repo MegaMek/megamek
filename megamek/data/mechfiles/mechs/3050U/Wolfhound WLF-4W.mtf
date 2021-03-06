@@ -1,41 +1,42 @@
-Version:1.0
+Version:1.2
 Wolfhound
 WLF-4W
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:35
-Engine:210 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:35
+engine:210 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:0
+heat sinks:10 Double
+walk mp:6
+jump mp:0
 
-Armor:Standard
-LA Armor:12
-RA Armor:12
-LT Armor:11
-RT Armor:11
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:5
-1 ISERMediumLaser, Right Arm
-1 ISERSmallLaser, Right Arm
-1 ISLightPPC, Right Torso
-1 ISLightPPC, Left Torso
-1 ISLightPPC, Center Torso
+ER Medium Laser, Right Arm
+ER Small Laser, Right Arm
+Light PPC, Left Torso
+Light PPC, Right Torso
+Light PPC, Center Torso
 
 Left Arm:
 Shoulder
@@ -66,32 +67,32 @@ ISERSmallLaser
 -Empty-
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLightPPC
-ISLightPPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLightPPC
-ISLightPPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -104,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLightPPC
-ISLightPPC
+Light PPC
+Light PPC
 
 Head:
 Life Support
@@ -148,3 +149,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

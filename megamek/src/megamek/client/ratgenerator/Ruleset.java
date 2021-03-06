@@ -32,8 +32,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.utils.MegaMekXmlUtil;
 
 /**
@@ -199,8 +199,6 @@ public class Ruleset {
      * @param fd
      */
     private void buildForceTree (ForceDescriptor fd, ProgressListener l, double progress) {
-        final String METHOD_NAME = "buildForceTree(ForceDescriptor, ProgressListener, double)"; //$NON-NLS-1$
-
         //Find the most specific ruleset for this faction.
         Ruleset rs = findRuleset(fd.getFaction());
         boolean applied = false;
@@ -217,9 +215,8 @@ public class Ruleset {
                 }				
             } else {
                 applied = fn.apply(fd);
-                DefaultMmLogger.getInstance().debug(getClass(), METHOD_NAME,
-                        "Selecting force node " + fn.show() //$NON-NLS-1$
-                        + " from ruleset " + rs.getFaction()); //$NON-NLS-1$
+                MegaMek.getLogger().debug("Selecting force node " + fn.show()
+                        + " from ruleset " + rs.getFaction());
             }
         } while (rs != null && (fn == null || !applied));
 
@@ -350,8 +347,6 @@ public class Ruleset {
     }
 
     public static void loadConstants(File f) {
-        final String METHOD_NAME = "loadConstants(File)"; //$NON-NLS-1$
-
         constants = new HashMap<>();
         InputStream is;
         try {
@@ -365,27 +360,24 @@ public class Ruleset {
                     try {
                         constants.put(fields[0], fields[1]);
                     } catch (NumberFormatException e) {
-                        DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                                "Malformed line in force generator constants file: " + line); //$NON-NLS-1$
+                        MegaMek.getLogger().error("Malformed line in force generator constants file: " + line);
                     }
                 }
             }
             reader.close();
         } catch (IOException e) {
-            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME, e); //$NON-NLS-1$
+            MegaMek.getLogger().error(e);
         }
     }
 
     public static void loadData() {
-        final String METHOD_NAME = "loadData()"; //$NON-NLS-1$
         initialized = false;
         initializing = true;
         rulesets = new HashMap<String,Ruleset>();
 
         File dir = new File(directory);
         if (!dir.exists()) {
-            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                    "Could not locate force generator faction rules."); //$NON-NLS-1$
+            MegaMek.getLogger().error("Could not locate force generator faction rules.");
             initializing = false;
             return;
         }
@@ -411,8 +403,7 @@ public class Ruleset {
                     rulesets.put(rs.getFaction(), rs);
                 }
             } catch (IllegalArgumentException ex) {
-                DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                        "While parsing file " + f.toString() + ": " + ex.getMessage());
+                MegaMek.getLogger().error("While parsing file " + f.toString() + ": " + ex.getMessage());
             }
         }
         initialized = true;
@@ -420,8 +411,6 @@ public class Ruleset {
     }
 
     private static Ruleset createFromFile(File f) {
-        final String METHOD_NAME = "createFromFile(File)"; //$NON-NLS-1$
-
         Document xmlDoc = null;
 
         DocumentBuilder db;
@@ -431,8 +420,7 @@ public class Ruleset {
             xmlDoc = db.parse(fis);
             fis.close();
         } catch (Exception e) {
-            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                    "While loading force template from file " + f.getName() + ": " //$NON-NLS-1$
+            MegaMek.getLogger().error("While loading force template from file " + f.getName() + ": "
                     + e.getMessage());
             return null;
         }
@@ -441,15 +429,13 @@ public class Ruleset {
 
         Element elem = xmlDoc.getDocumentElement();
         if (!elem.getNodeName().equals("ruleset")) {
-            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                    "Could not find ruleset element in file " + f.getName()); //$NON-NLS-1$
+            MegaMek.getLogger().error("Could not find ruleset element in file " + f.getName());
             return null;
         }
         if (elem.getAttribute("faction").length() > 0) {
             retVal.faction = elem.getAttribute("faction");
         } else {
-            DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                    "Faction is not declared in ruleset file " + f.getName()); //$NON-NLS-1$
+            MegaMek.getLogger().error("Faction is not declared in ruleset file " + f.getName());
             return null;
         }
         if (elem.getAttribute("parent").length() > 0) {
@@ -527,11 +513,10 @@ public class Ruleset {
                     try {
                         fn = ForceNode.createFromXml(wn);
                     } catch (IllegalArgumentException ex) {
-                        DefaultMmLogger.getInstance().error(Ruleset.class, METHOD_NAME,
-                                "In file " + f.getName() + " while processing force node" + //$NON-NLS-1$
-                                        ((wn.getAttributes().getNamedItem("eschName") == null)?"": //$NON-NLS-1$
-                                            " " + wn.getAttributes().getNamedItem("eschName")) + //$NON-NLS-1$
-                                        ": " + ex.getMessage()); //$NON-NLS-1$
+                        MegaMek.getLogger().error("In file " + f.getName() + " while processing force node" 
+                                + ((wn.getAttributes().getNamedItem("eschName") == null) ? "" : " " 
+                                        + wn.getAttributes().getNamedItem("eschName")) 
+                                + ": " + ex.getMessage());
                     }
                     if (fn != null) {
                         retVal.forceNodes.add(fn);

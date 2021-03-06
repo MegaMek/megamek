@@ -1,12 +1,12 @@
-Version:1.0
+Version:1.1
 Woodsman
 D
 
 Config:Biped Omnimech
 techbase:Clan
-era:3085
-source:Jihad
-rules level:3
+era:3149
+source:Dark Age
+rules level:2
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

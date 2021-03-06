@@ -255,7 +255,7 @@ class FovHighlightingAndDarkening {
      * If enviroment has changed between calls to this method the cache is
      * cleared.
      */
-    private LosEffects getCachedLosEffects(Coords src, Coords dest) {
+    public LosEffects getCachedLosEffects(Coords src, Coords dest) {
         ArrayList<StepSprite> pathSprites = boardView1.pathSprites;
         StepSprite lastStepSprite = pathSprites.size() > 0 ? pathSprites
                 .get(pathSprites.size() - 1) : null;

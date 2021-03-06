@@ -941,6 +941,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return null;
         }
         
+        // got ammo?
+        if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
+            return Messages.getString("WeaponAttackAction.OutOfAmmo");
+        }
+        
         // Ammo-specific Reasons
         if (atype != null) {
             // Are we dumping that ammo?
@@ -967,11 +972,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (atype.getMunitionType() == AmmoType.M_FLARE)
                     && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
                 return Messages.getString("WeaponAttackAction.OnlyFlare");
-            }
-            
-            // got ammo?
-            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
-                return Messages.getString("WeaponAttackAction.OutOfAmmo");
             }
 
             // Aeros must have enough ammo for the maximum rate of fire because
@@ -1116,9 +1116,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (sensorHits > 3) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
-        }
         // Industrialmechs and other unit types have destroyed sensors with 2 or more hits
-        if ((sensorHits > 1)
+        } else if ((sensorHits > 1)
                 || ((ae instanceof Mech) && (((Mech) ae).isIndustrial() && (sensorHits == 1)))) {
             return Messages.getString("WeaponAttackAction.SensorsDestroyed");
         }
@@ -1159,7 +1158,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Only weapons allowed to clear minefields can target a hex for minefield clearance
-        if ((target instanceof MinefieldTarget) && atype != null && !AmmoType.canClearMinefield(atype)) {
+        if ((target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) && 
+                ((atype == null) || !AmmoType.canClearMinefield(atype))) {
             return Messages.getString("WeaponAttackAction.CantClearMines");
         }
         
@@ -2868,7 +2868,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Electro-Magnetic Interference
-        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+        if (game.getPlanetaryConditions().hasEMI() && !ae.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;
@@ -3914,7 +3914,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        if (ae.isConventionalInfantry()) {
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
@@ -4155,7 +4155,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
                 && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            if ((ghostTargetMod > -1) && !ae.isConventionalInfantry()) {
                 int bapMod = 0;
                 if (ae.hasBAP()) {
                     bapMod = 1;
@@ -4264,17 +4264,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Battle Armor targets are hard for Meks and Tanks to hit.
-        if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
+        if (!isAttackerInfantry && (te instanceof BattleArmor)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
         // infantry squads are also hard to hit
-        if (te != null && (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
+        if ((te != null) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
         }
 
         // Ejected MechWarriors are harder to hit
-        if ((te != null) && (te instanceof MechWarrior)) {
+        if (te instanceof MechWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
         
@@ -4373,6 +4373,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         //Target's hex
         IHex targHex = game.getBoard().getHex(target.getPosition());
         
+        boolean targetHexContainsWater = targHex != null && targHex.containsTerrain(Terrains.WATER);
+        boolean targetHexContainsFortified = targHex != null && targHex.containsTerrain(Terrains.FORTIFIED);
+        
         Entity te = null;
         if (ttype == Targetable.TYPE_ENTITY) {
             //Some of these weapons only target valid entities
@@ -4412,7 +4415,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Fortified/Dug-In Infantry
         if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(WeaponType.F_FLAMER)) {
-            if (targHex.containsTerrain(Terrains.FORTIFIED)
+            if (targetHexContainsFortified
                     || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
             }
@@ -4423,7 +4426,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             partialWaterLevel = 2;
         }
-        if ((te != null) && targHex.containsTerrain(Terrains.WATER)
+        if ((te != null) && targetHexContainsWater
                 // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
@@ -4433,7 +4436,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
-            if (underWater && (targHex.containsTerrain(Terrains.WATER) && (targEl == 0) 
+            if (underWater && (targetHexContainsWater && (targEl == 0) 
                     && (te != null && te.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
@@ -4530,7 +4533,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targHex.containsTerrain(Terrains.WATER) && (null != te) && te.isSurfaceNaval()) {
+        if (underWater && targetHexContainsWater && (null != te) && te.isSurfaceNaval()) {
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
         }
         

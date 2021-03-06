@@ -17,6 +17,7 @@ package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * BLkFile.java
@@ -272,6 +273,16 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                                 size = getLegacyVariableSize(equipName);
                             }
                             mount.setSize(size);
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
+                                && size > 1) {
+                            // The ammo bin is created by Entity#addEquipment but the size has not
+                            // been set yet, so if the unit carries multiple clips the number of
+                            // shots needs to be adjusted.
+                            mount.setSize(size);
+                            assert(mount.getLinked() != null);
+                            mount.getLinked().setOriginalShots((int) size
+                                    * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

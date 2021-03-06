@@ -14,7 +14,7 @@
   NOTE: All locations should be in data/images/widgets
 -->
 <skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+    xsi:noNamespaceSchemaLocation="skinSchema.xsd">
 	<UI_Element>
 		<name>PhaseDisplayBorder</name>
 		<no_border>false</no_border>
@@ -185,7 +185,7 @@
 		<show_scroll_bars>false</show_scroll_bars>
 		<should_bold_mouseover>false</should_bold_mouseover>
 	</UI_Element>
-	
+
 	<UI_Element>
 		<name>MainMenuButton</name>
 		<no_border>true</no_border>
@@ -199,8 +199,8 @@
 		<should_bold_mouseover>false</should_bold_mouseover>
 		<font_name>Battletech Oldstyle</font_name>
 		<font_size>12</font_size>
-	</UI_Element>	
-	
+	</UI_Element>
+
 	<UI_Element>
 		<name>defaultButton</name>
 		<no_border>true</no_border>

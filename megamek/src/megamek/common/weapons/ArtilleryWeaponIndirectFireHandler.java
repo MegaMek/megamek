@@ -145,8 +145,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
-        boolean isFlak = (target instanceof VTOL) || target.isAero();
-        boolean asfFlak = target.isAero();
+        boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
+        boolean targetIsAirborneVTOL = targetIsEntity && ((Entity) target).isAirborneVTOLorWIGE();
+        boolean isFlak = targetIsAirborneVTOL || target.isAirborne();
+        boolean asfFlak = target.isAirborne();
         Entity bestSpotter = null;
         if (ae == null) {
             System.err.println("Artillery Entity is null!");

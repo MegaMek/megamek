@@ -17,9 +17,15 @@ package megamek.common;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
+
+import megamek.common.options.OptionsConstants;
 
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
@@ -141,6 +147,22 @@ public class AmmoType extends EquipmentType {
     public static final int T_BARRACUDA_T = 112;
     public static final int T_INFANTRY = 113;
     public static final int NUM_TYPES = 114;  //Should always be at the end with the highest number
+
+    /**
+     * Contains the {@code AmmoType}s that could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds).
+     */
+    private static final Integer[] ALLOWED_BY_TYPE_ARRAY = { AmmoType.T_LRM, AmmoType.T_LRM_PRIMITIVE, AmmoType.T_LRM_STREAK, AmmoType.T_LRM_TORPEDO,
+        AmmoType.T_LRM_TORPEDO_COMBO, AmmoType.T_SRM, AmmoType.T_SRM_ADVANCED, AmmoType.T_SRM_PRIMITIVE, AmmoType.T_SRM_STREAK, AmmoType.T_SRM_TORPEDO,
+        AmmoType.T_MRM, AmmoType.T_MRM_STREAK, AmmoType.T_ROCKET_LAUNCHER, AmmoType.T_EXLRM, AmmoType.T_PXLRM, AmmoType.T_HSRM, AmmoType.T_MML,
+        AmmoType.T_NLRM, AmmoType.T_MG, AmmoType.T_MG_LIGHT, AmmoType.T_MG_HEAVY, AmmoType.T_NAIL_RIVET_GUN, };
+
+    /**
+     * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and SRM 6, both fire SRM rounds),
+     * and conceptually can share ammo.
+     * 
+     * NB: This is used in MekHQ.
+     */
+    public static final Set<Integer> ALLOWED_BY_TYPE = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ALLOWED_BY_TYPE_ARRAY)));
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -319,7 +341,7 @@ public class AmmoType extends EquipmentType {
     // vehicular grenade launcher
     public static final long M_CHAFF = 1l << 54;
     public static final long M_INCENDIARY = 1l << 55;
-    public static final long M_SMOKEGRENADE = 1l << 56;
+    // Number 56 was M_SMOKEGRENADE, but that has now been merged with M_SMOKE
 
     // Number 57 is used for iATMs IMP ammo in the ATM section above.
     // and 58 for IIW
@@ -389,20 +411,6 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     *
-     * @param other the <code>Object</code> to compare to this one.
-     * @return <code>true</code> if the other is an <code>AmmoType</code> object
-     *         of the same <code>ammoType</code> as this object. N.B. different
-     *         munition types are still equal.
-     */
-    @Override
-    public boolean equals(Object other) {
-        return equalsAmmoTypeOnly(other) && (getRackSize() == ((AmmoType) other)
-                .getRackSize());
-    }
-
-    /**
      * When comparing <code>AmmoType</code>s, look at the ammoType only.
      *
      * @param other the <code>Object</code> to compare to this one.
@@ -414,45 +422,111 @@ public class AmmoType extends EquipmentType {
         if (!(other instanceof AmmoType)) {
             return false;
         }
-        // there a couple of flags that need to be checked
-        if (getAmmoType() == T_MML) {
-            if (hasFlag(F_MML_LRM) != ((AmmoType) other).hasFlag(F_MML_LRM)) {
+
+        AmmoType otherAmmoType = (AmmoType) other;
+
+        // There a couple of flags that need to be checked before we check
+        // on getAmmoType() strictly.
+        if (is(T_MML)) {
+            if (hasFlag(F_MML_LRM) != otherAmmoType.hasFlag(F_MML_LRM)) {
                 return false;
             }
         }
-        if (getAmmoType() == T_AR10) {
-            if (hasFlag(F_AR10_BARRACUDA) != ((AmmoType) other)
-                    .hasFlag(F_AR10_BARRACUDA)) {
+
+        if (is(T_AR10)) {
+            if (hasFlag(F_AR10_BARRACUDA) != otherAmmoType.hasFlag(F_AR10_BARRACUDA)) {
                 return false;
             }
-            if (hasFlag(F_AR10_WHITE_SHARK) != ((AmmoType) other)
-                    .hasFlag(F_AR10_WHITE_SHARK)) {
+            if (hasFlag(F_AR10_WHITE_SHARK) != otherAmmoType.hasFlag(F_AR10_WHITE_SHARK)) {
                 return false;
             }
-            if (hasFlag(F_AR10_KILLER_WHALE) != ((AmmoType) other)
-                    .hasFlag(F_AR10_KILLER_WHALE)) {
+            if (hasFlag(F_AR10_KILLER_WHALE) != otherAmmoType.hasFlag(F_AR10_KILLER_WHALE)) {
                 return false;
             }
-            if (hasFlag(F_NUCLEAR) != ((AmmoType) other)
-                    .hasFlag(F_NUCLEAR)) {
+            if (hasFlag(F_NUCLEAR) != otherAmmoType.hasFlag(F_NUCLEAR)) {
                 return false;
             }
         }
-        return getAmmoType() == ((AmmoType) other).getAmmoType();
+
+        return is(otherAmmoType.getAmmoType());
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = ammoType;
-        result = prime * result
-                + ((flags == null) ? 0 : flags.hashCode());
-        result = prime * result + rackSize;
-        return result;
+    /**
+     * Gets a value indicating whether or not this {@code AmmoType}
+     * is compatible with another {@code AmmoType}.
+     * 
+     * NB: this roughly means the same ammo type and munition type, but not rack size.
+     * 
+     * @param other The other {@code AmmoType} to determine compatibility with.
+     */
+    public boolean isCompatibleWith(AmmoType other) {
+        if (other == null) {
+            return false;
+        }
+
+        // If it isn't an allowed type, then nope!
+        if (!ALLOWED_BY_TYPE.contains(getAmmoType()) 
+                || !ALLOWED_BY_TYPE.contains(other.getAmmoType())) {
+            return false;
+        }
+
+        // MML Launchers, ugh.
+        if ((is(T_MML) || other.is(T_MML)) && (getMunitionType() == other.getMunitionType())) {
+            // LRMs...
+            if (is(T_MML) && hasFlag(F_MML_LRM) && other.is(T_LRM)) {
+                return true;
+            } else if (other.is(T_MML) && other.hasFlag(AmmoType.F_MML_LRM) && is(T_LRM)) {
+                return true;
+            }
+
+            // SRMs
+            if (is(T_MML) && !hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+                return true;
+            } else if (other.is(T_MML) && !other.hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+                return true;
+            }
+        }
+
+        // AR-10 Launchers, ugh.
+        /*if (getAmmoType() == T_AR10 || a2.getAmmoType() == T_AR10) {
+            // Barracuda
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_BARRACUDA) && a2.getAmmoType() == T_BARRACUDA) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_BARRACUDA) && getAmmoType() == T_BARRACUDA) {
+                result = true;
+            }
+            // Killer Whale
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_KILLER_WHALE) && a2.getAmmoType() == T_KILLER_WHALE) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_KILLER_WHALE) && getAmmoType() == T_KILLER_WHALE) {
+                result = true;
+            }
+            // White Shark
+            if (getAmmoType() == T_AR10 && hasFlag(F_AR10_WHITE_SHARK) && a2.getAmmoType() == T_WHITE_SHARK) {
+                result = true;
+            } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_WHITE_SHARK) && getAmmoType() == T_WHITE_SHARK) {
+                result = true;
+            }
+        }*/
+
+        // General Launchers
+        if (is(other.getAmmoType()) && (getMunitionType() == other.getMunitionType())) {
+            return true;
+        }
+
+        return false;
     }
 
     public int getAmmoType() {
         return ammoType;
+    }
+
+    /**
+     * Gets a value indicating whether or not this is a certain ammo type.
+     * @param ammoType The ammo type to compare against.
+     */
+    public boolean is(int ammoType) {
+        return getAmmoType() == ammoType;
     }
 
     public long getMunitionType() {
@@ -1637,7 +1711,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
                 
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(3052).setPrototypeFactions(F_DC)
@@ -1807,7 +1881,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
       
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN).setTechRating(RATING_C)
                     .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                     .setClanAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2117,7 +2191,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_TH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD),"230,TM"));
               
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(3052).setPrototypeFactions(F_DC)
@@ -2361,7 +2435,7 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_CSF,F_RD)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),"283,TO"));
               
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 1, M_DEAD_FIRE,
                 new TechAdvancement(TECH_BASE_CLAN)
                 .setIntroLevel(false)
                 .setUnofficial(true)
@@ -5195,13 +5269,16 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 20000;
         ammo.rulesRefs = "219,TM";
+        //This is going to be a rare difference between TT and MM. Removing the Extinction date on Gauss ammo.
+        //The prototype share the base ammo and rather than make a whole new ammo, just going say the IS can figure out
+        //how to make large round steel balls.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
         .setIntroLevel(false)
         .setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
-        .setISApproximate(false, false, false,false, false)
+        .setISAdvancement(2587, 2590, 3045, DATE_NONE, 3038)
+        .setISApproximate(false, false, false,false, true)
         .setPrototypeFactions(F_TH)
         .setProductionFactions(F_TH)
         .setReintroductionFactions(F_FC,F_FW,F_DC);     
@@ -11488,6 +11565,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 2;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 0.5;
                 ammo.bv = 47;
                 ammo.cost = 10000;
                 ammo.ammoRatio = 2;
@@ -11548,6 +11626,7 @@ public class AmmoType extends EquipmentType {
                 ammo.rackSize = 7;
                 ammo.ammoType = AmmoType.T_SCC;
                 ammo.shots = 1;
+                ammo.tonnage = 2;
                 ammo.bv = 124;
                 ammo.cost = 25000;
                 ammo.ammoRatio = 0.5;
@@ -12205,7 +12284,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
         ammo.shots = 8;
-        ammo.bv = 21;
+        ammo.bv = 12;
         ammo.cost = 12000;
         //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
         //This to cover some of the back worlds in the Periphery.
@@ -15806,5 +15885,44 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Whether the given weapon can switch to the given ammo type
+     * @param weapon The weapon being considered
+     * @param otherAmmo The other ammo type being considered
+     * @return true/false - null arguments or linked ammo bin for the weapon result in false
+     */
+    public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {
+        if((weapon == null) ||
+                (weapon.getLinked() == null) ||
+                (otherAmmo == null)) {
+            return false;
+        }
+        
+        AmmoType currentAmmoType = (AmmoType) weapon.getLinked().getType();
+        
+        // Ammo of the same type and rack size should be allowed
+        boolean ammoOfSameType = currentAmmoType.equalsAmmoTypeOnly(otherAmmo)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
+        
+        // MMLs can swap between different specific ammo types, so we have a special case check here
+        boolean mmlAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_MML)
+                && (otherAmmo.getAmmoType() == AmmoType.T_MML)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
+        
+        // LBXs can swap between cluster and slug ammo types
+        boolean lbxAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX)
+                && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
+                && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
+        
+        boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.M_CASELESS;
+        boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.M_CASELESS;
+        boolean caselessMismatch = caselessLoaded != otherBinCaseless;
+        
+        boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);
+        boolean staticFeedMismatch = hasStaticFeed && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
+        
+        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
     }
 }

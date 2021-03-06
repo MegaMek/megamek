@@ -25,10 +25,9 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.enums.Gender;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +48,6 @@ public class MULParser {
 
     public static final String VERSION = "version";
 
-    public static final MMLogger logger = DefaultMmLogger.getInstance();
     /**
      * The names of the various elements recognized by this parser.
      */
@@ -751,8 +749,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
@@ -782,7 +779,7 @@ public class MULParser {
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if(infSquadNum.length() > 0) {
+            if (infSquadNum.length() > 0) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
@@ -1249,8 +1246,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    logger.error(getClass(), "setPilotAttributes",
-                            "Error in loading MUL, issues with extraData elements!");
+                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         } // End have-required-fields

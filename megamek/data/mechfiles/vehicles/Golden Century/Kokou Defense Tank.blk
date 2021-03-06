@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,11 +20,11 @@ Kokou Defense Tank
 </Model>
 
 <year>
-2842
+2843
 </year>
 
 <originalBuildYear>
-2842
+2843
 </originalBuildYear>
 
 <type>
@@ -97,4 +97,3 @@ Succession Wars
 <tonnage>
 70.0
 </tonnage>
-

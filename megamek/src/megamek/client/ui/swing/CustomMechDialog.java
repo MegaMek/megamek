@@ -674,20 +674,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     continue;
                 }
 
-                // a bunch of stuf should get disabled for conv infantry
-                if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals(OptionsConstants.MD_VDNI) || option.getName()
-                                .equals(OptionsConstants.MD_BVDNI))) {
+                // a bunch of stuff should get disabled for conv infantry
+                if (entity.isConventionalInfantry()
+                        && (option.getName().equals(OptionsConstants.MD_VDNI)
+                        || option.getName().equals(OptionsConstants.MD_BVDNI))) {
                     continue;
                 }
 
-                // a bunch of stuff should get disabled for all but conventional
-                // infantry
-                if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                // a bunch of stuff should get disabled for all but conventional infantry
+                if (!entity.isConventionalInfantry()
                         && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
-                                || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) || option
-                                .getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
+                        || option.getName().equals(OptionsConstants.MD_PL_MASC)
+                        || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO)
+                        || option.getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
                     continue;
                 }
 

@@ -24,6 +24,10 @@ JES III Missile Carrier
 3135
 </year>
 
+<originalBuildYear>
+3135
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -40,12 +47,20 @@ Wheeled
 2
 </engine_type>
 
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
 40
 21
 21
-26
 20
+26
 </armor>
 
 <Body Equipment>

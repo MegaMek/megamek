@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
+import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -58,18 +59,7 @@ import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.client.ui.swing.util.TurnTimer;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.util.List;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class MovementDisplay extends StatusBarPhaseDisplay {
-    /**
-     *
-     */
     private static final long serialVersionUID = -7246715124042905688L;
     
     // Defines for the different flags
@@ -103,7 +93,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      *
      * @author arlith
      */
-    public static enum MoveCommand implements PhaseCommand {
+    public enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND), //$NON-NLS-1$
@@ -1243,29 +1233,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void removeLastStep() {
         cmd.removeLastStep();
-        if (cmd.length() == 0) {
+        final Entity entity = ce();
+        if (entity == null) {
+            MegaMek.getLogger().warning("Cannot process removeLastStep for a null entity.");
+            return;
+        } else if (cmd.length() == 0) {
             clear();
-            if ((gear == MovementDisplay.GEAR_JUMP) && 
-                    (!cmd.isJumping())) {
+            if ((gear == MovementDisplay.GEAR_JUMP) && !cmd.isJumping()) {
                 cmd.addStep(MoveStepType.START_JUMP);
-            } else if (ce().isConvertingNow()) {
+            } else if (entity.isConvertingNow()) {
                 cmd.addStep(MoveStepType.CONVERT_MODE);
             }
         } else {
-            clientgui.bv.drawMovementData(ce(), cmd);
-            clientgui.bv.setWeaponFieldofFire(ce(), cmd);
+            // clear board cursors
+            clientgui.getBoardView().select(cmd.getFinalCoords());
+            clientgui.getBoardView().cursor(cmd.getFinalCoords());
+            clientgui.getBoardView().drawMovementData(entity, cmd);
+            clientgui.bv.setWeaponFieldofFire(entity, cmd);
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                butDone.setText("<html><b>"
-                                + Messages.getString("MovementDisplay.Done")
-                                + "</b></html>"); //$NON-NLS-1$
+                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
             }
         }
-        
         updateButtons();
     }
 
@@ -1526,14 +1519,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         
-        if ((ce() instanceof Infantry) && ((Infantry)ce()).hasMicrolite()
-        		&& (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
-        		&& !cmd.contains(MoveStepType.FORWARDS)
-        		&& cmd.getFinalElevation() > 0
-        		&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-    				.terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-				&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-        			.terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+        if ((ce() instanceof Infantry) && ((Infantry) ce()).hasMicrolite()
+                && (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
+                && !cmd.contains(MoveStepType.FORWARDS)
+                && cmd.getFinalElevation() > 0
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+                    .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+                    .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
             String title = Messages
                     .getString("MovementDisplay.MicroliteMove.title"); //$NON-NLS-1$
             String body = Messages
@@ -1961,40 +1954,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantDFA"),
-                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MovementDisplay.NoTarget"));
                     clear();
                     computeMovementEnvelope(ce);
                     return;
                 }
 
                 // check if it's a valid DFA
-                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient()
-                                                                 .getGame(), cen, target, cmd);
+                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient().getGame(), cen, target, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
-                    if (clientgui
-                            .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.title",
-                                            new Object[] { target
-                                                    .getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
-                                                    Double.valueOf(
-                                                            Compute.oddsAbove(toHit
-                                                                    .getValue())),
-                                                    toHit.getDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageFor(
-                                                                            ce,
-                                                                            (target instanceof Infantry)
-                                                                                    && !(target instanceof BattleArmor))),
-                                                    toHit.getTableDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageTakenBy(ce)) }))) {
+                    if (clientgui.doYesNoDialog(
+                            Messages.getString("MovementDisplay.DFADialog.title",
+                                    target.getDisplayName()),
+                            Messages.getString("MovementDisplay.DFADialog.message",
+                                    toHit.getValueAsString(), Compute.oddsAbove(toHit.getValue()),
+                                    toHit.getDesc(),
+                                    DfaAttackAction.getDamageFor(ce, target.isConventionalInfantry()),
+                                    toHit.getTableDesc(), DfaAttackAction.getDamageTakenBy(ce)))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -2005,13 +1982,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     return;
                 }
                 // if not valid, tell why
-                clientgui.doAlertDialog(
-                        Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
-                        toHit.getDesc());
+                clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), toHit.getDesc());
                 clear();
                 return;
             }
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
+            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
             updateProneButtons();
             updateRACButton();
             updateSearchlightButton();
@@ -2780,6 +2755,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setUnloadEnabled((ce.getUnitsUnloadableFromBays().size() > 0)
                              && !ce.isAirborne());
             setLoadEnabled(false);
+            setMountEnabled(false);
             return;
         }
 
@@ -2794,9 +2770,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             mpUsed = cmd.getMpUsed();
         }
         if (!ce.isAirborne()
-            && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
-            && (Compute.getMountableUnits(ce, pos, elev,
-                                          game).size() > 0)) {
+                && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && !Compute.getMountableUnits(ce, pos,
+                    elev + game.getBoard().getHex(pos).surface(), game).isEmpty()) {
             setMountEnabled(true);
         }
 
@@ -2909,11 +2885,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             elev += hex.getLevel();
         }
 
-        ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos,
-                                                                     elev, clientgui.getClient().getGame());
+        List<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().getGame());
 
         // Handle error condition.
-        if (mountableUnits.size() == 0) {
+        if (mountableUnits.isEmpty()) {
             System.err.println("MovementDisplay#getMountedUnit() " +
                                "called without mountable units."); //$NON-NLS-1$
         }
@@ -3093,7 +3068,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value may be null if there are no eligible targets
      */
     private Entity getTowedUnit() {
-        final String METHOD_NAME = "getTowedUnit()";
         final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
@@ -3110,7 +3084,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         // Handle error condition.
         if (choices.size() == 0) {
-            logDebug(METHOD_NAME, "Method called without towable units.");
+            MegaMek.getLogger().debug("Method called without towable units.");
             return null;
         }
 
@@ -3244,13 +3218,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value will not be <code>null</code>.
      */
     private Entity getDisconnectedUnit() {
-        final String METHOD_NAME = "getDisconnectedUnit()";
         Entity ce = ce();
         Entity choice = null;
         
         // Handle error condition.
         if (ce.getAllTowedUnits().isEmpty()) {
-            logDebug(METHOD_NAME, "Method called without any towed units.");
+            MegaMek.getLogger().debug("Method called without any towed units.");
             return null;
         }
         
@@ -3327,9 +3300,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos)
                             .getLevel()
                    + ce.getElevation();
-        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        List<Coords> ring = pos.allAdjacent();
         if (ce instanceof Dropship) {
-            ring = Compute.coordsAtRange(pos, 2);
+            ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available
         // Positions
@@ -3405,9 +3378,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         crew.setId(clientgui.getClient().getGame().getNextEntityId());
         crew.setGame(clientgui.getClient().getGame());
         int elev = clientgui.getClient().getGame().getBoard().getHex(pos).getLevel() + abandoned.getElevation();
-        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        List<Coords> ring = pos.allAdjacent();
         if (abandoned instanceof Dropship) {
-            ring = Compute.coordsAtRange(pos, 2);
+            ring = pos.allAtDistance(2);
         }
         // ok now we need to go through the ring and identify available
         // Positions
@@ -4169,7 +4142,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         for (Entity ent : game.getEntitiesVector(pos)) {
-            if (!ce.equals(ent)) {
+            if ((ce == null) || !ce.equals(ent)) {
                 targets.add(ent);
             }
         }
@@ -5327,7 +5300,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
-        updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
         updateLandButtons();

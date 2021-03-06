@@ -24,9 +24,11 @@ import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
@@ -441,15 +443,6 @@ public class EquipmentType implements ITechnology {
             Mounted ammo = mounted.getLinked();
             if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
                     || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
-                return false;
-            }
-
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getAmmoType() == AmmoType.T_LRM)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
                 return false;
             }
         }
@@ -1353,42 +1346,60 @@ public class EquipmentType implements ITechnology {
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
+            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                     .hasMoreElements();) {
                 EquipmentType type = e.nextElement();
                 if (type instanceof AmmoType) {
-                    w.write("A,");
+                    w.write("A");
                 } else if (type instanceof WeaponType) {
-                    w.write("W,");
+                    w.write("W");
                 } else {
-                    w.write("M,");
-                }
-                w.write(type.getName());
-                w.write(",");
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year
-                            + "-"
-                            + TechConstants.getTechName(type.getTechLevel(year)));
-                }
-                w.write(",");
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year
-                            + "-"
-                            + TechConstants.getLevelName(type
-                                    .getTechLevel(year)));
+                    w.write("M");
                 }
 
-                w.write(",");
+                w.write(",\"");
+                w.write(type.getName());
+
+                // Gather the unique tech levels for this equipment ...
+                List<Integer> levels = type.getTechLevels().keySet().stream()
+                        .map(year -> type.getTechLevel(year))
+                        .sorted()   // ordered for ease of use
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // ... and use them to output the tech names ...
+                w.write("\",\"");
+                w.write(levels.stream()
+                        .map(TechConstants::getTechName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                // ... and associated rules levels.
+                w.write("\",\"");
+                w.write(levels.stream()
+                        .map(TechConstants::getLevelName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                w.write("\",\"");
                 w.write(type.getFullRatingName());
-                w.write(",");
-                w.write(getEquipDateAsString(type.getIntroductionDate()));
-                w.write(",");
-                w.write(getEquipDateAsString(type.getExtinctionDate()));
-                w.write(",");
-                w.write(getEquipDateAsString(type.getReintroductionDate()));
-                w.write(",");
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getStaticTechLevel().toString());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getIntroductionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getPrototypeDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getProductionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getCommonDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getExtinctionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getReintroductionDateName());
+                w.write("\",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
                 } else {
@@ -1416,7 +1427,7 @@ public class EquipmentType implements ITechnology {
                 for (Enumeration<String> names = type.getNames(); names
                         .hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write(name + ",");
+                    w.write("\"" + name + "\",");
                 }
                 w.newLine();
             }

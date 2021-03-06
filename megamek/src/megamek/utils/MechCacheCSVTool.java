@@ -21,14 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
-import megamek.common.Aero;
-import megamek.common.EquipmentType;
-import megamek.common.Mech;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.TechConstants;
-import megamek.common.UnitRoleHandler;
-
+import megamek.common.*;
 
 
 /**
@@ -54,7 +47,8 @@ public class MechCacheCSVTool {
         try {
             StringBuffer csvLine = new StringBuffer();
 
-            csvLine.append("Chassis,Model,Combined,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Rules,Engine Name,Internal Structure," +
+
+            csvLine.append("Chassis,Model,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year,Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure," +
                     "Myomer,Cockpit Type,Gyro Type," +
                     "Armor Types," +
                     "Equipment (multiple entries)\n");
@@ -72,6 +66,9 @@ public class MechCacheCSVTool {
                 
                 //Combined Name
                 csvLine.append(mech.getChassis() + " " + mech.getModel()+ ",");
+                
+                //
+                csvLine.append(mech.isClan() + ",");
                 
                 //Source Book
                 csvLine.append(mech.getSourceFile() + ",");
@@ -119,8 +116,11 @@ public class MechCacheCSVTool {
                 
                 // BV
                 csvLine.append(mech.getBV()  + ",");
+                
+                //Cost
+                csvLine.append(mech.getCost() + ",");
 
-                //Rules Level
+                //Level
                 csvLine.append(mech.getLevel() + ",");
                 
                 // Engine Type

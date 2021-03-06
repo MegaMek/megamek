@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,11 +13,11 @@ Warship
 </UnitType>
 
 <Name>
-Corone
+Corone Destroyer
 </Name>
 
 <Model>
-Warship
+(2915)
 </Model>
 
 <year>
@@ -233,4 +233,3 @@ ISERLargeLaser
 <escape_pod>
 30
 </escape_pod>
-

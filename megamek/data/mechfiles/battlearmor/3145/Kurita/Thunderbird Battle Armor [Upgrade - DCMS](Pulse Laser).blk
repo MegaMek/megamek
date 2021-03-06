@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Thunderbird Battle Armor
 </Name>
 
 <Model>
-[Upgrade - DCMS](Pulse Laser)
+(DCMS)[Upgrade](Pulse Laser)
 </Model>
 
 <year>
@@ -100,4 +100,3 @@ biped
 <weightclass>
 3
 </weightclass>
-

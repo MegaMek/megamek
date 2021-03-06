@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -13,6 +13,9 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.icons.Camouflage;
+
 import java.util.Vector;
 
 /**
@@ -23,25 +26,11 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public interface IPlayer extends ITurnOrdered {
-    public static final int PLAYER_NONE = -1;
-    public static final int TEAM_NONE = 0;
-    public static final int TEAM_UNASSIGNED = -1;
-    public static final String[] colorNames = { "Blue", "Red", "Green", "Cyan",
-            "Pink", "Orange", "Gray", "Brown", "Purple", "Turquoise ",
-            "Maroon", "Spring Green", "Gold", "Sienna", "Violet", "Navy",
-            "Olive Drab", "Fuchsia", "FireBrick", "Dark Golden Rod", "Coral",
-            "Chartreuse", "Deep Purple", "Yellow" };
-    public static final String[] teamNames = {"No Team", "Team 1", "Team 2",
-                                              "Team 3", "Team 4", "Team 5"};
-    public static final int MAX_TEAMS = teamNames.length;
-    /**
-     * The "no camo" category.
-     */
-    public static final String NO_CAMO = "-- No Camo --";
-    /**
-     * The category for camos in the root directory.
-     */
-    public static final String ROOT_CAMO = "-- General --";
+    int PLAYER_NONE = -1;
+    int TEAM_NONE = 0;
+    int TEAM_UNASSIGNED = -1;
+    String[] teamNames = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
+    int MAX_TEAMS = teamNames.length;
 
     Vector<Minefield> getMinefields();
 
@@ -79,6 +68,8 @@ public interface IPlayer extends ITurnOrdered {
 
     int getNbrMFInferno();
 
+    Camouflage getCamouflage();
+
     void setCamoCategory(String name);
 
     String getCamoCategory();
@@ -86,6 +77,10 @@ public interface IPlayer extends ITurnOrdered {
     void setCamoFileName(String name);
 
     String getCamoFileName();
+
+    PlayerColour getColour();
+
+    void setColour(PlayerColour colour);
 
     void setGame(IGame game);
 
@@ -118,10 +113,6 @@ public interface IPlayer extends ITurnOrdered {
     boolean canSeeAll();
 
     void setObserver(boolean observer);
-
-    int getColorIndex();
-
-    void setColorIndex(int index);
 
     int getStartingPos();
 

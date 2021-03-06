@@ -72,7 +72,7 @@ public abstract class MMRandom {
      * @throws IllegalArgumentException will be thrown if the
      *             input is <= 0.
      */
-    Roll d6(int nDice) {
+    public Roll d6(int nDice) {
         if (0 >= nDice) {
             throw new IllegalArgumentException(
                     "Must ask for a positive number of rolls, not " + nDice);
@@ -86,7 +86,7 @@ public abstract class MMRandom {
         return roll;
     }
 
-    Roll d6(int nDice, int keep) {
+    public Roll d6(int nDice, int keep) {
         if (0 >= nDice) {
             throw new IllegalArgumentException(
                     "Must ask for a positive number of rolls, not " + nDice);
@@ -106,7 +106,7 @@ public abstract class MMRandom {
     /**
      * A single die
      */
-    Roll d6() {
+    public Roll d6() {
         return d6(1);
     }
 
@@ -118,13 +118,13 @@ public abstract class MMRandom {
      *            any random number returned by this method.
      * @return a random <code>int</code> from the value set [0, maxValue).
      */
-    abstract int randomInt(int maxValue);
+    public abstract int randomInt(int maxValue);
 
     /**
      * Returns a random <code>float</code> in the range of 0 to 1
      * @return a random <code>float</code> from the value set [0,1]
      */
-    abstract float randomFloat();
+    public abstract float randomFloat();
 
     /**
      * Uses com.sun.java.util.collections.Random

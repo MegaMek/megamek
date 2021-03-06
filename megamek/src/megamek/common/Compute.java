@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Vector;
 
@@ -215,6 +216,15 @@ public class Compute {
      */
     public static void setRNG(int type) {
         random = MMRandom.generate(type);
+    }
+
+    /**
+     * Sets the RNG to the specific instance.
+     * @param random A non-null instance of {@see MMRandom} to use
+     *               for all random number generation.
+     */
+    public static void setRNG(MMRandom random) {
+        Compute.random = Objects.requireNonNull(random);
     }
 
     /**
@@ -505,7 +515,7 @@ public class Compute {
         // check for rubble
         if ((movementType != EntityMovementType.MOVE_JUMP)
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
-            && (entity.getMovementMode() != EntityMovementMode.VTOL)
+            && (destElevation == 0)
             && !isPavementStep
             && entity.canFall()) {
             return true;
@@ -1115,12 +1125,14 @@ public class Compute {
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
         if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-            && targHex.containsTerrain(Terrains.WATER) && (targBottom < 0)) {
-            if (targTop >= 0) {
-                targetInPartialWater = true;
-            } else {
-                targetUnderwater = true;
-            }
+            && (targHex != null) && targHex.containsTerrain(Terrains.WATER) 
+            && (targBottom < 0)) {
+            
+                if (targTop >= 0) {
+                    targetInPartialWater = true;
+                } else {
+                    targetUnderwater = true;
+                }
         }
 
         // allow naval units on surface to be attacked from above or below
@@ -1138,8 +1150,9 @@ public class Compute {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
+        
         // allow ice to be cleared from below
-        if (targHex.containsTerrain(Terrains.WATER)
+        if ((targHex != null) && targHex.containsTerrain(Terrains.WATER)
             && (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             targetInPartialWater = true;
         }
@@ -1611,8 +1624,7 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker,
-                                        Targetable target) {
+    public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
     }
 
@@ -1623,35 +1635,30 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker,
-                                        Targetable target, boolean useGroundDistance) {
-
+    public static int effectiveDistance(IGame game, Entity attacker, Targetable target,
+                                        boolean useGroundDistance) {
         if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
         }
 
-        Vector<Coords> attackPos = new Vector<Coords>();
+        Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
-        Vector<Coords> targetPos = new Vector<Coords>();
+        Vector<Coords> targetPos = new Vector<>();
         targetPos.add(target.getPosition());
         // if a grounded dropship is the attacker, then it gets to choose the
         // best secondary position for LoS
-        if ((attacker instanceof Dropship) && !attacker.isAirborne()
-            && !attacker.isSpaceborne()) {
-            attackPos = new Vector<Coords>();
+        if ((attacker instanceof Dropship) && !attacker.isAirborne() && !attacker.isSpaceborne()) {
+            attackPos = new Vector<>();
             for (int key : attacker.getSecondaryPositions().keySet()) {
                 attackPos.add(attacker.getSecondaryPositions().get(key));
             }
         }
-        if ((target instanceof Entity) && (target instanceof Dropship)
-            && !((Entity) target).isAirborne()
-            && !((Entity) target).isSpaceborne()) {
-            targetPos = new Vector<Coords>();
-            for (int key : ((Entity) target).getSecondaryPositions().keySet()) {
-                targetPos.add(((Entity) target).getSecondaryPositions()
-                                               .get(key));
+        if ((target instanceof Dropship) && !target.isAirborne() && !((Entity) target).isSpaceborne()) {
+            targetPos = new Vector<>();
+            for (final int key : target.getSecondaryPositions().keySet()) {
+                targetPos.add(target.getSecondaryPositions().get(key));
             }
         }
         int distance = Integer.MAX_VALUE;
@@ -1664,12 +1671,10 @@ public class Compute {
             }
         }
 
-        if (Compute.isGroundToAir(attacker, target)
-                && (target instanceof Entity)) {
+        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
-            distance = attacker.getPosition().distance(
-                    getClosestFlightPath(attacker.getId(),
-                            attacker.getPosition(), (Entity) target));
+            distance = attacker.getPosition().distance(getClosestFlightPath(attacker.getId(),
+                    attacker.getPosition(), (Entity) target));
 
             // if the ground attacker uses weapon bays and we are on a
             // ground map, then we will divide this distance by 16
@@ -1683,14 +1688,13 @@ public class Compute {
 
         // if this is an air-to-air attack on the ground map, then divide
         // distance by 16
-        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround()
-            && !useGroundDistance) {
+        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
             distance = (int) Math.ceil(distance / 16.0);
         }
 
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
-        // TODO: should the player be explcitly notified?
+        // TODO: should the player be explicitly notified?
         if (Compute.isInSameBuilding(game, attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
@@ -1724,17 +1728,13 @@ public class Compute {
     }
 
     /**
-     * Returns the closest position along <code>te</codeE>'s flight path to
-     * <code>aPos</code>.  In the case of multiple equi-distance positions, the
-     * first one is picked unless <code>te</code>'s playerPickedPassThrough
-     * position is non-null.
-     *
-     * @param aPos
-     * @param te
-     * @return
+     * @param aPos the attacker's position
+     * @param te the target entity
+     * @return the closest position along <code>te</codeE>'s flight path to <code>aPos</code>. In
+     * the case of multiple equi-distance positions, the first one is picked unless
+     * <code>te</code>'s playerPickedPassThrough position is non-null.
      */
-    public static Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
-
+    public static @Nullable Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
         Coords finalPos = te.getPosition();
         if (te.getPlayerPickedPassThrough(attackerId) != null) {
             finalPos = te.getPlayerPickedPassThrough(attackerId);
@@ -2431,18 +2431,18 @@ public class Compute {
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-    public static void modifyPhysicalBTHForAdvantages(Entity attacker,
-                                                      Entity target, ToHitData toHit, IGame game) {
+    public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
+                                                      final ToHitData toHit, final IGame game) {
+        Objects.requireNonNull(attacker);
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
+            toHit.addModifier(-1, "melee specialist");
         }
 
-        IHex curHex = game.getBoard().getHex(attacker.getPosition());
         if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((attacker instanceof Mech) || (attacker instanceof Protomech))
-                && (curHex.terrainLevel(Terrains.WATER) > 1)) {
+                && (game.getBoard().getHex(attacker.getPosition()).terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
 
@@ -2451,10 +2451,8 @@ public class Compute {
         }
 
         // Mek targets that are dodging are harder to hit.
-
-        if ((target != null)
-            && (target instanceof Mech)
-            && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
+        if ((target instanceof Mech)
+                && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && target.dodging) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -2626,6 +2624,14 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
                                                      int eistatus, boolean attackerInSameBuilding,
                                                      boolean underwaterWeapon) {
+        ToHitData toHit = new ToHitData();
+
+        // no terrain mods for bombs, artillery strikes
+        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB ||
+                t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY) {
+            return toHit;
+        }
+        
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -2636,6 +2642,11 @@ public class Compute {
                 hex = game.getBoard().getHex(
                         game.getEntity(entityTarget.getId()).getPosition());
             }
+        }
+        
+        // if the hex doesn't exist, it's unlikely to have terrain modifiers
+        if (hex == null) {
+            return toHit;
         }
 
 
@@ -2653,12 +2664,6 @@ public class Compute {
         boolean isUnderwater = (entityTarget != null)
                                && hex.containsTerrain(Terrains.WATER) && (hex.depth() > 0)
                                && (entityTarget.getElevation() < hex.surface());
-        ToHitData toHit = new ToHitData();
-
-        if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
-            // no terrain mods for aero bombing
-            return toHit;
-        }
 
         // if we have in-building combat, it's a +1
         if (attackerInSameBuilding) {
@@ -2941,19 +2946,22 @@ public class Compute {
         AmmoType loaded_ammo = new AmmoType();
 
         Entity attacker = g.getEntity(waa.getEntityId());
-        Infantry inf_attacker = new Infantry();
-        BattleArmor ba_attacker = new BattleArmor();
+        Entity target = g.getEntity(waa.getTargetId());
+        
+        int baShootingStrength = attacker instanceof BattleArmor ? 
+                ((BattleArmor) attacker).getShootingStrength() : 0;
+        
+        int infShootingStrength = 0;
+        double infDamagePerTrooper = 0;
+                
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         Mounted lnk_guide;
 
         ToHitData hitData = waa.toHit(g, allECMInfo);
 
-        if (attacker instanceof BattleArmor) {
-            ba_attacker = (BattleArmor) g.getEntity(waa.getEntityId());
-        }
-        if ((attacker instanceof Infantry)
-            && !(attacker instanceof BattleArmor)) {
-            inf_attacker = (Infantry) g.getEntity(waa.getEntityId());
+        if (attacker.isConventionalInfantry()) {
+            infShootingStrength = ((Infantry) attacker).getShootingStrength();
+            infDamagePerTrooper = ((Infantry) attacker).getDamagePerTrooper();
         }
 
         WeaponType wt = (WeaponType) weapon.getType();
@@ -3075,8 +3083,7 @@ public class Compute {
             // weapons do odd things when mounting multiples
             if (attacker instanceof BattleArmor) {
                 // The number of troopers hitting
-                fHits = expectedHitsByRackSize[ba_attacker
-                        .getShootingStrength()];
+                fHits = expectedHitsByRackSize[baShootingStrength];
                 if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
@@ -3130,10 +3137,8 @@ public class Compute {
 
                 // Check for target with attached Narc or iNarc homing pod from
                 // friendly unit
-                if (g.getEntity(waa.getTargetId()).isNarcedBy(
-                        attacker.getOwner().getTeam())
-                        || g.getEntity(waa.getTargetId()).isINarcedBy(
-                                attacker.getOwner().getTeam())) {
+                if (target.isNarcedBy(attacker.getOwner().getTeam())
+                        || target.isINarcedBy(attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
                             || (at.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (at.getAmmoType() == AmmoType.T_MML)
@@ -3173,7 +3178,6 @@ public class Compute {
 
             // * HAGs modify their cluster hits for range.
             if (wt instanceof HAGWeapon) {
-                Entity target = g.getEntity(waa.getTargetId());
                 int distance = attacker.getPosition().distance(
                         target.getPosition());
                 if (distance <= wt.getShortRange()) {
@@ -3196,12 +3200,11 @@ public class Compute {
             // so they don't use the missile hits table. Weapon bays also deal
             // damage in a single block
             if ((attacker.getPosition() != null)
-                && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
-                // Damage may vary by range for some weapons, so let's see how
-                // far
+                && (target.getPosition() != null)) {
+                // Damage may vary by range for some weapons, so let's see how far
                 // away we actually are and then set the damage accordingly.
-                int rangeToTarget = attacker.getPosition().distance(
-                        g.getEntity(waa.getTargetId()).getPosition());
+                int rangeToTarget = attacker.getPosition().distance(target.getPosition());
+                
                 //Convert AV to fDamage for bay weapons, fighters, etc
                 if (attacker.usesWeaponBays()){
                     double av = 0;
@@ -3282,65 +3285,59 @@ public class Compute {
                 }
             }
 
-            // Infantry follow some special rules, but do fixed amounts of
-            // damage
-            // Anti-mek attacks are weapon-like in nature, so include them here
-            // as well
+            // Infantry follow some special rules, but do fixed amounts of damage
+            // Anti-mek attacks are weapon-like in nature, so include them here as well
             if (attacker instanceof Infantry) {
                 if (wt.getInternalName() == Infantry.LEG_ATTACK) {
                     fDamage = 20.0f; // Actually 5, but the chance of crits
                     // deserves a boost
-                }
-
-                if (inf_attacker.isPlatoon()) {
-                    if (wt.getInternalName() == Infantry.SWARM_MEK) {
-                        // If the target is a Mek that is not swarmed, this is a
-                        // good thing
-                        if ((g.getEntity(waa.getTargetId())
-                                .getSwarmAttackerId() == Entity.NONE)
-                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-
-                            fDamage = 1.5f
-                                    * (float)inf_attacker.getDamagePerTrooper()
-                                    * inf_attacker.getShootingStrength();
-                        }
-                        // Otherwise, call it 0 damage
-                        else {
-                            fDamage = 0.0f;
+                // leg attacks are mutually exclusive with swarm attacks, 
+                } else {                
+                    boolean targetIsSwarmable = (target instanceof Mech) || (target instanceof Tank);
+    
+                    if (attacker.isConventionalInfantry()) {
+                        if (wt.getInternalName() == Infantry.SWARM_MEK) {
+                            // If the target is a Mek that is not swarmed, this is a
+                            // good thing
+                            if ((target.getSwarmAttackerId() == Entity.NONE) && targetIsSwarmable) {
+                                fDamage = 1.5f
+                                        * (float) infDamagePerTrooper
+                                        * infShootingStrength;
+                            }
+                            // Otherwise, call it 0 damage
+                            else {
+                                fDamage = 0.0f;
+                            }
+                        } else {
+                            // conventional weapons; field guns should be handled
+                            // under the standard weapons section
+                            fDamage = 0.6f
+                                    * (float) infDamagePerTrooper
+                                    * infShootingStrength;
                         }
                     } else {
-                        // conventional weapons; field guns should be handled
-                        // under the standard weapons section
-                        fDamage = 0.6f
-                                * (float)inf_attacker.getDamagePerTrooper()
-                                * inf_attacker.getShootingStrength();
-                    }
-                } else {
-                    // Battle armor units conducting swarm attack
-                    if (wt.getInternalName() == Infantry.SWARM_MEK) {
-                        // If the target is a Mek that is not swarmed, this is a
-                        // good thing
-                        if ((g.getEntity(waa.getTargetId())
-                                .getSwarmAttackerId() == Entity.NONE)
-                                && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-                            // Overestimated, but the chance at crits and head
-                            // shots deserves a boost
-                            fDamage = 10.0f * ba_attacker.getShootingStrength();
-                        }
-                        // Otherwise, call it 0 damage
-                        else {
-                            fDamage = 0.0f;
+                        // Battle armor units conducting swarm attack
+                        if (wt.getInternalName() == Infantry.SWARM_MEK) {
+                            // If the target is a Mek that is not swarmed, this is a
+                            // good thing
+                            if ((target.getSwarmAttackerId() == Entity.NONE) && targetIsSwarmable) {
+                                // Overestimated, but the chance at crits and head
+                                // shots deserves a boost
+                                fDamage = 10.0f * baShootingStrength;
+                            }
+                            // Otherwise, call it 0 damage
+                            else {
+                                fDamage = 0.0f;
+                            }
                         }
                     }
-
                 }
             }
 
         }
 
         // Need to adjust damage if the target is infantry.
-        if ((g.getEntity(waa.getTargetId()) instanceof Infantry)
-            && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
+        if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
             fDamage = directBlowInfantryDamage(fDamage, 0,
                     wt.getInfantryDamageClass(), ((Infantry) (g.getEntity(waa
                             .getTargetId()))).isMechanized(), false);
@@ -3349,8 +3346,7 @@ public class Compute {
         fDamage *= fChance;
 
         // Conventional infantry take double damage in the open
-        if ((g.getEntity(waa.getTargetId()) instanceof Infantry)
-            && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
+        if (g.getEntity(waa.getTargetId()).isConventionalInfantry()) {
             IHex e_hex = g.getBoard().getHex(
                     g.getEntity(waa.getTargetId()).getPosition().getX(),
                     g.getEntity(waa.getTargetId()).getPosition().getY());
@@ -3361,8 +3357,8 @@ public class Compute {
             }
 
             // Cap damage to prevent run-away values
-            if (inf_attacker.getShootingStrength() > 0) {
-                fDamage = Math.min(inf_attacker.getShootingStrength(), fDamage);
+            if (infShootingStrength > 0) {
+                fDamage = Math.min(infShootingStrength, fDamage);
             }
         }
         return fDamage;
@@ -3466,21 +3462,17 @@ public class Compute {
 
             // For each valid ammo bin
             for (Mounted abin : shooter.getAmmo()) {
-                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                                       abin)) {
+                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
                     if (abin.getUsableShotsLeft() > 0) {
                         abin_type = (AmmoType) abin.getType();
                         if (!AmmoType.canDeliverMinefield(abin_type)) {
 
                             // Load weapon with specified bin
-                            shooter.loadWeapon(
-                                    shooter.getEquipment(atk.getWeaponId()),
-                                    abin);
+                            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
                             atk.setAmmoId(shooter.getEquipmentNum(abin));
 
                             // Get expected damage
-                            ex_damage = Compute.getExpectedDamage(cgame, atk,
-                                                                  false);
+                            ex_damage = Compute.getExpectedDamage(cgame, atk, false);
 
                             // Calculate any modifiers due to ammo type
                             ammo_multiple = 1.0;
@@ -3501,12 +3493,7 @@ public class Compute {
                                             || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
                                             || (abin_type.getAmmoType() == AmmoType.T_PAC))
                                             && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
-                                ammo_multiple = 0.0;
-                                if (target instanceof Infantry) {
-                                    if (!(target instanceof BattleArmor)) {
-                                        ammo_multiple = 2.0;
-                                    }
-                                }
+                                ammo_multiple = target.isConventionalInfantry() ? 2.0 : 0.0;
                             }
 
                             // LBX cluster rounds work better against units
@@ -3515,12 +3502,11 @@ public class Compute {
                             // Other ammo that deliver lots of small
                             // submunitions should be tested for here too
                             if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
-                                 || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB) || (abin_type
-                                                                                                   .getAmmoType() ==
-                                                                                           AmmoType.T_SBGAUSS))
-                                && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
+                                    || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SBGAUSS))
+                                    && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
                                 if (target.getArmorRemainingPercent() <= 0.25) {
-                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
+                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10.0);
                                 }
                                 if (target instanceof Tank) {
                                     ammo_multiple += 1.0;
@@ -4197,8 +4183,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             } else if (te.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if ((te instanceof Infantry) && !(te instanceof BattleArmor)
-                       && ((Infantry) te).hasSneakCamo()) {
+            } else if (te.isConventionalInfantry() && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
 
@@ -6059,28 +6044,6 @@ public class Compute {
     }
 
     /**
-     * Gets a ring of hexes at a specified distance from the centre
-     *
-     * @param centre The centre point of the ring
-     * @param range  The radius of the ring
-     */
-    public static ArrayList<Coords> coordsAtRange(Coords centre, int range) {
-        ArrayList<Coords> result = new ArrayList<Coords>(range * 6);
-        if (range < 1) {
-            result.add(centre);
-            return result;
-        }
-        for (int dir = 0; dir < 6; dir++) {
-            Coords corner = centre.translated(dir, range);
-            for (int count = 0; count < range; count++) {
-                result.add(corner);
-                corner = corner.translated((dir + 2) % 6);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left
      *
@@ -6695,7 +6658,7 @@ public class Compute {
     }
 
     public static ArrayList<Coords> getAcceptableUnloadPositions(
-            ArrayList<Coords> ring, Entity unit, IGame game, int elev) {
+            List<Coords> ring, Entity unit, IGame game, int elev) {
 
         ArrayList<Coords> acceptable = new ArrayList<Coords>();
 
@@ -6716,15 +6679,22 @@ public class Compute {
         return acceptable;
     }
 
-    public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos,
-                                                      int elev, IGame game) {
-
-        ArrayList<Entity> mountable = new ArrayList<Entity>();
+    /**
+     * Builds a list of all adjacent units that can load the given Entity.
+     * @param en   The entity to load
+     * @param pos  The coordinates of the hex to load from
+     * @param elev The absolute elevation of the unit at the point of loading (surface
+     *             of the hex + elevation over the surface)
+     * @param game The game object
+     * @return     All adjacent units that can mount the Entity
+     */
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader
         // so lets take the ring
-        for (Coords c : coordsAtRange(pos, 1)) {
+        for (Coords c : pos.allAdjacent()) {
             IHex hex = game.getBoard().getHex(c);
             if (null == hex) {
                 continue;

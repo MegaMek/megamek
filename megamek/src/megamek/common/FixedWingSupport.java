@@ -500,6 +500,11 @@ public class FixedWingSupport extends ConvFighter {
         bvText.append("</BODY></HTML>");
     }
 
+    @Override
+    public double getBVTypeModifier() {
+        return 1.0;
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
     }

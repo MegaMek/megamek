@@ -2,25 +2,22 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import megamek.client.ui.swing.util.PlayerColors;
 
 /**
  * This class defines a single server report. It holds information such as the
@@ -318,9 +315,7 @@ public class Report implements Serializable {
             }
             add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);
-            String colorcode = Integer.toHexString(PlayerColors.getColor(
-                    entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
-            add("<B><font color='" + colorcode + "'>"
+            add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
                     + entity.getOwner().getName() + "</font></B>");
         }
     }
@@ -486,7 +481,7 @@ public class Report implements Serializable {
                 i++;
             }
             //add the sprite code at the beginning of the line
-            if (!imageCode.isEmpty()) {
+            if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
                 }

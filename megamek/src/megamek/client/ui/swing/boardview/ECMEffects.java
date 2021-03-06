@@ -2,15 +2,15 @@
  * MegaMek -
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.boardview;
 
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.ECMInfo;
 import megamek.common.IPlayer;
 
@@ -34,10 +33,8 @@ import megamek.common.IPlayer;
  * information.
  *
  * @author arlith
- *
  */
 public class ECMEffects {
-
     /**
      * A collection of <code>ECMInfo</code> instances that affect a location.
      */
@@ -135,8 +132,7 @@ public class ECMEffects {
      * @return
      */
     public static Color getColorAverage(List<Color> colors) {
-        final int alpha = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
 
         int red, green, blue;
         red = green = blue = 0;
@@ -160,16 +156,8 @@ public class ECMEffects {
      * @return
      */
     public static Color getECMColor(IPlayer player) {
-        final int alpha = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
-
-        Color tint;
-        if (player != null) {
-            tint = new Color(PlayerColors.getColorRGB(player.getColorIndex()));
-        } else {
-            tint = Color.gray;
-        }
-
+        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        Color tint = (player == null) ? Color.GRAY : player.getColour().getColour();
         // Create a new color by adding transparency to the tint
         return new Color(tint.getRed(), tint.getGreen(), tint.getBlue(), alpha);
     }

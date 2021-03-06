@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Chippewa IIC
 </Model>
 
 <year>
-3000
+2861
 </year>
 
 <originalBuildYear>
-3000
+2861
 </originalBuildYear>
 
 <type>
@@ -126,4 +126,3 @@ Succession Wars
 <tonnage>
 90.0
 </tonnage>
-

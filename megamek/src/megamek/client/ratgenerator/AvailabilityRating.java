@@ -16,8 +16,7 @@
 
 package megamek.client.ratgenerator;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
+import megamek.MegaMek;
 
 /**
  * Handles availability rating values and calculations for RAT generator.
@@ -78,8 +77,7 @@ public class AvailabilityRating {
 		faction = fields[0];
 
 		if (fields.length < 2) {
-			DefaultMmLogger.getInstance().log(getClass(), "<init>(String, int, String)", LogLevel.WARNING,
-			       "No availability code given for " + unit +
+		    MegaMek.getLogger().warning("No availability code given for " + unit +
 					" (" + era + "): " + faction);
 			return;
 		}
@@ -96,8 +94,7 @@ public class AvailabilityRating {
 			try {
 				startYear = Integer.parseInt(fields[2]);
 			} catch (NumberFormatException ex) {
-	            DefaultMmLogger.getInstance().log(getClass(), "<init>(String, int, String)", LogLevel.WARNING,
-	                    "Could not parse start year " + fields[2] + " for "
+			    MegaMek.getLogger().warning("Could not parse start year " + fields[2] + " for "
 						+ unit + " in " + era);
 			}
 		}

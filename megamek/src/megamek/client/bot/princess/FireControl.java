@@ -1351,17 +1351,31 @@ public class FireControl {
         return 0;
     }
 
-    private boolean isCommander(final Entity entity) {
-        return entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
-               (owner.getHighestEnemyInitiativeId() == entity.getId());
+    protected boolean isCommander(final Entity entity) {
+        if (owner.getFireControlState().commanderCached(entity)) {
+            return owner.getFireControlState().isCommander(entity);
+        } 
+
+        owner.getFireControlState().setCommander(entity, 
+                entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
+                (owner.getHighestEnemyInitiativeId() == entity.getId()));
+            
+        return owner.getFireControlState().isCommander(entity);
     }
 
-    private boolean isSubCommander(final Entity entity) {
-        final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();  //removed in IO + entity.getMDIniBonus()
-        return entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
+    protected boolean isSubCommander(final Entity entity) {
+        if (owner.getFireControlState().subCommanderCached(entity)) {
+            return owner.getFireControlState().isSubCommander(entity);
+        }
+
+        final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();
+        owner.getFireControlState().setSubCommander(entity, 
+                entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
-               (0 < initBonus);
+               (0 < initBonus));
+            
+        return owner.getFireControlState().isSubCommander(entity);
     }
 
     /**
@@ -1401,8 +1415,7 @@ public class FireControl {
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
                    || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
+                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry) {
             return 0;
         }
         //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).
@@ -1595,8 +1608,6 @@ public class FireControl {
                                    final Targetable target,
                                    @Nullable EntityState targetState,
                                    final IGame game) {
-        final String METHOD_NAME = "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)";
-
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
         }
@@ -1609,11 +1620,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1673,9 +1684,6 @@ public class FireControl {
                                         final MovePath flightPath,
                                         final IGame game,
                                         final boolean assumeUnderFlightPath) {
-        final String METHOD_NAME = "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, " +
-                                   "boolean)";
-
         if (null == targetState) {
             targetState = new EntityState(target);
         }
@@ -1690,24 +1698,24 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
         
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
             0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter will crash if striking at altitude 1!");
+            owner.getLogger().error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
 
         if (AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE < flightPath.getFinalAltitude()) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's altitude is too high!");
+            owner.getLogger().error("Shooter's altitude is too high!");
             return myPlan;
         }
 
@@ -1821,7 +1829,6 @@ public class FireControl {
                                  final Targetable target,
                                  final Map<Mounted, Double> ammoConservation,
                                  final IGame game) {
-        final String METHOD_NAME = "getFullFiringPlan(Entity, Targetable, IGame)";
         final NumberFormat DECF = new DecimalFormat("0.000");
 
         final FiringPlan myPlan = new FiringPlan(target);
@@ -1829,11 +1836,11 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), METHOD_NAME, LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
@@ -1864,8 +1871,8 @@ public class FireControl {
                 continue;
             }            
             
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG,
-                      "\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) + ") for " + weapon.getName() +
+            owner.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) 
+                      + ") for " + weapon.getName() +
                       " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
 
@@ -2068,14 +2075,14 @@ public class FireControl {
                                                     ammoConservation, game);
         
         if(shooter.canFlipArms()) {
-            shooter.setArmsFlipped(true);
+            shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
             betaStrike.setFlipArms(true);
             if(betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
-            shooter.setArmsFlipped(false);
+            shooter.setArmsFlipped(false, false);
         }
         
         // Although they don't track heat, infantry/BA do need to make tradeoffs
@@ -2131,7 +2138,7 @@ public class FireControl {
                                                        target, targetState, game);
         
         if(shooter.canFlipArms()) {
-            shooter.setArmsFlipped(true);
+            shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
                                                         target, targetState, game);
             betaStrike.setFlipArms(true);
@@ -2139,7 +2146,7 @@ public class FireControl {
                 alphaStrike = betaStrike;
             }
             
-            shooter.setArmsFlipped(false);
+            shooter.setArmsFlipped(false, false);
         }
         
         // Infantry and BA may have alternative options, so we need to consider
@@ -2225,7 +2232,7 @@ public class FireControl {
         // than what we currently have as the best plan then use that. Start with "no twist" as default.
         FiringPlan bestFiringPlan = noTwistPlan;
         for (final int currentTwist : validFacingChanges) {
-            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+            shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist), false);
 
             FiringPlan twistPlan = null;
             switch (params.getCalculationType()) {
@@ -2248,7 +2255,7 @@ public class FireControl {
         }
 
         // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
+        shooter.setSecondaryFacing(originalFacing, false);
 
         return bestFiringPlan;
     }
@@ -2409,8 +2416,6 @@ public class FireControl {
                                  final IHonorUtil honorUtil,
                                  final IGame game,
                                  final Map<Mounted, Double> ammoConservation) {
-        final String METHOD_NAME = "getBestFiringPlan(Entity, IGame)";
-
         FiringPlan bestPlan = null;
 
         // Get a list of potential targets.
@@ -2425,7 +2430,7 @@ public class FireControl {
             final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
             if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
                                                            owner.getForcedWithdrawal())) {
-                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, enemy.getDisplayName() + " is broken - ignoring");
+                owner.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
@@ -2435,7 +2440,7 @@ public class FireControl {
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
             
-            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
+            owner.getLogger().info(shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
@@ -2532,11 +2537,11 @@ public class FireControl {
                 continue;
             }
 
-            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), weaponType);
+            final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                owner.log(getClass(), "loadAmmo(Entity, Targetable)", LogLevel.WARNING,
-                          shooter.getDisplayName() + " tried to load " + currentWeapon.getName() + " with ammo " +
+                owner.getLogger().warning(shooter.getDisplayName() + " tried to load " 
+                          + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
                 continue;
             // if we didn't find preferred ammo after all, continue
@@ -2595,15 +2600,14 @@ public class FireControl {
 
     Mounted getPreferredAmmo(final Entity shooter,
                              final Targetable target,
-                             final WeaponType weaponType) {
-        final String METHOD_NAME = "getPreferredAmmo(Entity, Targetable, WeaponType)";
-
-        final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weaponType.getShortName())
+                             final Mounted weapon) {
+        final StringBuilder msg = new StringBuilder("Getting ammo for ").append(weapon.getType().getShortName())
                                                                         .append(" firing at ")
                                                                         .append(target.getDisplayName
                         ());
         Entity targetEntity = null;
         Mounted preferredAmmo = null;
+        WeaponType weaponType = (WeaponType) weapon.getType();
 
         try {
             boolean fireResistant = false;
@@ -2623,7 +2627,7 @@ public class FireControl {
             final List<Mounted> ammo = shooter.getAmmo();
             final List<Mounted> validAmmo = new ArrayList<>();
             for (final Mounted a : ammo) {
-                if (AmmoType.isAmmoValid(a, weaponType)) {
+                if (AmmoType.isAmmoValid(a, weaponType) && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
                     validAmmo.add(a);
                 }
             }
@@ -2725,7 +2729,7 @@ public class FireControl {
             return preferredAmmo;
         } finally {
             msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+            owner.getLogger().debug(msg.toString());
         }
     }
 
@@ -3050,7 +3054,6 @@ public class FireControl {
                 || AmmoType.M_PAINT_OBSCURANT == ammoType.getMunitionType()
                 || AmmoType.M_SMOKE == ammoType.getMunitionType()
                 || AmmoType.M_SMOKE_WARHEAD == ammoType.getMunitionType()
-                || AmmoType.M_SMOKEGRENADE == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER_ACTIVE == ammoType.getMunitionType()
                 || AmmoType.M_THUNDER_AUGMENTED == ammoType.getMunitionType()
@@ -3219,12 +3222,10 @@ public class FireControl {
 
     /**
      * Given a firing plan, calculate the best target to light up with a searchlight
-     * @param plan
-     * @return
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
-        // no search light if it's not on
-        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight()) {
+        // no search light if it's not on, unit doesn't have one, or is hidden
+        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight() || shooter.isHidden()) {
             return null;
         }
         

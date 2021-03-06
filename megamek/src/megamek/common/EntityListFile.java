@@ -26,6 +26,7 @@ import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -182,6 +183,7 @@ public class EntityListFile {
      */
     public static String getLocString(Entity entity, int indentLvl) {
         boolean isMech = entity instanceof Mech;
+        boolean isNonSmallCraftAero = (entity instanceof Aero) && !(entity instanceof SmallCraft);
         boolean haveSlot = false;
         StringBuffer output = new StringBuffer();
         StringBuffer thisLoc = new StringBuffer();
@@ -190,6 +192,10 @@ public class EntityListFile {
         // Walk through the locations for the entity,
         // and only record damage and ammo.
         for (int loc = 0; loc < entity.locations(); loc++) {
+            // Aero.LOC_WINGS and Aero.LOC_FUSELAGE are not "real"
+            // locations for the purpose of being destroyed or blown off,
+            // but they may contain equipment which should be used below.
+            boolean isPseudoLocation = isNonSmallCraftAero && (loc >= Aero.LOC_WINGS);
 
             // if the location is blown off, remove it so we can get the real
             // values
@@ -197,7 +203,7 @@ public class EntityListFile {
 
             // Record destroyed locations.
             if (!(entity instanceof Aero)
-                    && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                    && !entity.isConventionalInfantry()
                     && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
                     && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
@@ -205,15 +211,20 @@ public class EntityListFile {
 
             //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
             //suits without pilots
-            if(entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
+            if (entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
                 isDestroyed = false;
+            }
+
+            if (isPseudoLocation) {
+                isDestroyed = false;
+                blownOff = false;
             }
 
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.
-            if (!isDestroyed) {
+            if (!isDestroyed && !isPseudoLocation) {
                 int currentArmor;
-                if (entity instanceof BattleArmor){
+                if (entity instanceof BattleArmor) {
                     currentArmor = entity.getArmor(loc);
                 } else {
                     currentArmor = entity.getArmorForReal(loc);
@@ -812,14 +823,13 @@ public class EntityListFile {
                 output.write("\" camoFileName=\"");
                 output.write(entity.getCamoFileName());
             }
-            if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            if (entity instanceof MechWarrior && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" pickUpId=\"");
-                output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
+                output.write(((MechWarrior) entity).getPickedUpByExternalIdAsString());
             }
 
             // Save some values for conventional infantry
-            if ((entity instanceof Infantry)
-                    && !(entity instanceof BattleArmor)) {
+            if (entity.isConventionalInfantry()) {
                 Infantry inf = (Infantry) entity;
                 if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
@@ -1226,11 +1236,11 @@ public class EntityListFile {
             output.write("\" hits=\"");
             output.write(String.valueOf(crew.getHits(pos)));
         }
-        if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory(pos))) {
+        if (!AbstractIcon.ROOT_CATEGORY.equals(crew.getPortraitCategory(pos))) {
             output.write("\" portraitCat=\"");
             output.write(crew.getPortraitCategory(pos));
         }
-        if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName(pos))) {
+        if (!AbstractIcon.DEFAULT_ICON_FILENAME.equals(crew.getPortraitFileName(pos))) {
             output.write("\" portraitFile=\"");
             output.write(crew.getPortraitFileName(pos));
         }

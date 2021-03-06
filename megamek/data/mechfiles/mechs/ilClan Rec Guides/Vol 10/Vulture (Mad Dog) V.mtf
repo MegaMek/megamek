@@ -1,0 +1,153 @@
+Version:1.0
+Vulture (Mad Dog)
+V
+
+Config:Biped Omnimech
+techbase:Clan
+era:3098
+rules level:3
+
+mass:60
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:23
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:7
+RTR armor:7
+RTC armor:7
+
+Weapons:6
+ER Medium Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Arrow IV, Right Torso
+ER Medium Laser, Right Arm
+Medium Pulse Laser, Right Arm
+LRM 20, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+Clan Ammo LRM-20 (OMNIPOD)
+CLArrowIVAmmo (OMNIPOD)
+CLArrowIVHomingAmmo (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+CLArrowIV (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

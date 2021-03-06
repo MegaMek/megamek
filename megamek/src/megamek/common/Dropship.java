@@ -447,7 +447,7 @@ public class Dropship extends SmallCraft {
         // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
@@ -957,14 +957,14 @@ public class Dropship extends SmallCraft {
                 }
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && (possibleMG.getLocation() == mounted.getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
+                    double mgBV = 0;
+                    for (int eqNum : mounted.getBayWeapons()) {
+                        Mounted mg = getEquipment(eqNum);
+                        if ((mg != null) && (!mg.isDestroyed())) {
+                            mgBV += mg.getType().getBV(this);
                         }
                     }
-                    dBV = mgaBV * 0.67;
+                    dBV = mgBV * 0.67;
                 }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -990,7 +990,7 @@ public class Dropship extends SmallCraft {
                     }
                     if ((mLinker.getType() instanceof MiscType)
                             && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        dBV *= 1.25;
+                        dBV *= 1.15;
                     }
                 }
                 // add up BV of ammo-using weapons for each type of weapon,

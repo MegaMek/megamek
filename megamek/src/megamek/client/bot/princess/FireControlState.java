@@ -19,6 +19,8 @@ public class FireControlState {
     private LinkedList<Entity> orderedFiringEntities;
     private Map<Integer, Integer> weaponRanges;
     private Map<Integer, Integer> airborneTargetWeaponRanges;
+    private Map<Integer, Boolean> isCommander;
+    private Map<Integer, Boolean> isSubCommander;
     
     public FireControlState() {
         additionalTargets = new ArrayList<>();
@@ -26,6 +28,8 @@ public class FireControlState {
         orderedFiringEntities = new LinkedList<>();
         weaponRanges = new HashMap<>();
         airborneTargetWeaponRanges = new HashMap<>();
+        isCommander = new HashMap<>();
+        isSubCommander = new HashMap<>();
     }
     
     /**
@@ -69,6 +73,30 @@ public class FireControlState {
         return airborneTarget ? airborneTargetWeaponRanges : weaponRanges;
     }
     
+    public boolean subCommanderCached(Entity entity) {
+        return isSubCommander.containsKey(entity.getId());
+    }
+    
+    public boolean commanderCached(Entity entity) {
+        return isCommander.containsKey(entity.getId());
+    }
+    
+    public boolean isSubCommander(Entity entity) {
+        return isSubCommander.get(entity.getId());
+    }
+    
+    public boolean isCommander(Entity entity) {
+        return isCommander.get(entity.getId());
+    }
+    
+    public void setSubCommander(Entity entity, boolean value) {
+        isSubCommander.put(entity.getId(), value);                
+    }
+    
+    public void setCommander(Entity entity, boolean value) {
+        isCommander.put(entity.getId(), value);                
+    }
+    
     /**
      * Clears data that shouldn't persist phase-to-phase
      */
@@ -77,5 +105,7 @@ public class FireControlState {
     	clearOrderedFiringEntities();
     	weaponRanges.clear();
     	airborneTargetWeaponRanges.clear();
+    	isCommander.clear();
+    	isSubCommander.clear();
     }
 }

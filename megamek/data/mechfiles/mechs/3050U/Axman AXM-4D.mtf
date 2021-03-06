@@ -146,3 +146,20 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+Overview: If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
+
+Capabilities: A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
+
+Deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. The -4D would be the Davion-flavored take on the design. A switch to four light autocannons instead of the single AC/20 and pulse laser would increase design, while the four tons of ammo allowed for the deployment of newly-developed specialty rounds. A targeting computer would further increase accuracy. These changes necessitated the sacrifice of the jump jets, though the cost-cutting decision to use single heat sinks would prove to be the least popular change.
+
+systemmanufacturer:CHASSIS:Dorwinion
+systemmode:CHASSIS:AXM Standard
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260 XL
+systemmanufacturer:ARMOR:Kallon
+systemmode:ARMOR:Unity Weave Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Johnston
+systemmode:COMMUNICATIONS:Wide Band
+systemmanufacturer:TARGETING:Rander
+systemmode:TARGETING:Pinpoint-HY

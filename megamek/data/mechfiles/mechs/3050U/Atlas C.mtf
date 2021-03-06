@@ -1,23 +1,22 @@
-Version:1.0
+Version:1.1
 Atlas
 C
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3050
-Source:TRO 3050 - Clan Invasion
+TechBase:Mixed (Clan Chassis)
+Era:3052
 Rules Level:4
 
 Mass:100
-Engine:300 Fusion Engine(IS)
-Structure:IS Standard
+Engine:300 Fusion Engine (Clan)
+Structure:Standard
 Myomer:Standard
 
-Heat Sinks:20 Single
+Heat Sinks:26 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard Armor (Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -31,13 +30,13 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:7
-Medium Laser, Left Arm
-Medium Laser, Right Arm
-LRM 20, Left Torso
-Streak SRM 6, Left Torso
-Ultra AC/20, Right Torso
-Medium Laser, Center Torso
-Medium Laser, Center Torso
+1 CLUltraAC20, Right Torso, Ammo:15
+1 CLLRM20, Left Torso, Ammo:12
+1 ISMediumLaser (R), Center Torso (R)
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser (R), Center Torso (R)
+1 ISMediumLaser, Left Arm
+1 CLStreakSRM6, Left Torso, Ammo:15
 
 Left Arm:
 Shoulder
@@ -45,9 +44,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 Heat Sink
-Medium Laser
--Empty-
--Empty-
+Heat Sink
+Heat Sink
+ISMediumLaser
 -Empty-
 -Empty-
 -Empty-
@@ -59,15 +58,17 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 Heat Sink
-Medium Laser
 -Empty-
--Empty-
--Empty-
+Heat Sink
+Heat Sink
+ISMediumLaser
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
+Heat Sink
+Heat Sink
 Heat Sink
 CLLRM20
 CLLRM20
@@ -75,11 +76,9 @@ CLLRM20
 CLLRM20
 CLStreakSRM6
 CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Ammo LRM-20
-Clan Ammo LRM-20
--Empty-
--Empty-
+CLLRM20 Ammo
+CLStreakSRM6 Ammo
+CLLRM20 Ammo
 
 Right Torso:
 CLUltraAC20
@@ -90,24 +89,24 @@ CLUltraAC20
 CLUltraAC20
 CLUltraAC20
 CLUltraAC20
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
--Empty-
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Engine
+Engine
+Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
-Medium Laser (R)
-Medium Laser (R)
+Engine
+Engine
+Engine
+ISMediumLaser (R)
+ISMediumLaser (R)
 
 Head:
 Life Support
@@ -116,12 +115,6 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Leg:
 Hip
@@ -130,12 +123,6 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Leg:
 Hip
@@ -144,11 +131,3 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-

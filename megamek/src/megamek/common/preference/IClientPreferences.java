@@ -24,9 +24,6 @@ public interface IClientPreferences extends IPreferenceStore {
 
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
-    public static final String LAST_PLAYER_CAMO_NAME = "LastPlayerCamoName";
-    public static final String LAST_PLAYER_CATEGORY = "LastPlayerCategory";
-    public static final String LAST_PLAYER_COLOR = "LastPlayerColor";
     public static final String LAST_PLAYER_NAME = "LastPlayerName";
     public static final String LAST_SERVER_PASS = "LastServerPass";
     public static final String LAST_SERVER_PORT = "LastServerPort";
@@ -129,12 +126,6 @@ public interface IClientPreferences extends IPreferenceStore {
     void setLastConnectAddr(String serverAddr);
 
     void setLastConnectPort(int port);
-
-    void setLastPlayerCamoName(String camoFileName);
-
-    void setLastPlayerCategory(String camoCategory);
-
-    void setLastPlayerColor(int colorIndex);
 
     void setLastPlayerName(String name);
 

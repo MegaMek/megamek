@@ -395,6 +395,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void remove() {
         disableButtons();
         clientgui.getClient().sendDeleteEntity(cen);
+        // Also remove units that are carried by the present unit
+        for (Entity carried: clientgui.getClient().getGame().getEntity(cen).getLoadedUnits()) {
+            clientgui.getClient().sendDeleteEntity(carried.getId());
+        }
         cen = Entity.NONE;
     }
 

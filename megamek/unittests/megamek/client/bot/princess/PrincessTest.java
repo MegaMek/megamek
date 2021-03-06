@@ -29,8 +29,6 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.logging.FakeLogger;
-import megamek.common.logging.LogLevel;
-
 import megamek.common.logging.MMLogger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,9 +38,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -63,8 +59,6 @@ public class PrincessTest {
 
         MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
-                                                   Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);

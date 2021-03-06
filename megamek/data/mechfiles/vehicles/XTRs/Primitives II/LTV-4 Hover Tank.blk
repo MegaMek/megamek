@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ LTV-4 Hover Tank
 </year>
 
 <type>
-IS Level 2
+IS Level 1
 </type>
 
 <motion_type>
@@ -76,4 +76,3 @@ XTRO Primitives II - Age of War
 <tonnage>
 50.0
 </tonnage>
-

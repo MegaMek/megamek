@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -939,7 +940,7 @@ public class Infantry extends Entity {
         bvText.append(endRow);
 
         if(hasDEST()) {
-            tmmFactor += 0.1;
+            tmmFactor += 0.2;
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("DEST:");
@@ -947,7 +948,7 @@ public class Infantry extends Entity {
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            bvText.append("+0.1");
+            bvText.append("+0.2");
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -1044,21 +1045,8 @@ public class Infantry extends Entity {
         // double weaponbv;
         double obr; //offensive battle rating
 
-        // adjust further for speed factor
-        // this is a bit weird, because the formula gives
-        // a different result than the table, because MASC/TSM
-        // is handled differently (page 315, TM, compare
-        // http://forums.classicbattletech.com/index.php/topic,20468.0.html
-        double speedFactor;
-        double speedFactorTableLookup = getRunMP(false, true, true)
-                + Math.round(Math.max(jumpMP, umuMP) / 2.0);
-        if (speedFactorTableLookup > 25) {
-            speedFactor = Math.pow(1 + ((((double) walkMP
-                + (Math.round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
-        } else {
-            speedFactor = Math
-                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
-        }
+        int speedFactorTableLookup = Math.max(getRunMP(false, true, true), Math.max(jumpMP, umuMP));
+        double speedFactor = Math.pow(1 + ((speedFactorTableLookup - 5) / 10.0), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         double wbv = 0;
         if(null != primaryW) {
@@ -2222,10 +2210,7 @@ public class Infantry extends Entity {
      * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
      */
     public boolean isNonMechSCUBA() {
-    	if (this instanceof BattleArmor) {
-    		return false;
-    	}
-    	return getMovementMode() == EntityMovementMode.INF_UMU;
+    	return isConventionalInfantry() && (getMovementMode() == EntityMovementMode.INF_UMU);
     }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
@@ -2239,7 +2224,7 @@ public class Infantry extends Entity {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondW = w;
-        if(null == w) {
+        if (null == w) {
             secondName = null;
         } else {
             secondName = w.getName();
@@ -2298,7 +2283,7 @@ public class Infantry extends Entity {
     public void setMovementMode(EntityMovementMode movementMode) {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
-        if (!(this instanceof BattleArmor)) {
+        if (isConventionalInfantry()) {
             setOriginalJumpMP(0);
             switch (getMovementMode()) {
                 case INF_MOTORIZED:
@@ -2602,17 +2587,14 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
+        double activeTroopPercent = (double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY);
         if (activeTroopPercent < 0.25) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: only "
-                        + NumberFormat.getPercentInstance().format(
-                                activeTroopPercent) + " troops remaining.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -2622,17 +2604,17 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isDmgHeavy() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
     }
 
     @Override
     public boolean isDmgModerate() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
     }
 
     @Override
     public boolean isDmgLight() {
-        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
+        return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
     }
 
     public boolean hasFieldGun() {

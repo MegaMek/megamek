@@ -53,6 +53,10 @@ public class RACHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+            return true;
+        }
+        
         if (ae instanceof Infantry) {
             return false;
         }

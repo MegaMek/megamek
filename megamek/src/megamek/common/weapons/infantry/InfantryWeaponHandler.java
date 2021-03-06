@@ -116,7 +116,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        if (target.isConventionalInfantry() && wtype.hasFlag(WeaponType.F_INF_BURST)) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
@@ -142,7 +142,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             //this is a little strange, but I can't just do this in calcDamagePerHit because
             //that is called up before misses are determined and will lead to weird reporting
             nDamPerHit = damageDealt;
@@ -157,12 +157,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     protected int calcAttackValue() {
-        int av = 0;
+        int av;
         //Sigh, another rules oversight - nobody bothered to figure this out
         //To be consistent with other cluster weapons we will assume 60% hit
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        if (ae.isConventionalInfantry()) {
             double damage = ((Infantry) ae).getDamagePerTrooper();
             av = (int) Math.round(damage * 0.6 * ((Infantry) ae).getShootingStrength());
+        } else {
+            // Small fixed wing support
+            av = super.calcAttackValue();
         }
         if (bDirect) {
             av = Math.min(av + (toHit.getMoS() / 3), av * 2);
@@ -181,8 +184,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().error(getClass(), "useAmmo()",
-                        String.format("Handler can't find any ammo for %s firing %s",
+                MegaMek.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
                                 ae.getShortName(), weapon.getName()));
                 return;
             }

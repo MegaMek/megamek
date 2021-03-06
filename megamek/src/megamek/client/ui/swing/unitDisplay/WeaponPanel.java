@@ -46,12 +46,10 @@ import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -271,12 +269,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     shotsLeft = mounted.getLinked().getUsableShotsLeft();
                 }
 
-                EquipmentType typeUsed = null;
-                if (mounted.getLinked() != null) {
-                    typeUsed = mounted.getLinked().getType();
-                }
-
-                int totalShotsLeft = en.getTotalMunitionsOfType(typeUsed);
+                int totalShotsLeft = en.getTotalMunitionsOfType(mounted);
 
                 wn.append(" ("); //$NON-NLS-1$
                 wn.append(shotsLeft);
@@ -1443,22 +1436,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
+        if ((wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
-            if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
-                wDamageTrooperR
-                        .setText(Double.toString((double) Math
-                                .round(((Infantry) entity)
-                                               .getDamagePerTrooper() * 1000) / 1000));
+            if (entity.isConventionalInfantry()) {
+                wDamageTrooperR.setText(Double.toString((double) Math.round(
+                        ((Infantry) entity).getDamagePerTrooper() * 1000) / 1000));
             } else {
-                wDamageTrooperR.setText(Double.toString(inftype
-                                                                .getInfantryDamage()));
+                wDamageTrooperR.setText(Double.toString(inftype.getInfantryDamage()));
             }
-            // what a nightmare to set up all the range info for infantry
-            // weapons
+            // what a nightmare to set up all the range info for infantry weapons
             wMinL.setVisible(false);
             wShortL.setVisible(false);
             wMedL.setVisible(false);
@@ -1934,19 +1922,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
 
                 boolean rightBay = true;
-                if (entity.usesWeaponBays()
-                    && !(entity instanceof FighterSquadron)) {
-                    rightBay = oldmount.ammoInBay(entity
-                                                          .getEquipmentNum(mountedAmmo));
+                if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
+                    rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
                 }
                 
                 // covers the situation where a weapon using non-caseless ammo should 
                 // not be able to switch to caseless on the fly and vice versa
-                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
-                boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
-                boolean caselessMismatch = amCaseless != etCaseless;                
+                boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay && !caselessMismatch
+                if (mountedAmmo.isAmmoUsable() && same && rightBay && canSwitchToAmmo
                     && (atype.getAmmoType() == wtype.getAmmoType())
                     && (atype.getRackSize() == wtype.getRackSize())) {
 
@@ -2676,6 +2660,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // this ammo
                 for (int wid : mWeap.getBayWeapons()) {
                     Mounted bWeap = entity.getEquipment(wid);
+                    // FIXME: Consider new AmmoType::equals / BombType::equals
                     if (bWeap.getType().equals(sWeap.getType())) {
                         entity.loadWeapon(bWeap, mAmmo);
                         // Alert the server of the update.

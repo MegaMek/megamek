@@ -54,11 +54,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T debug(Class<?> callingClass, String methodName, T throwable) {
-        return null;
-    }
-
-    @Override
     public void debug(Class<?> callingClass, String methodName, String message) {
 
     }
@@ -71,21 +66,6 @@ public class FakeLogger implements MMLogger {
     @Override
     public void debug(Object callingObject, String message) {
 
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T debug(Object callingObject, String message, T throwable) {
-        return null;
     }
 
     @Override
@@ -129,41 +109,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public void fatal(Class<?> callingClass, String message) {
-
-    }
-
-    @Override
-    public void fatal(Object callingObject, String message) {
-
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Class<?> callingClass, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T fatal(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Class<?> callingClass, String methodName, T throwable) {
-        return null;
-    }
-
-    @Override
     public void info(Class<?> callingClass, String methodName, String message) {
 
     }
@@ -179,48 +124,8 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T info(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T info(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
     public void trace(Class<?> callingClass, String message) {
 
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Class<?> callingClass, String methodName, T throwable) {
-        return null;
-    }
-
-    @Override
-    public void trace(Object callingObject, String message) {
-
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T trace(Object callingObject, String message, T throwable) {
-        return null;
     }
 
     @Override
@@ -244,26 +149,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T warning(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Class<?> callingClass, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T warning(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
     public void methodBegin(Class<?> callingClass, String methodName) {
 
     }
@@ -274,22 +159,12 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public void methodCalled(Class<?> callingClass, String methodName) {
-
-    }
-
-    @Override
     public boolean willLog(Class<?> callingClass, LogLevel level) {
         return false;
     }
 
     @Override
     public void setLogLevel(String category, LogLevel level) {
-
-    }
-
-    @Override
-    public void setLogLevel(Object callingObject, LogLevel level) {
 
     }
 
@@ -306,5 +181,125 @@ public class FakeLogger implements MMLogger {
     @Override
     public void resetLogFile(String logFileName) {
 
+    }
+
+    @Override
+    public void debug(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T debug(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T debug(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void error(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T error(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T error(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void fatal(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T fatal(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void info(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T info(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T info(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void trace(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T trace(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T trace(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void warning(String message) {
+
+    }
+
+    @Override
+    public <T extends Throwable> T warning(T throwable) {
+        return null;
+    }
+
+    @Override
+    public <T extends Throwable> T warning(String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void methodBegin() {
+
+    }
+
+    @Override
+    public void methodEnd() {
+
+    }
+
+    @Override
+    public void methodCalled() {
+
+    }
+
+    @Override
+    public <T extends Throwable> T log(LogLevel logLevel, String message, T throwable) {
+        return null;
+    }
+
+    @Override
+    public void setLogLevel(LogLevel level) {
+
+    }
+
+    @Override
+    public LogLevel getLogLevel() {
+        return null;
     }
 }

@@ -1,17 +1,17 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
@@ -58,20 +58,18 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.generators.RandomCallsignGenerator;
+import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
-import megamek.client.ui.swing.tileset.CamoManager;
-import megamek.client.ui.swing.tileset.PortraitManager;
+import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.util.MenuScroller;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -81,6 +79,8 @@ import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Portrait;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -88,7 +88,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.DirectoryItem;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener,
@@ -177,8 +176,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     };
 
-    private CamoChooser camoDialog;
-
     //region Action Commands
     private static final String NAME_COMMAND = "NAME";
     private static final String CALLSIGN_COMMAND = "CALLSIGN";
@@ -213,15 +210,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
         butCompact.addActionListener(this);
 
-        butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("ChatLounge.butDone"));
         Font font = null;
         try {
-            font = new Font("sanserif", Font.BOLD, 12); //$NON-NLS-1$
+            font = new Font("sanserif", Font.BOLD, 12);
         } catch (Exception exp) {
-            exp.printStackTrace();
+            MegaMek.getLogger().error(exp);
         }
         if (font == null) {
-            System.err.println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
+            MegaMek.getLogger().error("Couldn't find the new font for the 'Done' button.");
         } else {
             butDone.setFont(font);
         }
@@ -255,7 +252,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * Sets up the entities table
      */
     private void setupEntities() {
-
         mekModel = new MekTableModel();
         tableEntities = new JTable();
         tableEntities.setModel(mekModel);
@@ -458,33 +454,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butCamo = new JButton();
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo");
-        butCamo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Show the CamoChooser for the selected player
-                IPlayer player = getPlayerSelected().getLocalPlayer();
-                int result = camoDialog.showDialog(player);
-                
-                // If the dialog was canceled or nothing selected, do nothing
-                if ((result == JOptionPane.CANCEL_OPTION) || (camoDialog.getSelectedItem() == null)) {
-                    return; 
-                }
-                
-                // Update the player from the camo selection
-                DirectoryItem selectedItem = camoDialog.getSelectedItem();
-                if (selectedItem.getCategory().equals(IPlayer.NO_CAMO)) {
-                    player.setColorIndex(camoDialog.getSelectedIndex());
-                }
-                player.setCamoCategory(selectedItem.getCategory());
-                player.setCamoFileName(selectedItem.getItem());
-                butCamo.setIcon(CamoManager.getPlayerCamoIcon(player));
-                getPlayerSelected().sendPlayerInfo();
+        butCamo.addActionListener(e -> {
+            // Show the CamoChooserDialog for the selected player
+            IPlayer player = getPlayerSelected().getLocalPlayer();
+            CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
+
+            // If the dialog was canceled or nothing selected, do nothing
+            if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
+                return;
             }
+
+            // Update the player from the camo selection
+            AbstractIcon selectedItem = ccd.getSelectedItem();
+            player.setCamoCategory(selectedItem.getCategory());
+            player.setCamoFileName(selectedItem.getFilename());
+            butCamo.setIcon(player.getCamouflage().getImageIcon());
+            getPlayerSelected().sendPlayerInfo();
         });
-        camoDialog = new CamoChooser(clientgui.getFrame());
         refreshCamos();
 
-        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
+        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart"));
         butChangeStart.addActionListener(this);
 
         // layout
@@ -1437,7 +1426,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         tooltipString.append("<HTML>");
 
         // Unit Chassis and Player
-        addToTT("Unit", NOBR, Integer.toHexString(PlayerColors.getColorRGB(entity.getOwner().getColorIndex())),
+        addToTT("Unit", NOBR, entity.getOwner().getColour().getHexString(),
                 entity.getChassis(), entity.getOwner().getName());
 
         // Pilot Info
@@ -1941,7 +1930,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     private void refreshCamos() {
-        butCamo.setIcon(CamoManager.getPlayerCamoIcon(getPlayerSelected().getLocalPlayer()));
+        butCamo.setIcon(getPlayerSelected().getLocalPlayer().getCamouflage().getImageIcon());
     }
 
     /**
@@ -2273,7 +2262,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
-        ArrayList<Entity> c3members = new ArrayList<Entity>();
+        ArrayList<Entity> c3members = new ArrayList<>();
         Iterator<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false).iterator();
         while (playerUnits.hasNext()) {
             Entity unit = playerUnits.next();
@@ -2345,7 +2334,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     /** 
-     * Displays a CamoChooser to choose an individual camo for 
+     * Displays a CamoChooserDialog to choose an individual camo for
      * the given vector of entities. The camo will only be applied
      * to units configurable by the local player, i.e. his own units
      * or those of his bots.
@@ -2355,21 +2344,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return;
         }
 
-        // Display the CamoChooser and await the result
+        // Display the CamoChooserDialog and await the result
         // The dialog is preset to the first selected unit's settings
-        CamoChooser mcd = new CamoChooser(clientgui.getFrame());
-        int result = mcd.showDialog(entities.get(0));
+        CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(),
+                entities.get(0).getOwner().getCamouflage(), entities.get(0).getCamouflage());
 
         // If the dialog was canceled or nothing was selected, do nothing
-        if ((result == JOptionPane.CANCEL_OPTION) || (mcd.getSelectedItem() == null)) {
+        if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
             return;
         }
 
         // Choosing the player camo resets the units to have no 
         // individual camo.
-        DirectoryItem selectedItem = mcd.getSelectedItem();
+        AbstractIcon selectedItem = ccd.getSelectedItem();
         IPlayer owner = entities.get(0).getOwner();
-        DirectoryItem ownerCamo = new DirectoryItem(owner.getCamoCategory(), owner.getCamoFileName());
+        AbstractIcon ownerCamo = owner.getCamouflage();
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
         
         // Update all allowed entities with the camo
@@ -2380,7 +2369,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     ent.setCamoFileName(null);
                 } else {
                     ent.setCamoCategory(selectedItem.getCategory());
-                    ent.setCamoFileName(selectedItem.getItem());
+                    ent.setCamoFileName(selectedItem.getFilename());
                 }
                 getLocalClient(ent).sendUpdateEntity(ent);
             }
@@ -2617,10 +2606,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshDoneButton();
         clientgui.getClient().getGame().setupTeams();
         refreshPlayerInfo();
-        // Update cammo info, unless the player is currently making changes
-        if ((camoDialog != null) && !camoDialog.isVisible()) {
-            refreshCamos();
-        }
         refreshEntities();
     }
 
@@ -2912,7 +2897,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 + (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " //$NON-NLS-1$
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (chkIncludeGround.isSelected()) {
-            txt = txt + " " + (String) comboMapType.getSelectedItem();
+            txt = txt + " " + comboMapType.getSelectedItem();
         } else {
             txt = txt + " " + "Space Map"; //$NON-NLS-1$
         }
@@ -2991,7 +2976,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-            ArrayList<String> players = new ArrayList<String>();
+            List<String> players = new ArrayList<>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
@@ -3178,20 +3163,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_PLAYER):
+                case COL_PLAYER:
                     return Messages.getString("ChatLounge.colPlayer");
-                case (COL_START):
+                case COL_START:
                     return "Start";
-                case (COL_TEAM):
+                case COL_TEAM:
                     return "Team";
-                case (COL_TON):
+                case COL_TON:
                     return Messages.getString("ChatLounge.colTon");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("ChatLounge.colBV");
-                case (COL_COST):
+                case COL_COST:
                     return Messages.getString("ChatLounge.colCost");
+                default:
+                    return "??";
             }
-            return "??";
         }
 
         @Override
@@ -3430,8 +3416,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         public class Renderer extends MekInfo implements TableCellRenderer {
-
-            private static final String FILENAME_PORTRAIT_DEFAULT = "default.gif";
             private static final String FILENAME_UNKNOWN_UNIT = "unknown_unit.gif";
             private static final long serialVersionUID = -9154596036677641620L;
 
@@ -3466,7 +3450,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         } else {
                             Image image = getToolkit().getImage(
                                     new MegaMekFile(Configuration.portraitImagesDir(),
-                                            FILENAME_PORTRAIT_DEFAULT)
+                                            Portrait.DEFAULT_PORTRAIT_FILENAME)
                                             .toString());
                             image = image.getScaledInstance(-1, 50,
                                     Image.SCALE_DEFAULT);
@@ -3486,7 +3470,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         if (compact) {
                             clearImage();
                         } else {
-                            setPortrait(entity.getCrew());
+                            setImage(entity.getCrew().getPortrait(0).getImage(50));
                         }
                         setToolTipText(formatPilotTooltip(entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
@@ -3535,13 +3519,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
                 return c;
             }
-
-            public void setPortrait(Crew pilot) {
-                String category = pilot.getPortraitCategory(0);
-                String file = pilot.getPortraitFileName(0);
-                setImage(PortraitManager.getPreviewPortraitImage(category, file));
-            }
-
         }
     }
 
@@ -3553,9 +3530,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 return;
             }
             int[] rows = tableEntities.getSelectedRows();
-            Vector<Entity> entities = new Vector<Entity>();
-            for (int i = 0; i < rows.length; i++) {
-                entities.add(mekModel.getEntityAt(rows[i]));
+            Vector<Entity> entities = new Vector<>();
+            for (int row : rows) {
+                entities.add(mekModel.getEntityAt(row));
             }
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {

@@ -56,6 +56,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
+        allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);
         gameTechLevel = TechConstants.getSimpleLevel(gameOptions.stringOption("techlevel"));
     }
 
@@ -75,8 +76,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose = new JButton(Messages.getString("Close"));
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, new GridBagConstraints());
-
-        updatePlayerChoice();
 
         JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
@@ -100,10 +99,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 String name = (String) comboPlayer.getSelectedItem();
                 client = clientGUI.getBots().get(name);
             }
+
             if (client == null) {
                 client = clientGUI.getClient();
             }
-            autoSetSkillsAndName(e);
+            autoSetSkillsAndName(e, client.getLocalPlayer());
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
         }
@@ -112,7 +112,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         }
     }
 
-    private void autoSetSkillsAndName(Entity e) {
+    private void autoSetSkillsAndName(Entity e, IPlayer player) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
@@ -135,10 +135,13 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                     ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
+
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender), i);
+                e.getCrew().setName((player != null)
+                        ? RandomNameGenerator.getInstance().generate(gender, player.getName())
+                        : RandomNameGenerator.getInstance().generate(gender), i);
             }
         }
         e.getCrew().sortRandomSkills();
@@ -189,7 +192,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         updatePlayerChoice();
+        super.setVisible(visible);
     }
 }

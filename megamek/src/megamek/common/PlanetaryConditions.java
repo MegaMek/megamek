@@ -618,11 +618,10 @@ public class PlanetaryConditions implements Serializable {
         if ((windStrength == WI_TORNADO_F4) && !(en instanceof Mech)) {
             return "tornado";
         }
-        if ((windStrength == WI_TORNADO_F13)
-                && (en.isConventionalInfantry()
-                        || ((en.getMovementMode() == EntityMovementMode.HOVER)
-                    || (en.getMovementMode() == EntityMovementMode.WIGE)
-                    || (en.getMovementMode() == EntityMovementMode.VTOL)))) {
+        if ((windStrength == WI_TORNADO_F13) && (en.isConventionalInfantry()
+            || ((en.getMovementMode() == EntityMovementMode.HOVER)
+            || (en.getMovementMode() == EntityMovementMode.WIGE)
+            || (en.getMovementMode() == EntityMovementMode.VTOL)))) {
             return "tornado";
         }
         if((windStrength == WI_STORM) && en.isConventionalInfantry()) {

@@ -90,6 +90,7 @@ public class PlanetaryConditionsTest {
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setWindStrength(PlanetaryConditions.WI_TORNADO_F13);
         mockEntity = mock(Infantry.class);
+        when(mockEntity.isConventionalInfantry()).thenReturn(true);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         assertEquals("tornado", planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame);
@@ -108,6 +109,7 @@ public class PlanetaryConditionsTest {
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setWindStrength(PlanetaryConditions.WI_STORM);
         mockEntity = mock(Infantry.class);
+        when(mockEntity.isConventionalInfantry()).thenReturn(true);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         assertEquals("storm", planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame);

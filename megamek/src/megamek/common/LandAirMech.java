@@ -1973,7 +1973,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return LOC_RT;
         } else if (emptyBaysInLoc(LOC_LT) >= cost) {
             return LOC_LT;
-        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
+        } else if (emptyBaysInLoc(LOC_CT) >= cost) {
             return LOC_CT;
         } else {
             return LOC_NONE;

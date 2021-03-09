@@ -87,11 +87,10 @@ Example: You can define quirks that affect all units of a given chassis and then
     </unit>
 -->
 
-<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsl">
+<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsd">
 	<unit>
 		<chassis>Atlas</chassis>
 		<unitType>Mech</unitType>
 		<quirk>command_mech</quirk>
 	</unit>
-
 </unitQuirks>

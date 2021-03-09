@@ -46,7 +46,6 @@ import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -1437,22 +1436,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
+        if ((wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
-            if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
-                wDamageTrooperR
-                        .setText(Double.toString((double) Math
-                                .round(((Infantry) entity)
-                                               .getDamagePerTrooper() * 1000) / 1000));
+            if (entity.isConventionalInfantry()) {
+                wDamageTrooperR.setText(Double.toString((double) Math.round(
+                        ((Infantry) entity).getDamagePerTrooper() * 1000) / 1000));
             } else {
-                wDamageTrooperR.setText(Double.toString(inftype
-                                                                .getInfantryDamage()));
+                wDamageTrooperR.setText(Double.toString(inftype.getInfantryDamage()));
             }
-            // what a nightmare to set up all the range info for infantry
-            // weapons
+            // what a nightmare to set up all the range info for infantry weapons
             wMinL.setVisible(false);
             wShortL.setVisible(false);
             wMedL.setVisible(false);

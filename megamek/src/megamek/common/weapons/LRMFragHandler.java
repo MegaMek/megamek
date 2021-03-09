@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -20,7 +20,6 @@ import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -32,10 +31,6 @@ import megamek.server.Server.DamageType;
  * @author Sebastian Brocks
  */
 public class LRMFragHandler extends LRMHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 2308151080895016663L;
 
     /**
@@ -66,15 +61,14 @@ public class LRMFragHandler extends LRMHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = wtype.getRackSize();
             if (bDirect) {
-                toReturn += toHit.getMoS() / 3;
+                toReturn += toHit.getMoS() / 3.0;
             }
         }
 
-        if (((target instanceof Entity) && !(target instanceof Infantry))
-                || (target instanceof BattleArmor)) {
+        if ((target instanceof Entity) && !target.isConventionalInfantry()) {
             toReturn = 0;
         }
 

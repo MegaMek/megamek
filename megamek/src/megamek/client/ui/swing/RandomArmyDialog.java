@@ -106,10 +106,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
     private MechSearchFilter searchFilter;
 
     private JLabel m_labelPlayer = new JLabel(Messages
-            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT); //$NON-NLS-1$
+            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
 
-    private JComboBox<String> m_chPlayer = new JComboBox<String>();
-    private JComboBox<String> m_chType = new JComboBox<String>();
+    private JComboBox<String> m_chPlayer = new JComboBox<>();
+    private JComboBox<String> m_chType = new JComboBox<>();
 
     private JTree m_treeRAT = new JTree();
     private JTabbedPane m_pMain = new JTabbedPane();
@@ -835,9 +835,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
     }
 
     private void updateTechChoice() {
-        int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
-                .getOptions().stringOption("techlevel"));
-        int maxTech;
+        final int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
+                .getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        final int maxTech;
         switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO:
                 maxTech = TechConstants.T_INTRO_BOXSET;
@@ -856,15 +856,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
                 break;
             default:
                 maxTech = TechConstants.T_TW_ALL;
+                break;
         }
 
         m_chType.removeAllItems();
         for (int i = 0; i <= maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        int savedSelection = GUIPreferences.getInstance().getRATTechLevel();
-        savedSelection = Math.min(savedSelection, maxTech - 1);
-        m_chType.setSelectedIndex(savedSelection);
+        m_chType.setSelectedIndex(Math.min(GUIPreferences.getInstance().getRATTechLevel(), maxTech));
     }
 
     private void updateRATs() {

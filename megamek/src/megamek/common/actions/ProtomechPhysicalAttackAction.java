@@ -67,8 +67,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
             toReturn += Math.ceil(entity.getWeight() / 5.0);
         }
-        if (((Protomech) entity).isEDPCharged() && (target instanceof Infantry)
-                && !(target instanceof BattleArmor)) {
+        if (((Protomech) entity).isEDPCharged() && target.isConventionalInfantry()) {
             toReturn++;
             // TODO: add another +1 to damage if target is cybernetically
             // enhanced

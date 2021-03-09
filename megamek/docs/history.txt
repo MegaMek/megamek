@@ -1,6 +1,12 @@
 VERSION HISTORY:
 ----------------
-0.47.18 (RC4)-SNAPSHOT
+0.49.0-SNAPSHOT
++ Issue #2614: Improved Building Validation
++ Issue #2592: Random Army Creation Tech Level Max Index Comparison Issue
++ Issue #2272: Fixing Alt-Click on Building and Mouse Wheel Over Building/Bridge/Fuel Tank Not Clearing Tile
++ Issue #2362: Fixing XML Schema File Issues
+
+0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes
 + Data: Updating Snub PPC per Errata.
 + Data: Fixing possible range issue with Clan HMG.
@@ -17,8 +23,12 @@ VERSION HISTORY:
 + Removing Print text and disabling the "Bing"
 + PR #2689: Random Skill Generator: Fixing AND Comparison
 + Issue #2676: Clan Heavy Machine Guns - No Range
++ PR #2690: Orphan control for destroyed entities to prevent soft-lock when loading save after destroying a unit
++ Data: Fixes for #2693, #2680, #2679, #2678, #2677, #2674, #2653, #2644, #2629
++ Data: New Sprites
++ Data: Improved SRM's range and Aero damage wrong.
 
-0.47.17 (RC3) (2021-02-075 2015 UTC)
+0.47.17 (RC3) (2021-02-07 2015 UTC)
 + Issue #2557: SimonLandmine maps out of date.
 + Issue #2529: Dead-fire ammo wrong shots/ton (missed some)
 + Data: Updated unit_roles and RAT Gen files for RecGuides and Golden Century.
@@ -511,7 +521,7 @@ v0.47.0 (2019-08-21 0300 UTC)
 + PR #1440: Added ignore for YML files when loading units
 + PR #1436: Greater variety of primitive and civilian units for AtB and template scenarios
 
-v0.46.0 (2019-08-20 1900 UTC)
+v0.46.0 (Stable) (2019-08-20 1900 UTC)
 + Data New Sprites.
 + MekHQ Issue #1256 - Several XTRO mechs labeled 'Unofficial'
 + Issue #1439 - mechset.txt typo

@@ -373,7 +373,7 @@ public class CEntity {
         }
 
         // Most units, including BA, are equipped with conventional weapons
-        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
+        if (!entity.isConventionalInfantry()) {
 
             if (entity instanceof BattleArmor) {
                 number_of_shooters = ((BattleArmor) entity)
@@ -668,7 +668,7 @@ public class CEntity {
         }
 
         if (entity instanceof Infantry) {
-            if (!(entity instanceof BattleArmor)) {
+            if (entity.isConventionalInfantry()) {
                 armor = INFANTRY_ARMOR;
             } else {
                 if (entity.isClan()) {
@@ -981,7 +981,7 @@ public class CEntity {
         // troopers
         // TODO: This will probably need some revamping when Total Warfare is
         // released.
-        if ((entity instanceof Infantry) & !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             result = ((Infantry) entity).getShootingStrength();
         }
 

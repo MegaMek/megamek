@@ -1,9 +1,9 @@
 #building block data file
 <BlockVersion>
-1
+1.1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -29,7 +29,7 @@ NL-45 Gunboat
 </originalBuildYear>
 
 <type>
-Clan Level 2
+Clan Level 4
 </type>
 
 <motion_type>
@@ -65,6 +65,10 @@ steeragequarters:20.0:0
 1
 </engine_type>
 
+<clan_engine>
+false
+</clan_engine>
+
 <armor_type>
 19
 </armor_type>
@@ -83,6 +87,14 @@ steeragequarters:20.0:0
 <Nose Equipment>
 CLERPPC
 CLERPPC
+CLRotaryAC5
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -158,3 +170,4 @@ TRO 3145 Mercenaries - Late Republic
 <escape_pod>
 0
 </escape_pod>
+

@@ -221,7 +221,6 @@ public class Sensor implements Serializable {
     }
 
     public int getModsForStealth(Entity te) {
-
         int mod = 0;
 
         // first if we have seismic/magscan/IR we don't have to mod anything
@@ -232,14 +231,9 @@ public class Sensor implements Serializable {
             return mod;
         }
 
-        boolean hasSneak = (te instanceof Infantry)
-                && !(te instanceof BattleArmor)
-                && (((Infantry) te).hasSneakCamo()
-                        || ((Infantry) te).hasSneakIR() || ((Infantry) te)
-                            .hasDEST());
-        boolean hasSneakECM = (te instanceof Infantry)
-                && !(te instanceof BattleArmor)
-                && ((Infantry) te).hasSneakECM();
+        boolean hasSneak = te.isConventionalInfantry() && (((Infantry) te).hasSneakCamo()
+                || ((Infantry) te).hasSneakIR() || ((Infantry) te).hasDEST());
+        boolean hasSneakECM = te.isConventionalInfantry() && ((Infantry) te).hasSneakECM();
 
         // these are cumulative, so lets just plow through the table on pg. 224
         // (ick)

@@ -1,19 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sept 5, 2005
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -43,12 +39,9 @@ import megamek.server.Server;
  * which is found in FM:3145 pg 255.
  * 
  * @author arlith
- *
+ * Created on Sept 5, 2005
  */ 
 public class TSEMPHandler extends EnergyWeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 5545991061428671743L;
 
     /**
@@ -102,8 +95,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         vPhaseReport.add(r);
 
         // TSEMP has no effect against infantry
-        if ((entityTarget instanceof Infantry) 
-                && !(entityTarget instanceof BattleArmor)){
+        if (entityTarget.isConventionalInfantry()) {
             // No Effect
             r = new Report(7415);
             r.subject = entityTarget.getId();

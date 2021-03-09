@@ -1227,25 +1227,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         // we default to direct fire weapons for anti-infantry damage
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, 
-                            (target instanceof Infantry) && !(target instanceof BattleArmor));
+        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

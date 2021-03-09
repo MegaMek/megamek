@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -21,7 +20,6 @@ import java.util.Vector;
 
 import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -39,9 +37,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * compiler catches my "= for ==" errors.
  */
 public class BattleArmor extends Infantry {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4594311535026187825L;
     /*
      * Infantry have no critical slot limitations. IS squads usually have 4 men,
@@ -1340,27 +1335,24 @@ public class BattleArmor extends Infantry {
         }
 
         // Stealthy units alreay have their to-hit mods defined.
-        if (isStealthy
-                && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))
-                && !hasMyomerBooster()) {
+        if (isStealthy && !ae.isConventionalInfantry() && !hasMyomerBooster()) {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                result = new TargetRoll(shortStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll(mediumStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME:
-            case RangeType.RANGE_LOS:
-                result = new TargetRoll(longStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_OUT:
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown range constant: " + range);
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    result = new TargetRoll(shortStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    result = new TargetRoll(mediumStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
+                    result = new TargetRoll(longStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 

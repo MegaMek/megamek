@@ -45,8 +45,9 @@ public class CLImprovedSRM4 extends SRMWeapon {
         this.criticals = 1;
         this.bv = 39;
         this.cost = 60000;
-        this.shortAV = 4;
-        this.maxRange = RANGE_SHORT;
+        this.shortAV = 6;
+        this.medAV = 6;
+        this.maxRange = RANGE_MED;
         ammoType = AmmoType.T_SRM_IMP;
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);

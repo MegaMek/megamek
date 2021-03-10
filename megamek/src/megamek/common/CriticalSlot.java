@@ -230,4 +230,5 @@ public class CriticalSlot implements Serializable {
     public boolean isRepairable() {
         return repairable;
     }
+
 }

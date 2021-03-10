@@ -23,6 +23,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.event.*;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
 public class AccessibilityWindow extends JDialog implements KeyListener {
+    private static final String cleanHtmlRegex = "<[^>]*>";
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
@@ -67,8 +69,31 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             }
 
             @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                systemEvent("Phase changed it is now " + IGame.Phase.getDisplayableName(e.getNewPhase()) + ".");
+                if (client.phaseReport != null) {
+                    systemEvent(cleanHtml(client.phaseReport));
+                }
+            }
+
+            @Override
+            public void gameTurnChange(GameTurnChangeEvent e) {
+                systemEvent("Turn changed it is now " + e.getPlayer().getName() + "'s turn.");
+                //systemEvent(cleanHtml(client.roundReport));
+            }
+
+            @Override
+            public void gameReport(GameReportEvent e) {
+                systemEvent(e.getReport());
+            }
+
+            @Override
             public void gameEnd(GameEndEvent e) {
                 systemEvent("The game ended. Goodbye.");
+            }
+
+            @Override
+            public void gameBoardChanged(GameBoardChangeEvent e) {
             }
 
             @Override
@@ -84,7 +109,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
-                systemEvent("Out of game event. (unneeded)" );
+                //systemEvent("Out of game event. (unneeded)" );
             }
 
             @Override
@@ -99,7 +124,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
                 if ((e != null) && (e.getEntity() != null)) {
-                    systemEvent(e.getEntity().toString());
+                    systemEvent(e.toString() );
                 }
             }
 
@@ -111,7 +136,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                         String name = ent.getOwner() != null 
                                     ? ent.getOwner().getName() 
                                     : "UNNAMED";
-                        systemEvent(ent.getDisplayName() + " from player " + name + " is doing " + e.getAction().toString() + ".");
+                        systemEvent(ent.getDisplayName() + " from player " + name + " is doing " + e.getAction().toDisplayableString(client) + ".");
                     }
                 }
             }
@@ -165,6 +190,16 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         }
     }
 
+    private String cleanHtml(String str) {
+        str = str.replaceAll(cleanHtmlRegex, "");
+        //replace &nbsp; with space
+        str = str.replace("&nbsp;", " ");
+        //replace &amp; with &
+        str = str.replace("&amp;", "&");
+
+        return str;
+    }
+
     /**
      * Tries to scroll down to the end of the box
      */
@@ -189,7 +224,8 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 processAccessibleGUI();
                 systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
             } else {
-                client.sendChat(inputField.getText());
+                //default to running commands in the accesibility window, added a say command for chat.
+                systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
             }
             inputField.setText("");
 

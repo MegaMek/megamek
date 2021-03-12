@@ -6,6 +6,7 @@ VERSION HISTORY:
 + Issue #2272: Fixing Alt-Click on Building and Mouse Wheel Over Building/Bridge/Fuel Tank Not Clearing Tile
 + Issue #2362: Fixing XML Schema File Issues
 + PR #2655: Accessibility command improvements
++ Issue #2710: Shield DC and DA values
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

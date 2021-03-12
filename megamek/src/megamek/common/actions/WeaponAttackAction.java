@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -4983,5 +4984,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         //If we get here, this isn't an artillery attack
         return toHit;
+    }
+
+    @Override
+    public String toDisplayableString(Client client) {
+        return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
 }

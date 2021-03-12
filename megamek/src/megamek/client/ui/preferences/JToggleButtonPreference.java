@@ -23,6 +23,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JTextFieldPreference monitors the selected state of a JToggleButton (which JCheckbox extends).
+ * It sets the saved value when a dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JToggleButtonPreference(JToggleButton)) to use this preference, on a
+ * JToggleButton that has called setName
+ */
 public class JToggleButtonPreference extends PreferenceElement implements ChangeListener {
     //region Variable Declarations
     private final WeakReference<JToggleButton> weakReference;

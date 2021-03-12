@@ -26,6 +26,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JWindowPreference monitors the size (width and height), location, and maximization state of a Window.
+ * It sets the saved values when a dialog is loaded and changes them as they change.
+ *
+ * Call preferences.manage(new JWindowPreference(Window)) to use this preference, on a Window that
+ * has called setName
+ */
 public class JWindowPreference extends PreferenceElement implements ComponentListener, WindowStateListener {
     //region Variable Declarations
     private final WeakReference<Window> weakReference;

@@ -43,10 +43,18 @@ public abstract class AbstractSplitPane extends JSplitPane {
     //endregion Variable Declarations
 
     //region Constructors
+    /**
+     * This creates an AbstractSplitPane using the default resource bundle. This is the normal
+     * constructor to use for an AbstractSplitPane.
+     */
     protected AbstractSplitPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name);
     }
 
+    /**
+     * This creates an AbstractSplitPane using the specified resource bundle. This is not recommended
+     * by default.
+     */
     protected AbstractSplitPane(final JFrame frame, final ResourceBundle resources, final String name) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         setName(name);

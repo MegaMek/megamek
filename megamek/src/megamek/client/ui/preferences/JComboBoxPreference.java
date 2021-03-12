@@ -23,6 +23,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JComboBoxPreference monitors the selected index of a JComboBox<?>. It sets the saved index when a
+ * dialog is loaded and changes it when it changes.
+ *
+ * Call preferences.manage(new JComboBoxPreference(JComboBox<?>)) to use this preference, on a
+ * JComboBox<?> that has called setName
+ */
 public class JComboBoxPreference extends PreferenceElement implements ItemListener {
     //region Variable Declarations
     private final WeakReference<JComboBox<?>> weakReference;

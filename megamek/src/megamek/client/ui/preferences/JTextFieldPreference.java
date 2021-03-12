@@ -23,6 +23,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JTextFieldPreference monitors the text value of a JTextField. It sets the saved value when a
+ * dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JTextFieldPreference(JTextField)) to use this preference, on a
+ * JTextField that has called setName
+ */
 public class JTextFieldPreference extends PreferenceElement implements DocumentListener {
     //region Variable Declarations
     private final WeakReference<JTextField> weakReference;

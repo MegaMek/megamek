@@ -40,20 +40,28 @@ public abstract class AbstractScrollPane extends JScrollPane {
     //endregion Variable Declarations
 
     //region Constructors
+    /**
+     * This creates an AbstractScrollPane using the default resource bundle and using the default
+     * scrollbar policies of vertical and horizontal scrollbars as required.
+     */
     protected AbstractScrollPane(final JFrame frame, final String name) {
         this(frame, name, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
 
+    /**
+     * This creates an AbstractScrollPane using the default resource bundle and using the specified
+     * scrollbar policies.
+     */
     protected AbstractScrollPane(final JFrame frame, final String name,
                                  final int verticalScrollBarPolicy, final int horizontalScrollBarPolicy) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()),
                 name, verticalScrollBarPolicy, horizontalScrollBarPolicy);
     }
 
-    protected AbstractScrollPane(final JFrame frame, final ResourceBundle resources, final String name) {
-        this(frame, resources, name, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    }
-
+    /**
+     * This creates an AbstractScrollPane using the specified resource bundle and using the default
+     * of vertical and horizontal scrollbars as required. This is not recommended by default.
+     */
     protected AbstractScrollPane(final JFrame frame, final ResourceBundle resources, final String name,
                                  final int verticalScrollBarPolicy, final int horizontalScrollBarPolicy) {
         super(verticalScrollBarPolicy, horizontalScrollBarPolicy);

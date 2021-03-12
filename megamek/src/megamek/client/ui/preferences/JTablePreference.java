@@ -25,6 +25,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JTablePreference monitors the latest sort column and sort order of a JTable. It sets the saved
+ * values when a dialog is loaded and changes them as they change.
+ *
+ * Call preferences.manage(new JTablePreference(JTable)) to use this preference, on a JTable that
+ * has called setName
+ */
 public class JTablePreference extends PreferenceElement implements MouseListener {
     //region Variable Declarations
     private final WeakReference<JTable> weakReference;

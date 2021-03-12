@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 /**
  * This is the default TabbedPane. It handles preferences, resources, and the frame.
  *
- * Inheriting classes must call initialize() in their constructor and override initialize()
+ * Inheriting classes must call initialize() in their constructors and override initialize()
  *
  * This is directly tied to MekHQ's AbstractMHQTabbedPane, and any changes here MUST be verified there.
  */
@@ -41,10 +41,18 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
     //endregion Variable Declarations
 
     //region Constructors
+    /**
+     * This creates an AbstractTabbedPane using the default resource bundle. This is the normal
+     * constructor to use for an AbstractTabbedPane.
+     */
     protected AbstractTabbedPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name);
     }
 
+    /**
+     * This creates an AbstractTabbedPane using the specified resource bundle. This is not recommended
+     * by default.
+     */
     protected AbstractTabbedPane(final JFrame frame, final ResourceBundle resources, final String name) {
         super();
         setName(name);

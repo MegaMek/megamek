@@ -23,6 +23,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JTabbedPanePreference monitors the selected tab of a JTabbedPane. It sets the saved value when a
+ * dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JTabbedPanePreference(JTabbedPane)) to use this preference, on a
+ * JTabbedPane that has called setName
+ */
 public class JTabbedPanePreference extends PreferenceElement implements ChangeListener {
     //region Variable Declarations
     private final WeakReference<JTabbedPane> weakReference;

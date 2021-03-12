@@ -23,6 +23,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JIntNumberSpinnerPreference monitors the value of a JSpinner whose number model is for an int.
+ * It sets the saved value when a dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JIntNumberSpinnerPreference(JSpinner)) to use this preference,
+ * on a JSpinner with an int valued SpinnerNumberModel that has called setName
+ */
 public class JIntNumberSpinnerPreference extends PreferenceElement implements ChangeListener {
     //region Variable Declarations
     private final WeakReference<JSpinner> weakReference;

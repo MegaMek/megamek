@@ -23,6 +23,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JSplitPanePreference monitors the location of the split divider on a JSplitPane.
+ * It sets the saved value when a dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JSplitPanePreference(JSplitPane)) to use this preference, on a
+ * JSplitPane that has called setName
+ */
 public class JSplitPanePreference extends PreferenceElement implements PropertyChangeListener {
     //region Variable Declarations
     private final WeakReference<JSplitPane> weakReference;

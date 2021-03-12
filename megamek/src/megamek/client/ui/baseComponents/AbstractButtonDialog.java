@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  * button panel with base Ok and Cancel buttons. It also includes an enum tracker for the result of
  * the dialog.
  *
- * Inheriting classes must call initialize() in their constructor and override createCenterPane()
+ * Inheriting classes must call initialize() in their constructors and override createCenterPane()
  *
  * The resources associated with this dialog need to contain at least the following keys:
  * - "Ok.text" -> text for the ok button
@@ -49,20 +49,27 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     //endregion Variable Declarations
 
     //region Constructors
+    /**
+     * This creates a modal AbstractButtonDialog using the default resource bundle. This is
+     * the normal constructor to use for an AbstractButtonDialog.
+     */
     protected AbstractButtonDialog(final JFrame frame, final String name, final String title) {
         this(frame, true, name, title);
     }
 
+    /**
+     * This creates an AbstractButtonDialog using the default resource bundle. It allows one
+     * to create non-modal button dialogs.
+     */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
                                    final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name, title);
     }
 
-    protected AbstractButtonDialog(final JFrame frame, final ResourceBundle resources,
-                                   final String name, final String title) {
-        this(frame, true, resources, name, title);
-    }
-
+    /**
+     * This creates an AbstractButtonDialog using the specified resource bundle. This is not
+     * recommended by default.
+     */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                                    final String name, final String title) {
         super(frame, modal, resources, name, title);
@@ -84,6 +91,8 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
     /**
      * Initializes the dialog's UI and preferences. Needs to be called by child classes for initial
      * setup.
+     *
+     * Anything that overrides this method MUST end by calling {@link AbstractDialog#finalizeInitialization()}
      */
     @Override
     protected void initialize() {

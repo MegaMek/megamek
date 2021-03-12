@@ -23,6 +23,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.lang.ref.WeakReference;
 
+/**
+ * JDoubleNumberSpinnerPreference monitors the value of a JSpinner whose number model is for a double.
+ * It sets the saved value when a dialog is loaded and changes it as it changes.
+ *
+ * Call preferences.manage(new JDoubleNumberSpinnerPreference(JSpinner)) to use this preference,
+ * on a JSpinner with a double valued SpinnerNumberModel that has called setName
+ */
 public class JDoubleNumberSpinnerPreference extends PreferenceElement implements ChangeListener {
     //region Variable Declarations
     private final WeakReference<JSpinner> weakReference;

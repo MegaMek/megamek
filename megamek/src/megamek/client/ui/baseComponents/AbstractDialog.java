@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  * This is the base class for dialogs in MegaMek. This class handles setting the UI, managing the X
  * button, managing the escape key, and saving the dialog preferences.
  *
- * Inheriting classes must call initialize() in their constructor and override createCenterPane()
+ * Inheriting classes must call initialize() in their constructors and override createCenterPane()
  *
  * This is directly tied to MekHQ's AbstractMHQDialog, and any changes here MUST be verified there.
  */
@@ -46,14 +46,26 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     //endregion Variable Declarations
 
     //region Constructors
+    /**
+     * This creates a non-modal AbstractDialog using the default resource bundle. This is the
+     * normal constructor to use for an AbstractDialog.
+     */
     protected AbstractDialog(final JFrame frame, final String name, final String title) {
         this(frame, false, name, title);
     }
 
+    /**
+     * This creates an AbstractDialog using the default resource bundle. It allows one to create
+     * modal dialogs.
+     */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name, title);
     }
 
+    /**
+     * This creates an AbstractDialog using the specified resource bundle. This is not recommended
+     * by default.
+     */
     protected AbstractDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                              final String name, final String title) {
         super(frame, modal);
@@ -78,6 +90,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     /**
      * Initializes the dialog's UI and preferences. Needs to be called by child classes for initial
      * setup.
+     *
+     * Anything that overrides this method MUST end by calling {@link AbstractDialog#finalizeInitialization()}
      */
     protected void initialize() {
         setLayout(new BorderLayout());

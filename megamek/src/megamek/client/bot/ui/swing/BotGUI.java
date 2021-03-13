@@ -14,13 +14,11 @@
  */
 package megamek.client.bot.ui.swing;
 
-import java.io.File;
-
 import javax.swing.JFrame;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.Messages;
-import megamek.client.ui.swing.CommonHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.BotHelpDialog;
 import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.IGame;
@@ -83,25 +81,29 @@ public class BotGUI implements GameListener {
             }
 
             if (confirm.getAnswer()) {
-                File helpfile = new File("docs/Bot Stuff/ai-readme.txt"); //$NON-NLS-1$
-                new CommonHelpDialog(frame, helpfile).setVisible(true);
+                new BotHelpDialog(frame).setVisible(true);
             }
             frame.dispose();
         }
     }
 
+    @Override
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
     }
 
+    @Override
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
     }
 
+    @Override
     public void gamePlayerChange(GamePlayerChangeEvent e) {
     }
 
+    @Override
     public void gamePlayerChat(GamePlayerChatEvent e) {
     }
 
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
     }
 

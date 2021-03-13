@@ -1510,6 +1510,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, location)) {
+            base--;
+        }
 
         return Math.max(0, base - damageTaken);
     }

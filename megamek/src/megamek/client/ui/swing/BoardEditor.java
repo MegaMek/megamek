@@ -84,6 +84,8 @@ import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -240,7 +242,7 @@ public class BoardEditor extends JComponent
     private Component bvc;
     private CommonMenuBar menuBar = new CommonMenuBar();
     private CommonAboutDialog about;
-    private CommonHelpDialog help;
+    private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private ITerrainFactory TF = Terrains.getTerrainFactory();
     private JDialog minimapW;
@@ -1758,12 +1760,9 @@ public class BoardEditor extends JComponent
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
-            File helpFile = new File("docs\\Boards Stuff", "Map Editor-readme.txt");
-            help = new CommonHelpDialog(frame, helpFile);
+            help = new BoardEditorHelpDialog(frame);
         }
-
-        // Show the help dialog.
-        help.setVisible(true);
+        help.setVisible(true); // Show the help dialog.
     }
 
     /** Called when the user selects the "View->Client Settings" menu item. */

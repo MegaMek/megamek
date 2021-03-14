@@ -63,11 +63,8 @@ public class ImageList extends JList<AbstractIcon> {
     /** 
      * Updates the list to show (only) the given icons.
      */
-    public void updateImages(List<AbstractIcon> icons) {
+    public void updateImages(final List<AbstractIcon> icons) {
         iconModel.clear();
-        // TODO : Java 11 : Swap to addAll
-        for (AbstractIcon icon: icons) {
-            iconModel.addElement(icon);
-        }
+        iconModel.addAll(icons);
     }
 }

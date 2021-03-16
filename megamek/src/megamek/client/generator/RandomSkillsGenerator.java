@@ -203,8 +203,7 @@ public class RandomSkillsGenerator implements Serializable {
                     skills[1]++;
                 }
                 //gunnery is worse for infantry, conv fighters and small craft
-                if(((e instanceof Infantry) && !(e instanceof BattleArmor))
-                        || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
+                if (e.isConventionalInfantry() || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
                     skills[0]++;
                 }
             }

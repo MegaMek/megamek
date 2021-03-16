@@ -116,7 +116,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        if (target.isConventionalInfantry() && wtype.hasFlag(WeaponType.F_INF_BURST)) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
@@ -142,7 +142,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             //this is a little strange, but I can't just do this in calcDamagePerHit because
             //that is called up before misses are determined and will lead to weird reporting
             nDamPerHit = damageDealt;

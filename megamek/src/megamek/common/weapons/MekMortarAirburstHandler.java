@@ -25,7 +25,6 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
-import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -197,8 +196,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 vPhaseReport.addAll(newReports);
             } else {
                 // Conventional Inf take burst-fire damage
-                if ((target instanceof Infantry) 
-                        && !(target instanceof BattleArmor)) {
+                if (target.isConventionalInfantry()) {
                     // Infantry take a bit more damage
                     int damage = 0;
                     // Roll 1d6 for each shell

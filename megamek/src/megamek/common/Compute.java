@@ -3462,21 +3462,17 @@ public class Compute {
 
             // For each valid ammo bin
             for (Mounted abin : shooter.getAmmo()) {
-                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                                       abin)) {
+                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
                     if (abin.getUsableShotsLeft() > 0) {
                         abin_type = (AmmoType) abin.getType();
                         if (!AmmoType.canDeliverMinefield(abin_type)) {
 
                             // Load weapon with specified bin
-                            shooter.loadWeapon(
-                                    shooter.getEquipment(atk.getWeaponId()),
-                                    abin);
+                            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
                             atk.setAmmoId(shooter.getEquipmentNum(abin));
 
                             // Get expected damage
-                            ex_damage = Compute.getExpectedDamage(cgame, atk,
-                                                                  false);
+                            ex_damage = Compute.getExpectedDamage(cgame, atk, false);
 
                             // Calculate any modifiers due to ammo type
                             ammo_multiple = 1.0;
@@ -3497,12 +3493,7 @@ public class Compute {
                                             || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
                                             || (abin_type.getAmmoType() == AmmoType.T_PAC))
                                             && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
-                                ammo_multiple = 0.0;
-                                if (target instanceof Infantry) {
-                                    if (!(target instanceof BattleArmor)) {
-                                        ammo_multiple = 2.0;
-                                    }
-                                }
+                                ammo_multiple = target.isConventionalInfantry() ? 2.0 : 0.0;
                             }
 
                             // LBX cluster rounds work better against units
@@ -3511,12 +3502,11 @@ public class Compute {
                             // Other ammo that deliver lots of small
                             // submunitions should be tested for here too
                             if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
-                                 || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB) || (abin_type
-                                                                                                   .getAmmoType() ==
-                                                                                           AmmoType.T_SBGAUSS))
-                                && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
+                                    || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SBGAUSS))
+                                    && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
                                 if (target.getArmorRemainingPercent() <= 0.25) {
-                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
+                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10.0);
                                 }
                                 if (target instanceof Tank) {
                                     ammo_multiple += 1.0;
@@ -4193,8 +4183,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             } else if (te.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if ((te instanceof Infantry) && !(te instanceof BattleArmor)
-                       && ((Infantry) te).hasSneakCamo()) {
+            } else if (te.isConventionalInfantry() && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
 

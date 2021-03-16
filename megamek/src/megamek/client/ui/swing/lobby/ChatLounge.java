@@ -1900,7 +1900,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File("docs/Boards Stuff/MapAssemblyHelp.html");
-                new CommonHelpDialog(clientgui.frame, helpfile).setVisible(true);
+//                new MMReadMeHelpDialog(clientgui.frame, helpfile).setVisible(true);
                 
             } else if (ev.getSource() == butListView) {
                 scrMekTable.setViewportView(mekTable);

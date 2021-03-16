@@ -1415,8 +1415,7 @@ public class FireControl {
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
                    || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
+                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry) {
             return 0;
         }
         //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).

@@ -204,7 +204,7 @@ public class EntityListFile {
 
             // Record destroyed locations.
             if (!(entity instanceof Aero)
-                    && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                    && !entity.isConventionalInfantry()
                     && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
                     && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
@@ -212,7 +212,7 @@ public class EntityListFile {
 
             //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
             //suits without pilots
-            if(entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
+            if (entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
                 isDestroyed = false;
             }
 
@@ -225,7 +225,7 @@ public class EntityListFile {
             // Destroyed locations have lost all their armor and IS.
             if (!isDestroyed && !isPseudoLocation) {
                 int currentArmor;
-                if (entity instanceof BattleArmor){
+                if (entity instanceof BattleArmor) {
                     currentArmor = entity.getArmor(loc);
                 } else {
                     currentArmor = entity.getArmorForReal(loc);
@@ -824,14 +824,13 @@ public class EntityListFile {
                 output.write("\" camoFileName=\"");
                 output.write(entity.getCamoFileName());
             }
-            if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            if (entity instanceof MechWarrior && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" pickUpId=\"");
-                output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
+                output.write(((MechWarrior) entity).getPickedUpByExternalIdAsString());
             }
 
             // Save some values for conventional infantry
-            if ((entity instanceof Infantry)
-                    && !(entity instanceof BattleArmor)) {
+            if (entity.isConventionalInfantry()) {
                 Infantry inf = (Infantry) entity;
                 if (inf.getArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");

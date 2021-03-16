@@ -50,7 +50,7 @@ Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Right Arm:
 Shoulder
@@ -64,7 +64,7 @@ Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Left Torso:
 Fusion Engine
@@ -76,7 +76,7 @@ CLWERPPC
 CLWERPPC
 CLWERPPC
 CLERMediumLaser
-IS Gauss Ammo
+CLImpGaussAmmo
 -Empty-
 -Empty-
 
@@ -92,7 +92,7 @@ CLWERPPC
 CLWERPPC
 CLWERPPC
 CLERMediumLaser
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Center Torso:
 Fusion Engine

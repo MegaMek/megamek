@@ -753,8 +753,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
@@ -784,7 +783,7 @@ public class MULParser {
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if(infSquadNum.length() > 0) {
+            if (infSquadNum.length() > 0) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }

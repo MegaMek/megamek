@@ -2210,10 +2210,7 @@ public class Infantry extends Entity {
      * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
      */
     public boolean isNonMechSCUBA() {
-    	if (this instanceof BattleArmor) {
-    		return false;
-    	}
-    	return getMovementMode() == EntityMovementMode.INF_UMU;
+    	return isConventionalInfantry() && (getMovementMode() == EntityMovementMode.INF_UMU);
     }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
@@ -2227,7 +2224,7 @@ public class Infantry extends Entity {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondW = w;
-        if(null == w) {
+        if (null == w) {
             secondName = null;
         } else {
             secondName = w.getName();
@@ -2286,7 +2283,7 @@ public class Infantry extends Entity {
     public void setMovementMode(EntityMovementMode movementMode) {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
-        if (!(this instanceof BattleArmor)) {
+        if (isConventionalInfantry()) {
             setOriginalJumpMP(0);
             switch (getMovementMode()) {
                 case INF_MOTORIZED:

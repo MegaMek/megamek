@@ -16,6 +16,7 @@ package megamek.client.ui.swing.lobby;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -70,11 +71,16 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
         selectionColor = UIManager.getColor("Tree.selectionBackground");
 
         if (value instanceof Entity) {
+            Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+            setFont(scaledFont);
             entity = (Entity) value;
             this.row = row; 
             IPlayer owner = entity.getOwner();
-
-            setText(MekForceTreeCellFormatter.formatUnitCompact(entity, lobby));
+            if (lobby.isCompact()) {
+                setText(MekForceTreeCellFormatter.formatUnitCompact(entity, lobby));
+            } else {
+                setText(MekForceTreeCellFormatter.formatUnitFull(entity, lobby));
+            }
             int size = UIUtil.scaleForGUI(40);
             if (lobby.isCompact()) {
                 size = size / 2;
@@ -91,6 +97,8 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
             }
         } else if (value instanceof Force) {
             entity = null;
+            Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
+            setFont(scaledFont);
             Force force = (Force) value;
             if (lobby.isCompact()) {
                 setText(MekForceTreeCellFormatter.formatForceCompact(force, lobby));
@@ -110,7 +118,7 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
         }
         Rectangle r = tree.getRowBounds(row);
         if (r != null && event.getPoint().x > r.getWidth() - UIUtil.scaleForGUI(50)) {
-            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, null).toString();
+            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings).toString();
         }
         return null;
     }

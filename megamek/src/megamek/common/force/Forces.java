@@ -519,6 +519,31 @@ public final class Forces implements Serializable {
         return result;
     }
     
+    /** 
+     * Removes the given forces and all their subforces from these Forces. Returns a list
+     * of affected surviving forces. This method does not check if the forces are empty.
+     * <P>NOTE: Any entities in the removed forces are NOT updated by this method!
+     * It is necessary to update any entities' forceId unless these are deleted as well. 
+     */
+    public ArrayList<Force> deleteForces(Collection<Force> delForces) {
+        ArrayList<Force> result = new ArrayList<>();
+        Set<Force> allForces = new HashSet<>(delForces);
+        delForces.stream().map(this::getFullSubForces).forEach(allForces::addAll);
+        // Remember the IDs to prevent updates to already-deleted parents
+        Set<Integer> allForceIds = allForces.stream().map(Force::getId).collect(toSet());
+        for (Force force: allForces) {
+            if (contains(force)) {
+                if (!force.isTopLevel() && !allForceIds.contains(force.getParentId())) {
+                    Force parent = getForce(force.getParentId());
+                    parent.removeSubForce(force.getId());
+                    result.add(parent);
+                }
+                forces.remove((Integer)force.getId());
+            }
+        }
+        return result;
+    }
+
     /** Returns a list of all forces and subforces in no particular order. */
     public ArrayList<Force> getAllForces() {
         return new ArrayList<>(forces.values());
@@ -685,6 +710,20 @@ public final class Forces implements Serializable {
             }
             for (int subForceId: force.getSubForces()) {
                 result.addAll(getFullEntities(forces.get(subForceId)));
+            }
+        }
+        return result;
+    }
+    
+    /** 
+     * Returns a list of the direct subordinate entities of the given force.
+     * Entities in subforces of this force are ignored. 
+     */
+    public ArrayList<Entity> getDirectEntities(Force force) {
+        ArrayList<Entity> result = new ArrayList<>();
+        if (contains(force)) {
+            for (int entityId: force.getEntities()) {
+                result.add(game.getEntity(entityId));
             }
         }
         return result;

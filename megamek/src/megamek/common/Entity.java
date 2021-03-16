@@ -14495,7 +14495,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     public boolean isC3IndependentMaster() {
-        return getC3MasterId() == -1;
+        return !isC3CompanyCommander();
     }
 
     /**

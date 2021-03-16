@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import megamek.common.Bay;
 import megamek.common.Entity;
 import megamek.common.QuirksHandler;
 
@@ -47,12 +46,6 @@ public class LobbyMekPopupActions implements ActionListener {
             
             // Single entity commands
         case "CONFIGURE":
-        case "UNLOADALLFROMBAY":
-        case "C3DISCONNECT":
-        case "C3CM":
-        case "C3LM":
-        case "C3JOIN":
-        case "C3CONNECT":
             if (!entities.isEmpty()) {
                 Entity randomSelected = entities.stream().findAny().get();
                 singleEntityAction(command, randomSelected, info);
@@ -60,6 +53,14 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
             // Multi entity commands
+        case "UNLOADALLFROMBAY":
+        case "C3CM":
+        case "C3LM":
+        case "C3JOIN":
+        case "C3CONNECT":
+        case "C3DISCONNECT":
+        case "C3FORMC3":
+        case "C3FORMNHC3":
         case "SWAP":
         case "DAMAGE":
         case "BV":
@@ -96,7 +97,6 @@ public class LobbyMekPopupActions implements ActionListener {
         case "FRENAME":
         case "FCREATETOP":
         case "FREMOVE":
-        case "FDELETE":
         case "FATTACH":
         case "FPROMOTE":
         case "FASSIGN":
@@ -116,12 +116,12 @@ public class LobbyMekPopupActions implements ActionListener {
             
         case "FADDTO":
             int forceId = Integer.parseInt(info);
-            lobby.addToForce(entities, forceId);
+            lobby.lobbyActions.addToForce(entities, forceId);
             break;
             
         case "FRENAME":
             forceId = Integer.parseInt(info);
-            lobby.renameForce(forceId);  
+            lobby.lobbyActions.renameForce(forceId);  
             break;
             
         case "FCREATETOP":
@@ -132,22 +132,20 @@ public class LobbyMekPopupActions implements ActionListener {
             lobby.lobbyActions.removeFromForce(entities);
             break;
             
-        case "FDELETE":
-//            lobby.lobbyActions.deleteAction(entities, true);
-//            lobby.lobbyActions.deleteForces(LobbyUtility.getForces(lobby.game(), info));
-            lobby.lobbyActions.delete(LobbyUtility.getForces(lobby.game(), info), entities);
-            break;
-            
         case "FATTACH":
             StringTokenizer st = new StringTokenizer(info, ":");
             parentId = Integer.parseInt(st.nextToken());
             forceId = Integer.parseInt(st.nextToken());
-            lobby.attachForce(forceId, parentId);
+            lobby.lobbyActions.attachForce(forceId, parentId);
             break;
             
         case "FPROMOTE":
-            forceId = Integer.parseInt(info);
-            lobby.promoteForce(forceId);
+            StringTokenizer fst = new StringTokenizer(info, ",");
+            Set<Integer> forceIds = new HashSet<>();
+            while (fst.hasMoreTokens()) {
+                forceIds.add(Integer.parseInt(fst.nextToken()));
+            }
+            lobby.lobbyActions.promoteForce(forceIds);
             break;
             
         case "FASSIGN":
@@ -176,7 +174,7 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
         case "DELETE":
-            lobby.lobbyActions.deleteAction(entities, true);
+            lobby.lobbyActions.delete(LobbyUtility.getForces(lobby.game(), info), entities, true);
             break;
             
         case "SKILLS":
@@ -202,7 +200,7 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
         case "SQUADRON":
-            lobby.createSquadron(entities);
+            lobby.lobbyActions.createSquadron(entities);
             break;
             
         case "SAVE_QUIRKS_ALL":
@@ -218,16 +216,12 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
         case "LOAD":
-            lobby.load(entities, info);
+            lobby.lobbyActions.load(entities, info);
             break;
 
         case "UNLOAD":
             Set<Entity> updateCandidates = new HashSet<>();
-            lobby.disembarkAll(entities); //TODO ?????? leftover call
-            for (Entity e: entities) {
-                lobby.disembark(e, updateCandidates);
-            }
-            lobby.sendUpdate(updateCandidates);
+            lobby.disembarkAll(entities);
             break;
             
         case "UNLOADALL":
@@ -276,10 +270,46 @@ public class LobbyMekPopupActions implements ActionListener {
             int id = Integer.parseInt(info);
             lobby.lobbyActions.swapPilots(entities, id);
             break;
+            
+        case "C3DISCONNECT":
+            lobby.lobbyActions.c3DisconnectFromNetwork(entities);
+            break;
+            
+        case "C3CM":
+            lobby.lobbyActions.c3SetCompanyMaster(entities);
+            break;
+            
+        case "C3LM":
+            lobby.lobbyActions.c3SetLanceMaster(entities);
+            break;
+            
+        case "C3JOIN":
+            int master = Integer.parseInt(info);
+            lobby.lobbyActions.c3JoinNh(entities, master, false);
+            break;
+            
+        case "C3CONNECT":
+            master = Integer.parseInt(info);
+            lobby.lobbyActions.c3Connect(entities, master, false);
+            break;
+            
+        case "C3FORMC3":
+            master = Integer.parseInt(info);
+            lobby.lobbyActions.c3Connect(entities, master, true);
+            break;
+
+        case "C3FORMNHC3":
+            master = Integer.parseInt(info);
+            lobby.lobbyActions.c3JoinNh(entities, master, true);
+            break;
+
+        case "UNLOADALLFROMBAY":
+            int bay = Integer.parseInt(info);
+            lobby.lobbyActions.unloadFromBay(entities, bay);
+            break;
         }
-        
     }
-    
+
     /** Calls lobby actions for a single entity. */
     private void singleEntityAction(String command, Entity entity, String info) {
         switch (command) {
@@ -287,37 +317,7 @@ public class LobbyMekPopupActions implements ActionListener {
             lobby.lobbyActions.customizeMech(entity);
             break;
             
-        case "C3DISCONNECT":
-            lobby.disconnectC3FromNetwork(entity);
-            break;
-            
-        case "C3CM":
-            lobby.setC3CompanyMaster(entity);
-            break;
-            
-        case "C3LM":
-            lobby.setC3LanceMaster(entity);
-            break;
-            
-        case "C3JOIN":
-            int master = Integer.parseInt(info);
-            lobby.joinNhC3(entity, master);
-            break;
-            
-        case "C3CONNECT":
-            master = Integer.parseInt(info);
-            lobby.connectToC3(entity, master);
-            break;
-            
-        case "UNLOADALLFROMBAY":
-            Set<Entity> updateCandidates = new HashSet<>();
-            int id = Integer.parseInt(info);
-            Bay bay = entity.getBayById(id);
-            for (Entity loadee : bay.getLoadedUnits()) {
-                lobby.disembark(loadee, updateCandidates);
-            }
-            lobby.sendUpdate(updateCandidates);
-            break;
+
         }
     }
     

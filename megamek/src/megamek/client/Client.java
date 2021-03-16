@@ -32,17 +32,7 @@ import javax.swing.*;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.commands.AddBotCommand;
-import megamek.client.commands.AssignNovaNetworkCommand;
-import megamek.client.commands.ClientCommand;
-import megamek.client.commands.DeployCommand;
-import megamek.client.commands.FireCommand;
-import megamek.client.commands.HelpCommand;
-import megamek.client.commands.MoveCommand;
-import megamek.client.commands.RulerCommand;
-import megamek.client.commands.ShowEntityCommand;
-import megamek.client.commands.ShowTileCommand;
-import megamek.client.commands.SitrepCommand;
+import megamek.client.commands.*;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ui.IClientCommandHandler;
@@ -50,31 +40,11 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.event.GameVictoryEvent;
+import megamek.common.actions.*;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListenerAdapter;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.IConnection;
-import megamek.common.net.Packet;
-import megamek.common.net.PacketReceivedEvent;
+import megamek.common.net.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
@@ -821,7 +791,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "add squadron" packet
      */
-    public void sendAddSquadron(FighterSquadron fs, Vector<Integer> fighterIds) {
+    public void sendAddSquadron(FighterSquadron fs, Collection<Integer> fighterIds) {
         checkDuplicateNamesDuringAdd(fs);
         send(new Packet(Packet.COMMAND_SQUADRON_ADD, new Object[] { fs, fighterIds }));
     }
@@ -1015,11 +985,22 @@ public class Client implements IClientCommandHandler {
     
     /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
     protected void receiveForcesDelete(Packet c) {
+        System.out.println("Delete");
         @SuppressWarnings("unchecked")
-        List<Integer> toDelete = (List<Integer>) c.getObject(0);
-        toDelete.stream().forEach(game.getForces()::deleteForce);
-        // This is a fake event used to update the display in the lobby
-        game.processGameEvent(new GamePlayerChangeEvent(this, getLocalPlayer()));
+        Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
+        Forces forces = game.getForces();
+        
+        // Gather the forces and entities to be deleted
+        Set<Force> delForces = new HashSet<>();
+        Set<Entity> delEntities = new HashSet<>();
+        forceIds.stream().map(id -> forces.getForce(id)).forEach(delForces::add);
+        delForces.stream().map(f -> forces.getFullEntities(f)).forEach(delEntities::addAll);
+
+        forces.deleteForces(delForces);
+
+        for (Entity entity : delEntities) {
+            game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+        }
     }
     
     /**
@@ -1039,13 +1020,11 @@ public class Client implements IClientCommandHandler {
      */
     @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
-        Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
+        Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
         for (Entity entity: entities) {
             game.setEntity(entity.getId(), entity);
         }
     }
-    
-    
 
     protected void receiveEntityAdd(Packet packet) {
         @SuppressWarnings("unchecked")
@@ -1405,6 +1384,9 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_ENTITY_UPDATE:
             receiveEntityUpdate(c);
+            break;
+        case Packet.COMMAND_ENTITY_MULTIUPDATE:
+            receiveEntitiesUpdate(c);
             break;
         case Packet.COMMAND_ENTITY_REMOVE:
             receiveEntityRemove(c);

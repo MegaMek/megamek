@@ -109,7 +109,12 @@ public class MekTableCellFormatter {
         }
         
         // Unit name
-        result.append(entity.getShortNameRaw());
+        if (entity.isPartOfFighterSquadron()) {
+            result.append(guiScaledFontHTML(uiGray()));
+            result.append(entity.getShortNameRaw()).append("</FONT>");
+        } else {
+            result.append(entity.getShortNameRaw());
+        }
 
         // Invalid unit design
         if (!entity.isDesignValid()) {
@@ -121,7 +126,7 @@ public class MekTableCellFormatter {
         // ECM
         if (entity.hasActiveECM()) {
             result.append(guiScaledFontHTML(uiC3Color()));
-            result.append(" \u24BA");
+            result.append(ECM_SIGN);
             result.append("</FONT>");
         }
 
@@ -129,7 +134,7 @@ public class MekTableCellFormatter {
         int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
         if (quirkCount > 0) {
             result.append(guiScaledFontHTML(uiQuirksColor()));
-            result.append(" \u24C6");
+            result.append(QUIRKS_SIGN);
             result.append("</FONT>");
         }
         
@@ -339,16 +344,7 @@ public class MekTableCellFormatter {
         if (quirkCount > 0) {
             result.append(DOT_SPACER);
             result.append(guiScaledFontHTML(uiQuirksColor()));
-            result.append(Messages.getString("ChatLounge.Quirks"));
-            
-//            int posQuirks = entity.countQuirks(Quirks.POS_QUIRKS);
-//            String pos = posQuirks > 0 ? "+" + posQuirks : ""; 
-//            int negQuirks = entity.countQuirks(Quirks.NEG_QUIRKS);
-//            String neg = negQuirks > 0 ? "-" + negQuirks : "";
-//            int wpQuirks = entity.countWeaponQuirks();
-//            String wpq = wpQuirks > 0 ? "W" + wpQuirks : "";
-//            result.append(arrangeInLine(" / ", pos, neg, wpq));
-            
+            result.append(QUIRKS_SIGN);
             result.append("</FONT>");
         }
 

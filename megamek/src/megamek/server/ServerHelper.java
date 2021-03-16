@@ -2,11 +2,14 @@ package megamek.server;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.force.Force;
+import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -512,29 +515,114 @@ public class ServerHelper {
         }
         return true;
     }
-    
+
+    /** 
+     * Writes a "Unit XX has been customized" message to the chat. The message
+     * is adapted to blind drop conditions. 
+     */
     static String entityUpdateMessage(Entity entity, IGame game) {
-    StringBuilder result = new StringBuilder();
-    if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
-        result.append("A Unit of ");
-        result.append(entity.getOwner().getName());
-        result.append(" has been customized.");
-        
-    } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
-        result.append("Unit ");
-        if (!entity.getExternalIdAsString().equals("-1")) {
-            result.append('[').append(entity.getExternalIdAsString()).append("] ");
+        StringBuilder result = new StringBuilder();
+        if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
+            result.append("A Unit of ");
+            result.append(entity.getOwner().getName());
+            result.append(" has been customized.");
+
+        } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
+            result.append("Unit ");
+            if (!entity.getExternalIdAsString().equals("-1")) {
+                result.append('[').append(entity.getExternalIdAsString()).append("] ");
+            }
+            result.append(entity.getId());
+            result.append('(').append(entity.getOwner().getName()).append(')');
+            result.append(" has been customized.");
+
+        } else {
+            result.append("Unit ");
+            result.append(entity.getDisplayName());
+            result.append(" has been customized.");
         }
-        result.append(entity.getId());
-        result.append('(').append(entity.getOwner().getName()).append(')');
-        result.append(" has been customized.");
-        
-    } else {
-        result.append("Unit ");
-        result.append(entity.getDisplayName());
-        result.append(" has been customized.");
+        return result.toString();
     }
-    return result.toString();
+    
+    /** 
+     * Disembarks and offloads the given entity (removing it from transports
+     * and removing transported units from it). 
+     * Returns a set of entities that received changes. The set may be empty, but not null.
+     * <P>NOTE: This is a simplified unload that is only valid in the lobby!
+     */
+    static HashSet<Entity> lobbyDisembark(IGame game, Collection<Entity> entities) { 
+        HashSet<Entity> result = new HashSet<>();
+        for (Entity entity: entities) {
+            result.addAll(lobbyDisembark(game, entity));
+            for (Entity carriedUnit: entity.getLoadedUnits()) {
+                result.addAll(lobbyDisembark(game, carriedUnit));
+            } 
+        }
+        System.out.println(result);
+        return result;
+    }
+    
+    /** 
+     * Have the given entity disembark if it is carried by another unit.
+     * Returns a set of entities that were modified. The set is empty if
+     * the entity was not loaded to a carrier. 
+     * <P>NOTE: This is a simplified disembark that is only valid in the lobby!
+     */
+    private static HashSet<Entity> lobbyDisembark(IGame game, Entity entity) {
+        HashSet<Entity> result = new HashSet<>();
+        if (entity.getTransportId() != Entity.NONE) {
+            Entity carrier = game.getEntity(entity.getTransportId());
+            if (carrier != null) {
+                carrier.unload(entity);
+                result.add(entity);
+                result.add(carrier);
+            }
+            entity.setTransportId(Entity.NONE);
+        }
+        return result;
+    }
+    
+    /** 
+     * Performs a disconnect from C3 networks for the given entities without sending an update. 
+     * This is a simplified version that is only valid in the lobby.
+     * Returns a set of entities that received changes.
+     */
+    static HashSet<Entity> performDisconnect(IGame game, Collection<Entity> entities) {
+        HashSet<Entity> result = new HashSet<>();
+        // Disconnect the entity from networks
+        for (Entity entity: entities) {
+            if (entity.hasNhC3()) {
+                entity.setC3NetIdSelf();
+                result.add(entity);
+            } else if (entity.hasAnyC3System()) {
+                entity.setC3Master(null, true);
+                result.add(entity);
+            }
+        }
+        // Also disconnect all units connected *to* that entity
+        for (Entity entity: game.getEntitiesVector()) {
+            if (entities.contains(entity.getC3Master())) {
+                entity.setC3Master(null, true);
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Creates a packet for an update for the given entities. 
+     * Only valid in the lobby.
+     */
+    static Packet createMultiEntityPacket(Collection<Entity> entities) {
+        return new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities);
+    }
+    
+    /**
+     * Creates a packet detailing a force delete.
+     * Only valid in the lobby.
+     */
+    static Packet createForcesDeletePacket(Collection<Integer> forces) {
+        return new Packet(Packet.COMMAND_FORCE_DELETE, forces);
     }
   
 }

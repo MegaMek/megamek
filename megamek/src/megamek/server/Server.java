@@ -61,42 +61,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.AirmechRamAttackAction;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.BrushOffAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.ClearMinefieldAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.JumpJetAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.RamAttackAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.TripAttackAction;
-import megamek.common.actions.UnjamAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.UnloadStrandedAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -125,49 +90,12 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
-import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.*;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.AreaEffectHelper.NukeStats;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.TAGHandler;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
-import megamek.server.commands.AddBotCommand;
-import megamek.server.commands.AllowTeamChangeCommand;
-import megamek.server.commands.AssignNovaNetServerCommand;
-import megamek.server.commands.CheckBVCommand;
-import megamek.server.commands.CheckBVTeamCommand;
-import megamek.server.commands.DefeatCommand;
-import megamek.server.commands.ExportListCommand;
-import megamek.server.commands.FixElevationCommand;
-import megamek.server.commands.HelpCommand;
-import megamek.server.commands.JoinTeamCommand;
-import megamek.server.commands.KickCommand;
-import megamek.server.commands.ListEntitiesCommand;
-import megamek.server.commands.ListSavesCommand;
-import megamek.server.commands.LoadGameCommand;
-import megamek.server.commands.LocalLoadGameCommand;
-import megamek.server.commands.LocalSaveGameCommand;
-import megamek.server.commands.NukeCommand;
-import megamek.server.commands.ResetCommand;
-import megamek.server.commands.RollCommand;
-import megamek.server.commands.RulerCommand;
-import megamek.server.commands.SaveGameCommand;
-import megamek.server.commands.SeeAllCommand;
-import megamek.server.commands.ServerCommand;
-import megamek.server.commands.ShowEntityCommand;
-import megamek.server.commands.ShowTileCommand;
-import megamek.server.commands.ShowValidTargetsCommand;
-import megamek.server.commands.SkipCommand;
-import megamek.server.commands.TeamCommand;
-import megamek.server.commands.TraitorCommand;
-import megamek.server.commands.VictoryCommand;
-import megamek.server.commands.WhoCommand;
+import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 
 /**
@@ -731,6 +659,7 @@ public class Server implements Runnable {
      * Allow the player to set whatever parameters he is able to
      */
     private void receivePlayerInfo(Packet packet, int connId) {
+        MegaMek.getLogger().error("Player Uppdate!");
         IPlayer player = (IPlayer) packet.getObject(0);
         IPlayer gamePlayer = game.getPlayer(connId);
         if (null != gamePlayer) {
@@ -4185,11 +4114,6 @@ public class Server implements Runnable {
 
         // Update the loaded unit.
         entityUpdate(unit.getId());
-
-        // Taharqa (2/28/13): I am not sure why the loader is not getting
-        // updated too - not updating it is causing problem in the chat 
-        // lounge loading, so I am going to do it here, but if we get
-        // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
 
@@ -30084,11 +30008,10 @@ public class Server implements Runnable {
     private void receiveSquadronAdd(Packet c, int connIndex) {
 
         final FighterSquadron fs = (FighterSquadron) c.getObject(0);
-        final Vector<Integer> fighters = (Vector<Integer>) c.getObject(1);
+        final Collection<Integer> fighters = (Collection<Integer>) c.getObject(1);
         if (fighters.size() < 1) {
             return;
         }
-        // fs.setOwner(fighters.firstElement().getOwner());
         // Only assign an entity ID when the client hasn't.
         if (Entity.NONE == fs.getId()) {
             fs.setId(getFreeEntityId());
@@ -30185,18 +30108,34 @@ public class Server implements Runnable {
     private void receiveForcesDelete(Packet c, int connIndex) {
         @SuppressWarnings("unchecked")
         List<Integer> forceList = (List<Integer>) c.getObject(0);
-        List<Integer> deletedForces = new ArrayList<>();
-        Forces forcesClone = game.getForces().clone();
-        for (int id: forceList) {
-            if (forcesClone.contains(id)) {
-                forcesClone.deleteForce(id);
-            }
+        
+        // Gather the forces and entities to be deleted
+        Forces forces = game.getForces();
+        Set<Force> delForces = new HashSet<>();
+        forceList.stream().map(id -> forces.getForce(id)).forEach(delForces::add);
+        Set<Force> allSubForces = new HashSet<>();
+        delForces.stream().map(f -> forces.getFullSubForces(f)).forEach(allSubForces::addAll);
+        delForces.removeIf(f -> allSubForces.contains(f));
+        Set<Entity> delEntities = new HashSet<>();
+        delForces.stream().map(f -> forces.getFullEntities(f)).forEach(delEntities::addAll);
+
+        // Unload units and disconnect any C3 networks
+        Set<Entity> updateCandidates = new HashSet<>();
+        updateCandidates.addAll(ServerHelper.lobbyDisembark(game, delEntities));
+        updateCandidates.addAll(ServerHelper.performDisconnect(game, delEntities));
+        
+        // Units that get deleted must not receive updates
+        updateCandidates.removeIf(e -> delEntities.contains(e));
+        if (!updateCandidates.isEmpty()) {
+            send(ServerHelper.createMultiEntityPacket(updateCandidates));
         }
-        if (forcesClone.isValid()) {
-            // All OK, so finalize the changes 
-            game.setForces(forcesClone);
-            send(createForcesDeletePacket(deletedForces));
+        
+        // Delete entities and forces
+        for (Entity entity : delEntities) {
+            game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
         }
+        forces.deleteForces(delForces);
+        send(ServerHelper.createForcesDeletePacket(forceList));
     }
 
     /**
@@ -30258,19 +30197,7 @@ public class Server implements Runnable {
             loadUnit(loader, loadee, bayNumber);
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
-                /*
-                 * StringBuffer message = new StringBuffer();
-                 * message.append("Unit "); if
-                 * (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) ||
-                 * game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { if
-                 * (!entity.getExternalIdAsString().equals("-1")) {
-                 * message.append('[') .append(entity.getExternalIdAsString())
-                 * .append("] "); } message.append(entity.getId()).append('(')
-                 * .append(entity.getOwner().getName()).append(')'); } else {
-                 * message.append(entity.getDisplayName()); }
-                 * message.append(" has been customized.");
-                 * sendServerChat(message.toString());
-                 */
+                ServerHelper.entityUpdateMessage(loadee, game);
                 // Set this so units can be unloaded in the first movement phase
                 loadee.setLoadedThisTurn(false);
             }
@@ -30550,6 +30477,21 @@ public class Server implements Runnable {
     private void receiveEntityDelete(Packet c, int connIndex) {
         @SuppressWarnings("unchecked")
         List<Integer> ids = (List<Integer>) c.getObject(0);
+        
+        Set<Entity> delEntities = new HashSet<>();
+        ids.stream().map(id -> game.getEntity(id)).forEach(delEntities::add);
+        
+        // Unload units and disconnect any C3 networks
+        Set<Entity> updateCandidates = new HashSet<>();
+        updateCandidates.addAll(ServerHelper.lobbyDisembark(game, delEntities));
+        updateCandidates.addAll(ServerHelper.performDisconnect(game, delEntities));
+        
+        // Units that get deleted must not receive updates
+        updateCandidates.removeIf(e -> delEntities.contains(e));
+        if (!updateCandidates.isEmpty()) {
+            send(ServerHelper.createMultiEntityPacket(updateCandidates));
+        }
+        
         ArrayList<Force> affectedForces = new ArrayList<>();
         for (Integer entityId : ids) {
             final Entity entity = game.getEntity(entityId);
@@ -30985,23 +30927,6 @@ public class Server implements Runnable {
         data[1] = entities;
         return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
     }
-    
-    /**
-     * Creates a packet detailing a force delete. Force updates must contain all
-     * affected forces and all affected entities.
-     */
-    private Packet createForceDeletePacket(Force force) {
-        return new Packet(Packet.COMMAND_FORCE_DELETE, force);
-    }
-    
-    /**
-     * Creates a packet detailing a force delete. Force updates must contain all
-     * affected forces and all affected entities.
-     */
-    private Packet createForcesDeletePacket(List<Integer> toDelete) {
-        return new Packet(Packet.COMMAND_FORCE_DELETE, toDelete);
-    }
-    
     
     /**
      * Creates a packet detailing the removal of an entity. Maintained for

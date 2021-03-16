@@ -21,17 +21,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.BattleArmorHandlesTank;
+import megamek.common.Bay;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MapSettings;
+import megamek.common.TankTrailerHitch;
+import megamek.common.Transporter;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -115,23 +119,6 @@ public class LobbyUtility {
     /** Returns true if the given entities all belong to the same player. */
     static boolean haveSingleOwner(Collection<Entity> entities) {
         return entities.stream().mapToInt(e -> e.getOwner().getId()).distinct().count() == 1;
-    }
-    
-    /**
-     * Returns true if no two of the given entities are enemies. This is
-     * true when all entities belong to a single player. If they belong to 
-     * different players, it is true when all belong to the same team and 
-     * that team is one of Teams 1 through 5 (not "No Team").
-     * <P>Returns true when entities is empty or has only one entity. The case of
-     * entities being empty should be considered by the caller.  
-     */
-    static boolean areAllied(Collection<Entity> entities) {
-        if (entities.size() == 0) {
-            MegaMek.getLogger().warning("Empty collection of entities received, cannot determine if no entities are all allied. Returning true.");
-            return true;
-        }
-        Entity randomEntry = entities.stream().findAny().get();
-        return !entities.stream().anyMatch(e -> e.isEnemyOf(randomEntry));
     }
     
     /** Returns true if any of the given entities are embarked (transported by something). */ 
@@ -265,8 +252,156 @@ public class LobbyUtility {
         return result;
     }
     
-
+    /** 
+     * Returns true if a and b share at least one non-hierarchic C3 system
+     * (C3i, Naval C3, Nova CEWS). Symmetrical (the order of a and b does not matter). 
+     */
+    public static boolean sameNhC3System(Entity a, Entity b) {
+        return (a.hasC3i() && b.hasC3i()) 
+                || (a.hasNavalC3() && b.hasNavalC3()) 
+                || (a.hasNovaCEWS() && b.hasNovaCEWS());
+    }
     
+    /** 
+     * Returns true when the entities can embark onto loader given the other constraints.
+     * If false, the passed errorMsg contains a suitable error message for display.
+     */
+    static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber,
+            boolean loadRear, StringBuilder errorMsg) {
+        // Protomek loading uses only 1 entity, get that (doesnt matter if it's something else):
+        Entity soleProtomek = entities.stream().findAny().get();
+        double capacity;
+        boolean hasEnoughCargoCapacity;
+        String errorMessage = "";
+        
+        if (bayNumber != -1) {
+            Bay bay = loader.getBayById(bayNumber);
+            if (null != bay) {
+                double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
+                capacity = bay.getUnused();
+                hasEnoughCargoCapacity = loadSize <= capacity;
+                errorMessage = Messages.getString("LoadingBay.baytoomany",
+                        (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
+            } else if (loader.hasETypeFlag(Entity.ETYPE_MECH)
+                    && soleProtomek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                // We're also using bay number to distinguish between front and rear locations
+                // for protomech mag clamp systems
+                hasEnoughCargoCapacity = entities.size() == 1;
+                errorMessage = Messages.getString("LoadingBay.protostoomany");
+            } else {
+                hasEnoughCargoCapacity = false;
+                errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
+            }
+        } else {
+            HashMap<Long, Double> capacities = new HashMap<>();
+            HashMap<Long, Double> counts = new HashMap<>();
+            HashMap<Transporter, Double> potentialLoad = new HashMap<>();
+            // Get the counts and capacities for all present types
+            for (Entity e : entities) {
+                long entityType = e.getEntityType();
+                long loaderType = loader.getEntityType();
+                double unitSize;
+                if ((entityType & Entity.ETYPE_MECH) != 0) {
+                    entityType = Entity.ETYPE_MECH;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
+                    entityType = Entity.ETYPE_INFANTRY;
+                    boolean useCount = true;
+                    if ((loaderType & Entity.ETYPE_TANK) != 0) {
+                        // This is a super hack... When getting
+                        // capacities, troopspace gives unused space in
+                        // terms of tons, and BattleArmorHandles gives
+                        // it in terms of unit count. If I call
+                        // getUnused, it sums these together, and is
+                        // meaningless, so we'll go through all
+                        // transporters....
+                        boolean hasTroopSpace = false;
+                        for (Transporter t : loader.getTransports()) {
+                            if (t instanceof TankTrailerHitch) {
+                                continue;
+                            }
+                            double loadWeight = e.getWeight();
+                            if (potentialLoad.containsKey(t)) {
+                                loadWeight += potentialLoad.get(t);
+                            }
+                            if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
+                                    && (loadWeight <= t.getUnused())) {
+                                hasTroopSpace = true;
+                                potentialLoad.put(t, loadWeight);
+                                break;
+                            }
+                        }
+                        if (hasTroopSpace) {
+                            useCount = false;
+                        }
+                    }
+                    // TroopSpace uses tonnage
+                    // bays and BA handlebars use a count
+                    if (useCount) {
+                        unitSize = 1;
+                    } else {
+                        unitSize = e.getWeight();
+                    }
+                } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
+                    entityType = Entity.ETYPE_PROTOMECH;
+                    unitSize = 1;
+                    // Loading using mag clamps; user can specify front or rear.
+                    // Make use of bayNumber field
+                    if ((loaderType & Entity.ETYPE_MECH) != 0) {
+                        bayNumber = loadRear? 1 : 0;
+                    }
+                } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
+                    entityType = Entity.ETYPE_DROPSHIP;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_JUMPSHIP) != 0) {
+                    entityType = Entity.ETYPE_JUMPSHIP;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_AERO) != 0) {
+                    entityType = Entity.ETYPE_AERO;
+                    unitSize = 1;
+                } else if ((entityType & Entity.ETYPE_TANK) != 0) {
+                    entityType = Entity.ETYPE_TANK;
+                    unitSize = 1;
+                } else {
+                    unitSize = 1;
+                }
+
+                Double count = counts.get(entityType);
+                if (count == null) {
+                    count = 0.0;
+                }
+                count = count + unitSize;
+                counts.put(entityType, count);
+
+                Double cap = capacities.get(entityType);
+                if (cap == null) {
+                    cap = loader.getUnused(e);
+                    capacities.put(entityType, cap);
+                }
+            }
+            hasEnoughCargoCapacity = true;
+            capacity = 0;
+            for (Long typeId : counts.keySet()) {
+                double currCount = counts.get(typeId);
+                double currCapacity = capacities.get(typeId);
+                if (currCount > currCapacity) {
+                    hasEnoughCargoCapacity = false;
+                    capacity = currCapacity;
+                    String messageName;
+                    if (typeId == Entity.ETYPE_INFANTRY) {
+                        messageName = "LoadingBay.nonbaytoomanyInf";
+                    } else {
+                        messageName = "LoadingBay.nonbaytoomany";
+                    }
+                    errorMessage = Messages.getString(messageName, currCount,
+                            Entity.getEntityTypeName(typeId), currCapacity);
+                }
+            }
+        }
+        errorMsg.append(errorMessage);
+        return hasEnoughCargoCapacity;
+    }
+
     
     // PRIVATE
     //  

@@ -87,6 +87,7 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             String source = (String)support.getTransferable().getTransferData(FLAVOR);
             List<Integer> entityIdList = getselectedEntityIds(source);
             List<Integer> forceIdList = getselectedForceIds(source);
+            // Only drag either entities or forces
             if (!entityIdList.isEmpty() && !forceIdList.isEmpty()) {
                 return false;
             }
@@ -97,8 +98,6 @@ public class MekForceTreeTransferHandler extends TransferHandler {
         }
         return true;
     }
-    
-    
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
@@ -126,31 +125,36 @@ public class MekForceTreeTransferHandler extends TransferHandler {
             JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
             TreePath dest = dl.getPath();
 
-            // No Path means remove from forces or promote
+            // No Path means remove entity from forces or promote force to top-level
             if (dest == null && !entityIdList.isEmpty()) {
                 lobby.lobbyActions.removeFromForce(LobbyUtility.getEntities(lobby.game(), entityIds));
                 return true;
             }
-            if (dest == null && forceIdList.size() == 1) {
-                lobby.promoteForce(forceIdList.get(0));
+            if (dest == null && !forceIdList.isEmpty()) {
+                lobby.lobbyActions.promoteForce(forceIdList);
                 return true;
             }
 
-            // Add entities to a force
+            // Add entities to a force (Drop onto force)
             if (dest != null && dest.getLastPathComponent() instanceof Force && !entityIdList.isEmpty()) {
                 int forceId = ((Force)dest.getLastPathComponent()).getId();
-                lobby.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
+                lobby.lobbyActions.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
             }
             
+            // Add entities to a force (Drop onto entities in a force)
             if (dest != null && dest.getLastPathComponent() instanceof Entity && !entityIdList.isEmpty()) {
                 int forceId = ((Entity)dest.getLastPathComponent()).getForceId();
-                lobby.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
+                if (forceId != Force.NO_FORCE) {
+                    lobby.lobbyActions.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
+                } else {
+                    lobby.lobbyActions.removeFromForce(LobbyUtility.getEntities(lobby.game(), entityIds));
+                }
             }
             
             // Attach a force to a new parent
             if (dest != null && dest.getLastPathComponent() instanceof Force && forceIdList.size() == 1) {
                 int newParentId = ((Force)dest.getLastPathComponent()).getId();
-                lobby.attachForce(forceIdList.get(0), newParentId);
+                lobby.lobbyActions.attachForce(forceIdList.get(0), newParentId);
             }
             
             

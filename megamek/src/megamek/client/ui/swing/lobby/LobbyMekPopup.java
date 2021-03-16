@@ -18,7 +18,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,6 +27,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.ScalingPopup;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -47,114 +47,46 @@ class LobbyMekPopup {
             ActionListener listener, ChatLounge lobby) {
 
         ClientGUI clientGui = lobby.getClientgui();
+        IGame game = lobby.game();
+        GameOptions opts = game.getOptions();
         
-        GameOptions opts = clientGui.getClient().getGame().getOptions();
         boolean optQuirks = opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
         boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
         boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
 
-        // Generate a set of all selected entities and all entities in selected forces (and any subforces)
+        // A set of all selected entities and all entities in selected forces and their subforces
         Set<Entity> joinedEntities = new HashSet<Entity>(entities);
         for (Force force: forces) {
-            joinedEntities.addAll(lobby.game().getForces().getFullEntities(force));
+            joinedEntities.addAll(game.getForces().getFullEntities(force));
         }  
-        
-        // Create a list of selected units that belong to the local player or one
-        // of his bots, as only those are configurable, so the popup menu really
-        // reflects what can be configured
-        HashSet<Entity> configurableEntities = new HashSet<>(entities);
-        configurableEntities.removeIf(e -> !lobby.isEditable(e));
-
-        boolean unconfigSelected = entities.size() != configurableEntities.size();
-        boolean canConfigureAny = configurableEntities.size() > 0;
-        boolean canConfigureAll = entities.size() == configurableEntities.size();
-        boolean canConfigureDeployAll = lobby.canConfigureMultipleDeployment(entities);
-        boolean canSeeAll = lobby.canSeeAll(entities);
-        boolean oneSelected = entities.size() == 1;
-        
 
         // Find certain unit features among all units the player can access
-        // i.e. his own units or his bots' units (not only selected units!)
-        HashSet<Entity> teamEntities = new HashSet<>(clientGui.getClient().getGame().getEntitiesVector());
-        teamEntities.removeIf(e -> !lobby.isEditable(e));
-        
-        boolean accessibleFighters = false;
-        boolean accessibleJumpships = false;
-        boolean accessibleTransportBays = false;
-        boolean accessibleCarriers = false;
-        boolean accessibleProtomeks = false;
-        for (Entity en: teamEntities) {
-            accessibleFighters |= en.isFighter(); 
-            accessibleJumpships |= en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
-            accessibleTransportBays |= !en.getTransportBays().isEmpty();
-            accessibleCarriers |= en.getLoadedUnits().size() > 0;
-            accessibleProtomeks |= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
-        }
+        // Used to hide some menu items entirely like "Form Squadron" when there's no fighter in the game
+        HashSet<Entity> accessibleEntities = new HashSet<>(game.getEntitiesVector());
+        accessibleEntities.removeIf(lobby.lobbyActions::isNotEditable);
+        boolean accessibleFighters = accessibleEntities.stream().anyMatch(e -> e.isFighter());
+        boolean accessibleTransportBays = accessibleEntities.stream().anyMatch(e -> !e.getTransportBays().isEmpty());
+        boolean accessibleCarriers = accessibleEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
+        boolean accessibleProtomeks = accessibleEntities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
 
-        // Find what can be done with the entities
-        boolean allCapFighter = !unconfigSelected;
-        boolean allDropships = !unconfigSelected;
-        boolean allProtomeks = !unconfigSelected;
-        boolean anyHLOn = false;
-        boolean anyHLOff = false;
-        boolean anyRFMGOn = false;
-        boolean anyRFMGOff = false;
-        boolean anyCarrier = false;
-        boolean allEmbarked = true;
-        boolean noneEmbarked = true;
-        boolean allHaveMagClamp = true;
-        for (Entity en: joinedEntities) {
-            if (en.getTransportId() == Entity.NONE) {
-                allEmbarked = false;
-            } else {
-                noneEmbarked = false;
-            }
-            if (en.getLoadedUnits().size() > 0) {
-                anyCarrier = true;
-            }
-            if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
-                allCapFighter = false;
-            }
-            if (en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)
-                    || en.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                allHaveMagClamp &= en.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP);
-            }
-            allProtomeks &= en.hasETypeFlag(Entity.ETYPE_PROTOMECH);
-            allDropships &= en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
-            if (optBurstMG) {
-                for (Mounted m: en.getWeaponList()) {
-                    EquipmentType etype = m.getType();
-                    if (etype.hasFlag(WeaponType.F_MG)) {
-                        anyRFMGOn |= m.isRapidfire();
-                        anyRFMGOff |= !m.isRapidfire();
-                    }
-                }
-            }
-            if (optLRMHotLoad) {
-                for (Mounted ammo: en.getAmmo()) {
-                    AmmoType etype = (AmmoType) ammo.getType();
-                    if (etype.hasFlag(AmmoType.F_HOTLOAD)) {
-                        anyHLOn |= ammo.isHotLoaded();
-                        anyHLOff |= !ammo.isHotLoaded();
-                    }
-                }
-            }
-        }
-        
-        // "Joined" means all selected entities + all entities of selected forces incl. subforces
+        // Find what can be done with the selected entities incl. those in selected forces
+        boolean anyCarrier = joinedEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
+        boolean noneEmbarked = joinedEntities.stream().allMatch(e -> e.getTransportId() == Entity.NONE);
+        boolean allProtomeks = joinedEntities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
+        boolean anyRFMGOn = joinedEntities.stream().anyMatch(e -> hasRapidFireMG(e));
+        boolean anyRFMGOff = joinedEntities.stream().anyMatch(e -> hasNormalFireMG(e));
+        boolean anyHLOn = joinedEntities.stream().anyMatch(e -> hasHotLoaded(e));
+        boolean anyHLOff = joinedEntities.stream().anyMatch(e -> hasNonHotLoaded(e));
+
         boolean hasjoinedEntities = !joinedEntities.isEmpty();
         boolean joinedOneEntitySelected = (entities.size() == 1) && forces.isEmpty();
-        boolean joinedCanSeeAllEntities = hasjoinedEntities && lobby.canSeeAll(joinedEntities);
-        boolean joinedcanEditEntities = hasjoinedEntities && lobby.isEditable(joinedEntities);
-        boolean joinedhasLateDeployment = hasjoinedEntities && joinedEntities.stream().anyMatch(e -> e.getDeployRound() != 0);
-        boolean joinedCanConfigureDeployAll = hasjoinedEntities && lobby.canConfigureMultipleDeployment(joinedEntities);
+        boolean canSeeAll = lobby.canSeeAll(joinedEntities);
         
         ScalingPopup popup = new ScalingPopup();
         
-        // All command strings should follow the layout COMMAND|INFO|ID1|ID2|I3...
-        // Commands that don't need INFO should still have it for parsing
-        // Commands that don't need an entity ID should still add noInfo for parsing
+        // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
+        // and use -1 when something is not needed (COMMAND|-1|-1)
         String eId = "|" + (entities.isEmpty() ? "-1" : entities.get(0).getId());
         String eIds = enToken(entities);
         String seIds = enToken(joinedEntities);
@@ -184,37 +116,30 @@ class LobbyMekPopup {
         
         popup.add(ScalingPopup.spacer());
         popup.add(changeOwnerMenu(!entities.isEmpty() || !forces.isEmpty(), clientGui, listener, entities, forces));
-        popup.add(loadMenu(clientGui, canConfigureAny && !allEmbarked, listener, entities));
+        popup.add(loadMenu(clientGui, true, listener, joinedEntities));
         
         if (accessibleCarriers) {
-            popup.add(menuItem("Disembark / leave from carriers", "UNLOAD" + NOINFO + eIds, canConfigureAny && !noneEmbarked, listener));
-            popup.add(menuItem("Offload all carried units", "UNLOADALL" + NOINFO + eIds, canConfigureAny && anyCarrier, listener));
+            popup.add(menuItem("Disembark / leave from carriers", "UNLOAD" + NOINFO + seIds, !noneEmbarked, listener));
+            popup.add(menuItem("Offload all carried units", "UNLOADALL" + NOINFO + seIds, anyCarrier, listener));
         }
 
         if (accessibleTransportBays) {
-            popup.add(offloadBayMenu(oneSelected && anyCarrier && canConfigureAny, entities.get(0), listener));
+            popup.add(offloadBayMenu(anyCarrier, joinedEntities, listener));
         }
 
         if (accessibleFighters && optCapFighters) {
-            boolean fsEnabled = canConfigureAny && allCapFighter && noneEmbarked;
-            popup.add(squadronMenu(clientGui, fsEnabled, listener, entities));
+            popup.add(squadronMenu(clientGui, true, listener, joinedEntities));
         }
 
-        if (accessibleJumpships) {
-            boolean jsEnabled = canConfigureAny && allDropships && noneEmbarked;
-            popup.add(jumpShipMenu(clientGui, jsEnabled, listener, entities));
-        }
-        
         if (accessibleProtomeks) {
-            boolean prEnabled = oneSelected && canConfigureAny && allProtomeks && noneEmbarked && allHaveMagClamp;
-            popup.add(protoMenu(clientGui, prEnabled, listener, entities.get(0)));
+            popup.add(protoMenu(clientGui, allProtomeks, listener, joinedEntities));
         }
         
-        popup.add(c3Menu(joinedOneEntitySelected && canConfigureAny, entities, clientGui, listener));
+        popup.add(c3Menu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
         
         popup.add(ScalingPopup.spacer());
-        popup.add(menuItem("Delete", "DELETE" + NOINFO + eIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
+        popup.add(menuItem("Delete", "DELETE|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
         
         return popup;
     }
@@ -223,10 +148,6 @@ class LobbyMekPopup {
      * Returns the "Force" submenu, allowing assignment to forces
      */
     private static JMenu forceMenu(ChatLounge lobby, List<Entity> entities, List<Force> forces, ActionListener listener) {
-        IGame game = lobby.getClientgui().getClient().getGame();
-        Forces gameForces = game.getForces();
-        IPlayer localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
-
         JMenu menu = new JMenu("Force");
         menu.add(menuItem("Create new Force...", "FCREATETOP" + NOINFO + NOINFO, true, listener));
         
@@ -238,33 +159,12 @@ class LobbyMekPopup {
             menu.add(menuItem("Add Subforce...", "FCREATESUB" + fId + NOINFO, editable, listener));
             menu.add(menuItem("Rename", "FRENAME" + fId + NOINFO, editable, listener));
             menu.add(menuItem("Promote to Top-Level Force", "FPROMOTE" + fId + NOINFO, editable && !force.isTopLevel(), listener));
-//            JMenu assignMenu = new JMenu("Assign to");
-//            JMenu fOnlyMenu = new JMenu("Force only");
-//            JMenu fFullMenu = new JMenu("Everything in the Force");
-//            assignMenu.add(fOnlyMenu);
-//            assignMenu.add(fFullMenu);
-//            for (IPlayer player: game.getPlayersVector()) {
-//                if (player.getId() != gameForces.getOwnerId(force)) {
-//                    fFullMenu.add(menuItem(player.getName(), "FASSIGN|" + player.getId() + ":" + force.getId() + NOINFO, true, listener));
-//                }
-//                if (!player.isEnemyOf(gameForces.getOwner(force))) {
-//                    fOnlyMenu.add(menuItem(player.getName(), "FASSIGNONLY|" + player.getId() + ":" + force.getId() + NOINFO, true, listener));
-//                }
-//            }
-//            assignMenu.setEnabled(editable && assignMenu.getItemCount() > 0);
-//            menu.add(assignMenu);
-            
         }
 
-        menu.add(menuItem("Delete Force(s)", "FDELETE|" + foToken(forces) + enToken(entities), true, listener));
+//        menu.add(menuItem("Delete Force(s)", "FDELETE|" + foToken(forces) + enToken(entities), true, listener));
         
         // If entities are selected but no forces, offer entity options
         if (forces.isEmpty() && !entities.isEmpty() && LobbyUtility.haveSingleOwner(entities)) {
-//            for (Force candidate: gameForces.getAvailableForces(entities.get(0).getOwner())) {
-//                String command = "FADDTO|" + candidate.getId() + enToken(entities);
-//                String display = candidate.getName() + idString(game, candidate.getId());
-//                menu.add(menuItem("Add to " + display, command, true, listener));
-//            }
             menu.add(menuItem("Remove from Force", "FREMOVE" + NOINFO + enToken(entities), true, listener));
         }
 
@@ -274,7 +174,7 @@ class LobbyMekPopup {
     
     static String idString(IGame game, int id) {
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            return " [" + id + "]"; 
+            return " <FONT" + UIUtil.colorString(UIUtil.uiGray()) +">[" + id + "]</FONT>"; 
         } else {
             return "";
         }
@@ -283,30 +183,31 @@ class LobbyMekPopup {
     /**
      * Returns the "Load" submenu, allowing general embarking
      */
-    private static JMenu loadMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
+    private static JMenu loadMenu(ClientGUI cg, boolean enabled, ActionListener listener,
             Collection<Entity> entities) {
 
+        IGame game = cg.getClient().getGame();
         JMenu menu = new JMenu("Load onto");
-        menu.setEnabled(enabled);
-        if (enabled) {
-            for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
-                if (loader.isCapitalFighter()) {
-                    continue;
-                }
-                boolean loadable = true;
-                for (Entity en : entities) {
-                    if (!loader.canLoad(en, false)
-                            || (loader.getId() == en.getId())
-                            || en.hasETypeFlag(Entity.ETYPE_PROTOMECH)
-                            //TODO: support edge case where a support vee with an internal vehicle bay can load trailer internally
-                            || (loader.canTow(en.getId()))) {
-                        loadable = false;
-                        break;
-                    }
-                }
-                if (loadable) {
-                    menu.add(menuItem(loader.getShortName(), "LOAD|" + loader.getId() + ":-1" + enToken(entities), enabled, listener));
-                }
+        if (enabled && !entities.isEmpty()) {
+
+            // Dropship -> Jumpship loading gives free collars info
+            if (entities.stream().allMatch(e -> e instanceof Dropship)) {
+                game.getEntitiesVector().stream()
+                .filter(e -> e instanceof Jumpship)
+                .filter(e -> !entities.contains(e))
+                .filter(e -> canLoadAll(e, entities))
+                .forEach(e -> menu.add(menuItem(
+                        "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()) + " (Free Collars: " + ((Jumpship)e).getFreeDockingCollars() + ")", 
+                        "LOAD|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+            } else if (!entities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
+                // Standard loading, not protomeks, not dropship -> jumpship
+                game.getEntitiesVector().stream()
+                .filter(e -> !e.isCapitalFighter(true))
+                .filter(e -> !entities.contains(e))
+                .filter(e -> canLoadAll(e, entities))
+                .forEach(e -> menu.add(menuItem(
+                        "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()), 
+                        "LOAD|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -316,12 +217,13 @@ class LobbyMekPopup {
     /**
      * Returns the "Load Protomech" submenu
      */
-    private static JMenu protoMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
-            Entity entity) {
+    private static JMenu protoMenu(ClientGUI cg, boolean enabled, ActionListener listener,
+            Collection<Entity> entities) {
 
         JMenu menu = new JMenu("Load Protomek");
-        if (enabled) {
-            for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
+        if (enabled && entities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
+            Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
+            for (Entity loader: cg.getClient().getGame().getEntitiesVector()) {
                 if (!loader.hasETypeFlag(Entity.ETYPE_MECH) || !loader.canLoad(entity, false)) {
                     continue;
                 }
@@ -340,13 +242,13 @@ class LobbyMekPopup {
                 if ((front != null) && front.canLoad(entity)
                         && ((entity.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
                                 || (rear == null) || rear.getLoadedUnits().isEmpty())) {
-                    loaderMenu.add(menuItem("Onto Front", "LOAD|" + loader.getId() + ":0", enabled, listener));
+                    loaderMenu.add(menuItem("Onto Front", "LOAD|" + loader.getId() + ":0" + enToken(entities), enabled, listener));
                 }
                 boolean frontUltra = (front != null)
                         && front.getLoadedUnits().stream()
                         .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
                 if ((rear != null) && rear.canLoad(entity) && !frontUltra) {
-                    loaderMenu.add(menuItem("Onto Rear", "LOAD|" + loader.getId() + ":1", enabled, listener));
+                    loaderMenu.add(menuItem("Onto Rear", "LOAD|" + loader.getId() + ":1" + enToken(entities), enabled, listener));
                 }
                 if (loaderMenu.getItemCount() > 0) {
                     menu.add(loaderMenu);
@@ -361,71 +263,31 @@ class LobbyMekPopup {
      * Returns the "Fighter Squadron" submenu, allowing to assign units to or
      * create a fighter squadron
      */
-    private static JMenu squadronMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
+    private static JMenu squadronMenu(ClientGUI cg, boolean enabled, ActionListener listener,
             Collection<Entity> entities) {
 
         JMenu menu = new JMenu("Fighter Squadrons");
-        menu.setEnabled(enabled);
-        if (enabled) {
-            menu.add(menuItem("Create Fighter Squadron", "SQUADRON", enabled, listener));
-            for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
-                // TODO don't allow capital fighters to load one another
-                // at the moment
-                if (!(loader instanceof FighterSquadron)) {
-                    continue;
-                }
-                boolean loadable = true;
-                for (Entity en: entities) {
-                    if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
-                        loadable = false;
-                        break;
-                    }
-                }
-                if (loadable) {
-                    menu.add(menuItem("Join " + loader.getShortName(), "LOAD|" + loader.getId() + ":-1" + enToken(entities), enabled, listener));
-                }
-            }
-        }
-        return menu;
-    }
+        boolean hasFighter = entities.stream().anyMatch(e -> e.isFighter());
+        if (enabled && hasFighter) {
+            menu.add(menuItem("Form Fighter Squadron", "SQUADRON" + NOINFO + enToken(entities), enabled, listener));
 
-    /**
-     * Returns the "Load onto" submenu, allowing to load dropships
-     * onto a jumpship
-     */
-    private static JMenu jumpShipMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
-            Collection<Entity> entities) {
-
-        JMenu menu = new JMenu("Load onto...");
-        if (enabled) {
-            for (Entity loader: clientGui.getClient().getGame().getEntitiesVector()) {
-                if (!(loader instanceof Jumpship)) {
-                    continue;
-                }
-                boolean loadable = true;
-                for (Entity en : entities) {
-                    if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
-                        loadable = false;
-                        break;
-                    }
-                }
-                if (loadable) {
-                    int freeCollars = 0;
-                    for (Transporter t : loader.getTransports()) {
-                        if (t instanceof DockingCollar) {
-                            freeCollars += (int)t.getUnused();
-                        }
-                    }
-                    String name = loader.getShortName() + " (Free Collars: " + freeCollars + ")";
-                    menu.add(menuItem(name, "LOAD|" + loader.getId() + ":-1" + enToken(entities), enabled, listener));
-                }
-            }
+            // Join [Squadron] menu items
+            cg.getClient().getGame().getEntitiesVector().stream()
+                .filter(e -> e instanceof FighterSquadron)
+                .filter(e -> !entities.contains(e))
+                .filter(e -> canLoadAll(e, entities))
+                .forEach(e -> menu.add(menuItem("Join " + e.getShortName(), 
+                        "LOAD|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
-        MenuScroller.createScrollBarsOnMenus(menu);
         return menu;
     }
     
+    /** Returns true when the loader can load all the given entities (under lobby conditions). */
+    private static boolean canLoadAll(Entity loader, Collection<Entity> entities) {
+        return entities.stream().allMatch(e -> loader.canLoad(e, false));
+    }
+
     /**
      * Returns the "Deploy" submenu, allowing late deployment
      */
@@ -488,8 +350,7 @@ class LobbyMekPopup {
      * name, callsign and skills
      */
     private static JMenu randomizeMenu(boolean enabled, ActionListener listener, String eIds) {
-        // listener menu uses the following Mnemonic Keys:
-        // C, N, S
+        // listener menu uses the following Mnemonic Keys: C, N, S
 
         JMenu menu = new JMenu("Randomize");
         menu.setEnabled(enabled);
@@ -501,43 +362,52 @@ class LobbyMekPopup {
         return menu;
     }
     
-    /**
-     * Returns the "C3" submenu, allowing C3 changes
-     */
-    private static JMenu c3Menu(boolean enabled, List<Entity> entities, ClientGUI cg, ActionListener listener) {
+    /** Returns the C3 computer submenu. */
+    private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg, ActionListener listener) {
         JMenu menu = new JMenu("C3");
-        menu.setEnabled(false);
 
-        if (!entities.isEmpty()) {
-            Entity entity = entities.get(0);
-            enabled = enabled && entity.hasAnyC3System();
+        if (entities.stream().anyMatch(e -> e.hasAnyC3System())) {
+
+            menu.add(menuItem("Disconnect", "C3DISCONNECT" + NOINFO + enToken(entities), enabled, listener));
+
+            if (entities.stream().anyMatch(e -> e.hasC3MM() || e.hasC3M())) {
+                boolean allCM = entities.stream().allMatch(e -> e.isC3CompanyCommander());
+                menu.add(menuItem("Set as C3 Company Master", "C3CM" + NOINFO + enToken(entities), !allCM, listener));
+                boolean allLM = entities.stream().allMatch(e -> e.isC3IndependentMaster());
+                menu.add(menuItem("Set as C3 Lance Master", "C3LM" + NOINFO + enToken(entities), !allLM, listener));
+            }
+
+            // Special treatment if exactly a C3SSSM is selected
+            if (entities.size() == 4) {
+                long countM = entities.stream().filter(e -> e.hasC3M()).count();
+                long countS = entities.stream().filter(e -> e.hasC3S()).count();
+                if (countM == 1 && countS == 3) {
+                    Entity master = entities.stream().filter(e -> e.hasC3M()).findAny().get();
+                    menu.add(menuItem("Form C3 Lance", "C3FORMC3|" + master.getId() + enToken(entities), true, listener));
+                }
+            }
             
-
-            String eId = "|" + entity.getId();
-            if ((entity.getC3Master() != null && !entity.isC3CompanyCommander())
-                    || (entity.hasNhC3() && !isNhC3Owner(entity))) {
-                menu.add(menuItem("Disconnect", "C3DISCONNECT" + NOINFO + eId, enabled, listener));
-            }
-
-            if (entity.hasC3MM() || entity.hasC3M()) {
-                if (!entity.isC3CompanyCommander()) {
-                    String item = "Set as C3 Company Master";
-                    menu.add(menuItem(item, "C3CM" + NOINFO + eId, enabled, listener));
-                }
-
-                if (!entity.isC3IndependentMaster()) {
-                    String item = "Set as C3 Lance Master";
-                    menu.add(menuItem(item, "C3LM" + NOINFO + eId, enabled, listener));
+            // Special treatment if a group of NhC3 is selected
+            if (entities.size() > 1 && entities.size() <= 6) {
+                Entity master = CollectionUtil.randomElement(entities);
+                if (entities.stream().allMatch(e -> LobbyUtility.sameNhC3System(master, e))) {
+                    menu.add(menuItem("Form C3 Lance", "C3FORMNHC3|" + master.getId() + enToken(entities), true, listener));
                 }
             }
 
+            Entity entity = entities.stream().filter(e -> e.hasAnyC3System()).findAny().get();
+            // ideally, find one slave or C3i/NC3/Nova to get some connection options
+            entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(entity);
+            IGame game = cg.getClient().getGame();
             ArrayList<String> usedNetIds = new ArrayList<String>();
+            
             for (Entity other : cg.getClient().getEntitiesVector()) {
                 // ignore enemies and self; only link the same type of C3
                 if (entity.isEnemyOf(other) || entity.equals(other)
                         || (entity.hasC3i() != other.hasC3i())
                         || (entity.hasNavalC3() != other.hasNavalC3())
                         || (entity.hasNovaCEWS() != other.hasNovaCEWS())
+                        || !other.hasAnyC3System() || other.hasC3S()
                         ) {
                     continue;
                 }
@@ -550,58 +420,45 @@ class LobbyMekPopup {
                 if (other.hasC3MM() && entity.hasC3M() && other.C3MasterIs(other)) {
                     nodes = other.calculateFreeC3MNodes();
                 }
-                if (entity.C3MasterIs(other) && !entity.equals(other)) {
+                if (entity.C3MasterIs(other)) {
                     nodes++;
                 }
-                if ((entity.hasNhC3()) && (entity.onSameC3NetworkAs(other) || entity.equals(other))) {
+                if ((entity.hasNhC3()) && entity.onSameC3NetworkAs(other)) {
                     nodes++;
-                }
-                if (nodes == 0) {
-                    continue;
                 }
 
                 if (other.hasNhC3()) {
                     // Don't add the following checks to the line above
                     if (!entity.onSameC3NetworkAs(other) && !usedNetIds.contains(other.getC3NetId())) {
-                        String item = Messages.getString("CustomMechDialog.join1", 
-                                other.getShortNameRaw(), other.getC3NetId(), nodes);
-                        menu.add(menuItem(item, "C3JOIN|" + other.getId() + eId, enabled, listener));
+                        String item = "<HTML>Join " + other.getShortNameRaw() + idString(game, other.getId());
+                        item += " (" + other.getC3NetId() + ")";
+                        item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
+                        menu.add(menuItem(item, "C3JOIN|" + other.getId() + enToken(entities), nodes != 0, listener));
                         usedNetIds.add(other.getC3NetId());
                     }
 
-                } else if (other.C3MasterIs(other) && other.hasC3MM()) {
-                    // Company masters with 2 computers can have *both* sub-masters AND slave units.
-                    String item = Messages.getString("CustomMechDialog.connect2", 
-                            other.getShortNameRaw(), other.getC3NetId(), nodes);
-                    menu.add(menuItem(item, "C3CONNECT|" + other.getId() + eId, enabled, listener));
+                } else if (other.isC3CompanyCommander() && other.hasC3MM()) {
+                    String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
+                    item += " (" + other.getC3NetId() + ")";
+                    item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
+                    menu.add(menuItem(item, "C3CONNECT|" + other.getId() + enToken(entities), nodes != 0, listener));
 
-                } else if (other.C3MasterIs(other) != entity.hasC3M()) {
-                    // If we're a slave-unit, we can only connect to sub-masters,
-                    // not main masters; likewise, if we're a master unit, we can
-                    // only connect to main master units, not sub-masters.
-                } else if (entity.C3MasterIs(other)) {
-                } else {
-                    // Make sure the limit of 12 units in a C3 network is maintained
-                    int entC3nodeCount = cg.getClient().getGame().getC3SubNetworkMembers(entity).size();
-                    int choC3nodeCount = cg.getClient().getGame().getC3NetworkMembers(other).size();
-                    if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
-                        String item = Messages.getString("CustomMechDialog.connect2", 
-                                other.getShortNameRaw(), nodes);
-                        menu.add(menuItem(item, "C3CONNECT|" + other.getId() + eId, enabled, listener));
+                } else if (other.isC3CompanyCommander() == entity.hasC3M() 
+                        && !entity.isC3CompanyCommander()) {
+                    String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
+                    item += " (" + other.getC3NetId() + ")";
+                    if (entity.C3MasterIs(other)) {
+                        item += " - already connected";
+                        nodes = 0;
+                    } else {
+                        item += (nodes == 0 ? " - full" : " - " + nodes + " free spots");
                     }
+                    menu.add(menuItem(item, "C3CONNECT|" + other.getId() + enToken(entities), nodes != 0, listener));
                 }
             }
-            menu.setEnabled(enabled && menu.getItemCount() > 0);
         }
+        menu.setEnabled(enabled && menu.getItemCount() > 0);
         return menu;
-    }
-    
-    /** 
-     * Returns true when this entity is the "owner" of this C3i or NC3 network
-     * which (only) means that the network id uses this entity's id.
-     */
-    private static boolean isNhC3Owner(Entity entity) {
-        return entity.hasNhC3() && entity.getC3NetId().endsWith("." + entity.getId());
     }
 
     /**
@@ -688,14 +545,15 @@ class LobbyMekPopup {
      * Returns the "Offload from" submenu, allowing to offload
      * units from a specific bay of the given entity
      */
-    private static JMenu offloadBayMenu(boolean enabled, Entity entity, ActionListener listener) {
+    private static JMenu offloadBayMenu(boolean enabled, Collection<Entity> entities, ActionListener listener) {
 
         JMenu menu = new JMenu("Offload All From...");
-        if (enabled) {
+        if (enabled && entities.size() == 1) {
+            Entity entity = CollectionUtil.randomElement(entities);
             for (Bay bay : entity.getTransportBays()) {
                 if (bay.getLoadedUnits().size() > 0) {
                     String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
-                    menu.add(menuItem(label, "UNLOADALLFROMBAY|" + entity.getId() + "|" + bay.getBayNumber(), enabled, listener));
+                    menu.add(menuItem(label, "UNLOADALLFROMBAY|" + bay.getBayNumber() + enToken(entities), enabled, listener));
                 }
             }
         }
@@ -706,23 +564,27 @@ class LobbyMekPopup {
 
     /**
      * Returns the "Swap Pilot" submenu, allowing to swap the unit
-     * pilot with a pilot of an equivalent unit
+     * pilot with a pilot of an equivalent unit. Does work with multiple 
+     * selected units but expects the Lobby to issue an error message as
+     * only one unit can swap pilot with one other unit.
      */
     private static JMenu swapPilotMenu(boolean enabled, Collection<Entity> entities, ClientGUI clientGui, ActionListener listener) {
-
-        JMenu menu = new JMenu("Swap pilots with");
+        IGame game = clientGui.getClient().getGame();
         
+        JMenu menu = new JMenu("Swap pilots with");
         if (!entities.isEmpty()) {
+            // use a random selected unit to determine the targets
             Entity entity = CollectionUtil.randomElement(entities);
-            for (Entity swapper: clientGui.getClient().getGame().getEntitiesVector()) {
-                if (swapper.isCapitalFighter()) {
-                    continue;
-                }
+            for (Entity swapper: game.getEntitiesVector()) {
                 // only swap your own pilots and with the same unit and crew type
-                if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
-                        && (swapper.getUnitType() == entity.getUnitType())
+                if (swapper.getOwnerId() == entity.getOwnerId() 
+                        && swapper.getId() != entity.getId()
+                        && swapper.getUnitType() == entity.getUnitType()
                         && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
-                    menu.add(menuItem(swapper.getShortName(), "SWAP|" + swapper.getId() + enToken(entities), enabled, listener));
+                    
+                    String item = "<HTML>" + swapper.getShortNameRaw() + idString(game, swapper.getId());
+                    String command = "SWAP|" + swapper.getId() + enToken(entities);
+                    menu.add(menuItem(item, command, enabled, listener));
                 }
             }
         }
@@ -754,5 +616,51 @@ class LobbyMekPopup {
         List<String> ids = forces.stream().map(e -> e.getId()).map(n -> n.toString()).collect(Collectors.toList());
         return String.join(",", ids);
     }
+    
+
+    /** Returns true when the entity has an MG set to rapid fire. */ 
+    private static boolean hasRapidFireMG(Entity entity) {
+        for (Mounted m: entity.getWeaponList()) {
+            EquipmentType etype = m.getType();
+            if (etype.hasFlag(WeaponType.F_MG) && m.isRapidfire()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /** Returns true when the entity has an MG set to normal (non-rapid) fire. */ 
+    private static boolean hasNormalFireMG(Entity entity) {
+        for (Mounted m: entity.getWeaponList()) {
+            EquipmentType etype = m.getType();
+            if (etype.hasFlag(WeaponType.F_MG) && !m.isRapidfire()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /** Returns true when the entity has a weapon with ammo set to hot-loaded. */ 
+    private static boolean hasHotLoaded(Entity entity) {
+        for (Mounted ammo: entity.getAmmo()) {
+            AmmoType etype = (AmmoType) ammo.getType();
+            if (etype.hasFlag(AmmoType.F_HOTLOAD) && ammo.isHotLoaded()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /** Returns true when the entity has a weapon with ammo set to non-hot-loaded. */ 
+    private static boolean hasNonHotLoaded(Entity entity) {
+        for (Mounted ammo: entity.getAmmo()) {
+            AmmoType etype = (AmmoType) ammo.getType();
+            if (etype.hasFlag(AmmoType.F_HOTLOAD) && !ammo.isHotLoaded()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 

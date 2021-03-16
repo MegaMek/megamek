@@ -31,6 +31,10 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
@@ -42,8 +46,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +86,7 @@ import megamek.common.options.*;
 import megamek.common.preference.*;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
@@ -133,8 +138,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JToggleButton butShowUnitID = new JToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
     private JToggleButton butListView = new JToggleButton("Sortable View");
     private JToggleButton butForceView = new JToggleButton("Force View");
-//    private JToggleButton butC3View = new JToggleButton("C3 View");
-//    private JToggleButton butTransportsView = new JToggleButton("Transports View");
     private JButton butCollapse = new JButton("<<");
     private JButton butExpand = new JButton(">>");
     private MekTableModel mekModel;
@@ -317,9 +320,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butCancelSearch.addActionListener(lobbyListener);
         butHelp.addActionListener(lobbyListener);
         butListView.addActionListener(lobbyListener);
-//        butC3View.addActionListener(lobbyListener);
         butForceView.addActionListener(lobbyListener);
-//        butTransportsView.addActionListener(lobbyListener);
         butCollapse.addActionListener(lobbyListener);
         butExpand.addActionListener(lobbyListener);
         
@@ -1111,7 +1112,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     public void refreshEntities() {
         refreshTree();
-        System.out.println("Refresh!");
+        
+        List<Integer> enIds = getSelectedEntities().stream().map(e -> e.getId()).collect(toList());
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
         Collections.sort(allEntities, activeSorter);
@@ -1160,6 +1162,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (localUnit || teamUnit || !realBlindDrop) {
                 mekModel.addUnit(entity);
+            }
+        }
+        // Restore selection
+        if (!enIds.isEmpty()) {
+            for (int i = 0; i < mekTable.getRowCount(); i++) {
+                if (enIds.contains(mekModel.getEntityAt(i).getId())) {
+                    mekTable.addRowSelectionInterval(i, i);
+                }
             }
         }
 
@@ -1257,8 +1267,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**
      * Embarks the given carried Entity onto the carrier given as carrierId.
      */
-    private void loadOnto(Entity carried, int carrierId, int bayNumber) {
-        Entity carrier = clientgui.getClient().getGame().getEntity(carrierId);
+    void loadOnto(Entity carried, int carrierId, int bayNumber) {
+        Entity carrier = game().getEntity(carrierId);
         if (carrier == null || !isLoadable(carried, carrier)) {
             return;
         }
@@ -1354,65 +1364,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } 
     }
     
-    /** Change the given entities' controller to the player with ID newOwnerId. */
-//    void changeOwner(Collection<Entity> entities, int newOwnerId) {
-//        
-//        // separate into piles for each owner, which must be bots or self
-//        // change owner for each pile. piles dont interfere?
-//        // Nope. Must be singly owned... too complicated
-//        
-//        IPlayer new_owner = clientgui.getClient().getGame().getPlayer(newOwnerId);
-//        if (new_owner == null) {
-//            MegaMek.getLogger().warning("Tried to change entity owner to a non-existent player!");
-//            return;
-//        }
-//        
-//        // Store entities that need to be sent to the Server to avoid sending them twice
-//        Set<Entity> updateCandidates = new HashSet<>();
-//        
-//        // For any units that are switching teams, offload units from them
-//        // and have them disembark if carried if the other unit doesn't also switch
-//        //TODO Don't unload units that transfer together. This is nonsense:
-//        for (Entity other: editableEntities(entities)) {
-//            if (other.getOwner().isEnemyOf(new_owner)) {
-//                offloadFrom(other, updateCandidates);
-//                disembark(other, updateCandidates);
-//            }
-//        }
-//        
-//        // Units that are switching teams cannot stay part of their current forces
-//        // Reassigning a whole force is done is assignForce()
-////        Set<Force> changedForces = new LinkedHashSet<>();
-//        Set<Entity> leaveForce = new HashSet<>();
-//        for (Entity entity: editableEntities(entities)) {
-//            if (entity.getOwner().isEnemyOf(new_owner)) {
-//                leaveForce.add(entity);
-//                //TODO double code, unify this? see removeFromForce
-////                changedForces.addAll(game().getForces().removeEntityFromForces(List.of(entity)));
-//            }
-//        }
-//        removeFromForce(leaveForce);
-////        for (Force force: changedForces) {
-////            IPlayer owner = game().getForces().getOwner(force);
-////            getLocalClient(entity)
-////        }
-//
-//        // Update any changed entities except for the entities changing owner (treated below)
-//        updateCandidates.removeAll(entities);
-//        sendUpdate(updateCandidates);
-//        
-//        // The entities themselves must be updated from the correct client
-//        // to make the update work when changing owner
-//        for (Entity entity: editableEntities(entities)) {
-//            Client formerClient = getLocalClient(entity);
-//            entity.setOwner(new_owner);
-//            formerClient.sendUpdateEntity(entity);
-//        }
-////        getLocalClient(random).sendUpdateForce(changedForces, entities);
-//    }
-    
-    
-
     /** 
      * Sends the entities in the given Collection to the Server. 
      * Sends only those that can be edited, i.e. the player's own
@@ -1442,10 +1393,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-
-    
-    
-    
     /** 
      * Disembarks all given entities from any transports they are in. 
      */
@@ -1455,11 +1402,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         sendUpdate(updateCandidates);
     }
 
-
-
-    
-    
-    
     /** 
      * Returns true when the given entity may be configured by the local player,
      * i.e. if it is his own unit or one of his bot's units.
@@ -1666,80 +1608,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getMechSelectorDialog().setVisible(true);
     }
     
-    /** OK
-     * Creates a fighter squadron from the given list of entities.
-     * Checks if all entities are fighters and if the number of entities
-     * does not exceed squadron capacity. Asks for a squadron name.
-     */
-    public void createSquadron(Collection<Entity> entities) {
-        if (!validateFightersForSquadron(entities)) {
-            return;
-        }
-        
-        // Obtain the IDs
-        Vector<Integer> fighterIds = 
-                new Vector<>(entities.stream().map(e -> e.getId()).collect(Collectors.toList()));
-        
-        // Make sure the number of fighters does not exceed squadron capacity
-        GameOptions opts = clientgui.getClient().getGame().getOptions();
-        if ((!opts.booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
-                && (fighterIds.size() > FighterSquadron.MAX_SIZE))
-                || (opts.booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
-                && (fighterIds.size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
-            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.toomany"));
-            return;
-        } 
-        
-        // Ask for a squadron name
-        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
-        if ((name == null) || (name.trim().length() == 0)) {
-            name = "Alpha";
-        }
-        
-        // Now, actually create the squadron
-        FighterSquadron fs = new FighterSquadron(name);
-        fs.setOwner(createSquadronOwner(entities));
-        clientgui.getClient().sendAddSquadron(fs, fighterIds);
-    }
-    
-    private IPlayer createSquadronOwner(Collection<Entity> entities) {
-        if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer()))) {
-            return localPlayer();
-        } else {
-            for (Entry<String, Client> en: clientgui.getClient().bots.entrySet()) {
-                IPlayer bot = en.getValue().getLocalPlayer();
-                if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
-                    return bot;
-                }
-            }
-        }
-        // Should not arrive here because that means that none of the entities are 
-        // editable by the local player.
-        MegaMek.getLogger().error("Could not find a suitable owner for creating a fighter squadron.");
-        return localPlayer();
-    }
-
-    /** 
-     * Validates the selected units for fighter squadron creation. Returns true
-     * if they can form a squadron 
-     */
-    private boolean validateFightersForSquadron(Collection<Entity> entities) {
-        if (entities.size() == 0) {
-            return false;
-        }
-        if (!areAllied(entities) || !canEditAny(entities)) {
-            JOptionPane.showMessageDialog(clientgui.frame, "Enemy units cannot be transported!");
-            return false;
-        }
-        for (Entity e: entities) {
-            if (!e.isFighter()) {
-                JOptionPane.showMessageDialog(clientgui.frame, "Only aerospace and conventional fighters can join squadrons!");
-                return false;
-            }
-        }
-        return true;
-    }
-    
     private void createArmy() {
         clientgui.getRandomArmyDialog().setVisible(true);
     }
@@ -1805,16 +1673,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         refreshEntities();
-        refreshPlayerInfo();
-        panTeamOverview.refreshData();
-    }
-
-    @Override
-    public void gameEntityRemove(GameEntityRemoveEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
         refreshPlayerInfo();
         panTeamOverview.refreshData();
     }
@@ -1970,10 +1828,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     resetSelectedBoards = true;
                     clientgui.getClient().sendMapSettings(mapSettings);
                 } 
-                
-//            } else if (ev.getSource().equals(comboMapType)) {
-//                mapSettings.setMedium(comboMapType.getSelectedIndex());
-//                clientgui.getClient().sendMapSettings(mapSettings);
                 
             } else if (ev.getSource() == butGroundMap) {
                 mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
@@ -2156,7 +2010,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         // Delete units first, which safely disembarks and offloads them
-        lobbyActions.deleteAction(game().getPlayerEntities(c.getLocalPlayer(), false), false);
+        // Don't delete the bot's forces, as that could also delete other players' entitites
+        lobbyActions.delete(new ArrayList<>(), game().getPlayerEntities(c.getLocalPlayer(), false), false);
         c.die();
         clientgui.getBots().remove(c.getName());
     }
@@ -2430,9 +2285,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butCancelSearch.removeActionListener(lobbyListener);
         butHelp.removeActionListener(lobbyListener);
         butListView.removeActionListener(lobbyListener);
-//        butC3View.removeActionListener(lobbyListener);
         butForceView.removeActionListener(lobbyListener);
-//        butTransportsView.removeActionListener(lobbyListener);
         butCollapse.removeActionListener(lobbyListener);
         butExpand.removeActionListener(lobbyListener);
         
@@ -2594,7 +2447,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     cost += (long)entity.getCost(false);
                     ton += entity.getWeight();
                 }
-            }
+            } 
             bvs.add(player.getBV());
             costs.add(cost);
             tons.add(ton);
@@ -2753,7 +2606,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                lobbyActions.deleteAction(entities, true);
+                lobbyActions.delete(new ArrayList<>(), entities, true);
             } else if (code == KeyEvent.VK_SPACE) {
                 e.consume();
                 mechReadoutAction(entities);
@@ -2764,9 +2617,89 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } else if (canConfigureMultipleDeployment(entities)) {
                     lobbyActions.customizeMechs(entities);
                 }
+            } else if (code == KeyEvent.VK_C && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
+                e.consume();
+                StringSelection stringSelection = new StringSelection(clipboardString(entities));
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, null);
+                
+            } else if (code == KeyEvent.VK_V && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
+                e.consume();
+                importClipboard(); 
+            } else if (code == KeyEvent.VK_P) {
+                e.consume();
+                refreshEntities();
+                System.out.println(game().getEntitiesVector().size() + " Units");
+                game().getEntitiesVector().stream().forEach(System.out::println);
             }
         }
     };
+    
+    /** Reads the clipboard and adds units, if it can parse them. */
+    private void importClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        boolean hasTransferableText = (contents != null) &&
+                contents.isDataFlavorSupported(DataFlavor.stringFlavor);
+        List<Entity> newEntities = new ArrayList<>();
+        if (hasTransferableText) {
+            try {
+                String result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+                StringTokenizer lines = new StringTokenizer(result, "\n");
+                while (lines.hasMoreTokens()) {
+                    String line = lines.nextToken();
+                    StringTokenizer tabs = new StringTokenizer(line, "\t");
+                    String unit = "";
+                    if (tabs.hasMoreTokens()) {
+                        unit = tabs.nextToken();
+                    }
+                    if (tabs.hasMoreTokens()) {
+                        unit += " " + tabs.nextToken();
+                    }
+                    MechSummary ms = MechSummaryCache.getInstance().getMech(unit);
+                    if (ms == null) {
+                        continue;
+                    }
+                    Entity newEntity = new MechFileParser(ms.getSourceFile(),
+                            ms.getEntryName()).getEntity();
+                    if (newEntity != null) {
+                        newEntity.setOwner(localPlayer());
+                        newEntities.add(newEntity);
+                    }
+                }
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (!newEntities.isEmpty()) {
+                client().sendAddEntity(newEntities);
+            }
+        }
+    }
+    
+    /** Returns a String representing the entities to export to the clipboard. */
+    private String clipboardString(Collection<Entity> entities) {
+        StringBuilder result = new StringBuilder();
+        for (Entity entity: entities) {
+            // Chassis
+            result.append(entity.getChassis()).append("\t");
+            // Model
+            result.append(entity.getModel()).append("\t");
+            // Weight; format for locale to avoid wrong ",." etc.
+            Locale cl = Locale.getDefault();
+            NumberFormat numberFormatter = NumberFormat.getNumberInstance(cl);
+            result.append(numberFormatter.format(entity.getWeight())).append("\t");
+            // Pilot name
+            result.append(entity.getCrew().getName()).append("\t");
+            // Crew Skill with text
+            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ")
+                    .append(entity.getCrew().getSkillsAsString(false)).append("\t");
+            // BV without C3 but with pilot (as that gets exported too)
+            result.append(entity.calculateBattleValue(true, false)).append("\t");
+            result.append("\n");
+        }
+        return result.toString();
+    }
     
     /** Returns a list of entities selected in the ForceTree. May be empty, but not null. */
     private List<Entity> getTreeSelectedEntities() {
@@ -2857,7 +2790,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             } else if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                lobbyActions.delete(selForces, entities);
+                lobbyActions.delete(selForces, entities, true);
                 
             } else if (code == KeyEvent.VK_RIGHT && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -2867,7 +2800,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 e.consume();
                 collapseTree();
                 
-            } 
+            } else if (code == KeyEvent.VK_C && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
+                e.consume();
+                StringSelection stringSelection = new StringSelection(clipboardString(entities));
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, null);
+                
+            } else if (code == KeyEvent.VK_V && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
+                e.consume();
+                importClipboard();
+                
+            } else if (code == KeyEvent.VK_F) {
+                e.consume();
+                System.out.println("Forces: ---");
+                System.out.println(game().getForces());
+                
+            } else if (code == KeyEvent.VK_P) {
+                e.consume();
+                refreshEntities();
+            }
         }
     };
 
@@ -2918,16 +2869,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     public class MekForceTreeMouseAdapter extends MouseInputAdapter {
         
-//        @Override
-//        public void mouseClicked(MouseEvent e) {
-//            if (e.getClickCount() == 2) {
-//                int row = mekTable.rowAtPoint(e.getPoint());
-//                Entity entity = mekModel.getEntityAt(row);
-//                if (entity != null && isEditable(entity)) {
-//                    customizeMech(entity);
-//                }
-//            }
-//        }
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                int row = mekForceTree.getRowForLocation(e.getX(), e.getY());
+                TreePath path = mekForceTree.getPathForRow(row);
+                if (path != null && path.getLastPathComponent() instanceof Entity) {
+                    Entity entity = (Entity) path.getLastPathComponent();
+                    lobbyActions.customizeMech(entity);
+                }
+            }
+        }
 
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -3002,59 +2954,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    /**
-     * Asks for a new name for the provided forceId and applies it. 
-     */
-    void renameForce(int forceId) {
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
-            return;
-        }
-        game().getForces().renameForce(name, forceId);
-        List<Force> forceList = new ArrayList<Force>();
-        forceList.add(game().getForces().getForce(forceId));
-        client().sendUpdateForce(forceList);
-    }
     
-    /**
-     * Attaches the given force as a subforce to the given newParentId. 
-     * Does NOT work for newParentId == NO_FORCE. Use promoteForce to do this.
-     * Does not allow attaching a force to one of its own subforces.
-     */
-    void attachForce(int forceId, int newParentId) {
-        Forces forces = game().getForces();
-        if (!forces.contains(forceId) || !forces.contains(newParentId)
-                || (forceId == newParentId)) {
-            return;
-        }
-        
-        Force force = forces.getForce(forceId);
-        Force newParent = forces.getForce(newParentId);
-        List<Force> subForces = forces.getFullSubForces(force);
-        IPlayer owner = forces.getOwner(force);
-        IPlayer newParentOwner = forces.getOwner(newParent);
-            
-        if (!lobbyActions.isEditable(force) || owner.isEnemyOf(newParentOwner) || subForces.contains(newParent)) {
-            return;
-        }
-
-        List<Force> changedForces = forces.attachForce(force, newParent);
-        client().sendUpdateForce(changedForces);
-    }
-    
-    /**
-     * Makes a force top-level, detaching it from any former parent. 
-     */
-    void promoteForce(int forceId) {
-        Forces forces = game().getForces();
-        if (!forces.contains(forceId) || !lobbyActions.isEditable(forceId)) {
-            return;
-        }
-        Force force = forces.getForce(forceId);
-        List<Force> changedForces = forces.promoteForce(force);
-        client().sendUpdateForce(changedForces);
-    }
     
     /**
      * Changes the owner of a force to a different player, making it top-level in the process. 
@@ -3110,7 +3010,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     /** Refreshes the Mek Tree, restoring expansion state and selection. */
     private void refreshTree() {
-//        long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!mekForceTree.isSelectionEmpty()) {
@@ -3154,7 +3054,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         for (Object sel: selections) {
             mekForceTree.addSelectionPath(getPath(sel));
         }
-//        System.out.println("tree update: " + (System.currentTimeMillis()-time));
+        System.out.println("tree update: " + (System.currentTimeMillis()-time));
 
     }
     
@@ -3226,86 +3126,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)));
     }
     
-    /**
-     * Add the provided entity to the provided force.
-     * Entities must have a single owner and be editable (local units or local bot's units)
-     * (Having multiple owners makes sending updates correctly for one's own bots difficult) 
-     */
-    void addToForce(Collection<Entity> entities, int forceId) {
-        if (!isEditable(entities) || !LobbyUtility.haveSingleOwner(entities) || entities.isEmpty()) {
-            return;
-        }
-        Set<Entity> changedEntities = new HashSet<>();
-        Set<Force> changedForces = new HashSet<>();
-        for (Entity entity: entities) {
-            List<Force> result = game().getForces().addEntity(entity, forceId);
-            if (!result.isEmpty()) {
-                changedForces.addAll(result);
-                changedEntities.add(entity);
-            }
-        }
-        Entity random = entities.stream().findAny().get();
-        getLocalClient(random).sendUpdateForce(changedForces, changedEntities);
-    }
     
-    /**  Sets the entity C3M to act as a Company Master. */
-    void setC3CompanyMaster(Entity entity) {
-        if (isEditable(entity) && entity.hasC3M()) {
-            entity.setC3Master(entity.getId(), true);
-            getLocalClient(entity).sendUpdateEntity(entity);
-        }
-    }
     
-    /**  Sets the entity C3M to act as a Lance Master (aka normal mode). */
-    void setC3LanceMaster(Entity entity) {
-        if (isEditable(entity) && entity.hasC3M()) {
-            entity.setC3Master(-1, true);
-            getLocalClient(entity).sendUpdateEntity(entity);
-        }
-    }
-
-
-    /** 
-     * Disconnects the passed entity from its C3 network, if any.
-     * Due to the way C3 networks are represented in Entity, units
-     * cannot disconnect from a C3 network with an id that is the
-     * entity's own id. 
-     */
-    void disconnectC3FromNetwork(Entity entity) {
-        if (!isEditable(entity)) {
-            return;
-        }
-        if (entity.hasNhC3()) {
-            entity.setC3NetIdSelf();
-        } else if (entity.hasAnyC3System()) {
-            entity.setC3Master(null, true);
-        }
-        getLocalClient(entity).sendUpdateEntity(entity);
-    }
-
-    /** 
-     * Connects the passed entity to a nonhierarchic C3 (NC3, C3i or Nova CEWS)
-     * identified by masterID.
-     */
-    void joinNhC3(Entity entity, int masterID) {
-        if (isEditable(entity) && entity.hasNhC3()) {
-            entity.setC3NetId(clientgui.getClient().getEntity(masterID));
-            getLocalClient(entity).sendUpdateEntity(entity);
-        }
-    }
     
     /** 
-     * Connects the passed entity to a standard C3 (C3S/C3M)
-     * identified by masterID.
-     */
-    void connectToC3(Entity entity, int masterID) {
-        if (isEditable(entity) && entity.hasC3()) {
-            entity.setC3Master(masterID, true);
-            getLocalClient(entity).sendUpdateEntity(entity);
-        }
-    }
-    
-    /** OK
      * Returns a Collection that contains only those of the given entities
      * that the local player can affect, i.e. his units or those of his bots. 
      * The returned Collection is a new Collection and can be safely altered.
@@ -3316,34 +3140,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return entities.stream().filter(e -> isEditable(e)).collect(Collectors.toSet());
     }
     
-    /** OK
-     * Returns a Collection that contains only those of the given entities
-     * that the local player can affect, i.e. his units or those of his bots. 
-     * The returned Collection is a new Collection and can be safely altered.
-     * (The entities are not copies of course.)
-     * <P>See also {@link #isEditable(Entity)} 
-     */
-//    private Set<Entity> teamEntities(Collection<Entity> entities) {
-//        return entities.stream().filter(e -> isOnLocalTeam(e)).collect(Collectors.toSet());
-//    }
-//    
-//    private boolean isOnLocalTeam(Entity entity) {
-//        return !entity.getOwner().isEnemyOf(clientgui.getClient().getLocalPlayer());   
-//    }
-    
-    /** 
-     * Returns true if the given carrier and the entities can be edited to transport 
-     * all the given entities. That is the case when carrier and entities are 
-     * all teammates and either the carrier or all the entities can be edited 
-     * by the local player. 
-     * Note: this method does NOT check if the loadings are rules-valid.
-     * <P>See also {@link #isEditable(Entity)}
-     * 
-     */
-//    private boolean isLoadable(Collection<Entity> entities, Entity carrier) {
-//        return entities.stream().allMatch(e -> isLoadable(e, carrier));
-//    }
-    
+   
     /** 
      * Returns true if the given carrier and carried can be edited to have the 
      * carrier transport the given carried entity. That is the case when they 
@@ -3356,171 +3153,58 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 && (isEditable(carrier) || isEditable(carried));
     }
     
-    /** 
-     * Returns a Collection that contains only those of the given entities that can 
-     * be edited to be transported by the carrier. For each of the given entities,
-     * that is the case when it and the carrier are teammates and one of them 
-     * can be edited by the local player. 
-     * Note: this method does NOT check if the loading is rules-valid.
-     * The returned Collection is a new Collection and can be safely altered.
-     * (The entities are not copies of course.)
-     * <P>See also {@link #isLoadable(Entity)} 
-     */
-//    private Set<Entity> loadableEntities(Collection<Entity> entities, Entity carrier) {
-//        return entities.stream().filter(e -> isLoadable(e, carrier)).collect(Collectors.toSet());
-//    }
-
-
-    
-    public void load(Collection<Entity> entities, String info) {
+   
+    public void load(Collection<Entity> selEntities, String info) {
+        StringTokenizer stLoad = new StringTokenizer(info, ":");
+        int loaderId = Integer.parseInt(stLoad.nextToken());
+        Entity loader = clientgui.getClient().getEntity(loaderId);
+        int bayNumber = Integer.parseInt(stLoad.nextToken());
+        // Remove those entities from the candidates that are already carried by that loader
+        Collection<Entity> entities = new HashSet<>(selEntities);
+        entities.removeIf(e -> e.getTransportId() == loaderId);
         if (entities.isEmpty()) {
             return;
         }
-        StringTokenizer stLoad = new StringTokenizer(info, ":");
-        int id = Integer.parseInt(stLoad.nextToken());
-        int bayNumber = Integer.parseInt(stLoad.nextToken());
-        Entity loadingEntity = clientgui.getClient().getEntity(id);
+        
+        // If a unit of the selected units is currently loaded onto another, 2nd unit of the selected
+        // units, do not continue. The player should unload units first. This would require
+        // a server update offloading that second unit AND embarking it. Currently not possible
+        // as a single server update and updates for one unit shouldn't be chained.
+        Set<Entity> carriers = entities.stream()
+                .filter(e -> e.getTransportId() != Entity.NONE)
+                .map(e -> game().getEntity(e.getTransportId())).collect(Collectors.toSet());
+        if (!Collections.disjoint(entities, carriers)) {
+            LobbyErrors.showNoDualLoad(clientgui.frame);
+            return;
+        }
+        
         boolean loadRear = false;
         if (stLoad.hasMoreTokens()) {
             loadRear = Boolean.parseBoolean(stLoad.nextToken());
         }
-
-        Entity randomSelected = entities.stream().findAny().get();
-        double capacity;
-        boolean hasEnoughCargoCapacity;
-        String errorMessage = "";
-        if (bayNumber != -1) {
-            Bay bay = loadingEntity.getBayById(bayNumber);
-            if (null != bay) {
-                double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
-                capacity = bay.getUnused();
-                hasEnoughCargoCapacity = loadSize <= capacity;
-                errorMessage = Messages.getString("LoadingBay.baytoomany",
-                        (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
-            } else if (loadingEntity.hasETypeFlag(Entity.ETYPE_MECH)
-                    && randomSelected.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-                // We're also using bay number to distinguish between front and rear locations
-                // for protomech mag clamp systems
-                hasEnoughCargoCapacity = entities.size() == 1;
-                errorMessage = Messages.getString("LoadingBay.protostoomany");
-            } else {
-                hasEnoughCargoCapacity = false;
-                errorMessage = Messages.getString("LoadingBay.bayNumberNotFound", bayNumber);
-            }
-        } else {
-            HashMap<Long, Double> capacities = new HashMap<>();
-            HashMap<Long, Double> counts = new HashMap<>();
-            HashMap<Transporter, Double> potentialLoad = new HashMap<>();
-            // Get the counts and capacities for all present types
-            for (Entity e : entities) {
-                long entityType = e.getEntityType();
-                long loaderType = loadingEntity.getEntityType();
-                double unitSize;
-                if ((entityType & Entity.ETYPE_MECH) != 0) {
-                    entityType = Entity.ETYPE_MECH;
-                    unitSize = 1;
-                } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
-                    entityType = Entity.ETYPE_INFANTRY;
-                    boolean useCount = true;
-                    if ((loaderType & Entity.ETYPE_TANK) != 0) {
-                        // This is a super hack... When getting
-                        // capacities, troopspace gives unused space in
-                        // terms of tons, and BattleArmorHandles gives
-                        // it in terms of unit count. If I call
-                        // getUnused, it sums these together, and is
-                        // meaningless, so we'll go through all
-                        // transporters....
-                        boolean hasTroopSpace = false;
-                        for (Transporter t : loadingEntity.getTransports()) {
-                            if (t instanceof TankTrailerHitch) {
-                                continue;
-                            }
-                            double loadWeight = e.getWeight();
-                            if (potentialLoad.containsKey(t)) {
-                                loadWeight += potentialLoad.get(t);
-                            }
-                            if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
-                                    && (loadWeight <= t.getUnused())) {
-                                hasTroopSpace = true;
-                                potentialLoad.put(t, loadWeight);
-                                break;
-                            }
-                        }
-                        if (hasTroopSpace) {
-                            useCount = false;
-                        }
-                    }
-                    // TroopSpace uses tonnage
-                    // bays and BA handlebars use a count
-                    if (useCount) {
-                        unitSize = 1;
-                    } else {
-                        unitSize = e.getWeight();
-                    }
-                } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
-                    entityType = Entity.ETYPE_PROTOMECH;
-                    unitSize = 1;
-                    // Loading using mag clamps; user can specify front or rear.
-                    // Make use of bayNumber field
-                    if ((loaderType & Entity.ETYPE_MECH) != 0) {
-                        bayNumber = loadRear? 1 : 0;
-                    }
-                } else if ((entityType & Entity.ETYPE_DROPSHIP) != 0) {
-                    entityType = Entity.ETYPE_DROPSHIP;
-                    unitSize = 1;
-                } else if ((entityType & Entity.ETYPE_JUMPSHIP) != 0) {
-                    entityType = Entity.ETYPE_JUMPSHIP;
-                    unitSize = 1;
-                } else if ((entityType & Entity.ETYPE_AERO) != 0) {
-                    entityType = Entity.ETYPE_AERO;
-                    unitSize = 1;
-                } else if ((entityType & Entity.ETYPE_TANK) != 0) {
-                    entityType = Entity.ETYPE_TANK;
-                    unitSize = 1;
-                } else {
-                    unitSize = 1;
-                }
-
-                Double count = counts.get(entityType);
-                if (count == null) {
-                    count = 0.0;
-                }
-                count = count + unitSize;
-                counts.put(entityType, count);
-
-                Double cap = capacities.get(entityType);
-                if (cap == null) {
-                    cap = loadingEntity.getUnused(e);
-                    capacities.put(entityType, cap);
-                }
-            }
-            hasEnoughCargoCapacity = true;
-            capacity = 0;
-            for (Long typeId : counts.keySet()) {
-                double currCount = counts.get(typeId);
-                double currCapacity = capacities.get(typeId);
-                if (currCount > currCapacity) {
-                    hasEnoughCargoCapacity = false;
-                    capacity = currCapacity;
-                    String messageName;
-                    if (typeId == Entity.ETYPE_INFANTRY) {
-                        messageName = "LoadingBay.nonbaytoomanyInf";
-                    } else {
-                        messageName = "LoadingBay.nonbaytoomany";
-                    }
-                    errorMessage = Messages.getString(messageName, currCount,
-                            Entity.getEntityTypeName(typeId), currCapacity);
-                }
-            }
-        }
-        if (hasEnoughCargoCapacity) {
-            for (Entity e : entities) {
-                loadOnto(e, id, bayNumber);
-            }
-        } else {
-            JOptionPane.showMessageDialog(clientgui.frame, errorMessage, 
+        
+        StringBuilder errorMsg = new StringBuilder();
+        if (!LobbyUtility.validateLobbyLoad(entities, loader, bayNumber, loadRear, errorMsg)) {
+            JOptionPane.showMessageDialog(clientgui.frame, errorMsg.toString(), 
                     Messages.getString("LoadingBay.error"), JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+            for (Entity e : entities) {
+                if (e.getTransportId() != Entity.NONE) {
+                    Set<Entity> updateCandidates = new HashSet<>();
+                    disembark(e, updateCandidates);
+                    if (!updateCandidates.isEmpty()) {
+                        Entity formerLoader = game().getEntity(e.getTransportId());
+                        getLocalClient(formerLoader).sendUpdateEntity(formerLoader);
+                    }
+                }
+                loadOnto(e, loaderId, bayNumber);
+            }
+//        } else {
+//            JOptionPane.showMessageDialog(clientgui.frame, errorMessage, 
+//                    Messages.getString("LoadingBay.error"), JOptionPane.ERROR_MESSAGE);
+//        }
         
     }
 
@@ -3548,7 +3232,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         int rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTABLE_ROWHEIGHT_FULL;
         mekTable.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
-//        mekC3Tree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         mekForceTree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         tablePlayers.setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
     }
@@ -3753,7 +3436,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     };
     
-    /** OK
+    /**
      * Sets the sorting used in the Mek Table depending on the column header 
      * that was clicked.  
      */ 
@@ -3779,7 +3462,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    /** OK Selects the next allowed sorter in the given list of sorters. */
+    /** Selects the next allowed sorter in the given list of sorters. */
     private void nextSorter(List<MekTableSorter> sorters) {
         // Set the next sorter as active, if this column was already sorted, or
         // the first sorter otherwise

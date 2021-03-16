@@ -27,7 +27,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
-import megamek.common.force.Force;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.LegAttack;
@@ -62,9 +61,8 @@ public final class UnitToolTip {
     // blind drop tooltips!
     // compact mode: partial repairs/damaged, C3 complete, 
     // remove load label from lobby
-    //TODO: clean up minimap
     // Deploy dialog:
-    //TODO: allow disconnecting C3 in lobby
+    // allow disconnecting C3 in lobby
     //TODO: config dialog de-crap
     //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
     //TODO: is hidden exclusive with late deploy?
@@ -141,7 +139,6 @@ public final class UnitToolTip {
     // remove random/surprise entries
     // dont reset maps upon size change
     // keep Map BUttons alive
-    //TODO: Does the multiple selection "\n" work on Macs?
     // Invalid boards treatment. 
     // Server boards not on client
     // Allow all board sizes ?? Nope, heavy change
@@ -159,18 +156,18 @@ public final class UnitToolTip {
     // playertable summary team see through real blind drop
     // Reduce Quirks display
     // C3 popup menu
-    //TODO: Deploy hidden/hull/prone popup menu
+    // Deploy hidden/hull/prone popup menu
     //TODO: C3 cant connect to enemy, check when changing sides
     //TODO: Remove C3 networks when switching teams (like loading)
     //TODO: check C3 behaviour when deleting units
-    //TODO: do C3 load from MUL?
-    //TODO: allow multiunit C3 popup
+    //TODO: do C3 load from MUL? Incorrectly!
+    // allow multiunit C3 popup
     // show C3 network somehow
     // Popup: set deployment turn
     // Make BV centered
-    //TODO: Deploymnet options
+    // Deploymnet options
     // Need the Cost/BV/Ton in the player list?
-    //TODO: Remove gridbag from lobby
+    // Remove gridbag from lobby
     // popup menu on player list (config, team, remove bot, config bot)
     // Random Army window size
     // Team Overview in detached mode write smaller text, otherwise larger
@@ -178,43 +175,46 @@ public final class UnitToolTip {
     //TODO: Make C3MM look right (Cyclops CP-11-C2) 
     // Remove C3 from weapon list
     //TODO: Client Setttings NPW when changing armor visual
-    //TODO: armor visual does not react when damaging units in lobby
     //TODO: Quirks: Remove "Weapon Quirk", only: SRM 6 - stable... in one line Crusader CRD-2R Enforcer 4R
     // display 4xMed Laser only when there is at least one weapon at least twice, not all "1x" Vulcan VL-2T
     // display Hotload for ammo
     //TODO: Ammo on Pocket Warships Arondight
     // remove Swarm Attacks...
-    //  TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
+    //TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
     // Ammo: xx turns (200 rounds)
     //TODO Mark units assault dropping
-    //TODO Hide Enemy Unit button ?? Hide them always
-    //TODO: Attach force, 
+    // Attach force, 
     // Unify popup
     // allow multiselect
     // attach force to server
-    //TODO change owner
-    //TODO: change opwner to server
-    //TODO: Add force to server, 
+    // change owner
+    // change opwner to server
+    // Add force to server 
     //TODO delete force
     //TODO delete force to server
-    //TODO: DND
+    // DND
     //TODO: remove forces when a player leaves during the lobby but not after
     //TODO: other forcegens?
-    //TODO formatting
+    // formatting
     //TODO: Popup MG burst fire doesnt work or isnt shown correctly in the tooltip
     //TODO Force updates can only contain entities of one player and that player client must send them
     //TODO Make sure game events fire upon force updates
-    //TODO Make tooltip appear only over unit icon
+    // Make tooltip appear only over (i)
+    //TODO (i) tooltip in mektable?
+    
     //TODO SHow Griffin C >>#2<<? 
     // Hide enemy forces and units in real blind drop
     // Sort forceless before enemy forces
-    //TODO: Allow deployment options for blind drop units? and multi-config? = deployment - show deployment?
+    // Allow deployment options for blind drop units? and multi-config? = deployment - show deployment?
     //            NO: you don't see the result - swap pilot shows other units! - dont care for names/callsign
-    //TODO: Team Overview: % Hidden
-    //TODO: Organizational Changes: Team Switch, Change Owner, C3, Load, Force->
+    //TODO: Team Overview: % Hidden (vielleicht: addiitional column und collapse ton/BV/cost to one col.)
+    // Organizational Changes: Team Switch, Change Owner, C3, Load, Force->
     //TODO: Deleting units too slow!
     //TODO: WHen dnd units to force-less units = remove from force
-    
+    // Restore selection on mektable
+    // Copy-paste units in mektable and mekforcetree
+    //TODO: When changeing owner of an empty force to an emeny, doesnt work
+    //TODO: Tooltip Empty Squadrons: just show Empty
 
     
     
@@ -400,7 +400,7 @@ public final class UnitToolTip {
      * The location has the given orig original Armor/IS. 
      */
     private static StringBuilder intactLocBar(int orig, int curr, String dChar) {
-        return locBar(orig, orig, dChar, false);
+        return locBar(orig, curr, dChar, false);
     }
     
     /** 

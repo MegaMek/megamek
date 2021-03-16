@@ -1022,7 +1022,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> members = new Vector<Entity>();
         //WOR
         // Does the unit have a C3 computer?
-        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3())) {
+        if ((entity != null) && entity.hasAnyC3System()) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.

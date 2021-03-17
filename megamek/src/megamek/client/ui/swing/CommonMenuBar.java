@@ -315,7 +315,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsReinforceRAT.setActionCommand(ClientGUI.FILE_UNITS_REINFORCE_RAT);
         submenu.add(fileUnitsReinforceRAT);
         fileRefreshCache = new JMenuItem(Messages
-                .getString("CommonMenuBar.refreshUnitCache")); //$NON-NLS-1$
+                .getString("CommonMenuBar.fileUnitsRefreshUnitCache")); //$NON-NLS-1$
         fileRefreshCache.addActionListener(this);
         fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
         submenu.add(fileRefreshCache);

@@ -279,7 +279,7 @@ public class MechSummaryCache {
             try {
                 saveCache();
             } catch (Exception e) {
-                loadReport.append("  Unable to save mech cache\n");
+                loadReport.append(" Unable to save mech cache\n");
                 MegaMek.getLogger().error(e);
             }
         }

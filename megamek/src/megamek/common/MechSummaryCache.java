@@ -152,8 +152,8 @@ public class MechSummaryCache {
     }
 
     private MechSummary[] m_data;
-    private Map<String, MechSummary> m_nameMap;
-    private Map<String, MechSummary> m_fileNameMap;
+    private final Map<String, MechSummary> m_nameMap;
+    private final Map<String, MechSummary> m_fileNameMap;
     private Map<String, String> hFailedFiles;
     private int cacheCount;
     private int fileCount;
@@ -281,6 +281,7 @@ public class MechSummaryCache {
         m_data = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_data);
         m_nameMap.clear();
+        m_fileNameMap.clear();
 
         // store map references
         for (MechSummary element : m_data) {
@@ -563,18 +564,18 @@ public class MechSummaryCache {
                     continue;
                 }
                 if (f.isDirectory()) {
-                    if (f.getName().toLowerCase().equals("unsupported")) {
+                    if (f.getName().equalsIgnoreCase("unsupported")) {
                         // Mechs in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
-                    } else if (f.getName().toLowerCase().equals("unofficial")
+                    } else if (f.getName().equalsIgnoreCase("unofficial")
                             && ignoreUnofficial) {
                         // Mechs in this directory are ignored because
                         // they are unofficial and we don't want those right
                         // now.
                         continue;
-                    } else if (f.getName().toLowerCase().equals("_svn")
-                            || f.getName().toLowerCase().equals(".svn")) {
+                    } else if (f.getName().equalsIgnoreCase("_svn")
+                            || f.getName().equalsIgnoreCase(".svn")) {
                         // This is a Subversion work directory. Lets ignore it.
                         continue;
                     }
@@ -695,9 +696,8 @@ public class MechSummaryCache {
             ZipEntry zEntry = (ZipEntry) i.nextElement();
 
             if (zEntry.isDirectory()) {
-                if (zEntry.getName().toLowerCase().equals("unsupported")) {
-                    loadReport
-                            .append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
+                if (zEntry.getName().equalsIgnoreCase("unsupported")) {
+                    loadReport.append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }

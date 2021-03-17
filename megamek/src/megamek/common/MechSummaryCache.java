@@ -279,7 +279,7 @@ public class MechSummaryCache {
             try {
                 saveCache();
             } catch (Exception e) {
-                loadReport.append("  Unable to save mech cache\n");
+                loadReport.append(" Unable to save mech cache\n");
                 MegaMek.getLogger().error(e);
             }
         }
@@ -696,7 +696,7 @@ public class MechSummaryCache {
 
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().equalsIgnoreCase("unsupported")) {
-                    loadReport.append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
+                    loadReport.append(" Do not place special 'unsupported' type folders in zip files, they must \nbe uncompressed directories to work properly. Note that you may place \nzip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }

@@ -760,6 +760,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case FILE_REFRESH_CACHE:
                 MechSummaryCache.refreshUnitData(false);
+                new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
                 break;
             case VIEW_CLIENT_SETTINGS:
                 showSettings();

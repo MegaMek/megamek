@@ -75,8 +75,7 @@ public class MechSummaryCache {
         return getInstance(false);
     }
 
-    public static synchronized MechSummaryCache getInstance(
-            boolean ignoreUnofficial) {
+    public static synchronized MechSummaryCache getInstance(boolean ignoreUnofficial) {
         final boolean ignoringUnofficial = ignoreUnofficial;
         if (m_instance == null) {
             m_instance = new MechSummaryCache();
@@ -92,6 +91,27 @@ public class MechSummaryCache {
             m_instance.loader.start();
         }
         return m_instance;
+    }
+
+    /**
+     * Checks the unit files directory for any changes since the last time the unit cache was
+     * loaded. If there are any updates, the new cache is saved.
+     *
+     * @param ignoreUnofficial If true, skips unofficial directories
+     */
+    public static void refreshUnitData(boolean ignoreUnofficial) {
+        m_instance.initializing = true;
+        m_instance.initialized = false;
+        interrupted = false;
+        disposeInstance = false;
+        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
+        long lastModified = unit_cache_path.exists() ?
+                unit_cache_path.lastModified() : megamek.MegaMek.TIMESTAMP;
+
+        m_instance.loader = new Thread(() -> m_instance.refreshCache(lastModified, ignoreUnofficial),
+                "Mech Cache Loader");
+        m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
+        m_instance.loader.start();
     }
 
     public static void dispose() {
@@ -236,6 +256,15 @@ public class MechSummaryCache {
             }
         }
 
+        boolean bNeedsUpdate = checkForChanges(ignoreUnofficial, vMechs, sKnownFiles, lLastCheck);
+        updateData(vMechs);
+        bNeedsUpdate |= addLookupNames();
+        finishLoad(bNeedsUpdate);
+
+        done();
+    }
+
+    private boolean checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
@@ -244,10 +273,14 @@ public class MechSummaryCache {
         if (userDataUnits.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
         }
+        return bNeedsUpdate;
+    }
 
+    private void updateData(Vector<MechSummary> vMechs) {
         // convert to array
         m_data = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_data);
+        m_nameMap.clear();
 
         // store map references
         for (MechSummary element : m_data) {
@@ -275,11 +308,11 @@ public class MechSummaryCache {
                 m_fileNameMap.put(unitName, element);
             }
         }
+    }
 
-        bNeedsUpdate |= addLookupNames();
-
+    private void finishLoad(boolean saveCache) {
         // save updated cache back to disk
-        if (bNeedsUpdate) {
+        if (saveCache) {
             try {
                 saveCache();
             } catch (Exception e) {
@@ -294,18 +327,8 @@ public class MechSummaryCache {
             loadReport.append("  ").append(hFailedFiles.size())
                     .append(" units failed to load...\n");
         }
-        /*
-         * Enumeration failedUnits = hFailedFiles.keys(); Enumeration
-         * failedUnitsDesc = hFailedFiles.elements(); while
-         * (failedUnits.hasMoreElements()) { loadReport.append("
-         * ").append(failedUnits.nextElement()) .append("\n");
-         * loadReport.append(" --")
-         * .append(failedUnitsDesc.nextElement()).append("\n"); }
-         */
 
         MegaMek.getLogger().info(loadReport.toString());
-
-        done();
     }
 
     private void done() {
@@ -336,6 +359,38 @@ public class MechSummaryCache {
         }
         wr.flush();
         wr.close();
+    }
+
+    private void refreshCache(long lastCheck, boolean ignoreUnofficial) {
+        loadReport = new StringBuffer();
+        loadReport.append("Refreshing unit cache:\n");
+        Vector<MechSummary> units = new Vector<>();
+        Set<String> knownFiles = new HashSet<>();
+        // Loop through current contents and make sure the file is still there.
+        // Note which files are represented so we can skip them if they haven't changed
+        for (MechSummary ms : m_data) {
+            if (interrupted) {
+                done();
+                return;
+            }
+            File source = ms.getSourceFile();
+            if (source.exists()) {
+                units.add(ms);
+                if (null == ms.getEntryName()) {
+                    knownFiles.add(source.toString());
+                } else {
+                    knownFiles.add(ms.getEntryName());
+                }
+            }
+        }
+
+        // load any changes since the last check time
+        boolean bNeedsUpdate = checkForChanges(ignoreUnofficial, units, knownFiles, lastCheck);
+        updateData(units);
+        bNeedsUpdate |= addLookupNames();
+        finishLoad(bNeedsUpdate);
+
+        done();
     }
 
     private MechSummary getSummary(Entity e, File f, String entry) {

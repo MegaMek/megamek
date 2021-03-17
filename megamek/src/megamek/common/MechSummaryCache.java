@@ -264,7 +264,8 @@ public class MechSummaryCache {
         done();
     }
 
-    private void checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck) {
+    private void checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs,
+                                 Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
@@ -567,8 +568,7 @@ public class MechSummaryCache {
                         // Mechs in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
-                    } else if (f.getName().equalsIgnoreCase("unofficial")
-                            && ignoreUnofficial) {
+                    } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
                         // Mechs in this directory are ignored because
                         // they are unofficial and we don't want those right
                         // now.

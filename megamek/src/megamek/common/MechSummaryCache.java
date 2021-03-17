@@ -256,15 +256,15 @@ public class MechSummaryCache {
             }
         }
 
-        boolean bNeedsUpdate = checkForChanges(ignoreUnofficial, vMechs, sKnownFiles, lLastCheck);
+        checkForChanges(ignoreUnofficial, vMechs, sKnownFiles, lLastCheck);
         updateData(vMechs);
-        bNeedsUpdate |= addLookupNames();
-        finishLoad(bNeedsUpdate);
+        addLookupNames();
+        logReport();
 
         done();
     }
 
-    private boolean checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck) {
+    private void checkForChanges(boolean ignoreUnofficial, Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck) {
         // load any changes since the last check time
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
@@ -273,7 +273,16 @@ public class MechSummaryCache {
         if (userDataUnits.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
         }
-        return bNeedsUpdate;
+
+        // save updated cache back to disk
+        if (bNeedsUpdate) {
+            try {
+                saveCache();
+            } catch (Exception e) {
+                loadReport.append("  Unable to save mech cache\n");
+                MegaMek.getLogger().error(e);
+            }
+        }
     }
 
     private void updateData(Vector<MechSummary> vMechs) {
@@ -311,17 +320,7 @@ public class MechSummaryCache {
         }
     }
 
-    private void finishLoad(boolean saveCache) {
-        // save updated cache back to disk
-        if (saveCache) {
-            try {
-                saveCache();
-            } catch (Exception e) {
-                loadReport.append("  Unable to save mech cache\n");
-                MegaMek.getLogger().error(e);
-            }
-        }
-
+    private void logReport() {
         loadReport.append(m_data.length).append(" units loaded.\n");
 
         if (hFailedFiles.size() > 0) {
@@ -386,10 +385,10 @@ public class MechSummaryCache {
         }
 
         // load any changes since the last check time
-        boolean bNeedsUpdate = checkForChanges(ignoreUnofficial, units, knownFiles, lastCheck);
+        checkForChanges(ignoreUnofficial, units, knownFiles, lastCheck);
         updateData(units);
-        bNeedsUpdate |= addLookupNames();
-        finishLoad(bNeedsUpdate);
+        addLookupNames();
+        logReport();
 
         done();
     }
@@ -758,14 +757,11 @@ public class MechSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean addLookupNames() {
-        File lookupNames = new MegaMekFile(getUnitCacheDir(),
-                FILENAME_LOOKUP).getFile();
-        boolean needsUpdate = false;
+    private void addLookupNames() {
+        File lookupNames = new MegaMekFile(getUnitCacheDir(), FILENAME_LOOKUP).getFile();
         if (lookupNames.exists()) {
-            try {
-                InputStream is = new FileInputStream(lookupNames);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            try (InputStream is = new FileInputStream(lookupNames);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 String line;
                 String lookupName;
                 String entryName;
@@ -781,17 +777,14 @@ public class MechSummaryCache {
                             MechSummary ms = m_nameMap.get(entryName);
                             if (null != ms) {
                                 m_nameMap.put(lookupName, ms);
-                                needsUpdate = true;
                             }
                         }
                     }
                 }
-                reader.close();
             } catch (IOException ex) {
                 MegaMek.getLogger().error(ex);
             }
         }
-        return needsUpdate;
     }
 
 

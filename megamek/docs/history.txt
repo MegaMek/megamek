@@ -9,6 +9,7 @@ VERSION HISTORY:
 + Issue #2710: Shield DC and DA values
 + PR #2714: Change source and target compatibility to Java 11
 + Data: New maps, unit fixes including fix for #2707
++ Issue #2597: Add thread safety to duplicate name hash
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

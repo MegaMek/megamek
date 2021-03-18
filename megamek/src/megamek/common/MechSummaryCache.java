@@ -64,6 +64,14 @@ public class MechSummaryCache {
     private boolean initialized = false;
     private boolean initializing = false;
 
+    private MechSummary[] m_data;
+    private final Map<String, MechSummary> m_nameMap;
+    private final Map<String, MechSummary> m_fileNameMap;
+    private Map<String, String> hFailedFiles;
+    private int cacheCount;
+    private int fileCount;
+    private int zipCount;
+
     private final List<Listener> listeners = new ArrayList<>();
 
     private StringBuffer loadReport = new StringBuffer();
@@ -150,14 +158,6 @@ public class MechSummaryCache {
             listeners.remove(listener);
         }
     }
-
-    private MechSummary[] m_data;
-    private final Map<String, MechSummary> m_nameMap;
-    private final Map<String, MechSummary> m_fileNameMap;
-    private Map<String, String> hFailedFiles;
-    private int cacheCount;
-    private int fileCount;
-    private int zipCount;
 
     private MechSummaryCache() {
         m_nameMap = new HashMap<>();

@@ -130,6 +130,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
+    public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
@@ -756,6 +757,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 getRandomArmyDialog().setVisible(true);
                 ignoreHotKeys = false;
+                break;
+            case FILE_REFRESH_CACHE:
+                MechSummaryCache.refreshUnitData(false);
+                new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
                 break;
             case VIEW_CLIENT_SETTINGS:
                 showSettings();

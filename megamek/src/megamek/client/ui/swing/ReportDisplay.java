@@ -18,16 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -315,6 +306,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                     clientgui.mechD.displayEntity(ent);
                     clientgui.setDisplayVisible(true);
                 }
+            } else if (evtDesc.startsWith("#toHit")) {
+                String desc = evtDesc.substring(evtDesc.indexOf(":") + 1);
+                JOptionPane.showMessageDialog(clientgui, desc);
             }
         }
     }

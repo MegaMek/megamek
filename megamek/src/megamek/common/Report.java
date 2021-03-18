@@ -287,6 +287,11 @@ public class Report implements Serializable {
         tagData.addElement(data);
     }
 
+    public void add(ToHitData toHit) {
+        tagData.addElement(String.format("<font color='0xffffff'><a href='#toHit:%s'>%d</a></font>",
+                toHit.getDesc(), toHit.getValue()));
+    }
+
     /**
      * Indicate which of two possible messages should be substituted for the
      * <code>&lt;msg:<i>n</i>,<i>m</i>&gt; tag.  An argument of

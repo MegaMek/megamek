@@ -54,7 +54,7 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String BOARD_HEIGHT = "BoardHeight";
     public static final String MAP_WIDTH = "MapWidth";
     public static final String MAP_HEIGHT = "MapHeight";
-    public static final String IP_ADDRESSES_IN_CHAT = "IPAdressesInChat";
+    public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
 
     boolean getPrintEntityChange();
 

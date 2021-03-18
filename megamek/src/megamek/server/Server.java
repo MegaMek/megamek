@@ -905,9 +905,10 @@ public class Server implements Runnable {
         try {
             InetAddress[] addresses = InetAddress.getAllByName(InetAddress
                     .getLocalHost().getHostName());
-            for (InetAddress addresse : addresses) {
+            for (InetAddress address : addresses) {
+                MegaMek.getLogger().info("s: machine IP " + address.getHostAddress());
                 sendServerChat(connId,
-                               "Machine IP is " + addresse.getHostAddress());
+                               "Machine IP is " + address.getHostAddress());
             }
         } catch (UnknownHostException e) {
             // oh well.

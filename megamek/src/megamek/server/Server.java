@@ -902,28 +902,38 @@ public class Server implements Runnable {
         // send current game info
         sendCurrentInfo(connId);
 
+        final boolean showIPAddressesInChat = PreferenceManager.getClientPreferences().getShowIPAddressesInChat();
+
         try {
             InetAddress[] addresses = InetAddress.getAllByName(InetAddress
                     .getLocalHost().getHostName());
-            for (InetAddress addresse : addresses) {
-                sendServerChat(connId,
-                               "Machine IP is " + addresse.getHostAddress());
+            for (InetAddress address : addresses) {
+                MegaMek.getLogger().info("s: machine IP " + address.getHostAddress());
+                if (showIPAddressesInChat) {
+                    sendServerChat(connId,
+                            "Machine IP is " + address.getHostAddress());
+                }
             }
         } catch (UnknownHostException e) {
             // oh well.
         }
 
-        // Send the port we're listening on. Only useful for the player
-        // on the server machine to check.
-        sendServerChat(connId,
-                       "Listening on port " + serverSocket.getLocalPort());
+        MegaMek.getLogger().info("s: listening on port " + serverSocket.getLocalPort());
+        if (showIPAddressesInChat) {
+            // Send the port we're listening on. Only useful for the player
+            // on the server machine to check.
+            sendServerChat(connId,
+                        "Listening on port " + serverSocket.getLocalPort());
+        }
 
         // Get the player *again*, because they may have disconnected.
         player = getPlayer(connId);
         if (null != player) {
             String who = player.getName() + " connected from " + getClient(connId).getInetAddress();
             MegaMek.getLogger().info("s: player #" + connId + ", " + who);
-            sendServerChat(who);
+            if (showIPAddressesInChat) {
+                sendServerChat(who);
+            }
 
         } // Found the player
 

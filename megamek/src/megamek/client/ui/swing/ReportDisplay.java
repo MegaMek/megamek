@@ -308,7 +308,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
             } else if (evtDesc.startsWith("#toHit")) {
                 String desc = evtDesc.substring(evtDesc.indexOf(":") + 1);
-                JOptionPane.showMessageDialog(clientgui, desc);
+                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
+                        JOptionPane.PLAIN_MESSAGE);
             }
         }
     }

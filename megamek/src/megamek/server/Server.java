@@ -13433,10 +13433,6 @@ public class Server implements Runnable {
             } else if (ea instanceof SpotAction) {
                 entity.setSpotting(true);
                 entity.setSpotTargetId(((SpotAction) ea).getTargetId());
-            } else if (ea instanceof DisengageAction) {
-                MovePath path = new MovePath(game, entity);
-                path.addStep(MoveStepType.FLEE);
-                addReport(processLeaveMap(path, false, -1));
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);
@@ -14318,6 +14314,10 @@ public class Server implements Runnable {
                 } else {
                     MegaMek.getLogger().error("Non-Tank tried to repair weapon malfunction");
                 }
+            } else if (ea instanceof DisengageAction) {
+                MovePath path = new MovePath(game, entity);
+                path.addStep(MoveStepType.FLEE);
+                addReport(processLeaveMap(path, false, -1));
             }
         }
     }

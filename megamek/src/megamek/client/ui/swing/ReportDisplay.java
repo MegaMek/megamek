@@ -289,10 +289,14 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         clientgui.getClient().getGame().removeGameListener(this);
     }
 
+    private JComponent activePane() {
+        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
+    }
+
     @Override
     public void hyperlinkUpdate(HyperlinkEvent evt) {
+        String evtDesc = evt.getDescription();
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            String evtDesc = evt.getDescription();
             if (evtDesc.startsWith("#entity")) {
                 String idString = evtDesc.substring(evtDesc.indexOf(":") + 1);
                 int id;
@@ -311,6 +315,13 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
                         JOptionPane.PLAIN_MESSAGE);
             }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+            if (evtDesc.startsWith("#toHit")) {
+                String desc = evtDesc.substring(evtDesc.indexOf(":") + 1);
+                activePane().setToolTipText(desc);
+            }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+            activePane().setToolTipText(null);
         }
     }
 

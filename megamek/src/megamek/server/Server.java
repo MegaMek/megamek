@@ -4598,7 +4598,7 @@ public class Server implements Runnable {
             r = new Report(9375);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
-            r.add(psr.getValue());
+            r.add(psr);
             r.add(ctrlroll);
             r.indent(1);
             if (ctrlroll < psr.getValue()) {
@@ -5374,7 +5374,7 @@ public class Server implements Runnable {
                                 r = new Report(2425);
                                 r.subject = target.getId();
                                 r.addDesc(target);
-                                r.add(psr.getValue());
+                                r.add(psr);
                                 r.add(psr.getDesc());
                                 r.add(roll);
                                 addReport(r);
@@ -5426,7 +5426,7 @@ public class Server implements Runnable {
                             // report the roll
                             r = new Report(2065);
                             r.subject = entity.getId();
-                            r.add(toHit.getValue());
+                            r.add(toHit);
                             r.add(roll);
                             r.newlines = 0;
                             addReport(r);
@@ -6008,7 +6008,7 @@ public class Server implements Runnable {
             r = new Report(9045);
             r.subject = target.getId();
             r.add(target.getDisplayName());
-            r.add(psr.getValue());
+            r.add(psr);
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(2);
@@ -8413,11 +8413,10 @@ public class Server implements Runnable {
                 } else {
                     r = new Report(9381);
                 }
-                //TODO : This doesn't currently break out the modifiers and should...
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());
-                r.add(rollTarget.getValue());
+                r.add(rollTarget);
                 r.add(ctrlroll);
                 r.newlines = 0;
                 r.indent(1);
@@ -9809,7 +9808,7 @@ public class Server implements Runnable {
             r = new Report(2460);
             r.subject = rider.getId();
             r.addDesc(rider);
-            r.add(prd.getValueAsString());
+            r.add(prd);
             r.addDesc(carrier);
             final int diceRoll = carrier.getCrew().rollPilotingSkill();
             r.add(diceRoll);
@@ -12841,7 +12840,7 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.subject = violation.getId();
                 r.addDesc(violation);
-                r.add(roll.getValue());
+                r.add(roll);
                 r.add(result);
                 vPhaseReport.add(r);
                 if (result < roll.getValue()) {
@@ -15387,7 +15386,7 @@ public class Server implements Runnable {
         } else {
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -15662,7 +15661,7 @@ public class Server implements Runnable {
         } else {
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -15905,7 +15904,7 @@ public class Server implements Runnable {
         } else {
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -16101,7 +16100,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -16338,7 +16337,7 @@ public class Server implements Runnable {
         // report the roll
         r = new Report(4025);
         r.subject = ae.getId();
-        r.add(toHit.getValue());
+        r.add(toHit);
         r.add(roll);
         r.newlines = 0;
         addReport(r);
@@ -16464,7 +16463,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -16608,7 +16607,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -16844,7 +16843,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -17199,7 +17198,7 @@ public class Server implements Runnable {
         // report the roll
         r = new Report(4025);
         r.subject = ae.getId();
-        r.add(toHit.getValue());
+        r.add(toHit);
         r.add(roll);
         r.newlines = 0;
         addReport(r);
@@ -17224,7 +17223,7 @@ public class Server implements Runnable {
                 r.addDesc(te);
                 r.addDesc(te);
                 r.addDesc(ae);
-                r.add(targetPushResult.toHit.getValue());
+                r.add(targetPushResult.toHit);
                 r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 addReport(r);
@@ -17247,7 +17246,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.addDesc(te);
             r.addDesc(ae);
-            r.add(targetPushResult.toHit.getValue());
+            r.add(targetPushResult.toHit);
             r.add(targetPushResult.roll);
             addReport(r);
         }
@@ -17352,7 +17351,7 @@ public class Server implements Runnable {
         // report the roll
         r = new Report(4025);
         r.subject = ae.getId();
-        r.add(toHit.getValue());
+        r.add(toHit);
         r.add(roll);
         r.newlines = 0;
         addReport(r);
@@ -17452,7 +17451,7 @@ public class Server implements Runnable {
         // report the roll
         r = new Report(4025);
         r.subject = ae.getId();
-        r.add(toHit.getValue());
+        r.add(toHit);
         r.add(roll);
         r.newlines = 0;
         addReport(r);
@@ -17543,7 +17542,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -17589,7 +17588,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = te.getId();
-            r.add(targetGrappleResult.toHit.getValue());
+            r.add(targetGrappleResult.toHit);
             r.add(targetGrappleResult.roll);
             r.newlines = 0;
             addReport(r);
@@ -17800,7 +17799,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             addReport(r);
             if (glancing) {
@@ -17966,7 +17965,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             addReport(r);
             if (glancing) {
@@ -18144,7 +18143,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(9033);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(toHit.getDesc());
             r.add(roll);
             r.newlines = 0;
@@ -18256,7 +18255,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
         }
@@ -18856,7 +18855,7 @@ public class Server implements Runnable {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
-            r.add(toHit.getValue());
+            r.add(toHit);
             r.add(roll);
             r.newlines = 0;
             addReport(r);
@@ -20317,7 +20316,7 @@ public class Server implements Runnable {
                 // report the roll
                 r = new Report(4025);
                 r.subject = ae.getId();
-                r.add(grappleHit.getValue());
+                r.add(grappleHit);
                 r.add(roll);
                 r.newlines = 0;
                 addReport(r);
@@ -21000,7 +20999,7 @@ public class Server implements Runnable {
             }
             int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2300);
-            r.add(roll.getValueAsString());
+            r.add(roll);
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
@@ -21180,7 +21179,7 @@ public class Server implements Runnable {
                     if (a != null && a.isOutControl()) {
                         r = new Report(9360);
                         r.subject = e.getId();
-                        r.add(target.getValueAsString());
+                        r.add(target);
                         r.add(diceRoll);
                         if (diceRoll < (target.getValue() - 5)) {
                             r.choose(false);
@@ -21193,7 +21192,7 @@ public class Server implements Runnable {
                     } else {
                         r = new Report(9315);
                         r.subject = e.getId();
-                        r.add(target.getValueAsString());
+                        r.add(target);
                         r.add(diceRoll);
                         r.newlines = 1;
                         if (diceRoll < target.getValue()) {
@@ -21295,7 +21294,7 @@ public class Server implements Runnable {
             int diceRoll = Compute.d6(2);
             r = new Report(9350);
             r.subject = e.getId();
-            r.add(base.getValueAsString());
+            r.add(base);
             r.add(diceRoll);
             if (diceRoll < base.getValue()) {
                 r.choose(false);
@@ -34882,7 +34881,7 @@ public class Server implements Runnable {
         addNewLines();
         r.subject = entity.getId();
         r.add(entity.getDisplayName(), true);
-        r.add(psr.getValueAsString());
+        r.add(psr);
         r.add(roll);
         r.newlines = 1;
         r.choose(roll >= psr.getValue());

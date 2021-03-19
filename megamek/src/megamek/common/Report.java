@@ -292,9 +292,13 @@ public class Report implements Serializable {
         tagData.addElement(data);
     }
 
-    public void add(ToHitData toHit) {
+    /**
+     * Adds target roll to report with details available as a tooltip
+     * @param targetRoll the target roll
+     */
+    public void add(TargetRoll targetRoll) {
         tagData.addElement(String.format("<font color='0xffffff'><a href='%s%s'>%d</a></font>",
-                TOOLTIP_LINK, toHit.getDesc(), toHit.getValue()));
+                TOOLTIP_LINK, targetRoll.getDesc(), targetRoll.getValue()));
     }
 
     /**

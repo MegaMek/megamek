@@ -45,25 +45,9 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.IPlayer;
+import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.HexTarget;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.IGame.Phase;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
@@ -668,6 +652,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
+        setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -738,6 +723,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
+        setDisengageEnabled(false);
     }
 
     /**
@@ -1535,6 +1521,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clear();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_DISENGAGE.getCmd())
+                && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
+                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
+            clear();
+            clientgui.getClient().sendOffboardFlee(cen);
+            ready();
         }
     }
 
@@ -1601,6 +1593,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void setNextTargetEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT_TARG).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
+    }
+
+    private void setDisengageEnabled(boolean enabled) {
+        if (buttons.containsKey(TargetingCommand.FIRE_DISENGAGE)) {
+            buttons.get(TargetingCommand.FIRE_DISENGAGE).setEnabled(enabled);
+        }
     }
 
     @Override

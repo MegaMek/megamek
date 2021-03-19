@@ -13439,6 +13439,39 @@ public class Server implements Runnable {
         endCurrentTurn(entity);
     }
 
+    private void receiveOffboardFleePacket(Packet packet, int connId) {
+        Entity entity = game.getEntity(packet.getIntValue(0));
+
+        // is this the right phase?
+        if (game.getPhase() != Phase.PHASE_TARGETING) {
+            MegaMek.getLogger().error("Server got offboard flee packet in wrong phase");
+            return;
+        }
+
+        // can this player/entity act right now?
+        GameTurn turn = game.getTurn();
+        if (game.isPhaseSimultaneous()) {
+            turn = game.getTurnForPlayer(connId);
+        }
+        if ((turn == null) || !turn.isValid(connId, entity, game)) {
+            String msg = "error: server got invalid attack packet from connection " + connId;
+            if (entity != null) {
+                msg += ", Entity: " + entity.getShortName();
+            } else {
+                msg += ", Entity was null!";
+            }
+            MegaMek.getLogger().error(msg);
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket(turn.getPlayerNum()));
+            return;
+        }
+
+        MovePath path = new MovePath(game, entity);
+        path.addStep(MoveStepType.FLEE);
+        addReport(processLeaveMap(path, false, -1));
+
+        endCurrentTurn(entity);
+    }
     /**
      * Process a batch of entity attack (or twist) actions by adding them to the
      * proper list to be processed later.
@@ -31343,6 +31376,9 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_ATTACK:
                 receiveAttack(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_OFFBOARD_FLEE:
+                receiveOffboardFleePacket(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_GTA_HEX_SELECT:
                 receiveGroundToAirHexSelectPacket(packet, connId);

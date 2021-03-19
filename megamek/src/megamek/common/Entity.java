@@ -9539,15 +9539,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canFlee() {
         Coords pos = getPosition();
-        return (pos != null)
-               && ((getWalkMP() > 0) || (this instanceof Infantry))
+        return ((getWalkMP() > 0) || (this instanceof Infantry))
                && !isProne()
                && !isStuck()
                && !isShutDown()
                && !getCrew().isUnconscious()
-               && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
-                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard()
-                                                               .getHeight() - 1)));
+               && (isOffBoard() || ((pos != null)
+                   && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
+                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard().getHeight() - 1)))));
     }
 
     public void setEverSeenByEnemy(boolean b) {

@@ -31,6 +31,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Report;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
@@ -297,8 +298,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     public void hyperlinkUpdate(HyperlinkEvent evt) {
         String evtDesc = evt.getDescription();
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (evtDesc.startsWith("#entity")) {
-                String idString = evtDesc.substring(evtDesc.indexOf(":") + 1);
+            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
+                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
                 int id;
                 try {
                     id = Integer.parseInt(idString);
@@ -310,14 +311,14 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                     clientgui.mechD.displayEntity(ent);
                     clientgui.setDisplayVisible(true);
                 }
-            } else if (evtDesc.startsWith("#toHit")) {
-                String desc = evtDesc.substring(evtDesc.indexOf(":") + 1);
+            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
                 JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
                         JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-            if (evtDesc.startsWith("#toHit")) {
-                String desc = evtDesc.substring(evtDesc.indexOf(":") + 1);
+            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
                 activePane().setToolTipText(desc);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {

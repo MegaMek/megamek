@@ -102,6 +102,11 @@ public class Report implements Serializable {
 
     /** Number of spaces to use per indentation level. */
     private static final int DEFAULT_INDENTATION = 4;
+
+    /** Prefix for entity hyperlinks */
+    public static final String ENTITY_LINK = "#entity:";
+    /** Prefix for tooltip text */
+    public static final String TOOLTIP_LINK = "#tooltip:";
     
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
@@ -288,8 +293,8 @@ public class Report implements Serializable {
     }
 
     public void add(ToHitData toHit) {
-        tagData.addElement(String.format("<font color='0xffffff'><a href='#toHit:%s'>%d</a></font>",
-                toHit.getDesc(), toHit.getValue()));
+        tagData.addElement(String.format("<font color='0xffffff'><a href='%s%s'>%d</a></font>",
+                TOOLTIP_LINK, toHit.getDesc(), toHit.getValue()));
     }
 
     /**
@@ -318,7 +323,7 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
+            add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
                     + "\">" + entity.getShortName() + "</a></font>", true);
             add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
                     + entity.getOwner().getName() + "</font></B>");

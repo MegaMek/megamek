@@ -277,12 +277,7 @@ public class MechSummaryCache {
 
         // save updated cache back to disk
         if (bNeedsUpdate) {
-            try {
-                saveCache();
-            } catch (Exception e) {
-                loadReport.append(" Unable to save mech cache\n");
-                MegaMek.getLogger().error(e);
-            }
+            saveCache(vMechs);
         }
     }
 
@@ -349,17 +344,19 @@ public class MechSummaryCache {
         }
     }
 
-    private void saveCache() throws Exception {
+    private void saveCache(List<MechSummary> data) {
         loadReport.append("Saving unit cache.\n");
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
-        ObjectOutputStream wr = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
-        wr.writeObject(m_data.length);
-        for (MechSummary element : m_data) {
-            wr.writeObject(element);
+        try (ObjectOutputStream wr = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(unit_cache_path)))) {
+            wr.writeObject(data.size());
+            for (MechSummary element : data) {
+                wr.writeObject(element);
+            }
+        } catch (Exception e) {
+            loadReport.append(" Unable to save mech cache\n");
+            MegaMek.getLogger().error(e);
         }
-        wr.flush();
-        wr.close();
     }
 
     private void refreshCache(long lastCheck, boolean ignoreUnofficial) {

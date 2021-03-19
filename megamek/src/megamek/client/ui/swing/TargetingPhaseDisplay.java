@@ -925,6 +925,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
+        setDisengageEnabled(false);
     }
 
     /**
@@ -997,7 +998,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-
+        setDisengageEnabled(ce().isOffBoard() && ce().canFlee());
     }
 
     /**
@@ -1020,6 +1021,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 attacks.removeElement(o);
+                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.bv.refreshAttacks();

@@ -12,6 +12,7 @@ VERSION HISTORY:
 + Issue #2597: Add thread safety to duplicate name hash
 + Issue #2722: Do not send IP addresses in chat by default
 + PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
++ PR #2730: Tooltips for target number calculations on the round report
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

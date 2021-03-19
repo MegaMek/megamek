@@ -109,7 +109,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         FIRE_MODE("fireMode"),
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
-        FIRE_CANCEL("fireCancel");
+        FIRE_CANCEL("fireCancel"),
+        FIRE_DISENGAGE("fireDisengage");
 
         String cmd;
 
@@ -525,6 +526,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         Arrays.sort(commands, comparator);
         for (TargetingCommand cmd : commands) {
             if (cmd == TargetingCommand.FIRE_CANCEL) {
+                continue;
+            }
+            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((ce() == null) || !ce().isOffBoard())) {
                 continue;
             }
             buttonList.add(buttons.get(cmd));

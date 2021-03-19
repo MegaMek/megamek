@@ -698,16 +698,6 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     *
-     */
-    public void sendOffboardFlee(int entityId) {
-        Object[] data = new Object[1];
-        data[0] = entityId;
-        send(new Packet(Packet.COMMAND_ENTITY_OFFBOARD_FLEE, data));
-        flushConn();
-    }
-
-    /**
      * Send the game options to the server
      */
     public void sendGameOptions(String password, Vector<IBasicOption> options) {

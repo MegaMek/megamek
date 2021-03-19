@@ -46,17 +46,10 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.IGame.Phase;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -1527,7 +1520,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
                         Messages.getString("MovementDisplay.EscapeDialog.message"))) {
             clear();
-            clientgui.getClient().sendOffboardFlee(cen);
+            attacks.add(new DisengageAction(cen));
             ready();
         }
     }

@@ -62,42 +62,7 @@ import megamek.common.Building.BasementType;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.AirmechRamAttackAction;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.BrushOffAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.ClearMinefieldAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.JumpJetAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.LayExplosivesAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.RamAttackAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.TripAttackAction;
-import megamek.common.actions.UnjamAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.UnloadStrandedAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -14349,6 +14314,10 @@ public class Server implements Runnable {
                 } else {
                     MegaMek.getLogger().error("Non-Tank tried to repair weapon malfunction");
                 }
+            } else if (ea instanceof DisengageAction) {
+                MovePath path = new MovePath(game, entity);
+                path.addStep(MoveStepType.FLEE);
+                addReport(processLeaveMap(path, false, -1));
             }
         }
     }

@@ -14,6 +14,7 @@ VERSION HISTORY:
 + PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
 + PR #2730: Tooltips for target number calculations on the round report
 + Issue #146: Disengage/Remove Unit Button for Offboard Artillery
++ Issue #2722: Add a UI to enable/disable showing IPs in chat
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

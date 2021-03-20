@@ -36,8 +36,7 @@ public abstract class PreferenceElement {
 
     //region Constructors
     protected PreferenceElement(final String name) {
-        // TODO : Java 11 : Swap to isBlank
-        assert (name != null) && !name.trim().isEmpty();
+        assert (name != null) && !name.isBlank();
         this.name = name;
     }
     //endregion Constructors

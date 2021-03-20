@@ -67,8 +67,7 @@ public class JComboBoxPreference extends PreferenceElement implements ItemListen
 
     @Override
     protected void initialize(final String value) {
-        // TODO : Java 11 : Swap to isBlank
-        assert (value != null) && !value.trim().isEmpty();
+        assert (value != null) && !value.isBlank();
 
         final JComboBox<?> element = getWeakReference().get();
         if (element != null) {

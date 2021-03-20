@@ -86,8 +86,7 @@ public class JTablePreference extends PreferenceElement implements MouseListener
 
     @Override
     protected void initialize(final String value) {
-        // TODO : Java 11 : Swap to isBlank
-        assert (value != null) && !value.trim().isEmpty();
+        assert (value != null) && !value.isBlank();
 
         final JTable element = getWeakReference().get();
         if (element != null) {

@@ -17011,7 +17011,6 @@ public class Server implements Runnable {
             addNewLines();
 
             int loc = hit.getLocation();
-            int toHitNumber = toHit.getValue();
 
             boolean mightTrip = (te instanceof Mech)
                     && te.locationIsLeg(loc)
@@ -17039,23 +17038,25 @@ public class Server implements Runnable {
 
             if (mightTrip) {
                 roll = Compute.d6(2);
-
+                int toHitValue = toHit.getValue();
+                String toHitDesc = toHit.getDesc();
                 if ((ae instanceof Mech) && (((Mech) ae).hasTSM() && (ae.heat >= 9))
                         && (!((Mech) te).hasTSM() || ((((Mech) te).hasTSM()) && (te.heat < 9)))) {
-                    toHitNumber -= 2;
+                    toHitValue -= 2;
+                    toHitDesc += " -2 (TSM Active Bonus)";
                 }
 
                 r = new Report(4450);
                 r.subject = ae.getId();
                 r.add(ae.getShortName());
                 r.add(te.getShortName());
-                r.add(toHitNumber);
+                r.addDataWithTooltip(String.valueOf(toHitValue), toHitDesc);
                 r.add(roll);
                 r.indent(2);
                 r.newlines = 0;
                 addReport(r);
 
-                if (roll >= toHit.getValue()) {
+                if (roll >= toHitValue) {
                     r = new Report(2270);
                     r.subject = ae.getId();
                     r.newlines = 0;

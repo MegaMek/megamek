@@ -16,6 +16,7 @@ VERSION HISTORY:
 + Issue #146: Disengage/Remove Unit Button for Offboard Artillery
 + Issue #2722: Add a UI to enable/disable showing IPs in chat
 + Issue #1131: Prevent units with bay weapon ammo from having that ammo disappear when customizing unit under some conditions
++ PR #2737: Use correct target number for chain whip trip with active TSM
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

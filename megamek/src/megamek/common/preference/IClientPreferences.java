@@ -166,4 +166,5 @@ public interface IClientPreferences extends IPreferenceStore {
 
     boolean getShowIPAddressesInChat();
 
+    void setShowIPAddressesInChat(boolean value);
 }

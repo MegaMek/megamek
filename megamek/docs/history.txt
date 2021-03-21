@@ -17,6 +17,7 @@ VERSION HISTORY:
 + Issue #2722: Add a UI to enable/disable showing IPs in chat
 + Issue #1131: Prevent units with bay weapon ammo from having that ammo disappear when customizing unit under some conditions
 + PR #2737: Use correct target number for chain whip trip with active TSM
++ Data: Unit date update. The MUL has update a lot of units with new dates this brings MM in line with them.
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

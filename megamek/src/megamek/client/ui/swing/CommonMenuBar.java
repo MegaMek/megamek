@@ -74,6 +74,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
+    private JMenuItem fileRefreshCache;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
@@ -313,6 +314,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsReinforceRAT.addActionListener(this);
         fileUnitsReinforceRAT.setActionCommand(ClientGUI.FILE_UNITS_REINFORCE_RAT);
         submenu.add(fileUnitsReinforceRAT);
+        fileRefreshCache = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsRefreshUnitCache")); //$NON-NLS-1$
+        fileRefreshCache.addActionListener(this);
+        fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
+        submenu.add(fileRefreshCache);
         fileUnitsOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
         fileUnitsOpen.addActionListener(this);

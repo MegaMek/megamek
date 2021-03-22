@@ -5,6 +5,19 @@ VERSION HISTORY:
 + Issue #2592: Random Army Creation Tech Level Max Index Comparison Issue
 + Issue #2272: Fixing Alt-Click on Building and Mouse Wheel Over Building/Bridge/Fuel Tank Not Clearing Tile
 + Issue #2362: Fixing XML Schema File Issues
++ PR #2655: Accessibility command improvements
++ Issue #2710: Shield DC and DA values
++ PR #2714: Change source and target compatibility to Java 11
++ Data: New maps, unit fixes including fix for #2707
++ Issue #2597: Add thread safety to duplicate name hash
++ Issue #2722: Do not send IP addresses in chat by default
++ PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
++ PR #2730: Tooltips for target number calculations on the round report
++ Issue #146: Disengage/Remove Unit Button for Offboard Artillery
++ Issue #2722: Add a UI to enable/disable showing IPs in chat
++ Issue #1131: Prevent units with bay weapon ammo from having that ammo disappear when customizing unit under some conditions
++ PR #2737: Use correct target number for chain whip trip with active TSM
++ Data: Unit date update. The MUL has update a lot of units with new dates this brings MM in line with them.
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

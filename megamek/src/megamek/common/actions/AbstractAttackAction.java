@@ -16,6 +16,7 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
+import megamek.client.Client;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -252,4 +253,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return toHit;
     }
 
+    @Override
+    public String toDisplayableString(Client client) {
+        return "attacking " + getTarget(client.getGame()).getDisplayName();
+    }
 }

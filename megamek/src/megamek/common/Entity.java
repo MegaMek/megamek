@@ -239,9 +239,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int initialBV = -1;
 
-    protected String displayName = null;
-    protected String shortName = null;
-    public int duplicateMarker = 1;
+    /**
+     * Protects: displayName, shortName, duplicateMarker.
+     */
+    private String displayName = null;
+    private String shortName = null;
+    private int duplicateMarker = 1;
 
     protected transient IPlayer owner;
     protected int ownerId;
@@ -2449,6 +2452,49 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Gets the marker used to disambiguate this entity
+     * from others with the same name. These are monotonically
+     * increasing values, starting from one.
+     */
+    public synchronized int getDuplicateMarker() {
+        return duplicateMarker;
+    }
+
+    /**
+     * Sets the marker used to disambiguate this entity
+     * from others with the same name. These are monotonically
+     * increasing values, starting from one.
+     * @param duplicateMarker A marker to disambiguate this entity
+     *                        from others with the same name.
+     */
+    public synchronized void setDuplicateMarker(int duplicateMarker) {
+        this.duplicateMarker = duplicateMarker;
+        if (duplicateMarker > 1) {
+            shortName = createShortName(duplicateMarker);
+            displayName = createDisplayName(duplicateMarker);
+        }
+    }
+
+    /**
+     * Updates the marker used to disambiguate this entity
+     * from others with the same name after one of them has
+     * been removed from the game.
+     * @param removedMarker The marker of the removed entity.
+     * @return A value indicating whether or not this entity
+     *         updated its duplicate marker.
+     */
+    public synchronized boolean updateDuplicateMarkerAfterDelete(int removedMarker) {
+        if (duplicateMarker > removedMarker) {
+            duplicateMarker--;
+            shortName = createShortName(duplicateMarker);
+            displayName = createDisplayName(duplicateMarker);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns the display name for this entity.
      */
     @Override
@@ -2460,33 +2506,38 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Sets the display name for this entity.
+     * @param displayName The new display name.
+     */
+    protected void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /**
      * Generates the display name for this entity.
      * <p/>
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model] ([Player Name]).
      */
-    public void generateDisplayName() {
-        StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis);
-        if ((model != null) && (model.length() > 0)) {
-            nbuf.append(" ").append(model);
-        }
-        // if show unit id is on, append the id
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(getId());
-        } else if (duplicateMarker > 1) {
-            // if not, and a player has more than one unit with the same name,
-            // append "#N" after the model to differentiate.
-            nbuf.append(" #" + duplicateMarker);
-        }
+    public synchronized void generateDisplayName() {
+        displayName = createDisplayName(duplicateMarker);
+     }
+
+    /**
+     * Creates a display name for the entity.
+     * @param duplicateMarker A number used to disambiguate two entities with
+     *                        the same name.
+     * @return A display name for the entity.
+     */
+    private String createDisplayName(int duplicateMarker) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(createShortName(duplicateMarker));
+
         if (getOwner() != null) {
-            nbuf.append(" (").append(getOwner().getName()).append(")");
-        }
-        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(getId());
+            builder.append(" (").append(getOwner().getName()).append(")");
         }
 
-        displayName = nbuf.toString();
+        return builder.toString();
     }
 
     /**
@@ -2506,31 +2557,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sub-classes are allowed to override this method. The display name is in
      * the format [Chassis] [Model].
      */
-    public void generateShortName() {
-        StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis);
-        if ((model != null) && (model.length() > 0)) {
-            nbuf.append(" ").append(model);
-        }
+    public synchronized void generateShortName() {
+        shortName = createShortName(duplicateMarker);
+    }
+
+    /**
+     * Creates a short name for the entity.
+     * @param duplicateMarker A number used to disambiguate two entities with
+     *                        the same name.
+     * @return A short name for the entity.
+     */
+    private String createShortName(int duplicateMarker) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getShortNameRaw());
         // if show unit id is on, append the id
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(getId());
+            builder.append(" ID:").append(getId());
         } else if (duplicateMarker > 1) {
             // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
-            nbuf.append(" #" + duplicateMarker);
+            builder.append(" #" + duplicateMarker);
         }
 
-        shortName = nbuf.toString();
+        return builder.toString();
     }
 
     public String getShortNameRaw() {
-        StringBuffer nbuf = new StringBuffer();
-        nbuf.append(chassis);
-        if ((model != null) && (model.length() > 0)) {
-            nbuf.append(" ").append(model);
+        if ((model == null) || (model.length() == 0)) {
+            return chassis;
         }
-        return nbuf.toString();
+        return chassis + " " + model;
     }
 
     /**
@@ -9300,12 +9356,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public String statusToString() {
         // should include additional information like imobile.
-        String str = "Entity [" + getDisplayName() + ", " + getId() + "]: ";
+        String str = "Entity [" + getDisplayName() + ", " + getId() + "]:";
         if (getPosition() != null) {
             str = str + "Location: (" + (getPosition().getX() + 1) + ", "
                   + (getPosition().getY() + 1) + ") ";
+            str += "Facing: " + Facing.valueOfInt(getFacing()).name();
         }
-        str = str + "Owner: " + owner.getName() + " Armor: " + getTotalArmor()
+
+        str += " MP: " + getWalkMP();
+        if(getOriginalJumpMP() > 0 ) {
+            str += " Jump: " + getJumpMP();
+        }
+        str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
               + "/" + getTotalOArmor() + " Internal Structure: "
               + getTotalInternal() + "/" + getTotalOInternal();
 
@@ -9337,10 +9399,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "No location given.";
         }
 
-        return getLocationName(loc) + " (" + getLocationAbbr(loc)
+        String str = getLocationName(loc) + " (" + getLocationAbbr(loc)
                + "): Armor: " + getArmorString(loc) + "/" + getOArmor(loc)
                + " Structure: " + getInternalString(loc) + "/"
-               + getOInternal(loc);
+               + getOInternal(loc) + "\n ";
+        for(CriticalSlot cs : crits[loc]) {
+            if(cs != null) {
+                Mounted mount = cs.getMount();
+                if(mount != null) {
+                    str += mount.getDesc() + "\n ";
+                }
+            }
+        }
+        return str;
     }
 
     /**
@@ -9468,15 +9539,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canFlee() {
         Coords pos = getPosition();
-        return (pos != null)
-               && ((getWalkMP() > 0) || (this instanceof Infantry))
+        return ((getWalkMP() > 0) || (this instanceof Infantry))
                && !isProne()
                && !isStuck()
                && !isShutDown()
                && !getCrew().isUnconscious()
-               && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
-                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard()
-                                                               .getHeight() - 1)));
+               && (isOffBoard() || ((pos != null)
+                   && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
+                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard().getHeight() - 1)))));
     }
 
     public void setEverSeenByEnemy(boolean b) {

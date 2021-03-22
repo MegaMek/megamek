@@ -53,6 +53,8 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
+import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
@@ -92,7 +94,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.util.SharedConfiguration;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
@@ -129,11 +130,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
+    public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
-    //file menu
-    public static final String FILE_PRINT = "filePrint";
     //endregion file menu
 
     //region view menu
@@ -178,12 +178,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
     private CommonAboutDialog about;
-    private CommonHelpDialog help;
+    private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private AccessibilityWindow aw;
-    private String helpFileName =
-            SharedConfiguration.getInstance().getProperty("megamek.CommonMenuBar.helpFilePath",
-                    Messages.getString("CommonMenuBar.helpFilePath"));
 
     public MegaMekController controller;
     private ChatterBox cb;
@@ -620,13 +617,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if (help == null) {
-            help = new CommonHelpDialog(frame, new File(helpFileName));
+            help = new MMReadMeHelpDialog(frame);
         }
         // Show the help dialog.
         help.setVisible(true);
     }
 
-    private void showSkinningHowTo(){
+    private void showSkinningHowTo() {
         try {
             // Get the correct help file.
             StringBuilder helpPath = new StringBuilder("file:///");
@@ -760,6 +757,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
                 getRandomArmyDialog().setVisible(true);
                 ignoreHotKeys = false;
+                break;
+            case FILE_REFRESH_CACHE:
+                MechSummaryCache.refreshUnitData(false);
+                new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
                 break;
             case VIEW_CLIENT_SETTINGS:
                 showSettings();

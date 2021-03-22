@@ -53,6 +53,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(MAP_HEIGHT, 1);
         store.setDefault(DEBUG_OUTPUT_ON,false);
         store.setDefault(MEMORY_DUMP_ON,false);
+        store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -253,6 +254,14 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     public void setGUIName(String guiName) {
         store.setValue(GUI_NAME, guiName);
+    }
+
+    public boolean getShowIPAddressesInChat() {
+        return store.getBoolean(IP_ADDRESSES_IN_CHAT);
+    }
+
+    public void setShowIPAddressesInChat(boolean value) {
+        store.setValue(IP_ADDRESSES_IN_CHAT, value);
     }
 
     protected Locale locale = null;

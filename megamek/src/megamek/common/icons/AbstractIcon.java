@@ -76,13 +76,11 @@ public abstract class AbstractIcon implements Serializable {
     }
 
     public boolean hasDefaultCategory() {
-        // TODO : Java 11 : Swap to using isBlank()
-        return ROOT_CATEGORY.equals(getCategory()) || getCategory().trim().isEmpty();
+        return ROOT_CATEGORY.equals(getCategory()) || getCategory().isBlank();
     }
 
     public boolean hasDefaultFilename() {
-        // TODO : Java 11 : Swap to using isBlank()
-        return DEFAULT_ICON_FILENAME.equals(getFilename()) || getFilename().trim().isEmpty();
+        return DEFAULT_ICON_FILENAME.equals(getFilename()) || getFilename().isBlank();
     }
     //endregion Boolean Methods
 

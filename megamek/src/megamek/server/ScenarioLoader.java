@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.MegaMek;
-import megamek.client.generator.RandomGenderGenerator;;
+import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -54,7 +54,6 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
-import megamek.common.Infantry;
 import megamek.common.MapSettings;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -68,6 +67,7 @@ import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
@@ -500,7 +500,10 @@ public class ScenarioLoader {
                         }
                         break;
                     case PARAM_CAMO:
-                        parseCamo(e, p.getString(key));
+                        final Camouflage camouflage = parseCamouflage(p.getString(key));
+                        if (!camouflage.isDefault()) {
+                            e.setCamouflage(camouflage);
+                        }
                         break;
                     case PARAM_ALTITUDE:
                         int altitude = Math.min(Integer.parseInt(p.getString(key)), 10);
@@ -618,21 +621,18 @@ public class ScenarioLoader {
     private void parseCommander(Entity entity, String commander) {
         entity.setCommander(Boolean.parseBoolean(commander));
     }
-    
-    /*
-     * Camo Parser/Validator for Individual Entity Camo
-     */
-    private void parseCamo(Entity entity, String camoString) {
-        String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
-        entity.setCamouflage(new Camouflage(camoData[0], camoData[1]));
-    }
 
-    /*
-     * Camo Parser/Validator for Faction Camo
-     */
-    private void parseCamo(IPlayer player, String camoString) {
-        String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
-        player.setCamouflage(new Camouflage(camoData[0], camoData[1]));
+    private Camouflage parseCamouflage(final @Nullable String camouflage) {
+        if ((camouflage == null) || camouflage.isBlank()) {
+            return new Camouflage();
+        }
+        final String[] camouflageParameters = camouflage.split(SEPARATOR_COMMA, -1);
+        if (camouflageParameters.length == 2) {
+            return new Camouflage(camouflageParameters[0], camouflageParameters[1]);
+        } else {
+            MegaMek.getLogger().error("Attempted to parse illegal camouflage parameter array of size " + camouflageParameters.length + " from " + camouflage);
+            return new Camouflage();
+        }
     }
 
     private int findIndex(String[] sa, String s) {
@@ -673,9 +673,9 @@ public class ScenarioLoader {
             int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
             player.setStartingPos(dir);
             
-            String camo = p.getString(getFactionParam(faction, PARAM_CAMO));
-            if ((camo != null) && !camo.isEmpty()) {
-                parseCamo(player, camo);
+            final Camouflage camouflage = parseCamouflage(p.getString(getFactionParam(faction, PARAM_CAMO)));
+            if (!camouflage.isDefault()) {
+                player.setCamouflage(camouflage);
             }
             
             String team = p.getString(getFactionParam(faction, PARAM_TEAM));

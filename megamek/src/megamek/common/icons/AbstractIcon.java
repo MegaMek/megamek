@@ -42,11 +42,11 @@ public abstract class AbstractIcon implements Serializable {
         this(ROOT_CATEGORY, DEFAULT_ICON_FILENAME);
     }
 
-    protected AbstractIcon(String category) {
+    protected AbstractIcon(@Nullable String category) {
         this(category, DEFAULT_ICON_FILENAME);
     }
 
-    protected AbstractIcon(String category, String filename) {
+    protected AbstractIcon(@Nullable String category, @Nullable String filename) {
         setCategory(category);
         setFilename(filename);
     }

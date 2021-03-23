@@ -54,7 +54,7 @@ public class FindClubAction extends AbstractEntityAction {
      */
     public static boolean canMechFindClub(IGame game, int entityId) {
         final Entity entity = game.getEntity(entityId);
-        if (null == entity.getPosition()) {
+        if ((null == entity) || null == (entity.getPosition())) {
             return false;
         }
         final IHex hex = game.getBoard().getHex(entity.getPosition());

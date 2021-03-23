@@ -27,6 +27,7 @@ import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MechWarrior;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -281,17 +282,28 @@ public final class PhysicalCalculator {
         }
 
         for (Entity target : game.getEntitiesVector()) {
-
+            // don't consider myself
             if (target.equals(entity)) {
                 continue;
             }
+            
+            // don't consider friendly targets
             if (!target.isEnemyOf(entity)) {
                 continue;
             }
+            
+            // don't consider targets not on the board
             if (target.getPosition() == null) {
                 continue;
             }
+            
+            // don't consider targets beyond melee range
             if (Compute.effectiveDistance(game, entity, target) > 1) {
+                continue;
+            }
+            
+            // don't bother stomping mechwarriors
+            if (target instanceof MechWarrior) {
                 continue;
             }
 

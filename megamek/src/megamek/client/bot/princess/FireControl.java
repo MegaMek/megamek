@@ -3224,6 +3224,7 @@ public class FireControl {
     /**
      * Return a "Find Club" action, if the unit in question can find a club.
      */
+    @Nullable
     public FindClubAction getFindClubAction(Entity shooter) {
         if (FindClubAction.canMechFindClub(shooter.getGame(), shooter.getId())) {
             FindClubAction findClubAction = new FindClubAction(shooter.getId());

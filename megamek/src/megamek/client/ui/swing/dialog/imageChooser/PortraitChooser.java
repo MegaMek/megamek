@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.dialog.imageChooser;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.trees.PortraitChooserTree;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -66,7 +67,7 @@ public class PortraitChooser extends AbstractIconChooser {
 
     /** Reloads the portrait directory from disk. */
     @Override
-    protected void refreshDirectory() {
+    public void refreshDirectory() {
         MMStaticDirectoryManager.refreshPortraitDirectory();
         refreshDirectory(new PortraitChooserTree());
     }

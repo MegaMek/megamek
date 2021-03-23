@@ -68,7 +68,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -458,16 +458,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             // Show the CamoChooserDialog for the selected player
             IPlayer player = getPlayerSelected().getLocalPlayer();
             CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
-
-            // If the dialog was canceled or nothing selected, do nothing
-            if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
-                return;
+            if (ccd.showDialog().isConfirmed()) {
+                player.setCamouflage(ccd.getSelectedItem());
+                butCamo.setIcon(player.getCamouflage().getImageIcon());
+                getPlayerSelected().sendPlayerInfo();
             }
-
-            // Update the player from the camo selection
-            player.setCamouflage(ccd.getSelectedItem());
-            butCamo.setIcon(player.getCamouflage().getImageIcon());
-            getPlayerSelected().sendPlayerInfo();
         });
         refreshCamos();
 
@@ -2345,11 +2340,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         final Entity entity = entities.get(0);
         // Display the CamoChooserDialog and await the result
         // The dialog is preset to the first selected unit's settings
-        CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(),
+        final CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(),
                 entity.getCamouflageOrElse(entity.getOwner().getCamouflage()), true);
 
-        // If the dialog was canceled or nothing was selected, do nothing
-        if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
+        if (ccd.showDialog().isCancelled()) {
             return;
         }
 

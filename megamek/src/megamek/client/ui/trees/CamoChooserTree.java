@@ -1,7 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team  
+ * MegaMek - Copyright (C) 2020-2021 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,7 +13,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.client.ui.swing.dialog.imageChooser;
+package megamek.client.ui.trees;
 
 import java.util.Iterator;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -22,25 +22,30 @@ import javax.swing.tree.DefaultTreeModel;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
+import megamek.common.util.StringUtil;
 
 public class CamoChooserTree extends AbstractIconChooserTree {
-    private static final long serialVersionUID = -452869897803327464L;
-
+    //region Constructors
     public CamoChooserTree() {
         super();
+    }
+    //endregion Constructors
 
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
+    //region Initialization
+    @Override
+    protected DefaultTreeModel createTreeModel() {
+        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
         if (MMStaticDirectoryManager.getCamouflage() != null) {
             root.add(new DefaultMutableTreeNode(Camouflage.COLOUR_CAMOUFLAGE));
-            Iterator<String> catNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
-            while (catNames.hasNext()) {
-                String catName = catNames.next();
-                if ((catName != null) && !catName.equals("")) {
-                    String[] names = catName.split("/");
-                    addCategoryToTree(root, names);
+            final Iterator<String> categoryNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
+            while (categoryNames.hasNext()) {
+                final String categoryName = categoryNames.next();
+                if (!StringUtil.isNullOrEmpty(categoryName)) {
+                    addCategoryToTree(root, categoryName.split("/"));
                 }
             }
         }
-        setModel(new DefaultTreeModel(root));
+        return new DefaultTreeModel(root);
     }
+    //endregion Initialization
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.swing.dialog.imageChooser;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -59,7 +59,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(JTree tree, @Nullable AbstractIcon icon) {
+    public AbstractIconChooser(final JTree tree, final @Nullable AbstractIcon icon) {
         initialize(tree);
         setOriginalIcon(icon);
         setSelection(icon);
@@ -67,7 +67,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Constructors
 
     //region Initialization
-    private void initialize(JTree tree) {
+    private void initialize(final JTree tree) {
         // Set up the image list (right panel)
         imageList = new ImageList(new AbstractIconRenderer());
         JScrollPane scrpImages = new JScrollPane(imageList);
@@ -84,8 +84,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrpTree, scrpImages);
         splitPane.setResizeWeight(0.5);
-
-        splitPane.setDividerLocation(GUIPreferences.getInstance().getInt(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS));
 
         setLayout(new BorderLayout());
         add(searchPanel(), BorderLayout.PAGE_START);
@@ -125,7 +123,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * Adds the icons of the given category to the given items List.
      * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
      */
-    protected void addCategoryItems(String category, List<AbstractIcon> items) {
+    protected void addCategoryItems(final String category, final List<AbstractIcon> items) {
         for (Iterator<String> iconNames = getDirectory().getItemNames(category);
              iconNames.hasNext(); ) {
             items.add(createIcon(category, iconNames.next()));
@@ -138,14 +136,14 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         return originalIcon;
     }
 
-    private void setOriginalIcon(@Nullable AbstractIcon originalIcon) {
+    private void setOriginalIcon(final @Nullable AbstractIcon originalIcon) {
         this.originalIcon = originalIcon;
     }
     //endregion Getters/Setters
 
     protected abstract DirectoryItems getDirectory();
 
-    protected abstract AbstractIcon createIcon(String category, String filename);
+    protected abstract AbstractIcon createIcon(final String category, final String filename);
 
     /**
      * Reacts to changes in the search field, showing searched items
@@ -154,7 +152,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * and reverting to the selected category when the search field is
      * empty.
      */
-    private void updateSearch(String contents) {
+    private void updateSearch(final String contents) {
         if (contents.isEmpty()) {
             TreePath path = treeCategories.getSelectionPath();
             if (path == null) {
@@ -193,7 +191,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     /**
      * This is used to refresh the contents of the directory
      */
-    protected abstract void refreshDirectory();
+    public abstract void refreshDirectory();
 
     /**
      * This method is to ONLY be called by those methods overwriting the abstract refreshDirectory
@@ -208,7 +206,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         treeCategories.addTreeSelectionListener(this);
         scrpTree = new JScrollPane(treeCategories);
         splitPane.setLeftComponent(scrpTree);
-        splitPane.setDividerLocation(GUIPreferences.getInstance().getInt(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS));
         setSelection(getOriginalIcon());
     }
 
@@ -287,11 +284,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         } else {
             treeCategories.setSelectionPath(new TreePath(root.getPath()));
         }
-    }
-
-    public void saveWindowSettings() {
-        GUIPreferences.getInstance().setValue(GUIPreferences.IMAGE_CHOOSER_SPLIT_POS,
-                splitPane.getDividerLocation());
     }
 
     @Override

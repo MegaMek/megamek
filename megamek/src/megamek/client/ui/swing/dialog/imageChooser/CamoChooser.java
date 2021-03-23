@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,6 +20,7 @@ package megamek.client.ui.swing.dialog.imageChooser;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.client.ui.trees.CamoChooserTree;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
@@ -36,7 +37,7 @@ public class CamoChooser extends AbstractIconChooser {
     //endregion Variable Declarations
 
     //region Constructors
-    public CamoChooser(@Nullable AbstractIcon camouflage, boolean canHaveIndividualCamouflage) {
+    public CamoChooser(final @Nullable AbstractIcon camouflage, final boolean canHaveIndividualCamouflage) {
         super(new CamoChooserTree(), camouflage);
         setCanHaveIndividualCamouflage(canHaveIndividualCamouflage);
     }
@@ -47,7 +48,7 @@ public class CamoChooser extends AbstractIconChooser {
         return canHaveIndividualCamouflage;
     }
 
-    public void setCanHaveIndividualCamouflage(boolean canHaveIndividualCamouflage) {
+    public void setCanHaveIndividualCamouflage(final boolean canHaveIndividualCamouflage) {
         this.canHaveIndividualCamouflage = canHaveIndividualCamouflage;
     }
     //endregion Getters/Setters
@@ -58,13 +59,13 @@ public class CamoChooser extends AbstractIconChooser {
     }
 
     @Override
-    protected AbstractIcon createIcon(String category, String filename) {
+    protected AbstractIcon createIcon(final String category, final String filename) {
         return new Camouflage(category, filename);
     }
 
     @Override
-    protected List<AbstractIcon> getItems(String category) {
-        List<AbstractIcon> result = new ArrayList<>();
+    protected List<AbstractIcon> getItems(final String category) {
+        final List<AbstractIcon> result = new ArrayList<>();
 
         if (category.startsWith(Camouflage.COLOUR_CAMOUFLAGE)) {
             // This section is a list of all colour camouflages supported
@@ -72,12 +73,12 @@ public class CamoChooser extends AbstractIconChooser {
                 result.add(createIcon(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
             }
         } else {
-            // In any other camouflage section, the camos of the selected category are
+            // In any other camouflage section, the camouflages of the selected category are
             // presented. When the includeSubDirs flag is true, all categories
             // below the selected one are also presented.
             if (includeSubDirs) {
                 for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-                    String tcat = catNames.next();
+                    final String tcat = catNames.next();
                     if (tcat.startsWith(category)) {
                         addCategoryItems(tcat, result);
                     }
@@ -89,15 +90,12 @@ public class CamoChooser extends AbstractIconChooser {
         return result;
     }
 
-    /** Reloads the camo directory from disk. */
+    /**
+     * Reloads the camouflage directory from disk.
+     */
     @Override
-    protected void refreshDirectory() {
+    public void refreshDirectory() {
         MMStaticDirectoryManager.refreshCamouflageDirectory();
         refreshDirectory(new CamoChooserTree());
-    }
-
-    @Override
-    protected void refreshDirectory(JTree newTree) {
-        super.refreshDirectory(newTree);
     }
 }

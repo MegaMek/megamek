@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,33 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog.imageChooser;
+package megamek.client.ui.dialogs;
 
-import java.awt.Window;
-
-import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
+import javax.swing.*;
+
 /**
  * This dialog allows players to select a portrait
- * It automatically fills itself with the portraits
- * in the {@link Configuration#portraitImagesDir()} directory tree.
- * Should be shown by using showDialog(). This method
- * returns either JOptionPane.OK_OPTION or .CANCEL_OPTION.
+ * It automatically fills itself with the portraits in the {@link Configuration#portraitImagesDir()}
+ * directory tree.
  *
  * @see AbstractIconChooserDialog
  */
 public class PortraitChooserDialog extends AbstractIconChooserDialog {
-    //region Variable Declarations
-    private static final long serialVersionUID = 6487684461690549139L;
-    //endregion Variable Declarations
-
     //region Constructors
-    /** Creates a dialog that allows players to choose a portrait. */
-    public PortraitChooserDialog(Window parent, @Nullable AbstractIcon icon) {
-        super(parent, Messages.getString("PortraitChoiceDialog.select_portrait"),
+    /**
+     * Creates a dialog that allows players to choose a portrait.
+     */
+    public PortraitChooserDialog(final JFrame frame, final @Nullable AbstractIcon icon) {
+        super(frame, "PortraitChooserDialog","PortraitChoiceDialog.select_portrait",
                 new PortraitChooser(icon));
     }
     //endregion Constructors

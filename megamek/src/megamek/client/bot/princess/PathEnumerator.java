@@ -266,7 +266,7 @@ public class PathEnumerator {
             } else if (!mover.isAero() && mover.isAirborne()) {
                 paths.add(new MovePath(game, mover));
             } else { // Non-Aero movement
-            	// TODO: Will this cause Princess to never use MASC?
+                // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
                                 MoveStepType.FORWARDS, getGame());
@@ -298,7 +298,7 @@ public class PathEnumerator {
                 // so let's not do this unless we're debugging
                 /* for(MovePath path : paths) {
 	                    getOwner().getLogger().debug(path.toString());
-	                }*/
+                }*/
                 
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);

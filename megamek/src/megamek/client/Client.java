@@ -96,7 +96,7 @@ public class Client implements IClientCommandHandler {
 
     private boolean disconnectFlag = false;
 
-    private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
+    private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
@@ -464,7 +464,9 @@ public class Client implements IClientCommandHandler {
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
             }
-            duplicateNameHash.clear(); // reset this
+            synchronized (unitNameTracker) {
+                unitNameTracker.clear(); // reset this
+            }
             break;
         default:
         }
@@ -1772,17 +1774,9 @@ public class Client implements IClientCommandHandler {
      * client (player) already has a unit in the game with the same name. If so,
      * add an identifier to the units name.
      */
-    private void checkDuplicateNamesDuringAdd(Entity entity) {
-        if (duplicateNameHash.get(entity.getShortName()) == null) {
-            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(1));
-        } else {
-            int count = duplicateNameHash.get(entity.getShortName()).intValue();
-            count++;
-            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(count));
-            entity.duplicateMarker = count;
-            entity.generateShortName();
-            entity.generateDisplayName();
-
+    private synchronized void checkDuplicateNamesDuringAdd(Entity entity) {
+        if (entity != null) {
+            unitNameTracker.add(entity);
         }
     }
 
@@ -1792,48 +1786,21 @@ public class Client implements IClientCommandHandler {
      * @param ids
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
-        ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
-        Hashtable<String, ArrayList<Integer>> rawNameToId = new Hashtable<String, ArrayList<Integer>>(
-                (int) (myEntities.size() * 1.26));
+        final List<Entity> updatedEntities = new ArrayList<>();
+        synchronized (unitNameTracker) {
+            for (int id : ids) {
+                Entity removedEntity = game.getEntity(id);
+                if (removedEntity == null) {
+                    continue;
+                }
 
-        for (Entity e : myEntities) {
-            String rawName = e.getShortNameRaw();
-            ArrayList<Integer> namedIds = rawNameToId.get(rawName);
-            if (namedIds == null) {
-                namedIds = new ArrayList<Integer>();
+                unitNameTracker.remove(removedEntity, updatedEntities::add);
             }
-            namedIds.add(e.getId());
-            rawNameToId.put(rawName, namedIds);
         }
 
-        for (int id : ids) {
-            Entity removedEntity = game.getEntity(id);
-            if (removedEntity == null) {
-                continue;
-            }
-
-            String removedRawName = removedEntity.getShortNameRaw();
-            Integer count = duplicateNameHash.get(removedEntity.getShortNameRaw());
-            if ((count != null) && (count > 1)) {
-                ArrayList<Integer> namedIds = rawNameToId.get(removedRawName);
-                for (Integer i : namedIds) {
-                    Entity e = game.getEntity(i);
-                    String eRawName = e.getShortNameRaw();
-                    if (eRawName.equals(removedRawName) && (e.duplicateMarker > removedEntity.duplicateMarker)) {
-                        e.duplicateMarker--;
-                        e.generateShortName();
-                        e.generateDisplayName();
-                        // Update the Entity, unless it's going to be deleted
-                        if (!ids.contains(e.getId())) {
-                            sendUpdateEntity(e);
-                        }
-                    }
-                }
-                duplicateNameHash.put(removedEntity.getShortNameRaw(), Integer.valueOf(count - 1));
-
-            } else if (count != null) {
-                duplicateNameHash.remove(removedEntity.getShortNameRaw());
-            }
+        // Send updates for any entity which had its name updated
+        for (Entity e : updatedEntities) {
+            sendUpdateEntity(e);
         }
     }
 

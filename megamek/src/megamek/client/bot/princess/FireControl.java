@@ -63,6 +63,7 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
@@ -3220,6 +3221,19 @@ public class FireControl {
         return unjamVector;
     }
 
+    /**
+     * Return a "Find Club" action, if the unit in question can find a club.
+     */
+    @Nullable
+    public FindClubAction getFindClubAction(Entity shooter) {
+        if (FindClubAction.canMechFindClub(shooter.getGame(), shooter.getId())) {
+            FindClubAction findClubAction = new FindClubAction(shooter.getId());
+            return findClubAction;
+        }
+        
+        return null;
+    }
+    
     /**
      * Given a firing plan, calculate the best target to light up with a searchlight
      */

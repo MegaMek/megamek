@@ -4216,7 +4216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
-            r.add(psr.getValue());
+            r.add(psr);
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(1);

@@ -7923,7 +7923,7 @@ public abstract class Mech extends Entity {
             int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
-            r.add(base.getValueAsString());
+            r.add(base);
             r.add(diceRoll);
             if (diceRoll < base.getValue()) {
                 r.choose(false);
@@ -7984,7 +7984,7 @@ public abstract class Mech extends Entity {
             int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
-            r.add(base.getValueAsString());
+            r.add(base);
             r.add(diceRoll);
             if (diceRoll < base.getValue()) {
                 r.choose(false);

@@ -59,6 +59,7 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -715,22 +716,32 @@ public class Princess extends BotClient {
             }
             
             // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
-            if(skipFiring) {
-                Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+            if (skipFiring) {
+                Vector<EntityAction> miscPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
                 
-                if(unjamPlan.size() == 0) {
+                // if we didn't produce an "unjam weapon" plan, consider spotting and lighting
+                // things up with a searchlight
+                if (miscPlan.size() == 0) {
                 	EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
-                	if(spotAction != null) {
-                		unjamPlan.add(spotAction);
+                	if (spotAction != null) {
+                	    miscPlan.add(spotAction);
                 	}
                 	
                 	SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                    if(searchLightAction != null) {
-                        unjamPlan.add(searchLightAction);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
                     }
                 }
                 
-                sendAttackData(shooter.getId(), unjamPlan);
+                // if we have absolutely nothing else to do, see if we can find a club
+                if (miscPlan.size() == 0) {
+                    FindClubAction findClubAction = getFireControl(shooter).getFindClubAction(shooter);
+                    if (findClubAction != null) {
+                        miscPlan.add(findClubAction);
+                    }
+                }
+                
+                sendAttackData(shooter.getId(), miscPlan);
                 return;
             }
             

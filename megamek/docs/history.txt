@@ -9,6 +9,19 @@ VERSION HISTORY:
 + Issue #2710: Shield DC and DA values
 + PR #2714: Change source and target compatibility to Java 11
 + Data: New maps, unit fixes including fix for #2707
++ Issue #2597: Add thread safety to duplicate name hash
++ Issue #2722: Do not send IP addresses in chat by default
++ PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
++ PR #2730: Tooltips for target number calculations on the round report
++ Issue #146: Disengage/Remove Unit Button for Offboard Artillery
++ Issue #2722: Add a UI to enable/disable showing IPs in chat
++ Issue #1131: Prevent units with bay weapon ammo from having that ammo disappear when customizing unit under some conditions
++ PR #2737: Use correct target number for chain whip trip with active TSM
++ Data: Unit date update. The MUL has update a lot of units with new dates this brings MM in line with them.
++ Issue #2740: Update base target number for attacking with "picked up" club (tree/girder/arm/leg) to be piloting - 1, rather than piloting + 1
++ Issue #2694: The bot will now consider not attempting to get up, or going to hull-down (where applicable) when odds of getting up are low
++ PR #2742: Enable the bot to "find club", when it absolutely, positively has nothing better to do with the firing phase
++ Issue #2747: Prevent protomech AC ammo from causing 8x the damage it should during ammo explosions
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

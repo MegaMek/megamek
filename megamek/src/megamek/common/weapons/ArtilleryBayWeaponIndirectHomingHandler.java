@@ -157,7 +157,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(toHit.getValue());
+            r.add(toHit);
             vPhaseReport.addElement(r);
         }
 

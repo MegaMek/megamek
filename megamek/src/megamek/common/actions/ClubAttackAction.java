@@ -236,7 +236,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
             return -4;
         } else {
-            return 1;
+            return -1;
         }
     }
 

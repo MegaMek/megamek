@@ -1371,27 +1371,46 @@ public class Server implements Runnable {
     }
 
     /**
-     * Removes all entities owned by a player. Should only be called when it
+     * Removes all entities owned by the given player. Should only be called when it
      * won't cause trouble (the lounge, for instance, or between phases.)
-     *
-     * @param player whose entities are to be removed
      */
     private void removeAllEntitiesOwnedBy(IPlayer player) {
-        Vector<Entity> toRemove = new Vector<>();
-
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
-            final Entity entity = e.next();
-
-            if (entity.getOwner().equals(player)) {
-                toRemove.addElement(entity);
-            }
-        }
-
-        for (Entity entity : toRemove) {
-            int id = entity.getId();
-            game.removeEntity(id, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-            send(createRemoveEntityPacket(id, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
-        }
+        int pid = player.getId();
+        Forces forces = game.getForces();
+        // Disentangle everything!
+        // remove other player's forces from player's forces
+        forces.getAllForces().stream()
+            .filter(f -> !f.isTopLevel())
+            .filter(f -> f.getOwnerId() != pid)
+            .filter(f -> forces.getForce(f.getParentId()).getOwnerId() == pid)
+            .forEach(forces::promoteForce);
+        
+        // remove other player's units from player's forces
+        game.getEntitiesVector().stream()
+            .filter(e -> e.getOwnerId() != pid)
+            .filter(e -> e.partOfForce())
+            .filter(e -> forces.getForce(e.getForceId()).getOwnerId() == pid)
+            .forEach(forces::removeEntityFromForces);
+        
+        // delete forces of player
+        forces.deleteForces(forces.getAllForces().stream()
+            .filter(f -> f.getOwnerId() == pid)
+            .filter(f -> f.isTopLevel() || !forces.getOwner(f.getParentId()).equals(player))
+            .collect(Collectors.toList()));
+        
+        Collection<Entity> delEntities = game.getEntitiesVector().stream()
+                .filter(e -> e.getOwner().equals(player)).collect(Collectors.toList());
+        
+        // remove entities of player from any forces, disembark and C3 disconnect them
+        delEntities.stream().forEach(forces::removeEntityFromForces);
+        ServerHelper.lobbyUnload(game, delEntities);
+        ServerHelper.performC3Disconnect(game, delEntities);
+        
+        // delete entities of player
+        delEntities.stream().forEach(e -> game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+        
+        // send full update
+        send(createFullEntitiesPacket());
     }
 
     /**
@@ -29963,7 +29982,7 @@ public class Server implements Runnable {
 
         final FighterSquadron fs = (FighterSquadron) c.getObject(0);
         final Collection<Integer> fighters = (Collection<Integer>) c.getObject(1);
-        if (fighters.size() < 1) {
+        if (fighters.isEmpty()) {
             return;
         }
         // Only assign an entity ID when the client hasn't.
@@ -29971,9 +29990,12 @@ public class Server implements Runnable {
             fs.setId(getFreeEntityId());
         }
         game.addEntity(fs);
+        var formerCarriers = new HashSet<Entity>();
+        
         for (int id : fighters) {
             Entity fighter = game.getEntity(id);
             if (null != fighter) {
+                formerCarriers.addAll(ServerHelper.lobbyUnload(game, List.of(fighter)));
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
                 fighter.setTransportId(fs.getId());
@@ -29983,6 +30005,9 @@ public class Server implements Runnable {
                 }
                 entityUpdate(fighter.getId());
             }
+        }
+        if (!formerCarriers.isEmpty()) {
+            send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, formerCarriers));
         }
         send(createAddEntityPacket(fs.getId()));
 
@@ -30075,8 +30100,8 @@ public class Server implements Runnable {
 
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(ServerHelper.lobbyDisembark(game, delEntities));
-        updateCandidates.addAll(ServerHelper.performDisconnect(game, delEntities));
+        updateCandidates.addAll(ServerHelper.lobbyUnload(game, delEntities));
+        updateCandidates.addAll(ServerHelper.performC3Disconnect(game, delEntities));
         
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
@@ -30437,8 +30462,8 @@ public class Server implements Runnable {
         
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(ServerHelper.lobbyDisembark(game, delEntities));
-        updateCandidates.addAll(ServerHelper.performDisconnect(game, delEntities));
+        updateCandidates.addAll(ServerHelper.lobbyUnload(game, delEntities));
+        updateCandidates.addAll(ServerHelper.performC3Disconnect(game, delEntities));
         
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
@@ -30666,7 +30691,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing the player info, for update
      */
-    private Packet createPlayerUpdatePacket(int playerId) {
+    Packet createPlayerUpdatePacket(int playerId) {
         final Object[] data = new Object[2];
         data[0] = playerId;
         data[1] = getPlayer(playerId);
@@ -30816,7 +30841,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing all current and out-of-game entities
      */
-    private Packet createFullEntitiesPacket() {
+    Packet createFullEntitiesPacket() {
         final Object[] data = new Object[3];
         data[0] = game.getEntitiesVector();
         data[1] = game.getOutOfGameEntitiesVector();
@@ -31137,7 +31162,7 @@ public class Server implements Runnable {
     /**
      * Send a packet to all connected clients.
      */
-    private void send(Packet packet) {
+    void send(Packet packet) {
         if (connections == null) {
             return;
         }
@@ -31283,6 +31308,9 @@ public class Server implements Runnable {
                 validatePlayerInfo(connId);
                 send(createPlayerUpdatePacket(connId));
                 break;
+            case Packet.COMMAND_PLAYER_TEAMCHANGE:
+                ServerHelper.receiveLobbyTeamChange(packet, connId, game, this);
+                break;
             case Packet.COMMAND_PLAYER_READY:
                 receivePlayerDone(packet, connId);
                 send(createPlayerDonePacket(connId));
@@ -31290,7 +31318,6 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_REROLL_INITIATIVE:
                 receiveInitiativeRerollRequest(packet, connId);
-                // send(createPlayerDonePacket(connId));
                 break;
             case Packet.COMMAND_FORWARD_INITIATIVE:
                 receiveForwardIni(connId);
@@ -31361,8 +31388,12 @@ public class Server implements Runnable {
                 receiveEntitiesUpdate(packet, connId);
                 resetPlayersDone();
                 break;
+            case Packet.COMMAND_ENTITY_ASSIGN:
+                ServerHelper.receiveEntitiesAssign(packet, connId, game, this);
+                resetPlayersDone();
+                break;
             case Packet.COMMAND_FORCE_UPDATE:
-                receiveForceUpdate(packet, connId);
+                ServerHelper.receiveForceUpdate(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_ADD:
@@ -31371,6 +31402,18 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_FORCE_DELETE:
                 receiveForcesDelete(packet, connId);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_PARENT:
+                ServerHelper.receiveForceParent(packet, connId, game, this);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_ADD_ENTITY:
+                ServerHelper.receiveAddEntititesToForce(packet, connId, game, this);
+                resetPlayersDone();
+                break;
+            case Packet.COMMAND_FORCE_ASSIGN_FULL:
+                ServerHelper.receiveForceAssignFull(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_ENTITY_LOAD:
@@ -31444,12 +31487,6 @@ public class Server implements Runnable {
                     mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
-//                    mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-//                    mapSettings.removeUnavailable();
-                    // if still only nulls left, use BOARD_GENERATED
-//                    if (mapSettings.getBoardsSelected().next() == null) {
-//                        mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
-//                    }
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());
@@ -31465,12 +31502,6 @@ public class Server implements Runnable {
                     mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
-//                    mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-//                    mapSettings.removeUnavailable();
-                    // if still only nulls left, use BOARD_GENERATED
-//                    if (mapSettings.getBoardsSelected().next() == null) {
-//                        mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
-//                    }
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());

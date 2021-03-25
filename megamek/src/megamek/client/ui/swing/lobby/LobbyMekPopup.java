@@ -161,8 +161,6 @@ class LobbyMekPopup {
             menu.add(menuItem("Promote to Top-Level Force", "FPROMOTE" + fId + NOINFO, editable && !force.isTopLevel(), listener));
         }
 
-//        menu.add(menuItem("Delete Force(s)", "FDELETE|" + foToken(forces) + enToken(entities), true, listener));
-        
         // If entities are selected but no forces, offer entity options
         if (forces.isEmpty() && !entities.isEmpty() && LobbyUtility.haveSingleOwner(entities)) {
             menu.add(menuItem("Remove from Force", "FREMOVE" + NOINFO + enToken(entities), true, listener));

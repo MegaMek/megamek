@@ -252,9 +252,7 @@ public class MekForceTreeCellFormatter {
         }
 
         // General (Yellow) Warnings
-        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())
-                ) {
+        if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(guiScaledFontHTML(uiYellow())); 
             result.append(WARNING_SIGN + "</FONT>");
         }
@@ -308,9 +306,9 @@ public class MekForceTreeCellFormatter {
 
         // Invalid unit design
         if (!entity.isDesignValid()) {
-            result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
-            result.append(Messages.getString("ChatLounge.invalidDesign"));
-            result.append("</FONT>");
+            result.append(DOT_SPACER);
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
 
         // ECM
@@ -396,7 +394,7 @@ public class MekForceTreeCellFormatter {
             result.append(DOT_SPACER + guiScaledFontHTML(uiLightRed()));
             result.append("Partial Repairs</FONT>");
         }
-
+        
         // Offboard deployment
         if (entity.isOffBoard()) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
@@ -445,7 +443,7 @@ public class MekForceTreeCellFormatter {
         result.append(guiScaledFontHTML(uiGreen(), 0.3f));
         result.append("&nbsp;  \u24D8");
         
-        return result.toString(); 
+        return LobbyUtility.abbreviateUnitName(result.toString()); 
     }
     
     static void formatSpan(StringBuilder current, Color color) {
@@ -516,10 +514,7 @@ public class MekForceTreeCellFormatter {
         int mapType = lobby.mapSettings.getMedium();
         
         // First line
-        // General (Yellow) Warnings
-        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())
-                ) {
+        if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(guiScaledFontHTML(uiYellow())); 
             result.append(WARNING_SIGN + "</FONT>");
             hasWarning = true;
@@ -624,8 +619,7 @@ public class MekForceTreeCellFormatter {
         if (!entity.isDesignValid()) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
-            result.append("\u26D4 " + Messages.getString("ChatLounge.invalidDesign"));
-            result.append("</FONT>");
+            result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
         
 
@@ -768,7 +762,7 @@ public class MekForceTreeCellFormatter {
             result.append(Messages.getString("ChatLounge.PartialRepairs"));
             result.append("</FONT>");
         }
-
+        
         // Starting values for Altitude / Velocity / Elevation
         if (!isCarried) {
             if (entity.isAero()) {

@@ -96,9 +96,7 @@ public class MekTableCellFormatter {
         }
         
         // General (Yellow) Warnings
-        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())
-                ) {
+        if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(guiScaledFontHTML(uiYellow())); 
             result.append(WARNING_SIGN + "</FONT>");
         }
@@ -118,9 +116,9 @@ public class MekTableCellFormatter {
 
         // Invalid unit design
         if (!entity.isDesignValid()) {
-            result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
-            result.append(Messages.getString("ChatLounge.invalidDesign"));
-            result.append("</FONT>");
+            result.append(DOT_SPACER);
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
 
         // ECM
@@ -205,7 +203,7 @@ public class MekTableCellFormatter {
             result.append(DOT_SPACER + guiScaledFontHTML(uiLightRed()));
             result.append("Partial Repairs</FONT>");
         }
-
+        
         // Offboard deployment
         if (entity.isOffBoard()) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
@@ -242,8 +240,8 @@ public class MekTableCellFormatter {
                 result.append(entity.getElevation() + "</I></FONT>");
             }
         }
-
-        return result.toString(); 
+        
+        return LobbyUtility.abbreviateUnitName(result.toString()); 
     }
 
     /** 
@@ -282,9 +280,7 @@ public class MekTableCellFormatter {
         boolean hasWarning = false;
         boolean hasCritical = false;
         // General (Yellow) Warnings
-        if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())
-                ) {
+        if (LobbyUtility.hasYellowWarning(entity)) {
             result.append(guiScaledFontHTML(uiYellow())); 
             result.append(WARNING_SIGN + "</FONT>");
             hasWarning = true;
@@ -328,7 +324,8 @@ public class MekTableCellFormatter {
         // Invalid Design
         if (!entity.isDesignValid()) {
             result.append(DOT_SPACER);
-            result.append(Messages.getString("ChatLounge.invalidDesign"));
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
         
         // ECM
@@ -356,6 +353,7 @@ public class MekTableCellFormatter {
             result.append(Messages.getString("ChatLounge.PartialRepairs"));
             result.append("</FONT>");
         }
+        
         result.append("<BR>");
         
         // THIRD LINE----

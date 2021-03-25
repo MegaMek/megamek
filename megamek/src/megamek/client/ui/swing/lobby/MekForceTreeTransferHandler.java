@@ -127,34 +127,34 @@ public class MekForceTreeTransferHandler extends TransferHandler {
 
             // No Path means remove entity from forces or promote force to top-level
             if (dest == null && !entityIdList.isEmpty()) {
-                lobby.lobbyActions.removeFromForce(LobbyUtility.getEntities(lobby.game(), entityIds));
+                lobby.lobbyActions.forceRemoveEntity(LobbyUtility.getEntities(lobby.game(), entityIds));
                 return true;
             }
             if (dest == null && !forceIdList.isEmpty()) {
-                lobby.lobbyActions.promoteForce(forceIdList);
+                lobby.lobbyActions.forcePromote(forceIdList);
                 return true;
             }
 
             // Add entities to a force (Drop onto force)
             if (dest != null && dest.getLastPathComponent() instanceof Force && !entityIdList.isEmpty()) {
                 int forceId = ((Force)dest.getLastPathComponent()).getId();
-                lobby.lobbyActions.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
+                lobby.lobbyActions.forceAddEntity(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
             }
             
             // Add entities to a force (Drop onto entities in a force)
             if (dest != null && dest.getLastPathComponent() instanceof Entity && !entityIdList.isEmpty()) {
                 int forceId = ((Entity)dest.getLastPathComponent()).getForceId();
                 if (forceId != Force.NO_FORCE) {
-                    lobby.lobbyActions.addToForce(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
+                    lobby.lobbyActions.forceAddEntity(LobbyUtility.getEntities(lobby.game(), entityIds), forceId);
                 } else {
-                    lobby.lobbyActions.removeFromForce(LobbyUtility.getEntities(lobby.game(), entityIds));
+                    lobby.lobbyActions.forceRemoveEntity(LobbyUtility.getEntities(lobby.game(), entityIds));
                 }
             }
             
             // Attach a force to a new parent
             if (dest != null && dest.getLastPathComponent() instanceof Force && forceIdList.size() == 1) {
                 int newParentId = ((Force)dest.getLastPathComponent()).getId();
-                lobby.lobbyActions.attachForce(forceIdList.get(0), newParentId);
+                lobby.lobbyActions.forceAttach(forceIdList.get(0), newParentId);
             }
             
             

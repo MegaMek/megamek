@@ -770,6 +770,11 @@ public class Client implements IClientCommandHandler {
         send(new Packet(Packet.COMMAND_ENTITY_WORDER_UPDATE, data));
         entity.setWeapOrderChanged(false);
     }
+    
+    /** Sends the given forces to the server to be made top-level forces. */
+    public void sendForceParent(Collection<Force> forceList, int newParentId) {
+        send(new Packet(Packet.COMMAND_FORCE_PARENT, new Object[] { forceList, newParentId }));
+    }
 
     /**
      * Sends an "add entity" packet with only one Entity.
@@ -834,6 +839,22 @@ public class Client implements IClientCommandHandler {
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities));
     }
+    
+    /**
+     * Sends a packet containing multiple entity updates. Should only be used 
+     * in the lobby phase.
+     */
+    public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
+        send(new Packet(Packet.COMMAND_ENTITY_ASSIGN, new Object[] { entities, newOwnerId }));
+    }
+    
+    /**
+     * Sends a packet containing multiple entity updates. Should only be used 
+     * in the lobby phase.
+     */
+    public void sendChangeTeam(IPlayer player, int newTeamId) {
+        send(new Packet(Packet.COMMAND_PLAYER_TEAMCHANGE, new Object[] { player.getId(), newTeamId }));
+    }
 
     /**
      * Sends an "update entity" packet
@@ -855,6 +876,22 @@ public class Client implements IClientCommandHandler {
      */
     public void sendUpdateForce(Collection<Force> changedForces) {
         send(new Packet(Packet.COMMAND_FORCE_UPDATE, new Object[] { changedForces, new ArrayList<>() }));
+    }
+    
+    /**
+     * Sends a packet instructing the server to add the given entities to the given force.
+     * The server will handle this; the client does not have to implement the change.
+     */
+    public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
+        send(new Packet(Packet.COMMAND_FORCE_ADD_ENTITY, new Object[] { entities, forceId }));
+    }
+    
+    /**
+     * Sends a packet instructing the server to add the given entities to the given force.
+     * The server will handle this; the client does not have to implement the change.
+     */
+    public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
+        send(new Packet(Packet.COMMAND_FORCE_ASSIGN_FULL, new Object[] { forceList, newOwnerId }));
     }
         
     /** Sends a packet to the Server requesting to delete the given forces. */
@@ -994,7 +1031,6 @@ public class Client implements IClientCommandHandler {
     
     /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
     protected void receiveForcesDelete(Packet c) {
-        System.out.println("Delete");
         @SuppressWarnings("unchecked")
         Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
         Forces forces = game.getForces();

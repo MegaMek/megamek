@@ -15,14 +15,8 @@ package megamek.client.ui.swing.lobby;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -31,7 +25,6 @@ import javax.swing.table.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -39,7 +32,6 @@ import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
-import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -48,13 +40,12 @@ public class MekTableModel extends AbstractTableModel {
     
     private static final long serialVersionUID = 4819661751806908535L;
 
-    private static enum COLS { UNIT, PILOT, PLAYER, BV, FORCE };
+    private static enum COLS { UNIT, PILOT, PLAYER, BV };
     public static final int COL_UNIT = COLS.UNIT.ordinal();
     public static final int COL_PILOT = COLS.PILOT.ordinal();
     public static final int COL_PLAYER = COLS.PLAYER.ordinal();
     public static final int COL_BV = COLS.BV.ordinal();
-    public static final int COL_FORCE = COLS.FORCE.ordinal();
-    public static final int N_COL = 4; // COLS.values().length;
+    public static final int N_COL = COLS.values().length;
     
     // Some unicode symbols. These work on Windows when setting the font 
     // to Dialog (which I believe uses Arial). I hope they work on other systems.
@@ -105,7 +96,7 @@ public class MekTableModel extends AbstractTableModel {
             boolean isBlindDrop = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             boolean hideEntity = isEnemy && isBlindDrop;
             float size = chatLounge.isCompact() ? 0 : 0.2f;
-            return hideEntity ? "" : guiScaledFontHTML(size) + bv.get(row);
+            return hideEntity ? "" : guiScaledFontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
             
         } else if (col == COLS.PLAYER.ordinal()) {
              return playerCells.get(row);
@@ -116,7 +107,7 @@ public class MekTableModel extends AbstractTableModel {
         } else if (col == COLS.UNIT.ordinal()) {
             return unitCells.get(row);
             
-        } else { // FORCE
+        } else { 
             return "";
         }
     }
@@ -223,8 +214,6 @@ public class MekTableModel extends AbstractTableModel {
             return result + Messages.getString("ChatLounge.colPlayer");
         } else if (column == COLS.BV.ordinal()) {
             return result + Messages.getString("ChatLounge.colBV");
-        } else if (column == COLS.FORCE.ordinal()) {
-            return ""; // No Force header
         }
 
         return "??";
@@ -271,20 +260,11 @@ public class MekTableModel extends AbstractTableModel {
         return COLS.PLAYER.ordinal();
     }
     
-    public static int columnForce() {
-        return COLS.FORCE.ordinal();
-    }
-
     /** Returns the subclassed cell renderer for all columns except the force column. */
     public MekTableModel.Renderer getRenderer() {
         return new MekTableModel.Renderer();
     }
     
-    /** Returns the subclassed cell renderer for the force display column. */
-    public MekTableModel.ForceRenderer getForceRenderer() {
-        return new MekTableModel.ForceRenderer();
-    }
-
     /** A specialized renderer for the mek table. */
     public class Renderer extends DefaultTableCellRenderer implements TableCellRenderer {
         
@@ -367,140 +347,6 @@ public class MekTableModel extends AbstractTableModel {
             return this;
         }
         
-    }
-    
-    /** A specialized renderer for the mek table. */
-    public class ForceRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
-        
-        private static final long serialVersionUID = -9154596036677641620L;
-        
-        int col;
-        BufferedImage img;
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-       
-            col = column;
-            Entity entity = getEntityAt(row);
-            if (null == entity) {
-                return null;
-            }
-            prepareForceImage(entity, row, table);
-            return this;
-        }
-        
-        private static final int BASE_FORCE_W = 18;
-        
-        private void prepareForceImage(Entity entity, int row, JTable table) {
-//            ArrayList<String> forces = Forces.getFullForceList(entity);
-//            int force_w = UIUtil.scaleForGUI(BASE_FORCE_W);
-//            int h = table.getRowHeight();
-//
-//            int colw = table.getColumnModel().getColumn(COL_FORCE).getWidth();
-//            BufferedImage image = ImageUtil.createAcceleratedImage(colw, h);
-//            Graphics2D g = (Graphics2D)image.getGraphics();
-//            GUIPreferences.AntiAliasifSet(g);
-//            AffineTransform oldTransform = g.getTransform();
-//            int depth = -1;
-//            for (String force: forces) {
-//                // No force at this level?
-//                depth++;
-//                if (force == null || force.equals("_")) {
-//                    continue;
-//                }
-//                
-//                int width = force_w * (forces.size() - depth);
-//                Color col = new Color(250/(depth+2),250/(depth+2),250/(depth+2));
-//                //                col = Color.red;
-//                int r1 = forceTopRow(table, depth, row);
-//                int r2 = forceBottomRow(table, depth, row);
-//
-//                // totally transparent here hurts the eyes
-//                Color c2 = new Color(col.getRed() / 2, col.getGreen() / 2,
-//                        col.getBlue() / 2);
-//
-//                c2 = getEntityAt(row).getOwner().getColour().getColour();
-//                
-//                if (getEntityAt(row).getOwner().isEnemyOf(clientGui.getClient().getLocalPlayer())) {
-//                    c2 = GUIPreferences.getInstance().getEnemyUnitColor();
-//                } else {
-//                    c2 = GUIPreferences.getInstance().getMyUnitColor();
-//                }
-//                c2 = new Color(c2.getRed()/(depth+2),c2.getGreen()/(depth+2),c2.getBlue()/(depth+2));
-//
-//                // the numbers make the lines align across hexes
-//                GradientPaint gp = new GradientPaint(0, h * (r1 - row),
-//                        c2, 0, h * (r2 - row + 1), col, false);
-//                g.setPaint(gp);
-//
-//
-//                g.fillRoundRect(colw-width, 0, width, h, 15, 15);
-//                if (r1 < row) {
-//                    g.fillRect(colw-width, 0, width/2, h/2);
-//                }
-//                if (r2 > row) {
-//                    g.fillRect(colw-width, h/2, width/2, h);
-//                }
-//                g.fillRect(colw-width/2, 0, width/2, h);
-//                g.setColor(Color.WHITE);
-//
-//                String text = force;
-//                int fontSize = UIUtil.scaleForGUI(14);
-//                g.setFont(new Font("Dialog", Font.PLAIN, fontSize));
-//                FontMetrics fm = g.getFontMetrics(g.getFont());
-//                int cx = (force_w - fm.stringWidth(text)) / 2 + colw - width;
-//                int cy = (h * (1 + r2 - r1) + fm.getAscent() - fm.getDescent()) / 2 + h * (r1 - row);
-//                int mx = colw - width + force_w/2;
-//                int my = (h * (1 + r2 - r1)) / 2 + h * (r1 - row);
-//                g.rotate(-Math.PI/2, mx, my);
-//                g.drawString(text, cx, cy);
-//                g.setTransform(oldTransform);
-//            }
-//            g.dispose();
-//            img = image;
-        }
-        
-//        private int forceTopRow(JTable table, int depth, int row) {
-//            if (row == 0) {
-//                return row;
-//            }
-//            String thisForce = Forces.getForceToDepth(getEntityAt(row), depth);
-//            for (int i = row - 1; i >= 0; i--) {
-//                String otherForce = Forces.getForceToDepth(getEntityAt(i), depth);
-//                if (otherForce == null || !otherForce.equals(thisForce)) {
-//                    return i + 1;
-//                }
-//            }
-//            return 0;
-//        }
-//        
-//        private int forceBottomRow(JTable table, int depth, int row) {
-//            if (row == table.getRowCount()) {
-//                return row;
-//            }
-//            String thisForce = Forces.getForceToDepth(getEntityAt(row), depth);
-//            for (int i = row + 1; i < table.getRowCount(); i++) {
-//                String otherForce = Forces.getForceToDepth(getEntityAt(i), depth);
-//                if (otherForce == null || !otherForce.equals(thisForce)) {
-//                    return i - 1;
-//                }
-//            }
-//            return table.getRowCount() - 1;
-//        }
-        
-        @Override
-        protected void paintComponent(Graphics g) {
-            // TODO Auto-generated method stub
-            g.drawImage(img, 0, 0, null);
-            super.paintComponent(g);
-        }
-        
-        
-        // game: private TreeMap<Integer, Force> forceIds = new TreeMap<>();
-        // baseforce
-        // Entity: int force = Force.NONE;
-        // Popup: Add to lance, create lance (no deeper forces), remove from lance, only same team
     }
     
     @Override

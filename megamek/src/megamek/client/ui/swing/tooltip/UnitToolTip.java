@@ -66,6 +66,7 @@ public final class UnitToolTip {
     //TODO: config dialog de-crap
     //TODO: Restrict Hidden deploy to units that can deploy hidden: VTOL: only on elev 0
     //TODO: is hidden exclusive with late deploy?
+    //TODO: Add searchlight to entitysprite name label
     // show doomed status in lobby
     // show doomed status explicit in tooltip #2322
     // better ECM source
@@ -83,7 +84,6 @@ public final class UnitToolTip {
     // Allow hiding unofficial and legacy options in Game options
     // No Altitude in space
     // No hidden in space
-    //TODO: Add searchlight to entitysprite name label
     // add searchlights automatically - add searchlights always, remove popup menu, add note in PlanetryC
     // make the randommapdialog scrolling more responsive
     // gui scale various dialogs: connect/host/planetary conditions/randommap/mapsize
@@ -115,7 +115,6 @@ public final class UnitToolTip {
     // blind drop unit display "Medium Support Vehcles Vehicle...correction, generall< more specific (Light Vehicle)
     // corrected conventional fighter weight classes, use the same as ASF (50t = medium)
     // Remove bot with loaded units breaks...
-    //TODO: Player removal with loaded units rbeaks the game
     // Table sorter not updated when it was prohibited and changed 
     // sorting use the UIManager char for ascending/descending nope. its an icon, not a character
     // do exclusive deploy zones need to be for players on a team? Depends on teams share vision
@@ -130,7 +129,6 @@ public final class UnitToolTip {
     // Disallow planetary conditions when in space
     // COnfigure all allowed for remote units
     // remake board assembly
-    //TODO: CLose the background image worker in lobby
     // adjust the map zooms in the list
     // board name in the preview improve
     // layout search bar
@@ -153,14 +151,18 @@ public final class UnitToolTip {
     // do not reload map list when going to space
     // switch between space ground selectedboards remains at 6, popup shows board 1...6, even though 1 board on screen
     // Use proper filechosers for map setup
+    // Player removal with loaded units rbeaks the game
+    // CLose the background image worker in lobby
     // playertable summary team see through real blind drop
     // Reduce Quirks display
     // C3 popup menu
     // Deploy hidden/hull/prone popup menu
-    //TODO: C3 cant connect to enemy, check when changing sides
-    //TODO: Remove C3 networks when switching teams (like loading)
-    //TODO: check C3 behaviour when deleting units
+    // C3 cant connect to enemy, check when changing sides
+    // Remove C3 networks when switching teams (like loading)
+    // check C3 behaviour when deleting units
     //TODO: do C3 load from MUL? Incorrectly!
+    //TODO: Make C3MM look right (Cyclops CP-11-C2)
+    //TODO: Correct C3 representation to be independent of id
     // allow multiunit C3 popup
     // show C3 network somehow
     // Popup: set deployment turn
@@ -172,17 +174,15 @@ public final class UnitToolTip {
     // Random Army window size
     // Team Overview in detached mode write smaller text, otherwise larger
     // Look at displaying ammo
-    //TODO: Make C3MM look right (Cyclops CP-11-C2) 
     // Remove C3 from weapon list
-    //TODO: Client Setttings NPW when changing armor visual
-    //TODO: Quirks: Remove "Weapon Quirk", only: SRM 6 - stable... in one line Crusader CRD-2R Enforcer 4R
+    // Client Setttings NPE when changing armor visual
+    // Quirks: Remove "Weapon Quirk", only: SRM 6 - stable... in one line Crusader CRD-2R Enforcer 4R
     // display 4xMed Laser only when there is at least one weapon at least twice, not all "1x" Vulcan VL-2T
     // display Hotload for ammo
-    //TODO: Ammo on Pocket Warships Arondight
+    //TODO: Ammo on Pocket Warships Arondight -> Bay Weapons, -> BayMunitionsChoicePanel
     // remove Swarm Attacks...
-    //TODO: Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
+    // Invalid Design: Foot Platoon (Flamer) with Sensor Engineers
     // Ammo: xx turns (200 rounds)
-    //TODO Mark units assault dropping
     // Attach force, 
     // Unify popup
     // allow multiselect
@@ -190,32 +190,52 @@ public final class UnitToolTip {
     // change owner
     // change opwner to server
     // Add force to server 
-    //TODO delete force
-    //TODO delete force to server
+    // delete force
     // DND
-    //TODO: remove forces when a player leaves during the lobby but not after
-    //TODO: other forcegens?
+    // remove forces when a player leaves during the lobby but not after
     // formatting
     //TODO: Popup MG burst fire doesnt work or isnt shown correctly in the tooltip
-    //TODO Force updates can only contain entities of one player and that player client must send them
-    //TODO Make sure game events fire upon force updates
+    // Make sure game events fire upon force updates
     // Make tooltip appear only over (i)
     //TODO (i) tooltip in mektable?
-    
-    //TODO SHow Griffin C >>#2<<? 
     // Hide enemy forces and units in real blind drop
     // Sort forceless before enemy forces
     // Allow deployment options for blind drop units? and multi-config? = deployment - show deployment?
     //            NO: you don't see the result - swap pilot shows other units! - dont care for names/callsign
-    //TODO: Team Overview: % Hidden (vielleicht: addiitional column und collapse ton/BV/cost to one col.)
+    // Team Overview: % Hidden (vielleicht: addiitional column und collapse ton/BV/cost to one col.)
     // Organizational Changes: Team Switch, Change Owner, C3, Load, Force->
-    //TODO: Deleting units too slow!
-    //TODO: WHen dnd units to force-less units = remove from force
+    // Deleting units too slow!
+    // WHen dnd units to force-less units = remove from force
     // Restore selection on mektable
     // Copy-paste units in mektable and mekforcetree
-    //TODO: When changeing owner of an empty force to an emeny, doesnt work
-    //TODO: Tooltip Empty Squadrons: just show Empty
-
+    // When changeing owner of an empty force to an emeny, doesnt work
+    // Tooltip Empty Squadrons: just show Empty
+    // Show Yellow Warning on DC Nova CEWS and empty Squadron
+    // Player with force leaving...
+    // Remove bot with C3 connections works
+    // Form C3 Lance with enemy units should give error
+    // re-sort -> only update the mek list
+    // Shorten names in compact mode
+    // Neoancient: facilitate. Dont check force changes server-side. 
+    //       +promote -teamchange -ownerchange +rename +attach +squadrons form/join
+    /*
+     >>No Server-side owner checks, all pure client-side
+     >>Server-side validity check for forces, reject invalid changes
+     >>Make additional commands when server-side handling is necessary
+      +Rename: single force, client side force update FORCE_UPDATE
+      +promote: multi, FORCE_PARENT command  
+      +attach: multi, FORCE_PARENT command, server side handling
+      +ownerchange force and units: rearrange -> FORCE_OWNER command, server side
+      +ownerchange force only: only teammate, no rearrange -> client side force update FORCE_UPDATE
+      +teamchange: ?? big problem -> server-side PLAYER_TEAMCHANGE
+      +moveup/movedown: single force, client side update FORCE_UPDATE
+      +add to force, 
+      +remove from force: ENTITY_FORCE_ATTACH
+     */
+    // Cannot move up/down teammember unit in own force
+    // Forming a new quadron with already loaded fighters leaves them in both squ.
+    // Loaded fighters joining a squadron doesnt work
+    //TODO Have Bot teammate, have connected forces?, close MM -> NPE in removeAllEntities in Server -> cant reproduce
     
     
     
@@ -265,6 +285,11 @@ public final class UnitToolTip {
             result.append(inGameValues(entity, localPlayer));
             result.append(PilotToolTip.getPilotTipShort(entity));
         }
+        
+        // An empty squadron should not show any info
+        if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
+            return result;
+        }
 
         // Static entity values like move capability
         result.append(guiScaledFontHTML());
@@ -295,12 +320,12 @@ public final class UnitToolTip {
             if (!quirksList.isEmpty()) {
                 result.append(quirksList);
             }
-            for (Mounted weapon : entity.getWeaponList()) {
+            for (Mounted weapon: entity.getWeaponList()) {
                 String wpQuirksList = getOptionList(weapon.getQuirks().getGroups(), 
                         grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), inLobby);
                 if (!wpQuirksList.isEmpty()) {
-                    // Line breaks not useful here
-                    result.append(wpQuirksList.replace("<BR>", "")).append("<BR>");
+                    // Line break after weapon name not useful here
+                    result.append(wpQuirksList.replace(":</I><BR>", ":</I>"));
                 }
             }
             result.append("</FONT>");
@@ -484,9 +509,6 @@ public final class UnitToolTip {
                 continue;
             }
             String weapDesc = curWp.getDesc();
-            if (weapDesc == null) {
-                int h = 22;
-            }
             // Distinguish equal weapons with and without rapid fire
             if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire()) {
                 weapDesc += RAPIDFIRE;
@@ -920,8 +942,14 @@ public final class UnitToolTip {
         // Non-critical (yellow) warnings
         result.append(guiScaledFontHTML(uiYellow())); 
         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                || ((entity.getC3Master() == null) && entity.hasC3S())) {
+                || ((entity.getC3Master() == null) && entity.hasC3S())
+                || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))) {
             result.append("<BR>Unconnected C3 Computer");
+        }
+        
+        // Non-critical (yellow) warnings
+        if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
+            result.append("<BR>This Fighter Squadron is empty");
         }
         result.append("</FONT>");
         return result;

@@ -143,7 +143,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private MekTableModel mekModel;
     
     /* Force Tree */
-    private MekTreeForceModel mekTreeForceModel;
+    private MekTreeForceModel mekForceTreeModel;
     JTree mekForceTree;
     private MekForceTreeMouseAdapter mekForceTreeMouseListener = new MekForceTreeMouseAdapter();
 
@@ -230,7 +230,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private MapListMouseAdapter mapListMouseListener = new MapListMouseAdapter(); 
     
-    LobbyActions lobbyActions; 
+    LobbyActions lobbyActions = new LobbyActions(this); 
     
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -254,7 +254,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshLabels();
         adaptToGUIScale();
         setupListeners();
-        lobbyActions = new LobbyActions(this);
     }
     
     /** Sets up all the listeners that the lobby works with. */
@@ -350,7 +349,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (e.getSource() == fldSpaceBoardHeight) {
                 setManualBoardHeight();
             } 
-        };
+        }
     }; 
     
     /** Shows the camo chooser and sets the selected camo. */
@@ -432,7 +431,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadList.setEnabled(true);
     };
 
-    /** Sets up the Mek Table. */
+    /** Sets up the Mek Table and Mek Tree. */
     private void setupEntities() {
         mekModel = new MekTableModel(clientgui, this);
         mekTable = new MekTable(mekModel);
@@ -441,19 +440,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mekTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < MekTableModel.N_COL; i++) {
             TableColumn column = mekTable.getColumnModel().getColumn(i);
-            if (i == MekTableModel.COL_FORCE) {
-                column.setCellRenderer(mekModel.getForceRenderer());
-            } else {
-                column.setCellRenderer(mekModel.getRenderer());
-            }
+            column.setCellRenderer(mekModel.getRenderer());
             setColumnWidth(column);
         }
 
-        mekTreeForceModel = new MekTreeForceModel(this);
-        mekForceTree = new JTree(mekTreeForceModel);
+        mekForceTreeModel = new MekTreeForceModel(this);
+        mekForceTree = new JTree(mekForceTreeModel);
         mekForceTree.setRootVisible(false);
         mekForceTree.setDragEnabled(true);
-        mekForceTree.setTransferHandler(new MekForceTreeTransferHandler(this, mekTreeForceModel));
+        mekForceTree.setTransferHandler(new MekForceTreeTransferHandler(this, mekForceTreeModel));
         mekForceTree.setCellRenderer(new MekTreeForceRenderer(this));
         mekForceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         mekForceTree.setExpandsSelectedPaths(true);
@@ -1112,7 +1107,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     public void refreshEntities() {
         refreshTree();
-        
+        refreshMekTable();
+    }
+    
+    private void refreshMekTable() {
         List<Integer> enIds = getSelectedEntities().stream().map(e -> e.getId()).collect(toList());
         mekModel.clearData();
         ArrayList<Entity> allEntities = new ArrayList<Entity>(clientgui.getClient().getEntitiesVector());
@@ -1182,7 +1180,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void toggleCompact() {
         setTableRowHeights();
         mekModel.refreshCells();
-        mekTreeForceModel.nodeChanged((TreeNode)mekTreeForceModel.getRoot());
+        mekForceTreeModel.nodeChanged((TreeNode)mekForceTreeModel.getRoot());
         
     }
 
@@ -1387,7 +1385,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     void sendUpdates(Collection<Entity> entities) {
         List<IPlayer> owners = entities.stream().map(e -> e.getOwner()).distinct().collect(toList());
         for (IPlayer owner: owners) {
-            System.out.println(owner);
             client().sendUpdateEntity(new ArrayList<Entity>(
                     entities.stream().filter(e -> e.getOwner().equals(owner)).collect(toList())));
         }
@@ -1900,7 +1897,36 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File("docs/Boards Stuff/MapAssemblyHelp.html");
-//                new MMReadMeHelpDialog(clientgui.frame, helpfile).setVisible(true);
+                final JDialog dialog = new ClientDialog(clientgui.frame, "Map Assembly Help", true, true);
+                final int height = 600;
+                final int width = 600;
+                
+                final JEditorPane pane = new JEditorPane();
+                pane.setName("helpPane");
+                pane.setEditable(false);
+                pane.setFont(new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+                try {
+                    pane.setPage(helpfile.toURI().toURL());
+                    JScrollPane tScroll = new JScrollPane(pane,
+                            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                    tScroll.getVerticalScrollBar().setUnitIncrement(16);
+                    dialog.add(tScroll, BorderLayout.CENTER);
+                } catch (Exception e) {
+                    dialog.setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
+                    pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
+                    MegaMek.getLogger().error(e);
+                }
+
+                JButton button = new DialogButton(Messages.getString("Okay"));
+                button.addActionListener(e -> dialog.setVisible(false));
+                JPanel okayPanel = new JPanel(new FlowLayout());
+                okayPanel.add(button);
+                dialog.add(okayPanel, BorderLayout.PAGE_END);
+
+                Dimension sz = new Dimension(scaleForGUI(width), scaleForGUI(height));
+                dialog.setPreferredSize(sz);
+                dialog.setVisible(true);
                 
             } else if (ev.getSource() == butListView) {
                 scrMekTable.setViewportView(mekTable);
@@ -2004,14 +2030,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private void removeBot() {
         Client c = getSelectedClient();
-        if ((c == null) || c.equals(clientgui.getClient())) {
-            clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-                    Messages.getString("ChatLounge.SelectBo"));
+        if (!client().bots.containsValue(c)) {
+//        if ((c == null) || c.equals(clientgui.getClient())) {
+//            clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
+//                    Messages.getString("ChatLounge.SelectBo"));
+            LobbyErrors.showOnlyOwnBot(clientgui.frame);
             return;
         }
         // Delete units first, which safely disembarks and offloads them
         // Don't delete the bot's forces, as that could also delete other players' entitites
-        lobbyActions.delete(new ArrayList<>(), game().getPlayerEntities(c.getLocalPlayer(), false), false);
+//        lobbyActions.delete(new ArrayList<>(), game().getPlayerEntities(c.getLocalPlayer(), false), false);
         c.die();
         clientgui.getBots().remove(c.getName());
     }
@@ -2626,11 +2654,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (code == KeyEvent.VK_V && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
                 importClipboard(); 
+                
             } else if (code == KeyEvent.VK_P) {
                 e.consume();
-                refreshEntities();
                 System.out.println(game().getEntitiesVector().size() + " Units");
                 game().getEntitiesVector().stream().forEach(System.out::println);
+                
+            } else if (code == KeyEvent.VK_F) {
+                e.consume();
+                System.out.println("Forces: ---");
+                System.out.println(game().getForces());
             }
         }
     };
@@ -2740,57 +2773,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void keyPressed(KeyEvent e) {
-            List<Entity> entities = getTreeSelectedEntities();
+            List<Entity> selEntities = getTreeSelectedEntities();
             List<Force> selForces = getTreeSelectedForces();
-            boolean onlyOneEntity = (entities.size() == 1) && selForces.isEmpty();
-            boolean onlyOneForce = (selForces.size() == 1) && entities.isEmpty();
-            Entity entity = onlyOneEntity ? entities.get(0) : null;
-            Force force = onlyOneForce ? selForces.get(0) : null;
+            boolean onlyOneEntity = (selEntities.size() == 1) && selForces.isEmpty();
             int code = e.getKeyCode();
             
             if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mechReadoutAction(entities);
+                mechReadoutAction(selEntities);
                 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
-                lobbyActions.customizeMech(entities.get(0));
+                lobbyActions.customizeMech(selEntities.get(0));
                 
-            } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK 
-                    && onlyOneEntity && isEditable(entity) && entity.getForceId() != Force.NO_FORCE) {
+            } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
-                List<Force> changedForce = game().getForces().moveUp(entity);
-                if (!changedForce.isEmpty()) {
-                    client().sendUpdateForce(changedForce);
-                }
+                lobbyActions.forceMove(selForces, selEntities, true);
                 
-            } else if (code == KeyEvent.VK_DOWN && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK 
-                    && onlyOneEntity && isEditable(entity) && entity.getForceId() != Force.NO_FORCE) {
+            } else if (code == KeyEvent.VK_DOWN && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
-                List<Force> changedForce = game().getForces().moveDown(entity);
-                if (!changedForce.isEmpty()) {
-                    client().sendUpdateForce(changedForce);
-                }
-                
-            } else if (code == KeyEvent.VK_UP && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK 
-                    && onlyOneForce && lobbyActions.isEditable(force) && !force.isTopLevel()) {
-                e.consume();
-                List<Force> changedForce = game().getForces().moveUp(force);
-                if (!changedForce.isEmpty()) {
-                    client().sendUpdateForce(changedForce);
-                }
-                
-            } else if (code == KeyEvent.VK_DOWN && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK 
-                    && onlyOneForce && lobbyActions.isEditable(force) && !force.isTopLevel()) {
-                e.consume();
-                List<Force> changedForce = game().getForces().moveDown(force);
-                if (!changedForce.isEmpty()) {
-                    client().sendUpdateForce(changedForce);
-                }
+                lobbyActions.forceMove(selForces, selEntities, false);
                 
             } else if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                lobbyActions.delete(selForces, entities, true);
+                lobbyActions.delete(selForces, selEntities, true);
                 
             } else if (code == KeyEvent.VK_RIGHT && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
@@ -2802,7 +2808,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             } else if (code == KeyEvent.VK_C && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
-                StringSelection stringSelection = new StringSelection(clipboardString(entities));
+                StringSelection stringSelection = new StringSelection(clipboardString(selEntities));
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(stringSelection, null);
                 
@@ -2810,14 +2816,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 e.consume();
                 importClipboard();
                 
+            } else if (code == KeyEvent.VK_P) {
+                e.consume();
+                System.out.println(game().getEntitiesVector().size() + " Units");
+                game().getEntitiesVector().stream().forEach(System.out::println);
+                
             } else if (code == KeyEvent.VK_F) {
                 e.consume();
                 System.out.println("Forces: ---");
                 System.out.println(game().getForces());
-                
-            } else if (code == KeyEvent.VK_P) {
-                e.consume();
-                refreshEntities();
             }
         }
     };
@@ -2954,63 +2961,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    
-    
-    /**
-     * Changes the owner of a force to a different player, making it top-level in the process. 
-     */
-//    void assignForce(int forceId, int newOwnerId) {
-//        Forces forces = game().getForces();
-//        if (!forces.contains(forceId) || !lobbyActions.isEditable(forceId) || (game().getPlayer(newOwnerId) == null)) {
-//            return;
-//        }
-//        Force force = forces.getForce(forceId);
-//        IPlayer oldOwner = game().getPlayer(forces.getOwnerId(force));
-//        IPlayer newOwner = game().getPlayer(newOwnerId);
-//        // If the force changes team, all units in it must change owner, too
-//        if (newOwner.isEnemyOf(oldOwner)) {
-//            List<Entity> entities = forces.getFullEntities(force);
-//            int count = entities.size();
-//            if (count > 0) {
-//                String question = "Change the owner of ";
-//                question += (count == 1) ? "one unit?" : count + " units to " + newOwner.getName() + "?";
-//                if (Response.YES == MMConfirmDialog.confirm(clientgui.getFrame(), "Assign Force...", question)) {
-//                    Set<Entity> updateCandidates = new HashSet<>();
-//                    
-//                    // For any units that are switching teams, offload units from them
-//                    // and have them disembark if carried
-//                    for (Entity entity: editableEntities(entities)) {
-//                        if (entity.getOwner().isEnemyOf(newOwner)) {
-//                            offloadFrom(entity, updateCandidates);
-//                            disembark(entity, updateCandidates);
-//                        }
-//                    }
-//
-//                    // Update any changed entities except for the entities changing owner (treated below)
-//                    updateCandidates.removeAll(entities);
-//                    sendUpdate(updateCandidates);
-//                    
-//                    // The entities themselves must be updated from the correct client
-//                    // to make the update work when changing owner
-//                    for (Entity entity: editableEntities(entities)) {
-//                        Client formerClient = getLocalClient(entity);
-////                        entity.setOwner(new_owner);
-//                        formerClient.sendUpdateEntity(entity);
-//                    } 
-//                }
-//            }
-//        }
-//        List<Force> changedForces = forces.assignForce(force, newOwner);
-//        client().sendUpdateForce(changedForces);
-//    }
-    
-    
-    
-    
-    
     /** Refreshes the Mek Tree, restoring expansion state and selection. */
     private void refreshTree() {
-        long time = System.currentTimeMillis();
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!mekForceTree.isSelectionEmpty()) {
@@ -3039,7 +2991,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         mekForceTree.setUI(null);
         try {
-            mekTreeForceModel.refreshData();
+            mekForceTreeModel.refreshData();
         } finally {
             mekForceTree.updateUI();
         }
@@ -3054,7 +3006,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         for (Object sel: selections) {
             mekForceTree.addSelectionPath(getPath(sel));
         }
-        System.out.println("tree update: " + (System.currentTimeMillis()-time));
 
     }
     
@@ -3076,7 +3027,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             List<Force> chain = forces.forceChain(forces.getForce(forceId));
             Object[] pathObjs = new Object[chain.size() + 1];
             int index = 0;
-            pathObjs[index++] = mekTreeForceModel.getRoot();
+            pathObjs[index++] = mekForceTreeModel.getRoot();
             for (Force force: chain) {
                 pathObjs[index++] = force;
             }
@@ -3089,7 +3040,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             List<Force> chain = forces.forceChain(game().getEntity(entityId));
             Object[] pathObjs = new Object[chain.size() + 2];
             int index = 0;
-            pathObjs[index++] = mekTreeForceModel.getRoot();
+            pathObjs[index++] = mekForceTreeModel.getRoot();
             for (Force force: chain) {
                 pathObjs[index++] = force;
             }
@@ -3457,7 +3408,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Select the next allowed sorter and refresh the display if the sorter was changed
         nextSorter(sorters);
         if (activeSorter != previousSorter) {
-            refreshEntities();
+            refreshMekTable();
             updateTableHeaders();
         }
     }

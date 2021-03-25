@@ -14,17 +14,8 @@
 package megamek.client.ui.swing.lobby;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.Map.Entry;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -47,26 +38,16 @@ import megamek.common.util.CollectionUtil;
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 import static java.util.stream.Collectors.*;
 
-/** This class contains the methods that act on entity changes from the pop-up menu and elsewhere. */
+/** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
 
     private final ChatLounge lobby;
-    private final IGame game;
-    private final Client client;
-    private final JFrame frame;
-    private final IPlayer localPlayer;
-    private final ClientGUI clientGui;
 
     private String cmdSelectedTab = null;   // TODO: required?
 
-    /** This class contains the methods that act on entity changes from the pop-up menu and elsewhere. */
+    /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
     LobbyActions(ChatLounge cl) {
         lobby = cl;
-        game = lobby.game();
-        client = lobby.client();
-        clientGui = lobby.getClientgui();
-        frame = lobby.getClientgui().getFrame();
-        localPlayer = client.getLocalPlayer();
     }
 
     /** Sets a deployment round for the given entities. Sends an update to the server. */ 
@@ -90,7 +71,7 @@ public class LobbyActions {
             return;
         }
         if (entities.stream().anyMatch(e -> !e.tracksHeat())) {
-            LobbyErrors.showHeatTracking(frame);
+            LobbyErrors.showHeatTracking(frame());
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
@@ -124,7 +105,7 @@ public class LobbyActions {
             return;
         }
         if (entities.stream().anyMatch(e -> e.getUnitType() != UnitType.MEK)) {
-            LobbyErrors.showOnlyMeks(frame);
+            LobbyErrors.showOnlyMeks(frame());
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
@@ -147,8 +128,8 @@ public class LobbyActions {
      * Does NOT work for newParentId == NO_FORCE. Use promoteForce to do this.
      * Does not allow attaching a force to one of its own subforces.
      */
-    void attachForce(int forceId, int newParentId) {
-        Forces forces = game.getForces();
+    void forceAttach(int forceId, int newParentId) {
+        Forces forces = game().getForces();
         if (!forces.contains(forceId) || !forces.contains(newParentId)
                 || (forceId == newParentId)) {
             return;
@@ -161,58 +142,91 @@ public class LobbyActions {
         IPlayer newParentOwner = forces.getOwner(newParent);
             
         if (owner.isEnemyOf(newParentOwner)) {
-            LobbyErrors.showForceOnlyTeam(frame);;
+            LobbyErrors.showOnlyTeam(frame());;
             return;
         }
         if (subForces.contains(newParent)) {
-            LobbyErrors.showForceNoAttachSubForce(frame);
+            LobbyErrors.showForceNoAttachSubForce(frame());
             return;
         }
         if (!isEditable(force)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
-
-        List<Force> changedForces = forces.attachForce(force, newParent);
-        if (!changedForces.isEmpty()) {
-            correctSender(force).sendUpdateForce(changedForces);
-        }
+        var forceList = new ArrayList<Force>(List.of(force));
+        client().sendForceParent(forceList, newParentId);
     }
     
 
     /**
-     * Makes a force top-level, detaching it from any former parent. 
+     * Makes the given forces top-level, detaching them from any former parents. 
      */
-    void promoteForce(Collection<Integer> forceIds) {
-        Forces forces = game.getForces();
+    void forcePromote(Collection<Integer> forceIds) {
+        var forces = game().getForces();
         if (forceIds.stream().anyMatch(id -> !forces.contains(id))) {
             return;
         }
-        Set<Force> promForces = forceIds.stream().map(id -> forces.getForce(id)).collect(toSet());
-        if (!areForcesEditable(promForces)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+        Set<Force> forceList = forceIds.stream().map(id -> forces.getForce(id)).collect(toSet());
+        if (!areForcesEditable(forceList)) {
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
-        Collection<Force> changedForces = new HashSet<Force>();
-        promForces.stream().map(f -> forces.promoteForce(f)).forEach(changedForces::addAll);
-        sendUpdates(new ArrayList<>(), changedForces);
+        client().sendForceParent(forceList, Force.NO_FORCE);
     }
 
     /** Shows the dialog which allows adding pre-existing damage to units. */
     void configureDamage(Collection<Entity> entities) {
         if (entities.size() != 1) {
-            LobbyErrors.showSingleUnit(frame, "assign damage");
+            LobbyErrors.showSingleUnit(frame(), "assign damage");
             return;
         }
         if (!validateUpdate(entities)) {
             return;
         }
         Entity entity = CollectionUtil.randomElement(entities);
-        UnitEditorDialog med = new UnitEditorDialog(frame, entity);
+        UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
         med.setVisible(true);
         sendUpdates(entities);
     }
+    
+    /** 
+     * Moves a force or entity within another force by one position. If up is true,
+     * moves upward, otherwise downward. 
+     */
+    void forceMove(Collection<Force> forceList, Collection<Entity> entityList, boolean up) {
+        // May only move a single force or a single entity
+        if (forceList.size() + entityList.size() != 1) {
+            LobbyErrors.showOnlySingleEntityOrForce(frame());
+            return;
+        }
+        if (!entityList.isEmpty() && !validateUpdate(entityList)) {
+            return;
+        }
+        if (!forceList.isEmpty() && !areForcesEditable(forceList)) {
+            LobbyErrors.showCannotConfigEnemies(frame());
+            return;
+        }
+        var forces = game().getForces();
+        var changedForce = new HashSet<Force>(); 
+        if (up) {
+            if (!forceList.isEmpty()) {
+                changedForce.addAll(forces.moveUp(CollectionUtil.randomElement(forceList)));
+            } else if (!entityList.isEmpty()) {
+                changedForce.addAll(forces.moveUp(CollectionUtil.randomElement(entityList)));
+            }
+        } else {
+            if (!forceList.isEmpty()) {
+                changedForce.addAll(forces.moveDown(CollectionUtil.randomElement(forceList)));
+            } else if (!entityList.isEmpty()) {
+                changedForce.addAll(forces.moveDown(CollectionUtil.randomElement(entityList)));
+            }
+        }
 
+        if (!changedForce.isEmpty()) {
+            client().sendUpdateForce(changedForce);
+        }
+    }
+    
     /** 
      * Displays a CamoChooser to choose an individual camo for the given entities. 
      * The camo will only be applied to units configurable by the local player, 
@@ -226,7 +240,7 @@ public class LobbyActions {
         // Display the CamoChooser and await the result
         // The dialog is preset to a random entity's settings
         Entity entity = CollectionUtil.randomElement(entities);
-        CamoChooserDialog ccd = new CamoChooserDialog(frame,
+        CamoChooserDialog ccd = new CamoChooserDialog(frame(),
                 entity.getOwner().getCamouflage(), entity.getCamouflage());
         if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
             return;
@@ -256,23 +270,23 @@ public class LobbyActions {
             return;
         }
         if (!haveSingleOwner(entities)) {
-            LobbyErrors.showSingleOwnerRequired(frame);
+            LobbyErrors.showSingleOwnerRequired(frame());
             return;
         }
         Entity randomSelected = CollectionUtil.randomElement(entities);
         String ownerName = randomSelected.getOwner().getName();
         int ownerId = randomSelected.getOwner().getId();
 
-        boolean editable = clientGui.getBots().get(ownerName) != null;
+        boolean editable = client().bots.get(ownerName) != null;
         Client client;
         if (editable) {
-            client = clientGui.getBots().get(ownerName);
+            client = client().bots.get(ownerName);
         } else {
-            editable |= ownerId == localPlayer.getId();
-            client = clientGui.getClient();
+            editable |= ownerId == localPlayer().getId();
+            client = client();
         }
 
-        CustomMechDialog cmd = new CustomMechDialog(clientGui, client, new ArrayList<>(entities), editable);
+        CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), client, new ArrayList<>(entities), editable);
         cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                 GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); 
@@ -288,17 +302,17 @@ public class LobbyActions {
                     for (Entity loadee : entity.getLoadedUnits()) {
                         entity.unload(loadee);
                         loadee.setTransportId(Entity.NONE);
-                        client.sendUpdateEntity(loadee);
+                        client().sendUpdateEntity(loadee);
                     }
                 }
 
-                client.sendUpdateEntity(entity);
+                client().sendUpdateEntity(entity);
 
                 // Changing state to a transporting unit can update state of
                 // transported units, so update those as well
                 for (Transporter transport : entity.getTransports()) {
                     for (Entity loaded : transport.getLoadedUnits()) {
-                        client.sendUpdateEntity(loaded);
+                        client().sendUpdateEntity(loaded);
                     }
                 }
 
@@ -322,13 +336,13 @@ public class LobbyActions {
         if (!validateUpdate(Arrays.asList(entity))) {
             return;
         }
-        boolean editable = clientGui.getBots().get(entity.getOwner().getName()) != null;
+        boolean editable = client().bots.get(entity.getOwner().getName()) != null;
         Client c;
         if (editable) {
-            c = clientGui.getBots().get(entity.getOwner().getName());
+            c = client().bots.get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == localPlayer.getId();
-            c = clientGui.getClient();
+            editable |= entity.getOwnerId() == localPlayer().getId();
+            c = client();
         }
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
@@ -347,7 +361,7 @@ public class LobbyActions {
             // display dialog
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
-            CustomMechDialog cmd = new CustomMechDialog(clientGui, c, entities, editable);
+            CustomMechDialog cmd = new CustomMechDialog(lobby.getClientgui(), c, entities, editable);
             cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
                     GUIPreferences.getInstance().getCustomUnitHeight()));
             cmd.refreshOptions();
@@ -509,7 +523,7 @@ public class LobbyActions {
     public void load(Collection<Entity> selEntities, String info) {
         StringTokenizer stLoad = new StringTokenizer(info, ":");
         int loaderId = Integer.parseInt(stLoad.nextToken());
-        Entity loader = game.getEntity(loaderId);
+        Entity loader = game().getEntity(loaderId);
         int bayNumber = Integer.parseInt(stLoad.nextToken());
         // Remove those entities from the candidates that are already carried by that loader
         Collection<Entity> entities = new HashSet<>(selEntities);
@@ -524,12 +538,12 @@ public class LobbyActions {
         // as a single server update and updates for one unit shouldn't be chained.
         Set<Entity> carriers = entities.stream()
                 .filter(e -> e.getTransportId() != Entity.NONE)
-                .map(e -> game.getEntity(e.getTransportId())).collect(toSet());
+                .map(e -> game().getEntity(e.getTransportId())).collect(toSet());
         if (!Collections.disjoint(entities, carriers)) {
-            LobbyErrors.showNoDualLoad(frame);
+            LobbyErrors.showNoDualLoad(frame());
             return;
         }
-
+        
         boolean loadRear = false;
         if (stLoad.hasMoreTokens()) {
             loadRear = Boolean.parseBoolean(stLoad.nextToken());
@@ -537,14 +551,14 @@ public class LobbyActions {
 
         StringBuilder errorMsg = new StringBuilder();
         if (!LobbyUtility.validateLobbyLoad(entities, loader, bayNumber, loadRear, errorMsg)) {
-            JOptionPane.showMessageDialog(frame, errorMsg.toString(), 
+            JOptionPane.showMessageDialog(frame(), errorMsg.toString(), 
                     Messages.getString("LoadingBay.error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        for (Entity e : entities) {
+        for (Entity e: entities) {
             if (e.getTransportId() != Entity.NONE) {
-                Entity formerLoader = game.getEntity(e.getTransportId());
+                Entity formerLoader = game().getEntity(e.getTransportId());
                 Set<Entity> updateCandidates = new HashSet<>();
                 lobby.disembark(e, updateCandidates);
                 if (!updateCandidates.isEmpty()) {
@@ -556,32 +570,31 @@ public class LobbyActions {
     }
     
     /** Asks for a new name for the provided forceId and applies it. */
-    void renameForce(int forceId) {
-        Forces forces = game.getForces();
+    void forceRename(int forceId) {
+        Forces forces = game().getForces();
         if (!forces.contains(forceId)) {
             return;
         }
         Force force = forces.getForce(forceId); 
         if (!isEditable(force)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
         // Ask for a name
-        String name = JOptionPane.showInputDialog(frame, "Choose a force designation");
+        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
         forces.renameForce(name, forceId);
-        List<Force> forceList = new ArrayList<Force>();
-        forceList.add(force);
-        correctSender(force).sendUpdateForce(forceList);
+        var forceList = new ArrayList<Force>(List.of(force)); // must be mutable
+        client().sendUpdateForce(forceList);
     }
     
     /**
      * Deletes the given forces and entities. Asks for confirmation if confirm is true. 
      */
     void delete(Collection<Force> foDelete, Collection<Entity> enDelete, boolean confirm) {
-        Forces forces = game.getForces();
+        Forces forces = game().getForces();
         // Remove redundant forces = subforces of other forces in the list 
         Set<Force> allSubForces = new HashSet<>();
         foDelete.stream().forEach(f -> allSubForces.addAll(forces.getFullSubForces(f)));
@@ -597,7 +610,7 @@ public class LobbyActions {
             return;
         }
         if (!areForcesEditable(finalFoDelete)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
 
@@ -613,7 +626,7 @@ public class LobbyActions {
                 question += (enCount == 1 ? "one unit" : enCount + " units");
             }
             question += "?";
-            if (Response.NO == MMConfirmDialog.confirm(frame, "Delete Units...", question)) {
+            if (Response.NO == MMConfirmDialog.confirm(frame(), "Delete Units...", question)) {
                 return;
             }
         }
@@ -645,12 +658,11 @@ public class LobbyActions {
      * Entities must have a single owner and be editable (local units or local bot's units)
      * (Having multiple owners makes sending updates correctly for one's own bots difficult) 
      */
-    void removeFromForce(Collection<Entity> entities) {
+    void forceRemoveEntity(Collection<Entity> entities) {
         if (!validateUpdate(entities)) {
             return;
         }
-        Set<Force> changedForces = game.getForces().removeEntityFromForces(entities);
-        sendUpdates(entities, changedForces);
+        client().sendAddEntitiesToForce(entities, Force.NO_FORCE);
     }
     
     /**
@@ -658,12 +670,12 @@ public class LobbyActions {
      * and another entity of the given id
      */
     void swapPilots(Collection<Entity> entities, int targetId) {
-        Entity target = game.getEntity(targetId);
+        Entity target = game().getEntity(targetId);
         if (target == null) {
             return;
         }
         if (entities.size() != 1) {
-            LobbyErrors.showSingleUnit(frame, "swap pilots");
+            LobbyErrors.showSingleUnit(frame(), "swap pilots");
             return;
         }
         Entity selected = CollectionUtil.randomElement(entities);
@@ -706,7 +718,7 @@ public class LobbyActions {
             }
         }
         // Also disconnect all units connected *to* that entity
-        for (Entity entity: game.getEntitiesVector()) {
+        for (Entity entity: game().getEntitiesVector()) {
             if (entities.contains(entity.getC3Master())) {
                 entity.setC3Master(null, true);
                 updateCandidates.add(entity);
@@ -721,7 +733,7 @@ public class LobbyActions {
             return;
         }
         if (!entities.stream().allMatch(e -> e.hasC3M())) {
-            LobbyErrors.showOnlyC3M(frame);
+            LobbyErrors.showOnlyC3M(frame());
             return;
         }
         entities.stream().forEach(e -> e.setC3Master(e.getId(), true));
@@ -734,7 +746,7 @@ public class LobbyActions {
             return;
         }
         if (!entities.stream().allMatch(e -> e.hasC3M())) {
-            LobbyErrors.showOnlyC3M(frame);
+            LobbyErrors.showOnlyC3M(frame());
             return;
         }
         entities.stream().forEach(e -> e.setC3Master(-1, true));
@@ -749,9 +761,13 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        Entity master = game.getEntity(masterID);
+        if (!areAllied(entities)) {
+            LobbyErrors.showOnlyTeam(frame());
+            return;
+        }
+        Entity master = game().getEntity(masterID);
         if (!master.hasNhC3() || !entities.stream().allMatch(e -> sameNhC3System(master, e))) {
-            LobbyErrors.showSameC3(frame);
+            LobbyErrors.showSameC3(frame());
             return;
         }
         if (disconnectFirst) {
@@ -760,7 +776,7 @@ public class LobbyActions {
         int freeNodes = master.calculateFreeC3Nodes();
         freeNodes += entities.contains(master) ? 1 : 0;
         if (entities.size() > freeNodes) {
-            LobbyErrors.showExceedC3Capacity(frame);
+            LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
         entities.stream().forEach(e -> e.setC3NetId(master));
@@ -772,16 +788,21 @@ public class LobbyActions {
      * identified by masterID.
      */
     void c3Connect(Collection<Entity> entities, int masterID, boolean disconnectFirst) {
-        Entity master = game.getEntity(masterID);
+        Entity master = game().getEntity(masterID);
         // To make it possible to mark a C3S/C3S/C3S/C3M lance and connect it:
         entities.remove(master);
         if (!validateUpdate(entities)) {
             return;
         }
+        if (!areAllied(entities)) {
+            LobbyErrors.showOnlyTeam(frame());
+            return;
+        }
         boolean connectMS = master.isC3IndependentMaster()  && entities.stream().allMatch(e -> e.hasC3S());
         boolean connectMM = master.isC3CompanyCommander() && entities.stream().allMatch(e -> e.hasC3M());
-        if (!connectMM && !connectMS) {
-            LobbyErrors.showSameC3(frame);
+        boolean connectSMM = master.hasC3MM() && entities.stream().allMatch(e -> e.hasC3S() || e.hasC3M());
+        if (!connectMM && !connectMS && !connectSMM) {
+            LobbyErrors.showSameC3(frame());
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>(entities);
@@ -789,75 +810,31 @@ public class LobbyActions {
             updateCandidates.addAll(performDisconnect(entities));
             updateCandidates.addAll(performDisconnect(Arrays.asList(master)));
         }
-        int newC3nodeCount = entities.stream().mapToInt(e -> game.getC3SubNetworkMembers(e).size()).sum();
-        int masC3nodeCount = game.getC3NetworkMembers(master).size();
+        int newC3nodeCount = entities.stream().mapToInt(e -> game().getC3SubNetworkMembers(e).size()).sum();
+        int masC3nodeCount = game().getC3NetworkMembers(master).size();
         if (newC3nodeCount + masC3nodeCount > Entity.MAX_C3_NODES || entities.size() > master.calculateFreeC3Nodes()) {
-            LobbyErrors.showExceedC3Capacity(frame);
+            LobbyErrors.showExceedC3Capacity(frame());
             return;
         }
         entities.stream().forEach(e -> e.setC3Master(master, true));
         sendUpdates(updateCandidates);
     }
     
-    /** Change the given entities' controller to the player with ID newOwnerId. */
-    void changeOwner(Collection<Entity> entities, Collection<Force> assignedForces, int newOwnerId) {
-        if (entities.isEmpty()) {
+    /** 
+     * Change the given entities' controller to the player with ID newOwnerId.
+     * If the given forceList is not empty, an error message will be shown.
+     */
+    void changeOwner(Collection<Entity> entities, Collection<Force> forceList, int newOwnerId) {
+        if (entities.isEmpty() || game().getPlayer(newOwnerId) == null) {
             return;
-        } else if (!assignedForces.isEmpty()) {
-            LobbyErrors.showOnlyEntityOrForce(frame);
+        } else if (!forceList.isEmpty()) {
+            LobbyErrors.showOnlyEntityOrForce(frame());
             return;
         }
         if (!validateUpdate(entities)) {
             return;
         }
-        IPlayer newOwner = game.getPlayer(newOwnerId);
-        if (newOwner == null) {
-            MegaMek.getLogger().warning("Tried to change entity owner to a non-existent player!");
-            return;
-        }
-        
-        Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(entities);
-        List<Entity> switchTeam = entities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
-        
-        // For any units that are switching teams, offload units from them
-        // and have them disembark if carried if the other unit doesn't also switch
-        //TODO Don't unload units that transfer together. 
-        for (Entity entity: switchTeam) {
-            lobby.offloadFrom(entity, updateCandidates);
-            lobby.disembark(entity, updateCandidates);
-        }
-        
-        // Units that are switching teams cannot stay part of their current forces and C3 networks
-        Set<Force> changedForces = game.getForces().removeEntityFromForces(switchTeam);
-        updateCandidates.addAll(performDisconnect(switchTeam)); 
-
-        // Assemble for sending into as few groups as possible
-        // The standard sendUpdates cannot be used here because when changing owner
-        // special care must be taken to send the update from the correct (former!) client.
-        Set<Client> senders = new HashSet<>();
-        senders.addAll(updateCandidates.stream().map(this::correctSender).distinct().collect(toList()));
-        senders.addAll(changedForces.stream().map(this::correctSender).distinct().collect(toList()));
-        
-        for (Client sender: senders) {
-            if (sender == null) {
-                continue;
-            }
-            List<Entity> enList = updateCandidates.stream().filter(e -> correctSender(e).equals(sender)).collect(toList());
-            List<Force> foList = changedForces.stream().filter(f -> correctSender(f).equals(sender)).collect(toList());
-            
-            // Entities must change owner this late so that the right sending client can still be found
-            for (Entity entity: enList) {
-                if (entities.contains(entity)) {
-                    entity.setOwner(newOwner);
-                }
-            }
-            if (foList.isEmpty()) {
-                sender.sendUpdateEntity(enList);   
-            } else {
-                sender.sendUpdateForce(foList, enList);
-            }
-        }
+        client().sendChangeOwner(entities, newOwnerId);
     }
     
     /** Change the team of a controlled player (the local player or one of his bots). */
@@ -870,69 +847,62 @@ public class LobbyActions {
             return;
         }
         
+        client().sendChangeTeam(c.getLocalPlayer(), team);
+        
         // Since different teams are always enemies, changing the team forces 
         // the units of this player to offload and disembark from 
         // all units of other players
-        Set<Entity> updateCandidates = new HashSet<>();
-        for (Entity entity: c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
-            lobby.offloadFromDifferentOwner(entity, updateCandidates);
-            lobby.disembarkDifferentOwner(entity, updateCandidates);
-        }
-        
-        // Units and forces cannot stay part of a former teammate's forces and vice versa
-        Forces forces = game.getForces();
-        int localId = c.getLocalPlayerNumber();
-        Set<Entity> leaveForce = new HashSet<>();
-        for (Entity entity: game.getEntitiesVector()) {
-            if (!entity.partOfForce()) {
-                continue;
-            }
-            Force force = forces.getForce(entity);
-            // Must leave force if one of Entity or Force belongs to the changing player but the other doesn't
-            if ((entity.getOwnerId() == localId) != (force.getOwnerId() == localId)) {
-                leaveForce.add(entity);
-            }
-        }
-        updateCandidates.addAll(leaveForce);
-        Set<Force> changedForces = game.getForces().removeEntityFromForces(leaveForce);
-        for (Force force: forces.getAllForces()) {
-            if ((force.getParentId() != Force.NO_FORCE) && ((force.getOwnerId() == localId) != (forces.getForce(force.getParentId()).getOwnerId() == localId))) {
-                changedForces.addAll(forces.promoteForce(force));
-            }
-        }
-        
-        // Units must leave their C3 networks
-        updateCandidates.addAll(performDisconnect(game.getPlayerEntities(c.getLocalPlayer(), false)));
-
-        sendUpdates(updateCandidates, changedForces);
-        c.getLocalPlayer().setTeam(team);
-        c.sendPlayerInfo();
+//        Set<Entity> updateCandidates = new HashSet<>();
+//        for (Entity entity: c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
+//            lobby.offloadFromDifferentOwner(entity, updateCandidates);
+//            lobby.disembarkDifferentOwner(entity, updateCandidates);
+//        }
+//        
+//        // Units and forces cannot stay part of a former teammate's forces and vice versa
+//        Forces forces = game().getForces();
+//        int localId = c.getLocalPlayerNumber();
+//        Set<Entity> leaveForce = new HashSet<>();
+//        for (Entity entity: game().getEntitiesVector()) {
+//            if (!entity.partOfForce()) {
+//                continue;
+//            }
+//            Force force = forces.getForce(entity);
+//            // Must leave force if one of Entity or Force belongs to the changing player but the other doesn't
+//            if ((entity.getOwnerId() == localId) != (force.getOwnerId() == localId)) {
+//                leaveForce.add(entity);
+//            }
+//        }
+//        updateCandidates.addAll(leaveForce);
+//        Set<Force> changedForces = game().getForces().removeEntityFromForces(leaveForce);
+//        for (Force force: forces.getAllForces()) {
+//            if ((force.getParentId() != Force.NO_FORCE) && ((force.getOwnerId() == localId) != (forces.getForce(force.getParentId()).getOwnerId() == localId))) {
+//                changedForces.addAll(forces.promoteForce(force));
+//            }
+//        }
+//        
+//        // Units must leave their C3 networks
+//        updateCandidates.addAll(performDisconnect(game().getPlayerEntities(c.getLocalPlayer(), false)));
+//
+//        sendUpdates(updateCandidates, changedForces);
+//        c.getLocalPlayer().setTeam(team);
+//        c.sendPlayerInfo();
     }
     
     /**
      * Add the entities to the force if admissible (the entities must all be editable
      * by the local player and be allied to the force's owner.
      */
-    void addToForce(Collection<Entity> entities, int forceId) {
-        Forces forces = game.getForces();
+    void forceAddEntity(Collection<Entity> entities, int forceId) {
+        Forces forces = game().getForces();
         if (!validateUpdate(entities) || !forces.contains(forceId)) {
             return;
         }
-        Force force = forces.getForce(forceId);
-        if (!admissibleToForce(entities, force)) {
-            LobbyErrors.showForceOnlyTeam(frame);
+        var forceOwner = forces.getOwner(forceId);
+        if (entities.stream().anyMatch(e -> e.getOwner().isEnemyOf(forceOwner))) {
+            LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        Set<Entity> changedEntities = new HashSet<>();
-        Set<Force> changedForces = new HashSet<>();
-        for (Entity entity: entities) {
-            List<Force> result = forces.addEntity(entity, forceId);
-            if (!result.isEmpty()) {
-                changedForces.addAll(result);
-                changedEntities.add(entity);
-            }
-        }
-        correctSender(force).sendUpdateForce(changedForces, changedEntities);
+        client().sendAddEntitiesToForce(entities, forceId);
     }
     
     /** 
@@ -943,99 +913,46 @@ public class LobbyActions {
      * force for the enemy. That seems useless. Therefore this is restricted
      * to only assign to team members of the former owner. 
      */
-    void assignForceOnly(Collection<Force> assignedForces, int newOwnerId) {
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+    void forceAssignOnly(Collection<Force> forceList, int newOwnerId) {
+        IPlayer newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;
         }
-        if (!areForcesEditable(assignedForces)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+        if (!areForcesEditable(forceList)) {
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
-        Forces forces = game.getForces();
-        if (assignedForces.stream().anyMatch(f -> newOwner.isEnemyOf(forces.getOwner(f)))) {
-            LobbyErrors.showOnlyTeammate(frame);
+        Forces forces = game().getForces();
+        if (forceList.stream().anyMatch(f -> newOwner.isEnemyOf(forces.getOwner(f)))) {
+            LobbyErrors.showOnlyTeammate(frame());
             return;
         }
         List<Force> changedForces = new ArrayList<>();
-        for (Force force: assignedForces) {
+        for (Force force: forceList) {
             changedForces.addAll(forces.assignForceOnly(force, newOwner));
         }
-        sendUpdates(new ArrayList<Entity>(), changedForces);
+        client().sendUpdateForce(changedForces);
     }
-
+    
     /** 
      * Changes the owner of the given forces to a different player together with
      * all subforces and units.
      */
-    void assignForce(Collection<Force> assignedForces, int newOwnerId) {
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+    void forceAssignFull(Collection<Force> forceList, int newOwnerId) {
+        IPlayer newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;
         }
-        if (!areForcesEditable(assignedForces)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+        if (!areForcesEditable(forceList)) {
+            LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
-        // First, remove any redundant forces (subforces of others in the list)
-        // The remaining forces will not overlap and can be treated separately
-        Forces forces = game.getForces();
-        Set<Force> allSubForces = new HashSet<>();
-        assignedForces.stream().forEach(f -> allSubForces.addAll(forces.getFullSubForces(f)));
-        List<Force> toBeAssigned = new ArrayList<>(assignedForces);
-        toBeAssigned.removeIf(f -> allSubForces.contains(f));
-        
-        for (Force force: toBeAssigned) {
-            changeOwner(force, newOwnerId);
-        }
-    }
-    
-    /** Change the owner of the given force and everything below it. */
-    private void changeOwner(Force force, int newOwnerId) {
-        Collection<Entity> entities = game.getForces().getFullEntities(force);
-        if (!validateUpdate(entities)) {
-            return;
-        }
-        IPlayer newOwner = game.getPlayer(newOwnerId);
-        if (newOwner == null) {
-            MegaMek.getLogger().warning("Tried to change entity owner to a non-existent player!");
-            return;
-        }
-        // Get the right sender now before updating owners
-        Client sender = correctSender(force);
-        Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(entities);
-        List<Entity> switchTeam = entities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
-        
-        // For any units that are switching teams, offload units from them
-        // and have them disembark if carried if the other unit doesn't also switch
-        //TODO Don't unload units that transfer together. 
-        for (Entity entity: switchTeam) {
-            lobby.offloadFrom(entity, updateCandidates);
-            lobby.disembark(entity, updateCandidates);
-        }
-        
-        Set<Force> changedForces = game.getForces().assignFullForces(force, newOwner);
-
-        // Entities must change owner this late so that the right sending client can still be found
-        for (Entity entity: updateCandidates) {
-            if (entities.contains(entity)) {
-                entity.setOwner(newOwner);
-            }
-        }
-        
-        // Since all affected (sub)forces and entities must belong to one team, as they are
-        // a single force structure, the owning client of the force can send the update.
-        if (changedForces.isEmpty() && !updateCandidates.isEmpty()) {
-            sender.sendUpdateEntity(updateCandidates);
-        } else if (!changedForces.isEmpty()) {
-            sender.sendUpdateForce(changedForces, updateCandidates);
-        }
+        client().sendAssignForceFull(forceList, newOwnerId);
     }
     
     void unloadFromBay(Collection<Entity> entities, int bayId) {
         if (entities.size() != 1) {
-            LobbyErrors.showSingleUnit(frame, "offload from bays");
+            LobbyErrors.showSingleUnit(frame(), "offload from bays");
             return;
         }
         Entity carrier = CollectionUtil.randomElement(entities);
@@ -1044,7 +961,7 @@ public class LobbyActions {
         }
         Bay bay = carrier.getBayById(bayId);
         if (bay == null) {
-            LobbyErrors.showNoSuchBay(frame);
+            LobbyErrors.showNoSuchBay(frame());
         }
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity loadee : bay.getLoadedUnits()) {
@@ -1063,21 +980,21 @@ public class LobbyActions {
             return;
         }
         if (entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
-            LobbyErrors.showOnlyFighter(frame);
+            LobbyErrors.showOnlyFighter(frame());
             return;
         }
         if (!areAllied(entities)) {
-            LobbyErrors.showLoadOnlyAllied(frame);
+            LobbyErrors.showLoadOnlyAllied(frame());
             return;
         }
-        boolean largeSquadrons = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS);
+        boolean largeSquadrons = game().getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS);
         if ((!largeSquadrons && entities.size() > FighterSquadron.MAX_SIZE) 
                 || entities.size() > FighterSquadron.ALTERNATE_MAX_SIZE) {
-            LobbyErrors.showSquadronTooMany(frame);
+            LobbyErrors.showSquadronTooMany(frame());
         }
         
         // Ask for a squadron name
-        String name = JOptionPane.showInputDialog(frame, "Choose a squadron designation");
+        String name = JOptionPane.showInputDialog(frame(), "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
@@ -1096,10 +1013,10 @@ public class LobbyActions {
      * fighters.
      */
     private IPlayer createSquadronOwner(Collection<Entity> entities) {
-        if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer))) {
-            return localPlayer;
+        if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer()))) {
+            return localPlayer();
         } else {
-            for (Entry<String, Client> en: client.bots.entrySet()) {
+            for (Entry<String, Client> en: client().bots.entrySet()) {
                 IPlayer bot = en.getValue().getLocalPlayer();
                 if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
                     return en.getValue().getLocalPlayer();
@@ -1118,11 +1035,11 @@ public class LobbyActions {
             return false;
         }
         if (!isEditable(entities)) {
-            LobbyErrors.showCannotConfigEnemies(frame);
+            LobbyErrors.showCannotConfigEnemies(frame());
             return false;
         }
         if (!canSeeAll(entities)) {
-            LobbyErrors.showCannotViewHidden(frame);
+            LobbyErrors.showCannotViewHidden(frame());
             return false;
         }
         return true;
@@ -1195,14 +1112,14 @@ public class LobbyActions {
      */
     private Client correctSender(Entity entity) {
         IPlayer owner = entity.getOwner();
-        if (localPlayer.equals(owner)) {
-            return client;
-        } else if (client.bots.containsKey(owner.getName())) {
-            return client.bots.get(owner.getName());
-        } else if (!localPlayer.isEnemyOf(owner)) {
-            return client;
+        if (localPlayer().equals(owner)) {
+            return client();
+        } else if (client().bots.containsKey(owner.getName())) {
+            return client().bots.get(owner.getName());
+        } else if (!localPlayer().isEnemyOf(owner)) {
+            return client();
         } else {
-            for (Client bot: client.bots.values()) {
+            for (Client bot: client().bots.values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
                     return bot;
                 }
@@ -1217,15 +1134,15 @@ public class LobbyActions {
      * null if none can be found (force is an enemy to the local player and all his bots)
      */
     private Client correctSender(Force force) {
-        IPlayer owner = game.getForces().getOwner(force);
-        if (localPlayer.equals(owner) || isEditable(force)) {
-            return client;
-        } else if (client.bots.containsKey(owner.getName())) {
-            return client.bots.get(owner.getName());
-        } else if (!localPlayer.isEnemyOf(owner)) {
-            return client;
+        IPlayer owner = game().getForces().getOwner(force);
+        if (localPlayer().equals(owner)) {
+            return client();
+        } else if (client().bots.containsKey(owner.getName())) {
+            return client().bots.get(owner.getName());
+        } else if (!localPlayer().isEnemyOf(owner) || isEditable(force)) {
+            return client();
         } else {
-            for (Client bot: client.bots.values()) {
+            for (Client bot: client().bots.values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
                     return bot;
                 }
@@ -1246,10 +1163,10 @@ public class LobbyActions {
      * player is allowed to change everything.
      */
     boolean isEditable(Entity entity) {
-        return clientGui.getBots().containsKey(entity.getOwner().getName())
-                || (entity.getOwnerId() == localPlayer.getId())
-                || (entity.partOfForce() && isSelfOrLocalBot(game.getForces().getOwner(entity.getForceId())))
-                || (entity.partOfForce() && isEditable(game.getForces().getForce(entity)));
+        return client().bots.containsKey(entity.getOwner().getName())
+                || (entity.getOwnerId() == localPlayer().getId())
+                || (entity.partOfForce() && isSelfOrLocalBot(game().getForces().getOwner(entity.getForceId())))
+                || (entity.partOfForce() && isEditable(game().getForces().getForce(entity)));
     }
 
     /** 
@@ -1276,23 +1193,23 @@ public class LobbyActions {
      * of the entities are not on his team.
      */
     boolean canSeeAll(Collection<Entity> entities) {
-        if (!isBlindDrop(game) && !isRealBlindDrop(game)) {
+        if (!isBlindDrop(game()) && !isRealBlindDrop(game())) {
             return true;
         }
         return !entities.stream().anyMatch(this::isLocalEnemy);
     }
 
     boolean entityInLocalTeam(Entity entity) {
-        return !localPlayer.isEnemyOf(entity.getOwner());
+        return !localPlayer().isEnemyOf(entity.getOwner());
     }
     
     boolean isSelfOrLocalBot(IPlayer player) {
-        return client.bots.containsKey(player.getName()) || localPlayer.equals(player);
+        return client().bots.containsKey(player.getName()) || localPlayer().equals(player);
     }
 
     /** Returns true if the entity is an enemy of the local player. */
     boolean isLocalEnemy(Entity entity) {
-        return localPlayer.isEnemyOf(entity.getOwner());
+        return localPlayer().isEnemyOf(entity.getOwner());
     }
     
     /**
@@ -1302,25 +1219,16 @@ public class LobbyActions {
      * of a local/bot force.  
      */
     boolean isEditable(Force force) {
-        List<Force> chain = game.getForces().forceChain(force);
-        return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(this::isSelfOrLocalBot);
+        List<Force> chain = game().getForces().forceChain(force);
+        return chain.stream().map(f -> game().getForces().getOwner(f)).anyMatch(this::isSelfOrLocalBot);
     }
     
     boolean isEditable(int forceId) {
-        return game.getForces().contains(forceId) && isEditable(game.getForces().getForce(forceId)); 
+        return game().getForces().contains(forceId) && isEditable(game().getForces().getForce(forceId)); 
     }
     
     boolean areForcesEditable(Collection<Force> forces) {
         return !forces.stream().anyMatch(f -> !isEditable(f));
-    }
-    
-    /** 
-     * Returns true when the entities may all be added to the force, i.e. when there are no
-     * enemies to that force's owner among the entities. 
-     */
-    private boolean admissibleToForce(Collection<Entity> entities, Force force) {
-        return areAllied(entities) 
-                && !game.getForces().getOwner(force).isEnemyOf(CollectionUtil.randomElement(entities).getOwner());
     }
     
     /**
@@ -1360,7 +1268,7 @@ public class LobbyActions {
         Entity randomEntity = entities.stream().findAny().get();
         IPlayer entityOwner = randomEntity.getOwner();
         Force randomForce = forces.stream().findAny().get();
-        IPlayer forceOwner = game.getForces().getOwner(randomForce);
+        IPlayer forceOwner = game().getForces().getOwner(randomForce);
         return areAllied(entities) && areForcesAllied(forces) && !entityOwner.isEnemyOf(forceOwner);
         
     }
@@ -1379,7 +1287,23 @@ public class LobbyActions {
             return true;
         }
         Force randomEntry = forces.stream().findAny().get();
-        IPlayer owner = game.getForces().getOwner(randomEntry);
-        return !forces.stream().anyMatch(f -> game.getForces().getOwner(f).isEnemyOf(owner));
+        IPlayer owner = game().getForces().getOwner(randomEntry);
+        return !forces.stream().anyMatch(f -> game().getForces().getOwner(f).isEnemyOf(owner));
+    }
+    
+    private IGame game() {
+        return lobby.game();
+    }
+    
+    private Client client() {
+        return lobby.client();
+    }
+    
+    private JFrame frame() {
+        return lobby.getClientgui().getFrame();
+    }
+    
+    private IPlayer localPlayer() {
+        return client().getLocalPlayer();
     }
 }

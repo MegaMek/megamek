@@ -583,9 +583,8 @@ public final class Forces implements Serializable {
     }
     
     /** 
-     * Promotes a force to top-level (unattaches it from its parent force). 
-     * Returns a list of affected forces containing the force and its former parent
-     * if it had one.
+     * Promotes a force to top-level (unattaches it from its parent force if it has one). 
+     * Returns a list of affected forces which may be empty. 
      */
     public ArrayList<Force> promoteForce(Force force) {
         ArrayList<Force> result = new ArrayList<>();
@@ -619,52 +618,11 @@ public final class Forces implements Serializable {
         }
         return result;
     }
-    
+   
     /** 
-     * Changes the owner of the given force to the given newOwner. Promotes the
-     * force to top-level if the new owner  
-     * Returns a list of affected forces containing the force and its former parent
-     * if it had one.
-     */
-//    public ArrayList<Force> assignFullForces(Collection<Force> assignedforces, IPlayer newOwner) {
-//        Set<Force> result = new HashSet<>();
-//        // First, remove any redundant forces (subforces of others in the list)
-//        Set<Force> allSubForces = new HashSet<>();
-//        assignedforces.stream().forEach(f -> allSubForces.addAll(getFullSubForces(f)));
-//        List<Force> toBeAssigned = new ArrayList<>(assignedforces);
-//        toBeAssigned.removeIf(f -> allSubForces.contains(f));
-//        
-//        for (Force force: toBeAssigned) {
-//            // gather up this whole force tree
-//            ArrayList<Force> affected = getFullSubForces(force);
-//            affected.add(force);
-//            if (!getOwner(force).isEnemyOf(newOwner)) {
-//                // If the force is a teammate of the new owner, all subforces are as well
-//                // and they can be assigned with the simpler method, no dislodging necessary
-//                for (Force f: affected) {
-//                    result.addAll(assignForceOnly(f, newOwner));
-//                }
-//            } else {
-//                // If the new owner is an enemy, dislodge the uppermost force
-//                // The other forces must all be set to the new owner as well
-//                result.addAll(promoteForce(force));
-//                result.add(force);
-//                for (Force f: affected) {
-//                    if (getOwnerId(f) != newOwner.getId()) {
-//                        f.setOwnerId(newOwner.getId());
-//                        result.add(f);
-//                    }
-//                }
-//            }
-//        }
-//        return new ArrayList<Force>(result); // TODO: silly not to use a set in all these methods
-//    }
-    
-    /** 
-     * Changes the owner of the given force to the given newOwner. Promotes the
-     * force to top-level if the new owner  
-     * Returns a list of affected forces containing the force and its former parent
-     * if it had one.
+     * Changes the owner of the given force and all subforces to the given newOwner. 
+     * Promotes the force to top-level if the parent force is now an enemy force.  
+     * Returns a list of affected forces.
      */
     public Set<Force> assignFullForces(Force force, IPlayer newOwner) {
         Set<Force> result = new HashSet<>();

@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.Box;
@@ -50,7 +51,7 @@ public class TeamOverviewPanel extends JPanel {
 
     private static final long serialVersionUID = -4754010220963493049L;
      
-    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, UNITS };
+    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS };
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final JScrollPane scrTeams = new JScrollPane(teamOverviewTable);
@@ -63,14 +64,15 @@ public class TeamOverviewPanel extends JPanel {
         setLayout(new GridLayout(1, 1));
         teamOverviewTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         teamOverviewTable.getSelectionModel().addListSelectionListener(e -> repaint());
-        TableColumn column = teamOverviewTable.getColumnModel().getColumn(TOMCOLS.MEMBERS.ordinal());
+        var column = teamOverviewTable.getColumnModel().getColumn(TOMCOLS.MEMBERS.ordinal());
         column.setCellRenderer(new MemberListRenderer());
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        var centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.COST.ordinal()).setCellRenderer(centerRenderer);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.BV.ordinal()).setCellRenderer(centerRenderer);
         teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
+        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrTeams.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrTeams);
@@ -132,6 +134,7 @@ public class TeamOverviewPanel extends JPanel {
         private ArrayList<Long> costs = new ArrayList<>();
         private ArrayList<Long> tons = new ArrayList<>();
         private ArrayList<String> units = new ArrayList<>();
+        private ArrayList<Double> hidden = new ArrayList<>();
 
         @Override
         public int getRowCount() {
@@ -146,6 +149,7 @@ public class TeamOverviewPanel extends JPanel {
             costs.clear();
             tons.clear();
             units.clear();
+            hidden.clear();
         }
 
         @Override
@@ -165,6 +169,7 @@ public class TeamOverviewPanel extends JPanel {
                 double ton = 0;
                 int bv = 0;
                 int[] unitCounts = { 0, 0, 0, 0, 0 };
+                int hiddenBv = 0;
                 boolean[] unitCritical = { false, false, false, false, false };
                 boolean[] unitWarnings = { false, false, false, false, false };
                 for (IPlayer teamMember: team.getPlayersVector()) {
@@ -193,10 +198,14 @@ public class TeamOverviewPanel extends JPanel {
                                 ) {
                             unitWarnings[classIndex(entity)] = true;
                         }
+                        if (entity.isHidden()) {
+                            hiddenBv += entity.calculateBattleValue();
+                        }
                     }
                 }
                 units.add(unitSummary(unitCounts, unitCritical, unitWarnings));
                 bvs.add((long)bv);
+                hidden.add(bv != 0 ? (double)hiddenBv/bv : 0);
                 costs.add(cost);
                 tons.add((long)(ton*1000));
             }
@@ -288,10 +297,10 @@ public class TeamOverviewPanel extends JPanel {
 
             case COST:
                 result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                if (costs.get(row) < 10000000) {
+                if (costs.get(row) < 10_000_000) {
                     result.append(String.format("%,d", costs.get(row)) + " C-Bills");
                 } else {
-                    result.append(String.format("%,d", costs.get(row) / 1000000) + "\u00B7M C-Bills");
+                    result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
                 }
                 result.append(relativeValue(costs, row));
                 break;
@@ -301,7 +310,7 @@ public class TeamOverviewPanel extends JPanel {
 
             case BV:
                 result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                result.append(bvs.get(row));
+                result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
                 result.append(relativeValue(bvs, row));
                 break;
                 
@@ -312,6 +321,11 @@ public class TeamOverviewPanel extends JPanel {
                 result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
                 result.append(units.get(row));
                 break;
+                
+            case HIDDEN:
+                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                var percentage = hidden.get(row);
+                result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
                 
             default:
                 break;

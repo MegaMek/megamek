@@ -95,6 +95,7 @@ public final class Force implements Serializable {
         return id;
     }
     
+    /** Returns the player ID of the owner of this force. */
     public int getOwnerId() {
         return ownerId;
     }
@@ -103,6 +104,7 @@ public final class Force implements Serializable {
         ownerId = newOwner;
     }
     
+    /** Returns the Force ID of this force's parent force; -1 if top-level. */
     public int getParentId() {
         return parent;
     }

@@ -1930,7 +1930,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         if (event.getValueIsAdjusting()) {
             return;
         }
-        if (event.getSource().equals(advancedKeys)) {
+        if (event.getSource().equals(advancedKeys) && !advancedKeys.isSelectionEmpty()) {
             advancedValue.setText(GUIPreferences.getInstance().getString(
                     "Advanced" + advancedKeys.getSelectedValue().option));
             advancedKeyIndex = advancedKeys.getSelectedIndex();

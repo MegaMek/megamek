@@ -116,12 +116,12 @@ public class LobbyMekPopupActions implements ActionListener {
             
         case "FADDTO":
             int forceId = Integer.parseInt(info);
-            lobby.lobbyActions.addToForce(entities, forceId);
+            lobby.lobbyActions.forceAddEntity(entities, forceId);
             break;
             
         case "FRENAME":
             forceId = Integer.parseInt(info);
-            lobby.lobbyActions.renameForce(forceId);  
+            lobby.lobbyActions.forceRename(forceId);  
             break;
             
         case "FCREATETOP":
@@ -129,14 +129,14 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
         case "FREMOVE":
-            lobby.lobbyActions.removeFromForce(entities);
+            lobby.lobbyActions.forceRemoveEntity(entities);
             break;
             
         case "FATTACH":
             StringTokenizer st = new StringTokenizer(info, ":");
             parentId = Integer.parseInt(st.nextToken());
             forceId = Integer.parseInt(st.nextToken());
-            lobby.lobbyActions.attachForce(forceId, parentId);
+            lobby.lobbyActions.forceAttach(forceId, parentId);
             break;
             
         case "FPROMOTE":
@@ -145,19 +145,19 @@ public class LobbyMekPopupActions implements ActionListener {
             while (fst.hasMoreTokens()) {
                 forceIds.add(Integer.parseInt(fst.nextToken()));
             }
-            lobby.lobbyActions.promoteForce(forceIds);
+            lobby.lobbyActions.forcePromote(forceIds);
             break;
             
         case "FASSIGN":
             st = new StringTokenizer(info, ":");
             int newOwnerId = Integer.parseInt(st.nextToken());
-            lobby.lobbyActions.assignForce(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+            lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
             break;
             
         case "FASSIGNONLY":
             st = new StringTokenizer(info, ":");
             newOwnerId = Integer.parseInt(st.nextToken());
-            lobby.lobbyActions.assignForceOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+            lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
             break;
         }
     }

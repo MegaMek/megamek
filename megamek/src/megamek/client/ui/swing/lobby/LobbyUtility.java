@@ -31,6 +31,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MapSettings;
@@ -262,6 +263,22 @@ public class LobbyUtility {
                 || (a.hasNovaCEWS() && b.hasNovaCEWS());
     }
     
+    /** Returns the string with some content shortened like Battle Armor -> BA */
+    static String abbreviateUnitName(String unitName) {
+        return unitName
+                .replace("(Standard)", "").replace("Battle Armor", "BA")
+                .replace("Standard", "Std.").replace("Vehicle", "Veh.")
+                .replace("Medium", "Med.").replace("Support", "Spt.")
+                .replace("Heavy", "Hvy.").replace("Light", "Lgt.");
+    }
+    
+    static boolean hasYellowWarning(Entity entity) {
+        return (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty())
+                || ((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
+                || (entity.hasNovaCEWS() && (entity.calculateFreeC3Nodes() == 2))
+                || ((entity.getC3Master() == null) && entity.hasC3S());
+    }
+    
     /** 
      * Returns true when the entities can embark onto loader given the other constraints.
      * If false, the passed errorMsg contains a suitable error message for display.
@@ -397,6 +414,11 @@ public class LobbyUtility {
                             Entity.getEntityTypeName(typeId), currCapacity);
                 }
             }
+        }
+        if (loader instanceof FighterSquadron 
+                && entities.stream().anyMatch(e -> !e.isFighter() || e instanceof FighterSquadron)) {
+            errorMessage = "Only aerospace and conventional fighters can join squadrons.";
+            hasEnoughCargoCapacity = false;
         }
         errorMsg.append(errorMessage);
         return hasEnoughCargoCapacity;

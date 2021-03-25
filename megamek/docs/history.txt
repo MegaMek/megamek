@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Issue #2740: Update base target number for attacking with "picked up" club (tree/girder/arm/leg) to be piloting - 1, rather than piloting + 1
 + Issue #2694: The bot will now consider not attempting to get up, or going to hull-down (where applicable) when odds of getting up are low
 + PR #2742: Enable the bot to "find club", when it absolutely, positively has nothing better to do with the firing phase
++ Issue #2747: Prevent protomech AC ammo from causing 8x the damage it should during ammo explosions
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

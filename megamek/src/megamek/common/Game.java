@@ -337,13 +337,15 @@ public class Game implements Serializable, IGame {
         return vibrabombs.contains(mf);
     }
 
+    @Override
     public GameOptions getOptions() {
         return options;
     }
 
-    public void setOptions(GameOptions options) {
-        if (null == options) {
-            System.err.println("Can't set the game options to null!");
+    @Override
+    public void setOptions(final @Nullable GameOptions options) {
+        if (options == null) {
+            MegaMek.getLogger().error("Can't set the game options to null!");
         } else {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -1398,15 +1400,10 @@ public class Game implements Serializable, IGame {
         
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
-            // This next statement has been cluttering up double-blind
-            // logs for quite a while now. I'm assuming it's no longer
-            // useful.
-            // System.err.println("Game#removeEntity: could not find entity to
-            // remove");
             return;
         }
 
-        entityIds.remove(Integer.valueOf(id));
+        entityIds.remove(id);
         removeEntityPositionLookup(toRemove);
 
         toRemove.setRemovalCondition(condition);
@@ -1599,14 +1596,14 @@ public class Game implements Serializable, IGame {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);
-        List<Entity> vector = new ArrayList<Entity>();
+        List<Entity> vector = new ArrayList<>();
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
                 
                 // if the entity with the given ID doesn't exist, we will update the lookup table
                 // and move on
-                if(e == null) {
+                if (e == null) {
                     posEntities.remove(eId);
                     continue;
                 }
@@ -1617,8 +1614,7 @@ public class Game implements Serializable, IGame {
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
-                        System.out.println("Game.getEntitiesVector(1) Error! "
-                                + e.getDisplayName() + " is not in " + c + "!");
+                        MegaMek.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }
             }
@@ -3249,9 +3245,10 @@ public class Game implements Serializable, IGame {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    public void setIlluminatedPositions(HashSet<Coords> ip) {
+    @Override
+    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) {
         if (ip == null) {
-            new RuntimeException("Illuminated Positions is null.").printStackTrace();
+            throw MegaMek.getLogger().error(new RuntimeException("Illuminated Positions is null."));
         }
         illuminatedPositions = ip;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -3493,26 +3490,21 @@ public class Game implements Serializable, IGame {
         return false;
     }
 
+    @Override
     public boolean checkForValidSmallCraft(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof SmallCraft)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        return getPlayerEntities(getPlayer(playerId), false).stream().anyMatch(e ->
+                (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
+    @Override
     public PlanetaryConditions getPlanetaryConditions() {
         return planetaryConditions;
     }
 
-    public void setPlanetaryConditions(PlanetaryConditions conditions) {
+    @Override
+    public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (null == conditions) {
-            System.err.println("Can't set the planetary conditions to null!");
+            MegaMek.getLogger().error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -3623,23 +3615,22 @@ public class Game implements Serializable, IGame {
                 && (getPhase() != Phase.PHASE_LOUNGE)
                 && (getPhase() != Phase.PHASE_INITIATIVE_REPORT)
                 && (getPhase() != Phase.PHASE_INITIATIVE)) {
-            System.out.println("Entities vector has " + entities.size()
-                    + " but pos lookup cache has " + entitiesInCache.size()
-                    + " entities!");
-            List<Integer> missingIds = new ArrayList<Integer>();
+            MegaMek.getLogger().warning("Entities vector has " + entities.size()
+                    + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
+            List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
                 if (!entitiesInCache.contains(id)) {
                     missingIds.add(id);
                 }
             }
-            System.out.println("Missing ids: " + missingIds);
+            MegaMek.getLogger().info("Missing ids: " + missingIds);
         }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
-                    System.out.println("Entity " + e.getId() + " is in "
+                    MegaMek.getLogger().warning("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
                             + "does not have it in that position!");
                 }
@@ -3653,10 +3644,8 @@ public class Game implements Serializable, IGame {
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    System.out.println("Entity Position Cache thinks Entity "
-                            + eId + "is in " + c
-                            + " but the Entity thinks it's in "
-                            + e.getPosition());
+                    MegaMek.getLogger().warning("Entity Position Cache thinks Entity " + eId
+                            + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }
         }

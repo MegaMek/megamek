@@ -57,7 +57,6 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -1025,10 +1024,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 try {
                     SwingUtilities.invokeLater(redrawWorker);
                 } catch (Exception ie) {
-                    System.err.print("Error scheduleRedrawTimer "); //$NON-NLS-1$
-                    System.err.print(ie.getMessage());
-                    System.err.print(": "); //$NON-NLS-1$
-                    System.err.println("ignoring");
+                    MegaMek.getLogger().error("Ignoring error: " + ie.getMessage());
                 }
             }
         };
@@ -1040,10 +1036,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
-            System.err.print("Error scheduleRedraw "); //$NON-NLS-1$
-            System.err.print(ie.getMessage());
-            System.err.print(": "); //$NON-NLS-1$
-            System.err.println("ignoring");
+            MegaMek.getLogger().error("Ignoring error: " + ie.getMessage());
         }
     }
 
@@ -1189,9 +1182,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (!isTileImagesLoaded()) {
-            g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
+            g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
             if (!tileManager.isStarted()) {
-                System.out.println("boardview1: loading images for board"); //$NON-NLS-1$
+                MegaMek.getLogger().info("Loading images for board");
                 tileManager.loadNeededImages(game);
             }
             // wait 1 second, then repaint
@@ -1219,9 +1212,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                     if ((xRem > 0) || (yRem > 0)) {
                         try {
-                            g.drawImage(
-                                    bvBgImage.getSubimage(xRem, yRem, w - xRem,
-                                            h - yRem),
+                            g.drawImage(bvBgImage.getSubimage(xRem, yRem, w - xRem, h - yRem),
                                     clipping.x + x, clipping.y + y, this);
                         } catch (Exception e) {
                             // if we somehow messed up the math, log the error and simply act as if we have no background image.
@@ -1230,7 +1221,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
                                     rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
-                            MegaMek.getLogger().error(this, errorData);
+                            MegaMek.getLogger().error(errorData);
                         }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
@@ -1266,8 +1257,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Field of Fire
-        if (!useIsometric()
-                && GUIPreferences.getInstance().getShowFieldOfFire()) {
+        if (!useIsometric() && GUIPreferences.getInstance().getShowFieldOfFire()) {
             drawSprites(g, fieldofFireSprites);
         }
 
@@ -1297,8 +1287,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawDeployment(g);
         }
 
-        if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
-                && (showAllDeployment)) {
+        if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) && showAllDeployment) {
             drawAllDeployment(g);
         }
 
@@ -1327,8 +1316,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawSprites(g, attackSprites);
 
         // draw movement vectors.
-        if (game.useVectorMove()
-            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+        if (game.useVectorMove() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             drawSprites(g, movementSprites);
         }
 
@@ -1336,8 +1324,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawSprites(g, pathSprites);
 
         // draw firing solution sprites, but only during the firing phase
-        if ((game.getPhase() == Phase.PHASE_FIRING) ||
-            (game.getPhase() == Phase.PHASE_OFFBOARD)) {
+        if ((game.getPhase() == Phase.PHASE_FIRING) || (game.getPhase() == Phase.PHASE_OFFBOARD)) {
             drawSprites(g, firingSprites);
         }
 
@@ -1779,14 +1766,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 
                         // Buildings Shadow
-                        if (hex.containsTerrain(Terrains.BUILDING))
-                        {
+                        if (hex.containsTerrain(Terrains.BUILDING)) {
                             int h = hex.terrainLevel(Terrains.BLDG_ELEV);
                             if ((shadowcaster+h-shadowed) > 0) {
                                 p1.setLocation(p0);
-                                for (int i = 0; i<n*(shadowcaster+h-shadowed); i++) {
-                                    g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
-                                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                                for (int i = 0; i < (n * (shadowcaster + h - shadowed)); i++) {
+                                    g.drawImage(lastSuper, (int) p1.getX(), (int) p1.getY(), null);
+                                    p1.setLocation(p1.getX() + deltaX, p1.getY() + deltaY);
                                 }
                             }
                         }
@@ -1795,28 +1781,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
                         supers = tileManager.orthoFor(hex);
                         if (supers.isEmpty()) break;
-                        Image maskB = createBlurredShadow(supers.get(supers.size()-1));
+                        Image maskB = createBlurredShadow(supers.get(supers.size() - 1));
                         if (maskB == null) {
                             clearShadowMap();
                             return;
                         }
                         int h = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-                        p1.setLocation(p0.getX()+deltaX*n*(shadowcaster+h-shadowed),
-                                p0.getY()+deltaY*n*(shadowcaster+h-shadowed));
+                        p1.setLocation(p0.getX() + deltaX * n * (shadowcaster + h - shadowed),
+                                p0.getY() + deltaY * n * (shadowcaster + h - shadowed));
                         // the shadowmask is translucent, therefore draw n times
                         // stupid hack
-                        for (int i=0;i<n;i++)
-                            g.drawImage(maskB, (int)p1.getX(), (int)p1.getY(), null);
+                        for (int i = 0; i < n; i++)
+                            g.drawImage(maskB, (int) p1.getX(), (int) p1.getY(), null);
                     }
-
                 }
             }
             g.setClip(saveClip);
         }
 
-        long tT5 = System.nanoTime()-stT;
-        System.out.println("Time to prepare the shadow map: "+tT5/1e6+" ms");
-
+        long tT5 = System.nanoTime() - stT;
+        MegaMek.getLogger().info("Time to prepare the shadow map: " + tT5 / 1e6 + " ms");
     }
 
     public void clearShadowMap() {
@@ -1853,8 +1837,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Coords cp = sprite.getPosition();
             // This can potentially be an expensive operation
             Rectangle spriteBounds = sprite.getBounds();
-            if (cp.equals(c) && view.intersects(spriteBounds)
-                    && !sprite.isHidden()) {
+            if (cp.equals(c) && view.intersects(spriteBounds) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -2803,43 +2786,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Set the text color according to Preferences or Light Gray in space
         g.setColor(guip.getMapTextColor());
-        if (game.getBoard().inSpace())
+        if (game.getBoard().inSpace()) {
             g.setColor(Color.LIGHT_GRAY);
+        }
 
         // draw special stuff for the hex
-        final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                .getSpecialHexDisplay(c);
+        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(),
-                            localPlayer)) {
-                        scaledImage = getScaledImage(shd.getType()
-                                .getDefaultImage(), true);
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer)) {
+                        scaledImage = getScaledImage(shd.getType().getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, this);
                     }
                 }
             }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Illegal argument exception, probably "
-                    + "can't load file.");
-            e.printStackTrace();
-            drawCenteredString("Loading Error", 0, 0
-                    + (int) (50 * scale), font_note, g);
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Exception, probably can't load file.", e);
+            drawCenteredString("Loading Error", 0, (int) (50 * scale), font_note, g);
             return;
         }
 
         // write hex coordinate unless deactivated or scale factor too small
-        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS)
-                && (scale >= 0.5)) {
-            drawCenteredString(c.getBoardNum(), 0, 0
-                    + (int) (12 * scale), font_hexnum, g);
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS) && (scale >= 0.5)) {
+            drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexnum, g);
         }
 
         if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
-            Point hexCenter = new Point((int)(HEX_W / 2 * scale), (int)(HEX_H / 2 * scale));
-            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED, false,
-                    new Font("SansSerif", Font.BOLD, 14));
+            Point hexCenter = new Point((int) (HEX_W / 2 * scale), (int) (HEX_H / 2 * scale));
+            drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
+                    false, new Font("SansSerif", Font.BOLD, 14));
         }
 
         // write terrain level / water depth / building height
@@ -3127,7 +3103,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     p2.x - (int) (HEX_ELEV * scale) }, new int[] { p1.y, p2.y,
                     p2.y }, 3);
             if ((p2.x - (int) (HEX_ELEV * scale)) < 0) {
-                System.out.println("Negative X value!: " + (p2.x - (int) (HEX_ELEV * scale)));
+                MegaMek.getLogger().info("Negative X value!: " + (p2.x - (int) (HEX_ELEV * scale)));
             }
             g.setColor(new Color(0, 0, 0, 0.4f));
             g.fillPolygon(shadow1);*/
@@ -3145,17 +3121,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             p1.y + fudge + scaledDelta }, 4);
 
             if ((p1.y + fudge) < 0) {
-                System.out.println("Negative Y value (Fudge)!: " + (p1.y + fudge));
+                MegaMek.getLogger().info("Negative Y value (Fudge)!: " + (p1.y + fudge));
             }
             if ((p2.y + fudge) < 0) {
-                System.out.println("Negative Y value (Fudge)!: " + (p2.y + fudge));
+                MegaMek.getLogger().info("Negative Y value (Fudge)!: " + (p2.y + fudge));
             }
 
             if ((p2.y + fudge + scaledDelta) < 0) {
-                System.out.println("Negative Y value!: " + (p2.y + fudge + scaledDelta));
+                MegaMek.getLogger().info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
             }
             if (( p1.y + fudge + scaledDelta) < 0) {
-                System.out.println("Negative Y value!: " + ( p1.y + fudge + scaledDelta));
+                MegaMek.getLogger().info("Negative Y value!: " + ( p1.y + fudge + scaledDelta));
             }
             g.setColor(color);
             g.drawPolygon(p);
@@ -5328,8 +5304,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
                     ImageIO.write(getEntireBoardImage(false), "png", imgFile);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             }
 
@@ -6195,10 +6171,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             File file;
             if (bvSkinSpec.backgrounds.size() > 0) {
                 file = new MegaMekFile(Configuration.widgetsDir(),
-                                bvSkinSpec.backgrounds.get(0)).getFile();
+                        bvSkinSpec.backgrounds.get(0)).getFile();
                 if (!file.exists()) {
-                    System.err.println("BoardView1 Error: icon doesn't exist: "
-                                       + file.getAbsolutePath());
+                    MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
+                            + file.getAbsolutePath());
                 } else {
                     bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
                             file.getAbsolutePath());
@@ -6207,26 +6183,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new MegaMekFile(Configuration.widgetsDir(),
-                                bvSkinSpec.backgrounds.get(1)).getFile();
+                        bvSkinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    System.err.println("BoardView1 Error: icon doesn't exist: "
-                                       + file.getAbsolutePath());
+                    MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
+                            + file.getAbsolutePath());
                 } else {
-                    scrollPaneBgImg = ImageUtil.loadImageFromFile(
-                            file.getAbsolutePath());
+                    scrollPaneBgImg = ImageUtil.loadImageFromFile(file.getAbsolutePath());
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error loading BoardView background images!");
-            System.out.println(e.getMessage());
+            MegaMek.getLogger().error("Error loading BoardView background images!", e);
         }
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this) {
-
-            /**
-             *
-             */
             private static final long serialVersionUID = 5973610449428194319L;
 
             @Override
@@ -6450,7 +6420,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    MegaMek.getLogger().error(e);
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -6470,7 +6440,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set
@@ -6805,9 +6775,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int boardY = (int)((c.getY() + 0.0) / board.getSubBoardHeight());
         int linIdx = boardY * board.getNumBoardsWidth() + boardX;
         if (linIdx < 0 || linIdx > boardBackgrounds.size() - 1) {
-            System.out.println("Error computing linear index or "
-                    + "missing background images "
-                    + "in BoardView1.getBoardBackgroundHexImage!");
+            MegaMek.getLogger().error("Error computing linear index or missing background images in BoardView1.getBoardBackgroundHexImage!");
             return null;
         }
         Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);

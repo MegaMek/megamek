@@ -4,15 +4,15 @@ MAD-8K
 
 Config:Biped
 techbase:Inner Sphere
-era:3145
-rules level:3
+era:3138
+rules level:4
 
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:15 Double
+heat sinks:15 IS Double
 walk mp:3
 jump mp:3
 

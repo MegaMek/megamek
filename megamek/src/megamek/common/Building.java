@@ -297,10 +297,13 @@ public class Building implements Serializable {
      */
     public Building(Coords coords, IBoard board, int structureType, BasementType basementType) {
 
-        // The ID of the building will be the hashcode of the coords.
+        // The ID of the building will be deterministic based on the
+        // position of its first hex. 9,999 hexes in the Y direction
+        // ought to be enough for anyone.
+        //
         // ASSUMPTION: this will be unique ID across ALL the building's
         // hexes for ALL the clients of this board.
-        id = coords.hashCode();
+        id = coords.getX() * 10000 + coords.getY();
 
         // The building occupies the given coords, at least.
         coordinates.addElement(coords);
@@ -378,47 +381,6 @@ public class Building implements Serializable {
         name = buffer.toString();
 
     } // End public Building( Coords, Board )
-
-    /**
-     * Creates a new building of the specified type, name, ID, and coordinates.
-     * Do *not* use this method unless you have carefully examined this class.
-     * The construction factors for the building will be based on the type.
-     *
-     * @param type
-     *            The <code>int</code> type of the building.
-     * @param id
-     *            The <code>int</code> ID of this building.
-     * @param name
-     *            The <code>String</code> name of this building.
-     * @param coords
-     *            The <code>Vector</code> of <code>Coords<code>
-     *                  for this building.  This object is used directly
-     *                  without being copied.
-     * @exception an
-     *                <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building, or if the
-     *                building covers multiple hexes with different CFs.
-     */
-    public Building(int bldgClass, int type, int id, String name,
-            Vector<Coords> coords) {
-        this.bldgClass = bldgClass;
-        this.type = type;
-        this.id = id;
-        this.name = name;
-        coordinates = coords;
-        // Insure that we've got a good type (and initialize our CF).
-        for (Coords coord : coordinates) {
-            currentCF.put(coord, getDefaultCF(this.type));
-            phaseCF.putAll(currentCF);
-            armor.put(coord, 0);
-            if (getDefaultCF(this.type) == Building.UNKNOWN) {
-                throw new IllegalArgumentException(
-                        "Invalid construction type: " + this.type + ".");
-            }
-            basement.put(coord, BasementType.UNKNOWN);
-            basementCollapsed.put(coord, false);
-        }
-    }
 
     /**
      * Get the ID of this building. The same ID applies to all hexes.

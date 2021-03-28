@@ -717,7 +717,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "Small Cockpit");
         }
 
@@ -1972,7 +1973,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return LOC_RT;
         } else if (emptyBaysInLoc(LOC_LT) >= cost) {
             return LOC_LT;
-        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
+        } else if (emptyBaysInLoc(LOC_CT) >= cost) {
             return LOC_CT;
         } else {
             return LOC_NONE;

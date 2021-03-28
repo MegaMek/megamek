@@ -217,6 +217,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox generateNames;
     private JCheckBox showUnitId;
     private JComboBox<String> displayLocale;
+    private JCheckBox showIPAddressesInChat;
 
     private JCheckBox showDamageLevel;
     private JCheckBox showDamageDecal;
@@ -733,6 +734,27 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(stampFormat);
         comps.add(row);
 
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // -------------- 
+
+        showIPAddressesInChat = new JCheckBox(Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
+        showIPAddressesInChat.setToolTipText(Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip"));
+        row = new ArrayList<>();
+        row.add(showIPAddressesInChat);
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -788,6 +810,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             stampFilenames.setSelected(cs.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(cs.getStampFormat());
+            showIPAddressesInChat.setSelected(cs.getShowIPAddressesInChat());
 
             defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
             useAverageSkills.setSelected(cs.useAverageSkills());
@@ -1004,6 +1027,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
         cs.setStampFilenames(stampFilenames.isSelected());
         cs.setStampFormat(stampFormat.getText());
+        cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         cs.setUseAverageSkills(useAverageSkills.isSelected());

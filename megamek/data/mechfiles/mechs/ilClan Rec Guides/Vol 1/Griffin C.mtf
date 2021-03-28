@@ -1,9 +1,9 @@
-Version:1.0
+Version:1.1
 Griffin
 C
 
 Config:Biped
-techbase:Mixed (IS Chassis)
+techbase:Mixed (Clan Chassis)
 era:3144
 source:ilClan Vol 1 - Dark Age
 rules level:4
@@ -13,7 +13,7 @@ engine:330 XL Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:11 Double
+heat sinks:11 IS Double
 walk mp:6
 jump mp:9
 

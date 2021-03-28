@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -194,6 +193,54 @@ public class Compute {
             }
         }
         return roll.getIntValue();
+    }
+
+    /**
+     * Input is in format "ndf", so this can handle 2d6 or 3d10
+     * @param number the number of dice to roll
+     * @param faces  the number of faces on those dice
+     * @return an Integer list of every dice roll, with index 0 containing the summed result
+     */
+    public static List<Integer> individualDice(final int number, final int faces) {
+        final List<Integer> individualRolls = new ArrayList<>();
+        int result = 0, roll;
+        individualRolls.add(result);
+
+        for (int i = 0; i < number; i++) {
+            roll = randomInt(faces) + 1;
+            individualRolls.add(roll);
+            result += roll;
+        }
+
+        individualRolls.set(0, result);
+
+        return individualRolls;
+    }
+
+    /**
+     * Input is in format "c ndf", so that this can handle 10 rolls of 3d6
+     * @param count  the count of sets of dice to roll
+     * @param number the number of dice to roll per set
+     * @param faces  the number of faces per die
+     * @return an Integer list of every summed dice roll, with index 0 containing the summed result
+     */
+    public static List<Integer> individualRolls(int count, int number, int faces) {
+        List<Integer> individualRolls = new ArrayList<>();
+        int result = 0, roll;
+        individualRolls.add(result);
+
+        for (int x = 0; x < count; x++) {
+            roll = 0;
+            for (int y = 0; y < number; y++) {
+                roll += randomInt(faces) + 1;
+            }
+            individualRolls.add(roll);
+            result += roll;
+        }
+
+        individualRolls.set(0, result);
+
+        return individualRolls;
     }
 
     /**
@@ -1624,8 +1671,7 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker,
-                                        Targetable target) {
+    public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
         return Compute.effectiveDistance(game, attacker, target, false);
     }
 
@@ -1636,35 +1682,30 @@ public class Compute {
      *
      * @return the effective distance
      */
-    public static int effectiveDistance(IGame game, Entity attacker,
-                                        Targetable target, boolean useGroundDistance) {
-
+    public static int effectiveDistance(IGame game, Entity attacker, Targetable target,
+                                        boolean useGroundDistance) {
         if (Compute.isAirToGround(attacker, target)
                 || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
         }
 
-        Vector<Coords> attackPos = new Vector<Coords>();
+        Vector<Coords> attackPos = new Vector<>();
         attackPos.add(attacker.getPosition());
-        Vector<Coords> targetPos = new Vector<Coords>();
+        Vector<Coords> targetPos = new Vector<>();
         targetPos.add(target.getPosition());
         // if a grounded dropship is the attacker, then it gets to choose the
         // best secondary position for LoS
-        if ((attacker instanceof Dropship) && !attacker.isAirborne()
-            && !attacker.isSpaceborne()) {
-            attackPos = new Vector<Coords>();
+        if ((attacker instanceof Dropship) && !attacker.isAirborne() && !attacker.isSpaceborne()) {
+            attackPos = new Vector<>();
             for (int key : attacker.getSecondaryPositions().keySet()) {
                 attackPos.add(attacker.getSecondaryPositions().get(key));
             }
         }
-        if ((target instanceof Entity) && (target instanceof Dropship)
-            && !((Entity) target).isAirborne()
-            && !((Entity) target).isSpaceborne()) {
-            targetPos = new Vector<Coords>();
-            for (int key : ((Entity) target).getSecondaryPositions().keySet()) {
-                targetPos.add(((Entity) target).getSecondaryPositions()
-                                               .get(key));
+        if ((target instanceof Dropship) && !target.isAirborne() && !((Entity) target).isSpaceborne()) {
+            targetPos = new Vector<>();
+            for (final int key : target.getSecondaryPositions().keySet()) {
+                targetPos.add(target.getSecondaryPositions().get(key));
             }
         }
         int distance = Integer.MAX_VALUE;
@@ -1677,12 +1718,10 @@ public class Compute {
             }
         }
 
-        if (Compute.isGroundToAir(attacker, target)
-                && (target instanceof Entity)) {
+        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
-            distance = attacker.getPosition().distance(
-                    getClosestFlightPath(attacker.getId(),
-                            attacker.getPosition(), (Entity) target));
+            distance = attacker.getPosition().distance(getClosestFlightPath(attacker.getId(),
+                    attacker.getPosition(), (Entity) target));
 
             // if the ground attacker uses weapon bays and we are on a
             // ground map, then we will divide this distance by 16
@@ -1696,14 +1735,13 @@ public class Compute {
 
         // if this is an air-to-air attack on the ground map, then divide
         // distance by 16
-        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround()
-            && !useGroundDistance) {
+        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
             distance = (int) Math.ceil(distance / 16.0);
         }
 
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
-        // TODO: should the player be explcitly notified?
+        // TODO: should the player be explicitly notified?
         if (Compute.isInSameBuilding(game, attacker, target)) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
@@ -1737,17 +1775,13 @@ public class Compute {
     }
 
     /**
-     * Returns the closest position along <code>te</codeE>'s flight path to
-     * <code>aPos</code>.  In the case of multiple equi-distance positions, the
-     * first one is picked unless <code>te</code>'s playerPickedPassThrough
-     * position is non-null.
-     *
-     * @param aPos
-     * @param te
-     * @return
+     * @param aPos the attacker's position
+     * @param te the target entity
+     * @return the closest position along <code>te</codeE>'s flight path to <code>aPos</code>. In
+     * the case of multiple equi-distance positions, the first one is picked unless
+     * <code>te</code>'s playerPickedPassThrough position is non-null.
      */
-    public static Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
-
+    public static @Nullable Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
         Coords finalPos = te.getPosition();
         if (te.getPlayerPickedPassThrough(attackerId) != null) {
             finalPos = te.getPlayerPickedPassThrough(attackerId);
@@ -2444,18 +2478,18 @@ public class Compute {
     /**
      * Modifier to physical attack BTH due to pilot advantages
      */
-    public static void modifyPhysicalBTHForAdvantages(Entity attacker,
-                                                      Entity target, ToHitData toHit, IGame game) {
+    public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
+                                                      final ToHitData toHit, final IGame game) {
+        Objects.requireNonNull(attacker);
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
+            toHit.addModifier(-1, "melee specialist");
         }
 
-        IHex curHex = game.getBoard().getHex(attacker.getPosition());
         if (attacker.hasAbility(OptionsConstants.PILOT_TM_FROGMAN)
                 && ((attacker instanceof Mech) || (attacker instanceof Protomech))
-                && (curHex.terrainLevel(Terrains.WATER) > 1)) {
+                && (game.getBoard().getHex(attacker.getPosition()).terrainLevel(Terrains.WATER) > 1)) {
             toHit.addModifier(-1, "Frogman");
         }
 
@@ -2464,10 +2498,8 @@ public class Compute {
         }
 
         // Mek targets that are dodging are harder to hit.
-
-        if ((target != null)
-            && (target instanceof Mech)
-            && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
+        if ((target instanceof Mech)
+                && target.hasAbility(OptionsConstants.PILOT_DODGE_MANEUVER) && target.dodging) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -3477,21 +3509,17 @@ public class Compute {
 
             // For each valid ammo bin
             for (Mounted abin : shooter.getAmmo()) {
-                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                                       abin)) {
+                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
                     if (abin.getUsableShotsLeft() > 0) {
                         abin_type = (AmmoType) abin.getType();
                         if (!AmmoType.canDeliverMinefield(abin_type)) {
 
                             // Load weapon with specified bin
-                            shooter.loadWeapon(
-                                    shooter.getEquipment(atk.getWeaponId()),
-                                    abin);
+                            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
                             atk.setAmmoId(shooter.getEquipmentNum(abin));
 
                             // Get expected damage
-                            ex_damage = Compute.getExpectedDamage(cgame, atk,
-                                                                  false);
+                            ex_damage = Compute.getExpectedDamage(cgame, atk, false);
 
                             // Calculate any modifiers due to ammo type
                             ammo_multiple = 1.0;
@@ -3512,12 +3540,7 @@ public class Compute {
                                             || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
                                             || (abin_type.getAmmoType() == AmmoType.T_PAC))
                                             && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
-                                ammo_multiple = 0.0;
-                                if (target instanceof Infantry) {
-                                    if (!(target instanceof BattleArmor)) {
-                                        ammo_multiple = 2.0;
-                                    }
-                                }
+                                ammo_multiple = target.isConventionalInfantry() ? 2.0 : 0.0;
                             }
 
                             // LBX cluster rounds work better against units
@@ -3526,12 +3549,11 @@ public class Compute {
                             // Other ammo that deliver lots of small
                             // submunitions should be tested for here too
                             if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
-                                 || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB) || (abin_type
-                                                                                                   .getAmmoType() ==
-                                                                                           AmmoType.T_SBGAUSS))
-                                && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
+                                    || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                                    || (abin_type.getAmmoType() == AmmoType.T_SBGAUSS))
+                                    && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
                                 if (target.getArmorRemainingPercent() <= 0.25) {
-                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
+                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10.0);
                                 }
                                 if (target instanceof Tank) {
                                     ammo_multiple += 1.0;
@@ -4208,8 +4230,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             } else if (te.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if ((te instanceof Infantry) && !(te instanceof BattleArmor)
-                       && ((Infantry) te).hasSneakCamo()) {
+            } else if (te.isConventionalInfantry() && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
 
@@ -6705,10 +6726,17 @@ public class Compute {
         return acceptable;
     }
 
-    public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos,
-                                                      int elev, IGame game) {
-
-        ArrayList<Entity> mountable = new ArrayList<Entity>();
+    /**
+     * Builds a list of all adjacent units that can load the given Entity.
+     * @param en   The entity to load
+     * @param pos  The coordinates of the hex to load from
+     * @param elev The absolute elevation of the unit at the point of loading (surface
+     *             of the hex + elevation over the surface)
+     * @param game The game object
+     * @return     All adjacent units that can mount the Entity
+     */
+    public static List<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        List<Entity> mountable = new ArrayList<>();
         // Expanded to include trains
 
         // the rules don't say that the unit must be facing loader

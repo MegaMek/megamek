@@ -16,6 +16,7 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
+import megamek.client.Client;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
@@ -237,16 +238,13 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
 
 
         //now check for general hit bonuses for heat
-        if((te != null) 
-                && !((attacker instanceof Infantry) 
-                        && !(attacker instanceof BattleArmor))) {
-            int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(
-                    te.heat);
-            if(heatBonus < 0) {
+        if ((te != null) && !attacker.isConventionalInfantry()) {
+            int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
+            if (heatBonus < 0) {
                 toHit.addModifier(heatBonus, "target excess heat at night");
             }
         }
-        
+
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
                 && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
@@ -255,4 +253,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return toHit;
     }
 
+    @Override
+    public String toDisplayableString(Client client) {
+        return "attacking " + getTarget(client.getGame()).getDisplayName();
+    }
 }

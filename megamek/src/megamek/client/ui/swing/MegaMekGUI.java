@@ -48,7 +48,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
@@ -74,6 +73,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
@@ -117,7 +117,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private Client client;
     private Server server;
     private CommonAboutDialog about;
-    private CommonHelpDialog help;
     private GameOptionsDialog optionsDialog;
     private CommonSettingsDialog settingsDialog;
 
@@ -241,7 +240,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 GUIPreferences.getInstance().setNagForReadme(false);
             }
             if (confirm.getAnswer()) {
-                showHelp();
+                new MMReadMeHelpDialog(frame).setVisible(true);
             }
         }
     }
@@ -857,17 +856,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         about.setVisible(true);
     }
 
-    /**
-     * Called when the user selects the "Help->Contents" menu item.
-     */
-    void showHelp() {
-        if (help == null) {
-            help = showHelp(frame, Messages.getString("CommonMenuBar.helpFilePath"));
-        }
-        // Show the help dialog.
-        help.setVisible(true);
-    }
-
     private void showSkinningHowTo() {
         try {
             // Get the correct help file.
@@ -890,29 +878,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     /**
-     * display the filename in a CommonHelpDialog
-     */
-    private static CommonHelpDialog showHelp(JFrame frame, String filename) {
-        Locale l = Locale.getDefault();
-        File helpFile;
-        if (!filename.contains(".txt")) { //$NON-NLS-1$
-            helpFile = new File("docs" + File.separator + filename + '-' //$NON-NLS-1$  //$NON-NLS-2$
-                    + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
-            if (!helpFile.exists()) {
-                helpFile = new File("docs" + File.separator + filename + ".txt"); //$NON-NLS-1$
-            }
-        } else {
-            String localeFileName = filename.replace(".txt", //$NON-NLS-1$
-                    "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
-            helpFile = new File(localeFileName);
-            if (!helpFile.exists()) {
-                helpFile = new File(filename);
-            }
-        }
-        return new CommonHelpDialog(frame, helpFile);
-    }
-
-    /**
      * Called when the user selects the "View->Client Settings" menu item.
      */
     void showSettings() {
@@ -929,20 +894,19 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
      * Called when the quit buttons is pressed or the main menu is closed.
      */
     static void quit() {
+        MegaMek.getPreferences().saveToFile(MegaMek.PREFERENCES_FILE);
         PreferenceManager.getInstance().save();
 
         try {
             WeaponOrderHandler.saveWeaponOrderFile();
         } catch (IOException e) {
-            System.out.println("Error saving custom weapon orders!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error saving custom weapon orders!", e);
         }
 
         try {
             QuirksHandler.saveCustomQuirksList();
         } catch (IOException e) {
-            System.out.println("Error saving quirks override!");
-            e.printStackTrace();
+            MegaMek.getLogger().error("Error saving quirks override!", e);
         }
 
         System.exit(0);
@@ -1015,7 +979,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 showAbout();
                 break;
             case ClientGUI.HELP_CONTENTS:
-                showHelp();
+                new MMReadMeHelpDialog(frame).setVisible(true);
                 break;
             case ClientGUI.HELP_SKINNING:
                 showSkinningHowTo();

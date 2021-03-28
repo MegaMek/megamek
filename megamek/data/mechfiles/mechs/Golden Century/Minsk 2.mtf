@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Minsk
 2
 
@@ -13,7 +13,7 @@ engine:210 Fusion (Clan) Engine
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 walk mp:3
 jump mp:0
 
@@ -79,9 +79,9 @@ CLStreakSRM6
 CLSmallPulseLaser
 Clan Mech Mortar-4
 Clan Mech Mortar-4
-Clan Streak SRM 6 Ammo
 Clan Ammo SC Mortar-4
-Clan Ammo AB Mortar-4
+Clan Ammo SC Mortar-4
+Clan Streak SRM 6 Ammo
 
 Right Torso:
 CLDoubleHeatSink

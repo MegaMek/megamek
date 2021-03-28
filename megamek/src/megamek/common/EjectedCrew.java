@@ -45,9 +45,7 @@ public class EjectedCrew extends Infantry {
         //setWeight(1); // Copied from original MechWarrior code, but does this really do anything?
 
         // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        newName.append(" of ").append(originalRide.getDisplayName());
-        displayName = newName.toString();
+        setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
@@ -90,8 +88,7 @@ public class EjectedCrew extends Infantry {
         setModel(originalRide.getDisplayName());
 
         // Generate the display name, then add the original ride's name.
-        String newName = new String(getDisplayName() + " of " + originalRide.getDisplayName());
-        displayName = newName;
+        setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());
         
         initializeInternal(escapedThisRound, Infantry.LOC_INFANTRY);
         
@@ -118,10 +115,6 @@ public class EjectedCrew extends Infantry {
         setChassis(VEE_EJECT_NAME);
         setModel(crew.getName());
         //setWeight(1);
-
-        // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(getDisplayName());
-        displayName = newName.toString();
 
         // Finish initializing this unit.
         setOwner(owner);

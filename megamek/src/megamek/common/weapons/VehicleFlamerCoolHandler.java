@@ -1,25 +1,20 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 23, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -35,11 +30,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * Created on Sep 23, 2004
  */
 public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4856089237895318515L;
 
     /**
@@ -47,25 +40,22 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget instanceof Infantry)
-                && !(entityTarget instanceof BattleArmor)) {
+        if (entityTarget.isConventionalInfantry()) {
             // 1 point direct-fire ballistic
             nDamPerHit = Compute.directBlowInfantryDamage(1,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_DIRECT_FIRE,
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null);
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
         Report r = new Report(3390);
         r.subject = subjectId;

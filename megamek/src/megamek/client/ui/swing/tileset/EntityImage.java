@@ -22,10 +22,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.util.Iterator;
+import java.util.Objects;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -33,44 +35,44 @@ import megamek.common.util.ImageUtil;
 
 /** Handles the rotated and damaged and preview images for a unit. */
 public class EntityImage {
-    
+
     // Control values for applying bigger and smaller smoke
     private static final int SMOKE_THREE = 70;
     private static final int SMOKE_TWO = 40;
-    
+
     // Damage decal images
     private static final File DECAL_PATH = new File(Configuration.imagesDir(), "units/DamageDecals");
     private static final File FILE_DAMAGEDECAL_EMPTY = new File("Transparent.png");
-    
+
     // Directory paths within DECAL_PATH
     private static final String PATH_FIRE1 = "Fire1/";
     private static final String PATH_FIRE2 = "Fire2/";
     private static final String PATH_FIRE3 = "Fire3/";
     private static final String PATH_FIREMULTI = "FireMulti/";
-    
+
     private static final String PATH_SMOKE1 = "Smoke1/";
     private static final String PATH_SMOKE2 = "Smoke2/";
     private static final String PATH_SMOKE3 = "Smoke3/";
     private static final String PATH_SMOKEMULTI = "SmokeMulti/";
-    
+
     private static final String PATH_LIGHT = "Light/";
     private static final String PATH_MODERATE = "Moderate/";
     private static final String PATH_HEAVY = "Heavy/";
     private static final String PATH_CRIPPLED = "Crippled/";
-    
+
     /** A transparent image used as a no-damage decal. */
     private static Image dmgEmpty;
-    
+
     private static final int[] X_POS = {0, 0, 63, 63, 0, -63, -63};
     private static final int[] Y_POS = {0, -72, -36, 36, 72, 36, -36};
-    
+
     private static final int IMG_WIDTH = HexTileset.HEX_W;
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
-    
+
     /** All damage decal/fire/smoke files in DECAL_PATH. */
     private static DirectoryItems DecalImages;
-    
+
     static {
         try {
             DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
@@ -80,7 +82,7 @@ public class EntityImage {
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
-    
+
     /** The base (unit) image used for this icon. */
     private Image base;
     /** The wreck base image used for this icon. */
@@ -91,9 +93,7 @@ public class EntityImage {
     private Image smoke;
     /** A smaller icon used for the unit overview. */
     private Image icon;
-    /** A color used instead of a camo. */
-    PlayerColour tint;
-    private Image camo;
+    private Camouflage camouflage;
     private Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
     private Component parent;
@@ -116,20 +116,19 @@ public class EntityImage {
     /** True for tanks */
     private final boolean isTank;
 
-    public EntityImage(Image base, PlayerColour tint, Image camo, Component comp, Entity entity) {
-        this(base, null, tint, camo, comp, entity, -1, true);
+    public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        this(base, null, camouflage, comp, entity, -1, true);
     }
-    
-    public EntityImage(Image base, Image wreck, PlayerColour tint, Image camo, Component comp,
+
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos) {
-        this(base, wreck, tint, camo, comp, entity, secondaryPos, false);
+        this(base, wreck, camouflage, comp, entity, secondaryPos, false);
     }
-    
-    public EntityImage(Image base, Image wreck, PlayerColour tint, Image camo, Component comp,
+
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos, boolean preview) {
         this.base = base;
-        this.tint = tint;
-        this.camo = camo;
+        setCamouflage(camouflage);
         parent = comp;
         this.wreck = wreck;
         this.dmgLevel = calculateDamageLevel(entity);
@@ -146,41 +145,45 @@ public class EntityImage {
         decal = getDamageDecal(entity, secondaryPos);
         smoke = getSmokeImage(entity, secondaryPos);
     }
-    
+
     /**
-     * Worker function that calculates the entity's damage level for the purposes of displaying damage 
+     * Worker function that calculates the entity's damage level for the purposes of displaying damage
      * to avoid particularly dumb-looking situations
      */
     private int calculateDamageLevel(Entity entity) {
         // gun emplacements don't show up as crippled when destroyed, which leads to them looking pristine
-        if((entity instanceof GunEmplacement) && entity.isDestroyed()) {
+        if ((entity instanceof GunEmplacement) && entity.isDestroyed()) {
             return Entity.DMG_CRIPPLED;
         }
-        
+
         // aerospace fighters where the pilot ejects look pretty dumb without any damage decals
         // so let's give them at least some damage
-        if(entity.isAirborne() && entity.getCrew().isEjected()) {
+        if (entity.isAirborne() && entity.getCrew().isEjected()) {
             return Math.max(Entity.DMG_HEAVY, entity.getDamageLevel(false));
         }
-        
+
         int calculatedDamageLevel = entity.getDamageLevel();
-        
-        // entities may be "damaged" or "crippled" due to harmless weapon jams, being out of ammo or otherwise but 
-        // not having taken any actual damage. In this case, it looks stupid for the entity to be all shot up, 
+
+        // entities may be "damaged" or "crippled" due to harmless weapon jams, being out of ammo or otherwise but
+        // not having taken any actual damage. In this case, it looks stupid for the entity to be all shot up,
         // so we pretend there's no damage.
-        if(calculatedDamageLevel > Entity.DMG_NONE) {
-            if((entity.getArmorRemainingPercent() >= 1.0) && (entity.getInternalRemainingPercent() >= 1.0)) {
+        if (calculatedDamageLevel > Entity.DMG_NONE) {
+            if ((entity.getArmorRemainingPercent() >= 1.0) && (entity.getInternalRemainingPercent() >= 1.0)) {
                 calculatedDamageLevel = Entity.DMG_NONE;
             }
         }
-        
+
         return calculatedDamageLevel;
     }
 
-    public Image getCamo() {
-        return camo;
+    public Camouflage getCamouflage() {
+        return camouflage;
     }
-    
+
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = Objects.requireNonNull(camouflage);
+    }
+
     public int getDmgLvl() {
         return dmgLevel;
     }
@@ -190,22 +193,22 @@ public class EntityImage {
         if (base == null) {
             return;
         }
-        
-        // Apply the player/unit camo or color
+
+        // Apply the player/unit camouflage
         base = applyColor(base);
-        
+
         // Save a small icon (without damage decals) for the unit overview
         icon = ImageUtil.getScaledImage(base,  56, 48);
-        
+
         // Add damage scars and smoke/fire; not to Infantry
         if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
             base = applyDamageDecal(base);
-            // No smoke in the lobby            
+            // No smoke in the lobby
             if (!isPreview) {
                 base = applyDamageSmoke(base);
             }
         }
-        
+
         // Generate rotated images for the unit and for a wreck
         for (int i = 0; i < 6; i++) {
             facings[i] = rotateImage(base, i);
@@ -213,22 +216,22 @@ public class EntityImage {
 
         if (wreck != null) {
             wreck = applyColor(wreck);
-            
+
             // Add damage scars and smoke/fire; not to Infantry
             if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
                 wreck = applyDamageDecal(wreck);
-                // No smoke in the lobby            
+                // No smoke in the lobby
                 if (!isPreview) {
                     wreck = applyDamageSmoke(wreck);
                 }
             }
-            
+
             for (int i = 0; i < 6; i++) {
                 wreckFacings[i] = rotateImage(wreck, i);
             }
         }
     }
-    
+
     /** Rotates a given unit image into direction dir. */
     private BufferedImage rotateImage(Image img, int dir) {
         double cx = base.getWidth(parent) / 2.0;
@@ -283,42 +286,43 @@ public class EntityImage {
         return getBase();
     }
 
-    /** Applies the unit individual or player color or camo to the icon. */
+    /** Applies the unit individual or player camouflage to the icon. */
     private Image applyColor(Image image) {
         if (image == null) {
             return null;
         }
-        boolean useCamo = (camo != null);
-        
+        final boolean colourCamouflage = getCamouflage().isColourCamouflage();
+        final int colour = colourCamouflage ? PlayerColour.parseFromString(getCamouflage().getFilename()).getHex() : -1;
+
         // Prepare the images for access
         int[] pMech = new int[IMG_SIZE];
         int[] pCamo = new int[IMG_SIZE];
         try {
             grabImagePixels(image, pMech);
-            if (useCamo) {
-                grabImagePixels(camo, pCamo);
+            if (!colourCamouflage) {
+                grabImagePixels(camouflage.getImage(), pCamo);
             }
         } catch (Exception e) {
             MegaMek.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
             return image;
         }
 
-        // Overlay the camo or color  
+        // Overlay the camo or color
         for (int i = 0; i < IMG_SIZE; i++) {
             int pixel = pMech[i];
             int alpha = (pixel >> 24) & 0xff;
             int red = (pixel >> 16) & 0xff;
             int green = (pixel >> 8) & 0xff;
             int blue = (pixel) & 0xff;
-            
+
             // Don't apply the camo over colored (not gray) pixels
             if (!(red == green && green == blue)) {
                 continue;
             }
-            
+
             // Apply the camo only on the icon pixels, not on transparent pixels
             if (alpha != 0) {
-                int pixel1 = useCamo ? pCamo[i] : tint.getHex();
+                int pixel1 = colourCamouflage ? colour : pCamo[i];
                 int red1 = (pixel1 >> 16) & 0xff;
                 int green1 = (pixel1 >> 8) & 0xff;
                 int blue1 = (pixel1) & 0xff;

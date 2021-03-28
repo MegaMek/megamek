@@ -118,15 +118,15 @@ public class BayMunitionsChoicePanel extends JPanel {
                     mounted.setShotsLeft(shots);
                     int slots = (int) Math.ceil((double) shots / row.munitions.get(i).getShots());
                     mounted.setOriginalShots(slots * row.munitions.get(i).getShots());
-                    mounted.setAmmoCapacity(slots * row.munitions.get(i).getTonnage(entity));
-                    remainingWeight -= mounted.getAmmoCapacity();
+                    mounted.setSize(slots * row.munitions.get(i).getTonnage(entity));
+                    remainingWeight -= mounted.getSize();
                     mountIndex++;
                 }
             }
             // Zero out any remaining unused bins.
             while (mountIndex < row.ammoMounts.size()) {
                 Mounted mount = row.ammoMounts.get(mountIndex);
-                mount.setAmmoCapacity(0);
+                mount.setSize(0);
                 mount.setOriginalShots(0);
                 mount.setShotsLeft(0);
                 mountIndex++;
@@ -136,8 +136,8 @@ public class BayMunitionsChoicePanel extends JPanel {
             if (remainingWeight > 0) {
                 Mounted m = row.ammoMounts.get(0);
                 AmmoType at = (AmmoType) m.getType();
-                m.setAmmoCapacity(m.getAmmoCapacity() + remainingWeight);
-                m.setOriginalShots((int) Math.floor(m.getAmmoCapacity() / (at.getShots() * m.getTonnage())));
+                m.setSize(m.getSize() + remainingWeight);
+                m.setOriginalShots((int) Math.floor(m.getSize() / (at.getShots() * m.getTonnage())));
             }
         }
     }
@@ -179,7 +179,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
-            tonnage = ammoMounts.stream().mapToDouble(m -> m.getAmmoCapacity()).sum();
+            tonnage = ammoMounts.stream().mapToDouble(m -> m.getSize()).sum();
             Map<String,Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
             for (AmmoType atype : munitions) {
@@ -237,7 +237,9 @@ public class BayMunitionsChoicePanel extends JPanel {
                             && (atype.getTechBase() != AmmoType.TECH_BASE_ALL)
                             && (techBase != AmmoType.TECH_BASE_ALL))
                     || !atype.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
-                            SimpleTechLevel.getGameTechLevel(game), techBase == AmmoType.TECH_BASE_CLAN, false)) {
+                            SimpleTechLevel.getGameTechLevel(game), 
+                            techBase == AmmoType.TECH_BASE_CLAN, 
+                            techBase == AmmoType.TECH_BASE_ALL)) {
                 return false;
             }
             if (atype.hasFlag(AmmoType.F_NUCLEAR)

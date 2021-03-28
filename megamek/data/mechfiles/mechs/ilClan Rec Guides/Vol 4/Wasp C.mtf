@@ -4,15 +4,15 @@ C
 
 Config:Biped
 techbase:Mixed (IS Chassis)
-era:3150
-rules level:2
+era:3143
+rules level:3
 
 mass:20
 engine:120 Fusion Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:6
 
@@ -30,8 +30,8 @@ RTR armor:2
 RTC armor:4
 
 Weapons:2
+Streak SRM 2 (I-OS), Left Leg
 ER Large Laser, Right Arm
-Streak SRM 2 (I-OS), Right Leg
 
 Left Arm:
 Shoulder
@@ -123,7 +123,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Clan Ferro-Fibrous
+CLStreakSRM2 (IOS)
 -Empty-
 -Empty-
 -Empty-
@@ -137,7 +137,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-CLStreakSRM2 (IOS)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

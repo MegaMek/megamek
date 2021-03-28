@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.2
 Daishi (Dire Wolf)
 S
 
@@ -79,18 +79,19 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMG (omnipod)
-CLStreakSRM4 (omnipod)
 Clan Streak SRM 4 Ammo (omnipod)
-Jump Jet (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
+Jump Jet (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMG (omnipod)
@@ -98,7 +99,6 @@ Clan LB 20-X AC Ammo (omnipod)
 Clan LB 20-X Cluster Ammo (omnipod)
 Clan LB 20-X AC Ammo (omnipod)
 Clan Machine Gun Ammo - Full (omnipod)
-Jump Jet (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -155,3 +155,5 @@ CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
+
+

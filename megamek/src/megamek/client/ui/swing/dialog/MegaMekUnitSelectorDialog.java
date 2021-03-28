@@ -77,8 +77,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, new GridBagConstraints());
 
-        updatePlayerChoice();
-
         JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
         panelButtons.add(labelPlayer, new GridBagConstraints());
@@ -194,7 +192,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
         updatePlayerChoice();
+        super.setVisible(visible);
     }
 }

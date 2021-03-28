@@ -1,10 +1,10 @@
-Version:1.0
+Version:1.1
 Devastator
 DVS-2-EC
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:2820
+era:2827
 source:Succession Wars
 rules level:4
 
@@ -50,7 +50,7 @@ Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Right Arm:
 Shoulder
@@ -64,7 +64,7 @@ Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
 Improved Gauss Rifle
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Left Torso:
 Fusion Engine
@@ -76,7 +76,7 @@ CLWERPPC
 CLWERPPC
 CLWERPPC
 CLERMediumLaser
-IS Gauss Ammo
+CLImpGaussAmmo
 -Empty-
 -Empty-
 
@@ -92,7 +92,7 @@ CLWERPPC
 CLWERPPC
 CLWERPPC
 CLERMediumLaser
-IS Gauss Ammo
+CLImpGaussAmmo
 
 Center Torso:
 Fusion Engine

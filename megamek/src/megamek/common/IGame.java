@@ -670,7 +670,7 @@ public interface IGame {
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    abstract Targetable getTarget(int nType, int nID);
+    @Nullable Targetable getTarget(int nType, int nID);
 
     /**
      * Returns the entity with the given id number, if any.

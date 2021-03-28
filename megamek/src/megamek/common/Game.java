@@ -35,6 +35,7 @@ import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -1200,7 +1201,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    public Targetable getTarget(int nType, int nID) {
+    @Override
+    public @Nullable Targetable getTarget(int nType, int nID) {
         try {
             switch (nType) {
                 case Targetable.TYPE_ENTITY:
@@ -1215,24 +1217,22 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_HEX_SCREEN:
                 case Targetable.TYPE_HEX_AERO_BOMB:
                 case Targetable.TYPE_HEX_TAG:
-                    return new HexTarget(HexTarget.idToCoords(nID), board,
-                                         nType);
+                    return new HexTarget(HexTarget.idToCoords(nID), nType);
                 case Targetable.TYPE_FUEL_TANK:
                 case Targetable.TYPE_FUEL_TANK_IGNITE:
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID),
-                                              board, nType);
+                    return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
                 case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID),
-                                               board);
+                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
                 case Targetable.TYPE_INARC_POD:
                     return INarcPod.idToInstance(nID);
                 default:
                     return null;
             }
         } catch (IllegalArgumentException t) {
+            MegaMek.getLogger().error(t);
             return null;
         }
     }

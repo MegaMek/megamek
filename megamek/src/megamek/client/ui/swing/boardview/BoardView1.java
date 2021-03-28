@@ -1,7 +1,7 @@
 /*
 * MegaMek -
 * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (C) 2018-2021 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
@@ -184,8 +183,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private static final long serialVersionUID = -5582195884759007416L;
 
-    static final int TRANSPARENT = 0xFFFF00FF;
-
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
     private static final int BOARD_HEX_DRAG = 3;
@@ -194,7 +191,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // the dimensions of megamek's hex images
     public static final int HEX_W = HexTileset.HEX_W;
     public static final int HEX_H = HexTileset.HEX_H;
-    public static final int HEX_DIAG = (int)Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
+    public static final int HEX_DIAG = (int) Math.round(Math.sqrt(HEX_W * HEX_W + HEX_H * HEX_H));
 
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
@@ -213,8 +210,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public static final int [] allDirections = {0,1,2,3,4,5};
 
     // Set to TRUE to draw hexes with isometric elevation.
-    private boolean drawIsometric = GUIPreferences.getInstance()
-                                                  .getIsometricEnabled();
+    private boolean drawIsometric = GUIPreferences.getInstance().getIsometricEnabled();
 
     int DROPSHDW_DIST = 20;
 
@@ -230,13 +226,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // line width of the fly over lines
     static final int FLY_OVER_LINE_WIDTH = 3;
 
-    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7); //$NON-NLS-1$
-    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8); //$NON-NLS-1$
-    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
-    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
+    // FIXME : Fonts shouldn't ever be handled like this for accessibility reasons
+    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7);
+    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8);
+    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9);
+    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10);
+    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
 
-    Dimension hex_size = null;
+    Dimension hex_size;
 
     private Font font_note = FONT_10;
     private Font font_hexnum = FONT_10;
@@ -261,10 +258,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean shouldScroll = false;
 
     // entity sprites
-    private Queue<EntitySprite> entitySprites = new PriorityQueue<EntitySprite>();
-    private Queue<IsometricSprite> isometricSprites = new PriorityQueue<IsometricSprite>();
+    private Queue<EntitySprite> entitySprites = new PriorityQueue<>();
+    private Queue<IsometricSprite> isometricSprites = new PriorityQueue<>();
 
-    private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
+    private ArrayList<FlareSprite> flareSprites = new ArrayList<>();
     /**
      * A Map that maps an Entity ID and a secondary position to a Sprite. Note
      * that the key is a List where the first entry will be the Entity ID and
@@ -290,29 +287,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private CursorSprite secondLOSSprite;
 
     // sprite for current movement
-    ArrayList<StepSprite> pathSprites = new ArrayList<StepSprite>();
+    ArrayList<StepSprite> pathSprites = new ArrayList<>();
 
-    private ArrayList<Coords> strafingCoords = new ArrayList<Coords>(5);
+    private ArrayList<Coords> strafingCoords = new ArrayList<>(5);
 
-    private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<FiringSolutionSprite>();
+    private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
 
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
     // vector of sprites for all firing lines
-    ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
+    ArrayList<AttackSprite> attackSprites = new ArrayList<>();
 
     // vector of sprites for all movement paths (using vectored movement)
-    private ArrayList<MovementSprite> movementSprites = new ArrayList<MovementSprite>();
+    private ArrayList<MovementSprite> movementSprites = new ArrayList<>();
 
     // vector of sprites for C3 network lines
-    private ArrayList<C3Sprite> c3Sprites = new ArrayList<C3Sprite>();
+    private ArrayList<C3Sprite> c3Sprites = new ArrayList<>();
 
     // list of sprites for declared VTOL/airmech bombing/strafing targets
     private ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
 
     // vector of sprites for aero flyover lines
-    private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
+    private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<>();
 
     // List of sprites for the weapon field of fire
     private ArrayList<HexSprite> fieldofFireSprites = new ArrayList<>();
@@ -324,7 +321,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public int fieldofFireWpUnderwater = 0;
     private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
 
-    TilesetManager tileManager = null;
+    TilesetManager tileManager;
 
     // polygons for a few things
     static Polygon hexPoly;
@@ -373,18 +370,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Initial scale factor for sprites and map
     float scale = 1.00f;
-    private ImageCache<Integer, Image> scaledImageCache =
-            new ImageCache<Integer, Image>();
-    private ImageCache<Integer, BufferedImage> shadowImageCache =
-            new ImageCache<Integer, BufferedImage>();
+    private ImageCache<Integer, Image> scaledImageCache = new ImageCache<>();
+    private ImageCache<Integer, BufferedImage> shadowImageCache = new ImageCache<>();
 
-    private Set<Integer> animatedImages = new HashSet<Integer>();
+    private Set<Integer> animatedImages = new HashSet<>();
 
     // Displayables (Chat box, etc.)
-    ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
+    ArrayList<IDisplayable> displayables = new ArrayList<>();
 
     // Move units step by step
-    private ArrayList<MovingUnit> movingUnits = new ArrayList<MovingUnit>();
+    private ArrayList<MovingUnit> movingUnits = new ArrayList<>();
 
     private long moveWait = 0;
 
@@ -2157,32 +2152,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Draw incoming artillery sprites - requires server to update client's
         // view of game
-        for (Enumeration<ArtilleryAttackAction> attacks = game
-                .getArtilleryAttacks(); attacks.hasMoreElements(); ) {
-            ArtilleryAttackAction a = attacks.nextElement();
-            Coords c = a.getTarget(game).getPosition();
+        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks();
+             attacks.hasMoreElements(); ) {
+            final ArtilleryAttackAction attack = attacks.nextElement();
+            final Targetable target = attack.getTarget(game);
+            if (target == null) {
+                continue;
+            }
+            final Coords c = target.getPosition();
             // Is the Coord within the viewing area?
             if ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
-                && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
-
+                    && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
                 Point p = getHexLocation(c);
-                artyIconImage = tileManager
-                        .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
+                artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
                 g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, this);
             }
         }
 
         // Draw pre-designated auto-hit hexes
-        if (localPlayer != null) // Could be null, like in map-editor
-        {
+        if (localPlayer != null) { // Could be null, like in map-editor
             for (Coords c : localPlayer.getArtyAutoHitHexes()) {
                 // Is the Coord within the viewing area?
                 if ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
                     && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
 
                     Point p = getHexLocation(c);
-                    artyIconImage = tileManager
-                            .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
+                    artyIconImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
                     g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, this);
                 }
             }

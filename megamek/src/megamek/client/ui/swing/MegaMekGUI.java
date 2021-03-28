@@ -749,19 +749,20 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
 
         // calculate initial BV
         server.calculatePlayerBVs();
-
+        
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
+                MegaMek.getLogger().info("Adding bot "  + pa[x].getName() + " as TestBot");
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.getPort());
                 c.getGame().addGameListener(new BotGUI(c));
+                c.connect();
             }
-        }
-
-        for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
+                MegaMek.getLogger().info("Adding bot "  + pa[x].getName() + " as Princess");
                 BotClient c = new Princess(pa[x].getName(), "localhost", hd.getPort(), LogLevel.ERROR);
                 c.getGame().addGameListener(new BotGUI(c));
+                c.connect();
             }
         }
 

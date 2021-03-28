@@ -314,9 +314,9 @@ public interface IGame {
     /**
      * sets the game options
      *
-     * @param options
+     * @param options the options to set
      */
-    abstract void setOptions(GameOptions options);
+    void setOptions(final @Nullable GameOptions options);
 
     /**
      * @return the game board
@@ -675,7 +675,7 @@ public interface IGame {
     /**
      * Returns the entity with the given id number, if any.
      */
-    abstract Entity getEntity(int id);
+    @Nullable Entity getEntity(final int id);
 
     /**
      * looks for an entity by id number even if out of the game
@@ -1507,7 +1507,7 @@ public interface IGame {
 
     abstract PlanetaryConditions getPlanetaryConditions();
 
-    abstract void setPlanetaryConditions(PlanetaryConditions conditions);
+    void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions);
 
     /**
      * Get a set of Coords illuminated by searchlights.
@@ -1526,7 +1526,7 @@ public interface IGame {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    abstract void setIlluminatedPositions(HashSet<Coords> ip);
+    void setIlluminatedPositions(final @Nullable HashSet<Coords> ip);
 
     /**
      * Add a new hex to the collection of Coords illuminated by searchlights.

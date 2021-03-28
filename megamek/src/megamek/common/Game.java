@@ -3503,7 +3503,7 @@ public class Game implements Serializable, IGame {
 
     @Override
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
-        if (null == conditions) {
+        if (conditions == null) {
             MegaMek.getLogger().error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);

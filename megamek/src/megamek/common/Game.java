@@ -1231,8 +1231,8 @@ public class Game implements Serializable, IGame {
                 default:
                     return null;
             }
-        } catch (IllegalArgumentException t) {
-            MegaMek.getLogger().error(t);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             return null;
         }
     }
@@ -1240,9 +1240,9 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the entity with the given id number, if any.
      */
-
-    public Entity getEntity(int id) {
-        return entityIds.get(Integer.valueOf(id));
+    @Override
+    public @Nullable Entity getEntity(final int id) {
+        return entityIds.get(id);
     }
 
     /**

@@ -29,10 +29,6 @@ import java.util.List;
 
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
-    public PortraitChooser() {
-        this(null);
-    }
-
     public PortraitChooser(AbstractIcon icon) {
         super(new PortraitChooserTree(), icon);
     }

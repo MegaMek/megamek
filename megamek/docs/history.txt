@@ -26,6 +26,7 @@ VERSION HISTORY:
 + PR #2754: Making Princess the default bot for MM Scenarios and Fixing MM Scenario Bot Loading
 + PR #2752: Offboard Artillery Target Not Found NPE
 + PR #2570: Camouflage Improvements and Integrated Directory Refresh
++ Issue #2755: Searchlights no longer have unlimited range
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

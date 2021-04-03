@@ -27,7 +27,9 @@ VERSION HISTORY:
 + PR #2752: Offboard Artillery Target Not Found NPE
 + PR #2570: Camouflage Improvements and Integrated Directory Refresh
 + Issue #2755: Searchlights no longer have unlimited range
-+ Issue #2758, 2759: Infantry no longer able to leap up to flying VTOLs for swarm attacks; target movement modifier now applies to legal leg/swarm attacks.
++ Issue #2758, 2759: Infantry no longer able to leap up to flying VTOLs for swarm attacks; 
+   target movement modifier now applies to legal leg/swarm attacks.
++ Issue #2767: Incorrect Citation for "(Unofficial) Specify the number of pre-designated artillery autohit hexes per map area
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

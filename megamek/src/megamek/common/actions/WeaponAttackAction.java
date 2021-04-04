@@ -1753,7 +1753,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                     return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                                 }
                             }
-                        } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
+                        } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV &&
+                                wtype.getAmmoType() != AmmoType.T_ARROW_IV_BOMB) {
                             //For Fighters, LAMs, Small Craft and VTOLs
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }

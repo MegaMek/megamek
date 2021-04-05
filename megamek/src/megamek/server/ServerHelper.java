@@ -1,17 +1,11 @@
 package megamek.server;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import megamek.MegaMek;
 import megamek.client.ui.swing.lobby.LobbyActions;
 import megamek.common.*;
-import megamek.common.force.Force;
-import megamek.common.force.Forces;
+import megamek.common.force.*;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
@@ -615,6 +609,22 @@ public class ServerHelper {
     }
     
     /** 
+     * Have the given entity disembark if it is carried by an enemy unit.
+     * <P>NOTE: This is a simplified disembark that is only valid in the lobby!
+     */
+    private static void lobbyDisembarkEnemy(IGame game, Entity entity) {
+        if (entity.getTransportId() != Entity.NONE) {
+            Entity carrier = game.getEntity(entity.getTransportId());
+            if (carrier == null) {
+                entity.setTransportId(Entity.NONE);
+            } else if (carrier != null && carrier.getOwner().isEnemyOf(entity.getOwner())) {
+                carrier.unload(entity);
+                entity.setTransportId(Entity.NONE);
+            }
+        }
+    }
+    
+    /** 
      * Performs a disconnect from C3 networks for the given entities. 
      * This is a simplified version that is only valid in the lobby.
      * Returns a set of entities that received changes.
@@ -705,14 +715,17 @@ public class ServerHelper {
         entityList.stream().map(e -> game.getEntity(e.getId())).forEach(serverEntities::add);
 
         // For any units that are switching teams, unload and disconnect from C3
-        List<Entity> switchingTeam = serverEntities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
-        lobbyUnloadOthers(game, switchingTeam);
-        performC3Disconnect(game, switchingTeam);
-        game.getForces().removeEntityFromForces(switchingTeam);
+//        List<Entity> switchingTeam = serverEntities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
+//        lobbyUnloadOthers(game, switchingTeam);
+//        performC3Disconnect(game, switchingTeam);
+//        game.getForces().removeEntityFromForces(switchingTeam);
 
         for (Entity entity: serverEntities) {
             entity.setOwner(newOwner);
         }
+        game.getForces().correct();
+        correctLoading(game);
+        correctC3Connections(game);
         server.send(server.createFullEntitiesPacket());
     }
     
@@ -741,17 +754,19 @@ public class ServerHelper {
 
         for (Force force: serverForces) {
             Collection<Entity> entities = forces.getFullEntities(force);
-            List<Entity> switchingTeam = entities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
+//            List<Entity> switchingTeam = entities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
             
             // For any units that are switching teams, unload and disconnect from C3
-            lobbyUnloadOthers(game, switchingTeam);
-            performC3Disconnect(game, switchingTeam); 
+//            lobbyUnloadOthers(game, switchingTeam);
+//            performC3Disconnect(game, switchingTeam); 
             forces.assignFullForces(force, newOwner);
-
             for (Entity entity: entities) {
                 entity.setOwner(newOwner);
             }
         }
+        forces.correct();
+        correctLoading(game);
+        correctC3Connections(game);
         server.send(server.createFullEntitiesPacket());
     }
     
@@ -786,49 +801,85 @@ public class ServerHelper {
      * This method is intended for use in the lobby!
      */
     static void receiveLobbyTeamChange(Packet c, int connId, IGame game, Server server) {
-        var playerId = (int) c.getObject(0);
+        @SuppressWarnings("unchecked")
+        var players = (Collection<IPlayer>) c.getObject(0);
         var newTeam = (int) c.getObject(1);
         
-        IPlayer player = game.getPlayer(playerId);
-        if (player == null || newTeam < 0 || newTeam > 5 || player.getTeam() == newTeam) {
+        // Collect server-side player objects
+        var serverPlayers = new HashSet<IPlayer>();
+        players.stream().map(p -> game.getPlayer(p.getId())).forEach(serverPlayers::add);
+        
+        // Check parameters and if there's an actual change to a player
+        serverPlayers.removeIf(p -> p == null || p.getTeam() == newTeam);
+        if (serverPlayers.isEmpty() || newTeam < 0 || newTeam > 5) {
             return;
         }
         
-        // Since different teams are always enemies, changing the team forces 
-        // the units of this player to offload and disembark from 
-        // all units of other players
-        List<Entity> switchingTeam = game.getPlayerEntities(player, false);        
-        lobbyUnloadOthers(game, switchingTeam);
-        performC3Disconnect(game, switchingTeam);
-
-        // Units and forces cannot stay part of a former teammate's forces and vice versa
+        // First, change all teams, then correct all connections (load, C3, force)
+        for (IPlayer player: serverPlayers) {
+            player.setTeam(newTeam);
+        }
         Forces forces = game.getForces();
-        Set<Entity> leaveForce = new HashSet<>();
-        for (Entity entity: game.getEntitiesVector()) {
-            if (entity.partOfForce()) {
-                Force force = forces.getForce(entity);
-                // Must leave force if one of Entity or Force belongs to the changing player but the other doesn't
-                if ((entity.getOwnerId() == playerId) != (force.getOwnerId() == playerId)) {
-                    leaveForce.add(entity);
-                }
-            }
-        }
-        forces.removeEntityFromForces(leaveForce);
-        for (Force force: forces.getAllForces()) {
-            if ((force.getParentId() != Force.NO_FORCE) 
-                    && ((force.getOwnerId() == playerId) != (forces.getForce(force.getParentId()).getOwnerId() == playerId))) {
-                forces.promoteForce(force);
-            }
-        }
+        forces.correct();
+        correctLoading(game);
+        correctC3Connections(game);
         
-        player.setTeam(newTeam);
+//        for (IPlayer player: serverPlayers) {
+//            // Since different teams are always enemies, changing the team forces 
+//            // the units of this player to offload and disembark from 
+//            // all units of other players
+//            List<Entity> switchingTeam = game.getPlayerEntities(player, false);        
+//            lobbyUnloadOthers(game, switchingTeam);
+//            performC3Disconnect(game, switchingTeam);
+//        }
+        
         server.send(server.createFullEntitiesPacket());
-        server.send(server.createPlayerUpdatePacket(playerId));
+        for (IPlayer player: serverPlayers) {
+            server.send(server.createPlayerUpdatePacket(player.getId()));
+        }
     }
-    
+
     /** 
-     * Handles a force parent packet, attaching the sent forces to a new parent or 
-     * making the sent forces top-level. 
+     * For all game units, disembarks from carriers and offloads carried units
+     * if they are enemies.  
+     * <P>NOTE: This is a simplified unload that is only valid in the lobby!
+     */
+    static void correctLoading(IGame game) {
+        for (Entity entity: game.getEntitiesVector()) {
+            lobbyDisembarkEnemy(game, entity);
+            for (Entity carriedUnit: entity.getLoadedUnits()) {
+                lobbyDisembarkEnemy(game, carriedUnit);
+            } 
+        }
+    }
+
+    /** 
+     * For all game units, disconnects from enemy C3 masters / networks
+     * <P>NOTE: This is intended for use in the lobby phase!
+     */
+    static void correctC3Connections(IGame game) {
+        for (Entity entity: game.getEntitiesVector()) {
+            if (entity.hasNhC3()) {
+                String net = entity.getC3NetId();
+                int id = Entity.NONE;
+                try {
+                    id = Integer.parseInt(net.substring(net.indexOf(".") + 1));
+                    if (game.getEntity(id).getOwner().isEnemyOf(entity.getOwner())) {
+                        entity.setC3NetIdSelf();
+                    }
+                } catch (Exception e) {
+                }
+            } else if (entity.hasAnyC3System()) {
+                if (entity.getC3Master() != null 
+                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner()))
+                entity.setC3Master(null, true);
+            }
+        }
+    }
+
+    /** 
+     * Handles an add entity to force / remove from force packet, attaching the 
+     * sent entities to a force or removing them from any force. 
      * This method is intended for use in the lobby!
      */
     static void receiveAddEntititesToForce(Packet c, int connId, IGame game, Server server) {
@@ -860,6 +911,29 @@ public class ServerHelper {
             changedEntities.addAll(entities);
         }
         server.send(createForceUpdatePacket(changedForces, changedEntities));
+    }
+    
+    /**
+     * Adds a force with the info from the client. Only valid during the lobby phase.
+     * @param c the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    static void receiveForceAdd(Packet c, int connId, IGame game, Server server) {
+        var force = (Force) c.getObject(0);
+        @SuppressWarnings("unchecked")
+        var entities = (Collection<Entity>) c.getObject(1);
+
+        int newId;
+        if (force.isTopLevel()) {
+            newId = game.getForces().addTopLevelForce(force.getName(), game.getPlayer(connId));
+        } else {
+            Force parent = game.getForces().getForce(force.getParentId()); 
+            newId = game.getForces().addSubForce(force.getName(), parent);
+        }
+        for (var entity: entities) {
+            game.getForces().addEntity(game.getEntity(entity.getId()), newId);
+        }
+        server.send(server.createFullEntitiesPacket());
     }
     
     /**

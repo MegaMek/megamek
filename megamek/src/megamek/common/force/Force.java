@@ -67,6 +67,11 @@ public final class Force implements Serializable {
         id = nId;
     }
     
+    /** Changes the id of this force to newId. */
+    void setId(int newId) {
+        id = newId;
+    }
+    
     /**
      * Creates a force object that is not integrated into any forces. Used
      * to send a new force to the server. In other cases, use Forces.add.
@@ -215,6 +220,7 @@ public final class Force implements Serializable {
         entities.remove((Integer)entity.getId());
     }
     
+    /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
         entities.remove((Integer)id);
     }

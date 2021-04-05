@@ -659,7 +659,6 @@ public class Server implements Runnable {
      * Allow the player to set whatever parameters he is able to
      */
     private void receivePlayerInfo(Packet packet, int connId) {
-        MegaMek.getLogger().error("Player Uppdate!");
         IPlayer player = (IPlayer) packet.getObject(0);
         IPlayer gamePlayer = game.getPlayer(connId);
         if (null != gamePlayer) {
@@ -30894,7 +30893,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet detailing the addition of an entity
      */
-    private Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
+    Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
         ArrayList<Entity> entities = new ArrayList<>(entityIds.size());
         for (Integer id : entityIds) {
             entities.add(game.getEntity(id));
@@ -31411,7 +31410,7 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_ADD:
-                receiveForceAdd(packet, connId);
+                ServerHelper.receiveForceAdd(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_DELETE:

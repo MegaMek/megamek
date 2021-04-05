@@ -37,4 +37,16 @@ public class CollectionUtil {
     public static final <T> T randomElement(Collection<T> collection) {
         return collection.stream().findFirst().get();
     }
+    
+    /** 
+     * Returns the only element of the collection.
+     * Throws an IllegalArgument exception if the collection size is greater than 1.
+     * Throws a NoSuchElement exception if it is empty.
+     */
+    public static final <T> T theElement(Collection<T> collection) {
+        if (collection.size() > 1) {
+            throw new IllegalArgumentException("The given collection has more than one element.");
+        }
+        return collection.stream().findFirst().get();
+    }
 }

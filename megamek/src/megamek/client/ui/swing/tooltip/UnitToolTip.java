@@ -235,7 +235,21 @@ public final class UnitToolTip {
     // Cannot move up/down teammember unit in own force
     // Forming a new quadron with already loaded fighters leaves them in both squ.
     // Loaded fighters joining a squadron doesnt work
-    //TODO Have Bot teammate, have connected forces?, close MM -> NPE in removeAllEntities in Server -> cant reproduce
+    // Have Bot teammate, have connected forces?, close MM -> NPE in removeAllEntities in Server -> cant reproduce
+    // Option: team change -> server -> first change team, then check entities and forces for wrong load and correct?
+    
+    // COMMENTS FROM DISCORD
+    
+    // Damn keyboard shortcuts view -> make go away in map preview
+    // horizontal scrollbars on mektable doesnt work
+    // maybe: remember state of ground map?
+    // unoff / legacy warning message
+    // Jtoggle button visibility....
+    // Create Force from menu point
+    // Add to force menu point
+    // Error with team changes 
+    // Random skills now default to TW
+    
     
     
     

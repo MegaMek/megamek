@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team 
+ * MegaMek - Copyright (C) 2020,2021 - The MegaMek Team 
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -16,27 +16,17 @@ package megamek.client.ui.swing.lobby;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JToolTip;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.Princess;
+import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.DialogButton;
@@ -45,6 +35,7 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.client.ui.Messages.getString;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -104,6 +95,26 @@ public class PlayerSettingsDialog extends ClientDialog {
         return currentPlayerStartPos;
     }
     
+    /** Returns the chosen random skill roll method. */
+    public int getMethod() {
+        return cmbMethod.getSelectedIndex();
+    }
+    
+    /** Returns the chosen random skill roll pilot type. */
+    public int getPilot() {
+        return cmbPilot.getSelectedIndex();
+    }
+    
+    /** Returns the chosen random skill roll experience. */
+    public int getXP() {
+        return cmbXP.getSelectedIndex();
+    }
+    
+    /** Returns the chosen random skill roll experience. */
+    public boolean getForceGP() {
+        return butForceGP.isSelected();
+    }
+    
     // PRIVATE
 
     private final Client client;
@@ -111,20 +122,32 @@ public class PlayerSettingsDialog extends ClientDialog {
     
     private static final int TOOLTIP_WIDTH = 300;
     private static final String PSD = "PlayerSettingsDialog.";
+    
+    // Initiative Section
     private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
-    private JLabel labConventional = new JLabel(Messages.getString(PSD + "labConventional"), SwingConstants.RIGHT); 
-    private JLabel labVibrabomb = new JLabel(Messages.getString(PSD + "labVibrabomb"), SwingConstants.RIGHT); 
-    private JLabel labActive = new JLabel(Messages.getString(PSD + "labActive"), SwingConstants.RIGHT); 
-    private JLabel labInferno = new JLabel(Messages.getString(PSD + "labInferno"), SwingConstants.RIGHT); 
+    private TipTextField fldInit = new TipTextField(3, this);
 
-    private JTextField fldInit = new JTextField(3);
+    // Mines Section
+    private JLabel labConventional = new JLabel(getString(PSD + "labConventional"), SwingConstants.RIGHT); 
+    private JLabel labVibrabomb = new JLabel(getString(PSD + "labVibrabomb"), SwingConstants.RIGHT); 
+    private JLabel labActive = new JLabel(getString(PSD + "labActive"), SwingConstants.RIGHT); 
+    private JLabel labInferno = new JLabel(getString(PSD + "labInferno"), SwingConstants.RIGHT); 
     private JTextField fldConventional = new JTextField(3);
     private JTextField fldVibrabomb = new JTextField(3);
     private JTextField fldActive = new JTextField(3);
     private JTextField fldInferno = new JTextField(3);
+
+    // Skills Section
+    private JLabel labMethod = new JLabel(getString(PSD + "labMethod"), SwingConstants.RIGHT); 
+    private JLabel labPilot = new JLabel(getString(PSD + "labPilot"), SwingConstants.RIGHT); 
+    private JLabel labXP = new JLabel(getString(PSD + "labXP"), SwingConstants.RIGHT);
+    private TipCombo<String> cmbMethod = new TipCombo<String>(this);
+    private JComboBox<String> cmbPilot = new JComboBox<String>();
+    private JComboBox<String> cmbXP = new JComboBox<String>();
+    private MMToggleButton butForceGP = new MMToggleButton(getString(PSD + "butForceGP"));
     
     private JPanel panStartButtons = new JPanel();
-    private JButton[] butStartPos = new JButton[11];
+    private TipButton[] butStartPos = new TipButton[11];
     private JButton butBotSettings = new JButton(Messages.getString(PSD + "botSettings"));
     private DialogButton butOkay = new DialogButton(Messages.getString("Okay"));
     
@@ -136,7 +159,8 @@ public class PlayerSettingsDialog extends ClientDialog {
         setupValues();
         
         JPanel mainPanel = new JPanel();
-        add(mainPanel, BorderLayout.CENTER);
+        ContentScrollPane scrMain = new ContentScrollPane(mainPanel);
+        add(scrMain, BorderLayout.CENTER);
         add(buttonPanel(), BorderLayout.PAGE_END);
         
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -149,6 +173,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
+        mainPanel.add(skillsSection());
         mainPanel.add(Box.createVerticalGlue());
     }
     
@@ -188,6 +213,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         panContent.add(labInit);
         panContent.add(fldInit);
         labInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
+        fldInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
         return result;
     }
     
@@ -206,6 +232,21 @@ public class PlayerSettingsDialog extends ClientDialog {
         return result;
     }
     
+    private JPanel skillsSection() {
+        JPanel result = new OptionPanel(PSD + "header.skills");
+        Content panContent = new Content(new GridLayout(4, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labMethod);
+        panContent.add(cmbMethod);
+        panContent.add(labPilot);
+        panContent.add(cmbPilot);
+        panContent.add(labXP);
+        panContent.add(cmbXP);
+        panContent.add(new JLabel());
+        panContent.add(butForceGP);
+        return result;
+    }
+    
     private JPanel buttonPanel() {
         JPanel result = new JPanel(new FlowLayout());
         butOkay.addActionListener(listener);
@@ -221,12 +262,27 @@ public class PlayerSettingsDialog extends ClientDialog {
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
+        for (int i = 0; i < RandomSkillsGenerator.M_SIZE; i++) {
+            cmbMethod.addItem(RandomSkillsGenerator.getMethodDisplayableName(i));
+        }
+        for (int i = 0; i < RandomSkillsGenerator.T_SIZE; i++) {
+            cmbPilot.addItem(RandomSkillsGenerator.getTypeDisplayableName(i));
+        }
+        for (int i = 0; i < RandomSkillsGenerator.L_SIZE; i++) {
+            cmbXP.addItem(RandomSkillsGenerator.getLevelDisplayableName(i));
+        }
+        cmbMethod.setSelectedIndex(client.getRandomSkillsGenerator().getMethod());
+        adjustSkillMethodTip();
+        cmbPilot.setSelectedIndex(client.getRandomSkillsGenerator().getType());
+        cmbXP.setSelectedIndex(client.getRandomSkillsGenerator().getLevel());
+        butForceGP.setSelected(client.getRandomSkillsGenerator().isClose());
+        cmbMethod.addItemListener(e -> adjustSkillMethodTip());
     }
     
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
         for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new TipButton();
+            butStartPos[i] = new TipButton("", this);
             butStartPos[i].addActionListener(listener);
         }
         panStartButtons.setLayout(new GridLayout(4, 3));
@@ -321,26 +377,15 @@ public class PlayerSettingsDialog extends ClientDialog {
         }
     };
     
-    /** A JButton with a specialized tooltip display. */
-    private class TipButton extends JButton {
-        private static final long serialVersionUID = -2441468942513824896L;
-
-        @Override
-        public Point getToolTipLocation(MouseEvent event) {
-            PlayerSettingsDialog psd = PlayerSettingsDialog.this;
-            int x = -getLocation().x + psd.getWidth();
-            int y = -getLocation().y;
-            return new Point(x, y);
+    private void adjustSkillMethodTip() {
+        if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_TW) {
+            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descTW")));
+        } else if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_TAHARQA) {
+            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descTaharqa")));
+        } else if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_CONSTANT) {
+            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descConstant")));
         }
-        
-        @Override
-        public JToolTip createToolTip() {
-            JToolTip tip = super.createToolTip();
-            tip.setBackground(alternateTableBGColor());
-            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
-            return tip;
-        }
-    };
+    }
     
     /** 
      * Parse the given field and return the integer it contains or 0, if
@@ -362,5 +407,29 @@ public class PlayerSettingsDialog extends ClientDialog {
         String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
         return scaleStringForGUI(result);
     }
-    
- }
+
+    /** 
+     * A specialized JScrollPane that reports 80% of the parent frame's
+     * height as its maximum preferred viewport height. This makes the dialog
+     * scale to about 80% of MM's window height when needed but not more. 
+     */
+    private class ContentScrollPane extends JScrollPane {
+        private static final long serialVersionUID = -4976675600736422725L;
+        
+        public ContentScrollPane(Component view) {
+            super(view);
+            getVerticalScrollBar().setUnitIncrement(16);
+            setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            setBorder(null);
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            var prefSize = super.getPreferredSize();
+            var maxHeight = clientgui.getFrame().getHeight() / 10 * 8;
+            return new Dimension(prefSize.width, Math.min(maxHeight, prefSize.height));
+        }
+    }; 
+
+}

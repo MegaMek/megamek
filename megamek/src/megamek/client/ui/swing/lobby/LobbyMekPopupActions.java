@@ -34,7 +34,6 @@ public class LobbyMekPopupActions implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println(e.getActionCommand());
         StringTokenizer st = new StringTokenizer(e.getActionCommand(), "|");
         String command = st.nextToken();
         // info need not be an int; loading uses the format "##:##"
@@ -101,6 +100,7 @@ public class LobbyMekPopupActions implements ActionListener {
         case "FPROMOTE":
         case "FASSIGN":
         case "FASSIGNONLY":
+        case "FCREATEFROM":
             forceAction(command, entities, info);
             break;
         }
@@ -111,7 +111,7 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
         case "FCREATESUB":
             int parentId = Integer.parseInt(info);
-            lobby.createSubForce(parentId);  
+            lobby.lobbyActions.forceCreateSub(parentId);  
             break;
             
         case "FADDTO":
@@ -125,7 +125,11 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
         case "FCREATETOP":
-            lobby.createTopForce();
+            lobby.lobbyActions.forceCreateEmpty();
+            break;
+            
+        case "FCREATEFROM":
+            lobby.lobbyActions.forceCreateFrom(entities);
             break;
             
         case "FREMOVE":

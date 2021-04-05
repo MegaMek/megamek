@@ -531,7 +531,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         game.getBoard().addBoardListener(this);
         
         keybindOverlay = new KeyBindingsOverlay(game, clientgui);
-        addDisplayable(keybindOverlay);
+        // Avoid showing the key binds when they can't be used (in the lobby map preview)
+        if (controller != null) {
+            addDisplayable(keybindOverlay);
+        }
         ourTask = scheduleRedrawTimer();// call only once
         clearSprites();
         addMouseListener(this);

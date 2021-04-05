@@ -49,6 +49,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
@@ -372,7 +373,8 @@ public final class UIUtil {
                     || (comp instanceof JComboBox<?>) || (comp instanceof JCheckBox)
                     || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JRadioButton)
-                    || (comp instanceof JTextArea) || (comp instanceof JTextPane)) {
+                    || (comp instanceof JTextArea) || (comp instanceof JTextPane)
+                    || (comp instanceof JToggleButton)) {
                 comp.setFont(scaledFont);
             }
             if (comp instanceof JScrollPane 
@@ -498,7 +500,11 @@ public final class UIUtil {
         }
     }
     
-    /** A JLabel with a specialized tooltip display. */
+    /** 
+     * A JLabel with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     * Used in the player settings and planetary settings dialogs.
+     */
     public static class TipLabel extends JLabel {
         private static final long serialVersionUID = -338233022633675883L;
         
@@ -525,14 +531,80 @@ public final class UIUtil {
         }
     }
     
-    /** A JButton with a specialized tooltip display. */
-    public static class TipButton extends JLabel {
+    /** 
+     * A JButton with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     * Used in the player settings and planetary settings dialogs.
+     */
+    public static class TipButton extends JButton {
         private static final long serialVersionUID = 9076500965039634219L;
         
         private JDialog parentDialog;
 
         public TipButton(String text, JDialog parent) {
             super(text);
+            parentDialog = parent;
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            int x = -getLocation().x + parentDialog.getWidth();
+            int y = 0;
+            return new Point(x, y);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A JComboBox with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     * Used in the player settings and planetary settings dialogs.
+     */
+    public static class TipCombo<E> extends JComboBox<E> {
+        private static final long serialVersionUID = 8663494450966107303L;
+        
+        private JDialog parentDialog;
+
+        public TipCombo(JDialog parent) {
+            super();
+            parentDialog = parent;
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            int x = -getLocation().x + parentDialog.getWidth();
+            int y = 0;
+            return new Point(x, y);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A JTextField with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     * Used in the player settings and planetary settings dialogs.
+     */
+    public static class TipTextField extends JTextField {
+        private static final long serialVersionUID = -2226586551388519966L;
+        
+        private JDialog parentDialog;
+
+        public TipTextField(int n, JDialog parent) {
+            super(n);
             parentDialog = parent;
         }
 

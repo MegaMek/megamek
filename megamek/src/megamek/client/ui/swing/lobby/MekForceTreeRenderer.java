@@ -15,18 +15,13 @@ package megamek.client.ui.swing.lobby;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
-import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
@@ -38,7 +33,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /** A specialized renderer for the Mek Force tree. */
-public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
+public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -2002064111324279609L;
     private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
@@ -46,10 +41,7 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
 
     private ChatLounge lobby;
     //    private final Color TRANSPARENT = new Color(250,250,250,0);
-    private boolean isTopLevel;
     private boolean isSelected;
-    private Color topLevelBG = UIUtil.uiGray();
-    private Color treeBG = Color.BLACK;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
     private IPlayer localPlayer;
@@ -65,11 +57,16 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
         isSelected = sel;
         IGame game = lobby.getClientgui().getClient().getGame();
         localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
-        treeBG = tree.getBackground();
-        topLevelBG = UIUtil.alternateTableBGColor();
-        isTopLevel = false;
         selectionColor = UIManager.getColor("Tree.selectionBackground");
-
+        setOpaque(true);
+        
+        if (isSelected) {
+            setBackground(new Color(selectionColor.getRGB()));
+        } else {
+            setForeground(null);
+            setBackground(null);
+        }
+        
         if (value instanceof Entity) {
             Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
             setFont(scaledFont);
@@ -106,7 +103,6 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
                 setText(MekForceTreeCellFormatter.formatForceFull(force, lobby));
             }
             setIcon(null);
-            isTopLevel = force.isTopLevel();
         }
         return this; 
     }
@@ -123,36 +119,11 @@ public class MekTreeForceRenderer extends DefaultTreeCellRenderer {
         return null;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (isTopLevel) {
-            Color c = treeBG;
-            if (isSelected) {
-                c = selectionColor;
-            }
-            Graphics2D g2 = (Graphics2D) g;
-            int x = UIUtil.scaleForGUI(300); 
-            GradientPaint bg = new GradientPaint(x, 0, topLevelBG, x + 50, 50, c);
-            g2.setPaint(bg);
-            g.fillRect(0, 0, UIUtil.scaleForGUI(600), getBounds().height);
-        }
-        super.paintComponent(g);
-    }
-
-
-    @Override
-    public Dimension getPreferredSize() {
-        if (isTopLevel) {
-            return new Dimension(UIUtil.scaleForGUI(600), super.getPreferredSize().height);
-        }
-        return super.getPreferredSize();
-    }
-
     private void setIcon(Image image, int size) {
         setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
     }
 
-    MekTreeForceRenderer(ChatLounge cl) {
+    MekForceTreeRenderer(ChatLounge cl) {
         lobby = cl;
         tree = lobby.mekForceTree;
     }

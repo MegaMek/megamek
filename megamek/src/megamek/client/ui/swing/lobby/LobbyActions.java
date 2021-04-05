@@ -25,7 +25,6 @@ import megamek.client.generator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.dialog.MMConfirmDialog.Response;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -478,6 +477,47 @@ public class LobbyActions {
     }
     
     /**
+     * Asks for a name and creates a new top-level force of that name. 
+     */
+    void forceCreateEmpty() {
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
+        }
+        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<Entity>());
+    }
+    
+    /**
+     * Asks for a name and creates a new top-level force of that name with the 
+     * selected entities in it. 
+     */
+    void forceCreateFrom(Collection<Entity> entities) {
+        if (!validateUpdate(entities)) {
+            return;
+        }
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
+        }
+        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), entities);
+    }
+    
+    /**
+     * Asks for a name and creates a new subforce of that name for the force given
+     * as the parentId. 
+     */
+    void forceCreateSub(int parentId) {
+        // Ask for a name
+        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            return;
+        }
+        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<Entity>());
+    }
+    
+    /**
      * Toggles burst MG fire for the given entities to the state given as burstOn
      */
     void toggleBurstMg(Collection<Entity> entities, boolean burstOn) {
@@ -626,7 +666,7 @@ public class LobbyActions {
                 question += (enCount == 1 ? "one unit" : enCount + " units");
             }
             question += "?";
-            if (Response.NO == MMConfirmDialog.confirm(frame(), "Delete Units...", question)) {
+            if (!MMConfirmDialog.confirm(frame(), "Delete Units...", question)) {
                 return;
             }
         }
@@ -838,54 +878,13 @@ public class LobbyActions {
     }
     
     /** Change the team of a controlled player (the local player or one of his bots). */
-    void changeTeam(int team) {
-        Client c = lobby.getSelectedClient();
-        
-        // If the team was not actually changed or the selected player 
-        // is not editable (not the local player or local bot), do nothing
-        if ((c == null) || (c.getLocalPlayer().getTeam() == team)) {
-            return;
-        }
-        
-        client().sendChangeTeam(c.getLocalPlayer(), team);
-        
-        // Since different teams are always enemies, changing the team forces 
-        // the units of this player to offload and disembark from 
-        // all units of other players
-//        Set<Entity> updateCandidates = new HashSet<>();
-//        for (Entity entity: c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
-//            lobby.offloadFromDifferentOwner(entity, updateCandidates);
-//            lobby.disembarkDifferentOwner(entity, updateCandidates);
-//        }
-//        
-//        // Units and forces cannot stay part of a former teammate's forces and vice versa
-//        Forces forces = game().getForces();
-//        int localId = c.getLocalPlayerNumber();
-//        Set<Entity> leaveForce = new HashSet<>();
-//        for (Entity entity: game().getEntitiesVector()) {
-//            if (!entity.partOfForce()) {
-//                continue;
-//            }
-//            Force force = forces.getForce(entity);
-//            // Must leave force if one of Entity or Force belongs to the changing player but the other doesn't
-//            if ((entity.getOwnerId() == localId) != (force.getOwnerId() == localId)) {
-//                leaveForce.add(entity);
-//            }
-//        }
-//        updateCandidates.addAll(leaveForce);
-//        Set<Force> changedForces = game().getForces().removeEntityFromForces(leaveForce);
-//        for (Force force: forces.getAllForces()) {
-//            if ((force.getParentId() != Force.NO_FORCE) && ((force.getOwnerId() == localId) != (forces.getForce(force.getParentId()).getOwnerId() == localId))) {
-//                changedForces.addAll(forces.promoteForce(force));
-//            }
-//        }
-//        
-//        // Units must leave their C3 networks
-//        updateCandidates.addAll(performDisconnect(game().getPlayerEntities(c.getLocalPlayer(), false)));
-//
-//        sendUpdates(updateCandidates, changedForces);
-//        c.getLocalPlayer().setTeam(team);
-//        c.sendPlayerInfo();
+    void changeTeam(Collection<IPlayer> players, int team) {
+        var toSend = new HashSet<IPlayer>();
+        players.stream()
+            .filter(this::isSelfOrLocalBot)
+            .filter(p -> p.getTeam() != team)
+            .forEach(toSend::add);
+        client().sendChangeTeam(toSend, team);
     }
     
     /**

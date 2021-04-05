@@ -24,6 +24,7 @@ import megamek.client.ui.swing.ButtonEsc;
 import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
+import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -115,7 +116,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
     protected abstract JPanel createMiddlePanel();
 
     protected void createButtons() {
-        JButton okayB = new JButton(new OkayAction(this));
+        JButton okayB = new DialogButton(new OkayAction(this));
         JButton cancelB = new ButtonEsc(new CloseAction(this));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());

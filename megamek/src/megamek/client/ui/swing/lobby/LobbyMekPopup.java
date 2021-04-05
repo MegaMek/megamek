@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -34,9 +35,9 @@ import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.CollectionUtil;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.common.util.CollectionUtil.*;
 
 /** Creates the Lobby Mek right-click pop-up menu for both the sortable table and the force tree. */
 class LobbyMekPopup {
@@ -149,7 +150,10 @@ class LobbyMekPopup {
      */
     private static JMenu forceMenu(ChatLounge lobby, List<Entity> entities, List<Force> forces, ActionListener listener) {
         JMenu menu = new JMenu("Force");
-        menu.add(menuItem("Create new Force...", "FCREATETOP" + NOINFO + NOINFO, true, listener));
+        if (!forces.isEmpty() || !entities.isEmpty()) {
+            menu.add(menuItem("Create Force from...", "FCREATEFROM|" + foToken(forces) + enToken(entities), true, listener));
+        }
+        menu.add(menuItem("Add empty Force...", "FCREATETOP" + NOINFO + NOINFO, true, listener));
         
         // If exactly one force is selected, offer force options
         if ((forces.size() == 1) && entities.isEmpty()) {
@@ -163,11 +167,31 @@ class LobbyMekPopup {
 
         // If entities are selected but no forces, offer entity options
         if (forces.isEmpty() && !entities.isEmpty() && LobbyUtility.haveSingleOwner(entities)) {
+            // Add to force menu tree
+            JMenu addMenu = new JMenu("Add to...");
+            for (Force force: lobby.game().getForces().getTopLevelForces()) {
+                addMenu.add(forceTreeMenu(force, lobby.game(), enToken(entities), listener));
+            }
+            menu.add(addMenu);
             menu.add(menuItem("Remove from Force", "FREMOVE" + NOINFO + enToken(entities), true, listener));
         }
 
         menu.setEnabled(menu.getItemCount() > 0);
         return menu;
+    }
+    
+    private static JMenuItem forceTreeMenu(Force force, IGame game, String enToken, ActionListener listener) {
+        JMenuItem result;
+        String item = "<HTML>" + force.getName() + idString(game, force.getId());
+        if (force.getSubForces().isEmpty()) {
+            result = menuItem(item, "FADDTO|" + force.getId() + enToken, true, listener);
+        } else {
+            result = new JMenu(item);
+            for (Integer subForceId: force.getSubForces()) {
+                result.add(forceTreeMenu(game.getForces().getForce(subForceId), game, enToken, listener));
+            }
+        }
+        return result;
     }
     
     static String idString(IGame game, int id) {
@@ -387,7 +411,7 @@ class LobbyMekPopup {
             
             // Special treatment if a group of NhC3 is selected
             if (entities.size() > 1 && entities.size() <= 6) {
-                Entity master = CollectionUtil.randomElement(entities);
+                Entity master = randomElement(entities);
                 if (entities.stream().allMatch(e -> LobbyUtility.sameNhC3System(master, e))) {
                     menu.add(menuItem("Form C3 Lance", "C3FORMNHC3|" + master.getId() + enToken(entities), true, listener));
                 }
@@ -485,7 +509,7 @@ class LobbyMekPopup {
             JMenu fFullMenu = new JMenu("Everything in the Force");
             assignMenu.add(fOnlyMenu);
             assignMenu.add(fFullMenu);
-            Force force = CollectionUtil.randomElement(forces);
+            Force force = randomElement(forces);
             for (IPlayer player: game.getPlayersVector()) {
                 if (!player.isEnemyOf(gameForces.getOwner(force))) {
                     String command = "FASSIGNONLY|" + player.getId() + ":" + foToken(forces) + NOINFO;
@@ -547,7 +571,7 @@ class LobbyMekPopup {
 
         JMenu menu = new JMenu("Offload All From...");
         if (enabled && entities.size() == 1) {
-            Entity entity = CollectionUtil.randomElement(entities);
+            Entity entity = theElement(entities);
             for (Bay bay : entity.getTransportBays()) {
                 if (bay.getLoadedUnits().size() > 0) {
                     String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
@@ -572,7 +596,7 @@ class LobbyMekPopup {
         JMenu menu = new JMenu("Swap pilots with");
         if (!entities.isEmpty()) {
             // use a random selected unit to determine the targets
-            Entity entity = CollectionUtil.randomElement(entities);
+            Entity entity = randomElement(entities);
             for (Entity swapper: game.getEntitiesVector()) {
                 // only swap your own pilots and with the same unit and crew type
                 if (swapper.getOwnerId() == entity.getOwnerId() 

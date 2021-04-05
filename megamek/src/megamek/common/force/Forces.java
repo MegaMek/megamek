@@ -501,6 +501,71 @@ public final class Forces implements Serializable {
     }
     
     /** 
+     * Corrects this Forces object as much as possible. Also corrects entities
+     * when necessary (wrong forceId).
+     * <LI>Incorrect links (false IDs, nonexistent or dual entities or forces)
+     * <LI>Enemy force/entity connections
+     * <LI>Incorrect links
+     * 
+     * @see #isValid()
+     */
+    public void correct() {
+        Set<Integer> entIds = new TreeSet<>();
+        Set<Integer> subIds = new TreeSet<>();
+        for (Entry<Integer, Force> entry: forces.entrySet()) {
+            // master list id must be equal to force id
+            entry.getValue().setId(entry.getKey());
+
+            // Create a copy of the game's entity list
+            HashMap<Integer, Entity> allEntities = new HashMap<>();
+            for (Entity entity: game.getEntitiesVector()) {
+                allEntities.put(entity.getId(), entity);
+            }
+
+            var entityIds = new ArrayList<Integer>(entry.getValue().getEntities());
+            for (int entityId: entityIds) {
+                // Remove non-existent/dead entities
+                if (!allEntities.containsKey(entityId)) {
+                    entry.getValue().removeEntity(entityId);
+                }
+                // Remove dual entity entries
+                if (!entIds.add(entityId)) {
+                    entry.getValue().removeEntity(entityId);
+                } else {
+                    // Entity forceID must match force entry
+                    game.getEntity(entityId).setForceId(entry.getKey());
+                }
+                // Remove entities from enemy forces
+                IPlayer enOwner = game.getPlayer(allEntities.get(entityId).getOwnerId());
+                IPlayer foOwner = game.getPlayer(getOwnerId(entry.getValue()));
+                if (enOwner != null && enOwner.isEnemyOf(foOwner)) {
+                    removeEntityFromForces(game.getEntity(entityId));
+                }
+            }
+
+            var subForceIds = new ArrayList<Integer>(entry.getValue().getSubForces());
+            for (int subforceId: subForceIds) {
+                // Remove nonexistent subforces
+                if (!contains(subforceId)) {
+                    entry.getValue().removeSubForce(subforceId);
+                }
+                // Remove dual subforce entries
+                if (!subIds.add(subforceId)) {
+                    entry.getValue().removeSubForce(subforceId);
+                }
+                // Correct parentID (the subforce's parent entry must be equal to the current force
+                getForce(subforceId).setParent(entry.getKey());
+                // Remove subforces from enemy forces
+                IPlayer subFoOwner = game.getPlayer(getOwnerId(getForce(subforceId)));
+                IPlayer foOwner = game.getPlayer(getOwnerId(entry.getValue()));
+                if (subFoOwner != null && subFoOwner.isEnemyOf(foOwner)) {
+                    promoteForce(getForce(subforceId));
+                }
+            }
+        }
+    }
+    
+    /** 
      * Removes the given force from these forces if it is empty. Returns a list
      * of affected forces which contains the parent if the deleted force was a subforce
      * and is empty otherwise.

@@ -72,7 +72,6 @@ import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.dialog.MMConfirmDialog.Response;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
@@ -91,7 +90,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 import static megamek.common.util.CollectionUtil.*;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 public class ChatLounge extends AbstractPhaseDisplay implements  
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
@@ -134,8 +133,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /* Unit Table */
     private JTable mekTable;
     public JScrollPane scrMekTable;
-    private JToggleButton butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact"));
-    private JToggleButton butShowUnitID = new JToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    private MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
+    private MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
     private JToggleButton butListView = new JToggleButton("Sortable View");
     private JToggleButton butForceView = new JToggleButton("Force View");
     private JButton butCollapse = new JButton("<<");
@@ -449,7 +448,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mekForceTree.setRootVisible(false);
         mekForceTree.setDragEnabled(true);
         mekForceTree.setTransferHandler(new MekForceTreeTransferHandler(this, mekForceTreeModel));
-        mekForceTree.setCellRenderer(new MekTreeForceRenderer(this));
+        mekForceTree.setCellRenderer(new MekForceTreeRenderer(this));
         mekForceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         mekForceTree.setExpandsSelectedPaths(true);
         ToolTipManager.sharedInstance().registerComponent(mekForceTree);
@@ -476,14 +475,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         panUnitInfo.setBorder(BorderFactory.createTitledBorder(" Unit Setup "));
         panUnitInfo.setLayout(new BoxLayout(panUnitInfo, BoxLayout.PAGE_AXIS));
-        JPanel panUnitInfoAdd = new JPanel(new GridLayout(1, 1, 2, 2));
+        JPanel panUnitInfoAdd = new JPanel(new GridLayout(2, 1, 2, 2));
         panUnitInfoAdd.setBorder(new EmptyBorder(0, 0, 2, 1));
         panUnitInfoAdd.add(butAdd);
+        panUnitInfoAdd.add(butArmy);
 
-        JPanel panUnitInfoGrid = new JPanel(new GridLayout(3, 2, 2, 2));
-        panUnitInfoGrid.add(butArmy);
+        JPanel panUnitInfoGrid = new JPanel(new GridLayout(2, 2, 2, 2));
         panUnitInfoGrid.add(butLoadList);
-        panUnitInfoGrid.add(butSkills);
         panUnitInfoGrid.add(butSaveList);
         panUnitInfoGrid.add(butNames);
         
@@ -493,7 +491,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Sets up the player configuration (team, camo) panel with the player list. */
     private void setupPlayerConfig() {
-        tablePlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablePlayers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tablePlayers.getTableHeader().setReorderingAllowed(false);
         for (int i = 0; i < PlayerTableModel.N_COL; i++) {
             TableColumn column = tablePlayers.getColumnModel().getColumn(i);
@@ -525,7 +523,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panPlayerInfo.add(panPlayerInfoBts);
         panPlayerInfo.add(butCamo);
 
-        refreshPlayerInfo();
+        refreshPlayerTable();
     }
 
     /** Sets up the lobby main panel (units/players). */
@@ -1172,7 +1170,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
 
         // Enable the "Save Unit List..." button if the local player has units.
-        butSaveList.setEnabled(localUnits);
         clientgui.getMenuBar().setUnitList(localUnits);
     }
     
@@ -1185,35 +1182,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** Refreshes the player info table. */
-    private void refreshPlayerInfo() {
-        // Remember the selected player
-        Client c = getSelectedClient();
-        String selPlayer = "";
-        if (c != null) {
-            selPlayer = c.getLocalPlayer().getName();
-        }
+    private void refreshPlayerTable() {
+        // Remember the selected players
+        var selPlayerIds = getselectedPlayers().stream().map(IPlayer::getId).collect(toSet());
 
         // Empty and refill the player table
         playerModel.clearData();
-        for (IPlayer player: clientgui.getClient().getGame().getPlayersVector()) {
+        for (IPlayer player: game().getPlayersVector()) {
             playerModel.addPlayer(player);
         }
 
-        // re-select the previously selected player, if possible
-        if (c != null && playerModel.getRowCount() > 0) {
-            for (int row = 0; row < playerModel.getRowCount(); row++) {
-                IPlayer p = playerModel.getPlayerAt(row);
-                if (p.getName().equals(selPlayer)) {
-                    tablePlayers.setRowSelectionInterval(row, row);
-                    break;
-                }
+        // re-select the previously selected players, if possible
+        for (int row = 0; row < playerModel.getRowCount(); row++) {
+            if (selPlayerIds.contains(playerModel.getPlayerAt(row).getId())) {
+                tablePlayers.addRowSelectionInterval(row, row);
             }
         }
     }
 
-    /**OK Updates the camo button to displays the camo of the currently selected player. */ 
+    /** Updates the camo button to displays the camo of the currently selected player. */ 
     private void refreshCamoButton() {
-        if ((tablePlayers == null) || (playerModel == null) || (tablePlayers.getSelectedRow() == -1)) {
+        if ((tablePlayers == null) || (playerModel == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return;
         }
         IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
@@ -1222,21 +1211,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    /**OK Sets up the team choice box. */
+    /** Sets up the team choice box. */
     private void setupTeamCombo() {
         for (int i = 0; i < IPlayer.MAX_TEAMS; i++) {
             comboTeam.addItem(IPlayer.teamNames[i]);
         }
     }
 
-    /**OK Updates the team choice combobox to show the selected player's team. */
+    /** Updates the team choice combobox to show the selected player's team. */
     private void refreshTeams() {
         comboTeam.removeActionListener(lobbyListener);
         comboTeam.setSelectedIndex(localPlayer().getTeam());
         comboTeam.addActionListener(lobbyListener);
     }
 
-    /**OK
+    /**
      * Refreshes the Done button. The label will say the opposite of the
      * player's "done" status, indicating that clicking it will reverse the
      * condition.
@@ -1245,21 +1234,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butDone.setText(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone"));
     }
 
-    /**OK Refreshes the state of the Done button with the state of the local player. */
+    /** Refreshes the state of the Done button with the state of the local player. */
     private void refreshDoneButton() {
         refreshDoneButton(localPlayer().isDone());
-    }
-
-    
-
-    /**
-     * Pop up the customize mech dialog
-     */
-    private void customizeMech() {
-        if (mekTable.getSelectedRow() == -1) {
-            return;
-        }
-        lobbyActions.customizeMech(mekModel.getEntityAt(mekTable.getSelectedRow()));
     }
 
     /**
@@ -1461,6 +1438,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFVibra(psd.getVibMines());
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
+            var rsg = c.getRandomSkillsGenerator();
+            rsg.setMethod(psd.getMethod());
+            rsg.setType(psd.getPilot());
+            rsg.setLevel(psd.getXP());
+            rsg.setClose(psd.getForceGP());
             
             // The deployment position
             int startPos = psd.getStartPos();
@@ -1640,7 +1622,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         refreshDoneButton();
         clientgui.getClient().getGame().setupTeams();
-        refreshPlayerInfo();
+        refreshPlayerTable();
+        refreshPlayerConfig();
         refreshCamoButton();
         refreshEntities();
         panTeamOverview.refreshData();
@@ -1655,7 +1638,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
-            refreshPlayerInfo();
+            refreshPlayerTable();
             refreshTeams();
             refreshCamoButton();
             refreshEntities();
@@ -1670,7 +1653,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         refreshEntities();
-        refreshPlayerInfo();
+        refreshPlayerTable();
         panTeamOverview.refreshData();
     }
 
@@ -1687,7 +1670,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             updateTableHeaders();
         }
         refreshEntities();
-        refreshPlayerInfo();
+        refreshPlayerTable();
         refreshMapSizes();
         updateMapSettings(clientgui.getClient().getMapSettings());
         panTeamOverview.refreshData();
@@ -1721,14 +1704,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
                 
-            } else if (ev.getSource().equals(mekTable)) {
-                customizeMech(); //???????????????????
-                
             } else if (ev.getSource().equals(tablePlayers)) {
                 configPlayer();
                 
             } else if (ev.getSource().equals(comboTeam)) {
-                lobbyActions.changeTeam(comboTeam.getSelectedIndex());
+                lobbyActions.changeTeam(getselectedPlayers(), comboTeam.getSelectedIndex());
                 
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
@@ -1981,8 +1961,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         if (selectedFile.exists()) {
             String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
-            Response confirmed = MMConfirmDialog.confirm(clientgui.frame, "Confirm replace", msg);
-            if (confirmed == Response.NO) {
+            if (!MMConfirmDialog.confirm(clientgui.frame, "Confirm replace", msg)) {
                 return;
             }
         }
@@ -2060,7 +2039,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             bot.setName(bcd.getBotName());
             clientgui.getBots().put(bot.getName(), bot);
             player.setName(bcd.getBotName());
-            clientgui.chatlounge.refreshPlayerInfo();
+            clientgui.chatlounge.refreshPlayerTable();
         }
     }
     
@@ -2386,25 +2365,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (event.getSource().equals(tablePlayers.getSelectionModel()) 
-                || event.getSource().equals(butRemoveBot)) { // ??
-
-            Client selClient = getSelectedClient();
-            comboTeam.setEnabled(selClient != null);
-            butLoadList.setEnabled(selClient != null);
-            butCamo.setEnabled(selClient != null);
-            butConfigPlayer.setEnabled(selClient != null);
-            refreshCamoButton();
-            // Disable the Remove Bot button for the "player" of a "Connect As Bot" client
-            butRemoveBot.setEnabled(selClient instanceof BotClient
-                    && !selClient.getLocalPlayer().equals(localPlayer()));
-            butBotSettings.setEnabled(selClient instanceof BotClient);
-            if (selClient != null) {
-                IPlayer selPlayer = selClient.getLocalPlayer();
-                boolean hasUnits = !selClient.getGame().getPlayerEntities(selPlayer, false).isEmpty();
-                butSaveList.setEnabled(hasUnits && unitsVisible(selPlayer));
-                setTeamSelectedItem(selPlayer.getTeam());
-            }
+        if (event.getSource().equals(tablePlayers.getSelectionModel())) {
+            refreshPlayerConfig();
+        }
+    }
+    
+    /** Adapts the enabled state of the player config UI items to the player selection. */
+    private void refreshPlayerConfig() {
+        var selPlayers = getselectedPlayers();
+        var hasSelection = !selPlayers.isEmpty();
+        var isSinglePlayer = selPlayers.size() == 1;
+        var allConfigurable = hasSelection && selPlayers.stream().allMatch(lobbyActions::isSelfOrLocalBot);
+        var isSingleLocalBot = isSinglePlayer && (getSelectedClient() instanceof BotClient);
+        comboTeam.setEnabled(allConfigurable);
+        butLoadList.setEnabled(allConfigurable && isSinglePlayer);
+        butCamo.setEnabled(allConfigurable && isSinglePlayer);
+        butConfigPlayer.setEnabled(allConfigurable && isSinglePlayer);
+        refreshCamoButton();
+        // Disable the Remove Bot button for the "player" of a "Connect As Bot" client
+        butRemoveBot.setEnabled(isSingleLocalBot);
+        butSaveList.setEnabled(false);
+        if (isSinglePlayer) {
+            var selPlayer = theElement(selPlayers);
+            var hasUnits = !game().getPlayerEntities(selPlayer, false).isEmpty();
+            butSaveList.setEnabled(hasUnits && unitsVisible(selPlayer));
+            setTeamSelectedItem(selPlayer.getTeam());
         }
     }
     
@@ -2416,14 +2401,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** 
-     * Returns false when any blind-drop option is active and player is not the local player; 
+     * Returns false when any blind-drop option is active and player is not on the local team; 
      * true otherwise. When true, individual units of the given player should not be shown/saved/etc. 
      */ 
     private boolean unitsVisible(IPlayer player) {
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         boolean isBlindDrop = opts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-        return player.equals(localPlayer()) || !isBlindDrop;
+        return !player.isEnemyOf(localPlayer()) || !isBlindDrop;
     }
 
     /**
@@ -2583,9 +2568,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (tablePlayers.getSelectedRowCount() == 0) {
                 return;
             }
-            int row = tablePlayers.getSelectedRow();
-            int id = playerModel.getPlayerAt(row).getId();
-            ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui, playerTableActionListener, id);
+            ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui, 
+                    playerTableActionListener, getselectedPlayers());
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -2607,7 +2591,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             case "TEAM":
                 int newTeam = Integer.parseInt(st.nextToken());
-                lobbyActions.changeTeam(newTeam);
+                lobbyActions.changeTeam(getselectedPlayers(), newTeam);
                 break;
 
             case "BOTREMOVE":
@@ -2618,10 +2602,41 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 doBotSettings();
                 break;
                 
+            case "DEPLOY":
+                int startPos = Integer.parseInt(st.nextToken());
+                if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
+                        && (startPos >= 1) && (startPos <= 9)) {
+                    startPos += 10;
+                }
+                for (IPlayer player: getselectedPlayers()) {
+                    if (lobbyActions.isSelfOrLocalBot(player)) {
+                        if (client().isLocalBot(player)) {
+                            // must use the bot's own player object:
+                            client().getBotClient(player).getLocalPlayer().setStartingPos(startPos);
+                            client().getBotClient(player).sendPlayerInfo();
+                        } else {
+                            player.setStartingPos(startPos);
+                            client().sendPlayerInfo();
+                        }
+                    }
+                }
+                break;
+                
             }
-            
         }
     };
+    
+    
+    private ArrayList<IPlayer> getselectedPlayers() {
+        var result = new ArrayList<IPlayer>(); 
+        for (int row: tablePlayers.getSelectedRows()) {
+            IPlayer player = playerModel.getPlayerAt(row);
+            if (player != null) {
+                result.add(player);
+            }
+        }
+        return result;
+    }
 
     KeyListener mekTableKeyListener = new KeyAdapter() {
 
@@ -3051,35 +3066,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    
-    /**
-     * Asks for a name and creates a new top-level force of that name. 
-     */
-    void createTopForce() {
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
-            return;
-        }
-        client().sendAddForce(Force.createToplevelForce(name, localPlayer()));
-    }
-    
-    /**
-     * Asks for a name and creates a new subforce of that name for the force given
-     * as the parentId. 
-     */
-    void createSubForce(int parentId) {
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
-            return;
-        }
-        client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)));
-    }
-    
-    
-    
-    
     /** 
      * Returns a Collection that contains only those of the given entities
      * that the local player can affect, i.e. his units or those of his bots. 
@@ -3258,7 +3244,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butOptions.setFont(scaledBigFont);
         butLoadList.setFont(scaledFont);
         butSaveList.setFont(scaledFont);
-        butArmy.setFont(scaledFont);
         butSkills.setFont(scaledFont);
         butNames.setFont(scaledFont);
         butAddBot.setFont(scaledFont);
@@ -3302,6 +3287,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butExpand.setFont(scaledFont);
         
         butAdd.setFont(scaledBigFont);
+        butArmy.setFont(scaledBigFont);
         panTabs.setFont(scaledBigFont);
         
         lblSearch.setFont(scaledFont);

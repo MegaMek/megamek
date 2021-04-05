@@ -30,26 +30,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -61,17 +44,12 @@ import org.w3c.dom.NodeList;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.options.GameOptions;
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.common.*;
+import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.utils.MegaMekXmlUtil;
+import static megamek.client.ui.Messages.*;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -125,8 +103,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    private JToggleButton butUnofficial = new JToggleButton("Unofficial Opts");
-    private JToggleButton butLegacy = new JToggleButton("Legacy Opts");
+    private MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
+    private MMToggleButton butLegacy = new MMToggleButton("Legacy Opts");
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -881,11 +859,29 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         } else if (e.getSource().equals(butCancel)) {
             cancelled = true;
         } else if (e.getSource().equals(butUnofficial)) {
+            if (!butUnofficial.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(client.frame, "Warning", getString("GameOptionsDialog.HideWarning")); 
+                if (!okay) {
+                    butUnofficial.removeActionListener(this);
+                    butUnofficial.setSelected(true);
+                    butUnofficial.addActionListener(this);
+                    return;
+                }
+            }
             toggleOptions(butUnofficial.isSelected(), "Unofficial");
             refreshSearchPanel();
             GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL, butUnofficial.isSelected());
             return;
         } else if (e.getSource().equals(butLegacy)) {
+            if (!butLegacy.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(client.frame, "Warning", getString("GameOptionsDialog.HideWarning"));
+                if (!okay) {
+                    butLegacy.removeActionListener(this);
+                    butLegacy.setSelected(true);
+                    butLegacy.addActionListener(this);
+                    return;
+                }
+            }
             toggleOptions(butLegacy.isSelected(), "Legacy");
             refreshSearchPanel();
             GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_LEGACY, butLegacy.isSelected());

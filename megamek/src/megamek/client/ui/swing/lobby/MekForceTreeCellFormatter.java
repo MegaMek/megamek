@@ -89,7 +89,7 @@ public class MekForceTreeCellFormatter {
         if (totalBv > 0) {
             result.append("BV ").append(String.format("%,d", totalBv));
             // Unit Type
-            long unittypes = fullEntities.stream().mapToLong(e -> e.getEntityType()).distinct().count();
+            long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct().count();
             result.append(guiScaledFontHTML(color));
             result.append(DOT_SPACER);
             if (unittypes > 1) {
@@ -161,7 +161,7 @@ public class MekForceTreeCellFormatter {
             result.append("BV ");
             result.append(String.format("%,d", totalBv));
             // Unit Type
-            long unittypes = fullEntities.stream().mapToLong(e -> e.getEntityType()).distinct().count();
+            long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct().count();
             result.append(DOT_SPACER);
             if (unittypes > 1) {
                 result.append(" Mixed");

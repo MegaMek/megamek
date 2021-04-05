@@ -854,8 +854,8 @@ public class Client implements IClientCommandHandler {
      * Sends a packet containing multiple entity updates. Should only be used 
      * in the lobby phase.
      */
-    public void sendChangeTeam(IPlayer player, int newTeamId) {
-        send(new Packet(Packet.COMMAND_PLAYER_TEAMCHANGE, new Object[] { player.getId(), newTeamId }));
+    public void sendChangeTeam(Collection<IPlayer> players, int newTeamId) {
+        send(new Packet(Packet.COMMAND_PLAYER_TEAMCHANGE, new Object[] { players, newTeamId }));
     }
 
     /**
@@ -906,8 +906,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Sends an "Add force" packet
      */
-    public void sendAddForce(Force force) {
-        send(new Packet(Packet.COMMAND_FORCE_ADD, force));
+    public void sendAddForce(Force force, Collection<Entity> entities) {
+        send(new Packet(Packet.COMMAND_FORCE_ADD, new Object[] { force, entities }));
     }
 
     /**
@@ -1883,5 +1883,19 @@ public class Client implements IClientCommandHandler {
 
     public void setCurrentHex(Coords hex) {
         currentHex = hex;
+    }
+    
+    /** Returns true when the player is a bot added/controlled by this client. */
+    public boolean isLocalBot(IPlayer player) {
+        return bots.containsKey(player.getName());
+    }
+    
+    /** Returns true when the player is a bot added/controlled by this client. */
+    public Client getBotClient(IPlayer player) {
+        if (isLocalBot(player)) {
+            return bots.get(player.getName());
+        } else {
+            throw new IllegalArgumentException("The given player is not a local bot.");
+        }
     }
 }

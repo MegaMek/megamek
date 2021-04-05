@@ -14,13 +14,16 @@
 package megamek.client.ui.swing.lobby;
 
 import java.awt.event.ActionListener;
+import java.util.Collection;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.common.*;
+import megamek.common.util.CollectionUtil;
+
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 /** 
@@ -31,32 +34,46 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 class PlayerTablePopup {
 
-    static ScalingPopup playerTablePopup(ClientGUI clientGui, ActionListener listener, int playerID) {
+    static ScalingPopup playerTablePopup(ClientGUI clientGui, ActionListener listener, 
+            Collection<IPlayer> players) {
         
         ScalingPopup popup = new ScalingPopup();
         
-        Client cl = clientGui.getClient();
-        boolean isOwnedBot = cl.bots.containsKey(cl.getGame().getPlayer(playerID).getName());
-        boolean isConfigurable = isOwnedBot || (clientGui.getClient().getLocalPlayerNumber() == playerID);
-        int currentTeam = cl.getGame().getPlayer(playerID).getTeam();
+        var cl = clientGui.getClient();
+        var isOnePlayer = players.size() == 1;
+        var SinglePlayer = CollectionUtil.randomElement(players);
+        var allOwnedBots = players.stream().allMatch(cl::isLocalBot);
+        var isConfigurable = isOnePlayer 
+                && (allOwnedBots || (cl.getLocalPlayer().equals(SinglePlayer)));
+        var allConfigurable = players.stream().allMatch(p -> cl.isLocalBot(p) || cl.getLocalPlayer().equals(p));
         
         popup.add(menuItem("Player Settings...", "CONFIG", isConfigurable, listener));
-        popup.add(teamMenu(isConfigurable, listener, currentTeam));
+        popup.add(teamMenu(allConfigurable, listener));
+        popup.add(startPosMenu(allConfigurable, listener));
         popup.add(ScalingPopup.spacer());
-        popup.add(menuItem("Remove Bot", "BOTREMOVE", isOwnedBot, listener));
-        popup.add(menuItem("Bot Settings...", "BOTSETTINGS", isOwnedBot, listener));
-
+        popup.add(menuItem("Remove Bot", "BOTREMOVE", isOnePlayer && allOwnedBots, listener));
+        popup.add(menuItem("Bot Settings...", "BOTSETTINGS", isOnePlayer && allOwnedBots, listener));
+        
         return popup;
         
     }
 
-    /** Returns the "Team" submenu, allowing assigning a player to a team. */
-    private static JMenu teamMenu(boolean enabled, ActionListener listener, int currentTeam) {
-
+    /** Returns the "Team" submenu, allowing to assign a player to a team. */
+    private static JMenu teamMenu(boolean enabled, ActionListener listener) {
         JMenu menu = new JMenu("Assign to Team");
         for (int i = 0; i < IPlayer.MAX_TEAMS; i++) {
             JMenuItem item = menuItem(IPlayer.teamNames[i], "TEAM|" + i, enabled, listener);
-            item.setEnabled(i != currentTeam);
+            menu.add(item);
+        }
+        menu.setEnabled(enabled);
+        return menu;
+    }
+    
+    /** Returns the "Starting Position" submenu, allowing to assign deployment positions. */
+    private static JMenu startPosMenu(boolean enabled, ActionListener listener) {
+        JMenu menu = new JMenu("Deployment Area");
+        for (int i = 0; i < 11; i++) {
+            JMenuItem item = menuItem(IStartingPositions.START_LOCATION_NAMES[i], "DEPLOY|" + i, enabled, listener);
             menu.add(item);
         }
         menu.setEnabled(enabled);

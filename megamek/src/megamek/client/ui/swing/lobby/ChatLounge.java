@@ -83,7 +83,6 @@ import megamek.common.event.*;
 import megamek.common.force.*;
 import megamek.common.options.*;
 import megamek.common.preference.*;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -366,9 +365,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
 
         // Update the player from the camo selection
-        AbstractIcon selectedItem = ccd.getSelectedItem();
-        player.setCamoCategory(selectedItem.getCategory());
-        player.setCamoFileName(selectedItem.getFilename());
+        player.setCamouflage(ccd.getSelectedItem());
         butCamo.setIcon(player.getCamouflage().getImageIcon());
         getSelectedClient().sendPlayerInfo();
     };

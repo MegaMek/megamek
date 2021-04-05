@@ -95,17 +95,21 @@ public abstract class AbstractIconChooserDialog extends JDialog {
     }
 
     /** Constructs the bottom panel with the Okay and Cancel buttons. */
-    private JPanel buttonPanel() {
+    protected JPanel buttonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-
-        JButton btnCancel = new JButton(Messages.getString("Cancel"));
-        btnCancel.addActionListener(evt -> cancel());
 
         JButton btnOkay = new JButton(Messages.getString("Okay"));
         btnOkay.addActionListener(evt -> select());
-
         panel.add(btnOkay);
+
+        JButton btnCancel = new JButton(Messages.getString("Cancel"));
+        btnCancel.addActionListener(evt -> cancel());
         panel.add(btnCancel);
+
+        JButton btnRefresh = new JButton(Messages.getString("AbstractIconChooserDialog.btnRefresh"));
+        btnRefresh.addActionListener(evt -> getChooser().refreshDirectory());
+        panel.add(btnRefresh);
+
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
     }
@@ -140,7 +144,7 @@ public abstract class AbstractIconChooserDialog extends JDialog {
         setVisible(false);
     }
 
-    private void cancel() {
+    protected void cancel() {
         wasCanceled = true;
         setVisible(false);
     }

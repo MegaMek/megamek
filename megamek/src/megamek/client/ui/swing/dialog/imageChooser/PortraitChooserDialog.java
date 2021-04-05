@@ -22,6 +22,7 @@ import java.awt.Window;
 
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
 /**
@@ -40,7 +41,7 @@ public class PortraitChooserDialog extends AbstractIconChooserDialog {
 
     //region Constructors
     /** Creates a dialog that allows players to choose a portrait. */
-    public PortraitChooserDialog(Window parent, AbstractIcon icon) {
+    public PortraitChooserDialog(Window parent, @Nullable AbstractIcon icon) {
         super(parent, Messages.getString("PortraitChoiceDialog.select_portrait"),
                 new PortraitChooser(icon));
     }

@@ -9864,7 +9864,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleFor(IGame.Phase phase) {
         // only deploy in deployment phase
         if ((phase == IGame.Phase.PHASE_DEPLOYMENT) == isDeployed()) {
-            return false;
+            if (!isDeployed() && isEligibleForTargetingPhase()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE)) {
+                MegaMek.getLogger().debug("Artillery Units Present and Advanced PreDesignate option enabled");
+            } else {
+                return false;
+            }
         }
 
         // carcass can't do anything
@@ -14634,26 +14639,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setCamouflage(Camouflage camouflage) {
         this.camouflage = camouflage;
-    }
-
-    @Deprecated
-    public void setCamoCategory(String name) {
-        getCamouflage().setCategory(name);
-    }
-
-    @Deprecated
-    public String getCamoCategory() {
-        return getCamouflage().getCategory();
-    }
-
-    @Deprecated
-    public void setCamoFileName(String name) {
-        getCamouflage().setFilename(name);
-    }
-
-    @Deprecated
-    public String getCamoFileName() {
-        return getCamouflage().getFilename();
     }
 
     public boolean getSelfDestructing() {

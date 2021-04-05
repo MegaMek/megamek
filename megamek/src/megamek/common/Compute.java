@@ -5446,6 +5446,9 @@ public class Compute {
         return toHit;
     }
 
+    /**
+     * This assembles attack roll modifiers for infantry swarm and leg attacks.
+     */
     private static ToHitData getAntiMechMods(ToHitData data, Infantry attacker,
                                              Entity defender) {
         if (attacker == null) {
@@ -5506,6 +5509,11 @@ public class Compute {
                              "Attacker is currently swarming.");
             return data;
         }
+        
+        if (defender.isAirborneVTOLorWIGE()) {
+            data.addModifier(TargetRoll.IMPOSSIBLE, "Cannot target airborne unit.");
+            return data;
+        }
 
         if ((defender instanceof Mech) && ((Mech) defender).isIndustrial()) {
             data.addModifier(-1, "targeting industrial mech");
@@ -5524,6 +5532,9 @@ public class Compute {
             data.addModifier(-2, "MD Grapple/Magnet");
         }
 
+        // swarm/leg attacks take target movement mods into account
+        data.append(getTargetMovementModifier(attacker.getGame(), defender.getTargetId()));
+        
         return data;
     }
 

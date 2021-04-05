@@ -63,8 +63,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     private int constantInitBonus = 0;
     private int streakCompensationBonus = 0;
 
-    private String camoCategory = Camouflage.COLOUR_CAMOUFLAGE;
-    private String camoFileName = PlayerColour.BLUE.name();
+    private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
     private PlayerColour colour = PlayerColour.BLUE;
 
     private Vector<Minefield> visibleMinefields = new Vector<>();
@@ -171,27 +170,12 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public Camouflage getCamouflage() {
-        return new Camouflage(getCamoCategory(), getCamoFileName());
+        return camouflage;
     }
 
     @Override
-    public void setCamoCategory(String name) {
-        camoCategory = name;
-    }
-
-    @Override
-    public String getCamoCategory() {
-        return camoCategory;
-    }
-
-    @Override
-    public void setCamoFileName(String name) {
-        camoFileName = name;
-    }
-
-    @Override
-    public String getCamoFileName() {
-        return camoFileName;
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = camouflage;
     }
 
     public Player(int id, String name) {
@@ -386,10 +370,10 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean hasTAG() {
-        for (Iterator<Entity> e = game
-                .getSelectedEntities(new EntitySelector() {
+        for (Iterator<Entity> e = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = getId();
 
+                    @Override
                     public boolean accept(Entity entity) {
                         if (entity.getOwner() == null) {
                             return false;
@@ -568,9 +552,8 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public Vector<Integer> getAirborneVTOL() {
-
         //a vector of unit ids
-        Vector<Integer> units = new Vector<Integer>();
+        Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (((entity instanceof VTOL)
@@ -584,6 +567,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         return units;
     }
     
+    @Override
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }

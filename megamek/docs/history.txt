@@ -22,6 +22,14 @@ VERSION HISTORY:
 + Issue #2694: The bot will now consider not attempting to get up, or going to hull-down (where applicable) when odds of getting up are low
 + PR #2742: Enable the bot to "find club", when it absolutely, positively has nothing better to do with the firing phase
 + Issue #2747: Prevent protomech AC ammo from causing 8x the damage it should during ammo explosions
++ PR #2558: Pre-designated auto-hit artillery hexes for on-board artillery option works with on-board artillery
++ PR #2754: Making Princess the default bot for MM Scenarios and Fixing MM Scenario Bot Loading
++ PR #2752: Offboard Artillery Target Not Found NPE
++ PR #2570: Camouflage Improvements and Integrated Directory Refresh
++ Issue #2755: Searchlights no longer have unlimited range
++ Issue #2758, 2759: Infantry no longer able to leap up to flying VTOLs for swarm attacks; 
+   target movement modifier now applies to legal leg/swarm attacks.
++ Issue #2767: Incorrect Citation for "(Unofficial) Specify the number of pre-designated artillery autohit hexes per map area
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

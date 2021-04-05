@@ -117,7 +117,7 @@ public interface IBomber {
 
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type))) {
+                if (null != BombType.getBombWeaponName(type)) {
                     Mounted m = null;
                     try {
                         m = ((Entity)this).addBomb(EquipmentType.get(BombType

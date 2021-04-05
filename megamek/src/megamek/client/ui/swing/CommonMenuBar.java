@@ -79,6 +79,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileRefreshCache;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsSave;
+    private JMenuItem fileUnitsPaste;
     /**
      * The <code>Entity</code> current selected. This value may be
      * <code>null</code>.
@@ -342,6 +343,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsSave.addActionListener(this);
         fileUnitsSave.setActionCommand(ClientGUI.FILE_UNITS_SAVE);
         submenu.add(fileUnitsSave);
+        fileUnitsPaste = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsPaste"));
+        fileUnitsPaste.addActionListener(this);
+        fileUnitsPaste.setActionCommand(ClientGUI.FILE_UNITS_PASTE);
+        fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileUnitsPaste);
 
         // Finish off the File menu.
 //        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
@@ -957,6 +964,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(false);
             viewKeybindsOverlay.setEnabled(false);
         }
+        
+        fileUnitsPaste.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
 
         // If we have a unit list, and if we are in the lounge,
         // then we can still perform all unit list actions.

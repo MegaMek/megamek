@@ -120,6 +120,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
+    public static final String FILE_UNITS_PASTE = "fileUnitsPaste";
     //endregion file menu
 
     //region view menu
@@ -726,6 +727,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case FILE_UNITS_SAVE:
                 ignoreHotKeys = true;
                 doSaveUnit();
+                ignoreHotKeys = false;
+                break;
+            case FILE_UNITS_PASTE:
+                ignoreHotKeys = true;
+                if (curPanel instanceof ChatLounge) {
+                    ((ChatLounge) curPanel).importClipboard();
+                }
                 ignoreHotKeys = false;
                 break;
             case FILE_UNITS_OPEN:

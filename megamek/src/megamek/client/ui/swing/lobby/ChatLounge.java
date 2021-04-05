@@ -2681,7 +2681,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     };
     
     /** Reads the clipboard and adds units, if it can parse them. */
-    private void importClipboard() {
+    public void importClipboard() {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable contents = clipboard.getContents(null);
         boolean hasTransferableText = (contents != null) &&

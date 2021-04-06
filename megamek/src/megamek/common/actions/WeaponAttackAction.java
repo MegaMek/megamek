@@ -54,7 +54,6 @@ import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
-import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
@@ -1753,7 +1752,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                     return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                                 }
                             }
-                        } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
+                        } else if ((wtype.getAmmoType() != AmmoType.T_ARROW_IV) &&
+                                (wtype.getAmmoType() != AmmoType.T_ARROW_IV_BOMB)) {
                             //For Fighters, LAMs, Small Craft and VTOLs
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }

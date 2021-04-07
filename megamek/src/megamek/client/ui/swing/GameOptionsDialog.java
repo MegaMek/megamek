@@ -59,9 +59,6 @@ import static megamek.client.ui.Messages.*;
  */
 public class GameOptionsDialog extends JDialog implements ActionListener, DialogOptionListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6072295678938594119L;
     private ClientGUI clientGui;
     private JFrame frame;
@@ -163,8 +160,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     /**
      * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
      *
-     * @param client
-     *            - the <code>Client</code> parent of this dialog.
+     * @param cg
+     *            - the <code>ClientGUI</code> parent of this dialog.
      */
     public GameOptionsDialog(ClientGUI cg) {
         super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$

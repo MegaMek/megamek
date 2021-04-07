@@ -20,6 +20,9 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -37,6 +40,7 @@ import javax.swing.table.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.TableColumnManager;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
@@ -54,39 +58,77 @@ public class TeamOverviewPanel extends JPanel {
     private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS };
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
+    private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
     private final JScrollPane scrTeams = new JScrollPane(teamOverviewTable);
     private final ClientGUI clientGui;
     private boolean isDetached;
-
+    private int shownColumn;
+    
     /** Constructs the team overview panel; the given ClientGUI is used to access the game data. */ 
     public TeamOverviewPanel(ClientGUI cg) {
         clientGui = cg;
         setLayout(new GridLayout(1, 1));
         teamOverviewTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         teamOverviewTable.getSelectionModel().addListSelectionListener(e -> repaint());
-        var column = teamOverviewTable.getColumnModel().getColumn(TOMCOLS.MEMBERS.ordinal());
-        column.setCellRenderer(new MemberListRenderer());
+        teamOverviewTable.getTableHeader().setReorderingAllowed(false);
+        teamOverviewTable.getTableHeader().addMouseListener(headerListener);
+        var colModel = teamOverviewTable.getColumnModel();
+        colModel.getColumn(TOMCOLS.MEMBERS.ordinal()).setCellRenderer(new MemberListRenderer());
         var centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
-        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.COST.ordinal()).setCellRenderer(centerRenderer);
-        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.BV.ordinal()).setCellRenderer(centerRenderer);
-        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
-        teamOverviewTable.getColumnModel().getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOMCOLS.TONNAGE.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOMCOLS.COST.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOMCOLS.BV.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOMCOLS.TEAM.ordinal()).setCellRenderer(centerRenderer);
+        colModel.getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrTeams.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrTeams);
-
+        
         adaptToGUIScale();
         refreshData();
     }
     
+    /** Detaches or attaches the team overview from/to its pane. */
     public void setDetached(boolean state) {
         if (state != isDetached) {
             isDetached = state;
+            if (isDetached) {
+                shownColumn = 0;
+                teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
+                teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
+            } else {
+                teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
+                teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
+                teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
+                teamOverviewManager.showColumn(TOMCOLS.TONNAGE.ordinal());
+                teamOverviewManager.showColumn(TOMCOLS.COST.ordinal());
+                teamOverviewManager.showColumn(TOMCOLS.BV.ordinal());
+            }
             refreshTableHeader();
         }
     }
+    
+    MouseListener headerListener = new MouseAdapter() {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (isDetached) {
+                shownColumn = (shownColumn + 1) % 3;
+                if (shownColumn == 0) {
+                    teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
+                    teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
+                    teamOverviewManager.showColumn(TOMCOLS.BV.ordinal());
+                } else if (shownColumn == 1) {
+                    teamOverviewManager.hideColumn(TOMCOLS.TONNAGE.ordinal());
+                    teamOverviewManager.showColumn(TOMCOLS.COST.ordinal());
+                    teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
+                } else {
+                    teamOverviewManager.showColumn(TOMCOLS.TONNAGE.ordinal());
+                    teamOverviewManager.hideColumn(TOMCOLS.COST.ordinal());
+                    teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
+                }
+            }
+        };
+    };
     
     /** Adapts the row heights and headers to the current GUI scaling. */
     public void adaptToGUIScale() {
@@ -97,7 +139,7 @@ public class TeamOverviewPanel extends JPanel {
     /** Refreshes the headers, setting the header names and gui scaling them. */
     public void refreshTableHeader() {
         JTableHeader header = teamOverviewTable.getTableHeader();
-        for (int i = 0; i < TOMCOLS.values().length; i++) {
+        for (int i = 0; i < teamOverviewTable.getColumnCount(); i++) {
             TableColumn column = teamOverviewTable.getColumnModel().getColumn(i);
             column.setHeaderValue(teamOverviewModel.getColumnName(i));
         }
@@ -261,6 +303,7 @@ public class TeamOverviewPanel extends JPanel {
 
         @Override
         public String getColumnName(int column) {
+            column += (isDetached && column > 1) ? 2 : 0;
             String text = Messages.getString("ChatLounge.teamOverview.COL" + TOMCOLS.values()[column]);
             float textSizeDelta = isDetached ? 0f : 0.3f;
             return "<HTML><NOBR>" + UIUtil.guiScaledFontHTML(textSizeDelta) + text;
@@ -354,7 +397,11 @@ public class TeamOverviewPanel extends JPanel {
                 if (baseValue != 0) {
                     String selectedTeam = teamNames.get(selectedRow);
                     long percentage = 100 * values.get(row) / baseValue;
-                    return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %% of %s)", percentage, selectedTeam);
+                    if (isDetached) {
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %%)", percentage);
+                    } else {
+                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f) + String.format("(%d %% of %s)", percentage, selectedTeam);
+                    }
                 }
             }
             return "";

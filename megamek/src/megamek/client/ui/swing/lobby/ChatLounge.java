@@ -18,7 +18,6 @@ package megamek.client.ui.swing.lobby;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -73,6 +72,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
+import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.util.*;
@@ -99,7 +99,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTABLE_ROWHEIGHT_COMPACT = 20;
     static final int MEKTABLE_ROWHEIGHT_FULL = 65;
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
-    private static final int PLAYERTABLE_ROWHEIGHT = 60;
     private final static int TEAMOVERVIEW_BORDER = 45;
     
     private JTabbedPane panTabs = new JTabbedPane();
@@ -156,7 +155,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
-    private JTable tablePlayers = new PlayerTable(playerModel);
+    private PlayerTable tablePlayers = new PlayerTable(playerModel, this);
     private JScrollPane scrPlayers = new JScrollPane(tablePlayers);
 
     /* Map Settings Panel */
@@ -488,12 +487,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Sets up the player configuration (team, camo) panel with the player list. */
     private void setupPlayerConfig() {
-        tablePlayers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tablePlayers.getTableHeader().setReorderingAllowed(false);
-        for (int i = 0; i < PlayerTableModel.N_COL; i++) {
-            TableColumn column = tablePlayers.getColumnModel().getColumn(i);
-            column.setCellRenderer(new PlayerRenderer());
-        }
+//        tablePlayers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//        tablePlayers.getTableHeader().setReorderingAllowed(false);
+//        for (int i = 0; i < PlayerTableModel.N_COL; i++) {
+//            TableColumn column = tablePlayers.getColumnModel().getColumn(i);
+//            column.setCellRenderer(new PlayerRenderer());
+//        }
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         butAddBot.setActionCommand("add_bot"); 
@@ -731,7 +730,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshMapButtons();
     }
     
-    /** 21OK
+    /** 
      *  Sets up and returns the panel above the available boards list 
      *  containing the search bar and the map size chooser.  
      */
@@ -766,7 +765,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return result;
     }
     
-    /** 21OK
+    /** 
      * Reacts to changes in the available boards search field, showing matching boards
      * for the search string when it has at least 3 characters
      * and reverting to all boards when the search string is empty.
@@ -779,7 +778,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    /** 21OK
+    /** 
      * Returns the available boards that match the given search string
      * (path or file name contains the search string.) 
      */
@@ -790,7 +789,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 .collect(Collectors.toList());
     }
     
-    /** 21OK
+    /** 
      * Returns a suitable divider location for the splitpane that contains
      * the available boards list and the map preview. The divider location
      * gives between 30% and 50% of space to the map preview depending
@@ -804,14 +803,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return Math.min(base + wAspect * 0.05, 0.5);
     }
 
-    /**OK Updates the ground map type chooser (ground/atmosphere map). */
+    /** Updates the ground map type chooser (ground/atmosphere map). */
     private void refreshMapChoice() {
         // refresh UI possibly from a server update
-//        comboMapType.removeActionListener(lobbyListener);
-//        if (mapSettings.getMedium() < MapSettings.MEDIUM_SPACE) {
-//            comboMapType.setSelectedIndex(mapSettings.getMedium());
-//        }
-//        comboMapType.addActionListener(lobbyListener);
         JToggleButton button = butGroundMap;
         if (mapSettings.getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
             button = butLowAtmoMap;
@@ -826,7 +820,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    /**OK Updates the list of available map sizes. */
+    /** Updates the list of available map sizes. */
     private void refreshMapSizes() {
         int oldSelection = comMapSizes.getSelectedIndex();
         mapSizes = clientgui.getClient().getAvailableMapSizes();
@@ -1184,10 +1178,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         var selPlayerIds = getselectedPlayers().stream().map(IPlayer::getId).collect(toSet());
 
         // Empty and refill the player table
-        playerModel.clearData();
-        for (IPlayer player: game().getPlayersVector()) {
-            playerModel.addPlayer(player);
-        }
+        playerModel.replaceData(game().getPlayersVector());
 
         // re-select the previously selected players, if possible
         for (int row = 0; row < playerModel.getRowCount(); row++) {
@@ -2408,127 +2399,127 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return !player.isEnemyOf(localPlayer()) || !isBlindDrop;
     }
 
-    /**
-     * A table model for displaying players
-     */
-    public class PlayerTableModel extends AbstractTableModel {
-
-        private static final long serialVersionUID = -1372393680232901923L;
-
-        private static final int COL_PLAYER = 0;
-        private static final int COL_FORCE = 1;
-        private static final int N_COL = 2;
-
-        private ArrayList<IPlayer> players;
-        private ArrayList<Integer> bvs;
-        private ArrayList<Long> costs;
-        private ArrayList<Double> tons;
-
-        public PlayerTableModel() {
-            players = new ArrayList<>();
-            bvs = new ArrayList<>();
-            costs = new ArrayList<>();
-            tons = new ArrayList<>();
-        }
-
-        @Override
-        public int getRowCount() {
-            return players.size();
-        }
-
-        public void clearData() {
-            players = new ArrayList<>();
-            bvs = new ArrayList<>();
-            costs = new ArrayList<>();
-            tons = new ArrayList<>();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return N_COL;
-        }
-
-        public void addPlayer(IPlayer player) {
-            players.add(player);
-            long cost = 0;
-            double ton = 0;
-            for (Entity entity : clientgui.getClient().getEntitiesVector()) {
-                if (entity.getOwner().equals(player) && !entity.isPartOfFighterSquadron()) {
-                    cost += (long)entity.getCost(false);
-                    ton += entity.getWeight();
-                }
-            } 
-            bvs.add(player.getBV());
-            costs.add(cost);
-            tons.add(ton);
-            fireTableDataChanged();
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            String result = "<HTML>" + UIUtil.guiScaledFontHTML();
-            switch (column) {
-                case (COL_PLAYER):
-                    return result + Messages.getString("ChatLounge.colPlayer");
-                default:
-                    return result + "Force";
-            }
-        }
-
-        @Override
-        public Class<?> getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
-        }
-
-        @Override
-        public Object getValueAt(int row, int col) {
-            StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
-            IPlayer player = getPlayerAt(row);
-            boolean realBlindDrop = player.isEnemyOf(localPlayer()) 
-                    && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-
-            if (col == COL_FORCE) {
-                if (realBlindDrop) {
-                    result.append("&nbsp;<BR><I>Unknown</I><BR>&nbsp;");
-                } else {
-                    double ton = tons.get(row);
-                    if (ton < 10) {
-                        result.append(String.format("%.2f", ton) + " Tons");
-                    } else {
-                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
-                    }
-                    if (costs.get(row) < 10000000) {
-                        result.append("<BR>" + String.format("%,d", costs.get(row)) + " C-Bills");
-                    } else {
-                        result.append("<BR>" + String.format("%,d", costs.get(row) / 1000000) + "\u00B7M C-Bills");
-                    }
-                    result.append("<BR>" + String.format("%,d", bvs.get(row)) + " BV");
-                }
-            } else {
-                result.append(guiScaledFontHTML(0.1f));
-                result.append(player.getName() + "</FONT>");
-                boolean isEnemy = localPlayer().isEnemyOf(player);
-                result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen()));
-                result.append("<BR>" + IPlayer.teamNames[player.getTeam()] + "</FONT>");
-                result.append(guiScaledFontHTML());
-                result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                if (!isValidStartPos(clientgui.getClient().getGame(), player)) {
-                    result.append(guiScaledFontHTML(uiYellow())); 
-                    result.append(WARNING_SIGN + "</FONT>");
-                }
-            }
-            return result.toString();
-        }
-
-        public IPlayer getPlayerAt(int row) {
-            return players.get(row);
-        }
-    }
+//    /**
+//     * A table model for displaying players
+//     */
+//    public class PlayerTableModel extends AbstractTableModel {
+//
+//        private static final long serialVersionUID = -1372393680232901923L;
+//
+//        private static final int COL_PLAYER = 0;
+//        private static final int COL_FORCE = 1;
+//        private static final int N_COL = 2;
+//
+//        private ArrayList<IPlayer> players;
+//        private ArrayList<Integer> bvs;
+//        private ArrayList<Long> costs;
+//        private ArrayList<Double> tons;
+//
+//        public PlayerTableModel() {
+//            players = new ArrayList<>();
+//            bvs = new ArrayList<>();
+//            costs = new ArrayList<>();
+//            tons = new ArrayList<>();
+//        }
+//
+//        @Override
+//        public int getRowCount() {
+//            return players.size();
+//        }
+//
+//        public void clearData() {
+//            players = new ArrayList<>();
+//            bvs = new ArrayList<>();
+//            costs = new ArrayList<>();
+//            tons = new ArrayList<>();
+//        }
+//
+//        @Override
+//        public int getColumnCount() {
+//            return N_COL;
+//        }
+//
+//        public void addPlayer(IPlayer player) {
+//            players.add(player);
+//            long cost = 0;
+//            double ton = 0;
+//            for (Entity entity : clientgui.getClient().getEntitiesVector()) {
+//                if (entity.getOwner().equals(player) && !entity.isPartOfFighterSquadron()) {
+//                    cost += (long)entity.getCost(false);
+//                    ton += entity.getWeight();
+//                }
+//            } 
+//            bvs.add(player.getBV());
+//            costs.add(cost);
+//            tons.add(ton);
+//            fireTableDataChanged();
+//        }
+//
+//        @Override
+//        public String getColumnName(int column) {
+//            String result = "<HTML>" + UIUtil.guiScaledFontHTML();
+//            switch (column) {
+//                case (COL_PLAYER):
+//                    return result + Messages.getString("ChatLounge.colPlayer");
+//                default:
+//                    return result + "Force";
+//            }
+//        }
+//
+//        @Override
+//        public Class<?> getColumnClass(int c) {
+//            return getValueAt(0, c).getClass();
+//        }
+//
+//        @Override
+//        public boolean isCellEditable(int row, int col) {
+//            return false;
+//        }
+//
+//        @Override
+//        public Object getValueAt(int row, int col) {
+//            StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
+//            IPlayer player = getPlayerAt(row);
+//            boolean realBlindDrop = player.isEnemyOf(localPlayer()) 
+//                    && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+//
+//            if (col == COL_FORCE) {
+//                if (realBlindDrop) {
+//                    result.append("&nbsp;<BR><I>Unknown</I><BR>&nbsp;");
+//                } else {
+//                    double ton = tons.get(row);
+//                    if (ton < 10) {
+//                        result.append(String.format("%.2f", ton) + " Tons");
+//                    } else {
+//                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
+//                    }
+//                    if (costs.get(row) < 10000000) {
+//                        result.append("<BR>" + String.format("%,d", costs.get(row)) + " C-Bills");
+//                    } else {
+//                        result.append("<BR>" + String.format("%,d", costs.get(row) / 1000000) + "\u00B7M C-Bills");
+//                    }
+//                    result.append("<BR>" + String.format("%,d", bvs.get(row)) + " BV");
+//                }
+//            } else {
+//                result.append(guiScaledFontHTML(0.1f));
+//                result.append(player.getName() + "</FONT>");
+//                boolean isEnemy = localPlayer().isEnemyOf(player);
+//                result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen()));
+//                result.append("<BR>" + IPlayer.teamNames[player.getTeam()] + "</FONT>");
+//                result.append(guiScaledFontHTML());
+//                result.append("<BR>Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+//                if (!isValidStartPos(clientgui.getClient().getGame(), player)) {
+//                    result.append(guiScaledFontHTML(uiYellow())); 
+//                    result.append(WARNING_SIGN + "</FONT>");
+//                }
+//            }
+//            return result.toString();
+//        }
+//
+//        public IPlayer getPlayerAt(int row) {
+//            return players.get(row);
+//        }
+//    }
     
     public class PlayerTableMouseAdapter extends MouseInputAdapter {
 
@@ -3167,7 +3158,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mekTable.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
         rowbaseHeight = butCompact.isSelected() ? MEKTABLE_ROWHEIGHT_COMPACT : MEKTREE_ROWHEIGHT_FULL;
         mekForceTree.setRowHeight(UIUtil.scaleForGUI(rowbaseHeight));
-        tablePlayers.setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
+        tablePlayers.rescale();
     }
 
     /** Refreshes the table headers of the MekTable and PlayerTable. */
@@ -3417,77 +3408,77 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    public class PlayerRenderer extends JPanel implements TableCellRenderer {
-        
-        private JLabel lblImage = new JLabel();
+//    public class PlayerRenderer extends JPanel implements TableCellRenderer {
+//        
+//        private JLabel lblImage = new JLabel();
+//
+//        public PlayerRenderer() {
+//            setLayout(new GridLayout(1,1,5,0));
+//            setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+//            add(lblImage);
+//        }
+//        
+//        private void setImage(Image img) {
+//            lblImage.setIcon(new ImageIcon(img));
+//        }
+//
+//        private static final long serialVersionUID = 4947299735765324311L;
+//
+//        @Override
+//        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+//                boolean hasFocus, int row, int column) {
+//
+//            lblImage.setText(value.toString());
+//
+//            if (column == PlayerTableModel.COL_PLAYER) {
+//                lblImage.setIconTextGap(scaleForGUI(5));
+//                IPlayer player = playerModel.getPlayerAt(row);
+//                if (player == null) {
+//                    return null;
+//                }
+//                Image camo = player.getCamouflage().getImage();
+//                int size = scaleForGUI(PLAYERTABLE_ROWHEIGHT) / 2;
+//                setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
+//            } else {
+//                lblImage.setIconTextGap(scaleForGUI(5));
+//                lblImage.setIcon(null);
+//            }
+//            
+//            if (isSelected) {
+//                setForeground(table.getSelectionForeground());
+//                setBackground(table.getSelectionBackground());
+//            } else {
+//                setForeground(table.getForeground());
+//                Color background = table.getBackground();
+//                if (row % 2 != 0) {
+//                    background = alternateTableBGColor();
+//                }
+//                setBackground(background);
+//            }
+//
+//            if (hasFocus) {
+//                if (!isSelected) {
+//                    Color col = UIManager.getColor("Table.focusCellForeground");
+//                    if (col != null) {
+//                        setForeground(col);
+//                    }
+//                    col = UIManager.getColor("Table.focusCellBackground");
+//                    if (col != null) {
+//                        setBackground(col);
+//                    }
+//                }
+//            }
+//
+//            return this;
+//        }
+//    }
 
-        public PlayerRenderer() {
-            setLayout(new GridLayout(1,1,5,0));
-            setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-            add(lblImage);
-        }
-        
-        private void setImage(Image img) {
-            lblImage.setIcon(new ImageIcon(img));
-        }
-
-        private static final long serialVersionUID = 4947299735765324311L;
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-
-            lblImage.setText(value.toString());
-
-            if (column == PlayerTableModel.COL_PLAYER) {
-                lblImage.setIconTextGap(scaleForGUI(5));
-                IPlayer player = playerModel.getPlayerAt(row);
-                if (player == null) {
-                    return null;
-                }
-                Image camo = player.getCamouflage().getImage();
-                int size = scaleForGUI(PLAYERTABLE_ROWHEIGHT) / 2;
-                setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
-            } else {
-                lblImage.setIconTextGap(scaleForGUI(5));
-                lblImage.setIcon(null);
-            }
-            
-            if (isSelected) {
-                setForeground(table.getSelectionForeground());
-                setBackground(table.getSelectionBackground());
-            } else {
-                setForeground(table.getForeground());
-                Color background = table.getBackground();
-                if (row % 2 != 0) {
-                    background = alternateTableBGColor();
-                }
-                setBackground(background);
-            }
-
-            if (hasFocus) {
-                if (!isSelected) {
-                    Color col = UIManager.getColor("Table.focusCellForeground");
-                    if (col != null) {
-                        setForeground(col);
-                    }
-                    col = UIManager.getColor("Table.focusCellBackground");
-                    if (col != null) {
-                        setBackground(col);
-                    }
-                }
-            }
-
-            return this;
-        }
-    }
-
-    /** OK Returns true when the compact view is active. */ 
+    /** Returns true when the compact view is active. */ 
     public boolean isCompact() {
         return butCompact.isSelected();
     }
     
-    /** OK 
+    /** 
      * Returns a list of the selected entities in the Mek table. 
      * The list may be empty but not null. 
      */
@@ -3500,8 +3491,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return result;
     }
     
-    /** OK Helper method to shorten calls. */
-    private IPlayer localPlayer() {
+    /** Helper method to shorten calls. */
+    IPlayer localPlayer() {
         return clientgui.getClient().getLocalPlayer();
     }
     
@@ -3709,50 +3700,50 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    private class PlayerTable extends JTable {
-        private static final long serialVersionUID = 6252953920509362407L;
-
-        public PlayerTable(PlayerTableModel playerModel) {
-            super(playerModel);
-        }
-
-        @Override
-        public String getToolTipText(MouseEvent e) {
-            Point p = e.getPoint();
-            IPlayer player = playerModel.getPlayerAt(rowAtPoint(p));
-            if (player == null) {
-                return null;
-            }
-
-            StringBuilder result = new StringBuilder("<HTML>");
-            result.append(guiScaledFontHTML(player.getColour().getColour()));
-            result.append(player.getName() + "</FONT>");
-
-            result.append(guiScaledFontHTML());
-            if ((clientgui.getClient() instanceof BotClient) && player.equals(localPlayer())) {
-                result.append(" (This Bot)");
-            } else if (clientgui.getBots().containsKey(player.getName())) {
-                result.append(" (Your Bot)");
-            } else if (localPlayer().equals(player)) {
-                result.append(" (You)");
-            }
-            result.append("<BR>");
-            if (player.getConstantInitBonus() != 0) {
-                String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
-                result.append("Initiative Modifier: ").append(sign);
-                result.append(player.getConstantInitBonus());
-            } else {
-                result.append("No Initiative Modifier");
-            }
-            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
-                int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
-                + player.getNbrMFInferno() + player.getNbrMFVibra();
-                result.append("<BR>Minefields: ").append(mines);
-            }
-            return result.toString();
-        }
-
-    }
+//    private class PlayerTable extends JTable {
+//        private static final long serialVersionUID = 6252953920509362407L;
+//
+//        public PlayerTable(PlayerTableModel playerModel) {
+//            super(playerModel);
+//        }
+//
+//        @Override
+//        public String getToolTipText(MouseEvent e) {
+//            Point p = e.getPoint();
+//            IPlayer player = playerModel.getPlayerAt(rowAtPoint(p));
+//            if (player == null) {
+//                return null;
+//            }
+//
+//            StringBuilder result = new StringBuilder("<HTML>");
+//            result.append(guiScaledFontHTML(player.getColour().getColour()));
+//            result.append(player.getName() + "</FONT>");
+//
+//            result.append(guiScaledFontHTML());
+//            if ((clientgui.getClient() instanceof BotClient) && player.equals(localPlayer())) {
+//                result.append(" (This Bot)");
+//            } else if (clientgui.getBots().containsKey(player.getName())) {
+//                result.append(" (Your Bot)");
+//            } else if (localPlayer().equals(player)) {
+//                result.append(" (You)");
+//            }
+//            result.append("<BR>");
+//            if (player.getConstantInitBonus() != 0) {
+//                String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
+//                result.append("Initiative Modifier: ").append(sign);
+//                result.append(player.getConstantInitBonus());
+//            } else {
+//                result.append("No Initiative Modifier");
+//            }
+//            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+//                int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
+//                + player.getNbrMFInferno() + player.getNbrMFVibra();
+//                result.append("<BR>Minefields: ").append(mines);
+//            }
+//            return result.toString();
+//        }
+//
+//    }
 
 
     void updateMapButtons() {

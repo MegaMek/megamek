@@ -72,6 +72,7 @@ public final class UIUtil {
     public final static String CONNECTED_SIGN = " \u26AF ";
     public final static String WARNING_SIGN = " \u26A0 ";
     public final static String QUIRKS_SIGN = " \u24E0 ";
+    public static final String DOT_SPACER = " \u2B1D ";
     
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();

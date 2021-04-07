@@ -63,7 +63,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      *
      */
     private static final long serialVersionUID = -6072295678938594119L;
-    private ClientGUI client;
+    private ClientGUI clientGui;
+    private JFrame frame;
     private GameOptions options;
 
     private boolean editable = true;
@@ -165,16 +166,18 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      * @param client
      *            - the <code>Client</code> parent of this dialog.
      */
-    public GameOptionsDialog(ClientGUI client) {
-        super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
-        this.client = client;
-        init(client.frame, client.getClient().getGame().getOptions());
+    public GameOptionsDialog(ClientGUI cg) {
+        super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
+        clientGui = cg;
+        frame = cg.getFrame();
+        init(frame, cg.getClient().getGame().getOptions());
     }
 
-    public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave) {
-        super(frame, Messages.getString("GameOptionsDialog.title"), true);
+    public GameOptionsDialog(JFrame jf, GameOptions options, boolean shouldSave) {
+        super(jf, Messages.getString("GameOptionsDialog.title"), true);
         // $NON-NLS-1$
         performSave = shouldSave;
+        frame = jf;
         init(frame, options);
         butOkay.setEnabled(false);
     }
@@ -203,8 +206,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
 
-        if ((client != null) && (changed.size() > 0)) {
-            client.getClient().sendGameOptions(texPass.getText(), changed);
+        if ((clientGui != null) && (changed.size() > 0)) {
+            clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
 
@@ -772,8 +775,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
-            if (client != null) {
-                for (Entity ent : client.getClient().getGame().getEntitiesVector()) {
+            if (clientGui != null) {
+                for (Entity ent : clientGui.getClient().getGame().getEntitiesVector()) {
                     if (ent instanceof Mech) {
                         ((Mech) ent).setBAGrabBars();
                     }
@@ -814,7 +817,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             cancelled = false;
-            if (client != null) {
+            if (clientGui != null) {
                 send();
             }
             if (performSave) {
@@ -860,7 +863,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             cancelled = true;
         } else if (e.getSource().equals(butUnofficial)) {
             if (!butUnofficial.isSelected()) {
-                boolean okay = MMConfirmDialog.confirm(client.frame, "Warning", getString("GameOptionsDialog.HideWarning")); 
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning")); 
                 if (!okay) {
                     butUnofficial.removeActionListener(this);
                     butUnofficial.setSelected(true);
@@ -874,7 +877,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             return;
         } else if (e.getSource().equals(butLegacy)) {
             if (!butLegacy.isSelected()) {
-                boolean okay = MMConfirmDialog.confirm(client.frame, "Warning", getString("GameOptionsDialog.HideWarning"));
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"));
                 if (!okay) {
                     butLegacy.removeActionListener(this);
                     butLegacy.setSelected(true);

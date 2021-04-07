@@ -613,7 +613,7 @@ public class MekForceTreeCellFormatter {
         result.append( "<BR>");
 
         // Controls the separator dot character
-        Boolean firstEntry = true;
+        boolean firstEntry = true;
 
         // Invalid Design
         if (!entity.isDesignValid()) {

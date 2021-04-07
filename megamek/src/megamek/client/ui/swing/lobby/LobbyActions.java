@@ -960,6 +960,7 @@ public class LobbyActions {
         Bay bay = carrier.getBayById(bayId);
         if (bay == null) {
             LobbyErrors.showNoSuchBay(frame());
+            return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity loadee : bay.getLoadedUnits()) {

@@ -617,7 +617,7 @@ public class ServerHelper {
             Entity carrier = game.getEntity(entity.getTransportId());
             if (carrier == null) {
                 entity.setTransportId(Entity.NONE);
-            } else if (carrier != null && carrier.getOwner().isEnemyOf(entity.getOwner())) {
+            } else if (carrier.getOwner().isEnemyOf(entity.getOwner())) {
                 carrier.unload(entity);
                 entity.setTransportId(Entity.NONE);
             }
@@ -713,13 +713,6 @@ public class ServerHelper {
         // Get the local (server) entities
         var serverEntities =  new HashSet<Entity>();
         entityList.stream().map(e -> game.getEntity(e.getId())).forEach(serverEntities::add);
-
-        // For any units that are switching teams, unload and disconnect from C3
-//        List<Entity> switchingTeam = serverEntities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
-//        lobbyUnloadOthers(game, switchingTeam);
-//        performC3Disconnect(game, switchingTeam);
-//        game.getForces().removeEntityFromForces(switchingTeam);
-
         for (Entity entity: serverEntities) {
             entity.setOwner(newOwner);
         }
@@ -754,11 +747,6 @@ public class ServerHelper {
 
         for (Force force: serverForces) {
             Collection<Entity> entities = forces.getFullEntities(force);
-//            List<Entity> switchingTeam = entities.stream().filter(e -> e.getOwner().isEnemyOf(newOwner)).collect(toList());        
-            
-            // For any units that are switching teams, unload and disconnect from C3
-//            lobbyUnloadOthers(game, switchingTeam);
-//            performC3Disconnect(game, switchingTeam); 
             forces.assignFullForces(force, newOwner);
             for (Entity entity: entities) {
                 entity.setOwner(newOwner);
@@ -823,15 +811,6 @@ public class ServerHelper {
         forces.correct();
         correctLoading(game);
         correctC3Connections(game);
-        
-//        for (IPlayer player: serverPlayers) {
-//            // Since different teams are always enemies, changing the team forces 
-//            // the units of this player to offload and disembark from 
-//            // all units of other players
-//            List<Entity> switchingTeam = game.getPlayerEntities(player, false);        
-//            lobbyUnloadOthers(game, switchingTeam);
-//            performC3Disconnect(game, switchingTeam);
-//        }
         
         server.send(server.createFullEntitiesPacket());
         for (IPlayer player: serverPlayers) {
@@ -915,8 +894,6 @@ public class ServerHelper {
     
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
      */
     static void receiveForceAdd(Packet c, int connId, IGame game, Server server) {
         var force = (Force) c.getObject(0);

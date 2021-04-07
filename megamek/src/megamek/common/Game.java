@@ -3673,7 +3673,7 @@ public class Game implements Serializable, IGame {
     }
 
     @Override
-    public Forces getForces() {
+    public synchronized Forces getForces() {
         return forces;
     }
 

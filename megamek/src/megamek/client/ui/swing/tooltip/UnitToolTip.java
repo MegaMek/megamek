@@ -255,7 +255,7 @@ public final class UnitToolTip {
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-    public static final String DOT_SPACER = " \u2B1D ";
+    
     
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, IPlayer localPlayer, 

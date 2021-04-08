@@ -3625,7 +3625,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > (doors * 2))
+                if ((numChoices > currentBay.getSafeLaunchRate())
                     && GUIPreferences.getInstance().getNagForLaunchDoors()) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;

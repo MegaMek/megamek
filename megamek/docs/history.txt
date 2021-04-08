@@ -11,6 +11,7 @@ VERSION HISTORY:
 + Data: New maps, unit fixes including fix for #2707
 + Issue #2597: Add thread safety to duplicate name hash
 + Issue #2722: Do not send IP addresses in chat by default
++ PR #2691: Base Components: Creating Base Components based on the previous MekHQ Preference setup 
 + PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
 + PR #2730: Tooltips for target number calculations on the round report
 + Issue #146: Disengage/Remove Unit Button for Offboard Artillery

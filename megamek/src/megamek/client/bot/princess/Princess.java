@@ -2113,7 +2113,7 @@ public class Princess extends BotClient {
     private void launchFighters(MovePath path) {
         // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
         // behind. They're not that good at screening against high speed pursuit anyway.
-        if(getBehaviorSettings().shouldGoHome()) {
+        if (getBehaviorSettings().shouldGoHome()) {
             return;
         }
         
@@ -2122,7 +2122,7 @@ public class Princess extends BotClient {
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not launching anything.
-        if((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
+        if ((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
             return;
         }
         
@@ -2133,11 +2133,11 @@ public class Princess extends BotClient {
         // grouping launched craft by bay to limit launches to 'safe' rate.
         Vector<Bay> fighterBays = movingEntity.getFighterBays();
         
-        for(int bayIndex = 0; bayIndex < fighterBays.size(); bayIndex++) {
+        for (int bayIndex = 0; bayIndex < fighterBays.size(); bayIndex++) {
             Bay bay = fighterBays.get(bayIndex);
             
-            for(Entity loadedEntity : bay.getLaunchableUnits()) {
-                unitsToLaunch.putIfAbsent(bayIndex, new Vector<Integer>());
+            for (Entity loadedEntity : bay.getLaunchableUnits()) {
+                unitsToLaunch.putIfAbsent(bayIndex, new Vector<>());
                 
                 // for now, just launch fighters at the 'safe' rate
                 if (unitsToLaunch.get(bayIndex).size() < bay.getSafeLaunchRate()) {

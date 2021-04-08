@@ -1029,7 +1029,8 @@ public class Princess extends BotClient {
             if ((entity.isOffBoard() 
                     || (null == entity.getPosition())
                     || entity.isUnloadedThisTurn()
-                    || !getGame().getTurn().isValidEntity(entity, getGame(), true))) {
+                    || !getGame().getTurn().isValidEntity(entity, getGame()))
+                            && !getGame().isPhaseSimultaneous()){
                 msg.append("cannot be moved.");
                 continue;
             }

@@ -681,14 +681,14 @@ public class ServerHelper {
         var changedForces = new HashSet<Force>();
         
         if (newParentId == Force.NO_FORCE) {
-            forceList.stream().forEach(f -> changedForces.addAll(forces.promoteForce(f)));
+            forceList.stream().forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
         } else {
             if (!forces.contains(newParentId)) {
                 MegaMek.getLogger().warning("Tried to attach forces to non-existing parent force ID " + newParentId);
                 return;
             }
             Force newParent = forces.getForce(newParentId);
-            forceList.stream().forEach(f -> changedForces.addAll(forces.attachForce(f, newParent)));
+            forceList.stream().forEach(f -> changedForces.addAll(forces.attachForce(forces.getForce(f.getId()), newParent)));
         }
         
         if (!changedForces.isEmpty()) {
@@ -902,7 +902,7 @@ public class ServerHelper {
 
         int newId;
         if (force.isTopLevel()) {
-            newId = game.getForces().addTopLevelForce(force.getName(), game.getPlayer(connId));
+            newId = game.getForces().addTopLevelForce(force.getName(), game.getPlayer(force.getOwnerId()));
         } else {
             Force parent = game.getForces().getForce(force.getParentId()); 
             newId = game.getForces().addSubForce(force.getName(), parent);

@@ -249,6 +249,8 @@ public final class UnitToolTip {
     // Add to force menu point
     // Error with team changes 
     // Random skills now default to TW
+    // Create force from enemy units -> own force BAD
+    // force doubling when moving a force
     
     
     
@@ -296,6 +298,7 @@ public final class UnitToolTip {
             result.append(deploymentWarnings(entity, localPlayer, mapSettings));
             result.append("<BR>");
         } else {
+            result.append(forceEntry(entity, localPlayer));
             result.append(inGameValues(entity, localPlayer));
             result.append(PilotToolTip.getPilotTipShort(entity));
         }
@@ -985,6 +988,30 @@ public final class UnitToolTip {
                 result.append(" [" + carried.getId() + "]");
             }
 
+        }
+        result.append("</FONT>");
+        return result;
+    }
+    
+    /** Returns a list of units loaded onto this unit. */
+    private static StringBuilder forceEntry(Entity entity, IPlayer localPlayer) {
+        StringBuilder result = new StringBuilder();
+        
+        if (entity.partOfForce()) {
+            // Get the my / ally / enemy color and desaturate it
+            Color color = GUIPreferences.getInstance().getEnemyUnitColor();
+            if (entity.getOwnerId() == localPlayer.getId()) {
+                color = GUIPreferences.getInstance().getMyUnitColor();
+            } else if (!localPlayer.isEnemyOf(entity.getOwner())) {
+                color = GUIPreferences.getInstance().getAllyUnitColor();
+            }
+            color = addGray(color, 128).brighter();
+            result.append(guiScaledFontHTML(color)).append("<BR>");
+            var forceChain = entity.getGame().getForces().forceChain(entity);
+            for (int i = forceChain.size() - 1; i >= 0; i--) {
+                result.append(forceChain.get(i).getName());
+                result.append(i != 0 ? ", " : "");
+            }
         }
         result.append("</FONT>");
         return result;

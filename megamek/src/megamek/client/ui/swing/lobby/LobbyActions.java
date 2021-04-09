@@ -495,12 +495,16 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
+        if (!areAllied(entities)) {
+            LobbyErrors.showOnlyTeam(frame());
+            return;
+        }
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createToplevelForce(name, localPlayer()), entities);
+        client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.randomElement(entities).getOwner()), entities);
     }
     
     /**

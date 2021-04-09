@@ -89,8 +89,20 @@ public class ScenarioLoader {
 
     private static final String PARAM_MMSVERSION = "MMSVersion";
     private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile";
+    private static final String PARAM_GAME_OPTIONS_FIXED = "FixedGameOptions";
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId";
     private static final String PARAM_FACTIONS = "Factions";
+    private static final String PARAM_SINGLEPLAYER = "SinglePlayer";
+    
+    private static final String PARAM_PLANETCOND_FIXED = "FixedPlanetaryConditions";
+    private static final String PARAM_PLANETCOND_TEMP = "PlanetaryConditionsTemperature";
+    private static final String PARAM_PLANETCOND_GRAV = "PlanetaryConditionsGravity";
+    private static final String PARAM_PLANETCOND_LIGHT = "PlanetaryConditionsLight";
+    private static final String PARAM_PLANETCOND_WEATHER = "PlanetaryConditionsWeather";
+    private static final String PARAM_PLANETCOND_WIND = "PlanetaryConditionsWind";
+    private static final String PARAM_PLANETCOND_WINDDIR = "PlanetaryConditionsWindDir";
+    private static final String PARAM_PLANETCOND_ATMOS = "PlanetaryConditionsAtmosphere";
+    private static final String PARAM_PLANETCOND_FOG = "PlanetaryConditionsFog";
 
     private static final String PARAM_MAP_WIDTH = "MapWidth";
     private static final String PARAM_MAP_HEIGHT = "MapHeight";
@@ -126,6 +138,19 @@ public class ScenarioLoader {
     private final List<CritHitPlan> critHitPlans = new ArrayList<>();
     // Used to set ammo Spec Ammounts
     private final List<SetAmmoPlan> ammoPlans = new ArrayList<>();
+
+    /** When true, the Game Options Dialog is skipped. */
+    private boolean fixedGameOptions = false;
+    
+    /** When true, the Planetary Conditions Dialog is skipped. */
+    private boolean fixedPlanetCond;
+    
+    /** 
+     * When true, the Player assignment/camo Dialog and the host dialog are skipped. 
+     * The first faction (player) is assumed to be the local player and the rest
+     * are assumed to be Princess.  
+     */
+    private boolean singlePlayer;
 
     public ScenarioLoader(File f) {
         scenarioFile = f;
@@ -389,9 +414,19 @@ public class ScenarioLoader {
         } else {
             g.getOptions().loadOptions(new MegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
         }
+        if (p.containsKey(PARAM_GAME_OPTIONS_FIXED)) {
+            fixedGameOptions = true;
+        }
 
         // set wind
         g.getPlanetaryConditions().determineWind();
+        if (p.containsKey(PARAM_PLANETCOND_FIXED)) {
+            fixedPlanetCond = true;
+        }
+        
+        if (p.containsKey(PARAM_SINGLEPLAYER)) {
+            singlePlayer = true;
+        }
 
         // Set up the teams (for initiative)
         g.setupTeams();
@@ -1098,5 +1133,17 @@ public class ScenarioLoader {
             Collection<String> values = get(key);
             return (values == null) ? 0 : values.size();
         }
+    }
+    
+    public boolean hasFixedGameOptions() {
+        return fixedGameOptions;
+    }
+    
+    public boolean hasFixedPlanetCond() {
+        return fixedPlanetCond;
+    }
+    
+    public boolean isSinglePlayer() {
+        return singlePlayer;
     }
 }

@@ -419,6 +419,7 @@ public class ScenarioLoader {
         }
 
         // set wind
+        buildPlanetaryConditions(g, p);
         g.getPlanetaryConditions().determineWind();
         if (p.containsKey(PARAM_PLANETCOND_FIXED)) {
             fixedPlanetCond = true;
@@ -442,6 +443,41 @@ public class ScenarioLoader {
         g.createVictoryConditions();
 
         return g;
+    }
+
+    private void buildPlanetaryConditions(Game g, StringMultiMap p) {
+        if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
+            int temp = Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP));
+            g.getPlanetaryConditions().setTemperature(temp);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_GRAV)) {
+            float grav = Float.parseFloat(p.getString(PARAM_PLANETCOND_GRAV));
+            g.getPlanetaryConditions().setGravity(grav);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_FOG)) {
+            int fog = Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG));
+            g.getPlanetaryConditions().setFog(fog);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
+            int atmo = Integer.parseInt(p.getString(PARAM_PLANETCOND_ATMOS));
+            g.getPlanetaryConditions().setAtmosphere(atmo);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
+            int light = Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT));
+            g.getPlanetaryConditions().setLight(light);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
+            int weather = Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER));
+            g.getPlanetaryConditions().setWeather(weather);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WIND)) {
+            int wind = Integer.parseInt(p.getString(PARAM_PLANETCOND_WIND));
+            g.getPlanetaryConditions().setWindStrength(wind);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
+            int dir = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR));
+            g.getPlanetaryConditions().setWindDirection(dir);
+        }
     }
 
     private Collection<Entity> buildFactionEntities(StringMultiMap p, IPlayer player) throws ScenarioLoaderException {

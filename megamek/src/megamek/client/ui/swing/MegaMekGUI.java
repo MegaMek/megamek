@@ -756,7 +756,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
         server.setGame(g);
-
+        
         // apply any scenario damage
         sl.applyDamage(server);
         ClientGUI gui = null;

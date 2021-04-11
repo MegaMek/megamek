@@ -103,6 +103,13 @@ public class ScenarioLoader {
     private static final String PARAM_PLANETCOND_WINDDIR = "PlanetaryConditionsWindDir";
     private static final String PARAM_PLANETCOND_ATMOS = "PlanetaryConditionsAtmosphere";
     private static final String PARAM_PLANETCOND_FOG = "PlanetaryConditionsFog";
+    private static final String PARAM_PLANETCOND_WINDSHIFTINGSTR = "PlanetaryConditionsWindShiftingStr";
+    private static final String PARAM_PLANETCOND_WINDMIN = "PlanetaryConditionsWindMin";
+    private static final String PARAM_PLANETCOND_WINDMAX = "PlanetaryConditionsWindMax";
+    private static final String PARAM_PLANETCOND_WINDSHIFTINGDIR = "PlanetaryConditionsWindShiftingDir";
+    private static final String PARAM_PLANETCOND_BLOWINGSAND = "PlanetaryConditionsBlowingSand";
+    private static final String PARAM_PLANETCOND_EMI = "PlanetaryConditionsEMI";
+    private static final String PARAM_PLANETCOND_TERRAINCHANGES = "PlanetaryConditionsAllowTerrainChanges";
 
     private static final String PARAM_MAP_WIDTH = "MapWidth";
     private static final String PARAM_MAP_HEIGHT = "MapHeight";
@@ -414,20 +421,14 @@ public class ScenarioLoader {
         } else {
             g.getOptions().loadOptions(new MegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
         }
-        if (p.containsKey(PARAM_GAME_OPTIONS_FIXED)) {
-            fixedGameOptions = true;
-        }
+        fixedGameOptions = parseBoolean(p, PARAM_GAME_OPTIONS_FIXED, false);
 
         // set wind
-        buildPlanetaryConditions(g, p);
+        parsePlanetaryConditions(g, p);
         g.getPlanetaryConditions().determineWind();
-        if (p.containsKey(PARAM_PLANETCOND_FIXED)) {
-            fixedPlanetCond = true;
-        }
-        
-        if (p.containsKey(PARAM_SINGLEPLAYER)) {
-            singlePlayer = true;
-        }
+        fixedPlanetCond = parseBoolean(p, PARAM_PLANETCOND_FIXED, false);
+
+        singlePlayer = parseBoolean(p, PARAM_SINGLEPLAYER, false);
 
         // Set up the teams (for initiative)
         g.setupTeams();
@@ -445,7 +446,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private void buildPlanetaryConditions(Game g, StringMultiMap p) {
+    private void parsePlanetaryConditions(Game g, StringMultiMap p) {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
             int temp = Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP));
             g.getPlanetaryConditions().setTemperature(temp);
@@ -477,6 +478,34 @@ public class ScenarioLoader {
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
             int dir = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR));
             g.getPlanetaryConditions().setWindDirection(dir);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
+            var shift = parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false);
+            g.getPlanetaryConditions().setShiftingWindDirection(shift);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGSTR)) {
+            var shift = parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false);
+            g.getPlanetaryConditions().setShiftingWindStrength(shift);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
+            int min = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMIN));
+            g.getPlanetaryConditions().setMinWindStrength(min);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
+            int max = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMAX));
+            g.getPlanetaryConditions().setMaxWindStrength(max);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_EMI)) {
+            var emi = parseBoolean(p, PARAM_PLANETCOND_EMI, false);
+            g.getPlanetaryConditions().setEMI(emi);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {
+            var terr = parseBoolean(p, PARAM_PLANETCOND_TERRAINCHANGES, true);
+            g.getPlanetaryConditions().setTerrainAffected(terr);
+        }
+        if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
+            var sand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false);
+            g.getPlanetaryConditions().setBlowingSand(sand);
         }
     }
 
@@ -935,6 +964,37 @@ public class ScenarioLoader {
         }
         return ExternalGameId;
     }
+    
+    public boolean hasFixedGameOptions() {
+        return fixedGameOptions;
+    }
+    
+    public boolean hasFixedPlanetCond() {
+        return fixedPlanetCond;
+    }
+    
+    public boolean isSinglePlayer() {
+        return singlePlayer;
+    }
+    
+    /** 
+     * Parses a boolean value. When the key is not present, returns the given
+     * defaultValue. When the key is present, interprets "true" and "on"  and "1"
+     * as true and everything else as false.
+     */
+    private boolean parseBoolean(StringMultiMap p, String key, boolean defaultValue) {
+        boolean result = defaultValue;
+        if (p.containsKey(key)) {
+            if (p.getString(key).equalsIgnoreCase("true") 
+                    || p.getString(key).equalsIgnoreCase("on")
+                    || p.getString(key).equalsIgnoreCase("1")) {
+                result = true;
+            } else {
+                result = false;
+            }
+        }
+        return result;
+    }
 
     public static void main(String[] saArgs) throws Exception {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
@@ -1170,16 +1230,5 @@ public class ScenarioLoader {
             return (values == null) ? 0 : values.size();
         }
     }
-    
-    public boolean hasFixedGameOptions() {
-        return fixedGameOptions;
-    }
-    
-    public boolean hasFixedPlanetCond() {
-        return fixedPlanetCond;
-    }
-    
-    public boolean isSinglePlayer() {
-        return singlePlayer;
-    }
+
 }

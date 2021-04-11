@@ -32,12 +32,12 @@ Maps=RANDOM,RANDOM
 GameOptionsFile=Example_options.xml
 # The Game Options can be fixed. In this case the Game Options Dialog shown before the 
 # scenario starts is skipped. 
-FixedGameOptions=1
+FixedGameOptions=true
 
 # Planetary Conditions ------------------------------------------
 # Planetary Conditions can be fixed. In this case the Planetary Conditions Dialog shown before the 
 # scenario starts is skipped. 
-FixedPlanetaryConditions=1
+FixedPlanetaryConditions=true
 # Temperature: Only integer values are allowed
 PlanetaryConditionsTemperature=-14
 PlanetaryConditionsGravity=1.12
@@ -55,13 +55,26 @@ PlanetaryConditionsWindDir=2
 PlanetaryConditionsAtmosphere=2
 # Fog: Default = No Fog; 1 = Light Fog; 2 = Heavy Fog
 PlanetaryConditionsFog=1
+# Shifting Wind
+# Strength: Default = off; default min. Wind = 0 (see Wind above); default max. Wind = 6
+# Direction: Default = off;
+PlanetaryConditionsWindShiftingStr=true
+PlanetaryConditionsWindMin=1
+PlanetaryConditionsWindMax=3
+PlanetaryConditionsWindShiftingDir=true
+# Blowing Sand: Default = off
+PlanetaryConditionsBlowingSand=true
+# EMI: Default = off
+PlanetaryConditionsEMI=true
+# Allow Terrain Changes: Default = on
+PlanetaryConditionsAllowTerrainChanges=false
 
 # Faction (= Player) list ---------------------------------------
 # A scenario can be set to single player style. In this case the first player is
 # the human player and all other players are Princess bots. This will skip the 
 # Player/Camo assignment dialog and the "Host game" dialog and directly connect
 # to a localhost Server and use the correct player name. 
-SinglePlayer=1
+SinglePlayer=true
 # The player name used to log into the server MUST match this name to play as
 # that faction.  Player names can *not* include spaces.
 Factions=PlayerA,PlayerB,PlayerC

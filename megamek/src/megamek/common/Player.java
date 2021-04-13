@@ -13,15 +13,15 @@
  */
 package megamek.common;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Vector;
-
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Vector;
 
 /**
  * Represents a player in the game.
@@ -55,6 +55,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     // hexes that are automatically hit by artillery
     private Vector<Coords> artyAutoHitHexes = new Vector<>();
 
+    private int initialEntityCount;
     private int initialBV;
 
     // initiative bonuses go here because we don't know if teams are rolling
@@ -72,7 +73,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     
     /**
      * Boolean that keeps track of whether a player has accepted another 
-     * player's request to chang teams.
+     * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
 
@@ -393,20 +394,35 @@ public final class Player extends TurnOrdered implements IPlayer {
         return false;
     }
 
+    @Override
+    public int getEntityCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count());
+    }
+
+    @Override
+    public int getInitialEntityCount() {
+        return initialEntityCount;
+    }
+
+    @Override
+    public void setInitialEntityCount(final int initialEntityCount) {
+        this.initialEntityCount = initialEntityCount;
+    }
+
+    @Override
+    public void changeInitialEntityCount(final int initialEntityCountChange) {
+        this.initialEntityCount += initialEntityCountChange;
+    }
+
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
     @Override
     public int getBV() {
-        int bv = 0;
-
-        for (Entity entity : game.getEntitiesVector()) {
-            if (equals(entity.getOwner()) && !entity.isDestroyed()
-                    && !entity.isTrapped()) {
-                bv += entity.calculateBattleValue();
-            }
-        }
-        return bv;
+        return game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped())
+                .mapToInt(Entity::calculateBattleValue).sum();
     }
 
     /**
@@ -429,18 +445,18 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void setInitialBV() {
-        initialBV = getBV();
-    }
-
-    @Override
-    public void increaseInitialBV(int bv) {
-        initialBV += bv;
-    }
-
-    @Override
     public int getInitialBV() {
         return initialBV;
+    }
+
+    @Override
+    public void setInitialBV(final int initialBV) {
+        this.initialBV = initialBV;
+    }
+
+    @Override
+    public void changeInitialBV(final int initialBVChange) {
+        this.initialBV += initialBVChange;
     }
 
     @Override

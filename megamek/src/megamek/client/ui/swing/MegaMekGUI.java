@@ -748,7 +748,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         optionsDialog = null;
 
         // calculate initial BV
-        server.calculatePlayerBVs();
+        server.calculatePlayerInitialCounts();
         
         // setup any bots
         for (int x = 0; x < pa.length; x++) {

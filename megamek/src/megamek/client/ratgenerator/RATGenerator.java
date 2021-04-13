@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.common.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -339,11 +340,13 @@ public class RATGenerator {
         return factions.keySet();
     }
     
-    public int eraForYear(int year) {
-        if (year < eraSet.first()) {
-            return eraSet.first();
+    public int eraForYear(final int year) {
+        if (year < getEraSet().first()) {
+            return getEraSet().first();
+        } else {
+            final Integer floor = getEraSet().floor(year);
+            return (floor == null) ? year : floor;
         }
-        return eraSet.floor(year);
     }
     
     public boolean eraIsLoaded(int era) {
@@ -841,18 +844,23 @@ public class RATGenerator {
     }
     
     /**
-     * If year is equal to one of the era marks, loads that era. If it is between,
-     * loads eras on both sides.
+     * If the year is equal to one of the era marks, it loads that era. If it is between two, it
+     * loads eras on both sides. Otherwise, just load the closest era.
      */
-    public void loadYear(int year) {
-        if (eraSet.contains(year)) {
+    public void loadYear(final int year) {
+        if (getEraSet().isEmpty()) {
+            return;
+        } else if (getEraSet().contains(year)) {
             loadEra(year);
+            return;
         }
-        if (year > eraSet.first()) {
-            loadEra(eraSet.floor(year));
+
+        if (year > getEraSet().first()) {
+            loadEra(getEraSet().floor(year));
         }
-        if (year < eraSet.last()) {
-            loadEra(eraSet.ceiling(year));
+
+        if (year < getEraSet().last()) {
+            loadEra(getEraSet().ceiling(year));
         }
     }
     
@@ -894,8 +902,13 @@ public class RATGenerator {
         }
     }
 
-    private void loadEra(int era) {
-        loadEra(era, Configuration.forceGeneratorDir());
+    /**
+     * @param era the era to load, which may be null if there isn't anything found
+     */
+    private void loadEra(final @Nullable Integer era) {
+        if (era != null) {
+            loadEra(era, Configuration.forceGeneratorDir());
+        }
     }
     
     private synchronized void loadEra(int era, File dir) {

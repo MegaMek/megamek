@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -33,10 +33,6 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public class SRMInfernoHandler extends SRMHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 826674238068613732L;
 
     /**
@@ -114,7 +110,7 @@ public class SRMInfernoHandler extends SRMHandler {
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(toHit.getValue());
+            r.add(toHit);
             vPhaseReport.addElement(r);
         }
 
@@ -193,18 +189,16 @@ public class SRMInfernoHandler extends SRMHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit with all missiles
         // BAs do one lump of damage per BA suit
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength());
+                r.add(wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength()
-                        * wtype.getRackSize();
+                return ((BattleArmor) ae).getShootingStrength() * wtype.getRackSize();
             }
             Report r = new Report(3325);
             r.subject = subjectId;

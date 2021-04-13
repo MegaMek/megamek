@@ -1,19 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sept 5, 2005
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -23,7 +19,6 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,13 +30,9 @@ import megamek.server.Server;
  * which is found in Jihad Conspiracies Interstellar Players 2, pg 127.
  * 
  * @author arlith
- *
+ * Created on Sept 5, 2005
  */ 
 public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -5226841653686213141L;
 
     /**
@@ -64,11 +55,10 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         return 0;
     }
 
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
-                nCluster, bldgAbsorbs);
+    @Override
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
         // Report that this unit has been hit by CWS
         Report r = new Report(7510);
@@ -78,8 +68,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         vPhaseReport.add(r);
 
         // CWS has no effect against infantry
-        if ((entityTarget instanceof Infantry) 
-                && !(entityTarget instanceof BattleArmor)){
+        if (entityTarget.isConventionalInfantry()) {
             // No Effect
             r = new Report(7515);
             r.subject = entityTarget.getId();
@@ -89,13 +78,13 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         }
         
         // If the Entity is shutdown, it will remain shutdown next turn
-        if (entityTarget.isShutDown()){
+        if (entityTarget.isShutDown()) {
             r = new Report(7511);
             r.subject = entityTarget.getId();
             r.addDesc(entityTarget);
             r.indent(3);
             vPhaseReport.add(r);
-            if (entityTarget.getTaserShutdownRounds() < 1){
+            if (entityTarget.getTaserShutdownRounds() < 1) {
                 entityTarget.setTaserShutdownRounds(1);
             }
         } else { // Otherwise, there's a shutdown check
@@ -139,7 +128,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                 r.choose(false);
                 vPhaseReport.add(r);
                 // okay, now mark shut down
-                if (entityTarget instanceof BattleArmor){
+                if (entityTarget instanceof BattleArmor) {
                     r = new Report(3706);
                     r.addDesc(entityTarget);
                     r.indent(4);

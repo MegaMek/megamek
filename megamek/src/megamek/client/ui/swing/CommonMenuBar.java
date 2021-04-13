@@ -74,6 +74,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
+    private JMenuItem fileRefreshCache;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
     private JMenuItem fileUnitsSave;
@@ -86,7 +87,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      * Record the current phase of the game.
      */
     private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
-    private JMenuItem filePrint;
+    //private JMenuItem filePrint;
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
     private JMenuItem viewAccessibilityWindow;
@@ -313,6 +314,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsReinforceRAT.addActionListener(this);
         fileUnitsReinforceRAT.setActionCommand(ClientGUI.FILE_UNITS_REINFORCE_RAT);
         submenu.add(fileUnitsReinforceRAT);
+        fileRefreshCache = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsRefreshUnitCache")); //$NON-NLS-1$
+        fileRefreshCache.addActionListener(this);
+        fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
+        submenu.add(fileRefreshCache);
         fileUnitsOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
         fileUnitsOpen.addActionListener(this);
@@ -330,12 +336,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         submenu.add(fileUnitsSave);
 
         // Finish off the File menu.
-        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
-        filePrint.addActionListener(this);
-        filePrint.setActionCommand(ClientGUI.FILE_PRINT);
-        filePrint.setEnabled(false);
+//        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
+//        filePrint.addActionListener(this);
+//        filePrint.setActionCommand(ClientGUI.FILE_PRINT);
+//        filePrint.setEnabled(false);
         menu.addSeparator();
-        menu.add(filePrint);
+//        menu.add(filePrint);
 
         // *** Create the view menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
@@ -889,7 +895,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         }
 
         // As of 2003-09-04, we can't ever print.
-        filePrint.setEnabled(false);
+//        filePrint.setEnabled(false);
 
         // the Client doesn't have any board actions
         if (client != null) {

@@ -1,9 +1,9 @@
 #building block data file
 <BlockVersion>
-1
+1.1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Bardiche Heavy Strike Tank
 3114
 </year>
 
+<originalBuildYear>
+3114
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -32,12 +36,15 @@ IS Level 3
 Wheeled
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
-5
+4
 </cruiseMP>
 
 <engine_type>
-2
+0
 </engine_type>
 
 <armor_type>
@@ -58,9 +65,10 @@ Wheeled
 
 <Body Equipment>
 ISMagshotGR Ammo
+ISMagshotGR Ammo
 IS Ammo MML-3 LRM
 IS Ammo MML-3 SRM
-ISSponsonTurret
+SponsonTurret
 </Body Equipment>
 
 <Front Equipment>
@@ -69,13 +77,13 @@ ISMML3
 </Front Equipment>
 
 <Right Equipment>
-ISMagshotGR (ST)
-ISMagshotGR (ST)
+ISMagshotGR(ST)
+ISMagshotGR(ST)
 </Right Equipment>
 
 <Left Equipment>
-ISMagshotGR (ST)
-ISMagshotGR (ST)
+ISMagshotGR(ST)
+ISMagshotGR(ST)
 </Left Equipment>
 
 <Rear Equipment>
@@ -96,3 +104,4 @@ TRO 3145 Free Worlds League - Late Republic
 <tonnage>
 70.0
 </tonnage>
+

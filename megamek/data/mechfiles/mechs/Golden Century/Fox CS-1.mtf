@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Fox
 CS-1
 
@@ -13,7 +13,7 @@ engine:300 XL (Clan) Engine
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 IS Double
 walk mp:6
 jump mp:0
 

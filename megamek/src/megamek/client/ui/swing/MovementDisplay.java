@@ -60,9 +60,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.client.ui.swing.util.TurnTimer;
 
 public class MovementDisplay extends StatusBarPhaseDisplay {
-    /**
-     *
-     */
     private static final long serialVersionUID = -7246715124042905688L;
     
     // Defines for the different flags
@@ -96,7 +93,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      *
      * @author arlith
      */
-    public static enum MoveCommand implements PhaseCommand {
+    public enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
         MOVE_WALK("moveWalk", CMD_GROUND), //$NON-NLS-1$
@@ -1236,29 +1233,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void removeLastStep() {
         cmd.removeLastStep();
-        if (cmd.length() == 0) {
+        final Entity entity = ce();
+        if (entity == null) {
+            MegaMek.getLogger().warning("Cannot process removeLastStep for a null entity.");
+            return;
+        } else if (cmd.length() == 0) {
             clear();
-            if ((gear == MovementDisplay.GEAR_JUMP) && 
-                    (!cmd.isJumping())) {
+            if ((gear == MovementDisplay.GEAR_JUMP) && !cmd.isJumping()) {
                 cmd.addStep(MoveStepType.START_JUMP);
-            } else if (ce().isConvertingNow()) {
+            } else if (entity.isConvertingNow()) {
                 cmd.addStep(MoveStepType.CONVERT_MODE);
             }
         } else {
-            clientgui.bv.drawMovementData(ce(), cmd);
-            clientgui.bv.setWeaponFieldofFire(ce(), cmd);
+            // clear board cursors
+            clientgui.getBoardView().select(cmd.getFinalCoords());
+            clientgui.getBoardView().cursor(cmd.getFinalCoords());
+            clientgui.getBoardView().drawMovementData(entity, cmd);
+            clientgui.bv.setWeaponFieldofFire(entity, cmd);
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                butDone.setText("<html><b>"
-                                + Messages.getString("MovementDisplay.Done")
-                                + "</b></html>"); //$NON-NLS-1$
+                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
             }
         }
-        
         updateButtons();
     }
 
@@ -1519,14 +1519,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         
-        if ((ce() instanceof Infantry) && ((Infantry)ce()).hasMicrolite()
-        		&& (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
-        		&& !cmd.contains(MoveStepType.FORWARDS)
-        		&& cmd.getFinalElevation() > 0
-        		&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-    				.terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
-				&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
-        			.terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+        if ((ce() instanceof Infantry) && ((Infantry) ce()).hasMicrolite()
+                && (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
+                && !cmd.contains(MoveStepType.FORWARDS)
+                && cmd.getFinalElevation() > 0
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+                    .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+                && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+                    .terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
             String title = Messages
                     .getString("MovementDisplay.MicroliteMove.title"); //$NON-NLS-1$
             String body = Messages
@@ -1954,40 +1954,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantDFA"),
-                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MovementDisplay.NoTarget"));
                     clear();
                     computeMovementEnvelope(ce);
                     return;
                 }
 
                 // check if it's a valid DFA
-                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient()
-                                                                 .getGame(), cen, target, cmd);
+                ToHitData toHit = DfaAttackAction.toHit(clientgui.getClient().getGame(), cen, target, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
-                    if (clientgui
-                            .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.title",
-                                            new Object[] { target
-                                                    .getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
-                                                    Double.valueOf(
-                                                            Compute.oddsAbove(toHit
-                                                                    .getValue())),
-                                                    toHit.getDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageFor(
-                                                                            ce,
-                                                                            (target instanceof Infantry)
-                                                                                    && !(target instanceof BattleArmor))),
-                                                    toHit.getTableDesc(),
-                                                    Integer.valueOf(
-                                                            DfaAttackAction
-                                                                    .getDamageTakenBy(ce)) }))) {
+                    if (clientgui.doYesNoDialog(
+                            Messages.getString("MovementDisplay.DFADialog.title",
+                                    target.getDisplayName()),
+                            Messages.getString("MovementDisplay.DFADialog.message",
+                                    toHit.getValueAsString(), Compute.oddsAbove(toHit.getValue()),
+                                    toHit.getDesc(),
+                                    DfaAttackAction.getDamageFor(ce, target.isConventionalInfantry()),
+                                    toHit.getTableDesc(), DfaAttackAction.getDamageTakenBy(ce)))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1998,13 +1982,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     return;
                 }
                 // if not valid, tell why
-                clientgui.doAlertDialog(
-                        Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
-                        toHit.getDesc());
+                clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), toHit.getDesc());
                 clear();
                 return;
             }
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>"); //$NON-NLS-1$
+            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
             updateProneButtons();
             updateRACButton();
             updateSearchlightButton();
@@ -3643,7 +3625,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > (doors * 2))
+                if ((numChoices > currentBay.getSafeLaunchRate())
                     && GUIPreferences.getInstance().getNagForLaunchDoors()) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
@@ -4234,7 +4216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
-            r.add(psr.getValue());
+            r.add(psr);
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(1);

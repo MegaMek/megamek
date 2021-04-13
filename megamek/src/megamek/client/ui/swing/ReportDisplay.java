@@ -18,16 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -40,6 +31,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Report;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
@@ -298,12 +290,16 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         clientgui.getClient().getGame().removeGameListener(this);
     }
 
+    private JComponent activePane() {
+        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
+    }
+
     @Override
     public void hyperlinkUpdate(HyperlinkEvent evt) {
+        String evtDesc = evt.getDescription();
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            String evtDesc = evt.getDescription();
-            if (evtDesc.startsWith("#entity")) {
-                String idString = evtDesc.substring(evtDesc.indexOf(":") + 1);
+            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
+                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
                 int id;
                 try {
                     id = Integer.parseInt(idString);
@@ -315,7 +311,18 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                     clientgui.mechD.displayEntity(ent);
                     clientgui.setDisplayVisible(true);
                 }
+            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
+                        JOptionPane.PLAIN_MESSAGE);
             }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                activePane().setToolTipText(desc);
+            }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+            activePane().setToolTipText(null);
         }
     }
 

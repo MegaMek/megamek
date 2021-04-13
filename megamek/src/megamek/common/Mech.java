@@ -76,7 +76,7 @@ public abstract class Mech extends Entity {
 
     public static final int ACTUATOR_FOOT = 14;
 
-    public static final String systemNames[] = { "Life Support", "Sensors",
+    public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
 
@@ -5947,11 +5947,9 @@ public abstract class Mech extends Entity {
             return new TargetRoll(mmod, "void signature");
         }
 
-        boolean isInfantry = (ae instanceof Infantry)
-                && !(ae instanceof BattleArmor);
+        final boolean isInfantry = ae.isConventionalInfantry();
         // Stealth or null sig must be active.
-        if (!isStealthActive() && !isNullSigActive()
-                && !isChameleonShieldActive()) {
+        if (!isStealthActive() && !isNullSigActive() && !isChameleonShieldActive()) {
             result = new TargetRoll(0, "stealth not active");
         }
         // Determine the modifier based upon the range.
@@ -6009,8 +6007,7 @@ public abstract class Mech extends Entity {
                 case RangeType.RANGE_OUT:
                     break;
                 default:
-                    throw new IllegalArgumentException(
-                            "Unknown range constant: " + range);
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -7926,7 +7923,7 @@ public abstract class Mech extends Entity {
             int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
-            r.add(base.getValueAsString());
+            r.add(base);
             r.add(diceRoll);
             if (diceRoll < base.getValue()) {
                 r.choose(false);
@@ -7987,7 +7984,7 @@ public abstract class Mech extends Entity {
             int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
-            r.add(base.getValueAsString());
+            r.add(base);
             r.add(diceRoll);
             if (diceRoll < base.getValue()) {
                 r.choose(false);

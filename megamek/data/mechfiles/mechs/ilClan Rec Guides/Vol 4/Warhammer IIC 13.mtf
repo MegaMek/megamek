@@ -76,8 +76,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLLRM15
 CLLRM15
-ISMediumPulseLaser
-ISMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
 Clan Ammo LRM-15
 Clan Endo Steel
 Clan Endo Steel
@@ -91,8 +91,8 @@ CLDoubleHeatSink
 CLLRM15
 CLLRM15
 CLSRM6
-ISMediumPulseLaser
-ISMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
 Clan Ammo LRM-15
 Clan Ammo LRM-15
 Clan Ammo SRM-6
@@ -115,7 +115,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISMediumPulseLaser
+CLMediumPulseLaser
 Sensors
 Life Support
 -Empty-

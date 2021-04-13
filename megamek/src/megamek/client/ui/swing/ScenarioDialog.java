@@ -34,7 +34,6 @@ import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
 import megamek.common.Player;
-import megamek.common.icons.AbstractIcon;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -54,7 +53,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
 
     public boolean bSet;
     public int[] playerTypes;
-    public String localName = ""; //$NON-NLS-1$
+    public String localName = "";
 
     @SuppressWarnings("unchecked")
     public ScenarioDialog(final JFrame frame, Player[] pa) {
@@ -88,9 +87,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 }
 
                 // Otherwise, update the player data from the selection
-                AbstractIcon selectedIcon = ccd.getSelectedItem();
-                curPlayer.setCamoCategory(selectedIcon.getCategory());
-                curPlayer.setCamoFileName(selectedIcon.getFilename());
+                curPlayer.setCamouflage(ccd.getSelectedItem());
                 curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
             });
         }

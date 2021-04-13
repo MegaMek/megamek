@@ -1,9 +1,9 @@
 #building block data file
 <BlockVersion>
-1
+1.1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ Gulltoppr OmniMonitor
 <year>
 3102
 </year>
+
+<originalBuildYear>
+3102
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -54,9 +58,9 @@ BattleArmorHandles - troopers:-1
 104
 90
 90
+64
 50
 66
-64
 </armor>
 
 <Body Equipment>
@@ -117,3 +121,4 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <baseChassisTurret2Weight>
 3.0
 </baseChassisTurret2Weight>
+

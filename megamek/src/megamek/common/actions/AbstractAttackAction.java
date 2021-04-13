@@ -1,43 +1,38 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
+import megamek.client.Client;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+
+import java.util.Enumeration;
 
 /**
  * Abstract superclass for any action where an entity is attacking another
  * entity.
  */
-public abstract class AbstractAttackAction extends AbstractEntityAction
-        implements AttackAction {
-    /**
-     *
-     */
+public abstract class AbstractAttackAction extends AbstractEntityAction implements AttackAction {
     private static final long serialVersionUID = -897197664652217134L;
     private int targetType;
     private int targetId;
@@ -71,8 +66,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         this.targetId = targetId;
     }
 
-    public Targetable getTarget(IGame g) {
-        return g.getTarget(getTargetType(), getTargetId());
+    public @Nullable Targetable getTarget(final IGame game) {
+        return game.getTarget(getTargetType(), getTargetId());
     }
 
     /**
@@ -237,16 +232,13 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
 
 
         //now check for general hit bonuses for heat
-        if((te != null) 
-                && !((attacker instanceof Infantry) 
-                        && !(attacker instanceof BattleArmor))) {
-            int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(
-                    te.heat);
-            if(heatBonus < 0) {
+        if ((te != null) && !attacker.isConventionalInfantry()) {
+            int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
+            if (heatBonus < 0) {
                 toHit.addModifier(heatBonus, "target excess heat at night");
             }
         }
-        
+
         if ((toHit.getValue() > 0) && (null != attacker.getCrew())
                 && attacker.hasAbility(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
@@ -255,4 +247,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return toHit;
     }
 
+    @Override
+    public String toDisplayableString(Client client) {
+        return "attacking " + getTarget(client.getGame()).getDisplayName();
+    }
 }

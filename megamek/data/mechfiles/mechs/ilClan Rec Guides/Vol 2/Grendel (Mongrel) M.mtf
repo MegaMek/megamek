@@ -4,16 +4,16 @@ M
 
 Config:Biped Omnimech
 techbase:Clan
-era:3085
+era:3086
 source:ilClan Vol 2 - Dark Age
-rules level:2
+rules level:4
 
 mass:45
 engine:315 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:7
 jump mp:7
@@ -52,10 +52,10 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC2 (omnipod)
-CLRotaryAC2 (omnipod)
-CLRotaryAC2 (omnipod)
-CLRotaryAC2 (omnipod)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -66,8 +66,8 @@ Clan Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-CLERLargeLaser (omnipod)
+Jump Jet (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -80,9 +80,9 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-CLRotaryAC2 Ammo (omnipod)
-CLCASEII (omnipod)
+Jump Jet (OMNIPOD)
+CLRotaryAC2 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -102,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
 -Empty-
 
 Head:
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -149,3 +149,4 @@ Jump Jet (omnipod)
 
 manufacturer:Manufacturing Plant SFF-AL2
 primaryfactory:Alnabog
+

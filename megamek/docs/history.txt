@@ -34,6 +34,8 @@ VERSION HISTORY:
 + Issue #547: Implement air-launched Arrow IV (homing and non-homing)
 + PR #2773: Launch Fighters (bot version)
 + Issue #1219: Adding Defensive Code for RATGenerator Era
++ Issues #1785/#2138: Fixing and Improving Round Report Player Stats
+
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

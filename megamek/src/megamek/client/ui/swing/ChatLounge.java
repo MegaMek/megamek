@@ -67,6 +67,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.util.MenuScroller;
@@ -2474,54 +2475,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     /**
-     * @param entity the entity to display the BV Calculation for
-     */
-    private void mechBVDisplay(Entity entity) {
-        final JDialog dialog = new JDialog(clientgui.frame, "BV Calculation Display", false);
-        dialog.getContentPane().setLayout(new GridBagLayout());
-
-        final int width = 500;
-        final int height = 400;
-        Dimension size = new Dimension(width, height);
-
-        JEditorPane tEditorPane = new JEditorPane();
-        tEditorPane.setContentType("text/html");
-        tEditorPane.setEditable(false);
-        tEditorPane.setBorder(null);
-        entity.calculateBattleValue();
-        tEditorPane.setText(entity.getBVText());
-        tEditorPane.setCaretPosition(0);
-
-        JScrollPane tScroll = new JScrollPane(tEditorPane,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        tScroll.setBorder(null);
-        tScroll.setPreferredSize(size);
-        tScroll.setMinimumSize(size);
-
-        GridBagConstraints gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.0;
-        gridBagConstraints.weighty = 1.0;
-        dialog.getContentPane().add(tScroll, gridBagConstraints);
-
-        JButton button = new JButton(Messages.getString("Okay"));
-        button.addActionListener(e -> dialog.setVisible(false));
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = GridBagConstraints.NONE;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
-        gridBagConstraints.weighty = 0.0;
-        dialog.getContentPane().add(button, gridBagConstraints);
-
-        dialog.setSize(new Dimension(width + 25, height + 75));
-        dialog.validate();
-        dialog.setVisible(true);
-    }
-
-    /**
      * Pop up the dialog to load a mech
      */
     private void loadMech() {
@@ -3561,7 +3514,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if (command.equalsIgnoreCase("VIEW")) {
                 mechReadout(entity);
             } else if (command.equalsIgnoreCase("BV")) {
-                mechBVDisplay(entity);
+                new BVDisplayDialog(clientgui.getFrame(), entity).setVisible(true);
             } else if (command.equalsIgnoreCase("DAMAGE")) {
                 mechEdit(entity);
             } else if (command.equalsIgnoreCase("INDI_CAMO")) {

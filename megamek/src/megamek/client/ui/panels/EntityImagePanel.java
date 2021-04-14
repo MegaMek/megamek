@@ -61,9 +61,8 @@ public class EntityImagePanel extends JPanel {
 
         // Layout the UI
         setName("entityImagePanel");
-        GroupLayout layout = new GroupLayout(this);
+        final GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
-
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 

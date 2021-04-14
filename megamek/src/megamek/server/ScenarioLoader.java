@@ -448,64 +448,49 @@ public class ScenarioLoader {
 
     private void parsePlanetaryConditions(Game g, StringMultiMap p) {
         if (p.containsKey(PARAM_PLANETCOND_TEMP)) {
-            int temp = Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP));
-            g.getPlanetaryConditions().setTemperature(temp);
+            g.getPlanetaryConditions().setTemperature(Integer.parseInt(p.getString(PARAM_PLANETCOND_TEMP)));
         }
         if (p.containsKey(PARAM_PLANETCOND_GRAV)) {
-            float grav = Float.parseFloat(p.getString(PARAM_PLANETCOND_GRAV));
-            g.getPlanetaryConditions().setGravity(grav);
+            g.getPlanetaryConditions().setGravity(Float.parseFloat(p.getString(PARAM_PLANETCOND_GRAV)));
         }
         if (p.containsKey(PARAM_PLANETCOND_FOG)) {
-            int fog = Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG));
-            g.getPlanetaryConditions().setFog(fog);
+            g.getPlanetaryConditions().setFog(Integer.parseInt(p.getString(PARAM_PLANETCOND_FOG)));
         }
         if (p.containsKey(PARAM_PLANETCOND_ATMOS)) {
-            int atmo = Integer.parseInt(p.getString(PARAM_PLANETCOND_ATMOS));
-            g.getPlanetaryConditions().setAtmosphere(atmo);
+            g.getPlanetaryConditions().setAtmosphere(Integer.parseInt(p.getString(PARAM_PLANETCOND_ATMOS)));
         }
         if (p.containsKey(PARAM_PLANETCOND_LIGHT)) {
-            int light = Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT));
-            g.getPlanetaryConditions().setLight(light);
+            g.getPlanetaryConditions().setLight(Integer.parseInt(p.getString(PARAM_PLANETCOND_LIGHT)));
         }
         if (p.containsKey(PARAM_PLANETCOND_WEATHER)) {
-            int weather = Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER));
-            g.getPlanetaryConditions().setWeather(weather);
+            g.getPlanetaryConditions().setWeather(Integer.parseInt(p.getString(PARAM_PLANETCOND_WEATHER)));
         }
         if (p.containsKey(PARAM_PLANETCOND_WIND)) {
-            int wind = Integer.parseInt(p.getString(PARAM_PLANETCOND_WIND));
-            g.getPlanetaryConditions().setWindStrength(wind);
+            g.getPlanetaryConditions().setWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WIND)));
         }
         if (p.containsKey(PARAM_PLANETCOND_WINDDIR)) {
-            int dir = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR));
-            g.getPlanetaryConditions().setWindDirection(dir);
+            g.getPlanetaryConditions().setWindDirection(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDDIR)));
         }
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGDIR)) {
-            var shift = parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false);
-            g.getPlanetaryConditions().setShiftingWindDirection(shift);
+            g.getPlanetaryConditions().setShiftingWindDirection(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGDIR, false));
         }
         if (p.containsKey(PARAM_PLANETCOND_WINDSHIFTINGSTR)) {
-            var shift = parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false);
-            g.getPlanetaryConditions().setShiftingWindStrength(shift);
+            g.getPlanetaryConditions().setShiftingWindStrength(parseBoolean(p, PARAM_PLANETCOND_WINDSHIFTINGSTR, false));
         }
         if (p.containsKey(PARAM_PLANETCOND_WINDMIN)) {
-            int min = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMIN));
-            g.getPlanetaryConditions().setMinWindStrength(min);
+            g.getPlanetaryConditions().setMinWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMIN)));
         }
         if (p.containsKey(PARAM_PLANETCOND_WINDMAX)) {
-            int max = Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMAX));
-            g.getPlanetaryConditions().setMaxWindStrength(max);
+            g.getPlanetaryConditions().setMaxWindStrength(Integer.parseInt(p.getString(PARAM_PLANETCOND_WINDMAX)));
         }
         if (p.containsKey(PARAM_PLANETCOND_EMI)) {
-            var emi = parseBoolean(p, PARAM_PLANETCOND_EMI, false);
-            g.getPlanetaryConditions().setEMI(emi);
+            g.getPlanetaryConditions().setEMI(parseBoolean(p, PARAM_PLANETCOND_EMI, false));
         }
         if (p.containsKey(PARAM_PLANETCOND_TERRAINCHANGES)) {
-            var terr = parseBoolean(p, PARAM_PLANETCOND_TERRAINCHANGES, true);
-            g.getPlanetaryConditions().setTerrainAffected(terr);
+            g.getPlanetaryConditions().setTerrainAffected(parseBoolean(p, PARAM_PLANETCOND_TERRAINCHANGES, true));
         }
         if (p.containsKey(PARAM_PLANETCOND_BLOWINGSAND)) {
-            var sand = parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false);
-            g.getPlanetaryConditions().setBlowingSand(sand);
+            g.getPlanetaryConditions().setBlowingSand(parseBoolean(p, PARAM_PLANETCOND_BLOWINGSAND, false));
         }
     }
 

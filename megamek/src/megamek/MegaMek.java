@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
+import megamek.client.ui.preferences.MMPreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
 import megamek.common.AlphaStrikeElement;
@@ -62,8 +63,9 @@ import megamek.utils.RATGeneratorEditor;
  */
 public class MegaMek {
     private static MMLogger logger = null;
+    private static MMPreferences preferences = null;
 
-    public static String VERSION = "0.47.17-SNAPSHOT";
+    public static String VERSION = "0.49.0-SNAPSHOT";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 
@@ -74,6 +76,7 @@ public class MegaMek {
             + "(-eqedb) (-oul)] [<args>]";
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:";
+    public static final String PREFERENCES_FILE = "mmconf/megamek.preferences";
     public static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt";
 
     public static void main(String[] args) {
@@ -98,17 +101,21 @@ public class MegaMek {
             String[] restArgs = cp.getRestArgs();
             if (cp.dedicatedServer()) {
                 MegaMek.startDedicatedServer(restArgs);
-            } else if (cp.ratGenEditor()) {
-                RATGeneratorEditor.main(restArgs);
             } else {
-                // Load button ordering
-                ButtonOrderPreferences.getInstance().setButtonPriorities();
+                getPreferences().loadFromFile(PREFERENCES_FILE);
 
-                String interfaceName = cp.getGuiName();
-                if (interfaceName == null) {
-                    interfaceName = PreferenceManager.getClientPreferences().getGUIName();
+                if (cp.ratGenEditor()) {
+                    RATGeneratorEditor.main(restArgs);
+                } else {
+                    // Load button ordering
+                    ButtonOrderPreferences.getInstance().setButtonPriorities();
+
+                    String interfaceName = cp.getGuiName();
+                    if (interfaceName == null) {
+                        interfaceName = PreferenceManager.getClientPreferences().getGUIName();
+                    }
+                    MegaMek.startGUI(interfaceName, restArgs);
                 }
-                MegaMek.startGUI(interfaceName, restArgs);
             }
         } catch (CommandLineParser.ParseException e) {
             String message = INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
@@ -175,7 +182,7 @@ public class MegaMek {
     }
 
     /**
-     * @return The logger that will handle log file output.  Will return the
+     * @return The logger that will handle log file output. Will return the
      * {@link DefaultMmLogger} if a different logger has not been set.
      */
     public static MMLogger getLogger() {
@@ -183,6 +190,14 @@ public class MegaMek {
             logger = DefaultMmLogger.getInstance();
         }
         return logger;
+    }
+
+    public static MMPreferences getPreferences() {
+        if (preferences == null) {
+            preferences = new MMPreferences();
+        }
+
+        return preferences;
     }
 
     /**

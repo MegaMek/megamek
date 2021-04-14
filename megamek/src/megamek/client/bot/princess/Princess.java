@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,6 +39,7 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.BulldozerMovePath;
@@ -59,6 +61,7 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -715,22 +718,32 @@ public class Princess extends BotClient {
             }
             
             // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
-            if(skipFiring) {
-                Vector<EntityAction> unjamPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+            if (skipFiring) {
+                Vector<EntityAction> miscPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
                 
-                if(unjamPlan.size() == 0) {
+                // if we didn't produce an "unjam weapon" plan, consider spotting and lighting
+                // things up with a searchlight
+                if (miscPlan.size() == 0) {
                 	EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
-                	if(spotAction != null) {
-                		unjamPlan.add(spotAction);
+                	if (spotAction != null) {
+                	    miscPlan.add(spotAction);
                 	}
                 	
                 	SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                    if(searchLightAction != null) {
-                        unjamPlan.add(searchLightAction);
+                    if (searchLightAction != null) {
+                        miscPlan.add(searchLightAction);
                     }
                 }
                 
-                sendAttackData(shooter.getId(), unjamPlan);
+                // if we have absolutely nothing else to do, see if we can find a club
+                if (miscPlan.size() == 0) {
+                    FindClubAction findClubAction = getFireControl(shooter).getFindClubAction(shooter);
+                    if (findClubAction != null) {
+                        miscPlan.add(findClubAction);
+                    }
+                }
+                
+                sendAttackData(shooter.getId(), miscPlan);
                 return;
             }
             
@@ -1965,6 +1978,7 @@ public class Princess extends BotClient {
         evadeIfNotFiring(retval, expectedDamage >= 0);
         turnOnSearchLight(retval, expectedDamage >= 0);
         unloadTransportedInfantry(retval);
+        launchFighters(retval);
         unjamRAC(retval);
         
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
@@ -2046,7 +2060,7 @@ public class Princess extends BotClient {
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
 
         // if there are no enemies on the board, then we're not unloading anything.
-        // infantry can't clear hexes, so let's not use th
+        // infantry can't clear hexes, so let's not unload them for that purpose
         if((null == closestEnemy) || (closestEnemy.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return;
         }
@@ -2055,6 +2069,11 @@ public class Princess extends BotClient {
         
         // loop through all entities carried by the current entity
         for(Transporter transport : movingEntity.getTransports()) {
+            // this operation is intended for entities on the ground
+            if (transport instanceof Bay) {
+                continue;
+            }
+            
             for(Entity loadedEntity : transport.getLoadedUnits()) {
                 // there's really no good reason for Princess to disconnect trailers.
                 // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
@@ -2084,6 +2103,55 @@ public class Princess extends BotClient {
                     return; // we can only unload one infantry unit per hex per turn, so once we've unloaded, we're done. 
                 }
             }
+        }
+    }
+    
+    /**
+     * Helper function that adds an "launch" step for units that are transporting 
+     * launchable units in some kind of bay.
+     */
+    private void launchFighters(MovePath path) {
+        // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
+        // behind. They're not that good at screening against high speed pursuit anyway.
+        if (getBehaviorSettings().shouldGoHome()) {
+            return;
+        }
+        
+        Entity movingEntity = path.getEntity();
+        Coords pathEndpoint = path.getFinalCoords();
+        Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity, pathEndpoint, getGame(), false);
+
+        // if there are no enemies on the board, then we're not launching anything.
+        if ((null == closestEnemy) || (closestEnemy.getTargetType() != Targetable.TYPE_ENTITY)) {
+            return;
+        }
+        
+        TreeMap<Integer, Vector<Integer>> unitsToLaunch = new TreeMap<>();
+        boolean executeLaunch = false;
+        
+        // loop through all fighter (or smallcraft) bays in the current entity
+        // grouping launched craft by bay to limit launches to 'safe' rate.
+        Vector<Bay> fighterBays = movingEntity.getFighterBays();
+        
+        for (int bayIndex = 0; bayIndex < fighterBays.size(); bayIndex++) {
+            Bay bay = fighterBays.get(bayIndex);
+            
+            for (Entity loadedEntity : bay.getLaunchableUnits()) {
+                unitsToLaunch.putIfAbsent(bayIndex, new Vector<>());
+                
+                // for now, just launch fighters at the 'safe' rate
+                if (unitsToLaunch.get(bayIndex).size() < bay.getSafeLaunchRate()) {
+                    unitsToLaunch.get(bayIndex).add(loadedEntity.getId());
+                    executeLaunch = true;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        // only add the step if we're actually launching something
+        if (executeLaunch) {
+            path.addStep(MoveStepType.LAUNCH, unitsToLaunch);
         }
     }
     

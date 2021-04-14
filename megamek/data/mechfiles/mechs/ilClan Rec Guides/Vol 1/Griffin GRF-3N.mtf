@@ -13,7 +13,7 @@ engine:275 Fusion Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
 
-heat sinks:11 Double
+heat sinks:11 IS Double
 walk mp:5
 jump mp:5
 
@@ -63,6 +63,8 @@ IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
+Jump Jet
+Jump Jet
 ISEnhancedLRM10 Ammo Artemis-capable
 ISEnhancedLRM10 Ammo Artemis-capable
 ISCASEII
@@ -70,13 +72,13 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-IS Endo Steel
-IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 
 Right Torso:
+Jump Jet
+Jump Jet
 Enhanced LRM 10
 Enhanced LRM 10
 Enhanced LRM 10
@@ -84,8 +86,6 @@ Enhanced LRM 10
 ISArtemisIV
 IS Endo Steel
 IS Endo Steel
-IS Endo Steel
-IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
@@ -123,8 +123,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+IS Endo Steel
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -137,8 +137,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+IS Endo Steel
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -148,7 +148,7 @@ Jump Jet
 
 manufacturer:Earthwerks-FWL, Inc.
 primaryfactory:Tiber
-systemmanufacturer:CHASSIS:Earthwerks 
+systemmanufacturer:CHASSIS:Earthwerks
 systemmode:CHASSIS:GRF Endo Steel
 systemmanufacturer:ENGINE:CoreTek
 systemmode:ENGINE:275

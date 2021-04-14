@@ -45,34 +45,11 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.IPlayer;
+import megamek.common.*;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.HexTarget;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.IGame.Phase;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -109,7 +86,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         FIRE_MODE("fireMode"),
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
-        FIRE_CANCEL("fireCancel");
+        FIRE_CANCEL("fireCancel"),
+        FIRE_DISENGAGE("fireDisengage");
 
         String cmd;
 
@@ -527,6 +505,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             if (cmd == TargetingCommand.FIRE_CANCEL) {
                 continue;
             }
+            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((ce() == null) || !ce().isOffBoard())) {
+                continue;
+            }
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -664,6 +645,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
+        setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -734,6 +716,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
+        setDisengageEnabled(false);
     }
 
     /**
@@ -935,6 +918,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
+        setDisengageEnabled(false);
     }
 
     /**
@@ -1007,7 +991,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-
+        setDisengageEnabled(ce().isOffBoard() && ce().canFlee());
     }
 
     /**
@@ -1030,6 +1014,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 attacks.removeElement(o);
+                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.bv.refreshAttacks();
@@ -1531,6 +1516,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clear();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_DISENGAGE.getCmd())
+                && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
+                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
+            clear();
+            attacks.add(new DisengageAction(cen));
+            ready();
         }
     }
 
@@ -1597,6 +1588,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void setNextTargetEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT_TARG).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
+    }
+
+    private void setDisengageEnabled(boolean enabled) {
+        if (buttons.containsKey(TargetingCommand.FIRE_DISENGAGE)) {
+            buttons.get(TargetingCommand.FIRE_DISENGAGE).setEnabled(enabled);
+        }
     }
 
     @Override

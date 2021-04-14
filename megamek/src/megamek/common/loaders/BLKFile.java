@@ -12,7 +12,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common.loaders;
 
 import java.util.*;
@@ -326,31 +325,31 @@ public class BLKFile {
         }
         
         if (dataFile.exists("manufacturer")) {
-        	e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
+            e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
         }
 
         if (dataFile.exists("primaryFactory")) {
-        	e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
+            e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
         }
         
         if (dataFile.exists("systemManufacturers")) {
-        	for (String line : dataFile.getDataAsString("systemManufacturers")) {
-        		String[] fields = line.split(":");
-        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
-        		if ((null != comp) && (fields.length > 1)) {
-        			e.getFluff().setSystemManufacturer(comp, fields[1]);
-        		}
-        	}
+            for (String line : dataFile.getDataAsString("systemManufacturers")) {
+                String[] fields = line.split(":");
+                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemManufacturer(comp, fields[1]);
+                }
+            }
         }
 
         if (dataFile.exists("systemModels")) {
-        	for (String line : dataFile.getDataAsString("systemModels")) {
-        		String[] fields = line.split(":");
-        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
-        		if ((null != comp) && (fields.length > 1)) {
-        			e.getFluff().setSystemModel(comp, fields[1]);
-        		}
-        	}
+            for (String line : dataFile.getDataAsString("systemModels")) {
+                String[] fields = line.split(":");
+                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemModel(comp, fields[1]);
+                }
+            }
         }
 
         if (dataFile.exists("imagepath")) {
@@ -593,7 +592,7 @@ public class BLKFile {
         }
         blk.writeBlockData("transporters", transporter_array);
 
-        if (!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
+        if (!t.isConventionalInfantry()) {
             if (t instanceof Aero){
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -774,7 +773,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
+            if (!(t.isConventionalInfantry() && (i == Infantry.LOC_INFANTRY))) {
                 blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
             }
         }
@@ -818,12 +817,12 @@ public class BLKFile {
         
         List<String> list = t.getFluff().createSystemManufacturersList();
         if (!list.isEmpty()) {
-        	blk.writeBlockData("systemManufacturers", list);
+            blk.writeBlockData("systemManufacturers", list);
         }
 
         list = t.getFluff().createSystemModelsList();
         if (!list.isEmpty()) {
-        	blk.writeBlockData("systemModels", list);
+            blk.writeBlockData("systemModels", list);
         }
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
@@ -895,7 +894,7 @@ public class BLKFile {
             
             EquipmentType et = infantry.getArmorKit();
             if (et != null) {
-            	blk.writeBlockData("armorKit", et.getInternalName());
+                blk.writeBlockData("armorKit", et.getInternalName());
             }
             if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
@@ -924,14 +923,14 @@ public class BLKFile {
             }
             ArrayList<String> augmentations = new ArrayList<>();
             for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-            		e.hasMoreElements();) {
-            	final IOption o = e.nextElement();
-            	if (o.booleanValue()) {
-            		augmentations.add(o.getName());
-            	}
+                    e.hasMoreElements();) {
+                final IOption o = e.nextElement();
+                if (o.booleanValue()) {
+                    augmentations.add(o.getName());
+                }
             }
             if (augmentations.size() > 0) {
-            	blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
+                blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());
@@ -1096,14 +1095,14 @@ public class BLKFile {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
-            	boolean isPod = transporter.endsWith(":omni");
-            	transporter = transporter.replace(":omni", "");
-            	boolean hasARTS = transporter.startsWith("arts");
-            	if (hasARTS) {
-            	    transporter = transporter.substring(4);
+                boolean isPod = transporter.endsWith(":omni");
+                transporter = transporter.replace(":omni", "");
+                boolean hasARTS = transporter.startsWith("arts");
+                if (hasARTS) {
+                    transporter = transporter.substring(4);
                 }
 
-            	// TroopSpace:
+                // TroopSpace:
                 if (transporter.startsWith("troopspace:")) {
                     // Everything after the ':' should be the space's size.
                     double fsize = Double.parseDouble(transporter.substring(11));

@@ -4,7 +4,7 @@ N
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
+era:3050
 rules level:2
 
 mass:75
@@ -12,7 +12,7 @@ engine:375 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:16 Double
+heat sinks:16 Clan Double
 base chassis heat sinks:15
 walk mp:5
 jump mp:0
@@ -45,8 +45,8 @@ Machine Gun, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -59,8 +59,8 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -73,13 +73,13 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-CLMediumPulseLaser (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-Clan Ammo LRM-15 (omnipod)
-Clan Ammo LRM-15 (omnipod)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -87,13 +87,13 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-CLMediumPulseLaser (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -109,7 +109,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Machine Gun Ammo - Half (omnipod)
+Clan Machine Gun Ammo - Half (OMNIPOD)
 Clan Endo Steel
 
 Head:

@@ -47,10 +47,7 @@ public class InfantryTROView extends TROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
-        if (html) {
-            return "conv_infantry.ftlh";
-        }
-        return "conv_infantry.ftl";
+        return (html) ? "conv_infantry.ftlh" : "conv_infantry.ftl";
     }
 
     @Override
@@ -60,12 +57,9 @@ public class InfantryTROView extends TROView {
         setModelData("transportWeight", inf.getWeight());
         setModelData("weaponPrimary", String.format("%d %s",
                 (inf.getSquadSize() - inf.getSecondaryN()) * inf.getSquadN(), inf.getPrimaryWeapon().getName()));
-        if (inf.getSecondaryWeapon() != null) {
-            setModelData("weaponSecondary",
-                    String.format("%d %s", inf.getSecondaryN() * inf.getSquadN(), inf.getPrimaryWeapon().getName()));
-        } else {
-            setModelData("weaponSecondary", Messages.getString("TROView.None"));
-        }
+        setModelData("weaponSecondary", (inf.getSecondaryWeapon() == null)
+                ? Messages.getString("TROView.None")
+                : String.format("%d %s", inf.getSecondaryN() * inf.getSquadN(), inf.getSecondaryWeapon().getName()));
         final EquipmentType armorKit = inf.getArmorKit();
         if (null != armorKit) {
             setModelData("armorKit", armorKit.getName());

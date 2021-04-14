@@ -30,17 +30,7 @@ import javax.swing.*;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
-import megamek.client.commands.AddBotCommand;
-import megamek.client.commands.AssignNovaNetworkCommand;
-import megamek.client.commands.ClientCommand;
-import megamek.client.commands.DeployCommand;
-import megamek.client.commands.FireCommand;
-import megamek.client.commands.HelpCommand;
-import megamek.client.commands.MoveCommand;
-import megamek.client.commands.RulerCommand;
-import megamek.client.commands.ShowEntityCommand;
-import megamek.client.commands.ShowTileCommand;
-import megamek.client.commands.SitrepCommand;
+import megamek.client.commands.*;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedConstantSkillGenerator;
@@ -122,7 +112,7 @@ public class Client implements IClientCommandHandler {
 
     private boolean disconnectFlag = false;
 
-    private Hashtable<String, Integer> duplicateNameHash = new Hashtable<>();
+    private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
 
@@ -133,6 +123,8 @@ public class Client implements IClientCommandHandler {
     private BoardView1 bv;
 
     ConnectionHandler packetUpdate;
+
+    private Coords currentHex;
 
     private class ConnectionHandler implements Runnable {
 
@@ -212,10 +204,17 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowEntityCommand(this));
         registerCommand(new FireCommand(this));
         registerCommand(new DeployCommand(this));
-        registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new AssignNovaNetworkCommand(this));
         registerCommand(new SitrepCommand(this));
+        registerCommand(new LookCommand(this));
+        registerCommand(new ChatCommand(this));
+        registerCommand(new DoneCommand(this));
+        ShowTileCommand tileCommand = new ShowTileCommand(this);
+        registerCommand(tileCommand);
+        for (String direction : ShowTileCommand.directions) {
+            commandsHash.put(direction.toLowerCase(), tileCommand);
+        }
 
         setSkillGenerator(new ModifiedConstantSkillGenerator());
     }
@@ -472,7 +471,9 @@ public class Client implements IClientCommandHandler {
             if (MechSummaryCache.getInstance().isInitialized()) {
                 RandomUnitGenerator.getInstance();
             }
-            duplicateNameHash.clear(); // reset this
+            synchronized (unitNameTracker) {
+                unitNameTracker.clear(); // reset this
+            }
             break;
         default:
         }
@@ -1637,17 +1638,9 @@ public class Client implements IClientCommandHandler {
      * client (player) already has a unit in the game with the same name. If so,
      * add an identifier to the units name.
      */
-    private void checkDuplicateNamesDuringAdd(Entity entity) {
-        if (duplicateNameHash.get(entity.getShortName()) == null) {
-            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(1));
-        } else {
-            int count = duplicateNameHash.get(entity.getShortName()).intValue();
-            count++;
-            duplicateNameHash.put(entity.getShortName(), Integer.valueOf(count));
-            entity.duplicateMarker = count;
-            entity.generateShortName();
-            entity.generateDisplayName();
-
+    private synchronized void checkDuplicateNamesDuringAdd(Entity entity) {
+        if (entity != null) {
+            unitNameTracker.add(entity);
         }
     }
 
@@ -1657,48 +1650,21 @@ public class Client implements IClientCommandHandler {
      * @param ids
      */
     private void checkDuplicateNamesDuringDelete(List<Integer> ids) {
-        ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(localPlayerNumber), false);
-        Hashtable<String, ArrayList<Integer>> rawNameToId = new Hashtable<String, ArrayList<Integer>>(
-                (int) (myEntities.size() * 1.26));
+        final List<Entity> updatedEntities = new ArrayList<>();
+        synchronized (unitNameTracker) {
+            for (int id : ids) {
+                Entity removedEntity = game.getEntity(id);
+                if (removedEntity == null) {
+                    continue;
+                }
 
-        for (Entity e : myEntities) {
-            String rawName = e.getShortNameRaw();
-            ArrayList<Integer> namedIds = rawNameToId.get(rawName);
-            if (namedIds == null) {
-                namedIds = new ArrayList<Integer>();
+                unitNameTracker.remove(removedEntity, updatedEntities::add);
             }
-            namedIds.add(e.getId());
-            rawNameToId.put(rawName, namedIds);
         }
 
-        for (int id : ids) {
-            Entity removedEntity = game.getEntity(id);
-            if (removedEntity == null) {
-                continue;
-            }
-
-            String removedRawName = removedEntity.getShortNameRaw();
-            Integer count = duplicateNameHash.get(removedEntity.getShortNameRaw());
-            if ((count != null) && (count > 1)) {
-                ArrayList<Integer> namedIds = rawNameToId.get(removedRawName);
-                for (Integer i : namedIds) {
-                    Entity e = game.getEntity(i);
-                    String eRawName = e.getShortNameRaw();
-                    if (eRawName.equals(removedRawName) && (e.duplicateMarker > removedEntity.duplicateMarker)) {
-                        e.duplicateMarker--;
-                        e.generateShortName();
-                        e.generateDisplayName();
-                        // Update the Entity, unless it's going to be deleted
-                        if (!ids.contains(e.getId())) {
-                            sendUpdateEntity(e);
-                        }
-                    }
-                }
-                duplicateNameHash.put(removedEntity.getShortNameRaw(), Integer.valueOf(count - 1));
-
-            } else if (count != null) {
-                duplicateNameHash.remove(removedEntity.getShortNameRaw());
-            }
+        // Send updates for any entity which had its name updated
+        for (Entity e : updatedEntities) {
+            sendUpdateEntity(e);
         }
     }
 
@@ -1730,6 +1696,7 @@ public class Client implements IClientCommandHandler {
      * Registers a new command in the client command table
      */
     public void registerCommand(ClientCommand command) {
+        //Warning, the special direction commands are registered seperatly
         commandsHash.put(command.getName(), command);
     }
 
@@ -1765,5 +1732,26 @@ public class Client implements IClientCommandHandler {
 
     public IGame getGame() {
         return game;
+    }
+
+    /**
+     * Return the Current Hex, used by client commands for the visually impaired
+     * @return the current Hex
+     */
+    public Coords getCurrentHex() {
+        return currentHex;
+    }
+
+    /**
+     * Set the Current Hex, used by client commands for the visually impaired
+     */
+    public void setCurrentHex(IHex hex) {
+        if (hex != null) {
+            currentHex = hex.getCoords();
+        }
+    }
+
+    public void setCurrentHex(Coords hex) {
+        currentHex = hex;
     }
 }

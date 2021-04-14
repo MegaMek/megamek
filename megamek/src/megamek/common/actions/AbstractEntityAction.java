@@ -14,6 +14,8 @@
 
 package megamek.common.actions;
 
+import megamek.client.Client;
+
 import java.io.Serializable;
 
 /**
@@ -37,5 +39,10 @@ public abstract class AbstractEntityAction implements Serializable,
 
     public void setEntityId(int entityId) {
         this.entityId = entityId;
+    }
+
+    @Override
+    public String toDisplayableString(Client client) {
+        return this.toString();
     }
 }

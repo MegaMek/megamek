@@ -698,8 +698,10 @@ public class TestAdvancedAerospace extends TestAero {
         boolean correct = true;
         double maxArmor = maxArmorWeight(vessel);
         if (vessel.getLabArmorTonnage() > maxArmor) {
-            buff.append("Total armor," + vessel.getLabArmorTonnage() + 
-                    " tons, is greater than the maximum: " + maxArmor + "\n");
+            buff.append("Total armor, ")
+                    .append(vessel.getLabArmorTonnage())
+                    .append(" tons, is greater than the maximum: ")
+                    .append(maxArmor).append("\n");
             correct = false;
         }
 

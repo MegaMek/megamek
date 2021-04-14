@@ -63,6 +63,7 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
@@ -1415,8 +1416,7 @@ public class FireControl {
         } else if (0.5 > damageFraction
                    || Targetable.TYPE_BUILDING == target.getTargetType()
                    || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
+                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry) {
             return 0;
         }
         //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).
@@ -3221,6 +3221,19 @@ public class FireControl {
         return unjamVector;
     }
 
+    /**
+     * Return a "Find Club" action, if the unit in question can find a club.
+     */
+    @Nullable
+    public FindClubAction getFindClubAction(Entity shooter) {
+        if (FindClubAction.canMechFindClub(shooter.getGame(), shooter.getId())) {
+            FindClubAction findClubAction = new FindClubAction(shooter.getId());
+            return findClubAction;
+        }
+        
+        return null;
+    }
+    
     /**
      * Given a firing plan, calculate the best target to light up with a searchlight
      */

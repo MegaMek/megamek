@@ -134,7 +134,7 @@ public class StringUtil {
      * @param text  The string to be evaluated.
      */
     public static boolean isNullOrEmpty(String text) {
-        return (text == null) || (text.trim().isEmpty());
+        return (text == null) || text.isBlank();
     }
 
 

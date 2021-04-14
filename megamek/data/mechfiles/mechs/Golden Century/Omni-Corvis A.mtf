@@ -1,53 +1,54 @@
-Version:1.0
+Version:1.1
 Omni-Corvis
 A
 
-Config:Biped
-TechBase:Clan
-Era:2921
-Source:Succession Wars
-Rules Level:2
+Config:Biped Omnimech
+techbase:Clan
+era:2921
+source:Succession Wars
+rules level:2
 
-Mass:50
-Engine:250 Fusion (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:50
+engine:250 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:15
-RA Armor:15
-LT Armor:16
-RT Armor:16
-CT Armor:24
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:15
+RA armor:15
+LT armor:16
+RT armor:16
+CT armor:24
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:9
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Right Torso
 Medium Pulse Laser, Center Torso
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Center Torso
 Small Pulse Laser, Head
-Streak SRM 6, Right Torso
-Streak SRM 6, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -60,8 +61,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -70,9 +71,9 @@ CLMediumPulseLaser
 -Empty-
 
 Left Torso:
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -84,9 +85,9 @@ Clan Endo Steel
 -Empty-
 
 Right Torso:
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -108,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLSmallPulseLaser
+CLSmallPulseLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -154,8 +155,5 @@ Clan Ferro-Fibrous
 -Empty-
 
 manufacturer:Niles Industriplex Alpha
-primaryFactory:Tokasha, Niles
-systemmodel:CHASSIS:Model MH-50
-systemmodel:ARMOR:Compound H17/1 Ferro-Fibrous
-systemmodel:TARGETING:Version Gamma-V TTS
+primaryfactory:Tokasha, Niles
 

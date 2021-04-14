@@ -698,9 +698,8 @@ public class MULParser {
         }
 
         // Camo
-        // Must be a null, and not an empty string, if it isn't being used. - Dylan 2014-04-04
-        entity.setCamoCategory(entityTag.getAttribute(CAMO_CATEGORY).equals("") ? null : entityTag.getAttribute(CAMO_CATEGORY));
-        entity.setCamoFileName(entityTag.getAttribute(CAMO_FILENAME).equals("") ? null : entityTag.getAttribute(CAMO_FILENAME));
+        entity.getCamouflage().setCategory(entityTag.getAttribute(CAMO_CATEGORY));
+        entity.getCamouflage().setFilename(entityTag.getAttribute(CAMO_FILENAME));
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);
@@ -710,7 +709,7 @@ public class MULParser {
         entity.setExternalIdAsString(extId);
 
         // external id
-        if(entity instanceof MechWarrior) {
+        if (entity instanceof MechWarrior) {
             String pickUpId = entityTag.getAttribute(PICKUP_ID);
             if ((null == pickUpId) || (pickUpId.length() == 0)) {
                 pickUpId = "-1";
@@ -749,8 +748,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
@@ -780,7 +778,7 @@ public class MULParser {
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if(infSquadNum.length() > 0) {
+            if (infSquadNum.length() > 0) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }

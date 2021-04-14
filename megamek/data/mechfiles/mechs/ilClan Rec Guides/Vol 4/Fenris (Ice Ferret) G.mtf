@@ -4,15 +4,15 @@ G
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
-rules level:2
+era:3088
+rules level:4
 
 mass:45
 engine:360 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 base chassis heat sinks:12
 walk mp:8
 jump mp:0
@@ -31,22 +31,22 @@ RTR armor:7
 RTC armor:8
 
 Weapons:9
-Light TAG [Clan], Center Torso
-ER Small Pulse Laser, Right Torso
-ER Small Pulse Laser, Left Torso
-SRM 4, Right Arm
 SRM 4, Left Arm
 AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Right Arm
 AP Gauss Rifle, Left Arm
+SRM 4, Right Arm
 AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Right Arm
+ER Small Pulse Laser, Left Torso
+ER Small Pulse Laser, Right Torso
+Light TAG [Clan], Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM4 (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle (omnipod)
+CLSRM4 (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -58,9 +58,9 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLSRM4 (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle (omnipod)
+CLSRM4 (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -72,8 +72,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser (omnipod)
-CLAPGaussRifle Ammo (omnipod)
+CLERSmallPulseLaser (OMNIPOD)
+CLAPGaussRifle Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -86,8 +86,8 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser (omnipod)
-Clan Ammo SRM-4 (omnipod)
+CLERSmallPulseLaser (OMNIPOD)
+Clan Ammo SRM-4 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -108,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightTAG (omnipod)
+CLLightTAG (OMNIPOD)
 Clan Endo Steel
 
 Head:

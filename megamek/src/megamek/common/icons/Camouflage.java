@@ -21,6 +21,7 @@ package megamek.common.icons;
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -38,7 +39,7 @@ public class Camouflage extends AbstractIcon {
         super(NO_CAMOUFLAGE);
     }
 
-    public Camouflage(String category, String filename) {
+    public Camouflage(@Nullable String category, @Nullable String filename) {
         super(category, filename);
     }
     //endregion Constructors

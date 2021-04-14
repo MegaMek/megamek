@@ -2685,7 +2685,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Aero.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -3262,7 +3263,6 @@ public class Aero extends Entity implements IAero, IBomber {
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
-        boolean isInfantry = (ae instanceof Infantry) && !(ae instanceof BattleArmor);
         // Stealth or null sig must be active.
         if (!isStealthActive()) {
             result = new TargetRoll(0, "stealth not active");
@@ -3273,14 +3273,14 @@ public class Aero extends Entity implements IAero, IBomber {
             switch (range) {
             case RangeType.RANGE_MINIMUM:
             case RangeType.RANGE_SHORT:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(0, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");
                 }
                 break;
             case RangeType.RANGE_MEDIUM:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(1, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");
@@ -3289,7 +3289,7 @@ public class Aero extends Entity implements IAero, IBomber {
             case RangeType.RANGE_LONG:
             case RangeType.RANGE_EXTREME:
             case RangeType.RANGE_LOS:
-                if (!isInfantry) {
+                if (!ae.isConventionalInfantry()) {
                     result = new TargetRoll(2, "stealth");
                 } else {
                     result = new TargetRoll(0, "infantry ignore stealth");

@@ -1,11 +1,10 @@
-Version:1.0
+Version:1.1
 Lynx
 C
 
-
 Config:Biped
 techbase:Clan
-era:2845
+era:2848
 source:Succesion Wars
 rules level:2
 
@@ -14,7 +13,7 @@ engine:275 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:17 Double
+heat sinks:17 Clan Double
 walk mp:5
 jump mp:5
 
@@ -33,11 +32,11 @@ RTC armor:6
 
 Weapons:6
 Large Pulse Laser, Left Arm
+ER Medium Laser, Left Arm
 ER PPC, Right Arm
 ER Large Laser, Right Torso
 ER Small Laser, Right Torso
 ER Medium Laser, Center Torso
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -76,24 +75,24 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLERLargeLaser
 CLERSmallLaser
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine

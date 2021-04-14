@@ -127,6 +127,7 @@
 	 arekP64
 	 Ask
 	 Keyl Seuhy
+	 Norman "Flynn" Zinner
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

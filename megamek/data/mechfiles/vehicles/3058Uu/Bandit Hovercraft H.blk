@@ -1,9 +1,9 @@
 #building block data file
 <BlockVersion>
-1
+1.1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ H
 3058
 </year>
 
+<originalBuildYear>
+3058
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -33,14 +37,7 @@ Hover
 </motion_type>
 
 <transporters>
-troopspace:4.0
-</transporters>
-
-<transporters>
-troopspace:4.0
-</transporters>
-
-<transporters>
+troopspace:8.0
 BattleArmorHandles - troopers:-1
 </transporters>
 
@@ -96,3 +93,4 @@ Clan Invasion
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
+

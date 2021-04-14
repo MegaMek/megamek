@@ -524,13 +524,8 @@ public class TestBot extends BotClient {
                                     toHit = DfaAttackAction.toHit(game, option
                                             .getEntity().getId(), target
                                                                           .getEntity(), option);
-                                    damage = 2 * DfaAttackAction
-                                            .getDamageFor(
-                                                    option.getEntity(),
-                                                    (target.getEntity() instanceof Infantry)
-                                                    && !(target
-                                                            .getEntity() instanceof BattleArmor)
-                                                         );
+                                    damage = 2 * DfaAttackAction.getDamageFor(option.getEntity(),
+                                            target.getEntity().isConventionalInfantry());
                                     self_threat = (option
                                                            .getCEntity()
                                                            .getThreatUtility(
@@ -1184,7 +1179,7 @@ public class TestBot extends BotClient {
                 }
 
                 // For good measure, infantry cannot attack multiple targets
-                if ((en instanceof Infantry) && !(en instanceof BattleArmor)) {
+                if (en.isConventionalInfantry()) {
                     starg_mod = 13;
                 }
 

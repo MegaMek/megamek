@@ -14,7 +14,7 @@
   NOTE: All locations should be in data/images/widgets
 -->
 <skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+    xsi:noNamespaceSchemaLocation="skinSchema.xsd">
 	<UI_Element>
 		<name>PhaseDisplayBorder</name>
 		<no_border>false</no_border>

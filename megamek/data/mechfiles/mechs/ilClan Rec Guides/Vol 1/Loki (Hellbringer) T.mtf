@@ -13,7 +13,7 @@ engine:325 XL (Clan) Engine(IS)
 structure:IS Standard
 myomer:Standard
 
-heat sinks:17 Double
+heat sinks:17 Clan Double
 base chassis heat sinks:13
 walk mp:5
 jump mp:0
@@ -45,8 +45,8 @@ Anti-Missile System, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -59,8 +59,8 @@ CLERPPC (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -73,11 +73,11 @@ CLERPPC (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -87,16 +87,16 @@ CLERMediumLaser (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-CLATM6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-Clan Ammo ATM-6 (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle Ammo (omnipod)
-CLAMS Ammo (omnipod)
-CLCASEII (omnipod)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLATM6 (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle Ammo (OMNIPOD)
+Clan Ammo ATM-6 (OMNIPOD)
+Clan Ammo ATM-6 (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLAntiMissileSystem (omnipod)
+CLAntiMissileSystem (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

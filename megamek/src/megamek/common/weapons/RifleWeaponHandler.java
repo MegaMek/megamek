@@ -1,21 +1,20 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -34,10 +33,6 @@ import megamek.server.Server.DamageType;
  * @author Jason Tighe
  */
 public class RifleWeaponHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7468287406174862534L;
 
     private HitData hit;
@@ -70,19 +65,17 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
-        Entity te = null;
+        Entity te;
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
                     waa.getAimedLocation(), waa.getAimingMode(),
                     toHit.getCover());
             hit.setAttackerId(getAttackerId());
-            if (!(te instanceof BattleArmor)
-                    && !(te instanceof Infantry)
-                    && (!te.hasBARArmor(hit.getLocation()) || (te
-                            .getBARRating(hit.getLocation()) >= 8))) {
+            if (!(te instanceof Infantry)
+                    && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }

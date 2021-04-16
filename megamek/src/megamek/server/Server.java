@@ -34842,7 +34842,7 @@ public class Server implements Runnable {
      *
      * @param entity the <code>Entity</code> for which to resolve it
      */
-    public void doAssaultDrop(Entity entity) {
+    public void doAssaultDrop(Entity entity) {       
         //resolve according to SO p.22
 
         Report r = new Report(2380);
@@ -34979,7 +34979,7 @@ public class Server implements Runnable {
      */
     void doAllAssaultDrops() {
         for (Entity e : game.getEntitiesVector()) {
-            if (e.isAssaultDropInProgress()) {
+            if (e.isAssaultDropInProgress() && e.isDeployed()) {
                 doAssaultDrop(e);
                 e.setLandedAssaultDrop();
             }

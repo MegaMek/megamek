@@ -187,7 +187,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-//        pack();
         splitPane.setDividerLocation(guiPreferences.getMechSelectorSplitPos());
         setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
         setLocation(guiPreferences.getMechSelectorPosX(), guiPreferences.getMechSelectorPosY());

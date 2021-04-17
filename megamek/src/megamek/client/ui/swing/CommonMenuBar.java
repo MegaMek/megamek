@@ -77,8 +77,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileRefreshCache;
-    private JMenuItem fileUnitsOpen;
-    private JMenuItem fileUnitsSave;
     private JMenuItem fileUnitsPaste;
     /**
      * The <code>Entity</code> current selected. This value may be
@@ -252,7 +250,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameQSave.setActionCommand(ClientGUI.FILE_GAME_QSAVE);
         fileGameQSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         submenu.add(fileGameQSave);
-        fileGameQLoad = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickSave")); //$NON-NLS-1$
+        fileGameQLoad = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickLoad")); //$NON-NLS-1$
         fileGameQLoad.addActionListener(this);
         fileGameQLoad.setActionCommand(ClientGUI.FILE_GAME_QLOAD);
         fileGameQLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
@@ -333,16 +331,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileRefreshCache.addActionListener(this);
         fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
         submenu.add(fileRefreshCache);
-        fileUnitsOpen = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
-        fileUnitsOpen.addActionListener(this);
-        fileUnitsOpen.setActionCommand(ClientGUI.FILE_UNITS_OPEN);
-        submenu.add(fileUnitsOpen);
-        fileUnitsSave = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsSave")); //$NON-NLS-1$
-        fileUnitsSave.addActionListener(this);
-        fileUnitsSave.setActionCommand(ClientGUI.FILE_UNITS_SAVE);
-        submenu.add(fileUnitsSave);
         fileUnitsPaste = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileUnitsPaste"));
         fileUnitsPaste.addActionListener(this);
@@ -967,18 +955,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         
         fileUnitsPaste.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
 
-        // If we have a unit list, and if we are in the lounge,
-        // then we can still perform all unit list actions.
-        if (hasUnitList) {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-          //  fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-        }
-        // If we don't have a unit list, but we are in the lounge,
-        // then we can open a unit list.
-        else {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-          //  fileUnitsSave.setEnabled(false);
-        }
         // Reinforcements cannot be added in the lounge!
         fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
         fileUnitsReinforceRAT.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);

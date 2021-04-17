@@ -1890,12 +1890,11 @@ public class Client implements IClientCommandHandler {
         return bots.containsKey(player.getName());
     }
     
-    /** Returns true when the player is a bot added/controlled by this client. */
+    /** 
+     * Returns the Client associated with the given local bot player. If
+     * the player is not a local bot, returns null. 
+     */
     public Client getBotClient(IPlayer player) {
-        if (isLocalBot(player)) {
-            return bots.get(player.getName());
-        } else {
-            throw new IllegalArgumentException("The given player is not a local bot.");
-        }
+        return bots.get(player.getName());
     }
 }

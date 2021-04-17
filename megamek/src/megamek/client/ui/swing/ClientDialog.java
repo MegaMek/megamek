@@ -40,20 +40,31 @@ public class ClientDialog extends JDialog {
     protected JFrame owner = null;
     private boolean isScaling = false;
 
-    /**
-     * @param owner - the <code>Frame</code> that owns this dialog.
-     * @param title - the title of this Dialog window
+    /** 
+     * Creates a basic ClientDialog.
+     * @see JDialog#JDialog(java.awt.Frame, String) 
      */
     public ClientDialog(JFrame owner, String title) {
         super(owner, title);
         this.owner = owner;
     }
 
+    /** 
+     * Creates a ClientDialog with modality as given by modal.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
     public ClientDialog(JFrame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.owner = owner;
     }
     
+    /** 
+     * Creates a ClientDialog with modality as given by modal. This dialog
+     * will automatically scale with the current GUI scaling value. Results of
+     * this may vary with the complexity of the dialog; manual scaling will
+     * often be better.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
     public ClientDialog(JFrame owner, String title, boolean modal, boolean scale) {
         super(owner, title, modal);
         this.owner = owner;

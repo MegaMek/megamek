@@ -87,7 +87,6 @@ public class MMConfirmDialog {
             lblMain.setBorder(new EmptyBorder(0, 20, 0, 20));
             add(lblMain, BorderLayout.CENTER);
             setMinimumSize(UIUtil.scaleForGUI(MINIMUM_SIZE));
-//            setPreferredSize(UIUtil.scaleForGUI(MINIMUM_SIZE));
             center();
             // Make the dialog take ENTER as Yes and ESC as No
             getRootPane().setDefaultButton(butYes);

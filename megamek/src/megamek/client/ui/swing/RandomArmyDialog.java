@@ -543,11 +543,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         // construct the main dialog
         setLayout(new BorderLayout());
-//        this.setPreferredSize(new Dimension(800,500));
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pSplit, BorderLayout.CENTER);
         validate();
-//        pack();
         setLocationRelativeTo(cl.frame);
         
         m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
@@ -790,32 +788,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
-//    public void windowActivated(WindowEvent arg0) {
-//        //ignored
-//    }
-//
-//    
-//
-//    public void windowClosing(WindowEvent arg0) {
-//        setVisible(false);
-//    }
-//
-//    public void windowDeactivated(WindowEvent arg0) {
-//        saveWindowSettings();
-//    }
-//
-//    public void windowDeiconified(WindowEvent arg0) {
-//        //ignored
-//    }
-//
-//    public void windowIconified(WindowEvent arg0) {
-//        //ignored
-//    }
-//
-//    public void windowOpened(WindowEvent arg0) {
-//        //ignored
-//    }
-
     WindowListener windowListener = new WindowAdapter() {
 
         public void windowClosed(WindowEvent arg0) {
@@ -832,8 +804,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
     };
-    
-    
     
 	private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();

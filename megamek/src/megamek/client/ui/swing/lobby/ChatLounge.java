@@ -576,20 +576,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panMapType.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         panMapType.add(butGroundMap);
         panMapType.add(butLowAtmoMap);
-//        panMapType.add(butHighAtmoMap);
         panMapType.add(butSpaceMap);
         grpMap.add(butGroundMap);
         grpMap.add(butLowAtmoMap);
         grpMap.add(butHighAtmoMap);
         grpMap.add(butSpaceMap);
-//        panMap.add(panMapType);
         
         // Planetary Conditions and Random Map Settings buttons
         FixedYPanel panSettings = new FixedYPanel();
         panSettings.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         panSettings.add(butConditions);
         panSettings.add(butRandomMap);
-//        panMap.add(panSettings);
 
         FixedYPanel panTopRows = new FixedYPanel();
         panTopRows.setLayout(new BoxLayout(panTopRows, BoxLayout.PAGE_AXIS));
@@ -1994,15 +1991,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void removeBot() {
         Client c = getSelectedClient();
         if (!client().bots.containsValue(c)) {
-//        if ((c == null) || c.equals(clientgui.getClient())) {
-//            clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
-//                    Messages.getString("ChatLounge.SelectBo"));
             LobbyErrors.showOnlyOwnBot(clientgui.frame);
             return;
         }
         // Delete units first, which safely disembarks and offloads them
         // Don't delete the bot's forces, as that could also delete other players' entitites
-//        lobbyActions.delete(new ArrayList<>(), game().getPlayerEntities(c.getLocalPlayer(), false), false);
         c.die();
         clientgui.getBots().remove(c.getName());
     }

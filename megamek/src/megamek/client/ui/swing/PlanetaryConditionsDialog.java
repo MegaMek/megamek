@@ -447,7 +447,8 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     
     /** 
      * Updates the enabled state of some fields based on the atmosphere setting. 
-     * Also, for some weather settings,   
+     * Also resets the state for some settings, e.g. vacuum will set wind and
+     * weather to none.
      */
     private void adaptToWeatherAtmo() {
         boolean isVacuum = comAtmosphere.getSelectedIndex() == ATMO_VACUUM;
@@ -468,6 +469,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
             chkBlowingSands.setSelected(false);
             chkShiftWindDir.setSelected(false);
             chkShiftWindStr.setSelected(false);
+            comWind.setSelectedIndex(WI_NONE);
+            comWeather.setSelectedIndex(WE_NONE);
+            comFog.setSelectedIndex(FOG_NONE);
         }
         if (specificWind) {
             chkShiftWindStr.setSelected(false);

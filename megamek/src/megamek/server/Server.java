@@ -34979,7 +34979,7 @@ public class Server implements Runnable {
      */
     void doAllAssaultDrops() {
         for (Entity e : game.getEntitiesVector()) {
-            if (e.isAssaultDropInProgress()) {
+            if (e.isAssaultDropInProgress() && e.isDeployed()) {
                 doAssaultDrop(e);
                 e.setLandedAssaultDrop();
             }

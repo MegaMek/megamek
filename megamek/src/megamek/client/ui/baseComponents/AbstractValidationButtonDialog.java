@@ -138,9 +138,21 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     }
 
     /**
+     * This runs revalidation on the dialog, which sets the validation state to pending before calling
+     * validateButtonActionPerformed to perform the data validation.
+     *
+     * @param evt the event triggering this, or null if you want to put the output into a popup, if
+     *            applicable
+     */
+    protected void revalidateAction(final @Nullable ActionEvent evt) {
+        setState(ValidationState.PENDING);
+        validateButtonActionPerformed(evt);
+    }
+
+    /**
      * This performs data validation on the dialog if the current validation state is pending or
      * warning.
-     * @param evt the event triggering this, or null if you want to put output into a popup, if
+     * @param evt the event triggering this, or null if you want to put the output into a popup, if
      *            applicable
      */
     protected void validateButtonActionPerformed(final @Nullable ActionEvent evt) {

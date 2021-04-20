@@ -11566,6 +11566,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         
+        // some equipment is not present in critical slots
+        // but is present in the location, so we'll need to look at it as well
+        for (Mounted mounted : getEquipment()) {
+            if (((mounted.getLocation() == loc) && mounted.getType().isHittable())
+                || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
+                if (blownOff) {
+                    mounted.setMissing(true);
+                // we don't want to hit something twice here to avoid triggering
+                // things that fire off when a mounted is hit
+                } else if (!mounted.isHit()) {
+                    mounted.setHit(true);
+                }
+            }
+        }
+        
         // dependent locations destroyed, unless they are already destroyed
         if ((getDependentLocation(loc) != Entity.LOC_NONE)
             && !(getInternal(getDependentLocation(loc)) < 0)) {

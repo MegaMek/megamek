@@ -22,6 +22,9 @@ import javax.swing.JMenuItem;
 import megamek.client.ui.swing.util.ScalingPopup;
 
 class MapListPopup {
+    
+    static final String MLP_BOARD = "BOARD";
+    static final String MLP_SURPRISE = "SURPRISE";
 
     static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, ChatLounge lobby) {
         
@@ -48,7 +51,7 @@ class MapListPopup {
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), "BOARD:" + i + ":" + boards.get(0), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(0), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -67,7 +70,7 @@ class MapListPopup {
             // Since it's not visible to the player, the random board can already be chosen here
             int rnd = (int)(Math.random() * boards.size());
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), "BOARD:" + i + ":" + boards.get(rnd), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -84,7 +87,7 @@ class MapListPopup {
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), "SURPRISE:" + i + ":" 
+                menu.add(menuItem("Board " + (i + 1), MLP_SURPRISE + ":" + i + ":" 
                         + String.join("\n", boards), enabled, listener));
             }
         }

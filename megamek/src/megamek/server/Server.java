@@ -1410,8 +1410,8 @@ public class Server implements Runnable {
         
         // remove entities of player from any forces, disembark and C3 disconnect them
         delEntities.stream().forEach(forces::removeEntityFromForces);
-        ServerHelper.lobbyUnload(game, delEntities);
-        ServerHelper.performC3Disconnect(game, delEntities);
+        ServerLobbyHelper.lobbyUnload(game, delEntities);
+        ServerLobbyHelper.performC3Disconnect(game, delEntities);
         
         // delete entities of player
         delEntities.stream().forEach(e -> game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED));
@@ -2206,7 +2206,7 @@ public class Server implements Runnable {
         switch (phase) {
             case PHASE_LOUNGE:
                 clearReports();
-                mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
+                mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
                 send(createMapSizesPacket());
@@ -30006,7 +30006,7 @@ public class Server implements Runnable {
         for (int id : fighters) {
             Entity fighter = game.getEntity(id);
             if (null != fighter) {
-                formerCarriers.addAll(ServerHelper.lobbyUnload(game, List.of(fighter)));
+                formerCarriers.addAll(ServerLobbyHelper.lobbyUnload(game, List.of(fighter)));
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
                 fighter.setTransportId(fs.getId());
@@ -30038,7 +30038,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
-                sendServerChat(ServerHelper.entityUpdateMessage(entity, game));
+                sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
             }
         }
     }
@@ -30061,33 +30061,11 @@ public class Server implements Runnable {
             // Only update entities that existed and are owned by a teammate of the sender
             if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
                 game.setEntity(entity.getId(), entity);
-                sendServerChat(ServerHelper.entityUpdateMessage(entity, game));
+                sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
             }
         }
         send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, newEntities));
-    }
-    
-    /**
-     * Adds a force with the info from the client. Only valid during the lobby phase.
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveForceAdd(Packet c, int connIndex) {
-        Force force = (Force) c.getObject(0);
-        if (!ServerHelper.isNewForceValid(game, force)) {
-            return;
-        }
-
-        List<Integer> changedForces = new ArrayList<>();
-        if (force.isTopLevel()) {
-            changedForces.add(game.getForces().addTopLevelForce(force.getName(), getPlayer(connIndex)));
-        } else {
-            Force parent = game.getForces().getForce(force.getParentId()); 
-            changedForces.add(force.getParentId());
-            changedForces.add(game.getForces().addSubForce(force.getName(), parent));
-        }
-        send(createAddEntityPacket(new ArrayList<Integer>(), changedForces));
     }
     
     /**
@@ -30111,13 +30089,13 @@ public class Server implements Runnable {
 
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(ServerHelper.lobbyUnload(game, delEntities));
-        updateCandidates.addAll(ServerHelper.performC3Disconnect(game, delEntities));
+        updateCandidates.addAll(ServerLobbyHelper.lobbyUnload(game, delEntities));
+        updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
         
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
         if (!updateCandidates.isEmpty()) {
-            send(ServerHelper.createMultiEntityPacket(updateCandidates));
+            send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
         
         // Delete entities and forces
@@ -30125,50 +30103,7 @@ public class Server implements Runnable {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
         }
         forces.deleteForces(delForces);
-        send(ServerHelper.createForcesDeletePacket(forceList));
-    }
-
-    /**
-     * Updates a force with the info from the client. This method is currently only usable for
-     * the lobby phase. E.g. it does not consider double blind. Blind drop is handled in the client. 
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveForceUpdate(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked")
-        Collection<Force> forceList = (Collection<Force>) c.getObject(0);
-        @SuppressWarnings("unchecked")
-        Collection<Entity> entityList = (Collection<Entity>) c.getObject(1);
-
-        // Check if the entity update is valid (cannot add entities and can 
-        // only change one's own and the team's units 
-        boolean entitiesValid = true;
-        for (Entity entity: entityList) {
-            Entity oldEntity = game.getEntity(entity.getId());
-            if ((oldEntity == null) || (oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
-                entitiesValid = false;
-            }
-        }
-        
-        // Use a forces clone to check if the updated Forces and Entities are valid
-        // The update must send all affected forces and all affected entities
-        Forces forcesClone = game.getForces().clone();
-        for (Force force: forceList) {
-            forcesClone.replace(force.getId(), force);
-        }
-        if (forcesClone.isValid(entityList) && entitiesValid) {
-            // All OK, so finalize the changes 
-            game.setForces(forcesClone);
-            for (Entity entity: entityList) {
-                game.setEntity(entity.getId(), entity);
-            }
-        } else {
-            MegaMek.getLogger().warning("Invalid forces update received");
-            forceList = game.getForces().getAllForces();
-            entityList = new ArrayList<>(game.getEntitiesVector());
-        }
-        
-        send(createForceUpdatePacket(forceList, entityList));
+        send(ServerLobbyHelper.createForcesDeletePacket(forceList));
     }
 
     /**
@@ -30187,7 +30122,7 @@ public class Server implements Runnable {
             loadUnit(loader, loadee, bayNumber);
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
-                ServerHelper.entityUpdateMessage(loadee, game);
+                ServerLobbyHelper.entityUpdateMessage(loadee, game);
                 // Set this so units can be unloaded in the first movement phase
                 loadee.setLoadedThisTurn(false);
             }
@@ -30473,13 +30408,13 @@ public class Server implements Runnable {
         
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(ServerHelper.lobbyUnload(game, delEntities));
-        updateCandidates.addAll(ServerHelper.performC3Disconnect(game, delEntities));
+        updateCandidates.addAll(ServerLobbyHelper.lobbyUnload(game, delEntities));
+        updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
         
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
         if (!updateCandidates.isEmpty()) {
-            send(ServerHelper.createMultiEntityPacket(updateCandidates));
+            send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
         
         ArrayList<Force> affectedForces = new ArrayList<>();
@@ -30659,7 +30594,7 @@ public class Server implements Runnable {
             IOption originalOption = game.getOptions().getOption(option.getName());
             if (originalOption != null) {
                 if ("maps_include_subdir".equals(originalOption.getName())) {
-                    mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
+                    mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     send(createMapSettingsPacket());
@@ -30905,17 +30840,6 @@ public class Server implements Runnable {
         data[1] = entities;
         data[2] = forceList;
         return new Packet(Packet.COMMAND_ENTITY_ADD, data);
-    }
-    
-    /**
-     * Creates a packet detailing a force update. Force updates must contain all
-     * affected forces and all affected entities.
-     */
-    private Packet createForceUpdatePacket(Collection<Force> forces, Collection<Entity> entities) {
-        final Object[] data = new Object[2];
-        data[0] = forces;
-        data[1] = entities;
-        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
     }
     
     /**
@@ -31320,7 +31244,7 @@ public class Server implements Runnable {
                 send(createPlayerUpdatePacket(connId));
                 break;
             case Packet.COMMAND_PLAYER_TEAMCHANGE:
-                ServerHelper.receiveLobbyTeamChange(packet, connId, game, this);
+                ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, game, this);
                 break;
             case Packet.COMMAND_PLAYER_READY:
                 receivePlayerDone(packet, connId);
@@ -31400,15 +31324,15 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_ENTITY_ASSIGN:
-                ServerHelper.receiveEntitiesAssign(packet, connId, game, this);
+                ServerLobbyHelper.receiveEntitiesAssign(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_UPDATE:
-                ServerHelper.receiveForceUpdate(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceUpdate(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_ADD:
-                ServerHelper.receiveForceAdd(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceAdd(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_DELETE:
@@ -31416,15 +31340,15 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_PARENT:
-                ServerHelper.receiveForceParent(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceParent(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_ADD_ENTITY:
-                ServerHelper.receiveAddEntititesToForce(packet, connId, game, this);
+                ServerLobbyHelper.receiveAddEntititesToForce(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_FORCE_ASSIGN_FULL:
-                ServerHelper.receiveForceAssignFull(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceAssignFull(packet, connId, game, this);
                 resetPlayersDone();
                 break;
             case Packet.COMMAND_ENTITY_LOAD:
@@ -31495,7 +31419,7 @@ public class Server implements Runnable {
                         sendServerChat("Player " + player.getName() + " changed map settings");
                     }
                     mapSettings = newSettings;
-                    mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
+                    mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     resetPlayersDone();
@@ -31510,7 +31434,7 @@ public class Server implements Runnable {
                         sendServerChat("Player " + player.getName() + " changed map dimensions");
                     }
                     mapSettings = newSettings;
-                    mapSettings.setBoardsAvailableVector(ServerHelper.scanForBoards(mapSettings));
+                    mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     resetPlayersDone();

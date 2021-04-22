@@ -366,6 +366,12 @@ public final class UIUtil {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
+    /** 
+     * Applies the current gui scale to a given dialog or whatever Container is given.
+     * For a dialog, pass getContentPane(). This can work well for simple dialogs,
+     * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
+     * gui scale.
+     */
     public static void adjustDialog(Container contentPane) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         Component[] allComps = contentPane.getComponents();

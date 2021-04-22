@@ -1,15 +1,20 @@
-/*  
- * MegaMek - Copyright (C) 2021 - The MegaMek Team  
- *  
- * listener program is free software; you can redistribute it and/or modify it under  
- * the terms of the GNU General Public License as published by the Free Software  
- * Foundation; either version 2 of the License, or (at your option) any later  
- * version.  
- *  
- * listener program is distributed in the hope that it will be useful, but WITHOUT  
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
- * details.  
+/*
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */ 
 package megamek.client.ui.swing.lobby;
 
@@ -36,6 +41,7 @@ import megamek.common.util.CollectionUtil;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 import static java.util.stream.Collectors.*;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -108,8 +114,8 @@ public class LobbyActions {
             return;
         }
         Set<Entity> updateCandidates = new HashSet<>();
-        boolean goProne = info.equals("PRONE");
-        boolean goHullDown = info.equals("HULLDOWN");
+        boolean goProne = info.equals(LMP_PRONE);
+        boolean goHullDown = info.equals(LMP_HULLDOWN);
         boolean stand = !goProne && !goHullDown;
         for (Entity entity: entities) {
             if ((goProne && !entity.isProne()) || (goHullDown && !entity.isHullDown())
@@ -182,7 +188,7 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        Entity entity = CollectionUtil.randomElement(entities);
+        Entity entity = CollectionUtil.anyOneElement(entities);
         UnitEditorDialog med = new UnitEditorDialog(frame(), entity);
         med.setVisible(true);
         sendUpdates(entities);
@@ -209,15 +215,15 @@ public class LobbyActions {
         var changedForce = new HashSet<Force>(); 
         if (up) {
             if (!forceList.isEmpty()) {
-                changedForce.addAll(forces.moveUp(CollectionUtil.randomElement(forceList)));
+                changedForce.addAll(forces.moveUp(CollectionUtil.anyOneElement(forceList)));
             } else if (!entityList.isEmpty()) {
-                changedForce.addAll(forces.moveUp(CollectionUtil.randomElement(entityList)));
+                changedForce.addAll(forces.moveUp(CollectionUtil.anyOneElement(entityList)));
             }
         } else {
             if (!forceList.isEmpty()) {
-                changedForce.addAll(forces.moveDown(CollectionUtil.randomElement(forceList)));
+                changedForce.addAll(forces.moveDown(CollectionUtil.anyOneElement(forceList)));
             } else if (!entityList.isEmpty()) {
-                changedForce.addAll(forces.moveDown(CollectionUtil.randomElement(entityList)));
+                changedForce.addAll(forces.moveDown(CollectionUtil.anyOneElement(entityList)));
             }
         }
 
@@ -238,7 +244,7 @@ public class LobbyActions {
 
         // Display the CamoChooser and await the result
         // The dialog is preset to a random entity's settings
-        Entity entity = CollectionUtil.randomElement(entities);
+        Entity entity = CollectionUtil.anyOneElement(entities);
         CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getOwner().getCamouflage());
         if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
             return;
@@ -271,7 +277,7 @@ public class LobbyActions {
             LobbyErrors.showSingleOwnerRequired(frame());
             return;
         }
-        Entity randomSelected = CollectionUtil.randomElement(entities);
+        Entity randomSelected = CollectionUtil.anyOneElement(entities);
         String ownerName = randomSelected.getOwner().getName();
         int ownerId = randomSelected.getOwner().getId();
 
@@ -504,7 +510,7 @@ public class LobbyActions {
         if ((name == null) || (name.trim().length() == 0)) {
             return;
         }
-        client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.randomElement(entities).getOwner()), entities);
+        client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()), entities);
     }
     
     /**
@@ -721,7 +727,7 @@ public class LobbyActions {
             LobbyErrors.showSingleUnit(frame(), "swap pilots");
             return;
         }
-        Entity selected = CollectionUtil.randomElement(entities);
+        Entity selected = CollectionUtil.anyOneElement(entities);
         if (!validateUpdate(Arrays.asList(target, selected))) {
             return;
         }
@@ -957,7 +963,7 @@ public class LobbyActions {
             LobbyErrors.showSingleUnit(frame(), "offload from bays");
             return;
         }
-        Entity carrier = CollectionUtil.randomElement(entities);
+        Entity carrier = CollectionUtil.anyOneElement(entities);
         if (!validateUpdate(Arrays.asList(carrier))) {
             return;
         }

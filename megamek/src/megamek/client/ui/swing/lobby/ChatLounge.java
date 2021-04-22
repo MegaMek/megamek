@@ -1,18 +1,22 @@
 /*
- * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.lobby;
 
@@ -2440,24 +2444,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             StringTokenizer st = new StringTokenizer(e.getActionCommand(), "|");
             String command = st.nextToken();
             switch (command) {
-            case "CONFIG":
+            case PlayerTablePopup.PTP_CONFIG:
                 configPlayer();
                 break;
 
-            case "TEAM":
+            case PlayerTablePopup.PTP_TEAM:
                 int newTeam = Integer.parseInt(st.nextToken());
                 lobbyActions.changeTeam(getselectedPlayers(), newTeam);
                 break;
 
-            case "BOTREMOVE":
+            case PlayerTablePopup.PTP_BOTREMOVE:
                 removeBot();
                 break;
 
-            case "BOTSETTINGS":
+            case PlayerTablePopup.PTP_BOTSETTINGS:
                 doBotSettings();
                 break;
                 
-            case "DEPLOY":
+            case PlayerTablePopup.PTP_DEPLOY:
                 int startPos = Integer.parseInt(st.nextToken());
                 if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
                         && (startPos >= 1) && (startPos <= 9)) {
@@ -2525,15 +2529,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 e.consume();
                 importClipboard(); 
                 
-            } else if (code == KeyEvent.VK_P) {
-                e.consume();
-                System.out.println(game().getEntitiesVector().size() + " Units");
-                game().getEntitiesVector().stream().forEach(System.out::println);
-                
-            } else if (code == KeyEvent.VK_F) {
-                e.consume();
-                System.out.println("Forces: ---");
-                System.out.println(game().getForces());
             }
         }
     };
@@ -2686,15 +2681,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 e.consume();
                 importClipboard();
                 
-            } else if (code == KeyEvent.VK_P) {
-                e.consume();
-                System.out.println(game().getEntitiesVector().size() + " Units");
-                game().getEntitiesVector().stream().forEach(System.out::println);
-                
-            } else if (code == KeyEvent.VK_F) {
-                e.consume();
-                System.out.println("Forces: ---");
-                System.out.println(game().getForces());
             }
         }
     };
@@ -2707,11 +2693,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String[] command = action.getActionCommand().split(":");
 
             switch (command[0]) {
-            case "BOARD":
+            case MapListPopup.MLP_BOARD:
                 changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
                 break;
 
-            case "SURPRISE":
+            case MapListPopup.MLP_SURPRISE:
                 changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
                 break;
             }
@@ -2943,56 +2929,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private boolean isLoadable(Entity carried, Entity carrier) {
         return !carrier.getOwner().isEnemyOf(carried.getOwner()) 
                 && (isEditable(carrier) || isEditable(carried));
-    }
-
-
-    public void load(Collection<Entity> selEntities, String info) {
-        StringTokenizer stLoad = new StringTokenizer(info, ":");
-        int loaderId = Integer.parseInt(stLoad.nextToken());
-        Entity loader = clientgui.getClient().getEntity(loaderId);
-        int bayNumber = Integer.parseInt(stLoad.nextToken());
-        // Remove those entities from the candidates that are already carried by that loader
-        Collection<Entity> entities = new HashSet<>(selEntities);
-        entities.removeIf(e -> e.getTransportId() == loaderId);
-        if (entities.isEmpty()) {
-            return;
-        }
-
-        // If a unit of the selected units is currently loaded onto another, 2nd unit of the selected
-        // units, do not continue. The player should unload units first. This would require
-        // a server update offloading that second unit AND embarking it. Currently not possible
-        // as a single server update and updates for one unit shouldn't be chained.
-        Set<Entity> carriers = entities.stream()
-                .filter(e -> e.getTransportId() != Entity.NONE)
-                .map(e -> game().getEntity(e.getTransportId())).collect(Collectors.toSet());
-        if (!Collections.disjoint(entities, carriers)) {
-            LobbyErrors.showNoDualLoad(clientgui.frame);
-            return;
-        }
-
-        boolean loadRear = false;
-        if (stLoad.hasMoreTokens()) {
-            loadRear = Boolean.parseBoolean(stLoad.nextToken());
-        }
-
-        StringBuilder errorMsg = new StringBuilder();
-        if (!LobbyUtility.validateLobbyLoad(entities, loader, bayNumber, loadRear, errorMsg)) {
-            JOptionPane.showMessageDialog(clientgui.frame, errorMsg.toString(), 
-                    Messages.getString("LoadingBay.error"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        for (Entity e : entities) {
-            if (e.getTransportId() != Entity.NONE) {
-                Set<Entity> updateCandidates = new HashSet<>();
-                disembark(e, updateCandidates);
-                if (!updateCandidates.isEmpty()) {
-                    Entity formerLoader = game().getEntity(e.getTransportId());
-                    getLocalClient(formerLoader).sendUpdateEntity(formerLoader);
-                }
-            }
-            loadOnto(e, loaderId, bayNumber);
-        }
     }
 
     @Override
@@ -3279,7 +3215,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Returns a list of the selected entities in the Mek table. 
      * The list may be empty but not null. 
      */
-    private ArrayList<Entity> getSelectedEntities() {
+    private List<Entity> getSelectedEntities() {
         ArrayList<Entity> result = new ArrayList<>();
         int[] rows = mekTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
@@ -3615,6 +3551,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     Client client() {
         return clientgui.getClient();
+    }
+    
+    boolean isForceView() {
+        return butForceView.isSelected();
     }
     
 }

@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import megamek.common.Entity;
 import megamek.common.QuirksHandler;
+import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
 public class LobbyMekPopupActions implements ActionListener {
@@ -44,7 +45,7 @@ public class LobbyMekPopupActions implements ActionListener {
         switch (command) {
             
             // Single entity commands
-        case "CONFIGURE":
+        case LMP_CONFIGURE:
             if (!entities.isEmpty()) {
                 Entity randomSelected = entities.stream().findAny().get();
                 singleEntityAction(command, randomSelected, info);
@@ -52,55 +53,59 @@ public class LobbyMekPopupActions implements ActionListener {
             break;
             
             // Multi entity commands
-        case "UNLOADALLFROMBAY":
-        case "C3CM":
-        case "C3LM":
-        case "C3JOIN":
-        case "C3CONNECT":
-        case "C3DISCONNECT":
-        case "C3FORMC3":
-        case "C3FORMNHC3":
-        case "SWAP":
-        case "DAMAGE":
-        case "BV":
-        case "VIEW":
-        case "INDI_CAMO":
-        case "CONFIGURE_ALL":
-        case "DELETE":
-        case "SKILLS":
-        case "NAME":
-        case "CALLSIGN":
-        case "RAPIDFIREMG_ON":
-        case "RAPIDFIREMG_OFF":
-        case "HOTLOAD_ON":
-        case "HOTLOAD_OFF":
-        case "SQUADRON":
-        case "SAVE_QUIRKS_ALL":
-        case "SAVE_QUIRKS_MODEL":
-        case "LOAD": 
-        case "UNLOAD":
-        case "UNLOADALL":
-        case "DEPLOY":
-        case "ASSIGN":
-        case "HEAT":
-        case "HIDDEN":
-        case "STAND":
+        case LMP_UNLOADALLFROMBAY:
+        case LMP_C3CM:
+        case LMP_C3LM:
+        case LMP_C3JOIN:
+        case LMP_C3CONNECT:
+        case LMP_C3DISCONNECT:
+        case LMP_C3FORMC3:
+        case LMP_C3FORMNHC3:
+        case LMP_SWAP:
+        case LMP_DAMAGE:
+        case LMP_BV:
+        case LMP_VIEW:
+        case LMP_INDI_CAMO:
+        case LMP_CONFIGURE_ALL:
+        case LMP_DELETE:
+        case LMP_SKILLS:
+        case LMP_NAME:
+        case LMP_CALLSIGN:
+        case LMP_RAPIDFIREMG_ON:
+        case LMP_RAPIDFIREMG_OFF:
+        case LMP_HOTLOAD_ON:
+        case LMP_HOTLOAD_OFF:
+        case LMP_SQUADRON:
+        case LMP_SAVE_QUIRKS_ALL:
+        case LMP_SAVE_QUIRKS_MODEL:
+        case LMP_LOAD: 
+        case LMP_UNLOAD:
+        case LMP_UNLOADALL:
+        case LMP_DEPLOY:
+        case LMP_ASSIGN:
+        case LMP_HEAT:
+        case LMP_HIDDEN:
+        case LMP_STAND:
             if (!entities.isEmpty()) {
                 multiEntityAction(command, entities, info);
             }
             break;
             
+        case LMP_MOVE_UP:
+        case LMP_MOVE_DOWN:
+            multiEntityAction(command, entities, info);
+            break;
+            
             // Force commands
-        case "FCREATESUB":
-        case "FADDTO":
-        case "FRENAME":
-        case "FCREATETOP":
-        case "FREMOVE":
-        case "FATTACH":
-        case "FPROMOTE":
-        case "FASSIGN":
-        case "FASSIGNONLY":
-        case "FCREATEFROM":
+        case LMP_FCREATESUB:
+        case LMP_FADDTO:
+        case LMP_FRENAME:
+        case LMP_FCREATETOP:
+        case LMP_FREMOVE:
+        case LMP_FPROMOTE:
+        case LMP_FASSIGN:
+        case LMP_FASSIGNONLY:
+        case LMP_FCREATEFROM:
             forceAction(command, entities, info);
             break;
         }
@@ -109,41 +114,34 @@ public class LobbyMekPopupActions implements ActionListener {
     /** Calls lobby actions for forces. */
     private void forceAction(String command, Set<Entity> entities, String info) {
         switch (command) {
-        case "FCREATESUB":
+        case LMP_FCREATESUB:
             int parentId = Integer.parseInt(info);
             lobby.lobbyActions.forceCreateSub(parentId);  
             break;
             
-        case "FADDTO":
+        case LMP_FADDTO:
             int forceId = Integer.parseInt(info);
             lobby.lobbyActions.forceAddEntity(entities, forceId);
             break;
             
-        case "FRENAME":
+        case LMP_FRENAME:
             forceId = Integer.parseInt(info);
             lobby.lobbyActions.forceRename(forceId);  
             break;
             
-        case "FCREATETOP":
+        case LMP_FCREATETOP:
             lobby.lobbyActions.forceCreateEmpty();
             break;
             
-        case "FCREATEFROM":
+        case LMP_FCREATEFROM:
             lobby.lobbyActions.forceCreateFrom(entities);
             break;
             
-        case "FREMOVE":
+        case LMP_FREMOVE:
             lobby.lobbyActions.forceRemoveEntity(entities);
             break;
             
-        case "FATTACH":
-            StringTokenizer st = new StringTokenizer(info, ":");
-            parentId = Integer.parseInt(st.nextToken());
-            forceId = Integer.parseInt(st.nextToken());
-            lobby.lobbyActions.forceAttach(forceId, parentId);
-            break;
-            
-        case "FPROMOTE":
+        case LMP_FPROMOTE:
             StringTokenizer fst = new StringTokenizer(info, ",");
             Set<Integer> forceIds = new HashSet<>();
             while (fst.hasMoreTokens()) {
@@ -152,13 +150,13 @@ public class LobbyMekPopupActions implements ActionListener {
             lobby.lobbyActions.forcePromote(forceIds);
             break;
             
-        case "FASSIGN":
-            st = new StringTokenizer(info, ":");
+        case LMP_FASSIGN:
+            StringTokenizer st = new StringTokenizer(info, ":");
             int newOwnerId = Integer.parseInt(st.nextToken());
             lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
             break;
             
-        case "FASSIGNONLY":
+        case LMP_FASSIGNONLY:
             st = new StringTokenizer(info, ":");
             newOwnerId = Integer.parseInt(st.nextToken());
             lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
@@ -169,147 +167,155 @@ public class LobbyMekPopupActions implements ActionListener {
     /** Calls lobby actions for multiple entities. */
     private void multiEntityAction(String command, Set<Entity> entities, String info) {
         switch (command) {
-        case "INDI_CAMO":
+        case LMP_INDI_CAMO:
             lobby.lobbyActions.individualCamo(entities);
             break;
             
-        case "CONFIGURE_ALL":
+        case LMP_CONFIGURE_ALL:
             lobby.lobbyActions.customizeMechs(entities);
             break;
             
-        case "DELETE":
+        case LMP_DELETE:
             lobby.lobbyActions.delete(LobbyUtility.getForces(lobby.game(), info), entities, true);
             break;
             
-        case "SKILLS":
+        case LMP_SKILLS:
             lobby.lobbyActions.setRandomSkills(entities);
             break;
             
-        case "NAME":
+        case LMP_NAME:
             lobby.lobbyActions.setRandomNames(entities);
             break;
             
-        case "CALLSIGN":
+        case LMP_CALLSIGN:
             lobby.lobbyActions.setRandomCallsigns(entities);
             break;
             
-        case "RAPIDFIREMG_ON":
-        case "RAPIDFIREMG_OFF":
-            lobby.lobbyActions.toggleBurstMg(entities, command.equals("RAPIDFIREMG_ON"));
+        case LMP_RAPIDFIREMG_ON:
+        case LMP_RAPIDFIREMG_OFF:
+            lobby.lobbyActions.toggleBurstMg(entities, command.equals(LMP_RAPIDFIREMG_ON));
             break;
 
-        case "HOTLOAD_ON":
-        case "HOTLOAD_OFF":
-            lobby.lobbyActions.toggleHotLoad(entities, command.equals("HOTLOAD_ON"));
+        case LMP_HOTLOAD_ON:
+        case LMP_HOTLOAD_OFF:
+            lobby.lobbyActions.toggleHotLoad(entities, command.equals(LMP_HOTLOAD_ON));
             break;
             
-        case "SQUADRON":
+        case LMP_SQUADRON:
             lobby.lobbyActions.createSquadron(entities);
             break;
             
-        case "SAVE_QUIRKS_ALL":
+        case LMP_SAVE_QUIRKS_ALL:
             for (Entity e : entities) {
                 QuirksHandler.addCustomQuirk(e, false);
             }
             break;
             
-        case "SAVE_QUIRKS_MODEL":
+        case LMP_SAVE_QUIRKS_MODEL:
             for (Entity e : entities) {
                 QuirksHandler.addCustomQuirk(e, true);
             }
             break;
             
-        case "LOAD":
+        case LMP_LOAD:
             lobby.lobbyActions.load(entities, info);
             break;
 
-        case "UNLOAD":
+        case LMP_UNLOAD:
             Set<Entity> updateCandidates = new HashSet<>();
             lobby.disembarkAll(entities);
             break;
             
-        case "UNLOADALL":
+        case LMP_UNLOADALL:
             updateCandidates = new HashSet<>();
             lobby.offloadAll(entities, updateCandidates);
             lobby.sendUpdate(updateCandidates);
             break;
             
-        case "ASSIGN":
+        case LMP_ASSIGN:
             StringTokenizer st = new StringTokenizer(info, ":");
             int newOwnerId = Integer.parseInt(st.nextToken());
             lobby.lobbyActions.changeOwner(entities, LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
             break;
             
-        case "DEPLOY":
+        case LMP_DEPLOY:
             int round = Integer.parseInt(info);
             lobby.lobbyActions.applyDeployment(entities, round);
             break;
             
-        case "HEAT":
+        case LMP_HEAT:
             int heat = Integer.parseInt(info);
             lobby.lobbyActions.applyHeat(entities, heat);
             break;
             
-        case "HIDDEN":
-            lobby.lobbyActions.applyHidden(entities, info.equals("HIDE"));
+        case LMP_HIDDEN:
+            lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
             break;
             
-        case "STAND":
+        case LMP_STAND:
             lobby.lobbyActions.applyProne(entities, info);
             break;
             
-        case "VIEW":
+        case LMP_VIEW:
             lobby.mechReadoutAction(entities);
             break;
             
-        case "BV":
+        case LMP_BV:
             lobby.mechBVAction(entities);
             break;
             
-        case "DAMAGE":
+        case LMP_DAMAGE:
             lobby.lobbyActions.configureDamage(entities);
             break;
             
-        case "SWAP":
+        case LMP_SWAP:
             int id = Integer.parseInt(info);
             lobby.lobbyActions.swapPilots(entities, id);
             break;
             
-        case "C3DISCONNECT":
+        case LMP_C3DISCONNECT:
             lobby.lobbyActions.c3DisconnectFromNetwork(entities);
             break;
             
-        case "C3CM":
+        case LMP_C3CM:
             lobby.lobbyActions.c3SetCompanyMaster(entities);
             break;
             
-        case "C3LM":
+        case LMP_C3LM:
             lobby.lobbyActions.c3SetLanceMaster(entities);
             break;
             
-        case "C3JOIN":
+        case LMP_C3JOIN:
             int master = Integer.parseInt(info);
             lobby.lobbyActions.c3JoinNh(entities, master, false);
             break;
             
-        case "C3CONNECT":
+        case LMP_C3CONNECT:
             master = Integer.parseInt(info);
             lobby.lobbyActions.c3Connect(entities, master, false);
             break;
             
-        case "C3FORMC3":
+        case LMP_C3FORMC3:
             master = Integer.parseInt(info);
             lobby.lobbyActions.c3Connect(entities, master, true);
             break;
 
-        case "C3FORMNHC3":
+        case LMP_C3FORMNHC3:
             master = Integer.parseInt(info);
             lobby.lobbyActions.c3JoinNh(entities, master, true);
             break;
 
-        case "UNLOADALLFROMBAY":
+        case LMP_UNLOADALLFROMBAY:
             int bay = Integer.parseInt(info);
             lobby.lobbyActions.unloadFromBay(entities, bay);
+            break;
+            
+        case LMP_MOVE_DOWN:
+            lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, false);
+            break;
+                
+        case LMP_MOVE_UP:
+            lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, true);
             break;
         }
     }
@@ -317,7 +323,7 @@ public class LobbyMekPopupActions implements ActionListener {
     /** Calls lobby actions for a single entity. */
     private void singleEntityAction(String command, Entity entity, String info) {
         switch (command) {
-        case "CONFIGURE":
+        case LMP_CONFIGURE:
             lobby.lobbyActions.customizeMech(entity);
             break;
             

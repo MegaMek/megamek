@@ -776,7 +776,7 @@ public final class UnitToolTip {
         return result;
     }
     
-    /** Returns a list of units loaded onto this unit. */
+    /** Returns the full force chain the entity is in as one text line. */
     private static StringBuilder forceEntry(Entity entity, IPlayer localPlayer) {
         StringBuilder result = new StringBuilder();
         
@@ -795,8 +795,8 @@ public final class UnitToolTip {
                 result.append(forceChain.get(i).getName());
                 result.append(i != 0 ? ", " : "");
             }
+            result.append("</FONT>");
         }
-        result.append("</FONT>");
         return result;
     }
     

@@ -11,6 +11,7 @@ VERSION HISTORY:
 + Data: New maps, unit fixes including fix for #2707
 + Issue #2597: Add thread safety to duplicate name hash
 + Issue #2722: Do not send IP addresses in chat by default
++ PR #2691: Base Components: Creating Base Components based on the previous MekHQ Preference setup 
 + PR #2724: "File>Unit List>Refresh Unit Cache" loads any changes in the unit files without having to restart
 + PR #2730: Tooltips for target number calculations on the round report
 + Issue #146: Disengage/Remove Unit Button for Offboard Artillery
@@ -30,6 +31,13 @@ VERSION HISTORY:
 + Issue #2758, 2759: Infantry no longer able to leap up to flying VTOLs for swarm attacks; 
    target movement modifier now applies to legal leg/swarm attacks.
 + Issue #2767: Incorrect Citation for "(Unofficial) Specify the number of pre-designated artillery autohit hexes per map area
++ Issue #547: Implement air-launched Arrow IV (homing and non-homing)
++ PR #2773: Launch Fighters (bot version)
++ Issue #1219: Adding Defensive Code for RATGenerator Era
++ Issues #1785/#2138: Fixing and Improving Round Report Player Stats
++ Issues #2787: Protomech AC gun and ammo are different tech levels
++ PR #2786: Units set for a delayed assault drop no longer disappear on the first turn of the game.
++ Issue #2438: Adding More Detail to Fire Damage Reporting
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

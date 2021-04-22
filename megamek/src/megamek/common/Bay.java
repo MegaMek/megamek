@@ -673,5 +673,12 @@ public class Bay implements Transporter, ITechnology {
     public long getCost() {
         return 0;
     }
+    
+    /**
+     * @return Safe launch rate for this particular bay: # of intact doors x 2
+     */
+    public int getSafeLaunchRate() {
+        return getCurrentDoors() * 2;
+    }
 
  } // End package class TroopSpace implements Transporter

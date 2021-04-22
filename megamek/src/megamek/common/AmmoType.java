@@ -4032,7 +4032,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
 
@@ -4057,7 +4057,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
 
@@ -4082,7 +4082,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
     

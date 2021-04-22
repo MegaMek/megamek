@@ -62,6 +62,7 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -1735,18 +1736,19 @@ public class Server implements Runnable {
         Enumeration<IPlayer> players = game.getPlayers();
         while (players.hasMoreElements()) {
             IPlayer player = players.nextElement();
-            // Players who started the game as observers get ignored
-            if (player.getInitialBV() == 0) {
+            // Observers without initial entities get ignored
+            if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
                 continue;
             }
-            r = new Report();
-            r.type = Report.PUBLIC;
-            r.messageId = 7016;
+            r = new Report(7016, Report.PUBLIC);
             r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
-            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000.0) / 100.0));
             r.add(player.getInitialBV());
+            r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
             r.add(player.getFledBV());
+            r.add(player.getEntityCount());
+            r.add(player.getInitialEntityCount());
+            r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
             addReport(r);
         }
 
@@ -2388,30 +2390,32 @@ public class Server implements Runnable {
                 transmitAllPlayerUpdates();
                 entityAllUpdate();
                 break;
-            case PHASE_INITIATIVE_REPORT:
+            case PHASE_INITIATIVE_REPORT: {
                 autoSave();
                 // Show player BVs
                 Enumeration<IPlayer> players2 = game.getPlayers();
                 while (players2.hasMoreElements()) {
                     IPlayer player = players2.nextElement();
-                    // Players who started the game as observers get ignored
-                    if (player.getInitialBV() == 0) {
+                    // Observers without initial entities get ignored
+                    if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
                         continue;
                     }
-                    Report r = new Report();
-                    r.type = Report.PUBLIC;
+                    Report r = new Report(7016, Report.PUBLIC);
                     if (doBlind() && suppressBlindBV()) {
                         r.type = Report.PLAYER;
                         r.player = player.getId();
                     }
-                    r.messageId = 7016;
                     r.add(Server.getColorForPlayer(player));
                     r.add(player.getBV());
-                    r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000.0) / 100.0));
                     r.add(player.getInitialBV());
+                    r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
                     r.add(player.getFledBV());
+                    r.add(player.getEntityCount());
+                    r.add(player.getInitialEntityCount());
+                    r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
                     addReport(r);
                 }
+            }
             case PHASE_TARGETING_REPORT:
             case PHASE_MOVEMENT_REPORT:
             case PHASE_OFFBOARD_REPORT:
@@ -2568,11 +2572,11 @@ public class Server implements Runnable {
         switch (phase) {
             case PHASE_EXCHANGE:
                 resetPlayersDone();
-                calculatePlayerBVs();
                 // Update initial BVs, as things may have been modified in lounge
                 for (Entity e : game.getEntitiesVector()) {
                     e.setInitialBV(e.calculateBattleValue(false, false));
                 }
+                calculatePlayerInitialCounts();
                 // Build teams vector
                 game.setupTeams();
                 applyBoardSettings();
@@ -2606,11 +2610,14 @@ public class Server implements Runnable {
     }
 
     /**
-     * Calculates all players initial BV, should only be called at start of game
+     * Calculates the initial count and BV for all players, and thus should only be called at the
+     * start of a game
      */
-    public void calculatePlayerBVs() {
-        for (Enumeration<IPlayer> players = game.getPlayers(); players.hasMoreElements(); ) {
-            players.nextElement().setInitialBV();
+    public void calculatePlayerInitialCounts() {
+        for (final Enumeration<IPlayer> players = game.getPlayers(); players.hasMoreElements(); ) {
+            final IPlayer player = players.nextElement();
+            player.setInitialEntityCount(player.getEntityCount());
+            player.setInitialBV(player.getBV());
         }
     }
 
@@ -8070,7 +8077,7 @@ public class Server implements Runnable {
                         Terrains.FIRE) && !lastPos.equals(curPos)
                         && (stepMoveType != EntityMovementType.MOVE_JUMP)
                         && (step.getElevation() <= 1) && !underwater) {
-                    doFlamingDamage(entity);
+                    doFlamingDamage(entity, curPos);
                 }
             }
             // check for extreme gravity movement
@@ -19165,7 +19172,7 @@ public class Server implements Runnable {
                 entity.coolFromExternal = 0;
 
                 if (entity.infernos.isStillBurning()) {
-                    doFlamingDamage(entity);
+                    doFlamingDamage(entity, entity.getPosition());
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
                     entity.setBATaserShutdown(false);
@@ -20032,18 +20039,17 @@ public class Server implements Runnable {
      * Flaming Damage rather than flaming death
      *
      * @param entity The <code>Entity</code> that may experience flaming damage.
+     * @param coordinates the coordinate location of the fire
      */
-    private void doFlamingDamage(Entity entity) {
+    private void doFlamingDamage(final Entity entity, final Coords coordinates) {
         Report r;
         int boomRoll = Compute.d6(2);
 
-        if ((entity.getMovementMode() == EntityMovementMode.VTOL)
-                && !entity.infernos.isStillBurning()) {
+        if ((entity.getMovementMode() == EntityMovementMode.VTOL) && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than
             // the burning terrain. TODO : Check for rules conformity (ATPM?)
             // according to maxtech, elevation 0 or 1 should be affected,
             // this makes sense for level 2 as well
-
             if (entity.getElevation() > 1) {
                 return;
             }
@@ -20051,8 +20057,7 @@ public class Server implements Runnable {
         // Battle Armor squads equipped with fire protection
         // gear automatically avoid flaming damage
         // TODO : can conventional infantry mount fire-resistant armor?
-        if ((entity instanceof BattleArmor)
-            && ((BattleArmor) entity).isFireResistant()) {
+        if ((entity instanceof BattleArmor) && ((BattleArmor) entity).isFireResistant()) {
             r = new Report(5095);
             r.subject = entity.getId();
             r.indent(1);
@@ -20076,6 +20081,7 @@ public class Server implements Runnable {
         r.subject = entity.getId();
         r.newlines = 0;
         r.addDesc(entity);
+        r.add(coordinates.getBoardNum());
         r.add(boomRoll);
         if (boomRoll >= 8) {
             // phew!
@@ -20100,8 +20106,7 @@ public class Server implements Runnable {
             // (hurray!)
             } else if (entity instanceof Tank) {
                 int bonus = -2;
-                if ((entity instanceof SupportTank)
-                    || (entity instanceof SupportVTOL)) {
+                if ((entity instanceof SupportTank) || (entity instanceof SupportVTOL)) {
                     bonus = 0;
                 }
                 // roll a critical hit
@@ -20409,7 +20414,7 @@ public class Server implements Runnable {
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
                     && ((entity.getElevation() <= 1)
                             || (entity.getElevation() <= numFloors))) {
-                doFlamingDamage(entity);
+                doFlamingDamage(entity, entity.getPosition());
             }
         }
     }
@@ -21007,15 +21012,28 @@ public class Server implements Runnable {
                 continue;
             }
             if ((entity.getTraitorId() != -1) && (entity.getOwnerId() != entity.getTraitorId())) {
-                IPlayer p = game.getPlayer(entity.getTraitorId());
-                if (null != p) {
+                final IPlayer oldPlayer = game.getPlayer(entity.getOwnerId());
+                final IPlayer newPlayer = game.getPlayer(entity.getTraitorId());
+                if (newPlayer != null) {
                     Report r = new Report(7305);
                     r.subject = entity.getId();
                     r.add(entity.getDisplayName());
-                    r.add(p.getName());
-                    entity.setOwner(p);
+                    r.add(newPlayer.getName());
+                    entity.setOwner(newPlayer);
                     entityUpdate(entity.getId());
                     vFullReport.add(r);
+
+                    // Move the initial count and BV to their new player
+                    newPlayer.changeInitialEntityCount(1);
+                    newPlayer.changeInitialBV(entity.calculateBattleValue());
+
+                    // And remove it from their old player, if they exist
+                    if (oldPlayer != null) {
+                        oldPlayer.changeInitialEntityCount(-1);
+                        // Note: I don't remove the full initial BV if I'm damaged, but that
+                        // actually makes sense
+                        oldPlayer.changeInitialBV(-1 * entity.calculateBattleValue());
+                    }
                 }
                 entity.setTraitorId(-1);
             }
@@ -29873,7 +29891,8 @@ public class Server implements Runnable {
             entityIds.add(entity.getId());
 
             if (game.getPhase() != Phase.PHASE_LOUNGE) {
-                entity.getOwner().increaseInitialBV(entity.calculateBattleValue(false, false));
+                entity.getOwner().changeInitialEntityCount(1);
+                entity.getOwner().changeInitialBV(entity.calculateBattleValue());
             }
             
             // Restore forces from MULs or other external sources from the forceString, if any
@@ -34973,7 +34992,7 @@ public class Server implements Runnable {
      */
     void doAllAssaultDrops() {
         for (Entity e : game.getEntitiesVector()) {
-            if (e.isAssaultDropInProgress()) {
+            if (e.isAssaultDropInProgress() && e.isDeployed()) {
                 doAssaultDrop(e);
                 e.setLandedAssaultDrop();
             }

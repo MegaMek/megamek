@@ -848,7 +848,7 @@ public class ForceDescriptor {
     
     /** Generates a force string for exporting these units to MUL / adding to the game. */
     private String getForceString() {
-        ArrayList<ForceDescriptor> ancestors = new ArrayList<>();
+        var ancestors = new ArrayList<ForceDescriptor>();
         ForceDescriptor p = parent;
         while (p != null) {
             ancestors.add(p);

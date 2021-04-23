@@ -35,11 +35,7 @@ public class NameSorter implements MekTableSorter {
     public int compare(final Entity a, final Entity b) {
         String aVal = a.getDisplayName();
         String bVal = b.getDisplayName();
-        if (direction == Sorting.ASCENDING) {
-            return aVal.compareTo(bVal);
-        } else {
-            return bVal.compareTo(aVal);
-        }
+        return (direction == Sorting.ASCENDING) ? aVal.compareTo(bVal) : bVal.compareTo(aVal);
     }
     
     @Override

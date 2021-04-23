@@ -40,8 +40,8 @@ public interface MekTableSorter extends Comparator<Entity> {
     int getColumnIndex();
     
     /**
-     * Returns true if this Sorter is currently allowed. Sorters might not be allowed e.g.
-     * when they would give away info in blind drops.
+     * Returns true if this Sorter is currently allowed. Sorters might not be allowed
+     * e.g. when they would give away info in blind drops.
      */
     default boolean isAllowed(GameOptions opts) {
         return true;
@@ -54,20 +54,12 @@ public interface MekTableSorter extends Comparator<Entity> {
     
     /** Returns 1 if dir is ASCENDING, -1 otherwise. */
     default int bigger(Sorting dir) {
-        if (dir == Sorting.ASCENDING) {
-            return 1;
-        } else {
-            return -1;
-        }
+        return dir == Sorting.ASCENDING ? 1 : -1;
     }
     
     /** Returns -1 if dir is ASCENDING, 1 otherwise. */
     default int smaller(Sorting dir) {
-        if (dir == Sorting.ASCENDING) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return dir == Sorting.ASCENDING ? -1 : 1;
     }
     
 }

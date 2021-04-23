@@ -85,6 +85,7 @@ public class PlayerTransportIDSorter implements MekTableSorter {
                 }
                 b_id = tr_b;
             }
+            
             if (tr_a != Entity.NONE) {
                 if (tr_a == b_id) {
                     // a is loaded on b

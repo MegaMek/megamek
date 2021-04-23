@@ -23,6 +23,7 @@ import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 
+/** A Lobby Mek Table sorter that sorts by C3 network association (and by ID after that). */
 public class C3IDSorter implements MekTableSorter {
     
     private ClientGUI clientGui;

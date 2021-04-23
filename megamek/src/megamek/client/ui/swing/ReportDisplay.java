@@ -230,7 +230,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         Font font = UIManager.getFont("Label.font");
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily() + "; font-size: "+size+"pt; font-style:normal;}");
+                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
     }
     
     public void appendReportTab(String additionalText) {

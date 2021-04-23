@@ -1510,8 +1510,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             return owner;
         }
-        // FORMERLY:
-        // return owner;
     }
 
     public void setOwner(IPlayer player) {
@@ -1531,10 +1529,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
-        if(null == other) {
+        if (null == other) {
             return false;
         }
-        if(null == getOwner()) {
+        if (null == getOwner()) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
         return (id != other.getId())

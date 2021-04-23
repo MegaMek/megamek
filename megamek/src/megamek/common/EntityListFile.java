@@ -1106,12 +1106,12 @@ public class EntityListFile {
 
             // Write the force hierarchy
             if (entity.getForceString().length() > 0) {
-                output.write(indentStr(indentLvl+1) + "<Force force=\"");
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
                 output.write(entity.getForceString());
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
             } else if ((entity.getGame() != null) && (entity.getForceId() != Force.NO_FORCE)) {
-                output.write(indentStr(indentLvl+1) + "<Force force=\"");
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
                 output.write(entity.getGame().getForces().forceStringFor(entity));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);

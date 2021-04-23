@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import javax.imageio.ImageIO;
@@ -898,8 +899,7 @@ public class Client implements IClientCommandHandler {
         
     /** Sends a packet to the Server requesting to delete the given forces. */
     public void sendDeleteForces(List<Force> toDelete) {
-        List<Integer> forceIds = new ArrayList<>();
-        toDelete.stream().mapToInt(f -> f.getId()).forEach(forceIds::add);
+        List<Integer> forceIds = toDelete.stream().mapToInt(Force::getId).boxed().collect(Collectors.toList());
         send(new Packet(Packet.COMMAND_FORCE_DELETE, forceIds));
     }
     

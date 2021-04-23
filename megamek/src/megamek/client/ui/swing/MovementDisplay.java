@@ -2117,10 +2117,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void updateSearchlightButton() {
         final Entity ce = ce();
         if (ce != null) {
-        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
-        setSearchlightEnabled(
-                isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
-                ce.isUsingSearchlight());
+            boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
+            setSearchlightEnabled(
+                    isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
+                    ce.isUsingSearchlight());
         }
     }
 

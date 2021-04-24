@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.2
 Centurion
 CN10-D
 
@@ -89,9 +89,9 @@ IS LB 10-X AC Ammo
 IS LB 10-X Cluster Ammo
 IS Ammo LRM-10 Artemis-capable
 IS Ammo LRM-10 Artemis-capable
+ISCASEII
 IS Endo Steel
 IS Endo Steel
--Empty-
 
 Center Torso:
 Fusion Engine

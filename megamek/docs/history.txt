@@ -38,7 +38,7 @@ VERSION HISTORY:
 + Issues #2787: Protomech AC gun and ammo are different tech levels
 + PR #2786: Units set for a delayed assault drop no longer disappear on the first turn of the game.
 + Issue #2438: Adding More Detail to Fire Damage Reporting
-+ Data: New Sprites, IrTech addition, numerous other data fixes.
++ Data: New Sprites, IrTech addition, numerous other data fixes. Fixes for #2696
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

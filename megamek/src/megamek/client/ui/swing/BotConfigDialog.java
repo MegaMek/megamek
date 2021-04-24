@@ -16,8 +16,6 @@ package megamek.client.ui.swing;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,7 +31,6 @@ import javax.swing.border.TitledBorder;
 
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
@@ -46,7 +43,7 @@ import megamek.common.logging.LogLevel;
 /**
  * BotConfigDialog is a dialog box that configures bot properties
  */
-public class BotConfigDialog extends JDialog implements ActionListener, KeyListener {
+public class BotConfigDialog extends JDialog implements ActionListener {
 
     private static final String PRINCESS_PANEL = "princess_config";
     private static final String TESTBOT_PANEL = "testbot_config";
@@ -54,9 +51,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private static final String BUILDING_TARGET = Messages.getString("BotConfigDialog.targetBuilding");
     private static final long serialVersionUID = -544663266637225925L;
 
-    private JRadioButton testBotRadiobutton;
-    private JRadioButton princessRadiobutton;
-    private ButtonGroup selectBotGroup = new ButtonGroup();
     private JList<String> playersToReplace;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
@@ -83,7 +77,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JComboBox<String> princessBehaviorNames;
 
     protected JTextField nameField;
-    private boolean customName = false; // did user not use default name?
     public boolean dialogAborted = true; // did user not click Ok button?
 
     // Are we replacing an existing player?
@@ -98,12 +91,13 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         this(parent, new HashSet<>());
     }
     
-    public BotConfigDialog(JFrame parent, BotClient existingBot) {
+    public BotConfigDialog(JFrame parent, BotClient existingBot, boolean allowNameEdit) {
         this(parent, new HashSet<>());
         
         if (existingBot instanceof Princess) {
             this.princessBehavior = ((Princess) existingBot).getBehaviorSettings();
             nameField.setText(existingBot.getName());
+            nameField.setEnabled(allowNameEdit);
             setPrincessFields();
         }
     }
@@ -117,7 +111,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         this.replacePlayer = !this.ghostPlayers.isEmpty();
 
         setLayout(new BorderLayout());
-        add(switchBotPanel(), BorderLayout.NORTH);
         botSpecificCardsPanel = new JPanel(new CardLayout());
         botSpecificCardsPanel.add(new JPanel(), TESTBOT_PANEL);
         JScrollPane princessScroll = new JScrollPane(princessPanel());
@@ -137,22 +130,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         pack();
         setSize(new Dimension(600, 600));
         setLocationRelativeTo(parent);
-    }
-
-    private JPanel switchBotPanel() {
-        JPanel panel = new JPanel(new FlowLayout());
-        testBotRadiobutton = new JRadioButton(Messages.getString("BotConfigDialog.testBotRadioButton"));
-        testBotRadiobutton.addActionListener(this);
-        selectBotGroup.add(testBotRadiobutton);
-        panel.add(testBotRadiobutton);
-
-        princessRadiobutton = new JRadioButton(Messages.getString("BotConfigDialog.princessRadioButton"));
-        princessRadiobutton.addActionListener(this);
-        selectBotGroup.add(princessRadiobutton);
-        princessRadiobutton.setSelected(true);
-        panel.add(princessRadiobutton);
-
-        return panel;
     }
 
     private JPanel selectPlayerToReplacePanel() {
@@ -258,7 +235,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             nameField.setText("Princess");
             nameField.setColumns(12);
             nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
-            nameField.addKeyListener(this);
             namepanel.add(nameField);
             panel.add(namepanel);
         }
@@ -533,20 +509,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     }
 
     public void actionPerformed(ActionEvent e) {
-        CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
-        if (testBotRadiobutton.equals(e.getSource())) {
-            if (!customName && !replacePlayer) {
-                nameField.setText("TestBot");
-            }
-            cardlayout.show(botSpecificCardsPanel, TESTBOT_PANEL);
-
-        } else if (princessRadiobutton.equals(e.getSource())) {
-            if (!customName) {
-                nameField.setText("Princess");
-            }
-            cardlayout.show(botSpecificCardsPanel, PRINCESS_PANEL);
-
-        } else if (butOK.equals(e.getSource())) {
+        if (butOK.equals(e.getSource())) {
             dialogAborted = false;
             savePrincessProperties();
             setVisible(false);
@@ -622,16 +585,6 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         }
     }
 
-    public void keyTyped(KeyEvent e) {
-        customName = true;
-    }
-
-    public void keyReleased(KeyEvent e) {
-    }
-
-    public void keyPressed(KeyEvent e) {
-    }
-
     /**
      * gets the selected, configured bot from the dialog
      *
@@ -640,17 +593,11 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
      * @return A new bot-controlled client.
      */
     BotClient getSelectedBot(String host, int port) {
-        if (testBotRadiobutton.isSelected()) {
-            return new TestBot(getBotName(), host, port);
-
-        } else if (princessRadiobutton.isSelected()) {
-            Princess toReturn = new Princess(getBotName(), host, port,
+        Princess toReturn = new Princess(getBotName(), host, port,
                                              LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
-            toReturn.setBehaviorSettings(princessBehavior);
-            toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
-            return toReturn;
-        }
-        return null; // shouldn't happen
+        toReturn.setBehaviorSettings(princessBehavior);
+        toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
+        return toReturn;
     }
 
     public String getBotName() {

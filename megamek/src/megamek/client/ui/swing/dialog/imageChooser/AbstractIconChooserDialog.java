@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -90,6 +92,13 @@ public abstract class AbstractIconChooserDialog extends JDialog {
             @Override
             public void windowClosing(WindowEvent e) {
                 cancel();
+            }
+        });
+        chooser.imageList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    select();
+                }
             }
         });
     }

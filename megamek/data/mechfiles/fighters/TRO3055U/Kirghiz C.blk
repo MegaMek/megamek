@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -37,6 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:10.0
 </transporters>
 
 <SafeThrust>
@@ -92,16 +93,6 @@ CLERPPC:OMNI
 <Aft Equipment>
 CLERLargeLaser:OMNI
 CLERLargeLaser:OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
 </Aft Equipment>
 
 <Wings Equipment>
@@ -120,3 +111,4 @@ TRO 3055u - Succession Wars
 <tonnage>
 100.0
 </tonnage>
+

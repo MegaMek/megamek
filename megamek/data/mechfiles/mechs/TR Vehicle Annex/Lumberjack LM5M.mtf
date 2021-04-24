@@ -3,32 +3,32 @@ Lumberjack
 LM5/M
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3070
-Source:RS 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3076
+source:RS 3075
+rules level:2
 
-Mass:70
-Engine:210 Fusion Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
+mass:70
+engine:210 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Heat Sinks:11 Single
-Walk MP:3
-Jump MP:3
+heat sinks:11 Single
+walk mp:3
+jump mp:3
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:23
-RT Armor:23
-CT Armor:30
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Heavy Industrial(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:23
+RT armor:23
+CT armor:30
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:5
 Medium Laser, Left Arm

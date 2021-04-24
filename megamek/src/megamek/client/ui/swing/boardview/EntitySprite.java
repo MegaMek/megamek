@@ -609,7 +609,30 @@ class EntitySprite extends Sprite {
                             && !((Infantry) entity).isTakingCover())
                     && !(isAero && ((IAero) entity).isSpheroid() && !board
                             .inSpace())) {
-                graph.draw(bv.facingPolys[entity.getFacing()]);
+                // Indicate a stacked unit with the same facing that can still move
+                if (shouldIndicateNotDone() && bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
+                    var tr = graph.getTransform();
+                    // rotate the arrow slightly
+                    graph.scale(1/bv.scale, 1/bv.scale);
+                    graph.rotate(Math.PI / 30, bv.hex_size.width/2, bv.hex_size.height/2);
+                    graph.scale(bv.scale, bv.scale);
+                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.LIGHT_GRAY);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                    graph.setTransform(tr);
+                }
+                if (!entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
+                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.WHITE);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                } else {
+                    graph.setColor(Color.GRAY);
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.LIGHT_GRAY);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                }
             }
 
             // determine secondary facing for non-mechs & flipped arms
@@ -622,12 +645,12 @@ class EntitySprite extends Sprite {
             }
             // draw red secondary facing arrow if necessary
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
-                graph.setColor(Color.red);
+                graph.setColor(Color.GREEN);
                 graph.draw(bv.facingPolys[secFacing]);
             }
             if (entity.isAero() && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
-                    graph.setColor(Color.red);
+                    graph.setColor(Color.GREEN);
                     graph.draw(bv.facingPolys[head]);
                 }
             }
@@ -662,6 +685,21 @@ class EntitySprite extends Sprite {
         }
 
         graph.dispose();
+    }
+
+    /** 
+     * Returns true when an indicator should be shown that some of the stacked
+     * units in the hex of this entity's may still move even while the topmost
+     * shown unit may already have moved. 
+     */
+    private boolean shouldIndicateNotDone() {
+        for (var other: bv.game.getEntitiesVector(entity.getPosition())) {
+            if ((other.getId() != entity.getId()) && (other.getFacing() == entity.getFacing()) 
+                    && !other.isDone()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Color getDamageColor() {
@@ -712,10 +750,6 @@ class EntitySprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return entityRect.contains(point.x, point.y);
-    }
-    
-    public Coords getPosition() {
-        return entity.getPosition();
     }
     
     private StringBuffer tooltipString;

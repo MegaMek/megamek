@@ -3278,7 +3278,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 int row = Integer.parseInt(st.nextToken());
                 IPlayer player = playerModel.getPlayerAt(row);
                 BotClient bot = (BotClient) clientgui.getBots().get(player.getName());
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot);
+                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot, false);
                 bcd.setVisible(true);
 
                 if (bcd.dialogAborted) {

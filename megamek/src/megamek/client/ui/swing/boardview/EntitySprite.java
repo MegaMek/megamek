@@ -610,10 +610,10 @@ class EntitySprite extends Sprite {
                     && !(isAero && ((IAero) entity).isSpheroid() && !board
                             .inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
-                if (shouldIndicateNotDone() && bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
+                if (shouldIndicateNotDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
-                    graph.scale(1/bv.scale, 1/bv.scale);
+                    graph.scale(1 / bv.scale, 1 / bv.scale);
                     graph.rotate(Math.PI / 30, bv.hex_size.width/2, bv.hex_size.height/2);
                     graph.scale(bv.scale, bv.scale);
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
@@ -621,8 +621,10 @@ class EntitySprite extends Sprite {
                     graph.setColor(Color.LIGHT_GRAY);
                     graph.draw(bv.facingPolys[entity.getFacing()]);
                     graph.setTransform(tr);
+                    System.out.println("Huhu: " + entity);
                 }
-                if (!entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
+                
+                if (!entity.isDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.WHITE);
@@ -643,7 +645,7 @@ class EntitySprite extends Sprite {
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;
             }
-            // draw red secondary facing arrow if necessary
+            // draw secondary facing arrow if necessary
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.GREEN);
                 graph.draw(bv.facingPolys[secFacing]);
@@ -693,13 +695,11 @@ class EntitySprite extends Sprite {
      * shown unit may already have moved. 
      */
     private boolean shouldIndicateNotDone() {
-        for (var other: bv.game.getEntitiesVector(entity.getPosition())) {
-            if ((other.getId() != entity.getId()) && (other.getFacing() == entity.getFacing()) 
-                    && !other.isDone()) {
-                return true;
-            }
-        }
-        return false;
+        return (bv.game.getEntitiesVector(entity.getPosition()).indexOf(entity) == 1)
+                && bv.game.getEntitiesVector(entity.getPosition()).stream()
+                .filter(e -> e.getId() != entity.getId())
+                .filter(e -> e.getFacing() == entity.getFacing())
+                .anyMatch(e -> !e.isDone());
     }
 
     private Color getDamageColor() {

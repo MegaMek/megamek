@@ -45,12 +45,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLATM3
-CLATM3
-CLATM3
-CLATM3
-CLATM3
-CLATM3
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
@@ -59,8 +59,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser (OMNIPOD)
+CLERMicroLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -73,9 +73,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-Clan Ammo ATM-3
-Clan Ammo ATM-3 ER
-Clan Ammo ATM-3 HE
+Clan Ammo ATM-3 (OMNIPOD)
+Clan Ammo ATM-3 ER (OMNIPOD)
+Clan Ammo ATM-3 HE (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -87,8 +87,8 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser (OMNIPOD)
+CLERMicroLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -152,4 +152,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule

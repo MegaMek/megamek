@@ -43,13 +43,13 @@ Streak SRM 6, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-Clan LB 2-X AC Ammo
+CLLBXAC2 (OMNIPOD)
+CLLBXAC2 (OMNIPOD)
+CLLBXAC2 (OMNIPOD)
+CLLBXAC2 (OMNIPOD)
+CLLBXAC2 (OMNIPOD)
+CLLBXAC2 (OMNIPOD)
+Clan LB 2-X AC Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,9 +57,9 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -71,12 +71,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLArtemisIV (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -85,9 +85,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -152,4 +152,5 @@ Foot Actuator
 -Empty-
 -Empty-
 
-
+manufacturer:Svarstaad Industriplex Beta 
+primaryfactory:Svarstaad

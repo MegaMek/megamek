@@ -43,8 +43,8 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMediumLaser
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,8 +57,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMediumLaser
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,28 +70,28 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisV
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisV
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
@@ -151,4 +151,5 @@ Foot Actuator
 -Empty-
 -Empty-
 
-
+manufacturer:Svarstaad Industriplex Beta 
+primaryfactory:Svarstaad

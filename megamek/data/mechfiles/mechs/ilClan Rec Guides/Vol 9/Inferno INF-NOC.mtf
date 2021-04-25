@@ -70,12 +70,12 @@ IS Endo Steel
 -Empty-
 
 Left Torso:
-ISMML5
-ISMML5
-ISMML5
-ISERMediumLaser
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+IS Ammo Thunderbolt-15 (OMNIPOD)
+IS Ammo Thunderbolt-15 (OMNIPOD)
 IS Ammo MML-5 LRM (OMNIPOD)
 ISCASEII
 -Empty-
@@ -84,12 +84,12 @@ ISCASEII
 -Empty-
 
 Right Torso:
-ISMML5
-ISMML5
-ISMML5
-ISERMediumLaser
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+IS Ammo Thunderbolt-15 (OMNIPOD)
+IS Ammo Thunderbolt-15 (OMNIPOD)
 IS Ammo MML-5 SRM (OMNIPOD)
 IS Ammo MML-5 LRM (OMNIPOD)
 ISCASEII
@@ -106,10 +106,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Thunderbolt 15
-Thunderbolt 15
-Thunderbolt 15
-ISERMediumLaser
+Thunderbolt 15 (OMNIPOD)
+Thunderbolt 15 (OMNIPOD)
+Thunderbolt 15 (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 
 Head:
 Life Support
@@ -153,4 +153,13 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:StarCorps Industries
+primaryfactory:Crofton
+systemmanufacturer:CHASSIS:StarFrame Heavy Endo Steel
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Garret 
+systemmode:COMMUNICATIONS:T-60 FastScan
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:F22c

@@ -41,7 +41,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -53,10 +53,10 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
+CLUltraAC10 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -68,7 +68,7 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLActiveProbe
+CLActiveProbe (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -82,9 +82,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLMediumPulseLaser
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
+CLMediumPulseLaser (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
+Clan Ultra AC/10 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -148,4 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Clan Protectorate Arms
+primaryfactory:Asellus Australis Alpha

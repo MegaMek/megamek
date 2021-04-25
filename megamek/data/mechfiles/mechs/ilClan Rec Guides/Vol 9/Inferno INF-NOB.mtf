@@ -69,13 +69,13 @@ IS Endo Steel
 -Empty-
 
 Left Torso:
-LRM 15
-LRM 15
-LRM 15
-ISERSmallLaser
-IS Ammo LRM-15
-IS Ammo LRM-15
-ISCASEII
+LRM 15 (OMNIPOD)
+LRM 15 (OMNIPOD)
+LRM 15 (OMNIPOD)
+ISERSmallLaser (OMNIPOD)
+IS Ammo LRM-15 (OMNIPOD)
+IS Ammo LRM-15 (OMNIPOD)
+ISCASEII (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -83,16 +83,16 @@ ISCASEII
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-LRM 15
-LRM 15
-LRM 15
-ISERSmallLaser
-IS Ammo LRM-15
-IS Ammo LRM-15
-ISCASEII
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+LRM 15 (OMNIPOD)
+LRM 15 (OMNIPOD)
+LRM 15 (OMNIPOD)
+ISERSmallLaser (OMNIPOD)
+IS Ammo LRM-15 (OMNIPOD)
+IS Ammo LRM-15 (OMNIPOD)
+ISCASEII (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -105,9 +105,9 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
 -Empty-
 
 Head:
@@ -152,4 +152,13 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:StarCorps Industries
+primaryfactory:Crofton
+systemmanufacturer:CHASSIS:StarFrame Heavy Endo Steel
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Garret 
+systemmode:COMMUNICATIONS:T-60 FastScan
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:F22c

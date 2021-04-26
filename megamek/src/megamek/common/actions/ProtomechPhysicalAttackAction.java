@@ -14,13 +14,11 @@
 
 package megamek.common.actions;
 
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.MiscType;

@@ -14,17 +14,15 @@
  */
 package megamek.common;
 
-import junit.framework.TestCase;
-import megamek.common.Entity;
-import megamek.common.MechFileParser;
+import java.io.File;
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.io.File;
+import junit.framework.TestCase;
 
 /**
  * Created with IntelliJ IDEA.

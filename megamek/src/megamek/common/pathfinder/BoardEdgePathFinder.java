@@ -30,13 +30,12 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.IHex;
-import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.MovePath;
-import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
 import megamek.common.MoveStep;
+import megamek.common.Terrains;
+import megamek.common.annotations.Nullable;
 
 /**
  * This class is intended to be used to find a (potentially long) legal path

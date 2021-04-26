@@ -2,8 +2,6 @@ package megamek.common.util;
 
 import java.text.MessageFormat;
 
-import megamek.common.Messages;
-
 public class CrewSkillSummaryUtil {
     private static final String SKILL_SUMMARY_PILOT = "{0}/{1}";
     private static final String SKILL_SUMMARY_RPG_PILOT = "{0}/{1}/{2}/{3}";

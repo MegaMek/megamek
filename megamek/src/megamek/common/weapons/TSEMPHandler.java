@@ -23,7 +23,6 @@ import megamek.common.ConvFighter;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Report;

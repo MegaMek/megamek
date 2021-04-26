@@ -1,6 +1,11 @@
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.FireControl.FireControlType;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
+
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -14,11 +19,6 @@ import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

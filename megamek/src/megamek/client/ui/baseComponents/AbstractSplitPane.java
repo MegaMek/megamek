@@ -18,16 +18,16 @@
  */
 package megamek.client.ui.baseComponents;
 
+import java.awt.Component;
+import java.util.ResourceBundle;
+
+import javax.swing.JFrame;
+import javax.swing.JSplitPane;
+
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.util.ResourceBundle;
+import megamek.common.util.EncodeControl;
 
 /**
  * This is the default SplitPane. It handles preferences, resources, the frame, and setup.

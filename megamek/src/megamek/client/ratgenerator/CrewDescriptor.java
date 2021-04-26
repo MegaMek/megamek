@@ -13,8 +13,6 @@
  */
 package megamek.client.ratgenerator;
 
-import java.util.Iterator;
-
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Compute;

@@ -1,5 +1,11 @@
 package megamek.client.bot.princess;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
+
 import junit.framework.TestCase;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.BipedMech;
@@ -7,7 +13,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -16,11 +21,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
 
 /**
  * Created with IntelliJ IDEA.

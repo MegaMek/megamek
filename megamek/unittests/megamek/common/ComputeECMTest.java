@@ -14,19 +14,18 @@
  */
 package megamek.common;
 
-import junit.framework.TestCase;
-import megamek.common.Entity;
-import megamek.common.options.GameOptions;
-import megamek.server.SmokeCloud;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Vector;
+import junit.framework.TestCase;
+import megamek.common.options.GameOptions;
+import megamek.server.SmokeCloud;
 
 /**
  * Created with IntelliJ IDEA.

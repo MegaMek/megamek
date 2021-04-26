@@ -15,7 +15,6 @@ package megamek.client.bot.princess;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.MegaMek;
 import megamek.common.Coords;

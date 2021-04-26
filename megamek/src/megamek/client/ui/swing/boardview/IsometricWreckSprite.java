@@ -15,7 +15,6 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

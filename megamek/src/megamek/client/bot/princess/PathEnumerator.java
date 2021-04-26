@@ -37,13 +37,11 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.LogLevel;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
-import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
@@ -53,6 +51,7 @@ import megamek.common.pathfinder.NewtonianAerospacePathFinder;
 import megamek.common.pathfinder.PronePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
+import megamek.common.util.BoardUtilities;
 
 /**
  * This class contains logic that calculates and stores 

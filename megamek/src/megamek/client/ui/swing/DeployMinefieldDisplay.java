@@ -362,7 +362,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+                || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
             return;
         }
 

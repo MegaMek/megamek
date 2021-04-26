@@ -1728,7 +1728,7 @@ public class MiniMap extends JPanel {
                 || (y > (getSize().height - topMargin - 14))) {
                 return;
             }
-            if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+            if ((me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
                 m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
                 m_bview.centerOnPointRel(

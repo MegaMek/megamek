@@ -442,7 +442,7 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     public void hexMoused(BoardViewEvent b) {
-        if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+        if ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
                 addPoint(b.getCoords());
             }

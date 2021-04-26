@@ -233,7 +233,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameNew.addActionListener(this);
         fileGameNew.setActionCommand(ClientGUI.FILE_GAME_NEW);
         fileGameNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-                                                          getToolkit().getMenuShortcutKeyMask()));
+                                                          getToolkit().getMenuShortcutKeyMaskEx()));
         submenu.add(fileGameNew);
         fileGameOpen = new JMenuItem(Messages.getString("CommonMenuBar.fileGameOpen")); //$NON-NLS-1$
         fileGameOpen.addActionListener(this);
@@ -352,7 +352,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMekDisplay.setActionCommand(ClientGUI.VIEW_MEK_DISPLAY);
         viewMekDisplay.setMnemonic(KeyEvent.VK_D);
         viewMekDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMekDisplay);
         
         viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow"));
@@ -378,14 +378,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP);
         viewMiniMap.setMnemonic(KeyEvent.VK_M);
         viewMiniMap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMiniMap);
         viewUnitOverview = new JMenuItem(Messages.getString("CommonMenuBar.viewUnitOverview")); //$NON-NLS-1$
         viewUnitOverview.addActionListener(this);
         viewUnitOverview.setActionCommand(ClientGUI.VIEW_UNIT_OVERVIEW);
         viewUnitOverview.setMnemonic(KeyEvent.VK_U);
         viewUnitOverview.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewUnitOverview);
         viewZoomIn = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewZoomIn")); //$NON-NLS-1$
@@ -440,14 +440,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMovementEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_ENV);
         viewMovementEnvelope.setMnemonic(KeyEvent.VK_Q);
         viewMovementEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMovementEnvelope);
         viewMovModEnvelope = new JMenuItem(Messages.getString("CommonMenuBar.movementModEnvelope")); //$NON-NLS-1$
         viewMovModEnvelope.addActionListener(this);
         viewMovModEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_MOD_ENV);
         viewMovModEnvelope.setMnemonic(KeyEvent.VK_W);
         viewMovModEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMovModEnvelope);
         viewChangeTheme = new JMenuItem(Messages.getString("CommonMenuBar.viewChangeTheme")); //$NON-NLS-1$
         viewChangeTheme.addActionListener(this);
@@ -459,7 +459,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewRoundReport.setActionCommand(ClientGUI.VIEW_ROUND_REPORT);
         viewRoundReport.setMnemonic(KeyEvent.VK_R);
         viewRoundReport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewRoundReport);
         menu.addSeparator();
         viewGameOptions = new JMenuItem(Messages.getString("CommonMenuBar.viewGameOptions")); //$NON-NLS-1$
@@ -476,7 +476,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewLOSSetting.setActionCommand(ClientGUI.VIEW_LOS_SETTING);
         viewLOSSetting.setMnemonic(KeyEvent.VK_L);
         viewLOSSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewLOSSetting);
         viewPlayerSettings = new JMenuItem(Messages.getString("CommonMenuBar.viewPlayerSettings")); //$NON-NLS-1$
         viewPlayerSettings.setActionCommand(ClientGUI.VIEW_PLAYER_SETTINGS);
@@ -792,7 +792,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem createMenuItem(JMenu m, String label, String command, int shortcut) {
         JMenuItem mi = createMenuItem(m, label, command);
         mi.setMnemonic(shortcut);
-        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMask()));
+        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMaskEx()));
         return mi;
     }
 

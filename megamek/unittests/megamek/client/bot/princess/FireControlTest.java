@@ -89,71 +89,55 @@ public class FireControlTest {
     // AC5
     private Mounted mockWeaponAC5;
     private WeaponType mockWeaponTypeAC5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Std;
     private Mounted mockAmmoAC5Std;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Flak;
     private Mounted mockAmmoAC5Flak;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAC5Incendiary;
     private Mounted mockAmmoAc5Incendiary;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAc5Flechette;
     private Mounted mockAmmoAc5Flechette;
 
     // LB10X
     private Mounted mockWeaponLB10X;
     private WeaponType mockLB10X;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLB10XSlug;
     private Mounted mockAmmoLB10XSlug;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLB10XCluster;
     private Mounted mockAmmoLB10XCluster;
 
     // MML
     private Mounted mockWeaponMML5;
     private WeaponType mockMML5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeSRM5;
     private Mounted mockAmmoSRM5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLRM5;
     private Mounted mockAmmoLRM5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeInferno5;
     private Mounted mockAmmoInferno5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeLrm5Frag;
     private Mounted mockAmmoLrm5Frag;
 
     // ATM
     private Mounted mockAtm5Weapon;
     private WeaponType mockAtm5;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5He;
     private Mounted mockAmmoAtm5He;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5St;
     private Mounted mockAmmoAtm5St;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5Er;
     private Mounted mockAmmoAtm5Er;
-    @SuppressWarnings("FieldCanBeLocal")
     private AmmoType mockAmmoTypeAtm5Inferno;
     private Mounted mockAmmoAtm5Inferno;
 
     private Entity mockTarget;
     private EntityState mockTargetState;
-    @SuppressWarnings("FieldCanBeLocal")
     private ToHitData mockTargetMoveMod;
     private Coords mockTargetCoords;
 
     private Entity mockShooter;
     private Coords mockShooterCoords;
     private EntityState mockShooterState;
-    @SuppressWarnings("FieldCanBeLocal")
     private ToHitData mockShooterMoveMod;
     private Crew mockCrew;
 
@@ -2124,7 +2108,6 @@ public class FireControlTest {
         Assert.assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testCalculateUtility() {
         final double TOLERANCE = 0.00001;

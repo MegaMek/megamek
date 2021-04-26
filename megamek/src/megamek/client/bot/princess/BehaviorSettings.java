@@ -665,7 +665,6 @@ public class BehaviorSettings {
      * @param behavior The XML element containing the behavior parameters.
      * @return TRUE if the XML was successfully parsed.
      */
-    @SuppressWarnings("UnusedReturnValue")
     boolean fromXml(final Element behavior) throws PrincessException {
         final NodeList children = behavior.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {

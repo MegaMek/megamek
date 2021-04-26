@@ -1559,7 +1559,7 @@ public class FireControl {
     private WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                                final MovePath flightPath,
                                                final Targetable target,
-                                               @SuppressWarnings("SameParameterValue") final EntityState targetState,
+                                               final EntityState targetState,
                                                final Mounted weapon,
                                                final IGame game,
                                                final boolean assumeUnderFlightPath,

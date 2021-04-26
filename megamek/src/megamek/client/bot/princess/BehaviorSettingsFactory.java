@@ -256,10 +256,7 @@ public class BehaviorSettingsFactory {
      * Bravery: 9 <br>
      * Strategic Targets: None
      */
-    // Used by MekHQ
-    @SuppressWarnings("WeakerAccess")
     public final BehaviorSettings BERSERK_BEHAVIOR = buildBerserkBehavior();
-    @SuppressWarnings("WeakerAccess")
     public static final String BERSERK_BEHAVIOR_DESCRIPTION = "BERSERK";
 
     private BehaviorSettings buildBerserkBehavior() {
@@ -331,10 +328,7 @@ public class BehaviorSettingsFactory {
      * Bravery: 2 <br>
      * Strategic Targets: None
      */
-    // Used by MekHQ
-    @SuppressWarnings("WeakerAccess")
     public final BehaviorSettings ESCAPE_BEHAVIOR = buildEscapeBehavior();
-    @SuppressWarnings("WeakerAccess")
     public static final String ESCAPE_BEHAVIOR_DESCRIPTION = "ESCAPE";
 
     private BehaviorSettings buildEscapeBehavior() {

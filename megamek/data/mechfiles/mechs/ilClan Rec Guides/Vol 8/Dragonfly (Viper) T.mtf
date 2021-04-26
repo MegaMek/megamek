@@ -44,8 +44,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
+CLStreakSRM4 (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -58,8 +58,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -72,8 +72,8 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLAntiMissileSystem
-CLAMS Ammo
+CLAntiMissileSystem (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -86,9 +86,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMicroLaser
-CLERMicroLaser
-CLTargeting Computer
+CLERMicroLaser (OMNIPOD)
+CLERMicroLaser (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightActiveProbe
+CLLightActiveProbe (OMNIPOD)
 Clan Endo Steel
 
 Head:
@@ -151,4 +151,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule

@@ -42,9 +42,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLNarcBeacon
-ISNarc Pods
-ISNarc Pods
+CLNarcBeacon (OMNIPOD)
+ISNarc Pods (OMNIPOD)
+ISNarc Pods (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -56,8 +56,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -70,9 +70,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-BloodhoundActiveProbe
-BloodhoundActiveProbe
-BloodhoundActiveProbe
+BloodhoundActiveProbe (OMNIPOD)
+BloodhoundActiveProbe (OMNIPOD)
+BloodhoundActiveProbe (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -84,7 +84,7 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLLightTAG
+CLLightTAG (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -149,4 +149,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule

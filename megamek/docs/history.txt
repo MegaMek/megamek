@@ -40,6 +40,7 @@ VERSION HISTORY:
 + Issue #2438: Adding More Detail to Fire Damage Reporting
 + Data: New Sprites, IrTech addition, numerous other data fixes. Fixes for #2696
 + Issue #2794: Switching back and forth from TestBot in bot config dialog no longer causes an NPE because the TestBot option has been removed.
++ Issue #2709: Equipment improperly tagged as fixed on recent omni designs
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

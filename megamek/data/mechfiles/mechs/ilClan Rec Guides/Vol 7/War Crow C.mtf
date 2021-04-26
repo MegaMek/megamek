@@ -44,10 +44,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Coolant Pod
+CLERLargeLaser (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+Clan Ammo ATM-9 ER (OMNIPOD)
+Coolant Pod (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -58,9 +58,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 HE
+CLERLargeLaser (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+Clan Ammo ATM-9 HE (OMNIPOD)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -70,10 +70,10 @@ Clan Ferro-Lamellor
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -84,10 +84,10 @@ Clan Ferro-Lamellor
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Lamellor
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -151,4 +151,12 @@ Foot Actuator
 -Empty-
 -Empty-
 
-
+manufacturer:Snow Raven Industrial Complex Beta
+primaryfactory:Mitchella
+systemmanufacturer:CHASSIS:Raven Endo Steel
+systemmode:CHASSIS:WC1
+systemmanufacturer:ENGINE:Redline
+systemmode:ENGINE:350 XL
+systemmanufacturer:ARMOR:Compound LZ-7 Ferro-Lamellor
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk. 2.2
+systemmanufacturer:TARGETING:“Hermes” CT-44

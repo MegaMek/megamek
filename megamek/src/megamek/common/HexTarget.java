@@ -26,23 +26,16 @@ public class HexTarget implements Targetable {
     private boolean m_bIgnite;
     private int m_type;
 
+    /**
+     * Creates a new HexTarget given a set of coordinates and a type defined in Targetable.
+     * the board parameter is ignored.
+     */
     public HexTarget(Coords c, int nType) {
         m_coords = c;
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
     
-    /**
-     * Creates a new HexTarget given a set of coordinates and a type defined in Targetable.
-     * the board parameter is ignored.
-     */
-    @Deprecated
-    public HexTarget(Coords c, IBoard board, int nType) {
-        m_coords = c;
-        m_type = nType;
-        m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
-    }
-
     public int getTargetType() {
         return m_type;
     }

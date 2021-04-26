@@ -417,6 +417,7 @@ public class FixedWingSupport extends ConvFighter {
             case STATION_KEEPING:
                 priceMultiplier = 1 + weight / 75.0;
                 break;
+            default:
         }
         return priceMultiplier;
     }

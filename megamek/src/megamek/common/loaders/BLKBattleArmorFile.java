@@ -105,6 +105,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                     break;
                 case NONE:
                     throw new EntityLoadingException("Invalid movement type: " + sMotion);
+                default: 
             }
         } catch (LocationFullException ignore) {
             // Adding to LOC_NONE

@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
  * Note: All constructors contain the name of the JButton in question. This MUST be provided and
  * means that they don't directly line up to the traditional JButton constructors.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class MMButton extends JButton {
     //region Constructors
     /**

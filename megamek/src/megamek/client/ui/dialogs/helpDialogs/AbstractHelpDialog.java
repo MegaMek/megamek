@@ -29,6 +29,7 @@ import java.io.File;
 /**
  * This class ensures that every Help dialog in MegaMek has an identical look-and-feel.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractHelpDialog extends AbstractDialog {
     //region Variable Declarations
     private String helpFilePath;

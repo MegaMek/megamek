@@ -37,6 +37,7 @@ import megamek.common.util.EncodeControl;
  *
  * This is directly tied to MekHQ's AbstractMHQSplitPane, and any changes here MUST be verified there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractSplitPane extends JSplitPane {
     //region Variable Declarations
     private JFrame frame;

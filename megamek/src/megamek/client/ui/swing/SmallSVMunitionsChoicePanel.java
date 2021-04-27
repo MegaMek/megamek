@@ -27,6 +27,7 @@ import java.util.List;
  * Panel that allows splitting ammo between standard and inferno for light and medium weapons
  * that have inferno variants.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class SmallSVMunitionsChoicePanel extends JPanel {
     private final Entity entity;
     private final List<AmmoRowPanel> rows = new ArrayList<>();

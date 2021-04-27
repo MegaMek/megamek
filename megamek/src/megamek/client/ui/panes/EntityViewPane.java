@@ -29,6 +29,7 @@ import javax.swing.*;
 /**
  * The EntityViewPane displays the Entity Summary and the TRO panels within a Tabbed Pane.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class EntityViewPane extends AbstractTabbedPane {
     //region Variable Declarations
     private MechViewPanel entityPanel;

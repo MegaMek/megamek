@@ -31,6 +31,7 @@ import java.awt.*;
 /**
  * The EntityImagePanel displays the Entity's Image using the provided camouflage.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class EntityImagePanel extends JPanel {
     //region Variable Declarations
     private JLabel imageLabel;

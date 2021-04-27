@@ -192,6 +192,7 @@ public class BoardEditor extends JComponent
      *  ListCellRenderer for rendering tooltips for each item in a list or combobox.  Code from SourceForge:
      *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items 
      */
+    @SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
         private TerrainHelper[] terrains;
         private List<TerrainTypeHelper> terrainTypes;
@@ -2281,6 +2282,7 @@ public class BoardEditor extends JComponent
      * 
      * @author Simon
      */
+    @SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
     private class EditorTextField extends JTextField {
         private int minValue = Integer.MIN_VALUE;
         

@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
  *
  * This is directly tied to MekHQ's AbstractMHQDialog, and any changes here MUST be verified there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractDialog extends JDialog implements WindowListener {
     //region Variable Declarations
     private JFrame frame;

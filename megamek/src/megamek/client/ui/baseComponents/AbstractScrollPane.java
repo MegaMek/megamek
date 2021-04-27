@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
  *
  * This is directly tied to MekHQ's AbstractMHQScrollPane, and any changes here MUST be verified there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractScrollPane extends JScrollPane {
     //region Variable Declarations
     private JFrame frame;

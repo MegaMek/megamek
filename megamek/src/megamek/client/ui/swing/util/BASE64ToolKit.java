@@ -19,8 +19,9 @@ import javax.swing.text.html.HTMLEditorKit;
 
 
 public class BASE64ToolKit extends HTMLEditorKit {
-
-    private static HTMLFactory factory = null;
+	
+	private static final long serialVersionUID = 8223662026277406659L;
+	private static HTMLFactory factory = null;
 
     /**
      * Returns a unique url for the image. It's created by getting the code location and adding the element to it.

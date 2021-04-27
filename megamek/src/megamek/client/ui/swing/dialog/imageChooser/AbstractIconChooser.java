@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractIconChooser extends JPanel implements TreeSelectionListener {
     //region Variable Declarations
     private AbstractIcon originalIcon;

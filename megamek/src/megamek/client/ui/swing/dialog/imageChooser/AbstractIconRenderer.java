@@ -24,6 +24,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class AbstractIconRenderer extends JPanel implements ListCellRenderer<AbstractIcon> {
     /** This JLabel displays the selectable image */
     protected JLabel lblImage = new JLabel();

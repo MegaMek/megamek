@@ -20,6 +20,7 @@ package megamek.client.ui.dialogs.helpDialogs;
 
 import javax.swing.*;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class BotHelpDialog extends AbstractHelpDialog {
     //region Constructors
     public BotHelpDialog(final JFrame frame) {

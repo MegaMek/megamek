@@ -47,6 +47,7 @@ import java.util.ResourceBundle;
  * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any changes here MUST be
  * verified there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractValidationButtonDialog extends AbstractButtonDialog {
     //region Variable Declarations
     private ValidationState state;

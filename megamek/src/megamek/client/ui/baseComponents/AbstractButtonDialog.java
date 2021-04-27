@@ -42,6 +42,7 @@ import java.util.ResourceBundle;
  * This is directly tied to MekHQ's AbstractMHQButtonDialog, and any changes here MUST be verified
  * there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractButtonDialog extends AbstractDialog {
     //region Variable Declarations
     private DialogResult result;

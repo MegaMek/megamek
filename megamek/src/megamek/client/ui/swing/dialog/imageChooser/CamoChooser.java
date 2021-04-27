@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class CamoChooser extends AbstractIconChooser {
     //region Variable Declarations
     private boolean canHaveIndividualCamouflage;

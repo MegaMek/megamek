@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
  *
  * This is directly tied to MekHQ's AbstractMHQTabbedPane, and any changes here MUST be verified there.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractTabbedPane extends JTabbedPane {
     //region Variable Declarations
     private JFrame frame;

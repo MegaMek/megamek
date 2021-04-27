@@ -33,6 +33,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class AccessibilityWindow extends JDialog implements KeyListener {
     private static final String cleanHtmlRegex = "<[^>]*>";
     public static final int MAX_HISTORY = 10;

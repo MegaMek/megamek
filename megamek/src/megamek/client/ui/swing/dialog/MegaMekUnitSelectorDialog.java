@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     //region Variable Declarations
     private ClientGUI clientGUI;

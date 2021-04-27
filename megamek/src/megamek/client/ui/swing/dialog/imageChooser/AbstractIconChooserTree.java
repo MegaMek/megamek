@@ -26,6 +26,7 @@ import javax.swing.tree.TreeSelectionModel;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public abstract class AbstractIconChooserTree extends JTree {
     protected AbstractIconChooserTree() {
         super();

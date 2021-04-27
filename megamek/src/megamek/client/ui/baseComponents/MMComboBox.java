@@ -31,6 +31,7 @@ import java.util.Vector;
  * Note: All constructors contain the name of the JComboBox in question. This MUST be provided and
  * means that they don't directly line up to the traditional JComboBox constructors.
  */
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class MMComboBox<E> extends JComboBox<E> {
     //region Constructors
     /**

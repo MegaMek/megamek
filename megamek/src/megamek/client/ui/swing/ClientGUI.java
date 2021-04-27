@@ -415,7 +415,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * finishes, so this function has to be called after the <code>Client</code>
      * is created.
      */
-    public void initialize() {
+    @SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
+	public void initialize() {
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {

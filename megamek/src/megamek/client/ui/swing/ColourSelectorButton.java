@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+@SuppressWarnings("serial") // Same-version serialization only (See Swing base classes)
 public class ColourSelectorButton extends JButton {
     //region Variable Declarations
     private Color colour;

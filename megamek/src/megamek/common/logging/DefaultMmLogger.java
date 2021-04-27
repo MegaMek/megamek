@@ -156,43 +156,8 @@ public class DefaultMmLogger implements MMLogger {
 
     //region Error
     @Override
-    @Deprecated
-    public <T extends Throwable> T error(final Class<?> callingClass, final String methodName,
-                                         final String message, final T throwable) {
-        return log(callingClass, methodName, LogLevel.ERROR, message, throwable);
-    }
-
-    @Override
-    @Deprecated
-    public <T extends Throwable> T error(final Class<?> callingClass, final String methodName,
-                                         final T throwable) {
-        return log(callingClass, methodName, LogLevel.ERROR, throwable);
-    }
-
-    @Override
-    @Deprecated
-    public void error(final Class<?> callingClass, final String methodName, final String message) {
-        log(callingClass, methodName, LogLevel.ERROR, message);
-    }
-    
-    @Override
-    public void error(final Class<?> callingClass, final String message) {
-        log(callingClass, getCallingMethod(), LogLevel.ERROR, message);
-    }
-
-    @Override
     public void error(final String message) {
         log(getCallingClass(), getCallingMethod(), LogLevel.ERROR, message, null);
-    }
-    
-    @Override
-    public void error(final Object callingObject, final String message) {
-        log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message);
-    }
-
-    @Override
-    public <T extends Throwable> T error(final Class<?> callingClass, final T throwable) {
-        return log(callingClass, getCallingMethod(), LogLevel.ERROR, throwable);
     }
     
     @Override
@@ -200,17 +165,6 @@ public class DefaultMmLogger implements MMLogger {
         return log(getCallingClass(), getCallingMethod(), LogLevel.ERROR, throwable);
     }
 
-    @Override
-    public <T extends Throwable> T error(final Object callingObject, final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, throwable);
-    }
-
-    @Override
-    public <T extends Throwable> T error(final Object callingObject, final String message,
-                                         final T throwable) {
-        return log(callingObject.getClass(), getCallingMethod(), LogLevel.ERROR, message, throwable);
-    }
-    
     @Override
     public <T extends Throwable> T error(final String message, final T throwable) {
         return log(getCallingClass(), getCallingMethod(), LogLevel.ERROR, message, throwable);

@@ -869,29 +869,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         this.size = size;
     }
     
-    /**
-     * The capacity of an ammo bin may be different than the weight of the original shots
-     * in the case of AR10s due to variable missile weight.
-     * 
-     * @return The capacity of a mounted ammo bin in tons.
-     * @deprecated Use {@link #getSize()}
-     */
-    @Deprecated
-    public double getAmmoCapacity() {
-        return size;
-    }
-
-    /**
-     * Sets the maximum tonnage of ammo for a mounted ammo bin.
-     * 
-     * @param capacity The capacity of the bin in tons.
-     * @deprecated Use {@link #setSize(double)}
-     */
-    @Deprecated
-    public void setAmmoCapacity(double capacity) {
-        size = capacity;
-    }
-
     public boolean isRapidfire() {
         return rapidfire;
     }

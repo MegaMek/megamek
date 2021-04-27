@@ -69,46 +69,6 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T error(Class<?> callingClass, String methodName, String message, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(Class<?> callingClass, String methodName, T throwable) {
-        return null;
-    }
-
-    @Override
-    public void error(Class<?> callingClass, String methodName, String message) {
-
-    }
-
-    @Override
-    public void error(Class<?> callingClass, String message) {
-
-    }
-
-    @Override
-    public void error(Object callingObject, String message) {
-
-    }
-
-    @Override
-    public <T extends Throwable> T error(Class<?> callingClass, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(Object callingObject, T throwable) {
-        return null;
-    }
-
-    @Override
-    public <T extends Throwable> T error(Object callingObject, String message, T throwable) {
-        return null;
-    }
-
-    @Override
     public void info(Class<?> callingClass, String methodName, String message) {
 
     }

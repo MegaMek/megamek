@@ -3681,7 +3681,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
             double tonnage = Math.max(1, nAmmo / ((AmmoType) mounted.getType()).getShots()) * mounted.getTonnage();
-            mounted.setAmmoCapacity(tonnage);
+            mounted.setSize(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);

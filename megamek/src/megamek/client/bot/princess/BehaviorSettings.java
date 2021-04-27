@@ -719,7 +719,8 @@ public class BehaviorSettings {
      *
      * @return An XML {@link org.w3c.dom.Element} describing this behavior settings object.
      */
-    Element toXml(final Document doc,
+    @SuppressWarnings("unused")
+	Element toXml(final Document doc,
                   final boolean includeTargets) {
         final String METHOD_NAME = "toXml(Document, boolean)";
         

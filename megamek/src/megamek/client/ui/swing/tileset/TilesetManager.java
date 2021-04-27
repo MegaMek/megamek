@@ -15,7 +15,6 @@
 */
 package megamek.client.ui.swing.tileset;
 
-import java.util.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -28,6 +27,12 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import megamek.MegaMek;
 import megamek.client.ui.ITilesetManager;
@@ -36,12 +41,23 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.RotateFilter;
-import megamek.common.*;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.IBoard;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.IPlayer;
+import megamek.common.Mech;
+import megamek.common.Minefield;
+import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
-import megamek.common.preference.*;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -615,7 +631,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         IPlayer player = entity.getOwner();
-        PlayerColour tint = player.getColour();
 
         Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         EntityImage entityImage = null;

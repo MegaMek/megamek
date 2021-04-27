@@ -29,10 +29,14 @@ import megamek.common.options.GameOptions;
 @RunWith(JUnit4.class)
 public class NewtonAerospacePathRankerTest {
 
-    private Princess mockPrincess;
-    private NewtonianAerospacePathRanker mockPathRanker;
-    private IGame mockGame;
-    private GameOptions mockGameOptions;
+    @SuppressWarnings("unused")
+	private Princess mockPrincess;
+    @SuppressWarnings("unused")
+	private NewtonianAerospacePathRanker mockPathRanker;
+    @SuppressWarnings("unused")
+	private IGame mockGame;
+    @SuppressWarnings("unused")
+	private GameOptions mockGameOptions;
 
     @Before
     public void setUp() {

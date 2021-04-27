@@ -18505,7 +18505,6 @@ public class Server implements Runnable {
         }
 
         // track any additional damage to the attacker due to the target having spikes
-        int spikeDamage = 0;
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             // Airmech ramming attacks do all damage to a single location
@@ -28019,7 +28018,7 @@ public class Server implements Runnable {
      * Possible to override 'is explosive' check
      */
     public Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted, boolean overrideExplosiveCheck) {
-        final String METHOD_NAME = "explodeEquipment(Entity,int,Mounted)";
+        //final String METHOD_NAME = "explodeEquipment(Entity,int,Mounted)";
         Vector<Report> vDesc = new Vector<>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {

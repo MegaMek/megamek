@@ -858,7 +858,7 @@ public class MtfFile implements IMechLoader {
         EquipmentType eq = EquipmentType.get(name);
         if (eq != null) {
             try {
-                Mounted mount = mech.addEquipment(eq, loc);
+                mech.addEquipment(eq, loc);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }

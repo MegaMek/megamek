@@ -329,7 +329,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         final EquipmentType type = weapon.getType();
 
-        // This is ok to keep here. No need to process anything further if we're not using a weapon somehow
+        // No need to process anything further if we're not using a weapon somehow
         if (!(type instanceof WeaponType)) {
             MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));

@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.util.weightedMap;
+package megamek.common.util.weightedMaps;
 
 import megamek.common.annotations.Nullable;
 
+import java.util.Map;
 import java.util.TreeMap;
 
 public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K, T> {
@@ -36,4 +37,13 @@ public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K
      * @return a random item from the weighted map, or null if it is empty
      */
     public abstract @Nullable T randomItem();
+
+    /**
+     * @param key the key of the item to get (used for simplification and unit testing reasons)
+     * @return the item from the weighted map, or null if it does not exist
+     */
+    protected @Nullable T randomItem(final K key) {
+        final Map.Entry<K, T> item = ceilingEntry(key);
+        return (item == null) ? null : item.getValue();
+    }
 }

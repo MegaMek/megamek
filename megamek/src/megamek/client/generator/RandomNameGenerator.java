@@ -24,7 +24,7 @@ import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.enums.Gender;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.util.weightedMap.WeightedIntMap;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 /**
  * This class sets up a random name generator that can then be used to generate random pilot names.

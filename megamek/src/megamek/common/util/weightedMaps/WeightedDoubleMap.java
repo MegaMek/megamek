@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,29 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.util.weightedMap;
+package megamek.common.util.weightedMaps;
 
-import megamek.common.Compute;
 import megamek.common.annotations.Nullable;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
- * Constructs a table of values each with an int weight that makes them more or less likely to be
+ * Constructs a table of values each with a double weight that makes them more or less likely to be
  * selected at random
  *
  * @param <T> The values in the table
  */
-public class WeightedIntMap<T> extends AbstractWeightedMap<Integer, T> {
+public class WeightedDoubleMap<T> extends AbstractWeightedMap<Double, T> {
     //region Variable Declarations
-    private static final long serialVersionUID = -568712793616821291L;
+    private static final long serialVersionUID = -2040584639476035520L;
     //endregion Variable Declarations
 
     @Override
-    public @Nullable T add(final Integer weight, final T value) {
-        return (weight > 0) ? put(isEmpty() ? weight : lastKey() + weight, value) : null;
+    public @Nullable T add(final Double weight, final T value) {
+        return (weight > 0.0d) ? put(isEmpty() ? weight : lastKey() + weight, value) : null;
     }
 
     @Override
     public @Nullable T randomItem() {
-        return isEmpty() ? null : ceilingEntry(Compute.randomInt(lastKey()) + 1).getValue();
+        return isEmpty() ? null : randomItem(ThreadLocalRandom.current().nextDouble(0.0d, lastKey()));
     }
 }

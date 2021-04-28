@@ -21,7 +21,7 @@ package megamek.client.generator;
 import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.util.weightedMap.WeightedIntMap;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

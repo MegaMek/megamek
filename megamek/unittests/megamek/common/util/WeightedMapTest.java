@@ -18,6 +18,8 @@
  */
 package megamek.common.util;
 
+import megamek.common.util.weightedMap.WeightedDoubleMap;
+import megamek.common.util.weightedMap.WeightedIntMap;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,20 +27,43 @@ import static org.junit.Assert.*;
 public class WeightedMapTest {
 
     @Test
-    public void testWeightedMap() {
-        WeightedMap<Integer> map = new WeightedMap<>();
+    public void testWeightedIntMap() {
+        WeightedIntMap<Integer> weightedIntMap = new WeightedIntMap<>();
         int total = 0;
         for (int i = 0; i < 6; i++) {
-            map.add(i, i);
+            weightedIntMap.put(i, i);
             total += i;
         }
 
-        assertEquals(map.size(), 5);
-        assertEquals(map.lastKey().intValue(), total);
-        assertEquals(map.ceilingEntry(1).getValue().intValue(), 1);
-        assertEquals(map.ceilingEntry(2).getValue().intValue(), 2);
-        assertEquals(map.ceilingEntry(10).getValue().intValue(), 4);
-        assertEquals(map.ceilingEntry(11).getValue().intValue(), 5);
-        assertEquals(map.ceilingEntry(15).getValue().intValue(), 5);
+        assertEquals(weightedIntMap.size(), 5);
+        assertEquals(weightedIntMap.lastKey().intValue(), total);
+        assertEquals(1, weightedIntMap.ceilingEntry(1).getValue().intValue());
+        assertEquals(2, weightedIntMap.ceilingEntry(2).getValue().intValue());
+        assertEquals(3, weightedIntMap.ceilingEntry(10).getValue().intValue());
+        assertEquals(4, weightedIntMap.ceilingEntry(11).getValue().intValue());
+        assertEquals(5, weightedIntMap.ceilingEntry(15).getValue().intValue());
+    }
+
+    @Test
+    public void testWeightedDoubleMap() {
+        WeightedDoubleMap<Integer> weightedDoubleMap = new WeightedDoubleMap<>();
+        weightedDoubleMap.add(0.0, 0);
+        weightedDoubleMap.add(1.1d, 1);
+        weightedDoubleMap.add(2.2d, 2);
+        weightedDoubleMap.add(3.3d, 3);
+        weightedDoubleMap.add(4.4d, 4);
+        weightedDoubleMap.add(5.5d, 5);
+
+        assertEquals(weightedDoubleMap.size(), 5);
+        assertEquals(weightedDoubleMap.firstKey(), 1.1d, 0.1d);
+        assertEquals(weightedDoubleMap.lastKey(), 16.5d, 0.1d);
+        assertEquals(1, weightedDoubleMap.ceilingEntry(0.0d).getValue().intValue());
+        assertEquals(1, weightedDoubleMap.ceilingEntry(0.6d).getValue().intValue());
+        assertEquals(1, weightedDoubleMap.ceilingEntry(1.1d).getValue().intValue());
+        assertEquals(2, weightedDoubleMap.ceilingEntry(3.3d).getValue().intValue());
+        assertEquals(3, weightedDoubleMap.ceilingEntry(6.6d).getValue().intValue());
+        assertEquals(4, weightedDoubleMap.ceilingEntry(11.0d).getValue().intValue());
+        assertEquals(5, weightedDoubleMap.ceilingEntry(11.1d).getValue().intValue());
+        assertEquals(5, weightedDoubleMap.ceilingEntry(16.5d).getValue().intValue());
     }
 }

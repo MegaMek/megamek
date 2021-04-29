@@ -2798,6 +2798,8 @@ public class Tank extends Entity {
                 case MAGLEV:
                     multiplier += weight / 250.0;
                     break;
+                default:
+                    break;
             }
         }
         cost *= multiplier;
@@ -2857,6 +2859,8 @@ public class Tank extends Entity {
                 case RAIL:
                 case MAGLEV:
                     priceMultiplier *= weight / 250.0;
+                    break;
+                default:
                     break;
             }
         }

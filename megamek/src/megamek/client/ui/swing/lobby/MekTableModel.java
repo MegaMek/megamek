@@ -34,6 +34,7 @@ import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
@@ -42,10 +43,11 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 public class MekTableModel extends AbstractTableModel {
-    
+    //region Variable Declarations
     private static final long serialVersionUID = 4819661751806908535L;
 
-    private static enum COLS { UNIT, PILOT, PLAYER, BV };
+    private enum COLS { UNIT, PILOT, PLAYER, BV }
+
     public static final int COL_UNIT = COLS.UNIT.ordinal();
     public static final int COL_PILOT = COLS.PILOT.ordinal();
     public static final int COL_PLAYER = COLS.PLAYER.ordinal();
@@ -55,11 +57,10 @@ public class MekTableModel extends AbstractTableModel {
     // Some unicode symbols. These work on Windows when setting the font 
     // to Dialog (which I believe uses Arial). I hope they work on other systems.
     public static final String DOT_SPACER = " \u2B1D ";
-    
-    
+
     /** Control value for the size of camo and portraits in the table at GUI scale == 1. */
     static final int MEKTABLE_IMGHEIGHT = 60;
-    
+
     private static final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
     private static final String DEF_PORTRAIT = new MegaMekFile(Configuration.portraitImagesDir(),
@@ -83,12 +84,15 @@ public class MekTableModel extends AbstractTableModel {
     private ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
     private ArrayList<String> playerCells = new ArrayList<>();
+    //endregion Variable Declarations
 
+    //region Constructors
     public MekTableModel(ClientGUI cg, ChatLounge cl) {
         clientGui = cg;
         chatLounge = cl;
     }
-    
+    //endregion Constructors
+
     @Override
     public Object getValueAt(int row, int col) {
         final Entity entity = entities.get(row);
@@ -219,9 +223,9 @@ public class MekTableModel extends AbstractTableModel {
             return result + Messages.getString("ChatLounge.colPlayer");
         } else if (column == COLS.BV.ordinal()) {
             return result + Messages.getString("ChatLounge.colBV");
+        } else {
+            return "??";
         }
-
-        return "??";
     }
 
     /** Returns the owner of the given entity. Prefer this over entity.getOwner(). */
@@ -236,11 +240,10 @@ public class MekTableModel extends AbstractTableModel {
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);
         float size = chatLounge.isCompact() ? 0 : 0.2f;
         String sep = chatLounge.isCompact() ? DOT_SPACER : "<BR>";
-        result.append(guiScaledFontHTML(owner.getColour().getColour(), size));
-        result.append(owner.getName());
-        result.append("</FONT>" + guiScaledFontHTML(size) + sep + "</FONT>");
-        result.append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen(), size));
-        result.append(IPlayer.teamNames[owner.getTeam()]);
+        result.append(guiScaledFontHTML(owner.getColour().getColour(), size)).append(owner.getName())
+                .append("</FONT>").append(guiScaledFontHTML(size)).append(sep).append("</FONT>")
+                .append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen(), size))
+                .append(IPlayer.teamNames[owner.getTeam()]);
         return result.toString();
     }
     
@@ -276,19 +279,23 @@ public class MekTableModel extends AbstractTableModel {
         private static final long serialVersionUID = -9154596036677641620L;
         
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-            Entity entity = getEntityAt(row);
-            if (null == entity) {
+        public Component getTableCellRendererComponent(final JTable table,
+                                                       final @Nullable Object value,
+                                                       final boolean isSelected,
+                                                       final boolean hasFocus,
+                                                       final int row, final int column) {
+            final Entity entity = getEntityAt(row);
+            if ((entity == null) || (value == null)) {
                 return null;
             }
+
             setIconTextGap(UIUtil.scaleForGUI(10));
             setText("<HTML>" + value.toString());
             boolean compact = chatLounge.isCompact();
             if (compact) {
                 setIcon(null);
             }
-            
+
             if (isSelected) {
                 setForeground(table.getSelectionForeground());
                 setBackground(table.getSelectionBackground());
@@ -300,12 +307,12 @@ public class MekTableModel extends AbstractTableModel {
                 }
                 setBackground(background);
             }
-            
+
             IPlayer owner = ownerOf(entity);
             boolean showAsUnknown = owner.isEnemyOf(clientGui.getClient().getLocalPlayer())
                     && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
-            
+
             if (showAsUnknown) {
                 setToolTipText(null);
                 if (column == COLS.UNIT.ordinal()) {
@@ -322,14 +329,12 @@ public class MekTableModel extends AbstractTableModel {
             } else {
                 if (column == COLS.UNIT.ordinal()) {
                     setToolTipText(unitTooltips.get(row));
+                    final Camouflage camouflage = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
+                    final Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camouflage, this);
                     if (!compact) {
-                        Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                        Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, this);
                         setIcon(new ImageIcon(icon.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                         setIconTextGap(UIUtil.scaleForGUI(10));
                     } else {
-                        Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                        Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camo, this);
                         setIcon(new ImageIcon(icon.getScaledInstance(-1, size/3, Image.SCALE_SMOOTH)));
                         setIconTextGap(UIUtil.scaleForGUI(5));
                     }

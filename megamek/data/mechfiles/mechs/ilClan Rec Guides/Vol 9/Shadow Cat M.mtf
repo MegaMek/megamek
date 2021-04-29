@@ -40,10 +40,10 @@ ER Medium Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -54,10 +54,10 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -69,9 +69,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -83,7 +83,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -149,4 +149,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Clan Protectorate Arms
+primaryfactory:Asellus Australis Alpha

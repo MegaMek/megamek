@@ -42,10 +42,10 @@ TAG (Clan), Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -58,8 +58,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -72,8 +72,8 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-ISAngelECMSuite
-ISAngelECMSuite
+ISAngelECMSuite (OMNIPOD)
+ISAngelECMSuite (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -86,8 +86,8 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLTAG
-CLActiveProbe
+CLTAG (OMNIPOD)
+CLActiveProbe (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -151,4 +151,5 @@ Jump Jet
 -Empty-
 -Empty-
 
-
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule

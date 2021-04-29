@@ -3,34 +3,34 @@ Uni ATAE-70T CargoMech
 (Standard)
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3050
-Source:RS VA
-Rules Level:2
+techbase:Inner Sphere
+era:3074
+source:RS VA
+rules level:3
 
-Mass:70
-Engine:210 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Industrial Triple-Strength
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:70
+engine:210 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Industrial Triple-Strength
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:3
-Jump MP:0
+heat sinks:1 Single
+walk mp:3
+jump mp:0
 
-Armor:Commercial(Inner Sphere)
-FLL Armor:27
-FRL Armor:27
-LT Armor:20
-RT Armor:20
-CT Armor:31
-HD Armor:9
-RLL Armor:27
-RRL Armor:27
-RTL Armor:9
-RTR Armor:9
-RTC Armor:10
+armor:Commercial(Inner Sphere)
+FLL armor:27
+FRL armor:27
+LT armor:20
+RT armor:20
+CT armor:31
+HD armor:9
+RLL armor:27
+RRL armor:27
+RTL armor:9
+RTR armor:9
+RTC armor:10
 
 Weapons:0
 
@@ -39,7 +39,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Industrial TSM
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -53,7 +53,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Industrial TSM
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -63,31 +63,31 @@ Industrial TSM
 -Empty-
 
 Left Torso:
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 
 Right Torso:
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Cargo (3.5 tons)
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Cargo:SIZE:3.5
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 
 Center Torso:
@@ -123,7 +123,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Industrial TSM
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -137,7 +137,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Industrial TSM
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-

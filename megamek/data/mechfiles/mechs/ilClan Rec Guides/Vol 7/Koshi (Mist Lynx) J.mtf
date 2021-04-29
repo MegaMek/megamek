@@ -38,8 +38,8 @@ Improved Heavy Medium Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -54,8 +54,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -82,7 +82,7 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Supercharger (Clan)
+Supercharger (Clan) (OMNIPOD)
 Jump Jet
 Jump Jet
 Jump Jet
@@ -147,4 +147,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:Industrial Complex Alpha 
+primaryfactory:Dante

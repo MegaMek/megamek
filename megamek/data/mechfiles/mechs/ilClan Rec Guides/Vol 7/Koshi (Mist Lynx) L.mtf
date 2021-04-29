@@ -44,9 +44,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyFlamer
-CL Heavy Flamer Ammo
-CLECMSuite
+CLHeavyFlamer (OMNIPOD)
+CL Heavy Flamer Ammo (OMNIPOD)
+CLECMSuite (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -56,11 +56,11 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -89,8 +89,8 @@ CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -151,4 +151,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:Industrial Complex Alpha 
+primaryfactory:Dante

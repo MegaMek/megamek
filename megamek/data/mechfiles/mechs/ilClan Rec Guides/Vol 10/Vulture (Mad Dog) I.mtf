@@ -39,9 +39,9 @@ Rotary AC/2, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-PPC Capacitor
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+PPC Capacitor (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -53,22 +53,22 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
+CLRotaryAC2 (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -81,10 +81,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLRotaryAC2 Ammo
-CLRotaryAC2 Ammo
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLRotaryAC2 Ammo (OMNIPOD)
+CLRotaryAC2 Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
@@ -148,4 +148,6 @@ Foot Actuator
 -Empty-
 -Empty-
 
+manufacturer:Svarstaad Industriplex Beta 
+primaryfactory:Svarstaad
 

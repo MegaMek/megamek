@@ -1336,8 +1336,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase == IGame.Phase.PHASE_TARGETING) {
-                target(new HexTarget(b.getCoords(), ce().getGame().getBoard(),
-                        Targetable.TYPE_HEX_ARTILLERY));
+                target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
             }
@@ -1389,8 +1388,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     .getBoard(), Targetable.TYPE_BLDG_TAG));
         }
 
-        targets.add(new HexTarget(pos, clientgui.getClient().getGame()
-                .getBoard(), Targetable.TYPE_HEX_TAG));
+        targets.add(new HexTarget(pos, Targetable.TYPE_HEX_TAG));
 
         // Do we have a single choice?
         if (targets.size() == 1) {
@@ -1544,7 +1542,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
                         .getGame(), cen, target, null));

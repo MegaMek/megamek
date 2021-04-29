@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>32</BOARDWIDTH>
+    <BOARDHEIGHT>34</BOARDHEIGHT>
+    <MAPWIDTH>2</MAPWIDTH>
+    <MAPHEIGHT>1</MAPHEIGHT>
+    <BOARDS>\unofficial\SimonLandmine\32x34\32x34 FrozenValley1</BOARDS>
+    <BOARDS>\unofficial\SimonLandmine\32x34\32x34 FrozenValley2</BOARDS>
+</MAPSETUP>

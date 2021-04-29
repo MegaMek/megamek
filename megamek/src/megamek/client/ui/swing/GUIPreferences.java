@@ -84,6 +84,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
     public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
     public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
+    public static final String ADVANCED_ARMORMINI_CAP_ARMOR_CHAR = "AdvancedArmorMiniCapArmorChar";
     public static final String ADVANCED_ARMORMINI_IS_CHAR = "AdvancedArmorMiniISChar";
     public static final String ADVANCED_ARMORMINI_DESTROYED_CHAR = "AdvancedArmorMiniDestroyedChar";
     public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
@@ -92,6 +93,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
+    public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     /* --End advanced settings-- */
 
 
@@ -105,7 +107,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOFTCENTER = "SoftCenter";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
-    public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
     public static final String DISPLAY_POS_X = "DisplayPosX";
@@ -133,11 +134,16 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
+    public static final String GUI_SCALE = "GUIScale";
     public static final String IMAGE_CHOOSER_POS_X = "ImageChooserPosX";
     public static final String IMAGE_CHOOSER_POS_Y = "ImageChooserPosY";
     public static final String IMAGE_CHOOSER_SIZE_HEIGHT = "ImageChooserSizeHeight";
     public static final String IMAGE_CHOOSER_SIZE_WIDTH = "ImageChooserSizeWidth";
     public static final String IMAGE_CHOOSER_SPLIT_POS = "ImageChooserSplitPos";
+    public static final String LOBBY_MEKTABLE_UNIT_WIDTH = "LobbyMektableUnitWidth";
+    public static final String LOBBY_MEKTABLE_PILOT_WIDTH = "LobbyMektablePilotWidth";
+    public static final String LOBBY_MEKTABLE_PLAYER_WIDTH = "LobbyMektablePlayerWidth";
+    public static final String LOBBY_MEKTABLE_BV_WIDTH = "LobbyMektableBVWidth";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -155,6 +161,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_SORT_ORDER = "MechSelectorSortOrder";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
+    public static final String MECH_SELECTOR_POS_X = "MechSelectorPosX";
+    public static final String MECH_SELECTOR_POS_Y = "MechSelectorPosY";
+    public static final String MECH_SELECTOR_SPLIT_POS = "MechSelectorSplitPos";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
@@ -204,6 +213,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String WINDOW_POS_Y = "WindowPosY";
     public static final String WINDOW_SIZE_HEIGHT = "WindowSizeHeight";
     public static final String WINDOW_SIZE_WIDTH = "WindowSizeWidth";
+    public static final String RND_ARMY_SIZE_HEIGHT = "RndArmySizeHeight";
+    public static final String RND_ARMY_SIZE_WIDTH = "RndArmySizeWidth";
+    public static final String RND_ARMY_POS_X = "RndArmyPosX";
+    public static final String RND_ARMY_POS_Y = "RndArmyPosY";
+    public static final String RND_ARMY_SPLIT_POS = "RndArmySplitPos";
     public static final String RND_MAP_POS_X = "RndMapPosX";
     public static final String RND_MAP_POS_Y = "RndMapPosY";
     public static final String RND_MAP_SIZE_HEIGHT = "RndMapSizeHeight";
@@ -227,6 +241,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
+    public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
+    public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -275,6 +291,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, Color.RED);
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
         setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square    
+        setDefault(ADVANCED_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
         setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot     
         setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x 
         setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, new Color(100, 180, 100)); // medium green 
@@ -283,6 +300,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(WARNING_COLOR, Color.RED);
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
+        setDefault(ADVANCED_NO_SAVE_NAG, false);
 
         setDefault(ADVANCED_MOVE_FONT_TYPE, Font.SANS_SERIF);
         setDefault(ADVANCED_MOVE_FONT_SIZE, 26);
@@ -324,7 +342,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
-        store.setDefault(CHAT_LOUNGE_TABS, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
@@ -335,14 +352,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
-        store.setDefault(FIRING_SOLUTIONS, true);
+        store.setDefault(FIRING_SOLUTIONS,true);
 
+        store.setDefault(GUI_SCALE, 1);
         store.setDefault(IMAGE_CHOOSER_POS_X, 200);
         store.setDefault(IMAGE_CHOOSER_POS_Y, 150);
         store.setDefault(IMAGE_CHOOSER_SIZE_WIDTH, 500);
         store.setDefault(IMAGE_CHOOSER_SIZE_HEIGHT, 400);
         store.setDefault(IMAGE_CHOOSER_SPLIT_POS, 50);
-
+        store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
+        store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
+        store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
+        store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
         setDefault(MAP_TEXT_COLOR, Color.BLACK);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -360,7 +381,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MECH_SELECTOR_SIZE_HEIGHT, 600);
         store.setDefault(MECH_SELECTOR_SIZE_WIDTH, 800);
-
+        store.setDefault(MECH_SELECTOR_POS_X, 200);
+        store.setDefault(MECH_SELECTOR_POS_Y, 200);
+        store.setDefault(MECH_SELECTOR_SPLIT_POS, 300);
+        store.setDefault(RND_ARMY_SIZE_HEIGHT, 600);
+        store.setDefault(RND_ARMY_SIZE_WIDTH, 800);
+        store.setDefault(RND_ARMY_POS_X, 200);
+        store.setDefault(RND_ARMY_POS_Y, 200);
+        store.setDefault(RND_ARMY_SPLIT_POS, 300);
+        
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -411,7 +440,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);
 
         store.setDefault(USE_ISOMETRIC, false);
-
+        
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
 
@@ -451,6 +480,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TEAM_COLORING, true);
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
+        setDefault(OPTIONS_SHOW_UNOFFICIAL, true);
+        setDefault(OPTIONS_SHOW_LEGACY, true);
     }
 
     public void setDefault(String name, Color color) {
@@ -502,10 +533,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(AUTO_DECLARE_SEARCHLIGHT);
     }
 
-    public boolean getChatLoungeTabs() {
-        return store.getBoolean(CHAT_LOUNGE_TABS);
-    }
-    
     public int getCustomUnitHeight() {
         return store.getInt(CUSTOM_UNIT_HEIGHT);
     }
@@ -672,6 +699,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMechSelectorSizeWidth() {
         return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
+    }
+    
+    public int getMechSelectorPosX() {
+        return store.getInt(MECH_SELECTOR_POS_X);
+    }
+    
+    public int getMechSelectorPosY() {
+        return store.getInt(MECH_SELECTOR_POS_Y);
+    }
+    
+    public int getMechSelectorSplitPos() {
+        return store.getInt(MECH_SELECTOR_SPLIT_POS);
+    }
+    
+    public int getRndArmySizeHeight() {
+        return store.getInt(RND_ARMY_SIZE_HEIGHT);
+    }
+
+    public int getRndArmySizeWidth() {
+        return store.getInt(RND_ARMY_SIZE_WIDTH);
+    }
+    
+    public int getRndArmyPosX() {
+        return store.getInt(RND_ARMY_POS_X);
+    }
+    
+    public int getRndArmyPosY() {
+        return store.getInt(RND_ARMY_POS_Y);
+    }
+    
+    public int getRndArmySplitPos() {
+        return store.getInt(RND_ARMY_SPLIT_POS);
     }
 
     public String getMinimapColours() {
@@ -882,6 +941,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public int getTooltipDistSuppression() {
         return store.getInt(TOOLTIP_DIST_SUPRESSION);
     }
+    
+    public float getGUIScale() {
+        return store.getFloat(GUI_SCALE);
+    }
 
     public int getWindowPosX() {
         return store.getInt(WINDOW_POS_X);
@@ -973,10 +1036,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAutoDeclareSearchlight(boolean state) {
         store.setValue(AUTO_DECLARE_SEARCHLIGHT, state);
-    }
-
-    public void setChatloungeTabs(boolean state) {
-        store.setValue(CHAT_LOUNGE_TABS, state);
     }
 
     public void setCustomUnitHeight(int state) {
@@ -1133,6 +1192,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMechSelectorSizeWidth(int i) {
         store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
+    }
+    
+    public void setMechSelectorPosX(int i) {
+        store.setValue(MECH_SELECTOR_POS_X, i);
+    }
+    
+    public void setMechSelectorSplitPos(int i) {
+        store.setValue(MECH_SELECTOR_SPLIT_POS, i);
+    }
+    
+    public void setMechSelectorPosY(int i) {
+        store.setValue(MECH_SELECTOR_POS_Y, i);
+    }
+    
+    public void setRndArmySizeHeight(int i) {
+        store.setValue(RND_ARMY_SIZE_HEIGHT, i);
+    }
+
+    public void setRndArmySizeWidth(int i) {
+        store.setValue(RND_ARMY_SIZE_WIDTH, i);
+    }
+    
+    public void setRndArmyPosX(int i) {
+        store.setValue(RND_ARMY_POS_X, i);
+    }
+    
+    public void setRndArmySplitPos(int i) {
+        store.setValue(RND_ARMY_SPLIT_POS, i);
+    }
+    
+    public void setRndArmyPosY(int i) {
+        store.setValue(RND_ARMY_POS_Y, i);
     }
 
     public void setMinimapEnabled(boolean b) {

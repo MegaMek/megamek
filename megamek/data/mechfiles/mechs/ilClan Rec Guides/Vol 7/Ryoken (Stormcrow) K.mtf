@@ -41,12 +41,12 @@ Improved Heavy Medium Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,24 +57,24 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -83,12 +83,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -150,4 +150,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:Industrial Complex Alpha
+primaryfactory:Dante

@@ -45,9 +45,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM5
-CLLRM5
-CLLaserAntiMissileSystem
+CLLRM5 (OMNIPOD)
+CLLRM5 (OMNIPOD)
+CLLaserAntiMissileSystem (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -90,8 +90,8 @@ CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Clan Ammo LRM-5
-CLTAG
+Clan Ammo LRM-5 (OMNIPOD)
+CLTAG (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -152,4 +152,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:Industrial Complex Alpha 
+primaryfactory:Dante

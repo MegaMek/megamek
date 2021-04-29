@@ -5646,6 +5646,26 @@ Black Python (Viper) 2:SKIRMISHER
 Viper (Black Python) 5:SKIRMISHER
 White Raven (Standard):SKIRMISHER
 White Raven 2:SKIRMISHER
+#ilClan Rec Guide 13
+Piranha 5:STRIKER
+Stinger STG-3Gb:STRIKER
+Stinger STG-4G:SCOUT
+Stinger  STG-5G:SCOUT
+Stinger STG-5M:SCOUT
+Stinger STG-6G:SCOUT
+Stinger STG-6M:SCOUT
+Stinger STG-6R:SCOUT
+Stinger C:NONE
+Stinger C 2:NONE
+Firestorm (Standard):SKIRMISHER
+Hunchback IIC 5:AMBUSHER
+Galahad (Glass Spider) (Standard):SNIPER
+Galahad (Glass Spider) 2:SNIPER
+Galahad (Glass Spider) 4:SNIPER
+Supernova 5:SNIPER
+Daishi (Dire Wolf) T:JUGGERNAUT
+Daishi (Dire Wolf) E:JUGGERNAUT
+Daishi (Dire Wolf) X:JUGGERNAUT
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER
@@ -5804,6 +5824,10 @@ Reconquista:BRAWLER
 #Shrapnel
 Centurion CN10-J:BRAWLER
 Centurion CN10-W:SNIPER
+Gyrfalcon 5:SKIRMISHER
+Thunder Stallion 4:JUGGERNAUT
+SuburbanMech UM-R90:AMBUSHER
+SuburbanMech UM-R100:SNIPER
 #Tukayyid
 Adder (Puma) TC:STRIKER
 Shadow Cat TC:SCOUT

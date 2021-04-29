@@ -103,8 +103,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
             } else if (atype.getMunitionType() == AmmoType.M_INCENDIARY) {
                 Vector<Report> dmgReports;
                 // Delivery an inferno to the hex
-                Targetable grenadeTarget = new HexTarget(c, game.getBoard(),
-                        Targetable.TYPE_HEX_IGNITE);
+                Targetable grenadeTarget = new HexTarget(c, Targetable.TYPE_HEX_IGNITE);
                 dmgReports = server
                         .deliverInfernoMissiles(ae, grenadeTarget, 1);
                 r = new Report(3372);

@@ -11657,8 +11657,7 @@ public class Server implements Runnable {
                         continue;
                     }
                     if (LosEffects.calculateLos(game, en.getId(),
-                            new HexTarget(mf.getCoords(), game.getBoard(),
-                                    Targetable.TYPE_HEX_CLEAR)).canSee()) {
+                            new HexTarget(mf.getCoords(), Targetable.TYPE_HEX_CLEAR)).canSee()) {
                         target = 0;
                         break;
                     }
@@ -13960,7 +13959,7 @@ public class Server implements Runnable {
                     for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e.getEquipmentNum(ams),
-                                new HexTarget(pos, game.getBoard(), HexTarget.TYPE_HEX_CLEAR))) {
+                                new HexTarget(pos, HexTarget.TYPE_HEX_CLEAR))) {
                             apdsList = apdsCoords.computeIfAbsent(pos, k -> new ArrayList<>());
                             apdsList.add(ams);
                         }
@@ -23212,7 +23211,7 @@ public class Server implements Runnable {
                                     }
                                     if (c != null) {
                                         vPhaseReport.addAll(deliverInfernoMissiles(te,
-                                                new HexTarget(c, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY),
+                                                new HexTarget(c, Targetable.TYPE_HEX_ARTILLERY),
                                                 infernos));
                                     }
                                 }

@@ -2007,7 +2007,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void doBotSettings() {
         IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         BotClient bot = (BotClient) clientgui.getBots().get(player.getName());
-        BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot);
+        BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot, false);
         bcd.setVisible(true);
 
         if (bcd.dialogAborted) {

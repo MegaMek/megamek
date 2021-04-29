@@ -43,10 +43,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -57,9 +57,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -150,4 +150,5 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule

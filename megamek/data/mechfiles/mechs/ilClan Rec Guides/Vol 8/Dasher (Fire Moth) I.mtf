@@ -41,7 +41,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
+CLERLargeLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -55,7 +55,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -83,8 +83,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLLRM5
-Clan Ammo LRM-5
+CLLRM5 (OMNIPOD)
+Clan Ammo LRM-5 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -148,4 +148,6 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+manufacturer:Dominion Facility Kappa-5 
+primaryfactory:Thule
 

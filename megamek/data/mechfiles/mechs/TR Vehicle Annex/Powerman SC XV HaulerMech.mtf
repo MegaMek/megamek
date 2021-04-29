@@ -3,34 +3,34 @@ Powerman SC XV HaulerMech
 (Standard)
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2795
-Source:TRO VA
-Rules Level:2
+techbase:Inner Sphere
+era:2895
+source:TRO VA
+rules level:2
 
-Mass:35
-Engine:140 ICE Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:35
+engine:140 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:0 Single
-Walk MP:4
-Jump MP:0
+heat sinks:0 Single
+walk mp:4
+jump mp:0
 
-Armor:Commercial(Inner Sphere)
-LA Armor:5
-RA Armor:5
-LT Armor:8
-RT Armor:8
-CT Armor:12
-HD Armor:2
-LL Armor:7
-RL Armor:7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+armor:Commercial(Inner Sphere)
+LA armor:5
+RA armor:5
+LT armor:8
+RT armor:8
+CT armor:12
+HD armor:2
+LL armor:7
+RL armor:7
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:0
 
@@ -39,9 +39,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 -Empty-
 -Empty-
 -Empty-
@@ -53,9 +53,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 -Empty-
 -Empty-
 -Empty-
@@ -63,8 +63,8 @@ Lift Hoist
 -Empty-
 
 Left Torso:
-Cargo (2 tons)
-Cargo (2 tons)
+Cargo:SIZE:2.0
+Cargo:SIZE:2.0
 -Empty-
 -Empty-
 -Empty-
@@ -77,8 +77,8 @@ Cargo (2 tons)
 -Empty-
 
 Right Torso:
-Cargo (2 tons)
-Cargo (2 tons)
+Cargo:SIZE:2.0
+Cargo:SIZE:2.0
 -Empty-
 -Empty-
 -Empty-
@@ -101,7 +101,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (0.5 tons)
+Cargo:SIZE:0.5
 -Empty-
 
 Head:

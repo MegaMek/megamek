@@ -151,12 +151,12 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
 
     /**
      * This performs data validation on the dialog if the current validation state is pending or
-     * warning.
+     * warning, or if this is manually triggered.
      * @param evt the event triggering this, or null if you want to put the output into a popup, if
      *            applicable
      */
     protected void validateButtonActionPerformed(final @Nullable ActionEvent evt) {
-        if (getState().isPending() || getState().isWarning()) {
+        if (getState().isPending() || getState().isWarning() || (evt != null)) {
             setState(validateAction(evt != null));
         }
     }

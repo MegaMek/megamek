@@ -44,8 +44,8 @@ Streak SRM 6, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -58,9 +58,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -73,11 +73,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLMediumPulseLaser
-CLERSmallLaser
-CLMG
-CLMG
-Clan Machine Gun Ammo - Full
+CLMediumPulseLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Machine Gun Ammo - Full (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -87,9 +87,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -153,4 +153,6 @@ Jump Jet
 -Empty-
 -Empty-
 
+manufacturer:Clan Protectorate Arms
+primaryfactory:Asellus Australis Alpha
 

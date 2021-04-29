@@ -41,6 +41,10 @@ VERSION HISTORY:
 + Data: New Sprites, IrTech addition, numerous other data fixes. Fixes for #2696
 + Issue #2794: Switching back and forth from TestBot in bot config dialog no longer causes an NPE because the TestBot option has been removed.
 + Issue #2709: Equipment improperly tagged as fixed on recent omni designs
++ Issues #448, #765, #1996, #2277, #2306, #2322, #2327, #2340, #2374, #2384, #2385, #2428, #2560, #2657: Lobby Rewrite
++ Issue #2133: MegaMek Scenario Additions (Planetary Conditions inclusion and Dialog skips)
++ PR #2797: Re-enable doubleclicking in the IconChooser
++ PR #2802: Weapon Attack Action Class Cast Exception Fix
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

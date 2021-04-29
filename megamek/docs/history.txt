@@ -45,6 +45,7 @@ VERSION HISTORY:
 + Issue #2133: MegaMek Scenario Additions (Planetary Conditions inclusion and Dialog skips)
 + PR #2797: Re-enable doubleclicking in the IconChooser
 + PR #2802: Weapon Attack Action Class Cast Exception Fix
++ Issue #2281: Creating a standard BV Display Dialog
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

@@ -72,6 +72,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
@@ -151,7 +152,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /* Player Configuration Panel */
     private FixedYPanel panPlayerInfo;
-    private JComboBox<String> comboTeam = new JComboBox<String>();
+    private JComboBox<String> comboTeam = new JComboBox<>();
     private JButton butCamo = new JButton();
     private JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
     private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
@@ -667,10 +668,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panMapPreview.add(bottomPanel);
         
         // The right side panel including the list of available boards
-        comMapSizes = new JComboBox<Comparable>();
+        comMapSizes = new JComboBox<>();
         refreshMapSizes();
 
-        lisBoardsAvailable = new JList<String>(new DefaultListModel<String>());
+        lisBoardsAvailable = new JList<>(new DefaultListModel<>());
         lisBoardsAvailable.setCellRenderer(new BoardNameRenderer());
         lisBoardsAvailable.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         lisBoardsAvailable.setVisibleRowCount(-1);
@@ -1517,49 +1518,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Shows the unit summaries for the given units, but not for hidden units (blind drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
      */
-    void mechBVAction(Collection<Entity> entities) {
+    void mechBVAction(final Set<Entity> entities) {
         if (entities.size() > 10) {
             LobbyErrors.showTenUnits(clientgui.frame);
-            return;
-        }
-        if (!canSeeAll(entities)) {
+        } else if (!canSeeAll(entities)) {
             LobbyErrors.showCannotViewHidden(clientgui.frame);
-            return;
+        } else {
+            for (final Entity entity : entities) {
+                new BVDisplayDialog(getClientgui().getFrame(), entity).setVisible(true);
+            }
         }
-        int index = 0;
-        for (Entity entity: entities) {
-            mechBVDisplay(entity, index++);
-        }
-    } 
-    
-    /**
-     * @param entity the entity to display the BV Calculation for
-     */
-    void mechBVDisplay(Entity entity, int index) {
-        final JDialog dialog = new ClientDialog(clientgui.frame, "BV Calculation Display", false, true);
-        final int height = 600;
-        
-        entity.calculateBattleValue();
-        JLabel bvSummary = new JLabel(entity.getBVText());
-        bvSummary.setFont(new Font("Dialog",Font.PLAIN, scaleForGUI(14)));
-        bvSummary.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JScrollPane tScroll = new JScrollPane(bvSummary,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        tScroll.getVerticalScrollBar().setUnitIncrement(16);
-        dialog.add(tScroll, BorderLayout.CENTER);
-
-        JButton button = new DialogButton(Messages.getString("Okay"));
-        button.addActionListener(e -> dialog.setVisible(false));
-        JPanel okayPanel = new JPanel(new FlowLayout());
-        okayPanel.add(button);
-        dialog.add(okayPanel, BorderLayout.PAGE_END);
-
-        Dimension sz = new Dimension(bvSummary.getPreferredSize().width + 40, scaleForGUI(height));
-        dialog.setPreferredSize(sz);
-        dialog.setVisible(true);
-        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
     }
 
     /**

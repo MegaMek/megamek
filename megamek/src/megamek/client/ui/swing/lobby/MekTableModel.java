@@ -58,7 +58,6 @@ public class MekTableModel extends AbstractTableModel {
     // to Dialog (which I believe uses Arial). I hope they work on other systems.
     public static final String DOT_SPACER = " \u2B1D ";
 
-
     /** Control value for the size of camo and portraits in the table at GUI scale == 1. */
     static final int MEKTABLE_IMGHEIGHT = 60;
 

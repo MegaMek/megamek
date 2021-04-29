@@ -286,7 +286,7 @@ public class MekTableModel extends AbstractTableModel {
                                                        final boolean hasFocus,
                                                        final int row, final int column) {
             final Entity entity = getEntityAt(row);
-            if (entity == null) {
+            if ((entity == null) || (value == null)) {
                 return null;
             }
 

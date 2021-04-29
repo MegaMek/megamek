@@ -373,7 +373,7 @@ public class PlayerSettingsDialog extends ClientDialog {
 
             // Bot settings button
             if (butBotSettings.equals(e.getSource())) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, (BotClient) client);
+                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, (BotClient) client, false);
                 bcd.setVisible(true);
                 if (!bcd.dialogAborted && client instanceof Princess) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());

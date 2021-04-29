@@ -420,7 +420,7 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public int getBV() {
-        return game.getPlayerEntities(this, false).stream()
+        return game.getPlayerEntities(this, true).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped())
                 .mapToInt(Entity::calculateBattleValue).sum();
     }
@@ -433,6 +433,7 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public int getFledBV() {
+        //TODO: I'm not sure how squadrons are treated here - see getBV()
         Enumeration<Entity> fledUnits = game.getRetreatedEntities();
         int bv = 0;
         while (fledUnits.hasMoreElements()) {

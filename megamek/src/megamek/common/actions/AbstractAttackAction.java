@@ -143,8 +143,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         //  (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
         if ((te != null) && (lightCond > PlanetaryConditions.L_DUSK)
-                && (te.isUsingSpotlight() || illuminated)) {
-            if (te.isUsingSpotlight()) {
+                && (te.isUsingSearchlight() || illuminated)) {
+            if (te.isUsingSearchlight()) {
                 toHit.addModifier(-searchlightMod, "target using searchlight");
                 night_modifier = night_modifier - searchlightMod;
             } else if (illuminated) {

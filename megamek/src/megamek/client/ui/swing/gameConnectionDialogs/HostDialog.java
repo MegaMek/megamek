@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * The host game dialog shown when hosting a new game and when loading a game
@@ -169,5 +170,14 @@ public class HostDialog extends AbstractGameConnectionDialog {
         getClientPreferences().setLastServerPass(getServerPass());
         getClientPreferences().setValue("megamek.megamek.metaservername", getMetaserver());
         setVisible(false);
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            UIUtil.adjustDialog(getContentPane());
+            pack();
+        }
+        super.setVisible(b);
     }
 }

@@ -1,21 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
 /*
- * GameOptionsDialog.java
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * Created on April 26, 2002, 2:14 PM
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.ui.swing;
@@ -30,24 +30,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -59,17 +44,12 @@ import org.w3c.dom.NodeList;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.options.GameOptions;
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.common.*;
+import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.utils.MegaMekXmlUtil;
+import static megamek.client.ui.Messages.*;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -79,11 +59,9 @@ import megamek.utils.MegaMekXmlUtil;
  */
 public class GameOptionsDialog extends JDialog implements ActionListener, DialogOptionListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6072295678938594119L;
-    private ClientGUI client;
+    private ClientGUI clientGui;
+    private JFrame frame;
     private GameOptions options;
 
     private boolean editable = true;
@@ -123,6 +101,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
+    private MMToggleButton butLegacy = new MMToggleButton("Legacy Opts");
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -130,6 +110,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      * options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
+    
+    private final static String UNOFFICIAL = "Unofficial";
+    private final static String LEGACY = "Legacy";
 
     /**
      * Initialize this dialog.
@@ -177,19 +160,21 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     /**
      * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
      *
-     * @param client
-     *            - the <code>Client</code> parent of this dialog.
+     * @param cg
+     *            - the <code>ClientGUI</code> parent of this dialog.
      */
-    public GameOptionsDialog(ClientGUI client) {
-        super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
-        this.client = client;
-        init(client.frame, client.getClient().getGame().getOptions());
+    public GameOptionsDialog(ClientGUI cg) {
+        super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
+        clientGui = cg;
+        frame = cg.getFrame();
+        init(frame, cg.getClient().getGame().getOptions());
     }
 
-    public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave) {
-        super(frame, Messages.getString("GameOptionsDialog.title"), true);
+    public GameOptionsDialog(JFrame jf, GameOptions options, boolean shouldSave) {
+        super(jf, Messages.getString("GameOptionsDialog.title"), true);
         // $NON-NLS-1$
         performSave = shouldSave;
+        frame = jf;
         init(frame, options);
         butOkay.setEnabled(false);
     }
@@ -197,6 +182,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
+        butUnofficial.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL));
+        butLegacy.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_LEGACY));
+        toggleOptions(butUnofficial.isSelected(), "Unofficial");
+        toggleOptions(butLegacy.isSelected(), "Legacy");
     }
 
     private void send() {
@@ -214,8 +203,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
 
-        if ((client != null) && (changed.size() > 0)) {
-            client.getClient().sendGameOptions(texPass.getText(), changed);
+        if ((clientGui != null) && (changed.size() > 0)) {
+            clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
 
@@ -270,6 +259,35 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
         validate();
     }
+    
+    /** 
+     * When show is true, options that contain the given String str are shown.
+     * When show is false, these options are hidden and deselected. 
+     * Used to show/hide unofficial and legcy options.
+     */
+    private void toggleOptions(boolean show, String str) {
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            // Each option in the list should have the same value, so picking the first is fine
+            if (comps.size() > 0) {
+                DialogOptionComponent comp = comps.get(0);
+                if (comp.getOption().getDisplayableName().contains(str)) {
+                    comp.setVisible(show);
+                    // Disable hidden options
+                    if (!show && comp.getOption().getType() == IOption.BOOLEAN) {
+                        comp.setSelected(false);
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean shouldShow(DialogOptionComponent comp) {
+        boolean hiddenUnofficial = !butUnofficial.isSelected() 
+                && comp.getOption().getDisplayableName().contains(UNOFFICIAL);
+        boolean hiddenLegacy = !butLegacy.isSelected() 
+                && comp.getOption().getDisplayableName().contains(LEGACY);
+        return !hiddenLegacy && !hiddenUnofficial;
+    }
 
     private void refreshSearchPanel() {
         panSearchOptions.removeAll();
@@ -284,25 +302,27 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
-        ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
-        for (List<DialogOptionComponent> comps : optionComps.values()) {
-            ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
-            for (DialogOptionComponent comp : comps) {
-                String optName = comp.option.getDisplayableName().toLowerCase();
-                String optDesc = comp.option.getDescription().toLowerCase();
-                if ((optName.contains(searchText) || optDesc.contains(searchText)) && !searchText.equals("")) {
-                    DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
-                    newComp.setEditable(comp.getEditable());
-                    searchComps.add(newComp);
-                    newComps.add(newComp);
+        if (!searchText.equals("")) {
+            ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
+            for (List<DialogOptionComponent> comps : optionComps.values()) {
+                ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
+                for (DialogOptionComponent comp : comps) {
+                    String optName = comp.option.getDisplayableName().toLowerCase();
+                    String optDesc = comp.option.getDescription().toLowerCase();
+                    if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
+                        DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
+                        newComp.setEditable(comp.getEditable());
+                        searchComps.add(newComp);
+                        newComps.add(newComp);
+                    }
                 }
+                comps.addAll(newComps);
+                allNewComps.addAll(newComps);
             }
-            comps.addAll(newComps);
-            allNewComps.addAll(newComps);
-        }
-        Collections.sort(allNewComps);
-        for (DialogOptionComponent comp : allNewComps) {
-            panSearchOptions.add(comp);
+            Collections.sort(allNewComps);
+            for (DialogOptionComponent comp : allNewComps) {
+                panSearchOptions.add(comp);
+            }
         }
         // panSearchOptions.validate();
         panOptions.repaint();
@@ -752,8 +772,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
-            if (client != null) {
-                for (Entity ent : client.getClient().getGame().getEntitiesVector()) {
+            if (clientGui != null) {
+                for (Entity ent : clientGui.getClient().getGame().getEntitiesVector()) {
                     if (ent instanceof Mech) {
                         ((Mech) ent).setBAGrabBars();
                     }
@@ -771,7 +791,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         butDefaults.addActionListener(this);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
-
+        butUnofficial.addActionListener(this);
+        butLegacy.addActionListener(this);
+        
+        panButtons.add(butUnofficial);
+        panButtons.add(butLegacy);
+        panButtons.add(Box.createHorizontalStrut(30));
         panButtons.add(butOkay);
         panButtons.add(butCancel);
         panButtons.add(butDefaults);
@@ -781,7 +806,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
     private void setupPassword() {
         panPassword.setLayout(new BorderLayout());
-	labPass.setLabelFor(texPass);
+        labPass.setLabelFor(texPass);
         panPassword.add(labPass, BorderLayout.WEST);
         panPassword.add(texPass, BorderLayout.CENTER);
     }
@@ -789,7 +814,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             cancelled = false;
-            if (client != null) {
+            if (clientGui != null) {
                 send();
             }
             if (performSave) {
@@ -833,6 +858,34 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             return;
         } else if (e.getSource().equals(butCancel)) {
             cancelled = true;
+        } else if (e.getSource().equals(butUnofficial)) {
+            if (!butUnofficial.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning")); 
+                if (!okay) {
+                    butUnofficial.removeActionListener(this);
+                    butUnofficial.setSelected(true);
+                    butUnofficial.addActionListener(this);
+                    return;
+                }
+            }
+            toggleOptions(butUnofficial.isSelected(), "Unofficial");
+            refreshSearchPanel();
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL, butUnofficial.isSelected());
+            return;
+        } else if (e.getSource().equals(butLegacy)) {
+            if (!butLegacy.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"));
+                if (!okay) {
+                    butLegacy.removeActionListener(this);
+                    butLegacy.setSelected(true);
+                    butLegacy.addActionListener(this);
+                    return;
+                }
+            }
+            toggleOptions(butLegacy.isSelected(), "Legacy");
+            refreshSearchPanel();
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_LEGACY, butLegacy.isSelected());
+            return;
         }
         setVisible(false);
     }
@@ -906,6 +959,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
         butDefaults.setEnabled(editable);
+        butUnofficial.setEnabled(editable);
+        butLegacy.setEnabled(editable);
 
         // Update our data element.
         this.editable = editable;

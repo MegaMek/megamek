@@ -78,4 +78,30 @@ public enum OffBoardDirection {
             return NONE;
         }
     }
+    
+    /** 
+     * Returns the OffBoardDirection associated with given the on-board deployment
+     * position as defined in IStartingPositions.
+     */
+    public static OffBoardDirection translateStartPosition(int startPos) {
+        if (startPos > 10) {
+            startPos -= 10;
+        }
+        switch (startPos) {
+            case 1:
+            case 2:
+            case 3:
+                return OffBoardDirection.NORTH;
+            case 4:
+                return OffBoardDirection.EAST;
+            case 5:
+            case 6:
+            case 7:
+                return OffBoardDirection.SOUTH;
+            case 8:
+                return OffBoardDirection.WEST;
+            default:
+                return OffBoardDirection.NONE;
+        }
+    }
 }

@@ -1372,7 +1372,7 @@ public class FireControl {
         final int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();
         owner.getFireControlState().setSubCommander(entity, 
                 entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
-               entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
+               entity.isUsingSearchlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
                (0 < initBonus));
             
@@ -3239,7 +3239,7 @@ public class FireControl {
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
         // no search light if it's not on, unit doesn't have one, or is hidden
-        if(!shooter.isUsingSpotlight() || !shooter.hasSpotlight() || shooter.isHidden()) {
+        if(!shooter.isUsingSearchlight() || !shooter.hasSearchlight() || shooter.isHidden()) {
             return null;
         }
         

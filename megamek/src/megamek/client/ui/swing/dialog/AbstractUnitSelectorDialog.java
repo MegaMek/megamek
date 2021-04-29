@@ -120,6 +120,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JTextField textFilter;
     private MechViewPanel panelMechView;
     private MechViewPanel panelTROView;
+    private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
     private long lastSearch = 0;
@@ -165,7 +166,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     private void setUserPreferences() {
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
 
         comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
 
@@ -187,7 +187,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-        pack();
+        splitPane.setDividerLocation(guiPreferences.getMechSelectorSplitPos());
+        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
+        setLocation(guiPreferences.getMechSelectorPosX(), guiPreferences.getMechSelectorPosY());
     }
 
     protected void initialize() {
@@ -406,7 +408,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JPanel panelButtons = createButtonsPanel();
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panePreview);
         splitPane.setResizeWeight(0);
         gridBagConstraints = new GridBagConstraints();
@@ -708,6 +710,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             guiPreferences.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
             guiPreferences.setMechSelectorSizeHeight(getSize().height);
             guiPreferences.setMechSelectorSizeWidth(getSize().width);
+            guiPreferences.setMechSelectorPosX(getLocation().x);
+            guiPreferences.setMechSelectorPosY(getLocation().y);
+            guiPreferences.setMechSelectorSplitPos(splitPane.getDividerLocation());
         }
     }
 

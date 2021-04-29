@@ -53,6 +53,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileGameNew;
     private JMenuItem fileGameOpen;
     private JMenuItem fileGameSave;
+    private JMenuItem fileGameQSave;
+    private JMenuItem fileGameQLoad;
     private JMenuItem fileGameSaveServer;
     private JMenuItem fileGameScenario;
     private JMenuItem fileGameConnectBot;
@@ -75,9 +77,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileRefreshCache;
-    private JMenuItem fileUnitsOpen;
-    private JMenuItem fileUnitsClear;
-    private JMenuItem fileUnitsSave;
+    private JMenuItem fileUnitsPaste;
     /**
      * The <code>Entity</code> current selected. This value may be
      * <code>null</code>.
@@ -110,6 +110,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewClientSettings;
     private JMenuItem viewPlayerSettings;
     private JMenuItem viewPlayerList;
+    private JMenuItem viewIncGUIScale;
+    private JMenuItem viewDecGUIScale;
     private JMenuItem deployMinesConventional;
     private JMenuItem deployMinesCommand;
     private JMenuItem deployMinesVibrabomb;
@@ -243,6 +245,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameSave.addActionListener(this);
         fileGameSave.setActionCommand(ClientGUI.FILE_GAME_SAVE);
         submenu.add(fileGameSave);
+        fileGameQSave = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickSave")); //$NON-NLS-1$
+        fileGameQSave.addActionListener(this);
+        fileGameQSave.setActionCommand(ClientGUI.FILE_GAME_QSAVE);
+        fileGameQSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQSave);
+        fileGameQLoad = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickLoad")); //$NON-NLS-1$
+        fileGameQLoad.addActionListener(this);
+        fileGameQLoad.setActionCommand(ClientGUI.FILE_GAME_QLOAD);
+        fileGameQLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQLoad);
         fileGameSaveServer = new JMenuItem(Messages.getString("CommonMenuBar.fileGameSaveServer")); //$NON-NLS-1$
         fileGameSaveServer.addActionListener(this);
         fileGameSaveServer.setActionCommand(ClientGUI.FILE_GAME_SAVE_SERVER);
@@ -319,21 +331,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileRefreshCache.addActionListener(this);
         fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
         submenu.add(fileRefreshCache);
-        fileUnitsOpen = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
-        fileUnitsOpen.addActionListener(this);
-        fileUnitsOpen.setActionCommand(ClientGUI.FILE_UNITS_OPEN);
-        submenu.add(fileUnitsOpen);
-        fileUnitsClear = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsClear")); //$NON-NLS-1$
-        fileUnitsClear.addActionListener(this);
-        fileUnitsClear.setActionCommand(ClientGUI.FILE_UNITS_CLEAR);
-        submenu.add(fileUnitsClear);
-        fileUnitsSave = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsSave")); //$NON-NLS-1$
-        fileUnitsSave.addActionListener(this);
-        fileUnitsSave.setActionCommand(ClientGUI.FILE_UNITS_SAVE);
-        submenu.add(fileUnitsSave);
+        fileUnitsPaste = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsPaste"));
+        fileUnitsPaste.addActionListener(this);
+        fileUnitsPaste.setActionCommand(ClientGUI.FILE_UNITS_PASTE);
+        fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileUnitsPaste);
 
         // Finish off the File menu.
 //        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
@@ -360,6 +363,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewAccessibilityWindow.addActionListener(this);
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);
+        
+        viewIncGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewIncGUIScale"));
+        viewIncGUIScale.addActionListener(this);
+        viewIncGUIScale.setActionCommand(ClientGUI.VIEW_INCGUISCALE);
+        viewIncGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewIncGUIScale);
+        
+        viewDecGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewDecGUIScale"));
+        viewDecGUIScale.addActionListener(this);
+        viewDecGUIScale.setActionCommand(ClientGUI.VIEW_DECGUISCALE);
+        viewDecGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewDecGUIScale);
         
         viewKeybindsOverlay = new JCheckBoxMenuItem(Messages.getString("CommonMenuBar.viewKeyboardShortcuts"));
         viewKeybindsOverlay.addActionListener(this);
@@ -937,21 +952,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(false);
             viewKeybindsOverlay.setEnabled(false);
         }
+        
+        fileUnitsPaste.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
 
-        // If we have a unit list, and if we are in the lounge,
-        // then we can still perform all unit list actions.
-        if (hasUnitList) {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-          //  fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-        }
-        // If we don't have a unit list, but we are in the lounge,
-        // then we can open a unit list.
-        else {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(false);
-          //  fileUnitsSave.setEnabled(false);
-        }
         // Reinforcements cannot be added in the lounge!
         fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
         fileUnitsReinforceRAT.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);

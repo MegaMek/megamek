@@ -15,7 +15,6 @@
 package megamek.common;
 
 import junit.framework.TestCase;
-import megamek.common.Entity;
 import megamek.common.options.GameOptions;
 import megamek.server.SmokeCloud;
 
@@ -59,6 +58,7 @@ public class ComputeECMTest {
         Mockito.when(mockGame.getSmokeCloudList()).thenReturn(
                 new ArrayList<SmokeCloud>());
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockGame.getPlayer(Mockito.anyInt())).thenReturn(mockPlayer);
         
         ECMInfo ecmInfo, eccmInfo, testInfoECM, testInfoECCM;
         File f;

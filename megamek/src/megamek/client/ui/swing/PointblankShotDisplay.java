@@ -702,7 +702,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         // declare searchlight, if possible
         if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
-            && ce().isUsingSpotlight()) {
+            && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 

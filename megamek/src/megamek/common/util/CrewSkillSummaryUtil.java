@@ -2,7 +2,11 @@ package megamek.common.util;
 
 import java.text.MessageFormat;
 
-import megamek.common.Messages;
+import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Tank;
+import megamek.common.options.OptionsConstants;
 
 public class CrewSkillSummaryUtil {
     private static final String SKILL_SUMMARY_PILOT = "{0}/{1}";
@@ -60,5 +64,27 @@ public class CrewSkillSummaryUtil {
         } else {
             return MessageFormat.format(SKILL_SUMMARY_LAM_GUNNERY, gunnery, aeroGunnery);
         }
+    }
+    
+    /** 
+     * Returns a descriptor string for the crew skills such as
+     * "Gunnery / Piloting", depending on the game options and entity type.
+     */
+    public static String getSkillNames(final Entity entity) {
+        final boolean rpgSkills = entity.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+        
+        String gunString = Messages.getString("BT.Gunnery");
+        if (rpgSkills) {
+            gunString = Messages.getString("CrewSkillSummary.GunneryLMB");
+        }
+        
+        String pilotString = Messages.getString("BT.Piloting");
+        if (entity instanceof Infantry) {
+            pilotString = Messages.getString("BT.AntiMek");
+        } else if (entity instanceof Tank) {
+            pilotString = Messages.getString("BT.Driving");
+        }
+        
+        return gunString + " / " + pilotString;
     }
 }

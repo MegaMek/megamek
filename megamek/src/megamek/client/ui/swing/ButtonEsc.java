@@ -18,9 +18,10 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+
+import megamek.client.ui.swing.dialog.DialogButton;
 
 /** 
  * A {@link javax.swing.JButton JButton} that will react
@@ -28,7 +29,7 @@ import javax.swing.KeyStroke;
  * 
  * @author SJuliez
  */
-public class ButtonEsc extends JButton {
+public class ButtonEsc extends DialogButton {
 
     private static final long serialVersionUID = -1259826896841611521L;
 

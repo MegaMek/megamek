@@ -310,6 +310,11 @@ public class Jumpship extends Aero {
         return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
     }
     
+    /** Returns the number of free Docking Collars. */
+    public int getFreeDockingCollars() {
+        return getDockingCollars().stream().mapToInt(dc -> (int) dc.getUnused()).sum();
+    }
+    
     /**
      * Get the number of damaged docking collars on the ship.
      * Used by crit damage string on unit display

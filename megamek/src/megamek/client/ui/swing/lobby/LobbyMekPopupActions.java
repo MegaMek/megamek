@@ -251,32 +251,32 @@ public class LobbyMekPopupActions implements ActionListener {
         case LMP_HIDDEN:
             lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
             break;
-            
+
         case LMP_STAND:
             lobby.lobbyActions.applyProne(entities, info);
             break;
-            
+
         case LMP_VIEW:
             lobby.mechReadoutAction(entities);
             break;
-            
+
         case LMP_BV:
             lobby.mechBVAction(entities);
             break;
-            
+
         case LMP_DAMAGE:
             lobby.lobbyActions.configureDamage(entities);
             break;
-            
+
         case LMP_SWAP:
             int id = Integer.parseInt(info);
             lobby.lobbyActions.swapPilots(entities, id);
             break;
-            
+
         case LMP_C3DISCONNECT:
             lobby.lobbyActions.c3DisconnectFromNetwork(entities);
             break;
-            
+
         case LMP_C3CM:
             lobby.lobbyActions.c3SetCompanyMaster(entities);
             break;

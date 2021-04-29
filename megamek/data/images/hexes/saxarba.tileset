@@ -31,17 +31,13 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Transitions/Transitions.tileinc"
 include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 include "saxarba/Includes/Pavement.tileinc"
 
-#Transitions
-super * "ground_fluff:1:01" "" "saxarba/Transitions/toDesert_20.png"
-super * "ground_fluff:1:02" "" "saxarba/Transitions/toDesert_40.png"
-super * "ground_fluff:1:03" "" "saxarba/Transitions/toDesert_60.png"
-super * "ground_fluff:1:04" "" "saxarba/Transitions/toDesert_80.png"
 
 
 #GRAY SAND

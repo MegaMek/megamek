@@ -113,7 +113,6 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
             }
         }
         if(((conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                || (conditions.getWeather() == PlanetaryConditions.WE_BLIZZARD)
                 && game.getBoard().onGround())) {
             heavySnowTurn = heavySnowTurn + 1;
             if(heavySnowTurn == 4) {

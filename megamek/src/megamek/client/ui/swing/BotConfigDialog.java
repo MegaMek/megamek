@@ -592,7 +592,7 @@ public class BotConfigDialog extends JDialog implements ActionListener {
      * @param port The gme server's host port.
      * @return A new bot-controlled client.
      */
-    BotClient getSelectedBot(String host, int port) {
+    public BotClient getSelectedBot(String host, int port) {
         Princess toReturn = new Princess(getBotName(), host, port,
                                              LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
         toReturn.setBehaviorSettings(princessBehavior);

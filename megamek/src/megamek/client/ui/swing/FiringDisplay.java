@@ -1498,7 +1498,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // declare searchlight, if possible
         if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
-            && ce().isUsingSpotlight()) {
+            && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
@@ -2266,7 +2266,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && !ce().isHidden()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()

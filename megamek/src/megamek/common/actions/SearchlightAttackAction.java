@@ -56,7 +56,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         final Entity attacker = game.getEntity(attackerId);
         
         // can't light up if either you or the target don't exist, or you don't have your light on
-        if ((attacker == null) || !attacker.isUsingSpotlight() || (target == null)) {
+        if ((attacker == null) || !attacker.isUsingSearchlight() || (target == null)) {
             return false;
         }
         

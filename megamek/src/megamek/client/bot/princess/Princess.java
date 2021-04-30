@@ -2033,8 +2033,8 @@ public class Princess extends BotClient {
     private void turnOnSearchLight(MovePath path, boolean possibleToInflictDamage) {
         Entity pathEntity = path.getEntity();
         if(possibleToInflictDamage &&
-                pathEntity.hasSpotlight() && 
-                !pathEntity.isUsingSpotlight() &&
+                pathEntity.hasSearchlight() && 
+                !pathEntity.isUsingSearchlight() &&
                 (path.getGame().getPlanetaryConditions().getLight() >= PlanetaryConditions.L_FULL_MOON)) {
             path.addStep(MoveStepType.SEARCHLIGHT);
         }

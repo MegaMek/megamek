@@ -1139,7 +1139,7 @@ public class Crew implements Serializable {
         }
         String s = "";
         if (getHits(pos) > 0) {
-            s += hits[pos] + " hits";
+            s += hits[pos] + ((hits[pos] == 1) ? " hit" : " hits");
             if (isUnconscious(pos)) {
                 s += " (KO)";
             } else if (isDead(pos)) {

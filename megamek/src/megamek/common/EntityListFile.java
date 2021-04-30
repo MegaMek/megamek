@@ -25,6 +25,7 @@ import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.force.Force;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -1099,6 +1100,19 @@ public class EntityListFile {
             //Record this unit's id number
             if (entity.getId() != Entity.NONE) {
                 output.write(indentStr(indentLvl+1) + "<Game id=\"" + entity.getId());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            }
+
+            // Write the force hierarchy
+            if (entity.getForceString().length() > 0) {
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
+                output.write(entity.getForceString());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            } else if ((entity.getGame() != null) && (entity.getForceId() != Force.NO_FORCE)) {
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
+                output.write(entity.getGame().getForces().forceStringFor(entity));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
             }

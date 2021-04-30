@@ -1132,16 +1132,16 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
             int modifiers = 0;
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK))){
-                modifiers |= KeyEvent.SHIFT_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.SHIFT_DOWN_MASK))){
+                modifiers |= KeyEvent.SHIFT_DOWN_MASK;
             }
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.ALT_MASK))){
-                modifiers |= KeyEvent.ALT_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.ALT_DOWN_MASK))){
+                modifiers |= KeyEvent.ALT_DOWN_MASK;
             }
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
-                modifiers |= KeyEvent.CTRL_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.CTRL_DOWN_MASK))){
+                modifiers |= KeyEvent.CTRL_DOWN_MASK;
             }
 
             if (kcb.modifiers != modifiers){
@@ -1750,7 +1750,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             gbc.anchor = GridBagConstraints.CENTER;
 
             final JTextField modifiers = new JTextField(10);
-            modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
+            modifiers.setText(KeyEvent.getModifiersExText(kcb.modifiers));
             for (KeyListener kl : modifiers.getKeyListeners()){
                 modifiers.removeKeyListener(kl);
             }
@@ -1760,7 +1760,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 @Override
                 public void keyPressed(KeyEvent evt) {
                     modifiers.setText(
-                            KeyEvent.getKeyModifiersText(evt.getModifiers()));
+                            KeyEvent.getModifiersExText(evt.getModifiersEx()));
                     evt.consume();
                 }
 

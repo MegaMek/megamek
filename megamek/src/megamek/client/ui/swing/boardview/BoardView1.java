@@ -673,7 +673,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // only scroll when we should
                 if (!shouldScroll) {
                     mouseAction(getCoordsAt(point), BOARD_HEX_DRAG,
-                                e.getModifiers());
+                                e.getModifiersEx());
                     return;
                 }
                 // if we have not yet been dragging, set the var so popups don't
@@ -4836,7 +4836,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (me.isPopupTrigger() && !dragging) {
-            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiers());
+            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx());
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
@@ -4856,14 +4856,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 return;
             }
         }
-        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
+        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiersEx());
     }
 
     public void mouseReleased(MouseEvent me) {
         // don't show the popup if we are drag-scrolling
         if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
-                        me.getModifiers());
+                        me.getModifiersEx());
             // stop scrolling
             shouldScroll = false;
             return;
@@ -4887,10 +4887,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK,
-                        me.getModifiers());
+                        me.getModifiersEx());
         } else {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_DOUBLECLICK,
-                        me.getModifiers());
+                        me.getModifiersEx());
         }
     }
 
@@ -5127,7 +5127,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Coords c = new Coords(x, y);
             switch (mtype) {
                 case BOARD_HEX_CLICK:
-                    if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+                    if ((modifiers & java.awt.event.InputEvent.CTRL_DOWN_MASK) != 0) {
                         checkLOS(c);
                     } else {
                         processBoardViewEvent(new BoardViewEvent(this, c, null,
@@ -5945,7 +5945,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (foundPlayer) txt.append("<BR>"); //$NON-NLS-1$
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
+            String keybindText = KeyEvent.getModifiersExText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
             if (!keybindText.isEmpty()) keybindText += "+";
             keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
             txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText));

@@ -412,7 +412,7 @@ public class BoardEditor extends JComponent
                 boolean isALT = (b.getModifiers() & ActionEvent.ALT_MASK) != 0;
                 boolean isSHIFT = (b.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
                 boolean isCTRL = (b.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-                boolean isLMB = (b.getModifiers() & InputEvent.BUTTON1_MASK) != 0;
+                boolean isLMB = (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0;
 
                 // Raise/Lower Terrain is selected
                 if (buttonUpDn.isSelected()) {

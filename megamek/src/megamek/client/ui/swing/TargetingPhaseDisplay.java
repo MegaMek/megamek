@@ -1295,18 +1295,18 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {

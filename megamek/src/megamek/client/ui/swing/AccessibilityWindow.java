@@ -178,9 +178,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                     Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
-            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
+            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK);
             // Click.
-            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
+            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK);
         }
     }
 

@@ -46,6 +46,7 @@ VERSION HISTORY:
 + PR #2797: Re-enable doubleclicking in the IconChooser
 + PR #2802: Weapon Attack Action Class Cast Exception Fix
 + Issue #2281: Creating a standard BV Display Dialog
++ PR #2803: Fixing a few Reports that are Missing Subjects
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

@@ -2,7 +2,7 @@
 * MegaMek -
 * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018, 2020 The MegaMek Team
+* Copyright (C) 2018-2021 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -62,7 +62,6 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
@@ -34415,6 +34414,7 @@ public class Server implements Runnable {
             hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
+            r.subject = entity.getId();
             r.addDesc(entity);
             addReport(r);
 
@@ -34923,11 +34923,13 @@ public class Server implements Runnable {
             addReport(r);
             if (!game.getBoard().contains(c)) {
                 r = new Report(2386);
+                r.subject = entity.getId();
                 addReport(r);
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 return;
             } else {
                 r = new Report(2387);
+                r.subject = entity.getId();
                 r.add(c.getBoardNum());
                 addReport(r);
             }

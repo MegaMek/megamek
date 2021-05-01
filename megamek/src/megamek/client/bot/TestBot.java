@@ -24,7 +24,6 @@ import java.util.Vector;
 
 import megamek.client.bot.MoveOption.DamageInfo;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -32,7 +31,6 @@ import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
 import megamek.common.IHex;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;

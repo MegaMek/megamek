@@ -15,8 +15,6 @@
 package megamek.common;
 
 import junit.framework.TestCase;
-import megamek.common.Entity;
-import megamek.common.MechFileParser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -49,6 +49,7 @@ VERSION HISTORY:
 + PR #2803: Fixing a few Reports that are Missing Subjects
 + Issue #2801 Omnimech Pods Incorrect Labels
 + Data: Adding Mech write ups to selected units.
++ New Sprites and Issue #2798 Wolfhounds Missing Full-Head Ejection Systems
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

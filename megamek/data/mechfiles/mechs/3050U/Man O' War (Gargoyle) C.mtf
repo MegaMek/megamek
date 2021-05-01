@@ -5,7 +5,7 @@ C
 Config:Biped Omnimech
 TechBase:Clan
 Era:2945
-Source:TRO 3050 - Succession Wars
+source:TRO Clan Invasion - Succession Wars
 Rules Level:2
 
 Mass:80
@@ -153,4 +153,16 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Gargoyle is an extremely fast assault OmniMech developed with the Timber Wolf as replacements for the first-generation Woodsman OmniMech. The Gargoyle is therefore commonly seen among Clan Wolf, and was a featured assault OmniMech during the Clan Invasion. The Gargoyle earned the name Man O' War from the Inner Sphere forces because of its effectiveness. Along with the Timber Wolf and Naga, the Gargoyle debuted in 2945.
+
+capabilities:A dedicated close combat configuration, the Gargoyle C carries as its primary weapon a powerful Ultra Autocannon/20 that has twice the rate of fire as a standard Autocannon. This is supported by a brace of six ER Medium Lasers that make the 'Mech a highly effective brawler. To protect itself from infantry knee-capping attacks in an urban environment, the 'Mech has three Anti-Personnel Pods.
+
+deployment:The Gargoyle is capable of reaching ground speeds of up to 86.4 km/h thanks to its massive 400 Model SF-3 XL Engine, accounting for over twenty percent of the 'Mech's mass. Built on a standard structure, the Gargoyle has sixteen double heat sinks in its base chassis, which can dissipate heat from most of the Gargoyle's configurations quite effectively. The Gargoyle carries eleven tons of Ferro-Fibrous armor which is light for its size, but provides protection equal to that of most heavy 'Mechs. Even the Gargoyles relatively light twenty-one and half tons of available pod space emphasizes speed; all Gargoyle configs mount weaponry almost exclusively in the arms, reducing the amount of time required to alter the weapon systems; however, with most of the weaponry placed in the arms, the Gargoyle is at the risk of being disarmed by a couple of well-placed shots.
+manufacturer:Wolf Clan Site OZ-1, Tokasha Mechworks, Tamar HH Industriplex Alpha
+primaryfactory:Tamar, Tokasha,  Tamar
+systemmanufacturer:CHASSIS:Clan Series Assault SXC
+systemmanufacturer:ENGINE:400 Model SF-3 XL
+systemmanufacturer:ARMOR:Forging C629/j Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Raldon R1
+systemmanufacturer:TARGETING:Version Kappa-III TTS
 

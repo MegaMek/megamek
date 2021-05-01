@@ -8184,14 +8184,14 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        misc.omniFixedOnly = true;
+        misc.omniFixedOnly = false;
         misc.bv = 0;
         misc.rulesRefs = "288,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3115, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(3059, 3115, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3059, 3115, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CSF, F_LC)
                 .setProductionFactions(F_CSF).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);;
         return misc;

@@ -13,7 +13,7 @@ engine:270 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:6
 jump mp:6
@@ -40,10 +40,10 @@ TAG (Clan), Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -54,12 +54,12 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20 (omnipod)
-CLHAG20 (omnipod)
-CLHAG20 (omnipod)
-CLHAG20 (omnipod)
-CLHAG20 (omnipod)
-CLHAG20 (omnipod)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
+CLHAG20 (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -71,8 +71,8 @@ Fusion Engine
 CLPartialWing
 CLPartialWing
 CLPartialWing
-Jump Jet (omnipod)
-CLECMSuite (omnipod)
+Jump Jet (OMNIPOD)
+CLECMSuite (OMNIPOD)
 Clan Endo Steel
 -Empty-
 -Empty-
@@ -86,8 +86,8 @@ CLPartialWing
 CLPartialWing
 CLPartialWing
 Jump Jet
-Hyper-Assault Gauss Rifle/20 Ammo (omnipod)
-Hyper-Assault Gauss Rifle/20 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/20 Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLTAG (omnipod)
+CLTAG (OMNIPOD)
 Clan Ferro-Fibrous
 
 Head:
@@ -149,4 +149,17 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Hierofalcon is a Medium Clan OmniMech designed primarily as a striker type design by Clan Jade Falcon. Developed by the Falcons in the mid-3140s as part of the Clan's increasing emphases on maneuverability and fast movement.
+capabilities:The Mech was constructed to handle 19 tons of OmniPods for weapons and equipment. As part of the push to be ever more flexible in movement, the 'Mech features a 270 Rated Extra-Light Engine. The addition of a permanently equipped Partial Wing adds to its maneuverability and cooling abilities. The 'Mech's hull is protected by 7.5 tons of Ferro-Fibrous Armor, giving it modest protection from enemy fire, while an ECM Suite provides additional protection from other threats. Its primary configuration features a Class 20 Hyper Assault Gauss Rifle in the right arm, with two tons of ammunition allotted to the weapon. Backing up the weapon are a pair of Heavy Medium Lasers mounted in the left arm. Intended as a spotter, the Hierofalcon features a TAG. Six Jump Jets have also been fitted into this configuration.
+
+history:The 'Mech began construction in 3148 on Alyina's CJF Factory Zone 4, The Hierofalcon was designed at the same time as the larger Jade Phoenix. The duo were part of a new generation of OmniMechs intended to eventually replace the Standard BattleMechs used by the Clan.
+
+One of its noted early actions was in 3149, in a skirmish against the Falcons' former close allies, Clan Hell's Horses on Hyperion. The light and swift Hieronfalcons overwhelmed the Horses' Nova, gaining a reputation among the Horses as being a terror on the battlefield.
+manufacturer:CJF Factory Zone 4
+primaryfactory:Alyina
+systemmanufacturer:CHASSIS:JF 4 Light Endo Steel
+systemmanufacturer:ENGINE:Light Force 270 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVII Integrated
 

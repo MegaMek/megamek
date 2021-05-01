@@ -14643,6 +14643,25 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>ISUltraAC5</weaponName>
 		</weaponQuirk>
 	</unit>
+	
+	<unit>
+		<chassis>Wolverine</chassis>
+		<model>WVR-6D</model>
+		<unitType>Mech</unitType>
+		<quirk>command_mech</quirk>
+		<quirk>ext_twist</quirk>
+		<quirk>imp_com</quirk>
+		<quirk>pro_actuator</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<quirk>cramped_cockpit</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>Autocannon/10</weaponName>
+		</weaponQuirk>
+	</unit>
 
 	<unit>
 		<chassis>Wolverine</chassis>

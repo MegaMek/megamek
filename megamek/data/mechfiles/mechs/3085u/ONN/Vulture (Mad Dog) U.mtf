@@ -3,33 +3,33 @@ Vulture (Mad Dog)
 U
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3077
-Source:RS 3085 - Jihad
-Rules Level:4
+techbase:Clan
+era:3077
+source:RS 3085 - Jihad
+rules level:4
 
-Mass:60
-Engine:300 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:60
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:12 Double
-Base Chassis Heat Sinks:12
-Walk MP:5
-Jump MP:0
+heat sinks:12 Clan Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:23
-HD Armor:9
-LL Armor:23
-RL Armor:23
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:23
+HD armor:9
+LL armor:23
+RL armor:23
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
 Weapons:6
 ER Medium Laser, Left Arm
@@ -43,8 +43,8 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,8 +57,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,13 +70,13 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRT15 (omnipod)
-CLLRT15 (omnipod)
-CLArtemisV (omnipod)
-CLArtemisV (omnipod)
-Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
-Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
-Clan HarJel (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRTorpedo-15 Artemis V-capable (OMNIPOD)
+Clan Ammo LRTorpedo-15 Artemis V-capable (OMNIPOD)
+IS HarJel (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -84,13 +84,13 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRT15 (omnipod)
-CLLRT15 (omnipod)
-CLArtemisV (omnipod)
-CLArtemisV (omnipod)
-Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
-Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
-Clan HarJel (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLArtemisV (OMNIPOD)
+CLArtemisV (OMNIPOD)
+Clan Ammo LRTorpedo-15 Artemis V-capable (OMNIPOD)
+Clan Ammo LRTorpedo-15 Artemis V-capable (OMNIPOD)
+IS HarJel (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU (omnipod)
-Clan HarJel
+UMU (OMNIPOD)
+IS HarJel (OMNIPOD)
 
 Head:
 Life Support
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU (omnipod)
-CLUMU (omnipod)
+UMU (OMNIPOD)
+UMU (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU (omnipod)
-CLUMU (omnipod)
+UMU (OMNIPOD)
+UMU (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -151,4 +151,15 @@ CLUMU (omnipod)
 -Empty-
 -Empty-
 
+overview:The Mad Dog is a heavy Clan OmniMech used for long-range indirect fire support. With hunched shoulders, a protruding head, and reverse-jointed legs, the Mad Dog resembles a vulture, so much so that it was codenamed Vulture and Hagetaka ("Vulture" in Japanese) by the Inner Sphere forces which first encountered it.
+capabilities:An underwater configuration, this version uses BattleMech HarJel System to prevent hull breaches. It's equipped with five UMUs to maintain a high cruising speed underwater. Its weaponry consists of twin LRT-15s with Artemis IV guidance and each arm carries a Medium Pulse Laser and ER Medium Laser.
+deployment:The name also fit the battlefield role of the Mad Dog; the main role of the Mad Dog is to act as a support 'Mech, and it often holds a hill maintaining constant watch over the entire battlefield, like a vulture waiting for its prey. With its ample firepower and decent speed of 86.4 km/h, it makes a highly mobile firing platform, and as such has spread to near ubiquity among the forces deployed by the Clans, although the design is favored more by Clan Ghost Bear MechWarriors. The Mad Dog carries eight and a half tons of Ferro-Fibrous armor for decent protection, although it will not be able to stand up to heavy fire.
+history:The Mad Dog was designed by Clan Smoke Jaguar as a second generation OmniMech based on the original heavy OmniMech Lupus of Clan Coyote.[7] The Mad Dog also used some of the same moulds of the Clan Wolf Timber Wolf OmniMech. However, despite using some of the same moulds (which might be viewed as high praise), the Mad Dog was named as a slur to the Lupus and Timber Wolf, and to Clans Wolf and Coyote. Because of its widespread production, most Clans maintain a large number of Mad Dogs in their toumans.
+manufacturer:Various,Svarstaad Industriplex Beta
+primaryfactory:Various,Svarstaad
+systemmanufacturer:CHASSIS:Eden Mk 60-OM
+systemmanufacturer:ENGINE:300 Type I XL
+systemmanufacturer:ARMOR:Compound SJ6CW Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Build OSJ-41
+systemmanufacturer:TARGETING:Cat’s Eye MD6
 

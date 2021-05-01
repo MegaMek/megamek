@@ -5392,7 +5392,7 @@ Behemoth (Stone Rhino) 5:JUGGERNAUT
 Behemoth (Stone Rhino) 6:BRAWLER
 Behemoth (Stone Rhino) 7:SNIPER
 Behemoth (Stone Rhino) 8:SNIPER
-#ilClan Rec Guide 3
+#ilClan Rec Guide 4
 Puma (Adder) I:STRIKER
 Puma (Adder) K:SNIPER
 Puma (Adder) L:STRIKER
@@ -5666,6 +5666,36 @@ Supernova 5:SNIPER
 Daishi (Dire Wolf) T:JUGGERNAUT
 Daishi (Dire Wolf) E:JUGGERNAUT
 Daishi (Dire Wolf) X:JUGGERNAUT
+#ilClan Rec Guide 14
+Griffin IIC (Standard):MISSILE_BOAT
+Griffin IIC 2:STRIKER
+Griffin IIC 9:STRIKER
+Sentinel STN-6S:SNIPER
+Exterminator EXT-7X:SKIRMISHER
+Ostsol OTL-5M:SKIRMISHER
+Ostsol OTL-8E:SKIRMISHER
+Ostsol OTL-8E3:SKIRMISHER
+Ostsol OTL-8F:SKIRMISHER
+Ostsol C:SKIRMISHER
+Black Hawk (Nova) T:SKIRMISHER
+Black Hawk (Nova) G:SKIRMISHER
+Black Hawk (Nova) I:SKIRMISHER
+Black Hawk (Nova) J:SKIRMISHER
+Black Hawk (Nova) K:BRAWLER
+Black Hawk (Nova) L:SKIRMISHER
+Black Hawk (Nova) R:SKIRMISHER
+Lightning LHN-C5:SNIPER
+Thug THG-13U:JUGGERNAUT
+#ilClan Rec Guide 15
+#ilClan Rec Guide 16
+#ilClan Rec Guide 17
+#ilClan Rec Guide 18
+#ilClan Rec Guide 19
+#ilClan Rec Guide 20
+#ilClan Rec Guide 21
+#ilClan Rec Guide 22
+#ilClan Rec Guide 23
+#ilClan Rec Guide 24
 #GoldenCentury
 Mongoose C:STRIKER
 Mongoose C 2:STRIKER

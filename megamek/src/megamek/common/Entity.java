@@ -167,10 +167,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final int USE_STRUCTURAL_RATING = -1;
 
-    public static final String ENTITY_AIR_TO_GROUND_SENSOR_RANGE= Messages.getString("Entity.sensor_range_vs_ground_target");
-
     // Weapon sort order defines
-    public static enum WeaponSortOrder {
+    public enum WeaponSortOrder {
         DEFAULT("DEFAULT"),
         RANGE_LH("RANGE_LH"),
         RANGE_HL("RANGE_HL"),
@@ -13226,8 +13224,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"
-                    + maxGroundSensorRange + ")}";
+                    + maxSensorRange + ")" + " {" + Messages.getString("Entity.sensor_range_vs_ground_target")
+                    + " (" + minGroundSensorRange + "-" + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                + maxSensorRange + ")";

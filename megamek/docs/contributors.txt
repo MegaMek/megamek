@@ -13,7 +13,7 @@
 	 Juliez
 
   Data Lead
-	 Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Dave Nawton 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -128,6 +128,7 @@
 	 Ask
 	 Keyl Seuhy
 	 Norman "Flynn" Zinner
+	 Kaji
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

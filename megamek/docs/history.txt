@@ -51,6 +51,7 @@ VERSION HISTORY:
 + Data: Adding Mech write ups to selected units.
 + New Sprites and Issue #2798 Wolfhounds Missing Full-Head Ejection Systems
 + Data: Issue #2774 - Kaji Maps Update.
++ Data: Updated 1st SW RATs, and some general unit data fixes.
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

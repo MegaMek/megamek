@@ -5655,8 +5655,8 @@ Stinger STG-5M:SCOUT
 Stinger STG-6G:SCOUT
 Stinger STG-6M:SCOUT
 Stinger STG-6R:SCOUT
-Stinger C:NONE
-Stinger C 2:NONE
+#Stinger C:NONE
+#Stinger C 2:NONE
 Firestorm (Standard):SKIRMISHER
 Hunchback IIC 5:AMBUSHER
 Galahad (Glass Spider) (Standard):SNIPER

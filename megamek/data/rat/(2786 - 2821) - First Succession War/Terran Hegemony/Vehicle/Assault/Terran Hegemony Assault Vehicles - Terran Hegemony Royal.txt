@@ -1,0 +1,12 @@
+Terran Hegemony Assault Vehicles - Terran Hegemony Royal
+Puma Assault Tank PAT-001,2
+Rhino Fire Support Tank (Royal),3
+Puma Assault Tank PAT-005,4
+Fury Command Tank (Original),5
+Fury Command Tank (Royal),6
+Alacorn Heavy Tank Mk VI,7
+Rhino Fire Support Tank (Royal),6
+Puma Assault Tank PAT-005b,5
+Alacorn Heavy Tank Mk VI,4
+Fury Command Tank (Fury II),3
+Rhino Fire Support Tank (Royal),2

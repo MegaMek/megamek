@@ -3,10 +3,10 @@ Vulture (2312),1
 Gazelle (2531),2
 Dictator (Standard),3
 Lion (2595),4
-Trojan (Blockade Runner) (2720),5
+Trojan (Blockade Runner),5
 Triumph (2593),6
 Leopard (2537),5
 Black Eagle (Standard),4
 DroST IIb Transport (2445),3
 Leopard CV (2581),2
-Trojan (Blockade Runner) (2720),1
+Trojan (Blockade Runner),1

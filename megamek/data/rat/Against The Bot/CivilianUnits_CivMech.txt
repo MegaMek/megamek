@@ -74,7 +74,7 @@ Marco MR-8E,3
 Patron LoaderMech (Standard),18
 Patron MilitiaMech PTN-2,9
 Peacekeeper PK-6 SecurityMech,9
-Peacemaker PM6 PoliceMech (Standard),3
+Peacemaker PM6 PoliceMech,3
 Pompier Firemech GM-3A,9
 Pompier Firemech GM-3CD,9
 Pompier Firemech GM-3HT,18

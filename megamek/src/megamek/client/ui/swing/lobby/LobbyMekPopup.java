@@ -600,8 +600,8 @@ class LobbyMekPopup {
 
         JMenu menu = new JMenu(Messages.getString("ChatLounge.popup.quirks"));
         menu.setEnabled(enabled);
-        menu.add(menuItem("Save Quirks for Chassis", LMP_SAVE_QUIRKS_ALL + eIds, enabled, listener));
-        menu.add(menuItem("Save Quirks for Chassis/Model", LMP_SAVE_QUIRKS_MODEL + eIds, enabled, listener));
+        menu.add(menuItem("Save Quirks for Chassis", LMP_SAVE_QUIRKS_ALL + NOINFO + eIds, enabled, listener));
+        menu.add(menuItem("Save Quirks for Chassis/Model", LMP_SAVE_QUIRKS_MODEL + NOINFO + eIds, enabled, listener));
         return menu;
     }
 

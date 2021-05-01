@@ -1,20 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -23,8 +28,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -38,46 +41,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-import javax.swing.border.LineBorder;
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
@@ -89,7 +58,11 @@ import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.*;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -102,8 +75,9 @@ import megamek.common.util.fileUtils.MegaMekFile;
 // TODO: sluggish hex drawing?
 // TODO: the board validation after a board load seems to be influenced by the former board...
 // TODO: copy/paste hexes
-public class BoardEditor extends JComponent
-        implements ItemListener, ListSelectionListener, ActionListener, DocumentListener, IMapSettingsObserver {
+public class BoardEditor extends JPanel
+        implements ItemListener, ListSelectionListener, ActionListener, 
+        DocumentListener, IMapSettingsObserver, IPreferenceChangeListener {
     
     /**
      * Class to make terrains in JComboBoxes easier.  This enables keeping the terrain type int separate from the name
@@ -193,6 +167,8 @@ public class BoardEditor extends JComponent
      *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items 
      */
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
+        private static final long serialVersionUID = -6776114675645434769L;
+        
         private TerrainHelper[] terrains;
         private List<TerrainTypeHelper> terrainTypes;
 
@@ -230,10 +206,12 @@ public class BoardEditor extends JComponent
     private static final String FILE_BOARD_EDITOR_VALIDATE = "fileBoardValidate";
     private static final String FILE_SOURCEFILE = "fileSource";
     //endregion action commands
+    
+    private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
+    private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
 
     // Components
     private JFrame frame = new JFrame();
-    private JScrollPane scrollPane;
     private Game game = new Game();
     private IBoard board = game.getBoard();
     private BoardView1 bv;
@@ -258,35 +236,38 @@ public class BoardEditor extends JComponent
     private IHex curHex = new Hex();
     
     // Easy terrain access buttons
-    private JButton buttonLW, buttonLJ;
-    private JButton buttonOW, buttonOJ;
-    private JButton buttonWa, buttonSw, buttonRo;
-    private JButton buttonRd, buttonCl, buttonBu;
-    private JButton buttonMd, buttonPv, buttonSn;
-    private JButton buttonIc, buttonTu, buttonMg;
-    private JButton buttonBr, buttonFT;
-    private JToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
-    private JToggleButton buttonUpDn, buttonOOC;
+    private ArrayList<ScalingIconButton> terrainButtons = new ArrayList<>();
+    private ScalingIconButton buttonLW, buttonLJ;
+    private ScalingIconButton buttonOW, buttonOJ;
+    private ScalingIconButton buttonWa, buttonSw, buttonRo;
+    private ScalingIconButton buttonRd, buttonCl, buttonBu;
+    private ScalingIconButton buttonMd, buttonPv, buttonSn;
+    private ScalingIconButton buttonIc, buttonTu, buttonMg;
+    private ScalingIconButton buttonBr, buttonFT;
+    private ArrayList<ScalingIconToggleButton> brushButtons = new ArrayList<>();
+    private ScalingIconToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
+    private ScalingIconToggleButton buttonUpDn, buttonOOC;
+
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2  
     private int brushSize = 1;
     private int hexLeveltoDraw = -1000;
     private Font fontElev = new Font("SansSerif", Font.BOLD, 20);
     private Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12);
     private EditorTextField texElev;
-    private JButton butElevUp;
-    private JButton butElevDown;
+    private ScalingIconButton butElevUp;
+    private ScalingIconButton butElevDown;
     private JList<TerrainTypeHelper> lisTerrain;
     private ComboboxToolTipRenderer lisTerrainRenderer;
-    private JButton butDelTerrain;
+    private ScalingIconButton butDelTerrain;
     private JComboBox<TerrainHelper> choTerrainType;
     private EditorTextField texTerrainLevel;
     private JCheckBox cheTerrExitSpecified;
     private EditorTextField texTerrExits;
-    private JButton butTerrExits;
+    private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
-    private JButton butExitUp, butExitDown;
+    private ScalingIconButton butExitUp, butExitDown;
     private JComboBox<String> choTheme;
-    private JButton butTerrDown, butTerrUp;
+    private ScalingIconButton butTerrDown, butTerrUp;
     private JButton butAddTerrain;
     private JButton butBoardNew;
     private JButton butBoardOpen;
@@ -299,9 +280,19 @@ public class BoardEditor extends JComponent
     private MapSettings mapSettings = MapSettings.getInstance();
     private JButton butExpandMap;
     private Coords lastClicked;
+    private JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT);
+    
+    private FixedYPanel panelHexSettings = new FixedYPanel();
+    private FixedYPanel panelTerrSettings = new FixedYPanel(new GridLayout(0, 2, 4, 4));
+    private FixedYPanel panelBoardSettings = new FixedYPanel();
+    
+    // Help Texts
+    JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT);
+    JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT);
     
     // Undo / Redo
-    private JButton buttonUndo, buttonRedo;
+    ArrayList<ScalingIconButton> undoButtons = new ArrayList<>();
+    private ScalingIconButton buttonUndo, buttonRedo;
     private Stack<HashSet<IHex>> undoStack = new Stack<>();
     private Stack<HashSet<IHex>> redoStack = new Stack<>();
     private HashSet<IHex> currentUndoSet;
@@ -487,21 +478,20 @@ public class BoardEditor extends JComponent
                 showHelp();
             }
         }
+        
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     /**
      * Sets up the frame that will display the editor.
      */
     private void setupFrame() {
-        scrollPane = new JScrollPane(this, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(12);
-
         setFrameTitle();
         frame.getContentPane().setLayout(new BorderLayout());
-
         frame.getContentPane().add(bvc, BorderLayout.CENTER);
-        frame.getContentPane().add(scrollPane, BorderLayout.EAST);
+        frame.getContentPane().add(this, BorderLayout.EAST);
+        
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         frame.setBackground(SystemColor.menu);
@@ -550,31 +540,25 @@ public class BoardEditor extends JComponent
     /**
      * Sets up JButtons
      */
-    private JButton prepareButton(String iconName, String buttonName, ArrayList<JButton> bList) {
-        JButton button = new JButton(buttonName);
-        button.addActionListener(this);
+    private ScalingIconButton prepareButton(String iconName, String buttonName, 
+            ArrayList<ScalingIconButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setIcon(new ImageIcon(imageButton));
-            // When there is an icon, then the text can be removed
-            button.setText("");
+        if (imageButton == null) {
+            return null;
         }
+        ScalingIconButton button = new ScalingIconButton(imageButton, width);
 
         // Get the hover icon
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setRolloverIcon(new ImageIcon(imageButton));
-        }
+        button.setRolloverImage(imageButton);
         
         // Get the disabled icon, if any
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setDisabledIcon(new ImageIcon(imageButton));
-        }
+        button.setDisabledImage(imageButton);
 
         String tt = Messages.getString("BoardEditor."+iconName+"TT");
         if (tt.length() != 0) {
@@ -584,43 +568,38 @@ public class BoardEditor extends JComponent
         if (bList != null) {
             bList.add(button);
         }
+        button.addActionListener(this);
         return button;
     }
     
     /**
      * Sets up JToggleButtons
      */
-    private JToggleButton addTerrainTButton(String iconName, String buttonName, ArrayList<JToggleButton> bList) {
-        JToggleButton button = new JToggleButton(buttonName);
-        button.addActionListener(this);
-        
+    private ScalingIconToggleButton addTerrainTButton(String iconName, String buttonName, 
+            ArrayList<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setIcon(new ImageIcon(imageButton));
-            // When there is an icon, then the text can be removed
-            button.setText("");
+        if (imageButton == null) {
+            return null;
         }
+        ScalingIconToggleButton button = new ScalingIconToggleButton(imageButton, width);
         
         // Get the hover icon
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setRolloverIcon(new ImageIcon(imageButton));
-        }
+        button.setRolloverImage(imageButton);
         
-        // Get the selected icon
+        // Get the selected icon, if any
         file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile();
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
-        if (imageButton != null) {
-            button.setSelectedIcon(new ImageIcon(imageButton));
-        }
+        button.setSelectedImage(imageButton);
         
         button.setToolTipText(Messages.getString("BoardEditor."+iconName+"TT"));
         if (bList != null) {
             bList.add(button);
         }
+        button.addActionListener(this);
         return button;
     }
 
@@ -630,46 +609,43 @@ public class BoardEditor extends JComponent
      */
     private void setupEditorPanel() {
         // Help Texts
-        JLabel genHelpText1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT); //$NON-NLS-1$
-        JLabel terrainButtonHelp = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT); //$NON-NLS-1$
-        genHelpText1.addMouseListener(clickToHide);
-        terrainButtonHelp.addMouseListener(clickToHide);
+        labHelp1.addMouseListener(clickToHide);
+        labHelp2.addMouseListener(clickToHide);
+        labHelp1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        labHelp2.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Buttons to ease setting common terrain types
-        ArrayList<JButton> terrainButtons = new ArrayList<>();
-        buttonLW = prepareButton("ButtonLW", "Woods", terrainButtons);
-        buttonLJ = prepareButton("ButtonLJ", "Jungle", terrainButtons);
-        buttonOW = prepareButton("ButtonLLW", "Low Woods", terrainButtons);
-        buttonOJ = prepareButton("ButtonLLJ", "Low Jungle", terrainButtons);
-        buttonWa = prepareButton("ButtonWa", "Water", terrainButtons);
-        buttonSw = prepareButton("ButtonSw", "Swamp", terrainButtons);
-        buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons);
-        buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons); 
-        buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons);
-        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons); 
-        buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons);
-        buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons);
-        buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons);
-        buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons);
-        buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons);
-        buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons);
-        buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons);
-        buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons);
+        buttonLW = prepareButton("ButtonLW", "Woods", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonLJ = prepareButton("ButtonLJ", "Jungle", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonOW = prepareButton("ButtonLLW", "Low Woods", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonOJ = prepareButton("ButtonLLJ", "Low Jungle", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonWa = prepareButton("ButtonWa", "Water", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonSw = prepareButton("ButtonSw", "Swamp", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonRo = prepareButton("ButtonRo", "Rough", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonMd = prepareButton("ButtonMd", "Mud", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH); 
+        buttonPv = prepareButton("ButtonPv", "Pavement", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonSn = prepareButton("ButtonSn", "Snow", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH); 
+        buttonBu = prepareButton("ButtonBu", "Buildings", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonRd = prepareButton("ButtonRd", "Roads", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonBr = prepareButton("ButtonBr", "Bridges", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonFT = prepareButton("ButtonFT", "Fuel Tanks", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonIc = prepareButton("ButtonIc", "Ice", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonTu = prepareButton("ButtonTu", "Tundra", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
+        buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
 
-        ArrayList<JToggleButton> brushButtons = new ArrayList<>();
-        buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons);
-        buttonBrush2 = addTerrainTButton("ButtonHex7", "Brush2", brushButtons);
-        buttonBrush3 = addTerrainTButton("ButtonHex19", "Brush3", brushButtons);
+        buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush2 = addTerrainTButton("ButtonHex7", "Brush2", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush3 = addTerrainTButton("ButtonHex19", "Brush3", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         ButtonGroup brushGroup = new ButtonGroup();
         brushGroup.add(buttonBrush1);
         brushGroup.add(buttonBrush2);
         brushGroup.add(buttonBrush3);
-        buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons);
-        buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons);
+        buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
 
-        ArrayList<JButton> undoButtons = new ArrayList<>();
-        buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons);
-        buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons);
+        buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         buttonUndo.setEnabled(false);
         buttonRedo.setEnabled(false);
 
@@ -862,14 +838,14 @@ public class BoardEditor extends JComponent
             repaintWorkingHex();
         });
 
-        JPanel terrainButtonPanel = new JPanel(new GridLayout(0, 4, 2, 2));
-        addManyButtons(terrainButtonPanel, terrainButtons);
+        FixedYPanel terrainButtonPanel = new FixedYPanel(new GridLayout(0, 4, 2, 2));
+        addManySButtons(terrainButtonPanel, terrainButtons);
 
-        JPanel brushButtonPanel = new JPanel(new GridLayout(0, 3, 2, 2));
+        FixedYPanel brushButtonPanel = new FixedYPanel(new GridLayout(0, 3, 2, 2));
         addManyTButtons(brushButtonPanel, brushButtons);
         buttonBrush1.setSelected(true);
 
-        JPanel undoButtonPanel = new JPanel(new GridLayout(1, 2, 2, 2));
+        FixedYPanel undoButtonPanel = new FixedYPanel(new GridLayout(1, 2, 2, 2));
         addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
 
         // Hex Elevation Control
@@ -877,11 +853,11 @@ public class BoardEditor extends JComponent
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
 
-        butElevUp = prepareButton("ButtonHexUP", "Raise Hex Elevation", null);
+        butElevUp = prepareButton("ButtonHexUP", "Raise Hex Elevation", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butElevUp.setName("butElevUp");
         butElevUp.setToolTipText(Messages.getString("BoardEditor.butElevUp.toolTipText"));
 
-        butElevDown = prepareButton("ButtonHexDN", "Lower Hex Elevation", null);
+        butElevDown = prepareButton("ButtonHexDN", "Lower Hex Elevation", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butElevDown.setName("butElevDown");
         butElevDown.setToolTipText(Messages.getString("BoardEditor.butElevDown.toolTipText"));
 
@@ -895,8 +871,8 @@ public class BoardEditor extends JComponent
         refreshTerrainList();
 
         // Terrain List, Preview, Delete
-        JPanel panlisHex = new JPanel(new FlowLayout(FlowLayout.LEFT,4,4));
-        butDelTerrain = prepareButton("buttonRemT", "Delete Terrain", null);
+        FixedYPanel panlisHex = new FixedYPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
+        butDelTerrain = prepareButton("buttonRemT", "Delete Terrain", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butDelTerrain.setEnabled(false);
         canHex = new HexCanvas();
         panlisHex.add(butDelTerrain);
@@ -926,8 +902,8 @@ public class BoardEditor extends JComponent
         choTerrainType.addActionListener(e -> { if (!terrListBlocker) lisTerrain.clearSelection(); });
         choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain"));
-        butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null);
-        butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null);
+        butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
+        butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
 
         // Minimap Toggle
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap"));
@@ -940,12 +916,12 @@ public class BoardEditor extends JComponent
             updateWhenSelected();
             noTextFieldUpdate = false;
         });
-        butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null);
+        butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null, BASE_ARROWBUTTON_ICON_WIDTH);
         texTerrExits = new EditorTextField("0", 2, 0); //$NON-NLS-1$
         texTerrExits.addActionListener(this);
         texTerrExits.getDocument().addDocumentListener(this);
-        butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null);
-        butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null);
+        butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
+        butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
 
         // Arrows and text fields for type and exits
         JPanel panUP = new JPanel(new GridLayout(1,0,4,4));
@@ -968,7 +944,6 @@ public class BoardEditor extends JComponent
 
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
-        JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT);
         choTheme = new JComboBox<>();
         TilesetManager tileMan = bv.getTilesetManager();
         Set<String> themes = tileMan.getThemes();
@@ -978,16 +953,14 @@ public class BoardEditor extends JComponent
         panTheme.add(choTheme);
 
         // The hex settings panel (elevation, theme)
-        JPanel panelHexSettings = new JPanel();
-        panelHexSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Hex Settings"));
+        panelHexSettings.setBorder(new TitledBorder("Hex Settings"));
         panelHexSettings.add(butElevUp);
         panelHexSettings.add(texElev);
         panelHexSettings.add(butElevDown);
         panelHexSettings.add(panTheme);
 
         // The terrain settings panel (type, level, exits)
-        JPanel panelTerrSettings = new JPanel(new GridLayout(0, 2, 4, 4));
-        panelTerrSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Terrain Settings"));
+        panelTerrSettings.setBorder(new TitledBorder("Terrain Settings"));
         panelTerrSettings.add(Box.createVerticalStrut(5));
         panelTerrSettings.add(panUP);
 
@@ -998,8 +971,7 @@ public class BoardEditor extends JComponent
         panelTerrSettings.add(panDN);
 
         // The board settings panel (Auto exit roads to pavement)
-        JPanel panelBoardSettings = new JPanel();
-        panelBoardSettings.setBorder(new TitledBorder(new LineBorder(Color.BLUE, 1), "Board Settings"));
+        panelBoardSettings.setBorder(new TitledBorder("Board Settings"));
         panelBoardSettings.add(cheRoadsAutoExit);
 
         // Board Buttons (Save, Load...)
@@ -1031,8 +1003,7 @@ public class BoardEditor extends JComponent
         addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew, butMiniMap);
         addManyActionListeners(butDelTerrain, butAddTerrain, butSourceFile);
         
-
-        JPanel panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
+        JPanel panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
         addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardOpen,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
         panButtons.add(butBoardValidate);
@@ -1041,47 +1012,28 @@ public class BoardEditor extends JComponent
             panButtons.add(butSourceFile);
         }
 
-        // ------------------
         // Arrange everything
-        //
-        setLayout(new GridBagLayout());
-        GridBagConstraints cfullLine = new GridBagConstraints();
-        GridBagConstraints cYFiller = new GridBagConstraints();
-
-        cfullLine.fill = GridBagConstraints.HORIZONTAL;
-        cfullLine.gridwidth = GridBagConstraints.REMAINDER;
-        cfullLine.gridx = 0;
-        cfullLine.insets = new Insets(4, 4, 1, 1);
-
-        cYFiller.fill = GridBagConstraints.HORIZONTAL;
-        cYFiller.gridwidth = GridBagConstraints.REMAINDER;
-        cYFiller.gridx = 0;
-        cYFiller.weighty = 1;
-        cYFiller.insets = new Insets(4, 4, 1, 1);
-
-        // Easy Access Terrain Buttons
-        add(genHelpText1, cfullLine);
-        add(terrainButtonHelp, cfullLine);
-        add(terrainButtonPanel, cfullLine);
-        add(brushButtonPanel, cfullLine);
-        add(new JLabel(""), cYFiller);
-        add(undoButtonPanel, cfullLine);
-        add(new JLabel(""), cYFiller);
-
-        // Terrain and Hex Control
-        add(panelBoardSettings, cfullLine);
-        add(panelHexSettings, cfullLine);
-        add(panelTerrSettings, cfullLine);
-
-        // Terrain List and Preview Hex
-        add(panlisHex, cfullLine);
-
-        // Board buttons
-        add(panButtons, cfullLine);
+        setLayout(new BorderLayout());
+        var centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        centerPanel.add(labHelp1);
+        centerPanel.add(labHelp2);
+        centerPanel.add(terrainButtonPanel);
+        centerPanel.add(brushButtonPanel);
+        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(undoButtonPanel);
+        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(panelBoardSettings);
+        centerPanel.add(panelHexSettings);
+        centerPanel.add(panelTerrSettings);
+        centerPanel.add(panlisHex);
+        var scrCenterPanel = new JScrollPane(centerPanel);
+        scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
+        add(scrCenterPanel, BorderLayout.CENTER);
+        add(panButtons, BorderLayout.PAGE_END);
 
         minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false);
-        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
-                             GUIPreferences.getInstance().getMinimapPosY());
+        minimapW.setLocation(guip.getMinimapPosX(), guip.getMinimapPosY());
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
@@ -1123,22 +1075,30 @@ public class BoardEditor extends JComponent
 
     // Helper to shorten the code
     private void addManyActionListeners(JButton... buttons) {
-        for (JButton button: buttons) button.addActionListener(this);
+        for (JButton button: buttons) {
+            button.addActionListener(this);
+        }
     }
     
     // Helper to shorten the code
     private void addManyButtons(JPanel panel, JButton... buttons) {
-        for (JButton button: buttons) panel.add(button);
+        for (JButton button: buttons) {
+            panel.add(button);
+        }
+    }
+    
+ // Helper to shorten the code
+    private void addManySButtons(JPanel panel, ArrayList<ScalingIconButton> terrainButtons) {
+        for (JButton button: terrainButtons) {
+            panel.add(button);
+        }
     }
     
     // Helper to shorten the code
-    private void addManyButtons(JPanel panel, ArrayList<JButton> buttonList) {
-        for (JButton button: buttonList) panel.add(button);
-    }
-    
-    // Helper to shorten the code
-    private void addManyTButtons(JPanel panel, ArrayList<JToggleButton> buttonList) {
-        for (JToggleButton button: buttonList) panel.add(button);
+    private void addManyTButtons(JPanel panel, ArrayList<ScalingIconToggleButton> buttonList) {
+        for (JToggleButton button: buttonList) {
+            panel.add(button);
+        }
     }
     
     /**
@@ -2164,6 +2124,58 @@ public class BoardEditor extends JComponent
             refreshTerrainFromList();
         }
     }
+    
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        } 
+    }
+    
+    /** Adapts the whole Board Editor UI to the current guiScale. */
+    private void adaptToGUIScale() {
+        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+
+        butAddTerrain.setFont(scaledFont);
+        butBoardNew.setFont(scaledFont);
+        butBoardOpen.setFont(scaledFont);
+        butBoardSave.setFont(scaledFont);
+        butBoardSaveAs.setFont(scaledFont);
+        butBoardSaveAsImage.setFont(scaledFont);
+        butBoardValidate.setFont(scaledFont);
+        butMiniMap.setFont(scaledFont);
+        butExpandMap.setFont(scaledFont);
+        butSourceFile.setFont(scaledFont);
+        
+        choTerrainType.setFont(scaledFont);
+        choTheme.setFont(scaledFont);
+        cheRoadsAutoExit.setFont(scaledFont);
+        cheTerrExitSpecified.setFont(scaledFont);
+        lisTerrain.setFont(scaledFont);
+        texTerrExits.setFont(scaledFont);
+        texElev.setFont(scaledFont);
+        texTerrainLevel.setFont(scaledFont);
+        
+        labHelp1.setFont(scaledFont);
+        labHelp2.setFont(scaledFont);
+        labTheme.setFont(scaledFont);
+        
+        ((TitledBorder)panelBoardSettings.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder)panelHexSettings.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder)panelTerrSettings.getBorder()).setTitleFont(scaledFont);
+        
+        terrainButtons.stream().forEach(ScalingIconButton::rescale);
+        undoButtons.stream().forEach(ScalingIconButton::rescale);
+        brushButtons.stream().forEach(ScalingIconToggleButton::rescale);
+        butTerrDown.rescale();
+        butTerrUp.rescale();
+        butElevDown.rescale();
+        butElevUp.rescale();
+        butExitDown.rescale();
+        butExitUp.rescale();
+        butTerrExits.rescale();
+        butDelTerrain.rescale();
+    }
 
     /**
      * Displays the currently selected hex picture, in component form
@@ -2206,7 +2218,7 @@ public class BoardEditor extends JComponent
                 if (!curHex.isValid(errBuf)) {
                     g.setFont(new Font("SansSerif", Font.BOLD, 14));
                     Point hexCenter = new Point(BoardView1.HEX_W / 2, BoardView1.HEX_H / 2);
-                    bv.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
+                    BoardView1.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
                             hexCenter, guip.getWarningColor(), false);
                     String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
                     tooltip = tooltip.replace("\n", "<br>");
@@ -2282,6 +2294,8 @@ public class BoardEditor extends JComponent
      * @author Simon
      */
     private class EditorTextField extends JTextField {
+        private static final long serialVersionUID = 1137300303131688344L;
+        
         private int minValue = Integer.MIN_VALUE;
         
         /**
@@ -2376,6 +2390,97 @@ public class BoardEditor extends JComponent
             } catch (NumberFormatException ex) {
                 return 0;
             }
+        }
+    }
+    
+    
+    /** 
+     * A specialized JButton that only shows an icon but scales that icon according
+     * to the current GUI scaling when its rescale() method is called.
+     */
+    private class ScalingIconButton extends JButton {
+        private static final long serialVersionUID = 4351623243707863737L;
+        
+        private Image baseImage;
+        private Image baseRolloverImage;
+        private Image baseDisabledImage;
+        private int baseWidth;
+        
+        ScalingIconButton(Image image, int width) {
+            super();
+            Objects.requireNonNull(image);
+            baseImage = image;
+            baseWidth = width;
+            rescale();
+        }
+        
+        void rescale() {
+            int realWidth = UIUtil.scaleForGUI(baseWidth);
+            int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
+            setIcon(new ImageIcon(ImageUtil.getScaledImage(baseImage, realWidth, realHeight)));
+            
+            if (baseRolloverImage != null) {
+                realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
+                setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
+            }
+            
+            if (baseDisabledImage != null) {
+                realHeight = baseDisabledImage.getHeight(null) * realWidth / baseDisabledImage.getWidth(null);
+                setDisabledIcon(new ImageIcon(ImageUtil.getScaledImage(baseDisabledImage, realWidth, realHeight)));
+            }
+        }
+        
+        void setRolloverImage(Image image) {
+            baseRolloverImage = image;
+        }
+        
+        void setDisabledImage(Image image) {
+            baseDisabledImage = image;
+        }
+    }
+    
+    /** 
+     * A specialized JToggleButton that only shows an icon but scales that icon according
+     * to the current GUI scaling when its rescale() method is called.
+     */
+    private class ScalingIconToggleButton extends JToggleButton {
+        private static final long serialVersionUID = 4351623243707863737L;
+        
+        private Image baseImage;
+        private Image baseRolloverImage;
+        private Image baseSelectedImage;
+        private int baseWidth;
+        
+        ScalingIconToggleButton(Image image, int width) {
+            super();
+            Objects.requireNonNull(image);
+            baseImage = image;
+            baseWidth = width;
+            rescale();
+        }
+        
+        void rescale() {
+            int realWidth = UIUtil.scaleForGUI(baseWidth);
+            int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
+            setIcon(new ImageIcon(ImageUtil.getScaledImage(baseImage, realWidth, realHeight)));
+            
+            if (baseRolloverImage != null) {
+                realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
+                setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
+            }
+            
+            if (baseSelectedImage != null) {
+                realHeight = baseSelectedImage.getHeight(null) * realWidth / baseSelectedImage.getWidth(null);
+                setSelectedIcon(new ImageIcon(ImageUtil.getScaledImage(baseSelectedImage, realWidth, realHeight)));
+            }
+        }
+        
+        void setRolloverImage(Image image) {
+            baseRolloverImage = image;
+        }
+        
+        void setSelectedImage(Image image) {
+            baseSelectedImage = image;
         }
     }
 }

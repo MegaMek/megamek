@@ -19,6 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import megamek.common.IGame;
+import megamek.common.options.GameOptions;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version $Id$
@@ -27,7 +30,15 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class NewtonAerospacePathRankerTest {
 
-
+    @SuppressWarnings("unused")
+    private Princess mockPrincess;
+    @SuppressWarnings("unused")
+    private NewtonianAerospacePathRanker mockPathRanker;
+    @SuppressWarnings("unused")
+    private IGame mockGame;
+    @SuppressWarnings("unused")
+    private GameOptions mockGameOptions;
+ 
     @Before
     public void setUp() {
         /*mockPathRanker = Mockito.mock(NewtonianAerospacePathRanker.class);

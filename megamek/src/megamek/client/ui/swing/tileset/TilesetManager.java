@@ -36,7 +36,6 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -615,7 +614,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         IPlayer player = entity.getOwner();
-        PlayerColour tint = player.getColour();
 
         Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         EntityImage entityImage = null;

@@ -41,7 +41,6 @@ import megamek.client.Client;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.logging.MMLogger;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -58,9 +57,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
     
-    //L4J Support
-    private MMLogger logger = null;
-
     private static final long serialVersionUID = 639696875125581395L;
     
     protected static final int TRANSPARENT = 0xFFFF00FF;

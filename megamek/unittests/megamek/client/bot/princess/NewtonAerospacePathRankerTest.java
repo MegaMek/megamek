@@ -13,10 +13,8 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.IGame;
-import megamek.common.options.GameOptions;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -29,10 +27,6 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class NewtonAerospacePathRankerTest {
 
-    private Princess mockPrincess;
-    private NewtonianAerospacePathRanker mockPathRanker;
-    private IGame mockGame;
-    private GameOptions mockGameOptions;
 
     @Before
     public void setUp() {
@@ -56,6 +50,7 @@ public class NewtonAerospacePathRankerTest {
         Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)).thenReturn(true);*/
     }
 
+    @Ignore
     @Test
     public void testCalculateSensorShadowMod() {
         /*final MovePath mockPath = Mockito.mock(MovePath.class);

@@ -27,7 +27,6 @@ import megamek.common.ITechManager;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;

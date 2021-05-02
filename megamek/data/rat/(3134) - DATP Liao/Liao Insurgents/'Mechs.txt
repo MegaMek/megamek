@@ -8,5 +8,5 @@ Powerman XI LoaderMech (Standard), 6
 Buster BC XV-M-W HaulerMech MOD, 5
 Hyena HYN-4A SalvageMech, 4
 Kiso ConstructionMech K-3N-KR4, 3
-Peacemaker PM6 PoliceMech (Standard), 2
+Peacemaker PM6 PoliceMech, 2
 Crosscut ED-X2 (RL), 1

@@ -3,33 +3,33 @@ Templar
 TLR1-OU
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3078
-Source:Jihad
-Rules Level:4
+techbase:Inner Sphere
+era:3078
+source:Jihad
+rules level:4
 
-Mass:85
-Engine:340 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
+mass:85
+engine:340 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:13
-Walk MP:4
-Jump MP:0
+heat sinks:15 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:28
-RA Armor:28
-LT Armor:26
-RT Armor:26
-CT Armor:44
-HD Armor:9
-LL Armor:36
-RL Armor:36
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:7
 LRT 10, Left Arm
@@ -44,10 +44,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRT 10 (omnipod)
-LRT 10 (omnipod)
-LRT 10 (omnipod)
-LRT 10 (omnipod)
+LRT 10 (OMNIPOD)
+LRT 10 (OMNIPOD)
+LRT 10 (OMNIPOD)
+LRT 10 (OMNIPOD)
 IS HarJel
 IS Endo Steel
 IS Endo Steel
@@ -57,14 +57,14 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISLargePulseLaser (omnipod)
-ISLargePulseLaser (omnipod)
-SRT 6 (omnipod)
-SRT 6 (omnipod)
-ISMediumPulseLaser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISLargePulseLaser (OMNIPOD)
+ISLargePulseLaser (OMNIPOD)
+SRT 6 (OMNIPOD)
+SRT 6 (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
 IS HarJel
 IS Endo Steel
 
@@ -72,12 +72,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISUMU (omnipod)
-ISUMU (omnipod)
-ISC3SlaveUnit (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+UMU (OMNIPOD)
+UMU (OMNIPOD)
+ISC3SlaveUnit (OMNIPOD)
 IS HarJel
 IS Endo Steel
 IS Endo Steel
@@ -86,11 +86,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUMU (omnipod)
-ISUMU (omnipod)
-IS Ammo LRTorpedo-10 (omnipod)
-IS Ammo LRTorpedo-10 (omnipod)
-IS Ammo SRTorpedo-6 (omnipod)
+UMU (OMNIPOD)
+UMU (OMNIPOD)
+IS Ammo LRTorpedo-10 (OMNIPOD)
+IS Ammo LRTorpedo-10 (OMNIPOD)
+IS Ammo SRTorpedo-6 (OMNIPOD)
 IS HarJel
 ISCASE
 IS Endo Steel
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser (omnipod)
-ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
 
 Head:
 Life Support
@@ -152,5 +152,17 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Templar.jpg
+capabilities:This variant was designed for underwater operations. In addition to four UMUs it is also equipped with a BattleMech HarJel System to prevent hull breaches. Three Medium Pulse Lasers and a Large Pulse Laser provide energy weapon support. An SRT-6 and LRT-10 torpedo launcher increase the odds of breaching an enemy unit's armor. A C3 Slave allows the Templar U to share targeting data with friendly units. 
+
+deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
+
+history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
+
+manufacturer:Kallon Industries
+primaryfactory:Talon
+systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel
+systemmanufacturer:ENGINE:KalTek 340 Extralight
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
+systemmanufacturer:TARGETING:Spar 3C MegaTrak
 

@@ -96,7 +96,7 @@ public class RandomSkillsGenerator implements Serializable {
 
     public RandomSkillsGenerator() {
 
-        method = M_CONSTANT;
+        method = M_TW;
         level = L_REG;
         type = T_IS;
         close = false;

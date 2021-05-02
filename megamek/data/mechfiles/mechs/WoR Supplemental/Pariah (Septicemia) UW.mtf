@@ -3,33 +3,33 @@ Pariah (Septicemia)
 UW
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3072
-Source:Jihad
-Rules Level:4
+techbase:Clan
+era:3072
+Source:WoR - Jihad
+rules level:4
 
-Mass:55
-Engine:275 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:55
+engine:275 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
-Walk MP:5
-Jump MP:0
+heat sinks:11 Clan Double
+base chassis heat sinks:11
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:18
-RA Armor:18
-LT Armor:18
-RT Armor:18
-CT Armor:23
-HD Armor:8
-LL Armor:24
-RL Armor:24
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:18
+RA armor:18
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:8
+LL armor:24
+RL armor:24
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
 Weapons:8
 LRT 15, Left Torso
@@ -46,7 +46,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Clan HarJel
+IS HarJel (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -60,7 +60,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Clan HarJel
+IS HarJel (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -72,29 +72,29 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUMU (omnipod)
-CLUMU (omnipod)
-CLLRT15 (omnipod)
-CLLRT15 (omnipod)
-CLSRT4 (omnipod)
-CLSRT4 (omnipod)
-CLSRT4 (omnipod)
-Clan Ammo LRTorpedo-15 (omnipod)
-Clan HarJel
+UMU (OMNIPOD)
+UMU (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+Clan Ammo LRTorpedo-15 (OMNIPOD)
+IS HarJel (OMNIPOD)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLUMU (omnipod)
-CLUMU (omnipod)
-CLLRT15 (omnipod)
-CLLRT15 (omnipod)
-CLSRT4 (omnipod)
-CLSRT4 (omnipod)
-CLSRT4 (omnipod)
-Clan Ammo LRTorpedo-15 (omnipod)
-Clan HarJel
+UMU (OMNIPOD)
+UMU (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLLRT15 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+CLSRT4 (OMNIPOD)
+Clan Ammo LRTorpedo-15 (OMNIPOD)
+IS HarJel (OMNIPOD)
 -Empty-
 
 Center Torso:
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU (omnipod)
-Clan HarJel
+UMU (OMNIPOD)
+IS HarJel (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMASS (omnipod)
+ISMASS (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ammo SRTorpedo-4 (omnipod)
-Clan Ammo LRTorpedo-15 (omnipod)
+Clan Ammo SRTorpedo-4 (OMNIPOD)
+Clan Ammo LRTorpedo-15 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ammo SRTorpedo-4 (omnipod)
-Clan Ammo LRTorpedo-15 (omnipod)
+Clan Ammo SRTorpedo-4 (OMNIPOD)
+Clan Ammo LRTorpedo-15 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -153,4 +153,20 @@ Clan Ammo LRTorpedo-15 (omnipod)
 -Empty-
 -Empty-
 
+overview:The backbone of The Society's military forces, the Septicemia was a utilitarian medium-class workhorse.
+
+Devoid of the more experimental technology utilized by the Cephalus and Osteon to allow it to be built in higher volumes, the Septicemia saves weight with an XL Engine, Endo Steel chassis, and nine tons of Ferro-Fibrous armor. While the location of its weaponry in its torsos hampers its ability to carry Battle Armor, this was intentional to try and ensure hand actuators were retained to maximize its physical combat abilities.
+
+capabilities:ntended for underwater operations, this variant is equipped with a M.A.S.S and five Underwater Maneuvering Units. To protect against hull breaches, it's also equipped with a BattleMech HarJel System. Offensively, it carries a single LRT-15 and three SRT-4 launchers in the left and right torsos. Two tons of ammunition for each launcher type can be found in the legs.
+
+deployment:Planning their OmniMech forces around a single mass-produced design intended to work in concert with two rarer but cutting-edge units, the Septicemia was built using proven technology with a focus towards mutual support on the battlefield, its every aspect intended to allow it to engage the Clan toumans using methods of warfare they found dezgra. Appearing during the Wars of Reaving when Clan warriors were even more intent on an exceedingly strict adherence of zellbrigen to avoid accusations of Taint, the Septicemia would prove frighteningly effective, earning it the nickname of "Pariah" by the Clan Diamond Shark forces that first faced it on Babylon in 3072.
+
+history:Despite its role in the Wars of Reaving, the Septicemia would see service after the conflict in the toumans of the four surviving Homeworld Clans. Avoiding extinction unlike the Cephalus and Osteon due to the capture of its production plant and lack of integrated Nova Combined Electronic Warfare System, while the other surviving Clans would push for a renaming of the Septicemia to excise its Taint (Void and Codex being popular suggestions), Khan Magnus DelVillar from Clan Stone Lion successfully campaigned against any moves to rename or remodel the design, citing that it would serve as a constant reminder of the dark crucible from which the Clans had emerged. 
+manufacturer:Kerensky Memorial Manufacturing
+primaryfactory:Strana Mechty
+systemmanufacturer:CHASSIS:55T Battle Epsilon-5 Profile Endo-Steel
+systemmanufacturer:ENGINE:275 Type II XL
+systemmanufacturer:ARMOR:Compound SJ8CW Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:GBX Series Integrated II
+systemmanufacturer:TARGETING:Cat’s Eye MD7
 

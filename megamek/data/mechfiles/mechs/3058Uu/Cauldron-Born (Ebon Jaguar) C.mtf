@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Cauldron-Born (Ebon Jaguar)
 C
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3049
-Source:TRO 3058 - Clan Invasion
+source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:65
@@ -150,3 +150,17 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien. 
+
+capabilities:The Cauldron-Born C is a missile boat and much easier on the heat curve than the other variants. Its primary weapons are a pair of LRM-15s and 25mm Ultra Autocannon/2s. Backing these up for short range work are a pair of SRM-6s. Though this variant carries no energy weapons, it does have ample supplies of ammunition that allow it to stay on the field for long periods of time.
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7

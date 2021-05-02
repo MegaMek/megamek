@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Grendel (Mongrel)
 B
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3053
-Source:TRO 3058 - Clan Invasion
+source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:45
@@ -150,4 +150,23 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Mongrel received its baptism of fire during the Battle of Tukayyid. There, it was commonly seen leading light Stars, especially on deep reconnaissance and raiding missions. Its ammo-efficient weapons allowed it to range far afield and helped simplify resupply, while its speed allowed it to dictate its range of engagement and outmaneuver all but the fastest of opponents.
+
+capabilities:This variant uses an Ultra Autocannon/5 for long range work. It mounts an ER Medium Laser and a pair of Medium Pulse Lasers for close-up engagements. An ER Small Laser is again added.
+
+deployment:The Grendel features a powerful 315-rated engine, enabling it to move at a fleet 119 km/h, and enough jump jets fixed on the chassis to propel it up to 210 meters at a leap. The Sharks spared no expense in weight-saving materials, making use of an XL Engine, Endo Steel structure, and seven and a half tons of Ferro-Fibrous armor. The incredible speed of the Grendel is not terribly helpful in most zellbrigen duels, but it is effective in large-scale actions especially against Inner Sphere foes of similar weight hard pressed to counter its speed or firepower. The Grendel is also popular with technicians. While many OmniMechs are often "hangar queens," the Grendel can go long periods without maintenance and still remain combat effective.
+
+history:The 'Mech entered full production after a slight physical remodel the following year and was re-christened "Grendel" after the name given to it by Com Guard troops who faced it.
+
+One of the few successes of Clan Diamond Shark's defeat on Tukayyid, the other Invading Clans almost immediately staged Trials of Possession of the re-named 'Mech. Rather than waste Warrior Caste resources in fighting the numerous Trials, the Diamond Sharks instead chose to sell production runs or license the design to the other Clans, speeding their recovery and ensuring the Grendel was a common sight among many front-line Clusters.
+
+Though the Grendel remains in use among the other Inner Sphere Clans following the Wars of Reaving, most notably the Clan Hell's Horses, the majority of production during the Dark Age era resides in the Khanates of Clan Sea Fox.
+manufacturer:Arcadia BattleMech Plant CM-T15, Manufacturing Plant SFF-AL2
+primaryfactory:Arcadia, Alnabog
+systemmanufacturer:CHASSIS:Process 12 Endo Steel
+systemmanufacturer:ENGINE:315 Consolidated XL
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Clan Standard 14X Series
+systemmanufacturer:COMMUNICATIONS:KP-3 “Screamer”
+systemmanufacturer:TARGETING:Version Gamma-V TTS
 

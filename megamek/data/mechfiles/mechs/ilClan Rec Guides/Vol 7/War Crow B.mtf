@@ -43,8 +43,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Clan Streak LRM 15 Ammo
-Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo (OMNIPOD)
+Clan Streak LRM 15 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -57,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -69,10 +69,10 @@ Clan Ferro-Lamellor
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLStreakLRM15
-CLStreakLRM15
-CLStreakLRM15
+Jump Jet (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
+CLStreakLRM15 (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -83,8 +83,8 @@ Clan Ferro-Lamellor
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLMediumPulseLaser
+Jump Jet (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Lamellor
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (OMNIPOD)
 CLMediumPulseLaser
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -127,7 +127,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -141,7 +141,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +150,13 @@ Jump Jet
 -Empty-
 -Empty-
 
+manufacturer:Snow Raven Industrial Complex Beta
+primaryfactory:Mitchella
+systemmanufacturer:CHASSIS:Raven Endo Steel
+systemmode:CHASSIS:WC1
+systemmanufacturer:ENGINE:Redline
+systemmode:ENGINE:350 XL
+systemmanufacturer:ARMOR:Compound LZ-7 Ferro-Lamellor
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk. 2.2
+systemmanufacturer:TARGETING:“Hermes” CT-44
 

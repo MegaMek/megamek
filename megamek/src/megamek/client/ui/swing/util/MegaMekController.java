@@ -104,7 +104,7 @@ public class MegaMekController implements KeyEventDispatcher {
         }
 
         int keyCode = evt.getKeyCode();
-        int modifiers = evt.getModifiers();
+        int modifiers = evt.getModifiersEx();
         // Get a collection of key/cmd binds that match the keycode/modifiers
         ArrayList<KeyCommandBind> kcbs = KeyCommandBind.getBindByKey(keyCode,
                 modifiers);

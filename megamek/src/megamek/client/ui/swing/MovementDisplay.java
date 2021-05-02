@@ -1741,18 +1741,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
         Coords currPosition = cmd != null ? cmd.getFinalCoords()
                                           : ce != null ? ce.getPosition() : null;
@@ -2116,12 +2116,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void updateSearchlightButton() {
         final Entity ce = ce();
-        if (null == ce) {
-            return;
+        if (ce != null) {
+            boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
+            setSearchlightEnabled(
+                    isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
+                    ce.isUsingSearchlight());
         }
-        setSearchlightEnabled(
-                ce.hasSpotlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
-                ce().isUsingSpotlight());
     }
 
     private synchronized void updateElevationButtons() {
@@ -3625,7 +3625,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > (doors * 2))
+                if ((numChoices > currentBay.getSafeLaunchRate())
                     && GUIPreferences.getInstance().getNagForLaunchDoors()) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
@@ -4216,7 +4216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
-            r.add(psr.getValue());
+            r.add(psr);
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(1);

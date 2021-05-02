@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Cauldron-Born (Ebon Jaguar)
 H
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3062
-Source:TRO 3058 - Civil War
+source:TRO Clan Invasion - Civil War
 Rules Level:2
 
 Mass:65
@@ -149,3 +149,17 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien. 
+
+capabilities:The H variant returns to the Ultra Autocannon/20 of the A, though it strips out all of the other weapons. They are replaced by a Heavy Large Laser, a pair of Heavy Medium Lasers, and a single Medium Pulse Laser. All of these weapons are tied to an advanced targeting computer. Even though this variant mounts additional heat sinks, an inexperienced MechWarrior could still be overwhelmed by the amount of heat this variant can produce.
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7

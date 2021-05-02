@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.BufferedWriter;
@@ -26,6 +25,7 @@ import java.util.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.force.Force;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -815,15 +815,16 @@ public class EntityListFile {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }
-            if (null != entity.getCamoCategory()) {
+            if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" camoCategory=\"");
-                output.write(entity.getCamoCategory());
+                output.write(entity.getCamouflage().getCategory());
             }
-            if (null != entity.getCamoFileName()) {
+            if (!entity.getCamouflage().hasDefaultFilename()) {
                 output.write("\" camoFileName=\"");
-                output.write(entity.getCamoFileName());
+                output.write(entity.getCamouflage().getFilename());
             }
-            if (entity instanceof MechWarrior && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
+
+            if ((entity instanceof MechWarrior) && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" pickUpId=\"");
                 output.write(((MechWarrior) entity).getPickedUpByExternalIdAsString());
             }
@@ -1099,6 +1100,19 @@ public class EntityListFile {
             //Record this unit's id number
             if (entity.getId() != Entity.NONE) {
                 output.write(indentStr(indentLvl+1) + "<Game id=\"" + entity.getId());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            }
+
+            // Write the force hierarchy
+            if (entity.getForceString().length() > 0) {
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
+                output.write(entity.getForceString());
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+            } else if ((entity.getGame() != null) && (entity.getForceId() != Force.NO_FORCE)) {
+                output.write(indentStr(indentLvl + 1) + "<Force force=\"");
+                output.write(entity.getGame().getForces().forceStringFor(entity));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
             }

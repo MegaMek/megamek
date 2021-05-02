@@ -107,7 +107,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
 
     /**
      * This MUST be called at the end of initialization to finalize it. This is the key method for
-     * this being the abstract basis for all other dialog
+     * this being the abstract basis for all other dialogs.
      */
     protected void finalizeInitialization() {
         pack();

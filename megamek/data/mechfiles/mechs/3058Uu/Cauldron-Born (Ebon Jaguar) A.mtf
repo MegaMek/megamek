@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Cauldron-Born (Ebon Jaguar)
 A
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3049
-Source:TRO 3058 - Clan Invasion
+source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:65
@@ -154,3 +154,17 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien. 
+
+capabilities:Built around what was once the largest gun in the Clan arsenal, the Cauldron-Born A is capable of dealing blistering damage at a variety of ranges. For long range, the A uses a pair of ER Large Lasers. At close range, the MechWarrior can switch to a 203mm Ultra Autocannon/20 that carries a fair amount of ammunition, along with a Medium Pulse Laser, and an ER Medium Laser. For anti-infantry work, it carries a pair of Machine Guns and a multi-purpose Flamer. Finally, the A variant has a pair of ER Medium Lasers mounted in the rear to discourage lighter 'Mechs from taking advantage of its relatively weak rear armor. The MechWarrior must carefully shepherd his or her weapons fire, as the variant carries no additional heat sinks
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7

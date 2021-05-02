@@ -151,4 +151,17 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+capabilities:Configured for Tancred Sandoval, this configuration carries two Rotary Autocannon/5s that can fire at a rate six times as fast as a standard autocannon. These are backed up by three ER Medium Lasers for close combat. For long range engagements, the Tancred configuration has a single ER Large Laser. All of these weapons are linked to a Targeting Computer, giving them increased accuracy. 
+
+deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
+
+history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
+
+manufacturer:Kallon Industries
+primaryfactory:Talon
+systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel
+systemmanufacturer:ENGINE:KalTek 340 Extralight
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
+systemmanufacturer:TARGETING:Spar 3C MegaTrak
 

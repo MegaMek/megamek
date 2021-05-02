@@ -37,6 +37,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.logging.LogLevel;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
@@ -49,6 +50,7 @@ import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
+import megamek.common.pathfinder.PronePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
@@ -277,9 +279,14 @@ public class PathEnumerator {
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
+                // add all moves that involve the entity remaining prone 
+                PronePathFinder ppf = new PronePathFinder();
+                ppf.run(new MovePath(getGame(), mover));
+                paths.addAll(ppf.getPronePaths());
+                
                 //add jumping moves
                 if (mover.getJumpMP() > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder
+                	ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
                                     MoveStepType.FORWARDS, getGame());
                     spf.run((new MovePath(game, mover))
@@ -287,9 +294,11 @@ public class PathEnumerator {
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
-                for(MovePath path : paths) {
-                    this.owner.getLogger().debug(path.toString());
-                }
+                // calling .debug is expensive even if we don't actually log anything
+                // so let's not do this unless we're debugging
+                /* for(MovePath path : paths) {
+	                    getOwner().getLogger().debug(path.toString());
+                }*/
                 
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);

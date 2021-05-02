@@ -48,12 +48,12 @@ public abstract class PMGenericHotArea implements PMHotArea {
     }
 
     public void onMouseClick(MouseEvent e) {
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         String command = ""; //$NON-NLS-1$
 
-        if (0 != (modifiers & InputEvent.BUTTON1_MASK)) {
+        if (0 != (modifiers & InputEvent.BUTTON1_DOWN_MASK)) {
             command = PMHotArea.MOUSE_CLICK_LEFT;
-        } else if (0 != (modifiers & InputEvent.BUTTON2_MASK)) {
+        } else if (0 != (modifiers & InputEvent.BUTTON2_DOWN_MASK)) {
             command = PMHotArea.MOUSE_CLICK_RIGHT;
         }
 
@@ -66,7 +66,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
     }
 
     public void onMouseOver(MouseEvent e) {
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_OVER;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                 command, modifiers);
@@ -75,7 +75,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
     }
 
     public void onMouseExit(MouseEvent e) {
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_EXIT;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                 command, modifiers);
@@ -83,7 +83,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
     }
 
     public void onMouseDown(MouseEvent e) {
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_DOWN;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                 command, modifiers);
@@ -91,7 +91,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
     }
 
     public void onMouseUp(MouseEvent e) {
-        int modifiers = e.getModifiers();
+        int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_UP;
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                 command, modifiers);

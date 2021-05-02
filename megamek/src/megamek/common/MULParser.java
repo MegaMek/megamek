@@ -97,6 +97,8 @@ public class MULParser {
     private static final String ORIG_MEN = "ONumberOfMen";
     private static final String CONVEYANCE = "Conveyance";
     private static final String GAME = "Game";
+    private static final String FORCE = "Force";
+    private static final String FORCEATT = "force";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -536,6 +538,8 @@ public class MULParser {
                     parseConveyance(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(GAME)) {
                     parseId(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(FORCE)) {
+                    parseForce(currEle, entity);
                 }
             }
         }
@@ -698,9 +702,8 @@ public class MULParser {
         }
 
         // Camo
-        // Must be a null, and not an empty string, if it isn't being used. - Dylan 2014-04-04
-        entity.setCamoCategory(entityTag.getAttribute(CAMO_CATEGORY).equals("") ? null : entityTag.getAttribute(CAMO_CATEGORY));
-        entity.setCamoFileName(entityTag.getAttribute(CAMO_FILENAME).equals("") ? null : entityTag.getAttribute(CAMO_FILENAME));
+        entity.getCamouflage().setCategory(entityTag.getAttribute(CAMO_CATEGORY));
+        entity.getCamouflage().setFilename(entityTag.getAttribute(CAMO_FILENAME));
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);
@@ -710,7 +713,7 @@ public class MULParser {
         entity.setExternalIdAsString(extId);
 
         // external id
-        if(entity instanceof MechWarrior) {
+        if (entity instanceof MechWarrior) {
             String pickUpId = entityTag.getAttribute(PICKUP_ID);
             if ((null == pickUpId) || (pickUpId.length() == 0)) {
                 pickUpId = "-1";
@@ -2362,6 +2365,13 @@ public class MULParser {
         } catch (Exception e) {
             warning.append("Invalid id in conveyance tag.\n");
         }
+    }
+    
+    /**
+     * Parse a force tag for the given <code>Entity</code>. 
+     */
+    private void parseForce(Element forceTag, Entity entity){
+        entity.setForceString(forceTag.getAttribute(FORCEATT));
     }
 
     /**

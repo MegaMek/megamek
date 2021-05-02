@@ -67,8 +67,7 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
 
     @Override
     protected void initialize(final String value) {
-        // TODO : Java 11 : Swap to isBlank
-        assert (value != null) && !value.trim().isEmpty();
+        assert (value != null) && !value.isBlank();
 
         final JTabbedPane element = getWeakReference().get();
         if (element != null) {

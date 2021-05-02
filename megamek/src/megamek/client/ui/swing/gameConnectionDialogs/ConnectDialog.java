@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 
 /** The Connect to game (as Bot or Player) dialog */
 public class ConnectDialog extends AbstractGameConnectionDialog {
@@ -101,5 +102,14 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         // update settings
         getClientPreferences().setLastConnectAddr(getServerAddress());
         setVisible(false);
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            UIUtil.adjustDialog(getContentPane());
+            pack();
+        }
+        super.setVisible(b);
     }
 }

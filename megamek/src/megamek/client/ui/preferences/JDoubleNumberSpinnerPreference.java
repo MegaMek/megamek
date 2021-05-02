@@ -68,8 +68,7 @@ public class JDoubleNumberSpinnerPreference extends PreferenceElement implements
 
     @Override
     protected void initialize(final String value) {
-        // TODO : Java 11 : Swap to isBlank
-        assert (value != null) && !value.trim().isEmpty();
+        assert (value != null) && !value.isBlank();
 
         final JSpinner element = getWeakReference().get();
         if (element != null) {

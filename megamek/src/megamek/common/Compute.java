@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -194,6 +193,54 @@ public class Compute {
             }
         }
         return roll.getIntValue();
+    }
+
+    /**
+     * Input is in format "ndf", so this can handle 2d6 or 3d10
+     * @param number the number of dice to roll
+     * @param faces  the number of faces on those dice
+     * @return an Integer list of every dice roll, with index 0 containing the summed result
+     */
+    public static List<Integer> individualDice(final int number, final int faces) {
+        final List<Integer> individualRolls = new ArrayList<>();
+        int result = 0, roll;
+        individualRolls.add(result);
+
+        for (int i = 0; i < number; i++) {
+            roll = randomInt(faces) + 1;
+            individualRolls.add(roll);
+            result += roll;
+        }
+
+        individualRolls.set(0, result);
+
+        return individualRolls;
+    }
+
+    /**
+     * Input is in format "c ndf", so that this can handle 10 rolls of 3d6
+     * @param count  the count of sets of dice to roll
+     * @param number the number of dice to roll per set
+     * @param faces  the number of faces per die
+     * @return an Integer list of every summed dice roll, with index 0 containing the summed result
+     */
+    public static List<Integer> individualRolls(int count, int number, int faces) {
+        List<Integer> individualRolls = new ArrayList<>();
+        int result = 0, roll;
+        individualRolls.add(result);
+
+        for (int x = 0; x < count; x++) {
+            roll = 0;
+            for (int y = 0; y < number; y++) {
+                roll += randomInt(faces) + 1;
+            }
+            individualRolls.add(roll);
+            result += roll;
+        }
+
+        individualRolls.set(0, result);
+
+        return individualRolls;
     }
 
     /**
@@ -5399,6 +5446,9 @@ public class Compute {
         return toHit;
     }
 
+    /**
+     * This assembles attack roll modifiers for infantry swarm and leg attacks.
+     */
     private static ToHitData getAntiMechMods(ToHitData data, Infantry attacker,
                                              Entity defender) {
         if (attacker == null) {
@@ -5459,6 +5509,11 @@ public class Compute {
                              "Attacker is currently swarming.");
             return data;
         }
+        
+        if (defender.isAirborneVTOLorWIGE()) {
+            data.addModifier(TargetRoll.IMPOSSIBLE, "Cannot target airborne unit.");
+            return data;
+        }
 
         if ((defender instanceof Mech) && ((Mech) defender).isIndustrial()) {
             data.addModifier(-1, "targeting industrial mech");
@@ -5477,6 +5532,9 @@ public class Compute {
             data.addModifier(-2, "MD Grapple/Magnet");
         }
 
+        // swarm/leg attacks take target movement mods into account
+        data.append(getTargetMovementModifier(attacker.getGame(), defender.getTargetId()));
+        
         return data;
     }
 

@@ -25,6 +25,8 @@ import megamek.client.ui.preferences.PreferencesNode;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
 /**
@@ -80,7 +82,7 @@ public abstract class AbstractSplitPane extends JSplitPane {
     protected void initialize() {
         setLeftComponent(createLeftComponent());
         setRightComponent(createRightComponent());
-        setPreferences();
+        finalizeInitialization();
     }
 
     /**
@@ -92,6 +94,15 @@ public abstract class AbstractSplitPane extends JSplitPane {
      * @return the created right component
      */
     protected abstract Component createRightComponent();
+
+    /**
+     * This MUST be called at the end of initialization to finalize it. This is the key method for
+     * this being the abstract basis for all other split panes
+     */
+    protected void finalizeInitialization() {
+        setOneTouchExpandable(true);
+        setPreferences();
+    }
 
     /**
      * This is used to set preferences based on the preference node for this class. It is overridden

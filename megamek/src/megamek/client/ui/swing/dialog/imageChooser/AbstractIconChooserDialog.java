@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -92,20 +94,31 @@ public abstract class AbstractIconChooserDialog extends JDialog {
                 cancel();
             }
         });
+        chooser.imageList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    select();
+                }
+            }
+        });
     }
 
     /** Constructs the bottom panel with the Okay and Cancel buttons. */
-    private JPanel buttonPanel() {
+    protected JPanel buttonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-
-        JButton btnCancel = new JButton(Messages.getString("Cancel"));
-        btnCancel.addActionListener(evt -> cancel());
 
         JButton btnOkay = new JButton(Messages.getString("Okay"));
         btnOkay.addActionListener(evt -> select());
-
         panel.add(btnOkay);
+
+        JButton btnCancel = new JButton(Messages.getString("Cancel"));
+        btnCancel.addActionListener(evt -> cancel());
         panel.add(btnCancel);
+
+        JButton btnRefresh = new JButton(Messages.getString("AbstractIconChooserDialog.btnRefresh"));
+        btnRefresh.addActionListener(evt -> getChooser().refreshDirectory());
+        panel.add(btnRefresh);
+
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         return panel;
     }
@@ -140,7 +153,7 @@ public abstract class AbstractIconChooserDialog extends JDialog {
         setVisible(false);
     }
 
-    private void cancel() {
+    protected void cancel() {
         wasCanceled = true;
         setVisible(false);
     }

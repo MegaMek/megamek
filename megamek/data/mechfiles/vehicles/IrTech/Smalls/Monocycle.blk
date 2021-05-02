@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Monocycle
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3075
+</year>
+
+<originalBuildYear>
+3075
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+pillionseats:1.0:0
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+2
+1
+1
+1
+</armor>
+
+<Body Equipment>
+MonocycleChassisMod
+ISOffRoadChassis
+Advanced Fire Control
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+Plasma Rifle (Man-Portable)
+Plasma Rifle (Man-Portable)
+Plasma Rifle (Man-Portable)
+Plasma Rifle (Man-Portable)
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+9
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+0.75
+</tonnage>
+
+<bv>
+74
+</bv>
+
+<fuel>
+0.013
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

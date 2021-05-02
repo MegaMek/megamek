@@ -1084,7 +1084,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      *            cleared.
      */
     public synchronized void setUnitList(boolean available) {
-        //manageMenu sets unit menus based on phase not from this setUnitListFlag.
+        // manageMenu sets unit menus based on phase not from this setUnitListFlag.
         manageMenu();
     }
 

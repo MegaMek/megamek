@@ -33,7 +33,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.SystemColor;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -488,14 +487,11 @@ public class BoardEditor extends JPanel
      */
     private void setupFrame() {
         setFrameTitle();
-        frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(bvc, BorderLayout.CENTER);
         frame.getContentPane().add(this, BorderLayout.EAST);
         
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
-        frame.setBackground(SystemColor.menu);
-        frame.setForeground(SystemColor.menuText);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             frame.setLocation(GUIPreferences.getInstance().getWindowPosX(),
                               GUIPreferences.getInstance().getWindowPosY());
@@ -534,11 +530,16 @@ public class BoardEditor extends JPanel
                 }
                 frame.dispose();
             }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                GUIPreferences.getInstance().removePreferenceChangeListener(BoardEditor.this);
+            }
         });
     }
 
     /**
-     * Sets up JButtons
+     * Sets up Scaling Icon Buttons
      */
     private ScalingIconButton prepareButton(String iconName, String buttonName, 
             ArrayList<ScalingIconButton> bList, int width) {
@@ -573,9 +574,9 @@ public class BoardEditor extends JPanel
     }
     
     /**
-     * Sets up JToggleButtons
+     * Sets up Scaling Icon ToggleButtons
      */
-    private ScalingIconToggleButton addTerrainTButton(String iconName, String buttonName, 
+    private ScalingIconToggleButton prepareToggleButton(String iconName, String buttonName, 
             ArrayList<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
@@ -602,7 +603,7 @@ public class BoardEditor extends JPanel
         button.addActionListener(this);
         return button;
     }
-
+    
     /**
      * Sets up the editor panel, which goes on the right of the map and has
      * controls for editing the current square.
@@ -634,15 +635,15 @@ public class BoardEditor extends JPanel
         buttonMg = prepareButton("ButtonMg", "Magma", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
         buttonCl = prepareButton("ButtonCl", "Clear", terrainButtons, BASE_TERRAINBUTTON_ICON_WIDTH);
 
-        buttonBrush1 = addTerrainTButton("ButtonHex1", "Brush1", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonBrush2 = addTerrainTButton("ButtonHex7", "Brush2", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonBrush3 = addTerrainTButton("ButtonHex19", "Brush3", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush1 = prepareToggleButton("ButtonHex1", "Brush1", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush2 = prepareToggleButton("ButtonHex7", "Brush2", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonBrush3 = prepareToggleButton("ButtonHex19", "Brush3", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         ButtonGroup brushGroup = new ButtonGroup();
         brushGroup.add(buttonBrush1);
         brushGroup.add(buttonBrush2);
         brushGroup.add(buttonBrush3);
-        buttonOOC = addTerrainTButton("ButtonOOC", "OOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
-        buttonUpDn = addTerrainTButton("ButtonUpDn", "UpDown", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonOOC = prepareToggleButton("ButtonOOC", "OOC", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
+        buttonUpDn = prepareToggleButton("ButtonUpDn", "UpDown", brushButtons, BASE_ARROWBUTTON_ICON_WIDTH);
 
         buttonUndo = prepareButton("ButtonUndo", "Undo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -839,14 +840,14 @@ public class BoardEditor extends JPanel
         });
 
         FixedYPanel terrainButtonPanel = new FixedYPanel(new GridLayout(0, 4, 2, 2));
-        addManySButtons(terrainButtonPanel, terrainButtons);
+        addManyButtons(terrainButtonPanel, terrainButtons);
 
         FixedYPanel brushButtonPanel = new FixedYPanel(new GridLayout(0, 3, 2, 2));
-        addManyTButtons(brushButtonPanel, brushButtons);
+        addManyButtons(brushButtonPanel, brushButtons);
         buttonBrush1.setSelected(true);
 
         FixedYPanel undoButtonPanel = new FixedYPanel(new GridLayout(1, 2, 2, 2));
-        addManyButtons(undoButtonPanel, buttonUndo, buttonRedo);
+        addManyButtons(undoButtonPanel, List.of(buttonUndo, buttonRedo));
 
         // Hex Elevation Control
         texElev = new EditorTextField("0", 3);
@@ -1004,8 +1005,8 @@ public class BoardEditor extends JPanel
         addManyActionListeners(butDelTerrain, butAddTerrain, butSourceFile);
         
         JPanel panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
-        addManyButtons(panButtons, butBoardNew, butBoardSave, butBoardOpen,
-                butExpandMap, butBoardSaveAs, butBoardSaveAsImage);
+        addManyButtons(panButtons, List.of(butBoardNew, butBoardSave, butBoardOpen,
+                butExpandMap, butBoardSaveAs, butBoardSaveAsImage));
         panButtons.add(butBoardValidate);
         panButtons.add(butMiniMap);
         if (Desktop.isDesktopSupported()) {
@@ -1032,6 +1033,7 @@ public class BoardEditor extends JPanel
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
 
+        // Set up the minimap 
         minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false);
         minimapW.setLocation(guip.getMinimapPosX(), guip.getMinimapPosY());
         try {
@@ -1051,26 +1053,19 @@ public class BoardEditor extends JPanel
      * returns only coords that are valid, i.e. on the board
      */
     private LinkedList<Coords> getBrushCoords(Coords center) {
-        LinkedList<Coords> coords = new LinkedList<>();
+        var result = new LinkedList<Coords>();
         // The center hex itself is always part of the brush
-        coords.add(center);
+        result.add(center);
         // Add surrounding hexes for the big brush
-        if (brushSize > 1) {
-            for (int dir: allDirections) 
-                coords.add(center.translated(dir));
+        if (brushSize >= 2) {
+            result.addAll(center.allAdjacent());
         } 
-        // Add the surrounding hexes, radius 2 for the very big brush
-        if (brushSize > 2) {
-            for (int dir: allDirections) {
-                Coords candC = center.translated(dir, 2);
-                coords.add(candC);
-                coords.add(candC.translated((dir+2)%6));
-            }
+        if (brushSize == 3) {
+            result.addAll(center.allAtDistance(2));
         } 
         // Remove coords that are not on the board
-        LinkedList<Coords> finalCoords = new LinkedList<>();
-        for (Coords c: coords) if (board.contains(c)) finalCoords.add(c);
-        return finalCoords;
+        result.removeIf(c -> !board.contains(c));
+        return result;
     }
 
     // Helper to shorten the code
@@ -1081,24 +1076,8 @@ public class BoardEditor extends JPanel
     }
     
     // Helper to shorten the code
-    private void addManyButtons(JPanel panel, JButton... buttons) {
-        for (JButton button: buttons) {
-            panel.add(button);
-        }
-    }
-    
- // Helper to shorten the code
-    private void addManySButtons(JPanel panel, ArrayList<ScalingIconButton> terrainButtons) {
-        for (JButton button: terrainButtons) {
-            panel.add(button);
-        }
-    }
-    
-    // Helper to shorten the code
-    private void addManyTButtons(JPanel panel, ArrayList<ScalingIconToggleButton> buttonList) {
-        for (JToggleButton button: buttonList) {
-            panel.add(button);
-        }
+    private void addManyButtons(JPanel panel, List<? extends AbstractButton> terrainButtons) {
+        terrainButtons.stream().forEach(panel::add);
     }
     
     /**
@@ -1434,9 +1413,9 @@ public class BoardEditor extends JPanel
         IBoard oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
-                int newX = x+west;
+                int newX = x + west;
                 int odd = x & 1 & west;
-                int newY = y+north + odd;
+                int newY = y + north + odd;
                 if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
                     IHex oldHex = oldBoard.getHex(x, y);
                     IHex hex = board.getHex(newX, newY);
@@ -1707,18 +1686,14 @@ public class BoardEditor extends JPanel
 
     /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
-        // Do we need to create the "about" dialog?
         if (about == null) {
             about = new CommonAboutDialog(frame);
         }
-
-        // Show the about dialog.
         about.setVisible(true);
     }
 
     /** Called when the user selects the "Help->Contents" menu item. */
     private void showHelp() {
-        // Do we need to create the "help" dialog?
         if (help == null) {
             help = new BoardEditorHelpDialog(frame);
         }
@@ -1727,12 +1702,9 @@ public class BoardEditor extends JPanel
 
     /** Called when the user selects the "View->Client Settings" menu item. */
     private void showSettings() {
-        // Do we need to create the "settings" dialog?
         if (setdlg == null) {
             setdlg = new CommonSettingsDialog(frame);
         }
-
-        // Show the settings dialog.
         setdlg.setVisible(true);
     }
     
@@ -1829,7 +1801,7 @@ public class BoardEditor extends JPanel
                     ignoreHotKeys = true;
                     JOptionPane.showMessageDialog(frame,
                             Messages.getString("BoardEditor.OpenFileError", curBoardFile.toString())
-                                    + e.getMessage());
+                            + e.getMessage());
                     MegaMek.getLogger().error(e);
                     ignoreHotKeys = false;
                 }
@@ -1908,49 +1880,15 @@ public class BoardEditor extends JPanel
             curHex.setTheme((String)choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }  
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.WOODS, 1));
-            curHex.addTerrain(TF.createTerrain(Terrains.FOLIAGE_ELEV, 2));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.WOODS, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 2));
         } else if (ae.getSource().equals(buttonOW)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }  
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.WOODS, 1));
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.WOODS, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 1));
         } else if (ae.getSource().equals(buttonMg)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.MAGMA, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.MAGMA, 1));
         } else if (ae.getSource().equals(buttonLJ)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.JUNGLE, 1));
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 2));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.JUNGLE, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 2));
         } else if (ae.getSource().equals(buttonOJ)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.JUNGLE, 1));
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.JUNGLE, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 1));
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
@@ -1966,61 +1904,19 @@ public class BoardEditor extends JPanel
                 addSetTerrainEasy(Terrains.WATER, 1);
             }
         } else if (ae.getSource().equals(buttonSw)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.SWAMP, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.SWAMP, 1));
         } else if (ae.getSource().equals(buttonRo)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.ROUGH, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.ROUGH, 1));
         } else if (ae.getSource().equals(buttonPv)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.PAVEMENT, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.PAVEMENT, 1));
         } else if (ae.getSource().equals(buttonMd)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.MUD, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.MUD, 1));
         } else if (ae.getSource().equals(buttonTu)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.TUNDRA, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.TUNDRA, 1));
         } else if (ae.getSource().equals(buttonIc)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.ICE, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.ICE, 1));
         } else if (ae.getSource().equals(buttonSn)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.SNOW, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.SNOW, 1));
         } else if (ae.getSource().equals(buttonCl)) {
             curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
@@ -2113,6 +2009,18 @@ public class BoardEditor extends JPanel
             }
             setFrameTitle();
         }
+    }
+    
+    private void setConvenientTerrain(ActionEvent event, ITerrain... terrains) {
+        if ((event.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            curHex.removeAllTerrains();
+        }
+        buttonUpDn.setSelected(false);
+        for (var terrain: terrains) {
+            curHex.addTerrain(terrain);
+        }
+        refreshTerrainList();
+        repaintWorkingHex();
     }
 
     @Override

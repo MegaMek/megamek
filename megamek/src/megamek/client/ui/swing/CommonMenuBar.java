@@ -73,7 +73,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     /**
      * When we have a unit list, set this to <code>true</code>.
      */
-    private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileRefreshCache;
@@ -1085,7 +1084,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      *            cleared.
      */
     public synchronized void setUnitList(boolean available) {
-        hasUnitList = available;
+        // manageMenu sets unit menus based on phase not from this setUnitListFlag.
         manageMenu();
     }
 

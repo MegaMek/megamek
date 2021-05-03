@@ -1759,7 +1759,6 @@ public class MULParser {
                     }
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
-                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                         if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
                             if (!inferno.isEmpty()) {

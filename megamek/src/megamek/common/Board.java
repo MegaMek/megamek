@@ -281,18 +281,13 @@ public class Board implements Serializable, IBoard {
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; null
-     *         otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public IHex getHex(int x, int y) {
-        if (contains(x, y)) {
-            return data[(y * width) + x];
-        }
-        return null;
+    @Override
+    public @Nullable IHex getHex(final int x, final int y) {
+        return contains(x, y) ? data[(y * width) + x] : null;
     }
 
     /**
@@ -652,16 +647,12 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public IHex getHex(Coords c) {
-        if (c == null) {
-            return null;
-        }
-        return getHex(c.getX(), c.getY());
+    @Override
+    public @Nullable IHex getHex(final @Nullable Coords c) {
+        return (c == null) ? null : getHex(c.getX(), c.getY());
     }
 
     /**

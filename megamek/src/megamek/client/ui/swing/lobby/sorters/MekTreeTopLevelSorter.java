@@ -63,11 +63,13 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
             idB = ((Entity) b).getId();
         }
 
-        boolean isLocalBotA = ownerA != null && client.bots.containsKey(ownerA.getName());
-        boolean isLocalBotB = ownerB != null && client.bots.containsKey(ownerB.getName());
+        boolean isLocalBotA = (ownerA != null) && client.bots.containsKey(ownerA.getName());
+        boolean isLocalBotB = (ownerB != null) && client.bots.containsKey(ownerB.getName());
 
-        boolean isLocalAllyA = ownerA != null && !ownerA.equals(localPlayer) && !ownerA.isEnemyOf(localPlayer);
-        boolean isLocalAllyB = ownerB != null && !ownerB.equals(localPlayer) && !ownerB.isEnemyOf(localPlayer);
+
+        boolean isLocalAllyA = (ownerA) != null && !ownerA.equals(localPlayer) && !ownerA.isEnemyOf(localPlayer);
+        boolean isLocalAllyB = (ownerB) != null && !ownerB.equals(localPlayer) && !ownerB.isEnemyOf(localPlayer);
+
 
         if ((ownerA == localPlayer) && (ownerB != localPlayer)) {
             return -1;

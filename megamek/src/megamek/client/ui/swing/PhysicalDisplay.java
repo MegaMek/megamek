@@ -1473,6 +1473,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
+        if (!clientgui.getClient().isMyTurn()) {
+            return;
+        }
+        
         // control pressed means a line of sight check.
         if ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
             return;

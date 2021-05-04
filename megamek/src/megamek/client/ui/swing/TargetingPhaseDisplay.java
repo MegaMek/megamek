@@ -131,8 +131,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     private boolean shiftheld;
 
-    private boolean twisting;
-
     private final IGame.Phase phase;
 
     private Entity[] visibleTargets;
@@ -1311,7 +1309,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
                 (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
-            twisting = false;
             clientgui.getBoardView().select(b.getCoords());
         }
     }
@@ -1495,8 +1492,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_TWIST.getCmd())) {
-            twisting = true;
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT_TARG.getCmd())) {

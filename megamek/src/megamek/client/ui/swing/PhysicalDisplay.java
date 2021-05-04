@@ -1477,16 +1477,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
             return;
         }
-        if (clientgui.getClient().isMyTurn()
-            && ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0)) {
-            if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-                if (!b.getCoords().equals(
-                        clientgui.getBoardView().getLastCursor())) {
-                    clientgui.getBoardView().cursor(b.getCoords());
-                }
-            } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-                clientgui.getBoardView().select(b.getCoords());
-            }
+        
+        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
+                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
+            clientgui.getBoardView().select(b.getCoords());
         }
     }
 

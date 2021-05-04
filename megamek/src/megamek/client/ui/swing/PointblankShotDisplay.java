@@ -937,17 +937,10 @@ public class PointblankShotDisplay extends FiringDisplay implements
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld || twisting) {
-                updateFlipArms(false);
-                torsoTwist(b.getCoords());
-            }
-            clientgui.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
+                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
             twisting = false;
-            if (!shiftheld) {
-                clientgui.getBoardView().select(b.getCoords());
-            }
+            clientgui.getBoardView().select(b.getCoords());
         }
     }
 

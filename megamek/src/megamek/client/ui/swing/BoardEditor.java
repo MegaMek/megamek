@@ -198,7 +198,7 @@ public class BoardEditor extends JPanel
  
     private static final long serialVersionUID = 4689863639249616192L;
     
-    GUIPreferences guip = GUIPreferences.getInstance();
+    private GUIPreferences guip = GUIPreferences.getInstance();
 
     //region action commands
     private static final String FILE_BOARD_EDITOR_EXPAND = "fileBoardExpand";
@@ -235,7 +235,7 @@ public class BoardEditor extends JPanel
     private IHex curHex = new Hex();
     
     // Easy terrain access buttons
-    private ArrayList<ScalingIconButton> terrainButtons = new ArrayList<>();
+    private List<ScalingIconButton> terrainButtons = new ArrayList<>();
     private ScalingIconButton buttonLW, buttonLJ;
     private ScalingIconButton buttonOW, buttonOJ;
     private ScalingIconButton buttonWa, buttonSw, buttonRo;
@@ -243,7 +243,7 @@ public class BoardEditor extends JPanel
     private ScalingIconButton buttonMd, buttonPv, buttonSn;
     private ScalingIconButton buttonIc, buttonTu, buttonMg;
     private ScalingIconButton buttonBr, buttonFT;
-    private ArrayList<ScalingIconToggleButton> brushButtons = new ArrayList<>();
+    private List<ScalingIconToggleButton> brushButtons = new ArrayList<>();
     private ScalingIconToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
     private ScalingIconToggleButton buttonUpDn, buttonOOC;
 
@@ -286,11 +286,11 @@ public class BoardEditor extends JPanel
     private FixedYPanel panelBoardSettings = new FixedYPanel();
     
     // Help Texts
-    JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT);
-    JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT);
+    private JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT);
+    private JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT);
     
     // Undo / Redo
-    ArrayList<ScalingIconButton> undoButtons = new ArrayList<>();
+    private List<ScalingIconButton> undoButtons = new ArrayList<>();
     private ScalingIconButton buttonUndo, buttonRedo;
     private Stack<HashSet<IHex>> undoStack = new Stack<>();
     private Stack<HashSet<IHex>> redoStack = new Stack<>();
@@ -542,12 +542,12 @@ public class BoardEditor extends JPanel
      * Sets up Scaling Icon Buttons
      */
     private ScalingIconButton prepareButton(String iconName, String buttonName, 
-            ArrayList<ScalingIconButton> bList, int width) {
+            List<ScalingIconButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
-            return null;
+            imageButton = ImageUtil.failStandardImage();
         }
         ScalingIconButton button = new ScalingIconButton(imageButton, width);
 
@@ -577,12 +577,12 @@ public class BoardEditor extends JPanel
      * Sets up Scaling Icon ToggleButtons
      */
     private ScalingIconToggleButton prepareToggleButton(String iconName, String buttonName, 
-            ArrayList<ScalingIconToggleButton> bList, int width) {
+            List<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
         File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
-            return null;
+            imageButton = ImageUtil.failStandardImage();
         }
         ScalingIconToggleButton button = new ScalingIconToggleButton(imageButton, width);
         
@@ -2068,9 +2068,9 @@ public class BoardEditor extends JPanel
         labHelp2.setFont(scaledFont);
         labTheme.setFont(scaledFont);
         
-        ((TitledBorder)panelBoardSettings.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder)panelHexSettings.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder)panelTerrSettings.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder) panelBoardSettings.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder) panelHexSettings.getBorder()).setTitleFont(scaledFont);
+        ((TitledBorder) panelTerrSettings.getBorder()).setTitleFont(scaledFont);
         
         terrainButtons.stream().forEach(ScalingIconButton::rescale);
         undoButtons.stream().forEach(ScalingIconButton::rescale);
@@ -2301,7 +2301,6 @@ public class BoardEditor extends JPanel
         }
     }
     
-    
     /** 
      * A specialized JButton that only shows an icon but scales that icon according
      * to the current GUI scaling when its rescale() method is called.
@@ -2322,6 +2321,7 @@ public class BoardEditor extends JPanel
             rescale();
         }
         
+        /** Adapts all images of this button to the current gui scale. */
         void rescale() {
             int realWidth = UIUtil.scaleForGUI(baseWidth);
             int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
@@ -2330,18 +2330,31 @@ public class BoardEditor extends JPanel
             if (baseRolloverImage != null) {
                 realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
                 setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
+            } else {
+                setRolloverIcon(null);
             }
+                
             
             if (baseDisabledImage != null) {
                 realHeight = baseDisabledImage.getHeight(null) * realWidth / baseDisabledImage.getWidth(null);
                 setDisabledIcon(new ImageIcon(ImageUtil.getScaledImage(baseDisabledImage, realWidth, realHeight)));
+            } else {
+                setDisabledIcon(null);
             }
         }
         
+        /** 
+         * Sets the unscaled base image to use as a mouse hover image for the button. 
+         * image may be null. Passing null disables the hover image. 
+         */
         void setRolloverImage(Image image) {
             baseRolloverImage = image;
         }
         
+        /** 
+         * Sets the unscaled base image to use as a button disabled image for the button. 
+         * image may be null. Passing null disables the button disabled image. 
+         */
         void setDisabledImage(Image image) {
             baseDisabledImage = image;
         }
@@ -2367,6 +2380,7 @@ public class BoardEditor extends JPanel
             rescale();
         }
         
+        /** Adapts all images of this button to the current gui scale. */ 
         void rescale() {
             int realWidth = UIUtil.scaleForGUI(baseWidth);
             int realHeight = baseImage.getHeight(null) * realWidth / baseImage.getWidth(null);
@@ -2375,18 +2389,30 @@ public class BoardEditor extends JPanel
             if (baseRolloverImage != null) {
                 realHeight = baseRolloverImage.getHeight(null) * realWidth / baseRolloverImage.getWidth(null);
                 setRolloverIcon(new ImageIcon(ImageUtil.getScaledImage(baseRolloverImage, realWidth, realHeight)));
+            } else {
+                setRolloverIcon(null);
             }
             
             if (baseSelectedImage != null) {
                 realHeight = baseSelectedImage.getHeight(null) * realWidth / baseSelectedImage.getWidth(null);
                 setSelectedIcon(new ImageIcon(ImageUtil.getScaledImage(baseSelectedImage, realWidth, realHeight)));
+            } else {
+                setSelectedIcon(null);
             }
         }
         
+        /** 
+         * Sets the unscaled base image to use as a mouse hover image for the button. 
+         * image may be null. Passing null disables the hover image. 
+         */
         void setRolloverImage(Image image) {
             baseRolloverImage = image;
         }
         
+        /** 
+         * Sets the unscaled base image to use as a "toggle button is selected" image for the button. 
+         * image may be null. Passing null disables the "is selected" image. 
+         */
         void setSelectedImage(Image image) {
             baseSelectedImage = image;
         }

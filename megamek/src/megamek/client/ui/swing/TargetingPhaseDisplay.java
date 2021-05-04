@@ -1519,15 +1519,21 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void updateFlipArms(boolean armsFlipped) {
+        if (ce() == null) {
+            return;
+        }
+        
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
         }
 
-        twisting = false;
-
-        torsoTwist(null);
-
+        // clear attacks clears all non-firing actions, e.g. torso twists and arm flips as well,
+        // so we have to push/pop facing
+        int secondaryFacing = ce().getSecondaryFacing();
+        
         clearAttacks();
+        
+        ce().setSecondaryFacing(secondaryFacing);
         ce().setArmsFlipped(armsFlipped);
         attacks.addElement(new FlipArmsAction(cen, armsFlipped));
         updateTarget();

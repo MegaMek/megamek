@@ -125,8 +125,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     protected boolean shiftheld;
 
-    protected boolean twisting;
-
     protected Entity[] visibleTargets = null;
 
     protected int lastTargetID = -1;
@@ -2049,7 +2047,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
                 (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
-            twisting = false;
             clientgui.getBoardView().select(b.getCoords());
         }
     }
@@ -2195,8 +2192,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
-            twisting = true;
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MORE.getCmd())) {
@@ -2245,11 +2240,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        //twisting = false;
-
-        //torsoTwist(null);
-
+        // clear attacks clears all non-firing actions, e.g. torso twists and arm flips as well,
+        // so we have to push/pop facing
+        int secondaryFacing = ce().getSecondaryFacing();
+        
         clearAttacks();
+        
+        ce().setSecondaryFacing(secondaryFacing);
         ce().setArmsFlipped(armsFlipped);
         attacks.addElement(new FlipArmsAction(cen, armsFlipped));
         updateTarget();

@@ -431,7 +431,6 @@ public class PathEnumerator {
     }
 
 //    public void debugPrintContents() {
-//        final String METHOD_NAME = "debugPrintContents()";
 //        getOwner().getLogger().methodBegin();
 //        try {
 //            for (Integer id : getUnitPaths().keySet()) {
@@ -440,7 +439,7 @@ public class PathEnumerator {
 //                int pathsSize = paths.size();
 //                String msg = "Unit " + entity.getDisplayName() + " has " + pathsSize + " paths and " +
 //                             getUnitPotentialLocations().get(id).size() + " ending locations.";
-//                getOwner().log(getClass(), METHOD_NAME, msg);
+//                getOwner().log(msg);
 //            }
 //        } finally {
 //            getOwner().getLogger().methodEnd();

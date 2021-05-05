@@ -5248,7 +5248,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             int idx = 0;
             for (var player: players) {
                 if (player.getName().equals(clientgui.getClient().getLocalPlayer().getName())
-                        || player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
+                        || (player.getTeam() == IPlayer.TEAM_UNASSIGNED)) {
                     continue;
                 }
                 playerIds[idx] = player.getId();

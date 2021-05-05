@@ -26,6 +26,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -224,7 +225,7 @@ public class MapMenu extends JPopupMenu {
                         ((MovementDisplay) currentPanel).actionPerformed(e);
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    MegaMek.getLogger().error(ex);
                 }
             });
             if (game.getPhase() == Phase.PHASE_MOVEMENT) {

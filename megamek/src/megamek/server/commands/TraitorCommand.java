@@ -63,7 +63,7 @@ public class TraitorCommand extends ServerCommand {
                 server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
                 ent.setTraitorId(pid);
             }
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException ignored) {
         }
     }
 

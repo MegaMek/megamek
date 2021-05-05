@@ -5153,13 +5153,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Notifies listeners about the specified mouse action.
      * 
-     * @param coords     - coords the Coords.
-     * @param mtype      - Board view event type
-     * @param modifiers  - mouse event modifiers usch as CTRL, ALT, and SHIFT
-     * @param button     - button associated with this board event 
-     *                      0 = no button
-     *                      1 = Button 1
-     *                      2 = Button 2
+     * @param coords          - coords the Coords.
+     * @param mtype           - Board view event type
+     * @param modifiers       - mouse event modifiers mask such as SHIFT_DOWN_MASK etc.
+     * @param mouseButton     - mouse button associated with this event 
+     *                           0 = no button
+     *                           1 = Button 1
+     *                           2 = Button 2
      */
     public void mouseAction(Coords coords, int mtype, int modifiers, int mouseButton) {
         mouseAction(coords.getX(), coords.getY(), mtype, modifiers, mouseButton);

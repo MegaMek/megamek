@@ -47,6 +47,7 @@ public class BoardViewEvent extends java.util.EventObject {
     private int type;
     private int modifiers;
     private int entityId;
+    private int mouseButton = 0;
 
     public BoardViewEvent(Object source, Coords c, Entity entity, int type,
             int modifiers) {
@@ -67,6 +68,12 @@ public class BoardViewEvent extends java.util.EventObject {
         super(source);
         this.type = type;
         this.entityId = entityId;
+    }
+    
+    public BoardViewEvent(Object source, Coords c, Entity entity, int type, 
+            int modifiers, int mouseButton) {
+        this(source, c, entity, type, modifiers);
+        this.mouseButton = mouseButton;
     }
 
     /**
@@ -105,5 +112,22 @@ public class BoardViewEvent extends java.util.EventObject {
      */
     public int getEntityId() {
         return entityId;
+    }
+
+    /**
+     * @return the id of the mouse button associated with this event if any.
+     * <ul>
+     * <li> 0 no button
+     * <li> 1 Button 1
+     * <li> 2 Button 2
+     * <li> 3 Button 3
+     * <li> 4 Button greater than 3
+     * <li> 5 Button greater than 3
+     * </ul>
+     * <p>
+     * 
+     */
+    public int getButton() {
+        return mouseButton ;
     }
 }

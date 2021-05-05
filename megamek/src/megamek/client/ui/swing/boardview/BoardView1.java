@@ -673,7 +673,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // only scroll when we should
                 if (!shouldScroll) {
                     mouseAction(getCoordsAt(point), BOARD_HEX_DRAG,
-                                e.getModifiersEx());
+                                e.getModifiersEx(), e.getButton());
                     return;
                 }
                 // if we have not yet been dragging, set the var so popups don't
@@ -4836,7 +4836,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (me.isPopupTrigger() && !dragging) {
-            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx());
+            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiersEx(), me.getButton());
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
@@ -4856,14 +4856,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 return;
             }
         }
-        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiersEx());
+        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiersEx(), me.getButton());
     }
 
     public void mouseReleased(MouseEvent me) {
         // don't show the popup if we are drag-scrolling
         if (me.isPopupTrigger() && !dragging) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP,
-                        me.getModifiersEx());
+                        me.getModifiersEx(), me.getButton());
             // stop scrolling
             shouldScroll = false;
             return;
@@ -4887,10 +4887,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK,
-                        me.getModifiersEx());
+                        me.getModifiersEx(), me.getButton());
         } else {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_DOUBLECLICK,
-                        me.getModifiersEx());
+                        me.getModifiersEx(), me.getButton());
         }
     }
 
@@ -5122,7 +5122,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Determines if this Board contains the (x, y) Coords, and if so, notifies
      * listeners about the specified mouse action.
      */
-    public void mouseAction(int x, int y, int mtype, int modifiers) {
+    public void mouseAction(int x, int y, int mtype, int modifiers, int mouseButton) {
         if (game.getBoard().contains(x, y)) {
             Coords c = new Coords(x, y);
             switch (mtype) {
@@ -5131,20 +5131,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         checkLOS(c);
                     } else {
                         processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
+                                BoardViewEvent.BOARD_HEX_CLICKED, modifiers, mouseButton));
                     }
                     break;
                 case BOARD_HEX_DOUBLECLICK:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_DRAG:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
+                            BoardViewEvent.BOARD_HEX_DRAGGED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_POPUP:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_POPUP, modifiers));
+                            BoardViewEvent.BOARD_HEX_POPUP, modifiers, mouseButton));
                     break;
             }
         }
@@ -5152,11 +5152,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     /**
      * Notifies listeners about the specified mouse action.
-     *
-     * @param coords the Coords.
+     * 
+     * @param coords     - coords the Coords.
+     * @param mtype      - Board view event type
+     * @param modifiers  - mouse event modifiers usch as CTRL, ALT, and SHIFT
+     * @param button     - button associated with this board event 
+     *                      0 = no button
+     *                      1 = Button 1
+     *                      2 = Button 2
      */
-    public void mouseAction(Coords coords, int mtype, int modifiers) {
-        mouseAction(coords.getX(), coords.getY(), mtype, modifiers);
+    public void mouseAction(Coords coords, int mtype, int modifiers, int mouseButton) {
+        mouseAction(coords.getX(), coords.getY(), mtype, modifiers, mouseButton);
     }
 
     /*

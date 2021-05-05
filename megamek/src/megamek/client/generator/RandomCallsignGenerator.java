@@ -21,7 +21,7 @@ package megamek.client.generator;
 import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.util.WeightedMap;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class RandomCallsignGenerator implements Serializable {
 
     private static final String CALLSIGN_FILE_NAME = "callsigns.csv";
 
-    private static WeightedMap<String> callsigns;
+    private static WeightedIntMap<String> callsigns;
 
     private static RandomCallsignGenerator rcg;
 
@@ -95,7 +95,7 @@ public class RandomCallsignGenerator implements Serializable {
 
     private void populateCallsigns() {
         int lineNumber = 0;
-        callsigns = new WeightedMap<>();
+        callsigns = new WeightedIntMap<>();
 
         File callsignFile = new MegaMekFile(Configuration.namesDir(), CALLSIGN_FILE_NAME).getFile();
 
@@ -112,7 +112,7 @@ public class RandomCallsignGenerator implements Serializable {
                 if (values.length >= 2) {
                     callsigns.add(Integer.parseInt(values[1]), values[0]);
                 } else {
-                    MegaMek.getLogger().error("Not enough fields in " + callsignFile.toString() + " on " + lineNumber);
+                    MegaMek.getLogger().error("Not enough fields in " + callsignFile + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {

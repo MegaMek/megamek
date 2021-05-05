@@ -2,6 +2,12 @@ VERSION HISTORY:
 ----------------
 0.49.1-SNAPSHOT
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ
++ PR #2825: Fixing Mek Tree Sorter NPEs
++ PR #2829: Fixing Mek Table Model Potential NPEs
++ Issue #2818: Placeholder Image on Destroyed Condor
++ Issue #2819: Fixing Left Click Targetting Issues
++ PR #2831: FovHighlightingAndDarkening Null Handling Improvements
++ PR #2835: ReadMe Java recommendation update and accessibility improvements
 
 0.49.0 (2021-05-01 2130 UTC)
 + Issue #2614: Improved Building Validation

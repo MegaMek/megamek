@@ -935,9 +935,17 @@ public class PointblankShotDisplay extends FiringDisplay implements
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
-                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
-            clientgui.getBoardView().select(b.getCoords());
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (shiftheld || twisting) {
+                updateFlipArms(false);
+                torsoTwist(b.getCoords());
+            }
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            twisting = false;
+            if (!shiftheld) {
+                clientgui.getBoardView().select(b.getCoords());
+            }
         }
     }
 
@@ -993,6 +1001,8 @@ public class PointblankShotDisplay extends FiringDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
+            twisting = true;
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MORE.getCmd())) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;

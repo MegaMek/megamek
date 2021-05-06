@@ -83,14 +83,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      */
     private JTextField txtSearch = new JTextField("");
     private WrappingButtonPanel panPassword = new WrappingButtonPanel();
-    private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); //$NON-NLS-1$
+    private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); 
     private JTextField texPass = new JTextField(15);
     private WrappingButtonPanel panButtons = new WrappingButtonPanel();
-    private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
-    private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); //$NON-NLS-1$
-    private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); 
+    private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); 
+    private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); 
+    private JButton butOkay = new JButton(Messages.getString("Okay")); 
+    private JButton butCancel = new JButton(Messages.getString("Cancel")); 
     private MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
     private MMToggleButton butLegacy = new MMToggleButton("Legacy Opts");
 
@@ -143,7 +143,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      *            - the <code>ClientGUI</code> parent of this dialog.
      */
     public GameOptionsDialog(ClientGUI cg) {
-        super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
+        super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); 
         clientGui = cg;
         frame = cg.getFrame();
         init(frame, cg.getClient().getGame().getOptions());
@@ -360,77 +360,77 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         groupPanel.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
 
-        if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) { // $NON-NLS-1$
-            if (!(options.getOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) { 
+            if (!(options.getOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)) { 
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)) { // $NON-NLS-1$
-            if (!options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)) { 
+            if (!options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)) { 
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
@@ -525,113 +525,113 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
 
-        if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-        }
-        if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+        }
+        if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-        }
-        if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+        }
+        if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
         if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(false);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(false);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
@@ -655,22 +655,22 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setSelected(false);
             }
         }
-        if ("vacuum".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("fire"); //$NON-NLS-1$
+        if ("vacuum".equals(option.getName())) { 
+            comps = optionComps.get("fire"); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED); // $NON-NLS-1$
+        if (OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS1); // $NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS1); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
@@ -683,41 +683,41 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVCOMBAT_TACOPS_LOS1.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES); // $NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_LOS1.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.resetToDefault();
             }
         }
         if (option.getName().equals(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
-            comps = optionComps.get(OptionsConstants.RPG_BEGIN_SHUTDOWN); //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.RPG_BEGIN_SHUTDOWN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
-            comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
@@ -842,10 +842,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
 
     private File selectGameOptionsFile(boolean saveDialog) {
-        JFileChooser fc = new JFileChooser("mmconf"); //$NON-NLS-1$
+        JFileChooser fc = new JFileChooser("mmconf"); 
         fc.setLocation(getLocation().x + 150, getLocation().y + 100);
-        // fc.setDialogTitle(Messages.getString(
-        // "GameOptionsDialog.FileChooser.title")); //$NON-NLS-1$
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
@@ -856,11 +854,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                         DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
-                        if (listOfComponents.getLength() > 0) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return listOfComponents.getLength() > 0;
                     } catch (Exception e) {
                         return false;
                     }
@@ -871,15 +865,11 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
             @Override
             public String getDescription() {
-                return "GameOptions"; //$NON-NLS-1$
+                return "GameOptions"; 
             }
         });
         int returnVal;
-        if (saveDialog) {
-            returnVal = fc.showSaveDialog(this);
-        } else {
-            returnVal = fc.showOpenDialog(this);
-        }
+        returnVal = saveDialog ? fc.showSaveDialog(this) : fc.showOpenDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             return null;
         }

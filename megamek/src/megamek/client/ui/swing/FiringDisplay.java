@@ -125,6 +125,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     protected boolean shiftheld;
 
+    protected boolean twisting;
+
     protected Entity[] visibleTargets = null;
 
     protected int lastTargetID = -1;
@@ -2045,9 +2047,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
-                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
-            clientgui.getBoardView().select(b.getCoords());
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (shiftheld || twisting) {
+                updateFlipArms(false);
+                torsoTwist(b.getCoords());
+            }
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            twisting = false;
+            if (!shiftheld) {
+                clientgui.getBoardView().select(b.getCoords());
+            }
         }
     }
 
@@ -2192,6 +2202,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
+            twisting = true;
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MORE.getCmd())) {
@@ -2240,13 +2252,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        // clear attacks clears all non-firing actions, e.g. torso twists and arm flips as well,
-        // so we have to push/pop facing
-        int secondaryFacing = ce().getSecondaryFacing();
-        
+        twisting = false;
+
+        torsoTwist(null);
+
         clearAttacks();
-        
-        ce().setSecondaryFacing(secondaryFacing);
         ce().setArmsFlipped(armsFlipped);
         attacks.addElement(new FlipArmsAction(cen, armsFlipped));
         updateTarget();

@@ -5247,7 +5247,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             // Loop through the players vector and fill in the arrays
             int idx = 0;
-            for (var player: players) {
+            for (var player : players) {
                 if (player.getName().equals(clientgui.getClient().getLocalPlayer().getName())
                         || (player.getTeam() == IPlayer.TEAM_UNASSIGNED)) {
                     continue;

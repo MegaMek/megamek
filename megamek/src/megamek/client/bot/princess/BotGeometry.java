@@ -123,9 +123,6 @@ public class BotGeometry {
          * Create a hexline from a point and direction
          */
         public HexLine(Coords c, int dir) {
-            @SuppressWarnings("unused")
-            final String METHOD_NAME = "HexLine(Coords, int)";
-
             setDirection(dir);
             if ((getDirection() == 0) || (getDirection() == 3)) {
                 setIntercept(c.getX());

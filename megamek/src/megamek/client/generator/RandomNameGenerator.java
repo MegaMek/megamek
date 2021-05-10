@@ -24,7 +24,7 @@ import megamek.MegaMek;
 import megamek.common.Configuration;
 import megamek.common.enums.Gender;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.util.WeightedMap;
+import megamek.common.util.weightedMaps.WeightedIntMap;
 
 /**
  * This class sets up a random name generator that can then be used to generate random pilot names.
@@ -95,28 +95,28 @@ public class RandomNameGenerator implements Serializable {
      * the name is a String value. The name is stored in a WeightedMap for each ethnic code to ensure
      * that there is a range from common to rare names. This is determined based on the input weights
      */
-    private static Map<Integer, WeightedMap<String>> femaleGivenNames;
-    private static Map<Integer, WeightedMap<String>> maleGivenNames;
-    private static Map<Integer, WeightedMap<String>> surnames;
+    private static Map<Integer, WeightedIntMap<String>> femaleGivenNames;
+    private static Map<Integer, WeightedIntMap<String>> maleGivenNames;
+    private static Map<Integer, WeightedIntMap<String>> surnames;
 
     /**
      * factionGivenNames contains values in the following format:
-     * Map<String Faction_Name, Map<Integer Surname_Ethnic_Code, WeightedMap<Integer Given_Name_Ethnic_Code>>>
+     * Map<String Faction_Name, Map<Integer Surname_Ethnic_Code, WeightedIntMap<Integer Given_Name_Ethnic_Code>>>
      * The faction name is the key to determining which list of names should be used, with the default being "General"
      * The Surname Ethnic Code is the code that the surname will be generated from
      * The Given Name Ethnic Code is the code to generate the given name from, from the femaleGivenNames or maleGivenNames
      * maps, and this is weighted to ensure that more common pairings are more common
      */
-    private static Map<String, Map<Integer, WeightedMap<Integer>>> factionGivenNames;
+    private static Map<String, Map<Integer, WeightedIntMap<Integer>>> factionGivenNames;
 
     /**
      * factionEthnicCodes contains values in the following format:
-     * Map<String Faction_Name, WeightedMap<Integer Surname_Ethnic_Code>>
+     * Map<String Faction_Name, WeightedIntMap<Integer Surname_Ethnic_Code>>
      * The faction name is the key to determining which list of names should be used, with the default being "General"
      * The Surname Ethnic Code is the code that the surname will be generated from, and
      * this is weighted to ensure that more common pairings for the faction are more common
      */
-    private static Map<String, WeightedMap<Integer>> factionEthnicCodes;
+    private static Map<String, WeightedIntMap<Integer>> factionEthnicCodes;
 
     /**
      * historical ethnicity is a map of the ethnic code to the historical region of origin on Earth
@@ -360,9 +360,9 @@ public class RandomNameGenerator implements Serializable {
 
         // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
         for (int i = 1; i <= numEthnicCodes; i++) {
-            maleGivenNames.put(i, new WeightedMap<>());
-            femaleGivenNames.put(i, new WeightedMap<>());
-            surnames.put(i, new WeightedMap<>());
+            maleGivenNames.put(i, new WeightedIntMap<>());
+            femaleGivenNames.put(i, new WeightedIntMap<>());
+            surnames.put(i, new WeightedIntMap<>());
         }
         //endregion Map Instantiation
 
@@ -385,11 +385,11 @@ public class RandomNameGenerator implements Serializable {
             // continue to play with named characters, indexing it at 1
             // Initialize Maps
             factionGivenNames.put(KEY_DEFAULT_FACTION, new HashMap<>());
-            factionEthnicCodes.put(KEY_DEFAULT_FACTION, new WeightedMap<>());
+            factionEthnicCodes.put(KEY_DEFAULT_FACTION, new WeightedIntMap<>());
 
             // Add information to maps
             for (int i = 1; i <= numEthnicCodes; i++) {
-                factionGivenNames.get(KEY_DEFAULT_FACTION).put(i, new WeightedMap<>());
+                factionGivenNames.get(KEY_DEFAULT_FACTION).put(i, new WeightedIntMap<>());
                 factionGivenNames.get(KEY_DEFAULT_FACTION).get(i).add(1, i);
                 factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
             }
@@ -407,7 +407,7 @@ public class RandomNameGenerator implements Serializable {
 
                 // Initialize Maps
                 factionGivenNames.put(key, new HashMap<>());
-                factionEthnicCodes.put(key, new WeightedMap<>());
+                factionEthnicCodes.put(key, new WeightedIntMap<>());
 
                 File factionFile = new MegaMekFile(factionsDir, filename).getFile();
                 try (InputStream is = new FileInputStream(factionFile);
@@ -417,7 +417,7 @@ public class RandomNameGenerator implements Serializable {
                         String[] values = input.nextLine().split(",");
                         int ethnicCode = Integer.parseInt(values[0]);
 
-                        factionGivenNames.get(key).put(ethnicCode, new WeightedMap<>());
+                        factionGivenNames.get(key).put(ethnicCode, new WeightedIntMap<>());
 
                         // Add information to maps
                         // The weights for ethnic given names for each surname ethnicity will be
@@ -441,7 +441,7 @@ public class RandomNameGenerator implements Serializable {
         //endregion Faction Files
     }
 
-    private void readNamesFileToMap(Map<Integer, WeightedMap<String>> map, String fileName) {
+    private void readNamesFileToMap(Map<Integer, WeightedIntMap<String>> map, String fileName) {
         int lineNumber = 0;
         File file = new MegaMekFile(Configuration.namesDir(), fileName).getFile();
 
@@ -454,7 +454,7 @@ public class RandomNameGenerator implements Serializable {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
-                    MegaMek.getLogger().error("Not enough fields in " + file.toString() + " on " + lineNumber);
+                    MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                     continue;
                 }
 

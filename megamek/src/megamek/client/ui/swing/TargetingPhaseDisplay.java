@@ -19,6 +19,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -130,6 +131,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     // is the shift key held?
     private boolean shiftheld;
+
+    private boolean twisting;
 
     private final IGame.Phase phase;
 
@@ -1293,7 +1296,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
@@ -1307,8 +1310,14 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
-                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (shiftheld || twisting) {
+                updateFlipArms(false);
+                torsoTwist(b.getCoords());
+            }
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            twisting = false;
             clientgui.getBoardView().select(b.getCoords());
         }
     }
@@ -1492,6 +1501,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_TWIST.getCmd())) {
+            twisting = true;
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT_TARG.getCmd())) {
@@ -1514,21 +1525,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void updateFlipArms(boolean armsFlipped) {
-        if (ce() == null) {
-            return;
-        }
-        
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
         }
 
-        // clear attacks clears all non-firing actions, e.g. torso twists and arm flips as well,
-        // so we have to push/pop facing
-        int secondaryFacing = ce().getSecondaryFacing();
-        
+        twisting = false;
+
+        torsoTwist(null);
+
         clearAttacks();
-        
-        ce().setSecondaryFacing(secondaryFacing);
         ce().setArmsFlipped(armsFlipped);
         attacks.addElement(new FlipArmsAction(cen, armsFlipped));
         updateTarget();

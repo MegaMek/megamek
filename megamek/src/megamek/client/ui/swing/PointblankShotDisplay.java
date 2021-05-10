@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -921,7 +922,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-            || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
@@ -935,9 +936,17 @@ public class PointblankShotDisplay extends FiringDisplay implements
             shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if ((b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) ||
-                (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED)) {
-            clientgui.getBoardView().select(b.getCoords());
+        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (shiftheld || twisting) {
+                updateFlipArms(false);
+                torsoTwist(b.getCoords());
+            }
+            clientgui.getBoardView().cursor(b.getCoords());
+        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+            twisting = false;
+            if (!shiftheld) {
+                clientgui.getBoardView().select(b.getCoords());
+            }
         }
     }
 
@@ -993,6 +1002,8 @@ public class PointblankShotDisplay extends FiringDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
+            twisting = true;
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MORE.getCmd())) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;

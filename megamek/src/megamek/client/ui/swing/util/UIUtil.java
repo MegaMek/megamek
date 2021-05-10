@@ -632,6 +632,39 @@ public final class UIUtil {
     }
     
     /**
+     * This is a specialized JPanel for use with a button bar at the bottom
+     * of a dialog for when it's possible that the button bar has to wrap (is
+     * wider than the dialog and needs to use two or more rows for the buttons).
+     * With a normal JPanel the wrapped buttons just disappear. 
+     * This Panel tries to detect when wrapping occurs and then extends vertically.
+     * Note that it will only extend to two rows, not more. But if three rows of 
+     * buttons are used, this will be very obvious.
+     * The native FlowLayout should be kept for the buttons. 
+     */
+    public static class WrappingButtonPanel extends JPanel {
+        private static final long serialVersionUID = -6966176665047676553L;
+
+        @Override
+        public Dimension getPreferredSize() {
+            int height = super.getPreferredSize().height; 
+            if (getSize().width < super.getPreferredSize().width) {
+                height = height * 2;
+            }
+            return new Dimension(super.getPreferredSize().width, height);
+        }
+        
+        @Override
+        public Dimension getMinimumSize() {
+            return new Dimension(super.getMinimumSize().width, getPreferredSize().height);
+        }
+        
+        @Override
+        public Dimension getMaximumSize() {
+            return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
+        }
+    };
+    
+    /**
      * Returns a single menu item with the given text, the given command string
      * cmd, the given enabled state, and assigned the given listener.
      */

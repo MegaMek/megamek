@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,36 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.util;
+package megamek.common.util.weightedMaps;
 
 import megamek.common.Compute;
-
-import java.util.TreeMap;
+import megamek.common.annotations.Nullable;
 
 /**
- * Constructs a table of values each with a weight that makes them more or less likely to be
+ * Constructs a table of values each with an int weight that makes them more or less likely to be
  * selected at random
  *
  * @param <T> The values in the table
  */
-public class WeightedMap<T> extends TreeMap<Integer, T> {
+public class WeightedIntMap<T> extends AbstractWeightedMap<Integer, T> {
+    //region Variable Declarations
     private static final long serialVersionUID = -568712793616821291L;
+    //endregion Variable Declarations
 
-    public void add(int weight, T item) {
-        if (weight > 0) {
-            if (!isEmpty()) {
-                put(lastKey() + weight, item);
-            } else {
-                put(weight, item);
-            }
-        }
+    @Override
+    public @Nullable T add(final Integer weight, final T value) {
+        return (weight > 0) ? put(isEmpty() ? weight : lastKey() + weight, value) : null;
     }
 
-    public T randomItem() {
-        if (isEmpty()) {
-            return null;
-        }
-        int random = Compute.randomInt(lastKey()) + 1;
-        return ceilingEntry(random).getValue();
+    @Override
+    public @Nullable T randomItem() {
+        return isEmpty() ? null : randomItem(Compute.randomInt(lastKey()) + 1);
     }
 }

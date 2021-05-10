@@ -79,6 +79,7 @@ public abstract class AbstractWreckSprite extends Sprite {
                 .getAscent());
 
         // create image for buffer
+        final Rectangle bounds = getBounds(); // more efficient than recreation
         image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         

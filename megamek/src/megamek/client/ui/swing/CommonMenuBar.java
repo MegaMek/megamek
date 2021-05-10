@@ -20,10 +20,11 @@
 package megamek.client.ui.swing;
 
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import javax.swing.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -113,100 +114,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem deployMinesVibrabomb;
     private JMenuItem deployMinesActive;
     private JMenuItem deployMinesInferno;
-    private JMenuItem deployNext;
-    private JMenuItem deployTurn;
-    private JMenuItem deployLoad;
-    private JMenuItem deployUnload;
-    private JMenuItem deployRemove;
-    private JMenuItem deployAssaultDrop;
-    
-    // The Movement menu
-    private JMenuItem moveWalk;
-    private JMenuItem moveNext;
-    private JMenuItem moveForwardIni;
-    private JMenuItem moveTurn;
-    private JMenuItem moveLayMine;
-    private JMenuItem moveLoad;
-    private JMenuItem moveUnload;
-    private JMenuItem moveTow;
-    private JMenuItem moveDisconnect;
-    private JMenuItem moveJump;
-    private JMenuItem moveSwim;
-    private JMenuItem moveModeConvert;
-    private JMenuItem moveBackUp;
-    private JMenuItem moveCharge;
-    private JMenuItem moveDFA;
-    private JMenuItem moveGoProne;
-    private JMenuItem moveFlee;
-    private JMenuItem moveFlyOff;
-    private JMenuItem moveEject;
-    private JMenuItem moveUnjam;
-    private JMenuItem moveSearchlight;
-    private JMenuItem moveClear;
-    private JMenuItem moveHullDown;
-    private JMenuItem moveGetUp;
-    private JMenuItem moveRaise;
-    private JMenuItem moveLower;
-    private JMenuItem moveReckless;
-    private JMenuItem moveEvade;
-    private JMenuItem moveBootlegger;
-    private JMenuItem moveShutdown;
-    private JMenuItem moveStartup;
-    private JMenuItem moveSelfDestruct;
-    //private JMenuItem moveTraitor;
-    private JMenuItem moveAcc;
-    private JMenuItem moveDec;
-    private JMenuItem moveAccN;
-    private JMenuItem moveDecN;
-    private JMenuItem moveEvadeAero;
-    private JMenuItem moveRoll;
-    private JMenuItem moveLaunch;
-    private JMenuItem moveRecover;
-    private JMenuItem moveJoin;
-    private JMenuItem moveDump;
-    private JMenuItem moveRam;
-    private JMenuItem moveHover;
-    private JMenuItem moveManeuver;
-    private JMenuItem moveTurnLeft;
-    private JMenuItem moveTurnRight;
-    private JMenuItem moveThrust;
-    private JMenuItem moveYaw;
-    private JMenuItem moveEndOver;
-    private JMenuItem moveStrafe;
-    private JMenuItem moveBomb;
     
     // The Firing Action menu
-    private JMenuItem fireFire;
-    private JMenuItem fireSkip;
-    private JMenuItem fireNextTarg;
-    private JMenuItem fireNext;
-    private JMenuItem fireTwist;
-    private JMenuItem fireFlipArms;
-    private JMenuItem fireMode;
-    private JMenuItem fireCalled;
-    private JMenuItem fireFindClub;
-    private JMenuItem fireSpot;
-    private JMenuItem fireSearchlight;
-    private JMenuItem fireClearTurret;
-    private JMenuItem fireClearWeaponJam;
-    private JMenuItem fireStrafe;
     private JMenuItem fireSaveWeaponOrder;
     private JMenuItem fireCancel;
     
-    // The Physical Attack Actions menu
-    private JMenuItem physicalNext;
-    private JMenuItem physicalPunch;
-    private JMenuItem physicalKick;
-    private JMenuItem physicalPush;
-    private JMenuItem physicalClub;
-    private JMenuItem physicalBrushOff;
-    private JMenuItem physicalDodge;
-    private JMenuItem physicalThrash;
-    private JMenuItem physicalProto;
-    private JMenuItem physicalVibro;
-    
     /** Contains all ActionListeners that have registered themselves with this menu bar. */
     private final List<ActionListener> actionListeners = new ArrayList<>();
+    
+    /** Maps the Action Command to the respective MenuItem. */
+    private final Map<String, JMenuItem> itemMap = new HashMap<String, JMenuItem>();
 
     /**
      * Create a MegaMek menu bar.
@@ -325,12 +242,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         deployMinesInferno = createMenuItem(submenu, getString("deployMinesInferno"), DEPLOY_MINE_INFERNO.getCmd()); 
 
         // Finish off the deploy menu.
-        deployNext = createMenuItem(menu, getString("deployNext"), DEPLOY_NEXT.getCmd(), KeyEvent.VK_N); 
-        deployTurn = createMenuItem(menu, getString("deployTurn"), DEPLOY_TURN.getCmd()); 
-        deployLoad = createMenuItem(menu, getString("deployLoad"), DEPLOY_LOAD.getCmd()); 
-        deployUnload = createMenuItem(menu, getString("deployUnload"), DEPLOY_UNLOAD.getCmd()); 
-        deployRemove = createMenuItem(menu, getString("deployRemove"), DEPLOY_REMOVE.getCmd()); 
-        deployAssaultDrop = createMenuItem(menu, getString("deployAssaultDrop"), DEPLOY_ASSAULTDROP.getCmd()); 
+        createMenuItem(menu, getString("deployNext"), DEPLOY_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("deployTurn"), DEPLOY_TURN.getCmd()); 
+        createMenuItem(menu, getString("deployLoad"), DEPLOY_LOAD.getCmd()); 
+        createMenuItem(menu, getString("deployUnload"), DEPLOY_UNLOAD.getCmd()); 
+        createMenuItem(menu, getString("deployRemove"), DEPLOY_REMOVE.getCmd()); 
+        createMenuItem(menu, getString("deployAssaultDrop"), DEPLOY_ASSAULTDROP.getCmd()); 
         menu.addSeparator();
         menu.add(submenu);
 
@@ -338,101 +255,101 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu = new JMenu(getString("MoveMenu")); 
         menu.setMnemonic(KeyEvent.VK_M);
         add(menu);
-        moveWalk = createMenuItem(menu, getString("moveWalk"), MOVE_WALK.getCmd(), KeyEvent.VK_W); 
-        moveJump = createMenuItem(menu, getString("moveJump"), MOVE_JUMP.getCmd(), KeyEvent.VK_J); 
-        moveSwim = createMenuItem(menu, getString("moveSwim"), MOVE_SWIM.getCmd(), KeyEvent.VK_S); 
-        moveModeConvert = createMenuItem(menu, getString("moveModeConvert"), MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); 
-        moveBackUp = createMenuItem(menu, getString("moveBackUp"), MOVE_BACK_UP.getCmd()); 
-        moveGetUp = createMenuItem(menu, getString("moveGetUp"), MOVE_GET_UP.getCmd()); 
-        moveGoProne = createMenuItem(menu, getString("moveGoProne"), MOVE_GO_PRONE.getCmd()); 
-        moveTurn = createMenuItem(menu, getString("moveTurn"), MOVE_TURN.getCmd()); 
-        moveNext = createMenuItem(menu, getString("moveNext"), MOVE_NEXT.getCmd(), KeyEvent.VK_N); 
-        moveForwardIni = createMenuItem(menu, getString("moveForwardIni"), MOVE_FORWARD_INI.getCmd()); 
-        moveRaise = createMenuItem(menu, getString("moveRaise"), MOVE_RAISE_ELEVATION.getCmd()); 
-        moveLower = createMenuItem(menu, getString("moveLower"), MOVE_LOWER_ELEVATION.getCmd()); 
-        moveReckless = createMenuItem(menu, getString("moveReckless"), MOVE_RECKLESS.getCmd()); 
-        moveEvade = createMenuItem(menu, getString("moveEvade"), MOVE_EVADE.getCmd()); 
-        moveBootlegger = createMenuItem(menu, getString("moveBootlegger"), MOVE_BOOTLEGGER.getCmd()); 
-        moveShutdown = createMenuItem(menu, getString("moveShutdown"), MOVE_SHUTDOWN.getCmd()); 
-        moveStartup = createMenuItem(menu, getString("moveStartup"), MOVE_STARTUP.getCmd()); 
-        moveSelfDestruct = createMenuItem(menu, getString("moveSelfDestruct"), MOVE_SELF_DESTRUCT.getCmd()); 
+        createMenuItem(menu, getString("moveWalk"), MOVE_WALK.getCmd(), KeyEvent.VK_W); 
+        createMenuItem(menu, getString("moveJump"), MOVE_JUMP.getCmd(), KeyEvent.VK_J); 
+        createMenuItem(menu, getString("moveSwim"), MOVE_SWIM.getCmd(), KeyEvent.VK_S); 
+        createMenuItem(menu, getString("moveModeConvert"), MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); 
+        createMenuItem(menu, getString("moveBackUp"), MOVE_BACK_UP.getCmd()); 
+        createMenuItem(menu, getString("moveGetUp"), MOVE_GET_UP.getCmd()); 
+        createMenuItem(menu, getString("moveGoProne"), MOVE_GO_PRONE.getCmd()); 
+        createMenuItem(menu, getString("moveTurn"), MOVE_TURN.getCmd()); 
+        createMenuItem(menu, getString("moveNext"), MOVE_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("moveForwardIni"), MOVE_FORWARD_INI.getCmd()); 
+        createMenuItem(menu, getString("moveRaise"), MOVE_RAISE_ELEVATION.getCmd()); 
+        createMenuItem(menu, getString("moveLower"), MOVE_LOWER_ELEVATION.getCmd()); 
+        createMenuItem(menu, getString("moveReckless"), MOVE_RECKLESS.getCmd()); 
+        createMenuItem(menu, getString("moveEvade"), MOVE_EVADE.getCmd()); 
+        createMenuItem(menu, getString("moveBootlegger"), MOVE_BOOTLEGGER.getCmd()); 
+        createMenuItem(menu, getString("moveShutdown"), MOVE_SHUTDOWN.getCmd()); 
+        createMenuItem(menu, getString("moveStartup"), MOVE_STARTUP.getCmd()); 
+        createMenuItem(menu, getString("moveSelfDestruct"), MOVE_SELF_DESTRUCT.getCmd()); 
         /* TODO: moveTraitor = createMenuItem(menu, getString("moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
 
         // Create the Aero Movement sub-menu
         JMenu aeromenu = new JMenu(getString("AeroMenu")); 
-        moveAcc = createMenuItem(aeromenu, getString("moveAcc"), MOVE_ACC.getCmd()); 
-        moveDec = createMenuItem(aeromenu, getString("moveDec"), MOVE_DEC.getCmd()); 
-        moveAccN = createMenuItem(aeromenu, getString("moveAccN"), MOVE_ACCN.getCmd()); 
-        moveDecN = createMenuItem(aeromenu, getString("moveDecN"), MOVE_DECN.getCmd()); 
-        moveEvadeAero = createMenuItem(aeromenu, getString("moveEvadeAero"), MOVE_EVADE_AERO.getCmd()); 
-        moveRoll = createMenuItem(aeromenu, getString("moveRoll"), MOVE_ROLL.getCmd()); 
+        createMenuItem(aeromenu, getString("moveAcc"), MOVE_ACC.getCmd()); 
+        createMenuItem(aeromenu, getString("moveDec"), MOVE_DEC.getCmd()); 
+        createMenuItem(aeromenu, getString("moveAccN"), MOVE_ACCN.getCmd()); 
+        createMenuItem(aeromenu, getString("moveDecN"), MOVE_DECN.getCmd()); 
+        createMenuItem(aeromenu, getString("moveEvadeAero"), MOVE_EVADE_AERO.getCmd()); 
+        createMenuItem(aeromenu, getString("moveRoll"), MOVE_ROLL.getCmd()); 
         aeromenu.addSeparator();
-        moveHover = createMenuItem(aeromenu, getString("moveHover"), MOVE_HOVER.getCmd()); 
-        moveManeuver = createMenuItem(aeromenu, getString("moveManeuver"), MOVE_MANEUVER.getCmd()); 
-        moveTurnLeft = createMenuItem(aeromenu, getString("moveTurnLeft"), MOVE_TURN_LEFT.getCmd()); 
-        moveTurnRight = createMenuItem(aeromenu, getString("moveTurnRight"), MOVE_TURN_RIGHT.getCmd()); 
-        moveThrust = createMenuItem(aeromenu, getString("moveThrust"), MOVE_THRUST.getCmd()); 
-        moveYaw = createMenuItem(aeromenu, getString("moveYaw"), MOVE_YAW.getCmd()); 
-        moveEndOver = createMenuItem(aeromenu, getString("moveEndOver"), MOVE_END_OVER.getCmd()); 
-        moveStrafe = createMenuItem(aeromenu, getString("moveStrafe"), MOVE_STRAFE.getCmd()); 
-        moveBomb = createMenuItem(aeromenu, getString("moveBomb"), MOVE_BOMB.getCmd()); 
+        createMenuItem(aeromenu, getString("moveHover"), MOVE_HOVER.getCmd()); 
+        createMenuItem(aeromenu, getString("moveManeuver"), MOVE_MANEUVER.getCmd()); 
+        createMenuItem(aeromenu, getString("moveTurnLeft"), MOVE_TURN_LEFT.getCmd()); 
+        createMenuItem(aeromenu, getString("moveTurnRight"), MOVE_TURN_RIGHT.getCmd()); 
+        createMenuItem(aeromenu, getString("moveThrust"), MOVE_THRUST.getCmd()); 
+        createMenuItem(aeromenu, getString("moveYaw"), MOVE_YAW.getCmd()); 
+        createMenuItem(aeromenu, getString("moveEndOver"), MOVE_END_OVER.getCmd()); 
+        createMenuItem(aeromenu, getString("moveStrafe"), MOVE_STRAFE.getCmd()); 
+        createMenuItem(aeromenu, getString("moveBomb"), MOVE_BOMB.getCmd()); 
 
         menu.addSeparator();
         menu.add(aeromenu);
 
         // Create the Special sub-menu.
         submenu = new JMenu(getString("SpecialMenu")); 
-        moveLoad = createMenuItem(submenu, getString("MoveLoad"), MOVE_LOAD.getCmd()); 
-        moveUnload = createMenuItem(submenu, getString("MoveUnload"), MOVE_UNLOAD.getCmd()); 
-        moveTow = createMenuItem(submenu, getString("moveTow"), MOVE_TOW.getCmd()); 
-        moveDisconnect = createMenuItem(submenu, getString("moveDisconnect"), MOVE_DISCONNECT.getCmd()); 
-        moveLaunch = createMenuItem(submenu, getString("moveLaunch"), MOVE_LAUNCH.getCmd()); 
-        moveRecover = createMenuItem(submenu, getString("moveRecover"), MOVE_RECOVER.getCmd()); 
-        moveJoin = createMenuItem(submenu, getString("moveJoin"), MOVE_JOIN.getCmd()); 
+        createMenuItem(submenu, getString("MoveLoad"), MOVE_LOAD.getCmd()); 
+        createMenuItem(submenu, getString("MoveUnload"), MOVE_UNLOAD.getCmd()); 
+        createMenuItem(submenu, getString("moveTow"), MOVE_TOW.getCmd()); 
+        createMenuItem(submenu, getString("moveDisconnect"), MOVE_DISCONNECT.getCmd()); 
+        createMenuItem(submenu, getString("moveLaunch"), MOVE_LAUNCH.getCmd()); 
+        createMenuItem(submenu, getString("moveRecover"), MOVE_RECOVER.getCmd()); 
+        createMenuItem(submenu, getString("moveJoin"), MOVE_JOIN.getCmd()); 
         submenu.addSeparator();
-        moveCharge = createMenuItem(submenu, getString("MoveCharge"), MOVE_CHARGE.getCmd()); 
-        moveDFA = createMenuItem(submenu, getString("MoveDeth"), MOVE_DFA.getCmd()); 
-        moveRam = createMenuItem(submenu, getString("moveRam"), MOVE_RAM.getCmd()); 
+        createMenuItem(submenu, getString("MoveCharge"), MOVE_CHARGE.getCmd()); 
+        createMenuItem(submenu, getString("MoveDeth"), MOVE_DFA.getCmd()); 
+        createMenuItem(submenu, getString("moveRam"), MOVE_RAM.getCmd()); 
         submenu.addSeparator();
-        moveFlee = createMenuItem(submenu, getString("MoveFlee"), MOVE_FLEE.getCmd()); 
-        moveFlyOff = createMenuItem(submenu, getString("MoveFlyOff"), MOVE_FLY_OFF.getCmd()); 
-        moveEject = createMenuItem(submenu, getString("MoveEject"), MOVE_EJECT.getCmd()); 
+        createMenuItem(submenu, getString("MoveFlee"), MOVE_FLEE.getCmd()); 
+        createMenuItem(submenu, getString("MoveFlyOff"), MOVE_FLY_OFF.getCmd()); 
+        createMenuItem(submenu, getString("MoveEject"), MOVE_EJECT.getCmd()); 
         submenu.addSeparator();
-        moveUnjam = createMenuItem(submenu, getString("moveUnjam"), MOVE_UNJAM.getCmd()); 
-        moveSearchlight = createMenuItem(submenu, getString("moveSearchlight"), MOVE_SEARCHLIGHT.getCmd()); 
-        moveClear = createMenuItem(submenu, getString("moveClear"), MOVE_CLEAR.getCmd()); 
-        moveHullDown = createMenuItem(submenu, getString("moveHullDown"), MOVE_HULL_DOWN.getCmd()); 
-        moveLayMine = createMenuItem(submenu, getString("moveLayMine"), MOVE_LAY_MINE.getCmd()); 
-        moveDump = createMenuItem(submenu, getString("moveDump"), MOVE_DUMP.getCmd()); 
+        createMenuItem(submenu, getString("moveUnjam"), MOVE_UNJAM.getCmd()); 
+        createMenuItem(submenu, getString("moveSearchlight"), MOVE_SEARCHLIGHT.getCmd()); 
+        createMenuItem(submenu, getString("moveClear"), MOVE_CLEAR.getCmd()); 
+        createMenuItem(submenu, getString("moveHullDown"), MOVE_HULL_DOWN.getCmd()); 
+        createMenuItem(submenu, getString("moveLayMine"), MOVE_LAY_MINE.getCmd()); 
+        createMenuItem(submenu, getString("moveDump"), MOVE_DUMP.getCmd()); 
 
         menu.addSeparator();
         menu.add(submenu);
 
         menu.addSeparator();
-        moveNext = createMenuItem(menu, getString("moveCancel"), MOVE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
+        createMenuItem(menu, getString("moveCancel"), MOVE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
 
         // Create the Attack actions menu
         menu = new JMenu(getString("FireMenu")); 
         menu.setMnemonic(KeyEvent.VK_I);
         add(menu);
-        fireFire = createMenuItem(menu, getString("fireFire"), FIRE_FIRE.getCmd(), KeyEvent.VK_F); 
-        fireSkip = createMenuItem(menu, getString("fireSkip"), FIRE_SKIP.getCmd(), KeyEvent.VK_S); 
-        fireNextTarg = createMenuItem(menu, getString("fireNextTarg"), FIRE_NEXT_TARG.getCmd(), KeyEvent.VK_T); 
-        fireNext = createMenuItem(menu, getString("fireNext"), FIRE_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("fireFire"), FIRE_FIRE.getCmd(), KeyEvent.VK_F); 
+        createMenuItem(menu, getString("fireSkip"), FIRE_SKIP.getCmd(), KeyEvent.VK_S); 
+        createMenuItem(menu, getString("fireNextTarg"), FIRE_NEXT_TARG.getCmd(), KeyEvent.VK_T); 
+        createMenuItem(menu, getString("fireNext"), FIRE_NEXT.getCmd(), KeyEvent.VK_N); 
         menu.addSeparator();
-        fireTwist = createMenuItem(menu, getString("fireTwist"), FIRE_TWIST.getCmd()); 
-        fireFlipArms = createMenuItem(menu, getString("fireFlipArms"), FIRE_FLIP_ARMS.getCmd()); 
+        createMenuItem(menu, getString("fireTwist"), FIRE_TWIST.getCmd()); 
+        createMenuItem(menu, getString("fireFlipArms"), FIRE_FLIP_ARMS.getCmd()); 
         menu.addSeparator();
-        fireMode = createMenuItem(menu, getString("fireMode"), FIRE_MODE.getCmd(), KeyEvent.VK_O); 
-        fireCalled = createMenuItem(menu, getString("fireCalled"), FIRE_CALLED.getCmd()); 
+        createMenuItem(menu, getString("fireMode"), FIRE_MODE.getCmd(), KeyEvent.VK_O); 
+        createMenuItem(menu, getString("fireCalled"), FIRE_CALLED.getCmd()); 
         menu.addSeparator();
-        fireFindClub = createMenuItem(menu, getString("fireFindClub"), FIRE_FIND_CLUB.getCmd()); 
-        fireSpot = createMenuItem(menu, getString("fireSpot"), FIRE_SPOT.getCmd()); 
-        fireSearchlight = createMenuItem(menu, getString("fireSearchlight"), FIRE_SEARCHLIGHT.getCmd()); 
-        fireClearTurret = createMenuItem(menu, getString("fireClearTurret"), FIRE_CLEAR_TURRET.getCmd()); 
-        fireClearWeaponJam = createMenuItem(menu, getString("fireClearWeaponJam"), FIRE_CLEAR_WEAPON.getCmd()); 
+        createMenuItem(menu, getString("fireFindClub"), FIRE_FIND_CLUB.getCmd()); 
+        createMenuItem(menu, getString("fireSpot"), FIRE_SPOT.getCmd()); 
+        createMenuItem(menu, getString("fireSearchlight"), FIRE_SEARCHLIGHT.getCmd()); 
+        createMenuItem(menu, getString("fireClearTurret"), FIRE_CLEAR_TURRET.getCmd()); 
+        createMenuItem(menu, getString("fireClearWeaponJam"), FIRE_CLEAR_WEAPON.getCmd()); 
         menu.addSeparator();
-        fireStrafe = createMenuItem(menu, getString("fireStrafe"), FIRE_CLEAR_WEAPON.getCmd()); 
+        createMenuItem(menu, getString("fireStrafe"), FIRE_CLEAR_WEAPON.getCmd()); 
         menu.addSeparator();
         fireCancel = createMenuItem(menu, getString("fireCancel"), FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
         menu.addSeparator();
@@ -442,16 +359,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         menu = new JMenu(getString("PhysicalMenu")); 
         menu.setMnemonic(KeyEvent.VK_P);
         add(menu);
-        physicalPunch = createMenuItem(menu, getString("physicalPunch"), PHYSICAL_PUNCH.getCmd()); 
-        physicalKick = createMenuItem(menu, getString("physicalKick"), PHYSICAL_KICK.getCmd()); 
-        physicalPush = createMenuItem(menu, getString("physicalPush"), PHYSICAL_PUSH.getCmd()); 
-        physicalClub = createMenuItem(menu, getString("physicalClub"), PHYSICAL_CLUB.getCmd()); 
-        physicalBrushOff = createMenuItem(menu, getString("physicalBrushOff"), PHYSICAL_BRUSH_OFF.getCmd()); 
-        physicalThrash = createMenuItem(menu, getString("physicalThrash"), PHYSICAL_THRASH.getCmd()); 
-        physicalProto = createMenuItem(menu, getString("physicalProto"), PHYSICAL_PROTO.getCmd()); 
-        physicalDodge = createMenuItem(menu, getString("physicalDodge"), PHYSICAL_DODGE.getCmd()); 
-        physicalVibro = createMenuItem(menu, getString("physicalVibro"), PHYSICAL_VIBRO.getCmd()); 
-        physicalNext = createMenuItem(menu, getString("physicalNext"), PHYSICAL_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("physicalPunch"), PHYSICAL_PUNCH.getCmd()); 
+        createMenuItem(menu, getString("physicalKick"), PHYSICAL_KICK.getCmd()); 
+        createMenuItem(menu, getString("physicalPush"), PHYSICAL_PUSH.getCmd()); 
+        createMenuItem(menu, getString("physicalClub"), PHYSICAL_CLUB.getCmd()); 
+        createMenuItem(menu, getString("physicalBrushOff"), PHYSICAL_BRUSH_OFF.getCmd()); 
+        createMenuItem(menu, getString("physicalThrash"), PHYSICAL_THRASH.getCmd()); 
+        createMenuItem(menu, getString("physicalProto"), PHYSICAL_PROTO.getCmd()); 
+        createMenuItem(menu, getString("physicalDodge"), PHYSICAL_DODGE.getCmd()); 
+        createMenuItem(menu, getString("physicalVibro"), PHYSICAL_VIBRO.getCmd()); 
+        createMenuItem(menu, getString("physicalNext"), PHYSICAL_NEXT.getCmd(), KeyEvent.VK_N); 
 
         // Create the Help menu
         menu = new JMenu(getString("HelpMenu")); 
@@ -467,26 +384,27 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
-    private JMenuItem createMenuItem(JMenu m, String label, String command, int shortcut) {
-        JMenuItem mi = createMenuItem(m, label, command);
-        mi.setMnemonic(shortcut);
-        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMaskEx()));
-        return mi;
+    private JMenuItem createMenuItem(JMenu menu, String label, String command, int shortcut) {
+        JMenuItem item = createMenuItem(menu, label, command);
+        item.setMnemonic(shortcut);
+        item.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMaskEx()));
+        return item;
     }
     
-    private JMenuItem createMenuItem(JMenu m, String label, String command) {
-        JMenuItem mi = new JMenuItem(label);
-        mi.addActionListener(this);
-        mi.setActionCommand(command);
-        mi.setEnabled(false);
-        m.add(mi);
-        return mi;
+    private JMenuItem createMenuItem(JMenu menu, String label, String command) {
+        JMenuItem item = new JMenuItem(label);
+        item.addActionListener(this);
+        item.setActionCommand(command);
+        item.setEnabled(false);
+        itemMap.put(command, item);
+        menu.add(item);
+        return item;
     }
     
-    private JMenuItem createMenuItem(JMenu m, String label, String command, boolean active) {
-        JMenuItem mi = createMenuItem(m, label, command);
-        mi.setEnabled(active);
-        return mi;
+    private JMenuItem createMenuItem(JMenu menu, String label, String command, boolean active) {
+        JMenuItem item = createMenuItem(menu, label, command);
+        item.setEnabled(active);
+        return item;
     }
     
     private JCheckBoxMenuItem createCbxMenuItem(JMenu menu, String label, String command) {
@@ -494,6 +412,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         item.addActionListener(this);
         item.setActionCommand(command);
         item.setEnabled(false);
+        itemMap.put(command, item);
         menu.add(item);
         return item;
     }
@@ -824,240 +743,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         }
         manageMenu();
     }
-
-    public synchronized void setMoveWalkEnabled(boolean enabled) {
-        moveWalk.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveTurnEnabled(boolean enabled) {
-        moveTurn.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveNextEnabled(boolean enabled) {
-        moveNext.setEnabled(enabled);
-    }
-    public synchronized void setMoveForwardIniEnabled(boolean enabled) {
-        moveForwardIni.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveLoadEnabled(boolean enabled) {
-        moveLoad.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveUnloadEnabled(boolean enabled) {
-        moveUnload.setEnabled(enabled);
-    }
     
-    public synchronized void setMoveTowEnabled(boolean enabled) {
-        moveTow.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveDisconnectEnabled(boolean enabled) {
-        moveDisconnect.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveJumpEnabled(boolean enabled) {
-        moveJump.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveSwimEnabled(boolean enabled) {
-        moveSwim.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveModeConvertEnabled(boolean enabled) {
-        moveModeConvert.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveLayMineEnabled(boolean enabled) {
-        moveLayMine.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveBackUpEnabled(boolean enabled) {
-        moveBackUp.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveChargeEnabled(boolean enabled) {
-        moveCharge.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveDFAEnabled(boolean enabled) {
-        moveDFA.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveGoProneEnabled(boolean enabled) {
-        moveGoProne.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveFleeEnabled(boolean enabled) {
-        moveFlee.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveFlyOffEnabled(boolean enabled) {
-        moveFlyOff.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveEjectEnabled(boolean enabled) {
-        moveEject.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveUnjamEnabled(boolean enabled) {
-        moveUnjam.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveSearchlightEnabled(boolean enabled) {
-        moveSearchlight.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveHullDownEnabled(boolean enabled) {
-        moveHullDown.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveClearEnabled(boolean enabled) {
-        moveClear.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveGetUpEnabled(boolean enabled) {
-        moveGetUp.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveRaiseEnabled(boolean enabled) {
-        moveRaise.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveLowerEnabled(boolean enabled) {
-        moveLower.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveRecklessEnabled(boolean enabled) {
-        moveReckless.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveAccEnabled(boolean enabled) {
-        moveAcc.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveDecEnabled(boolean enabled) {
-        moveDec.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveAccNEnabled(boolean enabled) {
-        moveAccN.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveDecNEnabled(boolean enabled) {
-        moveDecN.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveEvadeEnabled(boolean enabled) {
-        moveEvade.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveBootleggerEnabled(boolean enabled) {
-        moveBootlegger.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveShutdownEnabled(boolean enabled) {
-        moveShutdown.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveStartupEnabled(boolean enabled) {
-        moveStartup.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveSelfDestructEnabled(boolean enabled) {
-        moveSelfDestruct.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveTraitorEnabled(boolean enabled) {
-        //TODO: moveTraitor.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveEvadeAeroEnabled(boolean enabled) {
-        moveEvadeAero.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveRollEnabled(boolean enabled) {
-        moveRoll.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveLaunchEnabled(boolean enabled) {
-        moveLaunch.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveRecoverEnabled(boolean enabled) {
-        moveRecover.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveJoinEnabled(boolean enabled) {
-        moveJoin.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveDumpEnabled(boolean enabled) {
-        moveDump.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveRamEnabled(boolean enabled) {
-        moveRam.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveHoverEnabled(boolean enabled) {
-        moveHover.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveManeuverEnabled(boolean enabled) {
-        moveManeuver.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveTurnLeftEnabled(boolean enabled) {
-        moveTurnLeft.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveTurnRightEnabled(boolean enabled) {
-        moveTurnRight.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveThrustEnabled(boolean enabled) {
-        moveThrust.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveYawEnabled(boolean enabled) {
-        moveYaw.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveEndOverEnabled(boolean enabled) {
-        moveEndOver.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveStrafeEnabled(boolean enabled) {
-        moveStrafe.setEnabled(enabled);
-    }
-    
-    public synchronized void setMoveBombEnabled(boolean enabled) {
-        moveBomb.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployNextEnabled(boolean enabled) {
-        deployNext.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployTurnEnabled(boolean enabled) {
-        deployTurn.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployLoadEnabled(boolean enabled) {
-        deployLoad.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployUnloadEnabled(boolean enabled) {
-        deployUnload.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployRemoveEnabled(boolean enabled) {
-        deployRemove.setEnabled(enabled);
-    }
-
-    public synchronized void setDeployAssaultDropEnabled(boolean enabled) {
-        deployAssaultDrop.setEnabled(enabled);
+    public synchronized void setEnabled(String command, boolean enabled) {
+        if (!itemMap.containsKey(command)) {
+            MegaMek.getLogger().error("ActionCommand " + command + " not recognized.");
+            return;
+        }
+        itemMap.get(command).setEnabled(enabled);
     }
 
     public synchronized void setDeployConventionalEnabled(int nbr) {
@@ -1084,102 +776,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     public synchronized void setDeployInfernoEnabled(int nbr) {
         deployMinesInferno.setText(Messages.getString("Inferno", nbr)); 
         deployMinesInferno.setEnabled(nbr > 0);
-    }
-
-    public synchronized void setPhysicalNextEnabled(boolean enabled) {
-        physicalNext.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalPunchEnabled(boolean enabled) {
-        physicalPunch.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalKickEnabled(boolean enabled) {
-        physicalKick.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalPushEnabled(boolean enabled) {
-        physicalPush.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalClubEnabled(boolean enabled) {
-        physicalClub.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalBrushOffEnabled(boolean enabled) {
-        physicalBrushOff.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalDodgeEnabled(boolean enabled) {
-        physicalDodge.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalThrashEnabled(boolean enabled) {
-        physicalThrash.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalProtoEnabled(boolean enabled) {
-        physicalProto.setEnabled(enabled);
-    }
-
-    public synchronized void setPhysicalVibroEnabled(boolean enabled) {
-        physicalVibro.setEnabled(enabled);
-    }
-
-    public synchronized void setFireFireEnabled(boolean enabled) {
-        fireFire.setEnabled(enabled);
-    }
-
-    public synchronized void setFireSkipEnabled(boolean enabled) {
-        fireSkip.setEnabled(enabled);
-    }
-
-    public synchronized void setFireNextTargetEnabled(boolean enabled) {
-        fireNextTarg.setEnabled(enabled);
-    }
-
-    public synchronized void setFireNextEnabled(boolean enabled) {
-        fireNext.setEnabled(enabled);
-    }
-
-    public synchronized void setFireTwistEnabled(boolean enabled) {
-        fireTwist.setEnabled(enabled);
-    }
-
-    public synchronized void setFireFlipArmsEnabled(boolean enabled) {
-        fireFlipArms.setEnabled(enabled);
-    }
-
-    public synchronized void setFireModeEnabled(boolean enabled) {
-        fireMode.setEnabled(enabled);
-    }
-
-    public synchronized void setFireCalledEnabled(boolean enabled) {
-        fireCalled.setEnabled(enabled);
-    }
-
-    public synchronized void setFireFindClubEnabled(boolean enabled) {
-        fireFindClub.setEnabled(enabled);
-    }
-
-    public synchronized void setFireSpotEnabled(boolean enabled) {
-        fireSpot.setEnabled(enabled);
-    }
-
-    public synchronized void setFireSearchlightEnabled(boolean enabled) {
-        fireSearchlight.setEnabled(enabled);
-    }
-
-    public synchronized void setFireClearTurretEnabled(boolean enabled) {
-        fireClearTurret.setEnabled(enabled);
-    }
-
-    public synchronized void setFireClearWeaponJamEnabled(boolean enabled) {
-        fireClearWeaponJam.setEnabled(enabled);
-    }
-
-    public synchronized void setStrafeEnabled(boolean enabled) {
-        fireStrafe.setEnabled(enabled);
     }
 
     @Override

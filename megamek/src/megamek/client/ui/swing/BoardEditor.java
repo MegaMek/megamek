@@ -60,6 +60,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
@@ -2347,7 +2348,7 @@ public class BoardEditor extends JPanel
          * Sets the unscaled base image to use as a mouse hover image for the button. 
          * image may be null. Passing null disables the hover image. 
          */
-        void setRolloverImage(Image image) {
+        void setRolloverImage(@Nullable Image image) {
             baseRolloverImage = image;
         }
         
@@ -2355,7 +2356,7 @@ public class BoardEditor extends JPanel
          * Sets the unscaled base image to use as a button disabled image for the button. 
          * image may be null. Passing null disables the button disabled image. 
          */
-        void setDisabledImage(Image image) {
+        void setDisabledImage(@Nullable Image image) {
             baseDisabledImage = image;
         }
     }
@@ -2405,7 +2406,7 @@ public class BoardEditor extends JPanel
          * Sets the unscaled base image to use as a mouse hover image for the button. 
          * image may be null. Passing null disables the hover image. 
          */
-        void setRolloverImage(Image image) {
+        void setRolloverImage(@Nullable Image image) {
             baseRolloverImage = image;
         }
         
@@ -2413,7 +2414,7 @@ public class BoardEditor extends JPanel
          * Sets the unscaled base image to use as a "toggle button is selected" image for the button. 
          * image may be null. Passing null disables the "is selected" image. 
          */
-        void setSelectedImage(Image image) {
+        void setSelectedImage(@Nullable Image image) {
             baseSelectedImage = image;
         }
     }

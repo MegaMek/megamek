@@ -79,8 +79,8 @@ public abstract class AbstractWreckSprite extends Sprite {
                 .getAscent());
 
         // create image for buffer
-        final Rectangle bounds = getBounds(); // more efficient than recreation
-        image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
+        final Rectangle imageBounds = getBounds(); // more efficient than double recreation
+        image = ImageUtil.createAcceleratedImage(imageBounds.width, imageBounds.height);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent

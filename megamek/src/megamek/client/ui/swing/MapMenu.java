@@ -1,76 +1,42 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
+import javax.swing.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.event.BoardViewEvent;
-import megamek.common.AmmoType;
-import megamek.common.BipedMech;
-import megamek.common.Building;
+import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.BuildingTarget;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EquipmentMode;
-import megamek.common.HexTarget;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MinefieldTarget;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadVee;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.WeaponComparatorDamage;
-import megamek.common.WeaponType;
-import megamek.common.actions.BAVibroClawAttackAction;
-import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.GrappleAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.IGame.Phase;
+import megamek.common.actions.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.other.CLFireExtinguisher;
-import megamek.common.weapons.other.ISFireExtinguisher;
+import megamek.common.weapons.other.*;
 
 /**
  * Context menu for the board.
@@ -251,22 +217,20 @@ public class MapMenu extends JPopupMenu {
             }
 
             // Traitor Command
-            JMenuItem item = new JMenuItem(
-                    Messages.getString("MovementDisplay.Traitor")); //$NON-NLS-1$
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TRAITOR
-                                          .getCmd());
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    try {
-                        if (currentPanel instanceof MovementDisplay) {
-                            ((MovementDisplay) currentPanel).actionPerformed(e);
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+            JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.Traitor"));
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TRAITOR.getCmd());
+            item.addActionListener(e -> {
+                try {
+                    if (currentPanel instanceof MovementDisplay) {
+                        ((MovementDisplay) currentPanel).actionPerformed(e);
                     }
+                } catch (Exception ex) {
+                    MegaMek.getLogger().error(ex);
                 }
             });
-            this.add(item);
+            if (game.getPhase() == Phase.PHASE_MOVEMENT) {
+                add(item);
+            }
         }
         
         menu = touchOffExplosivesMenu();

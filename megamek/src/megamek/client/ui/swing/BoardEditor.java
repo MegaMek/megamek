@@ -446,7 +446,10 @@ public class BoardEditor extends JComponent
                         }
                     }
                     // ------- End Raise/Lower Terrain
-                } else if (isLMB) {
+                } else if (isLMB || (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                    // 'isLMB' is true if a button 1 is associated to a click or release but not while dragging.
+                    // The left button down mask is checked because we could be dragging.
+                    
                     // Normal texture paint
                     if (isALT) { // ALT-Click
                         setCurrentHex(board.getHex(b.getCoords()));

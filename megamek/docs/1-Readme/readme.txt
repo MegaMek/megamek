@@ -25,7 +25,6 @@ RUNNING MEGAMEK
 ===============
 Java programs run in their own environment, called a Virtual Machine or VM
 for short. These Java VMs are available on most systems from a variety of 
-for short. These Java VMs are available on most systems from a variety of 
 sources. Most modern systems have one installed by default.
 
 Windows users: To start MegaMek, run the MegaMek.exe file. If this fails

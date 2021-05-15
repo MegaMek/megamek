@@ -334,6 +334,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
+        
+        if (target == null) {
+            MegaMek.getLogger().error(attackerId + "Attempting to attack null target");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
 
         final WeaponType wtype = (WeaponType) type;
 

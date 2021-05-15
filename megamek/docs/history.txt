@@ -13,6 +13,7 @@ VERSION HISTORY:
 + PR #2849: Fixing Abstract Wreck Sprite NPE
 + Issue #2826 Traitor Context menu correction (no traitoring to teamless)
 + Issue #2856: Fixed Board Editor Level Up/Dn and left click dragging
++ PR #2862: Adding null target safety check for WeaponAttackAction.toHit() method
 
 0.49.0 (2021-05-01 2130 UTC)
 + Issue #2614: Improved Building Validation

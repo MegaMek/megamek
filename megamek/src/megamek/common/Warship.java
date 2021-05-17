@@ -219,7 +219,6 @@ public class Warship extends Jumpship {
         double[] driveCost = new double[6];
         int driveIdx = 0;
         double driveCosts = 0;
-        int dockingCollars = 0;
         // Drive Coil
         driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator

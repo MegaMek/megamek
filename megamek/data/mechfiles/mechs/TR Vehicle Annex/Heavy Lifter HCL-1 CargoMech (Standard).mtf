@@ -3,34 +3,34 @@ Heavy Lifter HCL-1 CargoMech
 (Standard)
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3060
-Source:RS IA
-Rules Level:2
+techbase:Inner Sphere
+era:3066
+source:RS IA
+rules level:2
 
-Mass:60
-Engine:240 Fusion Engine(IS)
-Structure:IS Industrial
-Myomer:Industrial Triple-Strength
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Industrial Triple-Strength
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+walk mp:4
+jump mp:0
 
-Armor:Industrial (Inner Sphere)
-FLL Armor:16
-FRL Armor:16
-LT Armor:21
-RT Armor:21
-CT Armor:23
-HD Armor:9
-RLL Armor:16
-RRL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+armor:Industrial (Inner Sphere)
+FLL armor:16
+FRL armor:16
+LT armor:21
+RT armor:21
+CT armor:23
+HD armor:9
+RLL armor:16
+RRL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:0
 
@@ -63,30 +63,30 @@ Environmental Sealing
 -Empty-
 
 Left Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
-Cargo (1 ton)
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Cargo:SIZE:1.0
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 Environmental Sealing
 -Empty-
 
 Right Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
-Cargo (1 ton)
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Cargo:SIZE:1.0
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 Environmental Sealing
 -Empty-
 

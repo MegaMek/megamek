@@ -50,6 +50,7 @@ import javax.swing.filechooser.FileFilter;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
@@ -489,6 +490,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     @Override
     public void setVisible(boolean b) {
         if (b) {
+            UIUtil.adjustDialog(getContentPane());
             loadWindowSettings();
         } else {
             saveWindowSettings();

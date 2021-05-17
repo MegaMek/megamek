@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -31,6 +32,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -314,9 +316,9 @@ public interface IGame {
     /**
      * sets the game options
      *
-     * @param options
+     * @param options the options to set
      */
-    abstract void setOptions(GameOptions options);
+    void setOptions(final @Nullable GameOptions options);
 
     /**
      * @return the game board
@@ -562,6 +564,8 @@ public interface IGame {
      * Returns the actual vector for the entities
      */
     abstract List<Entity> getEntitiesVector();
+    
+    abstract Stream<Entity> getEntitiesStream();
 
     abstract void setEntitiesVector(List<Entity> entities);
 
@@ -670,12 +674,12 @@ public interface IGame {
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    abstract Targetable getTarget(int nType, int nID);
+    @Nullable Targetable getTarget(int nType, int nID);
 
     /**
      * Returns the entity with the given id number, if any.
      */
-    abstract Entity getEntity(int id);
+    @Nullable Entity getEntity(final int id);
 
     /**
      * looks for an entity by id number even if out of the game
@@ -1507,7 +1511,7 @@ public interface IGame {
 
     abstract PlanetaryConditions getPlanetaryConditions();
 
-    abstract void setPlanetaryConditions(PlanetaryConditions conditions);
+    void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions);
 
     /**
      * Get a set of Coords illuminated by searchlights.
@@ -1526,7 +1530,7 @@ public interface IGame {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    abstract void setIlluminatedPositions(HashSet<Coords> ip);
+    void setIlluminatedPositions(final @Nullable HashSet<Coords> ip);
 
     /**
      * Add a new hex to the collection of Coords illuminated by searchlights.
@@ -1546,4 +1550,12 @@ public interface IGame {
             HashSet<Coords> oldPositions);
 
     public abstract String getUUIDString();
+    
+    abstract Forces getForces();
+    
+    /** 
+     * Overwrites the current forces object with the provided object.
+     * Called from server messages when loading a game.
+     */
+    abstract void setForces(Forces forces);
 }

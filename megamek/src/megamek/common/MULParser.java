@@ -97,6 +97,8 @@ public class MULParser {
     private static final String ORIG_MEN = "ONumberOfMen";
     private static final String CONVEYANCE = "Conveyance";
     private static final String GAME = "Game";
+    private static final String FORCE = "Force";
+    private static final String FORCEATT = "force";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -536,6 +538,8 @@ public class MULParser {
                     parseConveyance(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(GAME)) {
                     parseId(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(FORCE)) {
+                    parseForce(currEle, entity);
                 }
             }
         }
@@ -1755,7 +1759,6 @@ public class MULParser {
                     }
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
-                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                         if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
                             if (!inferno.isEmpty()) {
@@ -2361,6 +2364,13 @@ public class MULParser {
         } catch (Exception e) {
             warning.append("Invalid id in conveyance tag.\n");
         }
+    }
+    
+    /**
+     * Parse a force tag for the given <code>Entity</code>. 
+     */
+    private void parseForce(Element forceTag, Entity entity){
+        entity.setForceString(forceTag.getAttribute(FORCEATT));
     }
 
     /**

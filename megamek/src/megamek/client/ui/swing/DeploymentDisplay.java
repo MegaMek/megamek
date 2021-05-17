@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -494,19 +495,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn() || (ce() == null)
-                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
 
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-                || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
         // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
 
         // check for a deployment
         Coords moveto = b.getCoords();

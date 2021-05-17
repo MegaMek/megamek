@@ -174,7 +174,7 @@ public class KeyBindParser {
                 output.write("         <command>"+kcb.cmd+"</command> ");
                 String keyTxt = "";
                 if (kcb.modifiers != 0) {
-                    keyTxt = KeyEvent.getKeyModifiersText(kcb.modifiers);
+                    keyTxt = KeyEvent.getModifiersExText(kcb.modifiers);
                     keyTxt += "-";
                 }
                 keyTxt += KeyEvent.getKeyText(kcb.key);

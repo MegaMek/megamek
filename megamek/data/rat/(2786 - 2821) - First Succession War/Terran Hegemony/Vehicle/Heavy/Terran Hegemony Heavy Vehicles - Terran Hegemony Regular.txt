@@ -1,0 +1,12 @@
+Terran Hegemony Heavy Vehicles - Terran Hegemony Regular
+Burke Defense Tank (Standard),2
+Padilla Heavy Artillery Tank (Standard),3
+Burke Defense Tank (Standard),4
+Von Luckner Heavy Tank (Star League),5
+Magi Infantry Support Vehicle (Standard),6
+Manticore Heavy Tank (Standard),7
+Bulldog Medium Tank (Standard),6
+Demon Tank (Standard),5
+Burke Defense Tank (Standard),4
+Marksman Artillery Vehicle (Standard),3
+Demon Tank (Standard),2

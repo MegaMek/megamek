@@ -1,22 +1,28 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
- * (bmazur@sev.org)
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1741,18 +1747,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
         Coords currPosition = cmd != null ? cmd.getFinalCoords()
                                           : ce != null ? ce.getPosition() : null;
@@ -2116,12 +2122,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void updateSearchlightButton() {
         final Entity ce = ce();
-        if (null == ce) {
-            return;
+        if (ce != null) {
+            boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
+            setSearchlightEnabled(
+                    isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
+                    ce.isUsingSearchlight());
         }
-        setSearchlightEnabled(
-                ce.hasSpotlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
-                ce().isUsingSpotlight());
     }
 
     private synchronized void updateElevationButtons() {
@@ -3625,7 +3631,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > (doors * 2))
+                if ((numChoices > currentBay.getSafeLaunchRate())
                     && GUIPreferences.getInstance().getNagForLaunchDoors()) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
@@ -5233,11 +5239,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
             computeMovementEnvelope(clientgui.mechD.getCurrentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
-            // Set up variables we need
-            // We use a vector instead of enumeration here so we can grab the
-            // size
-            Vector<IPlayer> players = clientgui.getClient().getGame()
-                    .getPlayersVector();
+            var players = clientgui.getClient().getGame().getPlayersVector();
             Integer[] playerIds = new Integer[players.size() - 1];
             String[] playerNames = new String[players.size() - 1];
             String[] options = new String[players.size() - 1];
@@ -5245,52 +5247,44 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             // Loop through the players vector and fill in the arrays
             int idx = 0;
-            for (int i = 0; i < players.size(); i++) {
-                IPlayer p = players.get(i);
-                // If this is us, we skip it since we can't transfer to
-                // ourselves
-                if (p.getName().equals(
-                        clientgui.getClient().getLocalPlayer().getName())) {
+            for (var player : players) {
+                if (player.getName().equals(clientgui.getClient().getLocalPlayer().getName())
+                        || (player.getTeam() == IPlayer.TEAM_UNASSIGNED)) {
                     continue;
                 }
-                playerIds[idx] = p.getId();
-                playerNames[idx] = p.getName();
-                options[idx] = p.getName() + " (ID: " + p.getId() + ")";
+                playerIds[idx] = player.getId();
+                playerNames[idx] = player.getName();
+                options[idx] = player.getName() + " (ID: " + player.getId() + ")";
                 idx++;
+            }
+            
+            // No players available?
+            if (idx == 0) {
+                JOptionPane.showMessageDialog(clientgui.getFrame(), 
+                        "No players available. Units cannot be traitored to players "
+                        + "that aren't assigned to a team.");
+                return;
             }
 
             // Dialog for choosing which player to transfer to
-            String option = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui.getFrame(),
+            String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
                             "Choose the player to gain ownership of this unit when it turns traitor",
                             "Traitor", JOptionPane.QUESTION_MESSAGE, null,
                             options, options[0]);
 
             // Verify that we have a valid option...
             if (option != null) {
-                // Now that we've selected a player, correctly associate the ID
-                // and name
+                // Now that we've selected a player, correctly associate the ID and name
                 int id = playerIds[Arrays.asList(options).indexOf(option)];
-                String name = playerNames[Arrays.asList(options)
-                        .indexOf(option)];
+                String name = playerNames[Arrays.asList(options).indexOf(option)];
 
                 // And now we perform the actual transfer
-                int confirm = JOptionPane
-                        .showConfirmDialog(
+                int confirm = JOptionPane.showConfirmDialog(
                                 clientgui.getFrame(),
-                                e.getDisplayName()
-                                        + " will switch to "
-                                        + name
-                                        + "'s side at the end of this turn. Are you "
-                                        + "sure?", "Confirm",
+                                e.getDisplayName() + " will switch to " + name
+                                        + "'s side at the end of this turn. Are you sure?", 
+                                "Confirm",
                                 JOptionPane.YES_NO_OPTION);
-                /*
-                 * JOptionPane.showMessageDialog( clientgui.getFrame(),
-                 * e.getDisplayName() + " will switch to " + name +
-                 * "'s side at the end of this turn.", "ERROR: Can't Switch",
-                 * JOptionPane.INFORMATION_MESSAGE);
-                 */
                 if (confirm == JOptionPane.YES_OPTION) {
                     e.setTraitorId(id);
                     clientgui.getClient().sendUpdateEntity(e);

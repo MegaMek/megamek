@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
@@ -135,6 +135,14 @@ public interface IPlayer extends ITurnOrdered {
 
     boolean hasTAG();
 
+    int getEntityCount();
+
+    int getInitialEntityCount();
+
+    void setInitialEntityCount(final int initialEntityCount);
+
+    void changeInitialEntityCount(final int initialEntityCountChange);
+
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
@@ -148,18 +156,16 @@ public interface IPlayer extends ITurnOrdered {
      */
     int getFledBV();
 
-    void setInitialBV();
-
-    /**
-     * Used to increase the initial BV by the specified value, which may be necessary if the player reinforces.
-     * @param bv
-     */
-    void increaseInitialBV(int bv);
-
     int getInitialBV();
 
+    void setInitialBV(final int initialBV);
+
+    void changeInitialBV(final int initialBVChange);
+
+    @Override
     void setInitCompensationBonus(int newBonus);
 
+    @Override
     int getInitCompensationBonus();
 
     void setConstantInitBonus(int b);
@@ -185,7 +191,9 @@ public interface IPlayer extends ITurnOrdered {
     Vector<Integer> getAirborneVTOL();
     
     // Make sure IPlayer implements both
+    @Override
     boolean equals(Object obj);
     
+    @Override
     int hashCode();
 }

@@ -304,7 +304,7 @@ public class EquipChoicePanel extends JPanel {
         if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
-            chSearchlight.setSelected(entity.hasSpotlight()
+            chSearchlight.setSelected(entity.hasSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity
                     .hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
@@ -400,8 +400,8 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update searchlight setting
-        entity.setExternalSpotlight(chSearchlight.isSelected());
-        entity.setSpotlightState(chSearchlight.isSelected());
+        entity.setExternalSearchlight(chSearchlight.isSelected());
+        entity.setSearchlightState(chSearchlight.isSelected());
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3

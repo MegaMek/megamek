@@ -1,18 +1,22 @@
 /*
-* MegaMek -
-* Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018, 2020 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (C) 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018, 2020, 2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.tileset;
 
 import java.util.*;
@@ -23,9 +27,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -34,10 +36,7 @@ import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
-import megamek.client.ui.swing.util.EntityWreckHelper;
-import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.util.RotateFilter;
+import megamek.client.ui.swing.util.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
@@ -116,41 +115,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         boardview = bv;
         hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);
-        try {
-            File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
-            File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
-
-            int bigWreckCount = 0;
-            int tinyWreckCount = 0;
-
-            // this section of code counts how many of each type of image is accessible
-            for (int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
-                String heavyFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
-                String lightFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
-                Image heavyImage = LoadSpecificImage(wreckDecalDir, heavyFileName);
-                Image lightImage = LoadSpecificImage(wreckDecalDir, lightFileName);
-
-                if (heavyImage != null) {
-                    bigWreckCount++;
-                }
-
-                if (lightImage != null) {
-                    tinyWreckCount++;
-                }
-
-                // if we can't load any more images, no need to keep failing
-                if (heavyImage == null && lightImage == null) {
-                    break;
-                }
-            }
-
-            wreckageDecalCount = new HashMap<>();
-            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ULTRALIGHT, tinyWreckCount);
-            wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS, bigWreckCount);
-
-        } catch (Exception ignored) {
-
-        }
+        wreckageDecalCount = new HashMap<>();
+        wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ULTRALIGHT, getULightDecalCount());
+        wreckageDecalCount.put(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS, getUHeavyDecalCount());
         wreckTileset.loadFromFile("wreckset.txt");
         try {
             hexTileset.incDepth = 0;
@@ -615,7 +582,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         IPlayer player = entity.getOwner();
-        PlayerColour tint = player.getColour();
 
         Camouflage camouflage = entity.getCamouflageOrElse(player.getCamouflage());
         EntityImage entityImage = null;
@@ -661,4 +627,29 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         mechImages.clear();
         hexTileset.clearAllHexes();
     }    
+    
+    /** Returns the number of available ultralight destroyed bottom decal images. */
+    private int getULightDecalCount() {
+        return getUltraDecalImgCount(FILENAME_SUFFIX_WRECKS_ULTRALIGHT);
+    }
+    
+    /** Returns the number of available ultraheavy destroyed bottom decal images. */
+    private int getUHeavyDecalCount() {
+        return getUltraDecalImgCount(FILENAME_SUFFIX_WRECKS_ASSAULTPLUS);
+    }
+    
+    private int getUltraDecalImgCount(String suffix) {
+        File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+        File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
+
+        // Counts how many image files are present
+        for (int decalIndex = 1; decalIndex < MAX_NUM_DECALS; decalIndex++) {
+            String lightFileName = String.format("%s_%d_%s.png", FILENAME_PREFIX_WRECKS, decalIndex, suffix);
+            if (!(new File(wreckDecalDir, lightFileName).exists())) {
+                return decalIndex - 1;
+            }
+        }
+        return MAX_NUM_DECALS - 1;
+    }
+
 }

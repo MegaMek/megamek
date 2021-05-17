@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Man O' War (Gargoyle)
 H
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3059
-Source:TRO 3050 - Clan Invasion
+source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:80
@@ -149,3 +149,16 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Gargoyle is an extremely fast assault OmniMech developed with the Timber Wolf as replacements for the first-generation Woodsman OmniMech. The Gargoyle is therefore commonly seen among Clan Wolf, and was a featured assault OmniMech during the Clan Invasion. The Gargoyle earned the name Man O' War from the Inner Sphere forces because of its effectiveness. Along with the Timber Wolf and Naga, the Gargoyle debuted in 2945.
+
+capabilities:Configured to take advantage of new Heavy Laser technology, the H configuration is a capable 'Mech at any range. For long range jousting with an enemy, the 'Mech has an LRM-10 launcher. This is backed up by an Ultra Autocannon/10 and a new Heavy Large Laser for intermediate ranges. Finally, for added punch at close range, the 'Mech has two ER Medium Lasers.
+
+deployment:The Gargoyle is capable of reaching ground speeds of up to 86.4 km/h thanks to its massive 400 Model SF-3 XL Engine, accounting for over twenty percent of the 'Mech's mass. Built on a standard structure, the Gargoyle has sixteen double heat sinks in its base chassis, which can dissipate heat from most of the Gargoyle's configurations quite effectively. The Gargoyle carries eleven tons of Ferro-Fibrous armor which is light for its size, but provides protection equal to that of most heavy 'Mechs. Even the Gargoyles relatively light twenty-one and half tons of available pod space emphasizes speed; all Gargoyle configs mount weaponry almost exclusively in the arms, reducing the amount of time required to alter the weapon systems; however, with most of the weaponry placed in the arms, the Gargoyle is at the risk of being disarmed by a couple of well-placed shots.
+manufacturer:Wolf Clan Site OZ-1, Tokasha Mechworks, Tamar HH Industriplex Alpha
+primaryfactory:Tamar, Tokasha,  Tamar
+systemmanufacturer:CHASSIS:Clan Series Assault SXC
+systemmanufacturer:ENGINE:400 Model SF-3 XL
+systemmanufacturer:ARMOR:Forging C629/j Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Raldon R1
+systemmanufacturer:TARGETING:Version Kappa-III TTS

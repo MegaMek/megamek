@@ -53,6 +53,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileGameNew;
     private JMenuItem fileGameOpen;
     private JMenuItem fileGameSave;
+    private JMenuItem fileGameQSave;
+    private JMenuItem fileGameQLoad;
     private JMenuItem fileGameSaveServer;
     private JMenuItem fileGameScenario;
     private JMenuItem fileGameConnectBot;
@@ -71,13 +73,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     /**
      * When we have a unit list, set this to <code>true</code>.
      */
-    private boolean hasUnitList;
     private JMenuItem fileUnitsReinforce;
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileRefreshCache;
-    private JMenuItem fileUnitsOpen;
-    private JMenuItem fileUnitsClear;
-    private JMenuItem fileUnitsSave;
+    private JMenuItem fileUnitsPaste;
     /**
      * The <code>Entity</code> current selected. This value may be
      * <code>null</code>.
@@ -110,6 +109,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewClientSettings;
     private JMenuItem viewPlayerSettings;
     private JMenuItem viewPlayerList;
+    private JMenuItem viewIncGUIScale;
+    private JMenuItem viewDecGUIScale;
     private JMenuItem deployMinesConventional;
     private JMenuItem deployMinesCommand;
     private JMenuItem deployMinesVibrabomb;
@@ -233,7 +234,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameNew.addActionListener(this);
         fileGameNew.setActionCommand(ClientGUI.FILE_GAME_NEW);
         fileGameNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-                                                          getToolkit().getMenuShortcutKeyMask()));
+                                                          getToolkit().getMenuShortcutKeyMaskEx()));
         submenu.add(fileGameNew);
         fileGameOpen = new JMenuItem(Messages.getString("CommonMenuBar.fileGameOpen")); //$NON-NLS-1$
         fileGameOpen.addActionListener(this);
@@ -243,6 +244,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameSave.addActionListener(this);
         fileGameSave.setActionCommand(ClientGUI.FILE_GAME_SAVE);
         submenu.add(fileGameSave);
+        fileGameQSave = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickSave")); //$NON-NLS-1$
+        fileGameQSave.addActionListener(this);
+        fileGameQSave.setActionCommand(ClientGUI.FILE_GAME_QSAVE);
+        fileGameQSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQSave);
+        fileGameQLoad = new JMenuItem(Messages.getString("CommonMenuBar.fileGameQuickLoad")); //$NON-NLS-1$
+        fileGameQLoad.addActionListener(this);
+        fileGameQLoad.setActionCommand(ClientGUI.FILE_GAME_QLOAD);
+        fileGameQLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileGameQLoad);
         fileGameSaveServer = new JMenuItem(Messages.getString("CommonMenuBar.fileGameSaveServer")); //$NON-NLS-1$
         fileGameSaveServer.addActionListener(this);
         fileGameSaveServer.setActionCommand(ClientGUI.FILE_GAME_SAVE_SERVER);
@@ -319,21 +330,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileRefreshCache.addActionListener(this);
         fileRefreshCache.setActionCommand(ClientGUI.FILE_REFRESH_CACHE);
         submenu.add(fileRefreshCache);
-        fileUnitsOpen = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsOpen")); //$NON-NLS-1$
-        fileUnitsOpen.addActionListener(this);
-        fileUnitsOpen.setActionCommand(ClientGUI.FILE_UNITS_OPEN);
-        submenu.add(fileUnitsOpen);
-        fileUnitsClear = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsClear")); //$NON-NLS-1$
-        fileUnitsClear.addActionListener(this);
-        fileUnitsClear.setActionCommand(ClientGUI.FILE_UNITS_CLEAR);
-        submenu.add(fileUnitsClear);
-        fileUnitsSave = new JMenuItem(Messages
-                .getString("CommonMenuBar.fileUnitsSave")); //$NON-NLS-1$
-        fileUnitsSave.addActionListener(this);
-        fileUnitsSave.setActionCommand(ClientGUI.FILE_UNITS_SAVE);
-        submenu.add(fileUnitsSave);
+        fileUnitsPaste = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileUnitsPaste"));
+        fileUnitsPaste.addActionListener(this);
+        fileUnitsPaste.setActionCommand(ClientGUI.FILE_UNITS_PASTE);
+        fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        submenu.add(fileUnitsPaste);
 
         // Finish off the File menu.
 //        filePrint = new JMenuItem(Messages.getString("CommonMenuBar.PrintMenu")); //$NON-NLS-1$
@@ -352,7 +354,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMekDisplay.setActionCommand(ClientGUI.VIEW_MEK_DISPLAY);
         viewMekDisplay.setMnemonic(KeyEvent.VK_D);
         viewMekDisplay.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMekDisplay);
         
         viewAccessibilityWindow = new JMenuItem(Messages.getString("CommonMenuBar.viewAccessibilityWindow"));
@@ -360,6 +362,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewAccessibilityWindow.addActionListener(this);
         viewAccessibilityWindow.setActionCommand(ClientGUI.VIEW_ACCESSIBILITY_WINDOW);
         menu.add(viewAccessibilityWindow);
+        
+        viewIncGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewIncGUIScale"));
+        viewIncGUIScale.addActionListener(this);
+        viewIncGUIScale.setActionCommand(ClientGUI.VIEW_INCGUISCALE);
+        viewIncGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewIncGUIScale);
+        
+        viewDecGUIScale = new JMenuItem(Messages.getString("CommonMenuBar.viewDecGUIScale"));
+        viewDecGUIScale.addActionListener(this);
+        viewDecGUIScale.setActionCommand(ClientGUI.VIEW_DECGUISCALE);
+        viewDecGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
+        menu.add(viewDecGUIScale);
         
         viewKeybindsOverlay = new JCheckBoxMenuItem(Messages.getString("CommonMenuBar.viewKeyboardShortcuts"));
         viewKeybindsOverlay.addActionListener(this);
@@ -378,14 +392,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP);
         viewMiniMap.setMnemonic(KeyEvent.VK_M);
         viewMiniMap.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMiniMap);
         viewUnitOverview = new JMenuItem(Messages.getString("CommonMenuBar.viewUnitOverview")); //$NON-NLS-1$
         viewUnitOverview.addActionListener(this);
         viewUnitOverview.setActionCommand(ClientGUI.VIEW_UNIT_OVERVIEW);
         viewUnitOverview.setMnemonic(KeyEvent.VK_U);
         viewUnitOverview.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewUnitOverview);
         viewZoomIn = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewZoomIn")); //$NON-NLS-1$
@@ -440,14 +454,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMovementEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_ENV);
         viewMovementEnvelope.setMnemonic(KeyEvent.VK_Q);
         viewMovementEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMovementEnvelope);
         viewMovModEnvelope = new JMenuItem(Messages.getString("CommonMenuBar.movementModEnvelope")); //$NON-NLS-1$
         viewMovModEnvelope.addActionListener(this);
         viewMovModEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_MOD_ENV);
         viewMovModEnvelope.setMnemonic(KeyEvent.VK_W);
         viewMovModEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewMovModEnvelope);
         viewChangeTheme = new JMenuItem(Messages.getString("CommonMenuBar.viewChangeTheme")); //$NON-NLS-1$
         viewChangeTheme.addActionListener(this);
@@ -459,7 +473,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewRoundReport.setActionCommand(ClientGUI.VIEW_ROUND_REPORT);
         viewRoundReport.setMnemonic(KeyEvent.VK_R);
         viewRoundReport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewRoundReport);
         menu.addSeparator();
         viewGameOptions = new JMenuItem(Messages.getString("CommonMenuBar.viewGameOptions")); //$NON-NLS-1$
@@ -476,7 +490,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewLOSSetting.setActionCommand(ClientGUI.VIEW_LOS_SETTING);
         viewLOSSetting.setMnemonic(KeyEvent.VK_L);
         viewLOSSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-                getToolkit().getMenuShortcutKeyMask()));
+                getToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(viewLOSSetting);
         viewPlayerSettings = new JMenuItem(Messages.getString("CommonMenuBar.viewPlayerSettings")); //$NON-NLS-1$
         viewPlayerSettings.setActionCommand(ClientGUI.VIEW_PLAYER_SETTINGS);
@@ -792,7 +806,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem createMenuItem(JMenu m, String label, String command, int shortcut) {
         JMenuItem mi = createMenuItem(m, label, command);
         mi.setMnemonic(shortcut);
-        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMask()));
+        mi.setAccelerator(KeyStroke.getKeyStroke(shortcut, getToolkit().getMenuShortcutKeyMaskEx()));
         return mi;
     }
 
@@ -937,21 +951,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(false);
             viewKeybindsOverlay.setEnabled(false);
         }
+        
+        fileUnitsPaste.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
 
-        // If we have a unit list, and if we are in the lounge,
-        // then we can still perform all unit list actions.
-        if (hasUnitList) {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-          //  fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-        }
-        // If we don't have a unit list, but we are in the lounge,
-        // then we can open a unit list.
-        else {
-            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(false);
-          //  fileUnitsSave.setEnabled(false);
-        }
         // Reinforcements cannot be added in the lounge!
         fileUnitsReinforce.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
         fileUnitsReinforceRAT.setEnabled(phase != IGame.Phase.PHASE_LOUNGE);
@@ -1082,7 +1084,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      *            cleared.
      */
     public synchronized void setUnitList(boolean available) {
-        hasUnitList = available;
+        // manageMenu sets unit menus based on phase not from this setUnitListFlag.
         manageMenu();
     }
 

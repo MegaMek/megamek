@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3072
 source:XTR Mercs - Jihad
 rules level:4
+Ejection:Full Head Ejection System
 
 mass:35
 engine:210 XL Engine(IS)
@@ -148,4 +149,15 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:A light, rugged, and dependable design, the Wolfhound made its first appearance in 3028. The final design was a light 'Mech with an all-energy weapons payload effective at a variety of combat ranges, the maximum amount of armor for a 'Mech of its weight class, and the use of mostly standard components to keep costs down.
 
+capabilities:Developed by Arc-Royal MechWorks in the midst of the Jihad, the extensively modified WLF-2X variant utilizes experimental technology. Using an Endo Steel chassis and an extra-light engine to save weight, the 2X's main weapon is a right-arm mounted Heavy PPC enhanced by both a PPC Capacitor and an Actuator Enhancement System. The torso mounted weapons remain lasers - specifically, two ER Medium Lasers and a single ER Small Laser - while ten double heat sinks allow it to keep their increased thermal output in check. Enhanced defensive protection comes in the form of supercharger-enhanced speed and cosmetically styled Laser Reflective Armor.
+
+history:Due to their fierce loyalty to House Steiner, the Kell Hounds were the first unit chosen to field test the Wolfhound in combat, followed shortly thereafter by Wolf's Dragoons. The design received its baptism of fire during the Fourth Succession War where it exceeded all expectations and performed brilliantly. This was especially true when the Wolfhound faced its intended targets, hitting the Jenner beyond its ability to return fire while closing the distance on the Panther to get within the minimum range of its primary weapon. With the successful end of the war the Federated Commonwealth ordered larger numbers of Wolfhounds to outfit its military and the design was used again during the War of 3039. Wolfhounds suffered far fewer casualties than other 'Mechs during that conflict and a mere handful fell into the hands of the Combine. While impressed with the 'Mech the Kuritans were too prideful to copy it themselves, instead using captured examples to help develop the Wolf Trap to specifically counter the 'Mech. Eventually Arc-Royal MechWorks was brought in to produce Wolfhounds under license from TharHes, and the recovery of Lostech thanks to the Helm Memory Core allowed for a more advanced variant to be produced to combat the Clan Invasion. Unfortunately the necessary retooling of TharHes' factories to produce the WLF-2 model, introduced in 3052, took too long before ComStar brought an end to the invasion with the Battle of Tukayyid. These newer Wolfhounds continued to be produced for both FedCom member states, although following the formal creation of the Lyran Alliance the TharHes factories began producing the newer WLF-3S model. This new variant was shipped only to units loyal to the Lyran state, and thus fought on the side of Katherine Steiner-Davion during the FedCom Civil War. During the Jihad the Word of Blake launched a devastating assault on Tharkad, effectively shutting down TharHes' Wolfhound factory line; in response Arc-Royal increased production and introduced the WLF-4 model to replace the losses suffered by allied forces fighting the Blakists.
+manufacturer:TharHes Industries, Arc-Royal MechWorks
+primaryfactory:Tharkad, Arc-Royal
+systemmanufacturer:CHASSIS:Arc-Royal KH/3 ES
+systemmanufacturer:ENGINE:GM 210 XL
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:COMMUNICATIONS:O/P Com-22/H47
+systemmanufacturer:TARGETING:Digital Scanlok 347

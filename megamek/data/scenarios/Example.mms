@@ -1,10 +1,6 @@
 # 
 #  A MegaMek Scenario file
 #
-# Future features for the scenario language
-#    Alternate victory conditions
-#    Staggered entry (reinforcements)
-#    Specified critical slot damage
 #
 
 # Versionstamp required to be recognized as a Scenario file
@@ -16,6 +12,7 @@ Name=Example Scenario
 # Scenario description
 Description=This is an example scenario to show different scenario features
 
+# Map Setup ------------------------------------------------------
 # Size of the map in mapboards
 BoardWidth=2
 BoardHeight=1
@@ -27,10 +24,59 @@ RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
 # Any unspecified boards will be set to RANDOM
 Maps=RANDOM,RANDOM
 
-# Faction list
+# Game/Rule Options ----------------------------------------------
+# This is an xml file which can be created by copying your
+# mmconf/gameoptions.xml
+# path is specified relative to the scenario file
+# This is one way to set victory conditions
+GameOptionsFile=Example_options.xml
+# The Game Options can be fixed. In this case the Game Options Dialog shown before the 
+# scenario starts is skipped. 
+FixedGameOptions=true
+
+# Planetary Conditions ------------------------------------------
+# Planetary Conditions can be fixed. In this case the Planetary Conditions Dialog shown before the 
+# scenario starts is skipped. 
+FixedPlanetaryConditions=true
+# Temperature: Only integer values are allowed
+PlanetaryConditionsTemperature=-14
+PlanetaryConditionsGravity=1.12
+# Light: Default = Daylight; 1 = Dusk; 2 = Full Moon Night; 3 = Moonless Night; 4 = Pitch Black
+PlanetaryConditionsLight=1
+# Weather: Default = None; 1/2/3/4 = Light/Moderate/Heavy/Gusting Rain; 5 = Downpour; 
+# 6/7/9 Light/Moderate/Heavy Snow; 8 = Snow Flurries; 10 = Sleet; 11 = Blizzard;
+# 12 = Ice Storm; 13/14 = Light/Heavy Hail
+PlanetaryConditionsWeather=13
+# Wind: Default = None; 1/2/3 = Light/Moderate/Strong Gale; 4 = Storm; 5 = Tornado F1-3; 6 = Tornado F4
+PlanetaryConditionsWind=4
+# Wind Direction: Default = Random; 0 = N; 1 = NE; 2 = SE; 3 = S; 4 = SW; 5 = NW
+PlanetaryConditionsWindDir=2
+# Atmospheric Pressure: Default = Standard; 0 = Vacuum; 1 = Trace; 2 = Thin; 4 = High; 5 = Very High
+PlanetaryConditionsAtmosphere=2
+# Fog: Default = No Fog; 1 = Light Fog; 2 = Heavy Fog
+PlanetaryConditionsFog=1
+# Shifting Wind
+# Strength: Default = off; default min. Wind = 0 (see Wind above); default max. Wind = 6
+# Direction: Default = off;
+PlanetaryConditionsWindShiftingStr=true
+PlanetaryConditionsWindMin=1
+PlanetaryConditionsWindMax=3
+PlanetaryConditionsWindShiftingDir=true
+# Blowing Sand: Default = off
+PlanetaryConditionsBlowingSand=true
+# EMI: Default = off
+PlanetaryConditionsEMI=true
+# Allow Terrain Changes: Default = on
+PlanetaryConditionsAllowTerrainChanges=false
+
+# Faction (= Player) list ---------------------------------------
+# A scenario can be set to single player style. In this case the first player is
+# the human player and all other players are Princess bots. This will skip the 
+# Player/Camo assignment dialog and the "Host game" dialog and directly connect
+# to a localhost Server and use the correct player name. 
+SinglePlayer=true
 # The player name used to log into the server MUST match this name to play as
 # that faction.  Player names can *not* include spaces.
-#
 Factions=PlayerA,PlayerB,PlayerC
 
 # Faction location
@@ -53,7 +99,13 @@ Team_PlayerC=2
 Minefields_PlayerA=2,0,2
 Minefields_PlayerB=1,0,3
 
-# Mechlist for each faction
+# Player Camos
+# Assigns a camo to a player; advisable in single player scenarios where the player can't do this
+# The directory and filename must be separated by a comma and the directory must end in a /
+Camo_PlayerA=Clans/Wolf/,Alpha Galaxy.jpg
+Camo_PlayerB=Clans/Burrock/,Alpha.jpg
+
+# Mechlist for each faction -------------------------------------------------
 #
 # Units are constructed as Unit_<faction name>_<#>, where the faction name 
 # matches the one listed in the Faction property and the # is a sequential 
@@ -87,6 +139,11 @@ Unit_PlayerB_2_AutoEject=true
 Unit_PlayerA_1_Commander=true
 Unit_PlayerB_1_Commander=true
 Unit_PlayerC_1_Commander=true
+
+# Unit Camos
+# Assigns a camo to a unit, overriding any player camo
+# The directory and filename must be separated by a comma and the directory must end in a /
+Unit_PlayerA_1_Camo=Clans/Wolf/,Alpha Galaxy.jpg
 
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that
@@ -198,9 +255,3 @@ Unit_PlayerA_2_SetAmmoType=3:1-ISAC20 Flak Ammo
 #
 # Unit_Kurita_666_Altitude=3
 
-# Set game options file
-# This is an xml file which can be created by copying your
-# mmconf/gameoptions.xml
-# path is specified relative to the scenario file
-# This is one way to set victory conditions
-GameOptionsFile=Example_options.xml

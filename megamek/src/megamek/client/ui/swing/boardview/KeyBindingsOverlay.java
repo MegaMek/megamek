@@ -201,7 +201,7 @@ public class KeyBindingsOverlay implements IDisplayable {
         List<String> result = new ArrayList<>();
         
         KeyCommandBind kcb = KeyCommandBind.TOGGLE_KEYBIND_DISPLAY;
-        String mod = KeyEvent.getKeyModifiersText(kcb.modifiers);
+        String mod = KeyEvent.getModifiersExText(kcb.modifiers);
         String key = KeyEvent.getKeyText(kcb.key);
         String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
         result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
@@ -242,7 +242,7 @@ public class KeyBindingsOverlay implements IDisplayable {
         List<String> result = new ArrayList<>();
         for (KeyCommandBind kcb: kcbs) {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
-            String mod = KeyEvent.getKeyModifiersText(kcb.modifiers);
+            String mod = KeyEvent.getModifiersExText(kcb.modifiers);
             String key = KeyEvent.getKeyText(kcb.key);
             result.add(label + ": " + (mod.isEmpty() ? "" : mod + "+") + key);
         }

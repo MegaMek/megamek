@@ -1,10 +1,7 @@
 package megamek.common.pathfinder;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.IAero;

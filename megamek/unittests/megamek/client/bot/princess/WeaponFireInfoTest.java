@@ -7,7 +7,6 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Targetable;

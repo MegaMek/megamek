@@ -13,7 +13,7 @@ engine:300 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:18 Double
+heat sinks:18 Clan Double
 base chassis heat sinks:10
 walk mp:5
 jump mp:0
@@ -32,21 +32,21 @@ RTR armor:6
 RTC armor:8
 
 Weapons:4
-Improved Heavy Medium Laser, Right Arm
 Improved Heavy Medium Laser, Left Arm
-Improved Heavy Large Laser, Right Torso
+Improved Heavy Medium Laser, Right Arm
 Improved Heavy Large Laser, Left Torso
+Improved Heavy Large Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-Coolant Pod (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+Coolant Pod (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -56,39 +56,39 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLImprovedMediumHeavyLaser (omnipod)
-CLTargeting Computer (omnipod)
-CLTargeting Computer (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Left Torso:
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
-CLImprovedHeavyLargeLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger (Clan)
+Supercharger (Clan) (OMNIPOD)
 Clan Endo Steel
 
 Head:

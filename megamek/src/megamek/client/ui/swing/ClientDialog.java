@@ -25,6 +25,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * A MegaMek Dialog box.
@@ -37,19 +38,37 @@ public class ClientDialog extends JDialog {
     private static final int CONTAINER_BUFFER = 10;
 
     protected JFrame owner = null;
+    private boolean isScaling = false;
 
-    /**
-     * @param owner - the <code>Frame</code> that owns this dialog.
-     * @param title - the title of this Dialog window
+    /** 
+     * Creates a basic ClientDialog.
+     * @see JDialog#JDialog(java.awt.Frame, String) 
      */
     public ClientDialog(JFrame owner, String title) {
         super(owner, title);
         this.owner = owner;
     }
 
+    /** 
+     * Creates a ClientDialog with modality as given by modal.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
     public ClientDialog(JFrame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.owner = owner;
+    }
+    
+    /** 
+     * Creates a ClientDialog with modality as given by modal. This dialog
+     * will automatically scale with the current GUI scaling value. Results of
+     * this may vary with the complexity of the dialog; manual scaling will
+     * often be better.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
+    public ClientDialog(JFrame owner, String title, boolean modal, boolean scale) {
+        super(owner, title, modal);
+        this.owner = owner;
+        isScaling = scale;
     }
 
     /**
@@ -74,7 +93,7 @@ public class ClientDialog extends JDialog {
      * @param desiredDimension the desired dimension of this dialog (you might
      *            not get it)
      */
-    protected void setLocationAndSize(Dimension desiredDimension) {
+    public void setLocationAndSize(Dimension desiredDimension) {
         int height, width;
 
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -103,7 +122,7 @@ public class ClientDialog extends JDialog {
     }
     
     /** Center the dialog within the owner frame.  */
-    protected void center() {
+    public void center() {
         if (owner == null) {
             return;
         }
@@ -120,7 +139,7 @@ public class ClientDialog extends JDialog {
      * right-aligned, the secondC left-aligned to bring them close together. 
      * Only useful for simple panels with GridBagLayout.
      */
-    protected void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
+    public void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
         int oldGridW = c.gridwidth;
         int oldAnchor = c.anchor;
         
@@ -140,13 +159,33 @@ public class ClientDialog extends JDialog {
      * Adds a spacer row (line) to the given <code>panel</code>, 
      * using constraints c. Only useful for simple panels with GridBagLayout.
      */
-    protected void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
+    public void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
         int oldGridW = c.gridwidth;
         
         c.gridwidth = GridBagConstraints.REMAINDER;
         targetP.add(Box.createVerticalStrut(vGap), c);
         
         c.gridwidth = oldGridW;
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (isScaling && b) {
+            guiScale();
+            super.setVisible(true);
+        } else {
+            super.setVisible(b);
+        }
+    }
+    
+    /** 
+     * Applies the GUI Scaling on the event thread as demanded
+     * by {@link java.awt.Container#getComponent(int)}. 
+     */
+    public void guiScale() {
+        UIUtil.adjustDialog(getContentPane());
+        pack();
+        center();
     }
 
 }

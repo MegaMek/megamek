@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
@@ -21,6 +22,7 @@ import megamek.common.IHex;
 import megamek.common.LosEffects;
 import megamek.common.MoveStep;
 import megamek.common.IGame.Phase;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
@@ -30,13 +32,8 @@ import megamek.common.preference.PreferenceChangeEvent;
 
 /**
  * A helper class for highlighting and darkening hexes.
- *
  */
 class FovHighlightingAndDarkening {
-
-    /**
-     * 
-     */
     private final BoardView1 boardView1;
     private java.util.List<Color> ringsColors = new ArrayList<>();
     private java.util.List<Integer> ringsRadii = new ArrayList<>();
@@ -176,6 +173,10 @@ class FovHighlightingAndDarkening {
             } else if (dist < max_dist) {
                 LosEffects los = getCachedLosEffects(src, c);
                 if (null != this.boardView1.selectedEntity) {
+                    if (los == null) {
+                        los = LosEffects.calculateLos(boardView1.game, boardView1.selectedEntity.getId(), null);
+                    }
+
                     if (doubleBlindOn) { // Visual Range only matters in DB
                         visualRange = Compute.getVisualRange(
                                 this.boardView1.game,
@@ -195,11 +196,13 @@ class FovHighlightingAndDarkening {
                         minSensorRange = 0;
                     }
                 }
+
                 // Visual Range only matters in DB: ensure no effect w/o DB
                 if (!doubleBlindOn) {
                     visualRange = dist;
                 }
-                if (!los.canSee() || (dist > visualRange)) {
+
+                if (((los != null) && !los.canSee()) || (dist > visualRange)) {
                     if (darken) {
                         if (sensorsOn
                                 && (dist > minSensorRange)
@@ -252,10 +255,10 @@ class FovHighlightingAndDarkening {
     /**
      * Checks for los effects, preferably from cache, if not getLosEffects
      * is invoked and it's return value is cached.
-     * If enviroment has changed between calls to this method the cache is
+     * If environment has changed between calls to this method the cache is
      * cleared.
      */
-    public LosEffects getCachedLosEffects(Coords src, Coords dest) {
+    public @Nullable LosEffects getCachedLosEffects(Coords src, Coords dest) {
         ArrayList<StepSprite> pathSprites = boardView1.pathSprites;
         StepSprite lastStepSprite = pathSprites.size() > 0 ? pathSprites
                 .get(pathSprites.size() - 1) : null;
@@ -275,8 +278,10 @@ class FovHighlightingAndDarkening {
 
         LosEffects los = losCache.get(dest);
         if (los == null) {
-            los = this.boardView1.fovHighlightingAndDarkening.getLosEffects(
-                    src, dest);
+            los = boardView1.fovHighlightingAndDarkening.getLosEffects(src, dest);
+            if (los == null) {
+                return null;
+            }
             losCache.put(dest, los);
         }
         return los;
@@ -342,24 +347,30 @@ class FovHighlightingAndDarkening {
      * present in that hex. If no units are present, the GUIPreference
      * 'mechInSecond' is used.
      */
-    private LosEffects getLosEffects(Coords src, Coords dest) {
+    private @Nullable LosEffects getLosEffects(final Coords src, final Coords dest) {
         /*
          * The getCachedLos method depends that this method uses only
          * information from src, dest, game, selectedEntity and the last
          * stepSprite from path Sprites. If this behavior changes, please
-         * change
-         * getCachedLos method accordingly.
+         * change the getCachedLos method accordingly.
          */
         GUIPreferences guip = GUIPreferences.getInstance();
         IBoard board = this.boardView1.game.getBoard();
         IHex srcHex = board.getHex(src);
+        if (srcHex == null) {
+            MegaMek.getLogger().error("Cannot process line of sight effects with a null source hex.");
+            return null;
+        }
         IHex dstHex = board.getHex(dest);
+        if (dstHex == null) {
+            MegaMek.getLogger().error("Cannot process line of sight effects with a null destination hex.");
+            return null;
+        }
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = src;
         ai.targetPos = dest;
         // First, we check for a selected unit and use its height. If
-        // there's
-        // no selected unit we use the mechInFirst GUIPref.
+        // there's no selected unit we use the mechInFirst GUIPref.
         if (this.boardView1.selectedEntity != null) {
             ai.attackHeight = this.boardView1.selectedEntity.getHeight();
             // Elevation of entity above the hex surface
@@ -380,11 +391,10 @@ class FovHighlightingAndDarkening {
             ai.attackHeight = guip.getMechInFirst() ? 1 : 0;
             ai.attackAbsHeight = srcHex.surface() + ai.attackHeight;
         }
-        // First, we take the tallest unit in the destination hex, if no
-        // units
-        // are present we use the mechInSecond GUIPref.
+        // First, we take the tallest unit in the destination hex, if no units are present we use
+        // the mechInSecond GUIPref.
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
-        for (Entity ent : this.boardView1.game.getEntitiesVector(dest)) {
+        for (Entity ent : boardView1.game.getEntitiesVector(dest)) {
             int trAbsheight = dstHex.surface() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();
@@ -396,10 +406,6 @@ class FovHighlightingAndDarkening {
             ai.targetHeight = guip.getMechInSecond() ? 1 : 0;
             ai.targetAbsHeight = dstHex.surface() + ai.targetHeight;
         }
-        return LosEffects.calculateLos(this.boardView1.game, ai);
+        return LosEffects.calculateLos(boardView1.game, ai);
     }
-
-
-
-
 }

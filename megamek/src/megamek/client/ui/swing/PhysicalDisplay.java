@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +37,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -47,7 +47,6 @@ import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -1454,7 +1453,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             setVibroEnabled(false);
         }
         setSearchlightEnabled((ce() != null) && (target != null)
-                && ce().isUsingSpotlight());
+                && ce().isUsingSearchlight());
     }
 
     /**
@@ -1476,11 +1475,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         // control pressed means a line of sight check.
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+        if ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
             return;
         }
         if (clientgui.getClient().isMyTurn()
-            && ((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0)) {
+            && (b.getButton() == MouseEvent.BUTTON1)) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(
                         clientgui.getBoardView().getLastCursor())) {

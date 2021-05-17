@@ -58,36 +58,16 @@ import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.lobby.ChatLounge;
+import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IPlayer;
-import megamek.common.MechSummaryCache;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Targetable;
-import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameMapQueryEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
@@ -104,6 +84,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
+    
+    /** The smallest GUI scaling value; smaller will make text unreadable */  
+    public static final float MIN_GUISCALE = 0.7f;
+    /** The highest GUI scaling value; increase this for 16K monitors */  
+    public static final float MAX_GUISCALE = 2.4f;
 
     //region action commands
     //region main menu
@@ -116,6 +101,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_GAME_OPEN = "fileGameOpen";
     public static final String FILE_GAME_SAVE = "fileGameSave";
     public static final String FILE_GAME_SAVE_SERVER = "fileGameSaveServer";
+    public static final String FILE_GAME_QSAVE = "fileGameQSave";
+    public static final String FILE_GAME_QLOAD = "fileGameQLoad";
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
@@ -132,11 +119,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
     public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
-    public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
+    public static final String FILE_UNITS_PASTE = "fileUnitsPaste";
     //endregion file menu
 
     //region view menu
+    public static final String VIEW_INCGUISCALE = "viewIncGUIScale";
+    public static final String VIEW_DECGUISCALE = "viewDecGUIScale";
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -201,7 +190,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
     private AbstractUnitSelectorDialog mechSelectorDialog;
-    private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
@@ -245,7 +233,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-
+    
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -440,20 +428,27 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                ignoreHotKeys = true;
-                int savePrompt = JOptionPane.showConfirmDialog(null,
-                        "Do you want to save the game before quitting MegaMek?",
-                        "Save First?",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                ignoreHotKeys = false;
-                if (savePrompt == JOptionPane.YES_OPTION) {
-                    if (!saveGame()) {
-                        // When the user did not actually save the game, don't close MM
-                        return;
+                if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
+                    ignoreHotKeys = true;
+                    int savePrompt = JOptionPane.showConfirmDialog(null,
+                            "Do you want to save the game before quitting MegaMek?",
+                            "Save First?",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    ignoreHotKeys = false;
+                    if (savePrompt == JOptionPane.YES_OPTION) {
+                        if (!saveGame()) {
+                            // When the user did not actually save the game, don't close MM
+                            return;
+                        }
                     }
-                }
-                if ((savePrompt == JOptionPane.NO_OPTION) || (savePrompt == JOptionPane.YES_OPTION)) {
+                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
+                    {
+                        frame.setVisible(false);
+                        saveSettings();
+                        die();
+                    }
+                } else {
                     frame.setVisible(false);
                     saveSettings();
                     die();
@@ -709,6 +704,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case FILE_GAME_SAVE:
                 saveGame();
                 break;
+            case FILE_GAME_QSAVE:
+                quickSaveGame();
+                break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
                 String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
@@ -731,13 +729,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 doSaveUnit();
                 ignoreHotKeys = false;
                 break;
+            case FILE_UNITS_PASTE:
+                ignoreHotKeys = true;
+                if (curPanel instanceof ChatLounge) {
+                    ((ChatLounge) curPanel).importClipboard();
+                }
+                ignoreHotKeys = false;
+                break;
             case FILE_UNITS_OPEN:
                 ignoreHotKeys = true;
                 loadListFile();
                 ignoreHotKeys = false;
-                break;
-            case FILE_UNITS_CLEAR:
-                deleteAllUnits(client);
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
@@ -805,6 +807,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
+                break;
+            case VIEW_INCGUISCALE:
+                float guiScale = GUIPreferences.getInstance().getGUIScale();
+                if (guiScale < MAX_GUISCALE) {
+                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
+                }
+                break;
+            case VIEW_DECGUISCALE:
+                guiScale = GUIPreferences.getInstance().getGUIScale();
+                if (guiScale > MIN_GUISCALE) {
+                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
+                }
                 break;
             case VIEW_KEYBINDS_OVERLAY:
                 bv.toggleKeybindsOverlay();
@@ -1006,12 +1020,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         client.die();
 
-        // TODO Is there a better solution?
-        // This is required because the ChatLounge adds the listener to the
-        // MechSummaryCache that must be removed explicitly.
-        if (chatlounge != null) {
-            chatlounge.die();
-        }
         TimerSingleton.getInstance().killTimer();
 
         if (controller != null) {
@@ -1034,13 +1042,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public AbstractUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
-    }
-
-    public StartingPositionDialog getStartingPositionDialog() {
-        if (startingPositionDialog == null) {
-            startingPositionDialog = new StartingPositionDialog(this);
-        }
-        return startingPositionDialog;
     }
 
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
@@ -1520,7 +1521,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * @param player
      */
-    protected void loadListFile(IPlayer player) {
+    public void loadListFile(IPlayer player) {
         loadListFile(player, false);
     }
 
@@ -1610,16 +1611,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    public void deleteAllUnits(Client c) {
-        ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
-                c.getLocalPlayer(), false);
-        ArrayList<Integer> ids = new ArrayList<>(currentUnits.size());
-        for (Entity e : currentUnits){
-            ids.add(e.getId());
-        }
-        c.sendDeleteEntities(ids);
-    }
-
     private boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser("./savegames");
@@ -1643,6 +1634,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         return false;
     }
+    
+    /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
+    private boolean quickSaveGame() {
+        String file = "quicksave";
+        String path = "./savegames";
+        client.sendChat("/localsave " + file + " " + path);
+        return true;
+    }
 
     /**
      * Allow the player to save a list of entities to a MegaMek Unit List file.
@@ -1656,11 +1655,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(ArrayList<Entity> unitList) {
+    public void saveListFile(ArrayList<Entity> unitList) {
         saveListFile(unitList, client.getLocalPlayer().getName());
     }
 
-    protected void saveListFile(ArrayList<Entity> unitList, String filename) {
+    public void saveListFile(ArrayList<Entity> unitList, String filename) {
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;

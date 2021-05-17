@@ -409,10 +409,10 @@ public class BoardEditor extends JComponent
                 }
                 lastClicked = c;
                 bv.cursor(c);
-                boolean isALT = (b.getModifiers() & ActionEvent.ALT_MASK) != 0;
-                boolean isSHIFT = (b.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
-                boolean isCTRL = (b.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-                boolean isLMB = (b.getModifiers() & InputEvent.BUTTON1_MASK) != 0;
+                boolean isALT = (b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0;
+                boolean isSHIFT = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+                boolean isCTRL = (b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0;
+                boolean isLMB = (b.getButton() == MouseEvent.BUTTON1);
 
                 // Raise/Lower Terrain is selected
                 if (buttonUpDn.isSelected()) {
@@ -446,7 +446,10 @@ public class BoardEditor extends JComponent
                         }
                     }
                     // ------- End Raise/Lower Terrain
-                } else if (isLMB) {
+                } else if (isLMB || (b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+                    // 'isLMB' is true if a button 1 is associated to a click or release but not while dragging.
+                    // The left button down mask is checked because we could be dragging.
+                    
                     // Normal texture paint
                     if (isALT) { // ALT-Click
                         setCurrentHex(board.getHex(b.getCoords()));

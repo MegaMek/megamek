@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
@@ -1392,8 +1393,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 toHitBuff.append(toHit.getDesc());
                 toHitBuff.append("\n");
             }
-            Targetable hexTarget = new HexTarget(c, game.getBoard(),
-                    HexTarget.TYPE_HEX_CLEAR);
+            Targetable hexTarget = new HexTarget(c, HexTarget.TYPE_HEX_CLEAR);
             toHit = WeaponAttackAction.toHit(game, cen, hexTarget, weaponId,
                     Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
             if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
@@ -1499,15 +1499,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // declare searchlight, if possible
         if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
-            && ce().isUsingSpotlight()) {
+            && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         if (isStrafing) {
             for (Coords c : strafingCoords) {
-                targets.add(new HexTarget(c, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR));
+                targets.add(new HexTarget(c, Targetable.TYPE_HEX_CLEAR));
                 Building bldg = game.getBoard().getBuildingAt(c); 
                 if (bldg != null) {
                     targets.add(new BuildingTarget(c, game.getBoard(), false));
@@ -2035,18 +2034,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -2268,7 +2267,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && !ce().isHidden()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
@@ -2490,19 +2489,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
                     && (munitionType == AmmoType.M_FLARE)) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_FLARE_DELIVER);
+                return new HexTarget(pos, Targetable.TYPE_FLARE_DELIVER);
             // Certain mek mortar types and LRMs should target hexes
             } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType == AmmoType.M_AIRBURST) 
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             } else if (munitionType == AmmoType.M_MINE_CLEARANCE) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             }
         }
         // Get the available choices, depending on friendly fire
@@ -2554,8 +2550,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             IHex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.JUNGLE)) {
-                targets.add(new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR));
+                targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));
             }
         }
 

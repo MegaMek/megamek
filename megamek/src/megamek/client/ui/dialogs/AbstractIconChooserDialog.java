@@ -19,22 +19,27 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooser;
+import megamek.client.ui.baseComponents.MMButton;
+import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.AbstractIconChooser;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
- * Creates a dialog that allows players to select a directory from
- * a directory tree and choose an image from the images in that directory.
- * Subclasses must provide the getItems() method that translates
- * a given category (directory) selected in the tree to a list
- * of items (images) to show in the list.
- * Subclasses can provide getSearchedItems() that translates a given search
- * String to the list of "found" items. If this is provided, showSearch(true)
- * should be called in the constructor to show the search panel.
+ * Creates a dialog that allows players to select a directory from a directory tree and choose an
+ * image from the images in that directory. Subclasses must provide the getItems() method that
+ * translates a given category (directory) selected in the tree to a list of items (images) to show
+ * in the list.
+ * Subclasses can provide getSearchedItems() that translates a given search String to the list of
+ * "found" items. If this is provided, showSearch(true) should be called in the constructor to show
+ * the search panel.
  */
 public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     //region Variable Declarations
@@ -52,9 +57,19 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
      * @param chooser the icon chooser display panel
      */
     public AbstractIconChooserDialog(final JFrame frame, final String name, final String title,
-                                     final AbstractIconChooser chooser) {
+                                     final AbstractIconChooser chooser, final boolean doubleClick) {
         super(frame, name, title);
         setChooser(chooser);
+        if (doubleClick) {
+            getChooser().getImageList().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(final MouseEvent evt) {
+                    if (evt.getClickCount() == 2) {
+                        okButtonActionPerformed(null);
+                    }
+                }
+            });
+        }
         initialize();
     }
     //endregion Constructors
@@ -83,20 +98,26 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
         return getChooser();
     }
 
-    /**
-     * Constructs the bottom panel with the Okay and Cancel buttons.
-     */
     @Override
     protected JPanel createButtonPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        panel.add(createButton("Ok.text", "Ok.toolTipText", "okButton", this::okButtonActionPerformed));
-        panel.add(createButton("Cancel.text", "Cancel.toolTipText", "cancelButton", this::cancelActionPerformed));
-        panel.add(createButton("refreshDirectory.text", "refreshDirectory.toolTipText",
-                "refreshButton", evt -> getChooser().refreshDirectory()));
+        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText", this::okButtonActionPerformed));
+        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
+        panel.add(new MMButton("btnRefresh", resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
+                evt -> getChooser().refreshDirectory()));
 
         return panel;
     }
     //endregion Initialization
+
+    //region Button Actions
+    @Override
+    protected void okButtonActionPerformed(final @Nullable ActionEvent evt) {
+        okAction();
+        setResult((getChooser().getSelectedItem() == null) ? DialogResult.CANCELLED : DialogResult.CONFIRMED);
+        setVisible(false);
+    }
+    //endregion Button Actions
 }

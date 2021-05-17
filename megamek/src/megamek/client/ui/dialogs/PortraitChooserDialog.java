@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.swing.dialog.imageChooser.PortraitChooser;
+import megamek.client.ui.panels.PortraitChooser;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -34,12 +34,9 @@ import javax.swing.*;
  */
 public class PortraitChooserDialog extends AbstractIconChooserDialog {
     //region Constructors
-    /**
-     * Creates a dialog that allows players to choose a portrait.
-     */
     public PortraitChooserDialog(final JFrame frame, final @Nullable AbstractIcon icon) {
         super(frame, "PortraitChooserDialog","PortraitChoiceDialog.select_portrait",
-                new PortraitChooser(icon));
+                new PortraitChooser(icon), true);
     }
     //endregion Constructors
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog.imageChooser;
+package megamek.client.ui.panels;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -26,7 +26,6 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.DirectoryItems;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -90,9 +89,6 @@ public class CamoChooser extends AbstractIconChooser {
         return result;
     }
 
-    /**
-     * Reloads the camouflage directory from disk.
-     */
     @Override
     public void refreshDirectory() {
         MMStaticDirectoryManager.refreshCamouflageDirectory();

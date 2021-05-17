@@ -15,7 +15,8 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooser;
+import megamek.client.ui.baseComponents.MMButton;
+import megamek.client.ui.panels.CamoChooser;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -38,7 +39,6 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     //endregion Variable Declarations
 
     //region Constructors
-    /** Creates a dialog that allows players to choose a camo pattern. */
     public CamoChooserDialog(final JFrame frame, final @Nullable AbstractIcon camouflage) {
         this(frame, camouflage, false);
     }
@@ -46,7 +46,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     public CamoChooserDialog(final JFrame frame, final @Nullable AbstractIcon camouflage,
                              final boolean canHaveIndividualCamouflage) {
         super(frame, "CamoChooserDialog", "CamoChoiceDialog.select_camo_pattern",
-                new CamoChooser(camouflage, canHaveIndividualCamouflage));
+                new CamoChooser(camouflage, canHaveIndividualCamouflage), true);
     }
     //endregion Constructors
 
@@ -66,17 +66,17 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        panel.add(createButton("Ok.text", "Ok.toolTipText", "okButton", this::okButtonActionPerformed));
+        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText", this::okButtonActionPerformed));
         if (getChooser().canHaveIndividualCamouflage()) {
-            panel.add(createButton("CamoChoiceDialog.parentButton.text",
-                    "CamoChoiceDialog.parentButton.toolTipText", "parentButton", evt -> {
+            panel.add(new MMButton("btnParent", resources, "btnParent.text",
+                    "btnParent.toolTipText", evt -> {
                 setUseDefault(true);
                 okButtonActionPerformed(evt);
             }));
         }
-        panel.add(createButton("Cancel.text", "Cancel.toolTipText", "cancelButton", this::cancelActionPerformed));
-        panel.add(createButton("refreshDirectory.text", "refreshDirectory.toolTipText",
-                "refreshButton", evt -> getChooser().refreshDirectory()));
+        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
+        panel.add(new MMButton("btnRefresh",resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
+                evt -> getChooser().refreshDirectory()));
 
         return panel;
     }

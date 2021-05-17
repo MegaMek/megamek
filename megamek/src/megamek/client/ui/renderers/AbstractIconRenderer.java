@@ -83,12 +83,12 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
     //endregion Initialization
 
     /**
-     * Sets the image based on the passed category and name from
-     * the DirectoryItems that the list currently displays.
+     * Sets the image based on the passed category and name from the DirectoryItems that the list
+     * currently displays.
      */
     private void setImage(final AbstractIcon icon) {
         getLblImage().setIcon(icon.getImageIcon());
-        setToolTip(String.format("<HTML><BODY>%s<br>%s", icon.getCategory(), icon.getFilename()));
+        setToolTip(String.format("<html><BODY>%s<br>%s</html>", icon.getCategory(), icon.getFilename()));
     }
 
     @Override

@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog.imageChooser;
+package megamek.client.ui.panels;
 
+import megamek.client.ui.lists.ImageList;
 import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -138,6 +139,14 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
 
     private void setOriginalIcon(final @Nullable AbstractIcon originalIcon) {
         this.originalIcon = originalIcon;
+    }
+
+    public ImageList getImageList() {
+        return imageList;
+    }
+
+    public void setImageList(final ImageList imageList) {
+        this.imageList = imageList;
     }
     //endregion Getters/Setters
 

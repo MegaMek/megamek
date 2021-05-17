@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog.imageChooser;
+package megamek.client.ui.panels;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.trees.PortraitChooserTree;
@@ -65,7 +65,6 @@ public class PortraitChooser extends AbstractIconChooser {
         return result;
     }
 
-    /** Reloads the portrait directory from disk. */
     @Override
     public void refreshDirectory() {
         MMStaticDirectoryManager.refreshPortraitDirectory();

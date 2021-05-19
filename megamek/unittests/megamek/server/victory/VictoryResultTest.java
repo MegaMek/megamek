@@ -1,7 +1,7 @@
 package megamek.server.victory;
 
 import junit.framework.TestCase;
-import megamek.common.Player;
+import megamek.common.IPlayer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -14,7 +14,7 @@ public class VictoryResultTest {
     public void testGetWinningPlayer() {
         // Trivial case: no players
         VictoryResult testResult = new VictoryResult(false);
-        TestCase.assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
+        TestCase.assertSame(IPlayer.PLAYER_NONE, testResult.getWinningPlayer());
 
         // Case with two players
         int winningPlayer = 0;
@@ -31,7 +31,7 @@ public class VictoryResultTest {
         testResult.addPlayerScore(secondWinningPlayer, 100);
         TestCase.assertNotSame(secondWinningPlayer, testResult.getWinningPlayer());
         TestCase.assertNotSame(winningPlayer, testResult.getWinningPlayer());
-        TestCase.assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
+        TestCase.assertSame(IPlayer.PLAYER_NONE, testResult.getWinningPlayer());
     }
 
 }

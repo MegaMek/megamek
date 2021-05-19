@@ -199,6 +199,8 @@ public abstract class AbstractIcon implements Serializable {
             case "filename":
                 setFilename(MegaMekXmlUtil.unEscape(wn.getTextContent().trim()));
                 break;
+            default:
+                break;
         }
     }
     //endregion File IO

@@ -26,7 +26,7 @@ import javax.swing.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
-import megamek.client.ui.Messages;
+import static megamek.client.ui.Messages.*;
 import megamek.common.*;
 import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -123,7 +123,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private final List<ActionListener> actionListeners = new ArrayList<>();
     
     /** Maps the Action Command to the respective MenuItem. */
-    private final Map<String, JMenuItem> itemMap = new HashMap<String, JMenuItem>();
+    private final Map<String, JMenuItem> itemMap = new HashMap<>();
 
     /**
      * Create a MegaMek menu bar.
@@ -135,249 +135,249 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
     public CommonMenuBar() {
         // Create the File menu
-        JMenu menu = new JMenu(getString("FileMenu")); 
+        JMenu menu = new JMenu(getString("CommonMenuBar.FileMenu")); 
         menu.setMnemonic(KeyEvent.VK_F);
         add(menu);
 
         // Create the Game sub-menu
-        JMenu submenu = new JMenu(getString("GameMenu")); 
+        JMenu submenu = new JMenu(getString("CommonMenuBar.GameMenu")); 
         menu.add(submenu);
-        fileGameNew = createMenuItem(submenu, getString("fileGameNew"), FILE_GAME_NEW, KeyEvent.VK_N);
-        fileGameOpen = createMenuItem(submenu, getString("fileGameOpen"), FILE_GAME_OPEN);
-        fileGameSave = createMenuItem(submenu, getString("fileGameSave"), FILE_GAME_SAVE);
-        fileGameQSave = createMenuItem(submenu, getString("fileGameQuickSave"), FILE_GAME_QSAVE);
+        fileGameNew = createMenuItem(submenu, getString("CommonMenuBar.fileGameNew"), FILE_GAME_NEW, KeyEvent.VK_N);
+        fileGameOpen = createMenuItem(submenu, getString("CommonMenuBar.fileGameOpen"), FILE_GAME_OPEN);
+        fileGameSave = createMenuItem(submenu, getString("CommonMenuBar.fileGameSave"), FILE_GAME_SAVE);
+        fileGameQSave = createMenuItem(submenu, getString("CommonMenuBar.fileGameQuickSave"), FILE_GAME_QSAVE);
         fileGameQSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-        fileGameQLoad = createMenuItem(submenu, getString("fileGameQuickLoad"), FILE_GAME_QLOAD);
+        fileGameQLoad = createMenuItem(submenu, getString("CommonMenuBar.fileGameQuickLoad"), FILE_GAME_QLOAD);
         fileGameQLoad.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
-        fileGameSaveServer = createMenuItem(submenu, getString("fileGameSaveServer"), FILE_GAME_SAVE_SERVER);
+        fileGameSaveServer = createMenuItem(submenu, getString("CommonMenuBar.fileGameSaveServer"), FILE_GAME_SAVE_SERVER);
         submenu.addSeparator();
-        fileGameScenario = createMenuItem(submenu, getString("fileGameScenario"), FILE_GAME_SCENARIO);
+        fileGameScenario = createMenuItem(submenu, getString("CommonMenuBar.fileGameScenario"), FILE_GAME_SCENARIO);
         submenu.addSeparator();
-        fileGameConnectBot = createMenuItem(submenu, getString("fileGameConnectBot"), FILE_GAME_CONNECT_BOT);
-        fileGameConnect = createMenuItem(submenu, getString("fileGameConnect"), FILE_GAME_CONNECT);
-        replacePlayer = createMenuItem(submenu, getString("replacePlayer"), FILE_GAME_REPLACE_PLAYER);
+        fileGameConnectBot = createMenuItem(submenu, getString("CommonMenuBar.fileGameConnectBot"), FILE_GAME_CONNECT_BOT);
+        fileGameConnect = createMenuItem(submenu, getString("CommonMenuBar.fileGameConnect"), FILE_GAME_CONNECT);
+        replacePlayer = createMenuItem(submenu, getString("CommonMenuBar.replacePlayer"), FILE_GAME_REPLACE_PLAYER);
 
         // Create the Board sub-menu.
-        submenu = new JMenu(getString("BoardMenu")); 
+        submenu = new JMenu(getString("CommonMenuBar.BoardMenu")); 
         menu.add(submenu);
-        fileBoardNew = createMenuItem(submenu, getString("fileBoardNew"), FILE_BOARD_NEW);
-        fileBoardOpen = createMenuItem(submenu, getString("fileBoardOpen"), FILE_BOARD_OPEN);
-        fileBoardSave = createMenuItem(submenu, getString("fileBoardSave"), FILE_BOARD_SAVE);
-        fileBoardSaveAs = createMenuItem(submenu, getString("fileBoardSaveAs"), FILE_BOARD_SAVE_AS);
-        fileBoardSaveAsImage = createMenuItem(submenu, getString("fileBoardSaveAsImage"), FILE_BOARD_SAVE_AS_IMAGE);
-        fileBoardSaveAsImage.setToolTipText(getString("fileBoardSaveAsImage.tooltip"));
-        fileBoardSaveAsImageUnits = createMenuItem(submenu, getString("fileBoardSaveAsImageUnits"), FILE_BOARD_SAVE_AS_IMAGE_UNITS);
-        fileBoardSaveAsImage.setToolTipText(getString("fileBoardSaveAsImageUnits.tooltip")); 
+        fileBoardNew = createMenuItem(submenu, getString("CommonMenuBar.fileBoardNew"), FILE_BOARD_NEW);
+        fileBoardOpen = createMenuItem(submenu, getString("CommonMenuBar.fileBoardOpen"), FILE_BOARD_OPEN);
+        fileBoardSave = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSave"), FILE_BOARD_SAVE);
+        fileBoardSaveAs = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAs"), FILE_BOARD_SAVE_AS);
+        fileBoardSaveAsImage = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAsImage"), FILE_BOARD_SAVE_AS_IMAGE);
+        fileBoardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
+        fileBoardSaveAsImageUnits = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAsImageUnits"), FILE_BOARD_SAVE_AS_IMAGE_UNITS);
+        fileBoardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip")); 
 
         // Create the Unit List sub-menu.
-        submenu = new JMenu(getString("UnitListMenu")); 
+        submenu = new JMenu(getString("CommonMenuBar.UnitListMenu")); 
         menu.add(submenu);
-        fileUnitsReinforce = createMenuItem(submenu, getString("fileUnitsReinforce"), FILE_UNITS_REINFORCE);
-        fileUnitsReinforceRAT = createMenuItem(submenu, getString("fileUnitsReinforceRAT"), FILE_UNITS_REINFORCE_RAT);
-        fileRefreshCache = createMenuItem(submenu, getString("fileUnitsRefreshUnitCache"), FILE_REFRESH_CACHE);
-        fileUnitsPaste = createMenuItem(submenu, getString("fileUnitsPaste"), FILE_UNITS_PASTE);
+        fileUnitsReinforce = createMenuItem(submenu, getString("CommonMenuBar.fileUnitsReinforce"), FILE_UNITS_REINFORCE);
+        fileUnitsReinforceRAT = createMenuItem(submenu, getString("CommonMenuBar.fileUnitsReinforceRAT"), FILE_UNITS_REINFORCE_RAT);
+        fileRefreshCache = createMenuItem(submenu, getString("CommonMenuBar.fileUnitsRefreshUnitCache"), FILE_REFRESH_CACHE);
+        fileUnitsPaste = createMenuItem(submenu, getString("CommonMenuBar.fileUnitsPaste"), FILE_UNITS_PASTE);
         fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 
         // Create the view menu.
-        menu = new JMenu(getString("ViewMenu"));
+        menu = new JMenu(getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(KeyEvent.VK_V);
         add(menu);
-        viewMekDisplay = createMenuItem(menu, getString("viewMekDisplay"), VIEW_MEK_DISPLAY, KeyEvent.VK_D);
-        viewAccessibilityWindow = createMenuItem(menu, getString("viewAccessibilityWindow"), VIEW_ACCESSIBILITY_WINDOW);
+        viewMekDisplay = createMenuItem(menu, getString("CommonMenuBar.viewMekDisplay"), VIEW_MEK_DISPLAY, KeyEvent.VK_D);
+        viewAccessibilityWindow = createMenuItem(menu, getString("CommonMenuBar.viewAccessibilityWindow"), VIEW_ACCESSIBILITY_WINDOW);
         viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
-        viewIncGUIScale = createMenuItem(menu, getString("viewIncGUIScale"), VIEW_INCGUISCALE);
+        viewIncGUIScale = createMenuItem(menu, getString("CommonMenuBar.viewIncGUIScale"), VIEW_INCGUISCALE);
         viewIncGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_DOWN_MASK));
-        viewDecGUIScale = createMenuItem(menu, getString("viewDecGUIScale"), VIEW_DECGUISCALE);
+        viewDecGUIScale = createMenuItem(menu, getString("CommonMenuBar.viewDecGUIScale"), VIEW_DECGUISCALE);
         viewDecGUIScale.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_DOWN_MASK));
         //TODO: remove keybinds overlay from the KeyCommandBinds and add an accelerator here instead
-        viewKeybindsOverlay = createCbxMenuItem(menu, getString("viewKeyboardShortcuts"), VIEW_KEYBINDS_OVERLAY);
+        viewKeybindsOverlay = createCbxMenuItem(menu, getString("CommonMenuBar.viewKeyboardShortcuts"), VIEW_KEYBINDS_OVERLAY);
         viewKeybindsOverlay.setState(GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
-        viewResetWindowPositions = createMenuItem(menu, getString("viewResetWindowPos"), VIEW_RESET_WINDOW_POSITIONS);
+        viewResetWindowPositions = createMenuItem(menu, getString("CommonMenuBar.viewResetWindowPos"), VIEW_RESET_WINDOW_POSITIONS);
         //TODO: show minimap should be a checkbox
-        viewMiniMap = createMenuItem(menu, getString("viewMiniMap"), VIEW_MINI_MAP, KeyEvent.VK_M);
+        viewMiniMap = createMenuItem(menu, getString("CommonMenuBar.viewMiniMap"), VIEW_MINI_MAP, KeyEvent.VK_M);
         //TODO: show unit overview should be a checkbox
-        viewUnitOverview = createMenuItem(menu, getString("viewUnitOverview"), VIEW_UNIT_OVERVIEW, KeyEvent.VK_U);
-        viewZoomIn = createMenuItem(menu, getString("viewZoomIn"), VIEW_ZOOM_IN);
-        viewZoomOut = createMenuItem(menu, getString("viewZoomOut"), VIEW_ZOOM_OUT);
+        viewUnitOverview = createMenuItem(menu, getString("CommonMenuBar.viewUnitOverview"), VIEW_UNIT_OVERVIEW, KeyEvent.VK_U);
+        viewZoomIn = createMenuItem(menu, getString("CommonMenuBar.viewZoomIn"), VIEW_ZOOM_IN);
+        viewZoomOut = createMenuItem(menu, getString("CommonMenuBar.viewZoomOut"), VIEW_ZOOM_OUT);
         menu.addSeparator();
-        toggleIsometric = createCbxMenuItem(menu, getString("viewToggleIsometric"), VIEW_TOGGLE_ISOMETRIC);
-        toggleIsometric.setState(GUIPreferences.getInstance().getBoolean(GUIPreferences.USE_ISOMETRIC)); 
-        toggleFovDarken = createCbxMenuItem(menu, getString("viewToggleFovDarken"), VIEW_TOGGLE_FOV_DARKEN);
-        toggleFovDarken.setState(GUIPreferences.getInstance().getBoolean(GUIPreferences.FOV_DARKEN)); 
-        toggleFovDarken.setToolTipText(getString("viewToggleFovDarkenTooltip"));
-        toggleFovHighlight = createCbxMenuItem(menu, getString("viewToggleFovHighlight"), VIEW_TOGGLE_FOV_HIGHLIGHT);
-        toggleFovHighlight.setState(GUIPreferences.getInstance().getBoolean("FovHighlight"));
-        toggleFieldOfFire = createCbxMenuItem(menu, getString("viewToggleFieldOfFire"), VIEW_TOGGLE_FIELD_OF_FIRE);
+        toggleIsometric = createCbxMenuItem(menu, getString("CommonMenuBar.viewToggleIsometric"), VIEW_TOGGLE_ISOMETRIC);
+        toggleIsometric.setState(GUIPreferences.getInstance().getIsometricEnabled()); 
+        toggleFovDarken = createCbxMenuItem(menu, getString("CommonMenuBar.viewToggleFovDarken"), VIEW_TOGGLE_FOV_DARKEN);
+        toggleFovDarken.setState(GUIPreferences.getInstance().getFovDarken()); 
+        toggleFovDarken.setToolTipText(getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
+        toggleFovHighlight = createCbxMenuItem(menu, getString("CommonMenuBar.viewToggleFovHighlight"), VIEW_TOGGLE_FOV_HIGHLIGHT);
+        toggleFovHighlight.setState(GUIPreferences.getInstance().getFovHighlight());
+        toggleFieldOfFire = createCbxMenuItem(menu, getString("CommonMenuBar.viewToggleFieldOfFire"), VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setState(GUIPreferences.getInstance().getShowFieldOfFire());
-        toggleFieldOfFire.setToolTipText(getString("viewToggleFieldOfFireToolTip"));
-        toggleFiringSolutions = createCbxMenuItem(menu, getString("viewToggleFiringSolutions"), VIEW_TOGGLE_FIRING_SOLUTIONS);
-        toggleFiringSolutions.setToolTipText(getString("viewToggleFiringSolutionsToolTip")); 
-        toggleFiringSolutions.setState(GUIPreferences.getInstance().getBoolean("FiringSolutions"));
-        viewMovementEnvelope = createCbxMenuItem(menu, getString("movementEnvelope"), VIEW_MOVE_ENV, KeyEvent.VK_Q);
-        viewMovementEnvelope.setState(GUIPreferences.getInstance().getBoolean("MoveEnvelope"));
-        viewMovModEnvelope = createMenuItem(menu, getString("movementModEnvelope"), VIEW_MOVE_MOD_ENV, KeyEvent.VK_W);
-        viewChangeTheme = createMenuItem(menu, getString("viewChangeTheme"), VIEW_CHANGE_THEME);
+        toggleFieldOfFire.setToolTipText(getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
+        toggleFiringSolutions = createCbxMenuItem(menu, getString("CommonMenuBar.viewToggleFiringSolutions"), VIEW_TOGGLE_FIRING_SOLUTIONS);
+        toggleFiringSolutions.setToolTipText(getString("CommonMenuBar.viewToggleFiringSolutionsToolTip")); 
+        toggleFiringSolutions.setState(GUIPreferences.getInstance().getFiringSolutions());
+        viewMovementEnvelope = createCbxMenuItem(menu, getString("CommonMenuBar.movementEnvelope"), VIEW_MOVE_ENV, KeyEvent.VK_Q);
+        viewMovementEnvelope.setState(GUIPreferences.getInstance().getMoveEnvelope());
+        viewMovModEnvelope = createMenuItem(menu, getString("CommonMenuBar.movementModEnvelope"), VIEW_MOVE_MOD_ENV, KeyEvent.VK_W);
+        viewChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
         menu.addSeparator();
-        viewRoundReport = createMenuItem(menu, getString("viewRoundReport"), VIEW_ROUND_REPORT, KeyEvent.VK_R);
+        viewRoundReport = createMenuItem(menu, getString("CommonMenuBar.viewRoundReport"), VIEW_ROUND_REPORT, KeyEvent.VK_R);
         menu.addSeparator();
-        viewGameOptions = createMenuItem(menu, getString("viewGameOptions"), VIEW_GAME_OPTIONS);
-        viewClientSettings = createMenuItem(menu, getString("viewClientSettings"), VIEW_CLIENT_SETTINGS);
+        viewGameOptions = createMenuItem(menu, getString("CommonMenuBar.viewGameOptions"), VIEW_GAME_OPTIONS);
+        viewClientSettings = createMenuItem(menu, getString("CommonMenuBar.viewClientSettings"), VIEW_CLIENT_SETTINGS);
         viewClientSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK));
-        viewLOSSetting = createMenuItem(menu, getString("viewLOSSetting"), VIEW_LOS_SETTING, KeyEvent.VK_L);
-        viewPlayerSettings = createMenuItem(menu, getString("viewPlayerSettings"), VIEW_PLAYER_SETTINGS);
+        viewLOSSetting = createMenuItem(menu, getString("CommonMenuBar.viewLOSSetting"), VIEW_LOS_SETTING, KeyEvent.VK_L);
+        viewPlayerSettings = createMenuItem(menu, getString("CommonMenuBar.viewPlayerSettings"), VIEW_PLAYER_SETTINGS);
         menu.addSeparator();
-        viewPlayerList = createMenuItem(menu, getString("viewPlayerList"), VIEW_PLAYER_LIST);
+        viewPlayerList = createMenuItem(menu, getString("CommonMenuBar.viewPlayerList"), VIEW_PLAYER_LIST);
 
         //  Create the deploy menu
-        menu = new JMenu(getString("DeployMenu")); 
+        menu = new JMenu(getString("CommonMenuBar.DeployMenu")); 
         menu.setMnemonic(KeyEvent.VK_D);
         add(menu);
 
         // Create the Deploy Mines sub-menu
-        submenu = new JMenu(getString("DeployMinesMenu")); 
-        deployMinesConventional = createMenuItem(submenu, getString("deployMinesConventional"), DEPLOY_MINE_CONV.getCmd()); 
-        deployMinesCommand = createMenuItem(submenu, getString("deployMinesCommand"), DEPLOY_MINE_COM.getCmd()); 
-        deployMinesVibrabomb = createMenuItem(submenu, getString("deployMinesVibrabomb"), DEPLOY_MINE_VIBRA.getCmd()); 
-        deployMinesActive = createMenuItem(submenu, getString("deployMinesActive"), DEPLOY_MINE_ACTIVE.getCmd()); 
-        deployMinesInferno = createMenuItem(submenu, getString("deployMinesInferno"), DEPLOY_MINE_INFERNO.getCmd()); 
+        submenu = new JMenu(getString("CommonMenuBar.DeployMinesMenu")); 
+        deployMinesConventional = createMenuItem(submenu, getString("CommonMenuBar.deployMinesConventional"), DEPLOY_MINE_CONV.getCmd()); 
+        deployMinesCommand = createMenuItem(submenu, getString("CommonMenuBar.deployMinesCommand"), DEPLOY_MINE_COM.getCmd()); 
+        deployMinesVibrabomb = createMenuItem(submenu, getString("CommonMenuBar.deployMinesVibrabomb"), DEPLOY_MINE_VIBRA.getCmd()); 
+        deployMinesActive = createMenuItem(submenu, getString("CommonMenuBar.deployMinesActive"), DEPLOY_MINE_ACTIVE.getCmd()); 
+        deployMinesInferno = createMenuItem(submenu, getString("CommonMenuBar.deployMinesInferno"), DEPLOY_MINE_INFERNO.getCmd()); 
 
         // Finish off the deploy menu.
-        createMenuItem(menu, getString("deployNext"), DEPLOY_NEXT.getCmd(), KeyEvent.VK_N); 
-        createMenuItem(menu, getString("deployTurn"), DEPLOY_TURN.getCmd()); 
-        createMenuItem(menu, getString("deployLoad"), DEPLOY_LOAD.getCmd()); 
-        createMenuItem(menu, getString("deployUnload"), DEPLOY_UNLOAD.getCmd()); 
-        createMenuItem(menu, getString("deployRemove"), DEPLOY_REMOVE.getCmd()); 
-        createMenuItem(menu, getString("deployAssaultDrop"), DEPLOY_ASSAULTDROP.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.deployNext"), DEPLOY_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("CommonMenuBar.deployTurn"), DEPLOY_TURN.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.deployLoad"), DEPLOY_LOAD.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.deployUnload"), DEPLOY_UNLOAD.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.deployRemove"), DEPLOY_REMOVE.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.deployAssaultDrop"), DEPLOY_ASSAULTDROP.getCmd()); 
         menu.addSeparator();
         menu.add(submenu);
 
         // Create the Move Commands menu
-        menu = new JMenu(getString("MoveMenu")); 
+        menu = new JMenu(getString("CommonMenuBar.MoveMenu")); 
         menu.setMnemonic(KeyEvent.VK_M);
         add(menu);
-        createMenuItem(menu, getString("moveWalk"), MOVE_WALK.getCmd(), KeyEvent.VK_W); 
-        createMenuItem(menu, getString("moveJump"), MOVE_JUMP.getCmd(), KeyEvent.VK_J); 
-        createMenuItem(menu, getString("moveSwim"), MOVE_SWIM.getCmd(), KeyEvent.VK_S); 
-        createMenuItem(menu, getString("moveModeConvert"), MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); 
-        createMenuItem(menu, getString("moveBackUp"), MOVE_BACK_UP.getCmd()); 
-        createMenuItem(menu, getString("moveGetUp"), MOVE_GET_UP.getCmd()); 
-        createMenuItem(menu, getString("moveGoProne"), MOVE_GO_PRONE.getCmd()); 
-        createMenuItem(menu, getString("moveTurn"), MOVE_TURN.getCmd()); 
-        createMenuItem(menu, getString("moveNext"), MOVE_NEXT.getCmd(), KeyEvent.VK_N); 
-        createMenuItem(menu, getString("moveForwardIni"), MOVE_FORWARD_INI.getCmd()); 
-        createMenuItem(menu, getString("moveRaise"), MOVE_RAISE_ELEVATION.getCmd()); 
-        createMenuItem(menu, getString("moveLower"), MOVE_LOWER_ELEVATION.getCmd()); 
-        createMenuItem(menu, getString("moveReckless"), MOVE_RECKLESS.getCmd()); 
-        createMenuItem(menu, getString("moveEvade"), MOVE_EVADE.getCmd()); 
-        createMenuItem(menu, getString("moveBootlegger"), MOVE_BOOTLEGGER.getCmd()); 
-        createMenuItem(menu, getString("moveShutdown"), MOVE_SHUTDOWN.getCmd()); 
-        createMenuItem(menu, getString("moveStartup"), MOVE_STARTUP.getCmd()); 
-        createMenuItem(menu, getString("moveSelfDestruct"), MOVE_SELF_DESTRUCT.getCmd()); 
-        /* TODO: moveTraitor = createMenuItem(menu, getString("moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
+        createMenuItem(menu, getString("CommonMenuBar.moveWalk"), MOVE_WALK.getCmd(), KeyEvent.VK_W); 
+        createMenuItem(menu, getString("CommonMenuBar.moveJump"), MOVE_JUMP.getCmd(), KeyEvent.VK_J); 
+        createMenuItem(menu, getString("CommonMenuBar.moveSwim"), MOVE_SWIM.getCmd(), KeyEvent.VK_S); 
+        createMenuItem(menu, getString("CommonMenuBar.moveModeConvert"), MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); 
+        createMenuItem(menu, getString("CommonMenuBar.moveBackUp"), MOVE_BACK_UP.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveGetUp"), MOVE_GET_UP.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveGoProne"), MOVE_GO_PRONE.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveTurn"), MOVE_TURN.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveNext"), MOVE_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("CommonMenuBar.moveForwardIni"), MOVE_FORWARD_INI.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveRaise"), MOVE_RAISE_ELEVATION.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveLower"), MOVE_LOWER_ELEVATION.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveReckless"), MOVE_RECKLESS.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveEvade"), MOVE_EVADE.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveBootlegger"), MOVE_BOOTLEGGER.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveShutdown"), MOVE_SHUTDOWN.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveStartup"), MOVE_STARTUP.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.moveSelfDestruct"), MOVE_SELF_DESTRUCT.getCmd()); 
+        /* TODO: moveTraitor = createMenuItem(menu, getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
 
         // Create the Aero Movement sub-menu
-        JMenu aeromenu = new JMenu(getString("AeroMenu")); 
-        createMenuItem(aeromenu, getString("moveAcc"), MOVE_ACC.getCmd()); 
-        createMenuItem(aeromenu, getString("moveDec"), MOVE_DEC.getCmd()); 
-        createMenuItem(aeromenu, getString("moveAccN"), MOVE_ACCN.getCmd()); 
-        createMenuItem(aeromenu, getString("moveDecN"), MOVE_DECN.getCmd()); 
-        createMenuItem(aeromenu, getString("moveEvadeAero"), MOVE_EVADE_AERO.getCmd()); 
-        createMenuItem(aeromenu, getString("moveRoll"), MOVE_ROLL.getCmd()); 
+        JMenu aeromenu = new JMenu(getString("CommonMenuBar.AeroMenu")); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveAcc"), MOVE_ACC.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveDec"), MOVE_DEC.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveAccN"), MOVE_ACCN.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveDecN"), MOVE_DECN.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveEvadeAero"), MOVE_EVADE_AERO.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveRoll"), MOVE_ROLL.getCmd()); 
         aeromenu.addSeparator();
-        createMenuItem(aeromenu, getString("moveHover"), MOVE_HOVER.getCmd()); 
-        createMenuItem(aeromenu, getString("moveManeuver"), MOVE_MANEUVER.getCmd()); 
-        createMenuItem(aeromenu, getString("moveTurnLeft"), MOVE_TURN_LEFT.getCmd()); 
-        createMenuItem(aeromenu, getString("moveTurnRight"), MOVE_TURN_RIGHT.getCmd()); 
-        createMenuItem(aeromenu, getString("moveThrust"), MOVE_THRUST.getCmd()); 
-        createMenuItem(aeromenu, getString("moveYaw"), MOVE_YAW.getCmd()); 
-        createMenuItem(aeromenu, getString("moveEndOver"), MOVE_END_OVER.getCmd()); 
-        createMenuItem(aeromenu, getString("moveStrafe"), MOVE_STRAFE.getCmd()); 
-        createMenuItem(aeromenu, getString("moveBomb"), MOVE_BOMB.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveHover"), MOVE_HOVER.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveManeuver"), MOVE_MANEUVER.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveTurnLeft"), MOVE_TURN_LEFT.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveTurnRight"), MOVE_TURN_RIGHT.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveThrust"), MOVE_THRUST.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveYaw"), MOVE_YAW.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveEndOver"), MOVE_END_OVER.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveStrafe"), MOVE_STRAFE.getCmd()); 
+        createMenuItem(aeromenu, getString("CommonMenuBar.moveBomb"), MOVE_BOMB.getCmd()); 
 
         menu.addSeparator();
         menu.add(aeromenu);
 
         // Create the Special sub-menu.
-        submenu = new JMenu(getString("SpecialMenu")); 
-        createMenuItem(submenu, getString("MoveLoad"), MOVE_LOAD.getCmd()); 
-        createMenuItem(submenu, getString("MoveUnload"), MOVE_UNLOAD.getCmd()); 
-        createMenuItem(submenu, getString("moveTow"), MOVE_TOW.getCmd()); 
-        createMenuItem(submenu, getString("moveDisconnect"), MOVE_DISCONNECT.getCmd()); 
-        createMenuItem(submenu, getString("moveLaunch"), MOVE_LAUNCH.getCmd()); 
-        createMenuItem(submenu, getString("moveRecover"), MOVE_RECOVER.getCmd()); 
-        createMenuItem(submenu, getString("moveJoin"), MOVE_JOIN.getCmd()); 
+        submenu = new JMenu(getString("CommonMenuBar.SpecialMenu")); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveLoad"), MOVE_LOAD.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveUnload"), MOVE_UNLOAD.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveTow"), MOVE_TOW.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveDisconnect"), MOVE_DISCONNECT.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveLaunch"), MOVE_LAUNCH.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveRecover"), MOVE_RECOVER.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveJoin"), MOVE_JOIN.getCmd()); 
         submenu.addSeparator();
-        createMenuItem(submenu, getString("MoveCharge"), MOVE_CHARGE.getCmd()); 
-        createMenuItem(submenu, getString("MoveDeth"), MOVE_DFA.getCmd()); 
-        createMenuItem(submenu, getString("moveRam"), MOVE_RAM.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveCharge"), MOVE_CHARGE.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveDeth"), MOVE_DFA.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveRam"), MOVE_RAM.getCmd()); 
         submenu.addSeparator();
-        createMenuItem(submenu, getString("MoveFlee"), MOVE_FLEE.getCmd()); 
-        createMenuItem(submenu, getString("MoveFlyOff"), MOVE_FLY_OFF.getCmd()); 
-        createMenuItem(submenu, getString("MoveEject"), MOVE_EJECT.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveFlee"), MOVE_FLEE.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveFlyOff"), MOVE_FLY_OFF.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.MoveEject"), MOVE_EJECT.getCmd()); 
         submenu.addSeparator();
-        createMenuItem(submenu, getString("moveUnjam"), MOVE_UNJAM.getCmd()); 
-        createMenuItem(submenu, getString("moveSearchlight"), MOVE_SEARCHLIGHT.getCmd()); 
-        createMenuItem(submenu, getString("moveClear"), MOVE_CLEAR.getCmd()); 
-        createMenuItem(submenu, getString("moveHullDown"), MOVE_HULL_DOWN.getCmd()); 
-        createMenuItem(submenu, getString("moveLayMine"), MOVE_LAY_MINE.getCmd()); 
-        createMenuItem(submenu, getString("moveDump"), MOVE_DUMP.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveUnjam"), MOVE_UNJAM.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveSearchlight"), MOVE_SEARCHLIGHT.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveClear"), MOVE_CLEAR.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveHullDown"), MOVE_HULL_DOWN.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveLayMine"), MOVE_LAY_MINE.getCmd()); 
+        createMenuItem(submenu, getString("CommonMenuBar.moveDump"), MOVE_DUMP.getCmd()); 
 
         menu.addSeparator();
         menu.add(submenu);
 
         menu.addSeparator();
-        createMenuItem(menu, getString("moveCancel"), MOVE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
+        createMenuItem(menu, getString("CommonMenuBar.moveCancel"), MOVE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
 
         // Create the Attack actions menu
-        menu = new JMenu(getString("FireMenu")); 
+        menu = new JMenu(getString("CommonMenuBar.FireMenu")); 
         menu.setMnemonic(KeyEvent.VK_I);
         add(menu);
-        createMenuItem(menu, getString("fireFire"), FIRE_FIRE.getCmd(), KeyEvent.VK_F); 
-        createMenuItem(menu, getString("fireSkip"), FIRE_SKIP.getCmd(), KeyEvent.VK_S); 
-        createMenuItem(menu, getString("fireNextTarg"), FIRE_NEXT_TARG.getCmd(), KeyEvent.VK_T); 
-        createMenuItem(menu, getString("fireNext"), FIRE_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("CommonMenuBar.fireFire"), FIRE_FIRE.getCmd(), KeyEvent.VK_F); 
+        createMenuItem(menu, getString("CommonMenuBar.fireSkip"), FIRE_SKIP.getCmd(), KeyEvent.VK_S); 
+        createMenuItem(menu, getString("CommonMenuBar.fireNextTarg"), FIRE_NEXT_TARG.getCmd(), KeyEvent.VK_T); 
+        createMenuItem(menu, getString("CommonMenuBar.fireNext"), FIRE_NEXT.getCmd(), KeyEvent.VK_N); 
         menu.addSeparator();
-        createMenuItem(menu, getString("fireTwist"), FIRE_TWIST.getCmd()); 
-        createMenuItem(menu, getString("fireFlipArms"), FIRE_FLIP_ARMS.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireTwist"), FIRE_TWIST.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireFlipArms"), FIRE_FLIP_ARMS.getCmd()); 
         menu.addSeparator();
-        createMenuItem(menu, getString("fireMode"), FIRE_MODE.getCmd(), KeyEvent.VK_O); 
-        createMenuItem(menu, getString("fireCalled"), FIRE_CALLED.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireMode"), FIRE_MODE.getCmd(), KeyEvent.VK_O); 
+        createMenuItem(menu, getString("CommonMenuBar.fireCalled"), FIRE_CALLED.getCmd()); 
         menu.addSeparator();
-        createMenuItem(menu, getString("fireFindClub"), FIRE_FIND_CLUB.getCmd()); 
-        createMenuItem(menu, getString("fireSpot"), FIRE_SPOT.getCmd()); 
-        createMenuItem(menu, getString("fireSearchlight"), FIRE_SEARCHLIGHT.getCmd()); 
-        createMenuItem(menu, getString("fireClearTurret"), FIRE_CLEAR_TURRET.getCmd()); 
-        createMenuItem(menu, getString("fireClearWeaponJam"), FIRE_CLEAR_WEAPON.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireFindClub"), FIRE_FIND_CLUB.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireSpot"), FIRE_SPOT.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireSearchlight"), FIRE_SEARCHLIGHT.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireClearTurret"), FIRE_CLEAR_TURRET.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireClearWeaponJam"), FIRE_CLEAR_WEAPON.getCmd()); 
         menu.addSeparator();
-        createMenuItem(menu, getString("fireStrafe"), FIRE_CLEAR_WEAPON.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireStrafe"), FIRE_CLEAR_WEAPON.getCmd()); 
         menu.addSeparator();
-        fireCancel = createMenuItem(menu, getString("fireCancel"), FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
+        fireCancel = createMenuItem(menu, getString("CommonMenuBar.fireCancel"), FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
         menu.addSeparator();
-        fireSaveWeaponOrder = createMenuItem(menu, getString("fireSaveWeaponOrder"), ClientGUI.FIRE_SAVE_WEAPON_ORDER); 
+        fireSaveWeaponOrder = createMenuItem(menu, getString("CommonMenuBar.fireSaveWeaponOrder"), ClientGUI.FIRE_SAVE_WEAPON_ORDER); 
 
         // Create the Physical Attacks menu
-        menu = new JMenu(getString("PhysicalMenu")); 
+        menu = new JMenu(getString("CommonMenuBar.PhysicalMenu")); 
         menu.setMnemonic(KeyEvent.VK_P);
         add(menu);
-        createMenuItem(menu, getString("physicalPunch"), PHYSICAL_PUNCH.getCmd()); 
-        createMenuItem(menu, getString("physicalKick"), PHYSICAL_KICK.getCmd()); 
-        createMenuItem(menu, getString("physicalPush"), PHYSICAL_PUSH.getCmd()); 
-        createMenuItem(menu, getString("physicalClub"), PHYSICAL_CLUB.getCmd()); 
-        createMenuItem(menu, getString("physicalBrushOff"), PHYSICAL_BRUSH_OFF.getCmd()); 
-        createMenuItem(menu, getString("physicalThrash"), PHYSICAL_THRASH.getCmd()); 
-        createMenuItem(menu, getString("physicalProto"), PHYSICAL_PROTO.getCmd()); 
-        createMenuItem(menu, getString("physicalDodge"), PHYSICAL_DODGE.getCmd()); 
-        createMenuItem(menu, getString("physicalVibro"), PHYSICAL_VIBRO.getCmd()); 
-        createMenuItem(menu, getString("physicalNext"), PHYSICAL_NEXT.getCmd(), KeyEvent.VK_N); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalPunch"), PHYSICAL_PUNCH.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalKick"), PHYSICAL_KICK.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalPush"), PHYSICAL_PUSH.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalClub"), PHYSICAL_CLUB.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalBrushOff"), PHYSICAL_BRUSH_OFF.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalThrash"), PHYSICAL_THRASH.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalProto"), PHYSICAL_PROTO.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalDodge"), PHYSICAL_DODGE.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalVibro"), PHYSICAL_VIBRO.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.physicalNext"), PHYSICAL_NEXT.getCmd(), KeyEvent.VK_N); 
 
         // Create the Help menu
-        menu = new JMenu(getString("HelpMenu")); 
+        menu = new JMenu(getString("CommonMenuBar.HelpMenu")); 
         menu.setMnemonic(KeyEvent.VK_H);
         add(menu);
-        createMenuItem(menu, getString("helpContents"), ClientGUI.HELP_CONTENTS, true);
-        createMenuItem(menu, getString("helpSkinning"), ClientGUI.HELP_SKINNING, true);
+        createMenuItem(menu, getString("CommonMenuBar.helpContents"), ClientGUI.HELP_CONTENTS, true);
+        createMenuItem(menu, getString("CommonMenuBar.helpSkinning"), ClientGUI.HELP_SKINNING, true);
         menu.addSeparator();
-        createMenuItem(menu, getString("helpAbout"), ClientGUI.HELP_ABOUT, true);
+        createMenuItem(menu, getString("CommonMenuBar.helpAbout"), ClientGUI.HELP_ABOUT, true);
 
         manageMenu();
         
@@ -431,7 +431,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      */
     public void actionPerformed(ActionEvent event) {
         // Pass the action on to each of our listeners.
-        actionListeners.stream().forEach(l -> l.actionPerformed(event));
+        actionListeners.forEach(l -> l.actionPerformed(event));
     }
 
     /**
@@ -579,7 +579,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewPlayerList.setEnabled(false);
             viewChangeTheme.setEnabled(true);
         }
-        
         
         // We're in-game.
         else if ((phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
@@ -745,36 +744,37 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     }
     
     public synchronized void setEnabled(String command, boolean enabled) {
-        if (!itemMap.containsKey(command)) {
+        if (itemMap.containsKey(command)) {
+            itemMap.get(command).setEnabled(enabled);
+        } else {
             MegaMek.getLogger().error("ActionCommand " + command + " not recognized.");
             return;
         }
-        itemMap.get(command).setEnabled(enabled);
     }
 
     public synchronized void setDeployConventionalEnabled(int nbr) {
-        deployMinesConventional.setText(Messages.getString("Minefield", nbr)); 
+        deployMinesConventional.setText(getString("CommonMenuBar.Minefield", nbr)); 
         deployMinesConventional.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployCommandEnabled(int nbr) {
-        deployMinesCommand.setText(Messages.getString("Command", nbr)); 
+        deployMinesCommand.setText(getString("CommonMenuBar.Command", nbr)); 
         // Cannot ever deploy command mines...
         deployMinesCommand.setEnabled(false);
     }
 
     public synchronized void setDeployVibrabombEnabled(int nbr) {
-        deployMinesVibrabomb.setText(Messages.getString("Vibrabomb", nbr)); 
+        deployMinesVibrabomb.setText(getString("CommonMenuBar.Vibrabomb", nbr)); 
         deployMinesVibrabomb.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployActiveEnabled(int nbr) {
-        deployMinesActive.setText(Messages.getString("Active", nbr)); 
+        deployMinesActive.setText(getString("CommonMenuBar.Active", nbr)); 
         deployMinesActive.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployInfernoEnabled(int nbr) {
-        deployMinesInferno.setText(Messages.getString("Inferno", nbr)); 
+        deployMinesInferno.setText(getString("CommonMenuBar.Inferno", nbr)); 
         deployMinesInferno.setEnabled(nbr > 0);
     }
 
@@ -793,8 +793,4 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         GUIPreferences.getInstance().removePreferenceChangeListener(this);        
     }
     
-    /* Convenience method to shorten calls */
-    private String getString(String ident) {
-        return Messages.getString("CommonMenuBar." + ident);
-    }
 }

@@ -924,7 +924,8 @@ public class Server implements Runnable {
             if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else if (game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+            } else if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) 
+                    && (game.getPhase() != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 endCurrentPhase();
             }
 

@@ -61,14 +61,14 @@ public class VictoryResult implements IResult {
         double max = Double.MIN_VALUE;
         int maxEntity = defaultEntity;
         boolean draw = false;
-        for (int i : entities.keySet()) {
-            if (entities.get(i) == max) {
+        for (HashMap.Entry<Integer, Double> entry : entities.entrySet()) {
+            if (entry.getValue() == max) {
                 draw = true;
             }
-            if (entities.get(i) > max) {
+            if (entry.getValue() > max) {
                 draw = false;
-                max = entities.get(i);
-                maxEntity = i;
+                max = entry.getValue();
+                maxEntity = entry.getKey();
             }
         }
         if (draw)

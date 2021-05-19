@@ -34,4 +34,27 @@ public class VictoryResultTest {
         TestCase.assertSame(IPlayer.PLAYER_NONE, testResult.getWinningPlayer());
     }
 
+    @Test
+    public void testGetWinningTeam() {
+        // Trivial case: no team
+        VictoryResult testResult = new VictoryResult(false);
+        TestCase.assertSame(IPlayer.TEAM_NONE, testResult.getWinningTeam());
+
+        // Case with two teams
+        int winningTeam = 1;
+        int losingTeam = 2;
+
+        testResult.addTeamScore(winningTeam, 100);
+        testResult.addTeamScore(losingTeam, 40);
+
+        TestCase.assertSame(winningTeam, testResult.getWinningTeam());
+
+        // Case with three teams and a draw
+        int secondWinningTeam = 3;
+
+        testResult.addTeamScore(secondWinningTeam, 100);
+        TestCase.assertNotSame(secondWinningTeam, testResult.getWinningTeam());
+        TestCase.assertNotSame(winningTeam, testResult.getWinningTeam());
+        TestCase.assertSame(IPlayer.TEAM_NONE, testResult.getWinningTeam());
+    }
 }

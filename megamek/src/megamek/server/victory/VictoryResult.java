@@ -57,42 +57,31 @@ public class VictoryResult implements IResult {
         return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
 
-    public int getWinningPlayer() {
+    private int getWinningEntity(HashMap<Integer, Double> entities, int defaultEntity) {
         double max = Double.MIN_VALUE;
-        int maxPlayer = IPlayer.PLAYER_NONE;
+        int maxEntity = defaultEntity;
         boolean draw = false;
-        for (int i : playerScore.keySet()) {
-            if (playerScore.get(i) == max) {
+        for (int i : entities.keySet()) {
+            if (entities.get(i) == max) {
                 draw = true;
             }
-            if (playerScore.get(i) > max) {
+            if (entities.get(i) > max) {
                 draw = false;
-                max = playerScore.get(i);
-                maxPlayer = i;
+                max = entities.get(i);
+                maxEntity = i;
             }
         }
         if (draw)
-            return IPlayer.PLAYER_NONE;
-        return maxPlayer;
+            return defaultEntity;
+        return maxEntity;
+    }
+
+    public int getWinningPlayer() {
+        return getWinningEntity(playerScore, IPlayer.PLAYER_NONE);
     }
 
     public int getWinningTeam() {
-        double max = Double.MIN_VALUE;
-        int maxTeam = IPlayer.TEAM_NONE;
-        boolean draw = false;
-        for (int i : teamScore.keySet()) {
-            if (teamScore.get(i) == max) {
-                draw = true;
-            }
-            if (teamScore.get(i) > max) {
-                draw = false;
-                max = teamScore.get(i);
-                maxTeam = i;
-            }
-        }
-        if (draw)
-            return IPlayer.TEAM_NONE;
-        return maxTeam;
+        return getWinningEntity(teamScore, IPlayer.TEAM_NONE);
     }
 
     protected void updateHiScore() {

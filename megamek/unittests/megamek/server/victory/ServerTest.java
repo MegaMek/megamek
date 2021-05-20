@@ -26,18 +26,18 @@ public class ServerTest {
 
         IGame testGame = Mockito.mock(IGame.class);
         Mockito.when(testGame.getVictory()).thenReturn(testVictory);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<GameListener>());
+        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
         Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
         Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
         Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
 
         //test whether the server.victory() returns false when mocking VictoryResult as false
-        Mockito.when(testVictory.checkForVictory(testGame, testGame.getVictoryContext())).thenReturn(testVictoryResultFalse);
+        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
         TestCase.assertFalse(testServer.victory());
 
         //test whether the server.victory() returns true when mocking VictoryResult as true
-        Mockito.when(testVictory.checkForVictory(testGame, testGame.getVictoryContext())).thenReturn(testVictoryResultTrue);
+        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
         TestCase.assertTrue(testServer.victory());
 

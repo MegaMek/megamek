@@ -54,6 +54,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -3385,6 +3386,10 @@ public class Game implements Serializable, IGame {
 
     public Victory getVictory() {
         return victory;
+    }
+
+    public VictoryResult getVictoryResult() {
+        return victory.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is

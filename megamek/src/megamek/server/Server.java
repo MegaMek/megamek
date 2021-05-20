@@ -3277,7 +3277,7 @@ public class Server implements Runnable {
      * add some reports to reporting
      */
     public boolean victory() {
-        VictoryResult vr = game.getVictory().checkForVictory(game, game.getVictoryContext());
+        VictoryResult vr = game.getVictoryResult();
         for (Report r : vr.getReports()) {
             addReport(r);
         }

@@ -36,6 +36,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * This interface is the root of all data about the game in progress. Both the
@@ -1472,6 +1473,8 @@ public interface IGame {
     abstract void createVictoryConditions();
 
     abstract Victory getVictory();
+
+    abstract VictoryResult getVictoryResult();
 
     abstract boolean useVectorMove();
 

@@ -58,7 +58,24 @@ public class ServerTest {
         Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(IPlayer.TEAM_NONE);
     }
 
+    @Test
+    public void testVictoryFalseReport() throws IOException {
+        Server testServer = new Server("test", 4);
+        VictoryResult testVictoryResultTrue = new VictoryResult(false);
+        IGame testGame = Mockito.mock(IGame.class);
+        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
+        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
+        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
+        testServer.setGame(testGame);
+        testServer.victory();
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(IPlayer.TEAM_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).isForceVictory();
+
+    }
 }
 
 

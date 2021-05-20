@@ -1550,4 +1550,9 @@ public interface IGame {
             HashSet<Coords> oldPositions);
 
     public abstract String getUUIDString();
+
+    /**
+     * moving the cancelVictory function closer to the game
+     */
+    public abstract void cancelVictory();
 }

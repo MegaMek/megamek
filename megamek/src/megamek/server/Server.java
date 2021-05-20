@@ -3309,11 +3309,7 @@ public class Server implements Runnable {
                 game.setVictoryTeam(wonTeam);
             }
         } else {
-            game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
-            game.setVictoryTeam(IPlayer.TEAM_NONE);
-            if (game.isForceVictory()) {
-                cancelVictory();
-            }
+            game.cancelVictory();
         }
         return vr.victory();
     }// end victory

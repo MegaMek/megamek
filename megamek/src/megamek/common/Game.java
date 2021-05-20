@@ -3681,4 +3681,13 @@ public class Game implements Serializable, IGame {
 
     }
 
+    /**
+     * cancel victory from the server.java moved here
+     */
+    public void cancelVictory(){
+        setForceVictory(false);
+        setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        setVictoryTeam(IPlayer.TEAM_NONE);
+    }
+
 }

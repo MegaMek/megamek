@@ -1,10 +1,7 @@
 package megamek.server.victory;
 
-import megamek.common.Entity;
-import megamek.common.IPlayer;
 import megamek.common.event.GameListener;
 import megamek.server.Server;
-import org.junit.Assert;
 import junit.framework.TestCase;
 import megamek.common.IGame;
 import org.junit.Test;
@@ -15,11 +12,10 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.*;
 
-import static org.mockito.Mockito.doReturn;
 
 
 @RunWith(JUnit4.class)
-public class VictoryTest {
+public class ServerTest {
     @Test
     public void testVictory() throws IOException {
         Server testServer = new Server("test", 123);
@@ -36,7 +32,6 @@ public class VictoryTest {
         testServer.setGame(testGame);
 
         TestCase.assertFalse(testServer.victory());
-
     }
 }
 

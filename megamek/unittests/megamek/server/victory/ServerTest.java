@@ -75,6 +75,22 @@ public class ServerTest {
     }
 
     @Test
+    public void testCancelVictory() throws IOException {
+        Server testServer = new Server("test", 8);
+        VictoryResult testVictoryResultTrue = new VictoryResult(false);
+        IGame testGame = createMockedGame();
+        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
+        Mockito.when(testGame.isForceVictory()).thenReturn(true);
+
+
+        testServer.setGame(testGame);
+        testServer.victory();
+        Mockito.verify(testGame, Mockito.times(2)).setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        Mockito.verify(testGame, Mockito.times(2)).setVictoryTeam(IPlayer.TEAM_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setForceVictory(false);
+    }
+
+    @Test
     public void testVictoryWinReports() throws IOException {
         Server testServer = new Server("test", 0);
 

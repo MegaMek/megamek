@@ -1,6 +1,7 @@
 package megamek.server.victory;
 
-import megamek.common.event.GameListener;
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.IPlayer;
 import megamek.server.Server;
 import junit.framework.TestCase;
 import megamek.common.IGame;
@@ -11,7 +12,6 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.*;
-
 
 
 @RunWith(JUnit4.class)
@@ -39,6 +39,50 @@ public class ServerTest {
         TestCase.assertTrue(testServer.victory());
 
     }
+
+    @Test
+    public void testVictoryWinReports() throws IOException {
+        Server testServer = new Server("test", 0);
+
+        int winner = 1;
+
+        // Mock a win victory result
+        // Only 1 report should be generated as the team is set to TEAM_NONE
+        VictoryResult victoryResult = Mockito.mock(VictoryResult.class);
+        Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
+        Mockito.when(victoryResult.victory()).thenReturn(true);
+        Mockito.when(victoryResult.isDraw()).thenReturn(false);
+        Mockito.when(victoryResult.getWinningPlayer()).thenReturn(winner);
+        Mockito.when(victoryResult.getWinningTeam()).thenReturn(IPlayer.TEAM_NONE);
+
+        IPlayer mockedPlayer = Mockito.mock(IPlayer.class);
+        Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
+        Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
+
+        IGame testGame = Mockito.mock(IGame.class);
+        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
+        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
+        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getVictoryResult()).thenReturn(victoryResult);
+        Mockito.when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
+
+        testServer.setGame(testGame);
+        testServer.victory();
+
+        TestCase.assertSame(1, testServer.getvPhaseReport().size());
+
+        // Second test server tests with both a team != TEAM_NONE and a player != PLAYER_NONE
+        // Two reports should be generated
+        Server testServer2 = new Server("test", 0);
+
+        Mockito.when(victoryResult.getWinningTeam()).thenReturn(10);
+        testServer2.setGame(testGame);
+        testServer2.victory();
+
+        TestCase.assertSame(2, testServer2.getvPhaseReport().size());
+    }
+
 }
 
 

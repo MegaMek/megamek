@@ -18,8 +18,10 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Report;
+import megamek.server.Server;
 
 /**
  * quick implementation of a Victory.Result stores player scores and a flag if
@@ -152,6 +154,40 @@ public class VictoryResult implements IResult {
     }
 
     public ArrayList<Report> getReports() {
+        return reports;
+    }
+
+    public ArrayList<Report> processVictory(IGame game) {
+        ArrayList<Report> reports = getReports();
+        if (victory()) {
+            boolean draw = isDraw();
+            int wonPlayer = getWinningPlayer();
+            int wonTeam = getWinningTeam();
+
+            if (wonPlayer != IPlayer.PLAYER_NONE) {
+                Report r = new Report(7200, Report.PUBLIC);
+                r.add(game.getPlayer(wonPlayer).getColorForPlayer());
+                reports.add(r);
+            }
+            if (wonTeam != IPlayer.TEAM_NONE) {
+                Report r = new Report(7200, Report.PUBLIC);
+                r.add("Team " + wonTeam);
+                reports.add(r);
+            }
+            if (draw) {
+                // multiple-won draw
+                game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
+                game.setVictoryTeam(IPlayer.TEAM_NONE);
+            } else {
+                // nobody-won draw or
+                // single player won or
+                // single team won
+                game.setVictoryPlayerId(wonPlayer);
+                game.setVictoryTeam(wonTeam);
+            }
+        } else {
+            game.cancelVictory();
+        }
         return reports;
     }
 

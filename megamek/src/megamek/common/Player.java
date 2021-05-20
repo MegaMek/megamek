@@ -585,4 +585,8 @@ public final class Player extends TurnOrdered implements IPlayer {
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }
+
+    public String getColorForPlayer(){
+        return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
+    }
 }

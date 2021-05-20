@@ -16,17 +16,24 @@ import java.util.*;
 
 @RunWith(JUnit4.class)
 public class ServerTest {
+
+    protected IGame createMockedGame() {
+        IGame testGame = Mockito.mock(IGame.class);
+        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
+        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
+        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        return testGame;
+    }
+
+
     @Test
     public void testVictory() throws IOException {
         Server testServer = new Server("test", 123);
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
-        IGame testGame = Mockito.mock(IGame.class);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
-        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        IGame testGame = createMockedGame();
 
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
@@ -43,11 +50,7 @@ public class ServerTest {
     public void testVictoryDrawReport() throws IOException {
         Server testServer = new Server("test", 4);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
-        IGame testGame = Mockito.mock(IGame.class);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
-        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
@@ -60,11 +63,7 @@ public class ServerTest {
     public void testVictoryFalseReport() throws IOException {
         Server testServer = new Server("test", 8);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
-        IGame testGame = Mockito.mock(IGame.class);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
-        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
@@ -94,11 +93,7 @@ public class ServerTest {
         Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
         Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
 
-        IGame testGame = Mockito.mock(IGame.class);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
-        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(victoryResult);
         Mockito.when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
 

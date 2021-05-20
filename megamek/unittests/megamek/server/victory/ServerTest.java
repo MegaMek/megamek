@@ -8,6 +8,7 @@ import megamek.common.IGame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -96,7 +97,9 @@ public class ServerTest {
 
         // Mock a win victory result
         // Only 1 report should be generated as the team is set to TEAM_NONE
+        IGame testGame = createMockedGame();
         VictoryResult victoryResult = Mockito.mock(VictoryResult.class);
+        Mockito.when(victoryResult.processVictory(testGame)).thenCallRealMethod();
         Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
         Mockito.when(victoryResult.victory()).thenReturn(true);
         Mockito.when(victoryResult.isDraw()).thenReturn(false);
@@ -107,7 +110,6 @@ public class ServerTest {
         Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
         Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
 
-        IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(victoryResult);
         Mockito.when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
 
@@ -121,6 +123,7 @@ public class ServerTest {
         Server testServer2 = new Server("test", 0);
 
         Mockito.when(victoryResult.getWinningTeam()).thenReturn(10);
+        Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
         testServer2.setGame(testGame);
         testServer2.victory();
 

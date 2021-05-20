@@ -158,7 +158,7 @@ public class VictoryResult implements IResult {
     }
 
     public ArrayList<Report> processVictory(IGame game) {
-        ArrayList<Report> reports = getReports();
+        ArrayList<Report> someReports = getReports();
         if (victory()) {
             boolean draw = isDraw();
             int wonPlayer = getWinningPlayer();
@@ -167,12 +167,12 @@ public class VictoryResult implements IResult {
             if (wonPlayer != IPlayer.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getColorForPlayer());
-                reports.add(r);
+                someReports.add(r);
             }
             if (wonTeam != IPlayer.TEAM_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team " + wonTeam);
-                reports.add(r);
+                someReports.add(r);
             }
             if (draw) {
                 // multiple-won draw
@@ -188,7 +188,7 @@ public class VictoryResult implements IResult {
         } else {
             game.cancelVictory();
         }
-        return reports;
+        return someReports;
     }
 
     protected String getTrace() {

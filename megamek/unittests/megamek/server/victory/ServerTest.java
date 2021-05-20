@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.*;
 
 
-
 @RunWith(JUnit4.class)
 public class ServerTest {
     @Test
@@ -59,7 +58,7 @@ public class ServerTest {
 
     @Test
     public void testVictoryFalseReport() throws IOException {
-        Server testServer = new Server("test", 4);
+        Server testServer = new Server("test", 8);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         IGame testGame = Mockito.mock(IGame.class);
         Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());

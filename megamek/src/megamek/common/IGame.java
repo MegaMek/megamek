@@ -1472,6 +1472,7 @@ public interface IGame {
      */
     abstract void createVictoryConditions();
 
+    @Deprecated
     abstract Victory getVictory();
 
     abstract VictoryResult getVictoryResult();

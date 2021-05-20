@@ -19,13 +19,10 @@ public class ServerTest {
     @Test
     public void testVictory() throws IOException {
         Server testServer = new Server("test", 123);
-        Victory testVictory = Mockito.mock(Victory.class);
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
-
         IGame testGame = Mockito.mock(IGame.class);
-        Mockito.when(testGame.getVictory()).thenReturn(testVictory);
         Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
         Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
         Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());

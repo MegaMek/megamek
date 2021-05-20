@@ -3384,6 +3384,7 @@ public class Game implements Serializable, IGame {
         victory = new Victory(getOptions());
     }
 
+    @Deprecated
     public Victory getVictory() {
         return victory;
     }

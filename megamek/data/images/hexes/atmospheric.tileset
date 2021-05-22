@@ -50,7 +50,7 @@ include "StandardIncludes/StandardThemes.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
 # ortho * "water:0" "" "transparent/blue_water_1.png"
-include "Structured_Water/Structured_Water.tileinc"
+include "Structured_Water/Structured_WaterX.tileinc"
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
 #levels 2 and 3 of swamp are for quicksand

@@ -1,10 +1,12 @@
 package megamek.server.victory;
 
 import junit.framework.TestCase;
+import megamek.common.IGame;
 import megamek.common.IPlayer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
 
 
 @RunWith(JUnit4.class)
@@ -57,4 +59,45 @@ public class VictoryResultTest {
         TestCase.assertNotSame(winningTeam, testResult.getWinningTeam());
         TestCase.assertSame(IPlayer.TEAM_NONE, testResult.getWinningTeam());
     }
+
+    @Test
+    public void testProcessVictory() {
+        // Trivial cases
+        VictoryResult victoryResult = new VictoryResult(true);
+
+        IPlayer playerMock = Mockito.mock(IPlayer.class);
+        Mockito.when(playerMock.getColorForPlayer()).thenReturn("");
+
+        IGame gameMock = Mockito.mock(IGame.class);
+        Mockito.when(gameMock.getPlayer(Mockito.anyInt())).thenReturn(playerMock);
+
+        TestCase.assertTrue(victoryResult.processVictory(gameMock).isEmpty());
+
+        VictoryResult victoryResult2 = new VictoryResult(false);
+        TestCase.assertTrue(victoryResult2.processVictory(gameMock).isEmpty());
+
+        // Less trivial cases
+        // Only won player is set
+        VictoryResult victoryResult3 = new VictoryResult(true);
+        victoryResult3.addPlayerScore(1, 100);
+        TestCase.assertSame(1, victoryResult3.processVictory(gameMock).size());
+
+        // Only won team is set
+        VictoryResult victoryResult4 = new VictoryResult(true);
+        victoryResult4.addTeamScore(1, 100);
+        TestCase.assertSame(1, victoryResult4.processVictory(gameMock).size());
+
+        // Both player and team winners are set
+        VictoryResult victoryResult5 = new VictoryResult(true);
+        victoryResult5.addPlayerScore(1, 100);
+        victoryResult5.addTeamScore(1, 100);
+        TestCase.assertSame(2, victoryResult5.processVictory(gameMock).size());
+
+        // Draw result
+        VictoryResult victoryResult6 = new VictoryResult(true);
+        victoryResult6.addPlayerScore(1, 100);
+        victoryResult6.addPlayerScore(2, 100);
+        TestCase.assertTrue(victoryResult6.processVictory(gameMock).isEmpty());
+    }
+
 }

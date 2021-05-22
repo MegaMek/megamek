@@ -16,7 +16,7 @@ VERSION HISTORY:
 + PR #2862: Adding null target safety check for WeaponAttackAction.toHit() method
 + Issue #2963: Armor tooltip matches reality better
 + Issue #2776: Fix for frequent inability to start MegaMek scenarios with bots from MMS files
-+ Issue #2727: Restore respect for client-side language settings
++ Issue #2727: Restore respect for client-side language settings (some things still aren't translated though)
 
 0.49.0 (2021-05-01 2130 UTC)
 + Issue #2614: Improved Building Validation

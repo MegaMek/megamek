@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,11 +19,14 @@ Dromedary Water Transport
 <Model>
 (Standard)
 </Model>
-</Model>
 
 <year>
 2562
 </year>
+
+<originalBuildYear>
+2562
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -33,6 +36,11 @@ IS Level 3
 Wheeled
 </motion_type>
 
+<transporters>
+cargobay:4.0:1:1
+liquidcargobay:45.5:1:2
+</transporters>
+
 <cruiseMP>
 2
 </cruiseMP>
@@ -40,10 +48,6 @@ Wheeled
 <engine_type>
 1
 </engine_type>
-
-<fuel>
-7.5
-</fuel>
 
 <armor>
 15
@@ -55,15 +59,8 @@ Wheeled
 10
 </armor>
 
-<barrating>
-5
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
 <Body Equipment>
+IS Machine Gun Ammo - Half
 ISSVDuneBuggyChassis
 </Body Equipment>
 
@@ -87,13 +84,23 @@ ISSVDuneBuggyChassis
 
 <Turret Equipment>
 Machine Gun
-IS Machine Gun Ammo - Half
 </Turret Equipment>
 
-<Transporters>
-cargobay:4:1
-liquidcargobay:45.5:1
-</Transporters>
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
 
 <source>
 TRO 3075 - Age of War
@@ -103,3 +110,10 @@ TRO 3075 - Age of War
 150.0
 </tonnage>
 
+<fuel>
+7.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

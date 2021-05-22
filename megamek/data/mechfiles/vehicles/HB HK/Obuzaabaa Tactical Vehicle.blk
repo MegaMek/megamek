@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Obuzaabaa Tactical Vehicle
 </Model>
 
 <year>
-2970
+2965
 </year>
 
 <type>

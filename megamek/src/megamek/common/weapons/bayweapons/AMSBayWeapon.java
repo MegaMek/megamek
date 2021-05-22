@@ -18,7 +18,7 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoBayWeaponHandler;
@@ -52,10 +52,17 @@ public class AMSBayWeapon extends AmmoBayWeapon {
 		flags = flags.or(F_AUTO_TARGET).or(F_AMSBAY).or(F_AERO_WEAPON);
 		setModes(new String[] { "On", "Off" });
 		setInstantModeSwitch(false);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+		techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setTechRating(RATING_E)
+		.setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+		.setISAdvancement(2613, 2617, 3048, 2835, 3045)
+		.setISApproximate(true, false, false,false, false)
+		.setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+		.setClanApproximate(true, false, false, false, false)
+		.setPrototypeFactions(F_TH,F_CSA)
+		.setProductionFactions(F_TH,F_CSA)
+		.setReintroductionFactions(F_CC)
+		.setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
     
     @Override
@@ -64,3 +71,5 @@ public class AMSBayWeapon extends AmmoBayWeapon {
         return new AmmoBayWeaponHandler(toHit, waa, game, server);
     }
 }
+
+

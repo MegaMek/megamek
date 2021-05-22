@@ -3,39 +3,40 @@ Yurei
 S-YR-1LAM
 
 Config:LAM
-TechBase:Mixed (IS Chassis)
-Era:3077
-Source:J:FR
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3077
+source:J:FR
+rules level:4
 
-Mass:40
-Engine:200 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:40
+engine:200 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+lam:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:5
+heat sinks:10 Double
+walk mp:5
+jump mp:5
 
-Armor:Standard(IS/Clan)
-LA Armor:11
-RA Armor:11
-LT Armor:11
-RT Armor:11
-CT Armor:13
-HD Armor:9
-LL Armor:17
-RL Armor:17
-RTL Armor:9
-RTR Armor:9
-RTC Armor:10
+armor:Standard(Clan)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:13
+HD armor:9
+LL armor:17
+RL armor:17
+RTL armor:9
+RTR armor:9
+RTC armor:10
 
 Weapons:3
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 ER Large Laser, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -87,7 +88,7 @@ Jump Jet
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Cargo (1 ton)
+Bomb Bay
 CLCASEII
 -Empty-
 -Empty-

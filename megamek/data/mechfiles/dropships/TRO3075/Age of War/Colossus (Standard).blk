@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Colossus
 </Model>
 
 <year>
-2760
+2718
 </year>
 
 <originalBuildYear>
-2760
+2718
 </originalBuildYear>
 
 <type>
@@ -211,4 +211,3 @@ TRO 3075 - Star League
 <escape_pod>
 25
 </escape_pod>
-

@@ -72,7 +72,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         super(en);
         asUnitType = ASUnitType.getUnitType(en);
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
-            double divisor = ((Infantry)en).getDamageDivisor();
+            double divisor = ((Infantry) en).calcDamageDivisor();
             if (((Infantry)en).isMechanized()) {
                 divisor /= 2.0;
             }

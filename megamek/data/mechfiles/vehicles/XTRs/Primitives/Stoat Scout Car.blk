@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Stoat Scout Car
 2250
 </year>
 
+<originalBuildYear>
+2250
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -48,18 +55,10 @@ Wheeled
 7
 </armor>
 
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Body Equipment>
 Basic Fire Control
 IS Machine Gun Ammo - Half
-CommsGear:1
+Communications Equipment:SIZE:1.0
 ISOffRoadChassis
 Armored Chassis
 </Body Equipment>
@@ -80,15 +79,30 @@ Armored Chassis
 Machine Gun
 </Turret Equipment>
 
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
 <source>
 XTRO Primitives I - Age of War
 </source>
 
-<transporters>
-cargobay:.2:1
-</transporters>
-
 <tonnage>
-50.0
+15.0
 </tonnage>
 
+<fuel>
+0.0
+</fuel>

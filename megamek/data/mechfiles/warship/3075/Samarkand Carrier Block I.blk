@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -40,13 +40,13 @@ Aerodyne
 asfbay:36.0:4:1
 smallcraftbay:12.0:1:2
 asfbay:36.0:3:3
-cargobay:46757.0:4:4
 dockingcollar
 dockingcollar
 dockingcollar
 1stclassquarters:350.0:0
 crewquarters:1015.0:0
 steeragequarters:150.0:0
+cargobay:46754.0:4:10
 </transporters>
 
 <SafeThrust>
@@ -211,6 +211,10 @@ IS Ammo MG - Full:100
 71
 </structural_integrity>
 
+<notes>
+Unit as constructed in TRO is 2 tons overweight. Removed 2 tons of Cargo to make unit legal.
+</notes>
+
 <source>
 TRO3075 - Star League
 </source>
@@ -263,4 +267,3 @@ TRO3075 - Star League
 <escape_pod>
 25
 </escape_pod>
-

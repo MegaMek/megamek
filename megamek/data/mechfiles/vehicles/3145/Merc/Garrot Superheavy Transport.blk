@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Garrot Superheavy Transport
 </Model>
 
 <year>
-3125
+3100
 </year>
 
 <type>
@@ -92,4 +92,3 @@ TRO 3145 Mercenaries - Late Republic
 <tonnage>
 30.0
 </tonnage>
-

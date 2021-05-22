@@ -220,9 +220,9 @@ public class Warship extends Jumpship {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
         // Controller
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
@@ -230,7 +230,7 @@ public class Warship extends Jumpship {
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (weight / 20000.0));
         // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -275,11 +275,11 @@ public class Warship extends Jumpship {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
@@ -563,5 +563,68 @@ public class Warship extends Jumpship {
     @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
+    }
+    
+    @Override
+    public boolean canChangeSecondaryFacing() {
+        // flying warships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // if they have the MP for it
+        return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
+    }
+    
+    /**
+     * Can this warship "torso twist" in the given direction?
+     */
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        int rotate = dir - getFacing();
+        if (canChangeSecondaryFacing()) {
+            return (rotate == 0) || (rotate == 1) || (rotate == -1)
+                    || (rotate == -5) || (rotate == 5);
+        }
+        return rotate == 0;
+    }
+    
+    /**
+     * Return the nearest valid direction to "torso twist" in
+     */
+    @Override
+    public int clipSecondaryFacing(int dir) {
+        if (isValidSecondaryFacing(dir)) {
+            return dir;
+        }
+        
+        // can't twist without enough MP
+        if (!canChangeSecondaryFacing()) {
+            return getFacing();
+        }
+        
+        // otherwise, twist once in the appropriate direction
+        final int rotate = (dir + (6 - getFacing())) % 6;
+        
+        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
+    }
+    
+    /**
+     * Handler for when the entity enters a new round
+     */
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        
+        if (getGame().useVectorMove()) {
+            setFacing(getSecondaryFacing());
+        }
+        
+        setSecondaryFacing(getFacing());
+    }
+    
+    /**
+     * Utility function that handles situations where a facing change
+     * has some kind of permanent effect on the entity.
+     */
+    @Override
+    public void postProcessFacingChange() {
+        mpUsed += 2;
     }
 }

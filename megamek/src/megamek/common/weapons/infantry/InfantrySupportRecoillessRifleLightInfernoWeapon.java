@@ -33,11 +33,12 @@ public class InfantrySupportRecoillessRifleLightInfernoWeapon extends InfantryWe
 		super();
 
 		name = "Recoilless Rifle (Light) - Inferno";
-		setInternalName(name);
+		setInternalName("InfantryLRRInferno");
+		addLookupName(name);
 		addLookupName("InfantryInfernoLRR");
 		addLookupName("InfantryLightRecoillessRifleInferno");
 		addLookupName("Infantry Inferno Light Recoilless Rifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 300;
 		bv = 0.97;
 		tonnage = .008;
@@ -47,6 +48,9 @@ public class InfantrySupportRecoillessRifleLightInfernoWeapon extends InfantryWe
 		infantryDamage = 0.19;
 		infantryRange = 2;
 		crew = 1;
+		ammoWeight = 0.0006;
+		ammoCost = 20;
+		shots = 1;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

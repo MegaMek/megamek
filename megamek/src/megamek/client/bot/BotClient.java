@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +34,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
+import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
 import megamek.common.AmmoType;
@@ -76,13 +77,14 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.pathfinder.BoardEdgePathFinder;
+import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 
 public abstract class BotClient extends Client {
-    private Map<EntityMovementMode, BoardEdgePathFinder> deploymentPathFinders = new HashMap<>();
-
+	public static final int BOT_TURN_RETRY_COUNT = 3;
+	
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
     
@@ -111,6 +113,9 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
+        
+        boardClusterTracker = new BoardClusterTracker();
+        
         game.addGameListener(new GameListenerAdapter() {
 
             @Override
@@ -121,7 +126,7 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                // On simultaneous phases, each player ending their turn will generalte a turn change
+                // On simultaneous phases, each player ending their turn will generate a turn change
                 // We want to ignore turns from other players and only listen to events we generated
                 boolean ignoreSimTurn = game.isPhaseSimultaneous() && (e.getPreviousPlayerId() != localPlayerNumber)
                         && calculatedTurnThisPhase;
@@ -219,6 +224,8 @@ public abstract class BotClient extends Client {
     }
 
     BotConfiguration config = new BotConfiguration();
+
+    protected BoardClusterTracker boardClusterTracker;
 
     public abstract void initialize();
 
@@ -496,8 +503,37 @@ public abstract class BotClient extends Client {
         }
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
-
+    
+    /**
+     * Calculate what to do on my turn.
+     * Has a retry mechanism for when the turn calculation fails due to concurrency issues
+     */
     private synchronized void calculateMyTurn() {
+    	int retryCount = 0;
+        boolean success = false;
+        
+        while((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
+        	success = calculateMyTurnWorker();
+        	
+        	if(!success) {
+	        	// if we fail, take a nap for 500-1500 milliseconds, then try again
+	            // as it may be due to some kind of thread-related issue
+        		// limit number of retries so we're not endlessly spinning
+        		// if we can't recover from the error
+	            retryCount++;
+	            try {
+					Thread.sleep(Compute.randomInt(1000) + 500);
+				} catch (InterruptedException e) {
+					MegaMek.getLogger().error(e.toString());
+				}
+	        }
+        }
+    }
+
+    /**
+     * Worker function for a single attempt to calculate the bot's turn.
+     */
+    private synchronized boolean calculateMyTurnWorker() {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
@@ -520,7 +556,6 @@ public abstract class BotClient extends Client {
                 }
                 moveEntity(mp.getEntity().getId(), mp);
             } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                // TODO: consider that if you're hidden you should hold fire
                 calculateFiringTurn();
             } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
@@ -547,12 +582,14 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
-                // Send a "no attack" to clear the game turn, if any.
-                // TODO: Fix for real arty stuff
+                // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
             }
+            
+            return true;
         } catch (Throwable t) {
-            t.printStackTrace();
+            MegaMek.getLogger().error(t);            
+            return false;
         }
     }
 
@@ -626,7 +663,7 @@ public abstract class BotClient extends Client {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent.getStartingPos())
                     && !deployed_ent.isLocationProhibited(c)) {
-                    validCoords.add(new RankedCoords(new Coords(c), 0));
+                    validCoords.add(new RankedCoords(c, 0));
                 }
             }
         }
@@ -772,12 +809,13 @@ public abstract class BotClient extends Client {
 
             // Mech
             if (deployed_ent.hasETypeFlag(Entity.ETYPE_MECH)) {
-                // -> Trees are good
+                // -> Trees are good, when they're tall enough
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
                 int x = coord.getX();
                 int y = coord.getY();
-                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)) {
+                if (board.getHex(x, y).containsTerrain(Terrains.WOODS)
+                        && board.getHex(x, y).terrainLevel(Terrains.FOLIAGE_ELEV) > 1) {
                     coord.fitness += 1;
                 }
                 if (board.getHex(x, y).containsTerrain(Terrains.WATER)) {
@@ -883,9 +921,7 @@ public abstract class BotClient extends Client {
             }
 
             // Make sure I'm not stuck in a dead-end.
-            if (!hasPathToEdge(deployed_ent, board)) {
-                coord.fitness -= 100;
-            }
+            coord.fitness += calculateEdgeAccessFitness(deployed_ent, board);
             
             if(coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
@@ -893,14 +929,12 @@ public abstract class BotClient extends Client {
         }
 
         // now, we double check: did we get a bunch of coordinates with a value way below 0?
-        // This indicates that we did not find any paths from the deployment zone to the opposite edge
-        // So we adjust each coordinate's fitness based on the "longest available path"
+        // This indicates that we do not have a way of getting to the opposite board edge,
+        // even when considering terrain destruction
+        // attempt to deploy in the biggest area this unit can access instead
         if(highestFitness < -10) {
             for(RankedCoords rc : validCoords) {
-                MovePath movePath = getBoardEdgePathFinder(deployed_ent).getLongestNonEdgePath(rc.getCoords());
-                if (movePath != null) {
-                    rc.fitness += movePath.getHexesMoved();
-                }
+                rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }
         
@@ -916,32 +950,29 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Gets the {@link BoardEdgePathFinder} for an {@link Entity} for their
-     * current movement mode.
-     * @param entity The entity to retrieve the {@link BoardEdgePathFinder}.
-     * @return The appropriate {@link BoardEdgePathFinder} for the given entity.
+     * Determines if the given entity has reasonable access to the "opposite" edge of the board from its
+     * current position. Returns 0 if this can be accomplished without destroying any terrain, 
+     * -50 if this can be accomplished but terrain must be destroyed,
+     * -100 if this cannot be accomplished at all
      */
-    private BoardEdgePathFinder getBoardEdgePathFinder(Entity entity) {
-        return deploymentPathFinders.computeIfAbsent(entity.getMovementMode(), 
-            e -> new BoardEdgePathFinder());
-    }
-
-    // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
-    /**
-     * Determines if the given entity has a reasonable path to the "opposite" edge of the board from its
-     * current position.
-     * @param entity
-     * @param board
-     * @return
-     */
-    private boolean hasPathToEdge(Entity entity, IBoard board) {
+    private int calculateEdgeAccessFitness(Entity entity, IBoard board) {
         // Flying units can always get anywhere
         if (entity.isAirborne() || entity instanceof VTOL) {
-            return true;
+            return 0;
         }
         
-        MovePath mp = getBoardEdgePathFinder(entity).findPathToEdge(entity);
-        return mp != null;
+        CardinalEdge destinationEdge = BoardUtilities.determineOppositeEdge(entity);
+        
+        int noReductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, false).size();
+        int reductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, true).size();
+        
+        if (noReductionZoneSize > 0) {
+            return 0;
+        } else if (reductionZoneSize > 0) {
+            return -50;
+        } else {
+            return -100;
+        }
     }
 
     private double potentialBuildingDamage(int x, int y, Entity entity) {
@@ -1184,18 +1215,10 @@ public abstract class BotClient extends Client {
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
-        
-        // once we've updated the game board with the building collapse, it is time to update
-        // the board edge pathfinder by purging any paths that go through or next to the collapsed hexes
-        for(BoardEdgePathFinder edgePathFinder : deploymentPathFinders.values()) {
-            for(Coords coords : (Vector<Coords>) packet.getObject(0)) {
-                edgePathFinder.invalidatePaths(coords);
-                
-                for(Coords neighbor : coords.allAdjacent()) {
-                    edgePathFinder.invalidatePaths(neighbor);
-                }
-            }
-        }
+    }
+
+    public BoardClusterTracker getClusterTracker() {
+        return boardClusterTracker;
     }
 
     private class RankedCoords implements Comparable<RankedCoords> {

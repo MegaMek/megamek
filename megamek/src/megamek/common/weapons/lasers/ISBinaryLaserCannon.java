@@ -1,8 +1,4 @@
-package megamek.common.weapons.lasers;
-
-import megamek.common.SimpleTechLevel;
-
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -15,6 +11,10 @@ import megamek.common.SimpleTechLevel;
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
+package megamek.common.weapons.lasers;
+
+import megamek.common.SimpleTechLevel;
+
 /*
  * Created on Sep 12, 2004
  *
@@ -53,8 +53,8 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         criticals = 4;
         bv = 222;
         cost = 200000;
-        shortAV = 16;
-        medAV = 16;
+        shortAV = 12;
+        medAV = 12;
         maxRange = RANGE_MED;
         rulesRefs = "319,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)

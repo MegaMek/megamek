@@ -37,13 +37,15 @@ public class InfantrySupportERLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantryERLaser");
 		addLookupName("InfantryERSmallLaser");
 		addLookupName("Infantry ER Laser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 11250;
 		bv = 8.21;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
 		infantryDamage = 0.84;
 		infantryRange = 4;
 		crew = 2;
+		ammoWeight = 0.003;
+		shots = 10;
 		tonnage = .110;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3059, 3075, DATE_NONE, DATE_NONE)

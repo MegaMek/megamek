@@ -10,13 +10,15 @@
 	 Carl "Neoancient" Spain
 	 NickAragua
 	 Christopher Watford
+	 Juliez
 
   Data Lead
-	 Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Dave Nawton 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
      Michael Hanson <hanson@cs.stanford.edu>
+     NickAragua
 
   More Code:
      John Uckele <btzealot55@yahoo.com>
@@ -99,6 +101,7 @@
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
 	 Justin "Windchild" Bowen
+	 Graysho
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -124,6 +127,8 @@
 	 arekP64
 	 Ask
 	 Keyl Seuhy
+	 Norman "Flynn" Zinner
+	 Kaji
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -147,6 +152,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
      Phoenixstorm
 	 Greekfire
+	 SuperStucco
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -161,6 +167,9 @@
      Doug Moore
      Solarmech (MekTek Development Team)
      #player2player on Sorcery
+     
+  Lead Sprite Artist
+     Alex "Deadborder" Fauth
 
   Various Images(including Sprites):
      Nehal Mistry
@@ -203,7 +212,6 @@
      walter@nebulastation.net
      Julio Prina <jjj.ladob@gmail.com>
      N.|.B.
-     Alex "Deadborder" Fauth
      Sebastian "Demos" Seiml
      Swiftsure
      Stingr4y
@@ -217,10 +225,13 @@
      Bloodwolf
      SirMegaV
 	 Saxarba
+	 Ahne
+	 AskAgain
 
   Camo Pack
   	 SeaVea
      Colonel Sanders Light (Folders noted with CSL)
+     Teerayne
 	 
   Splash Screen
  	 Florian "SpOoKy777" Mellies (https://www.deviantart.com/spooky777)
@@ -236,7 +247,11 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Greekfire.
 	 Bloodwolf
-
+	 SLDF_gunslinger
+	 
+  Mech Data:
+  	Drawn from Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
+  	
   Translations
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>
@@ -287,11 +302,18 @@
 	Copied image three times and arrange into a 1600x1200 image, pixelated by 3 px, applied the make seemless map function, and then shrank to 800x600 adjusting brightness and contrast for depths.
 	data/images/hexes/largeTextures/BigWater.jpg
 	
+   Megamek Portrait Pack
+     Base images purchased from Generated Photos (https://generated.photos/). Generated Photos carry no additional likeness rights. 
+     All images have been generated without human intervention through machine learning processes. Any perceived resemblance of our 
+     materials to an existing person is not intentional.
+     
+     Base portraits modified by Saxarba (https://www.deviantart.com/quellion). Additional images used in portraits provided with permission by SpOoKy777 (https://www.deviantart.com/spooky777/gallery) 	
+	
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of
      BattleTech, a source of fun and inspiration to us all.
 
 
   If I've missed anyone or details have changed, please accept apologies and
-  contact the author(s) (above.)
+  contact megamekteam at gmail.com or any of the lead developers
 

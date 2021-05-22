@@ -13,6 +13,8 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Dimension;
+
 import javax.swing.*;
 
 /**
@@ -85,6 +87,14 @@ public class CheckpointComboBox<E> extends JComboBox<E> {
      */
     public void removeCheckpoint() {
         checkpointIndex = -1;
+    }
+    
+    @Override
+    public Dimension getMaximumSize() {
+        // Make this ComboBox not stretch vertically
+        Dimension size = getPreferredSize();
+        Dimension maxSize = super.getMaximumSize();
+        return new Dimension(maxSize.width, size.height);
     }
 
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -106,4 +106,3 @@ Light PPC:OMNI
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
-

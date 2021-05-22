@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sabre
+</Name>
+
+<Model>
+SB-27b-EC
+</Model>
+
+<year>
+2819
+</year>
+
+<originalBuildYear>
+2819
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+11
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+30
+28
+28
+21
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMediumLaserPrototype
+CLERMediumLaserPrototype
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERMediumLaserPrototype
+CLERMediumLaserPrototype
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<history>
+Cloud Cobra technicians modified the Clan’s remaining stock of Royal Sabres with four of the latest prototype ER medium lasers during the Pentagon Campaign before future refinement allowed for all six lasers to be reinstalled on the airframe
+</history>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+25.0
+</tonnage>

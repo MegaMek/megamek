@@ -23,9 +23,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.util.MegaMekFile;
+import megamek.MegaMek;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Singleton class that loads the canon unit roles from a text file and provides lookup access.
@@ -115,7 +114,6 @@ public class UnitRoleHandler {
      * to maintain thread safety.
      */
     private void loadRoles() {
-        final String METHOD_NAME = "loadRoles()"; //$NON-NLS-1$
         File f = new MegaMekFile(Configuration.dataDir(), FILE_LOC).getFile();
         FileInputStream is = null;
         BufferedReader reader = null;
@@ -139,11 +137,9 @@ public class UnitRoleHandler {
             reader.close();
             is.close();
         } catch (FileNotFoundException e) {
-            DefaultMmLogger.getInstance().log(UnitRoleHandler.class, METHOD_NAME,
-                    LogLevel.ERROR, "Could not locate unit role file " + f.getName()); //$NON-NLS-1$
+            MegaMek.getLogger().error("Could not locate unit role file " + f.getName());
         } catch (IOException e) {
-            DefaultMmLogger.getInstance().log(UnitRoleHandler.class, METHOD_NAME,
-                    LogLevel.ERROR, "Error reading unit role file " + f.getName()); //$NON-NLS-1$
+            MegaMek.getLogger().error("Error reading unit role file " + f.getName());
         }
         // We're going to mark it as initialized even if it fails because there is no benefit to
         // repeating an attempt if the file is not there or cannot be read.

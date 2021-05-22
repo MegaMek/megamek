@@ -14,11 +14,12 @@
  */
 
 package megamek.common.verifier;
+import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 import java.math.BigInteger;
@@ -724,8 +725,8 @@ public class TestSupportVehicle extends TestEntity {
                 if (null != mod) {
                     weight *= mod.multiplier;
                 } else {
-                    DefaultMmLogger.getInstance().warning(getClass(), "getWeightStructure()",
-                            "Could not find multiplier for " + m.getType().getName() + " chassis mod.");
+                    MegaMek.getLogger().warning("Could not find multiplier for " 
+                            + m.getType().getName() + " chassis mod.");
                 }
             }
         }
@@ -784,6 +785,19 @@ public class TestSupportVehicle extends TestEntity {
             return testTank.getTankWeightDualTurret();
         } else {
             return 0.0;
+        }
+    }
+
+    @Override
+    public double getWeightAmmo() {
+        if (getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            double weight = 0;
+            for (Mounted m : getEntity().getWeaponList()) {
+                weight += getSmallSVAmmoWeight(m);
+            }
+            return weight;
+        } else {
+            return super.getWeightAmmo();
         }
     }
 
@@ -875,6 +889,34 @@ public class TestSupportVehicle extends TestEntity {
         return fireCon + crewStr;
     }
 
+    @Override
+    public StringBuffer printAmmo(StringBuffer buff, int posLoc, int posWeight) {
+        if (getEntity().getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return super.printAmmo(buff, posLoc, posWeight);
+        }
+        for (Mounted m : getEntity().getWeaponList()) {
+            double weight = getSmallSVAmmoWeight(m);
+            if (weight > 0) {
+                buff.append(StringUtil.makeLength("Ammo [" + m.getName() + "]", 20));
+                buff.append(" ").append(
+                        StringUtil.makeLength(getLocationAbbr(m.getLocation()),
+                                getPrintSize() - 5 - 20))
+                        .append(TestEntity.makeWeightString(weight, true)).append("\n");
+            }
+        }
+        return buff;
+    }
+
+    public static double getSmallSVAmmoWeight(Mounted mounted) {
+        // first clip is free
+        if ((mounted.getSize() > 1) && (mounted.getType() instanceof InfantryWeapon)) {
+            return RoundWeight.nextKg((mounted.getSize() - 1)
+                    * ((InfantryWeapon) mounted.getType()).getAmmoWeight());
+        } else {
+            return 0.0;
+        }
+    }
+
     public boolean canUseSponsonTurret() {
         return sponsonLegal(SVType.getVehicleType(getEntity()),
                 getEntity().getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT);
@@ -910,7 +952,9 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Support vehicles with ").append(engine.getEngineName())
                     .append(" engine must allocate some weight for fuel.\n");
             correct = false;
-        } else if ((supportVee instanceof Aero) && (((Aero) supportVee).getOriginalFuel() <= 0.0)) {
+        } else if ((supportVee instanceof FixedWingSupport)
+                && (((FixedWingSupport) supportVee).getOriginalFuel() <= 0.0)
+                && ((FixedWingSupport) supportVee).kgPerFuelPoint() > 0) {
             buff.append("Aerospace units must allocate some weight for fuel.\n");
             correct = false;
         }
@@ -974,6 +1018,12 @@ public class TestSupportVehicle extends TestEntity {
                     && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movemement mode!\n\n");
                 correct = false;
+            } else if (m.getType().hasFlag(MiscType.F_LIFEBOAT)
+                    && m.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
+                    && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
+                    && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+                buff.append(m.getName()).append(" requires naval support vehicle or amphibious chassis modification.\n");
+                correct = false;
             } else if (m.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 hardpoints++;
             } else if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
@@ -1012,13 +1062,26 @@ public class TestSupportVehicle extends TestEntity {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }
-        if (supportVee instanceof Tank) {
-            for (Mounted m : supportVee.getEquipment()) {
-                if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode())) {
-                    buff.append(m.getType().getName()).append(" is incompatible with ")
-                            .append(supportVee.getMovementModeAsString());
-                    correct = false;
-                }
+        for (Mounted m : supportVee.getEquipment()) {
+            if ((m.getType() instanceof MiscType) && !m.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if ((supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && (((m.getType() instanceof WeaponType)
+                        && !m.getType().hasFlag(WeaponType.F_INFANTRY))
+                    || ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_HEAVY_EQUIPMENT)))) {
+                buff.append("Small support vehicles cannot mount heavy weapons or equipment (")
+                        .append(m.getName()).append(").\n");
+                correct = false;
+            } else if ((m.getType() instanceof WeaponType)
+                    && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
+                    && !m.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
+                buff.append(m.getType().getName()).append(" cannot be used by support vehicles.\n");
+                correct = false;
+            } else if (!TestTank.legalForMotiveType(m.getType(), supportVee.getMovementMode(), true)) {
+                buff.append(m.getType().getName()).append(" is incompatible with ")
+                        .append(supportVee.getMovementModeAsString());
+                correct = false;
             }
         }
         for (int loc = 0; loc < supportVee.locations(); loc++) {
@@ -1207,10 +1270,12 @@ public class TestSupportVehicle extends TestEntity {
                 unallocated.add(mount);
             }
         }
-        for (Mounted mount : supportVee.getAmmo()) {
-            if ((mount.getLocation() == Entity.LOC_NONE) &&
-                    !mount.isOneShotAmmo()) {
-                unallocated.add(mount);
+        if (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            for (Mounted mount : supportVee.getAmmo()) {
+                if ((mount.getLocation() == Entity.LOC_NONE) &&
+                        !mount.isOneShotAmmo()) {
+                    unallocated.add(mount);
+                }
             }
         }
 
@@ -1264,7 +1329,7 @@ public class TestSupportVehicle extends TestEntity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                    buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
                     addedCargo = true;
                     continue;
@@ -1276,7 +1341,7 @@ public class TestSupportVehicle extends TestEntity {
             if (!(mount.getType() instanceof AmmoType)
                     && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
                     && !mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }
         }
@@ -1426,10 +1491,14 @@ public class TestSupportVehicle extends TestEntity {
      * @return The number of slots taken up by ammo.
      */
     public int getAmmoSlots() {
+        // Small SV ammo occupies the same slot as the weapon.
+        if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            return 0;
+        }
         int slots = 0;
         Set<String> foundAmmo = new HashSet<>();
         for (Mounted ammo : supportVee.getAmmo()) {
-            // don't count oneshot ammo
+            // don't count oneshot
             if (ammo.isOneShotAmmo()) {
                 continue;
             }

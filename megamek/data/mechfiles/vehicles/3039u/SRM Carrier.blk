@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ SRM Carrier
 </Model>
 
 <year>
-2407
+2470
 </year>
 
 <type>
@@ -83,4 +83,3 @@ TRO 3039 - Age of War
 <tonnage>
 60.0
 </tonnage>
-

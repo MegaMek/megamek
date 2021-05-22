@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -60,7 +60,7 @@ cargobay:8.92:1:2
 <Body Equipment>
 AmphibiousChassis
 Basic Fire Control
-Environmental Sealed Chassis
+Environmental Sealing
 </Body Equipment>
 
 <Front Equipment>
@@ -116,4 +116,3 @@ TRO VAr - Star League
 <fuel>
 0.0
 </fuel>
-

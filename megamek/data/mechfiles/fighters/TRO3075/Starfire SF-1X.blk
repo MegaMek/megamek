@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ SF-1X
 </Model>
 
 <year>
-3030
+3028
 </year>
 
 <originalBuildYear>
-3030
+3028
 </originalBuildYear>
 
 <type>
@@ -110,4 +110,3 @@ XTRO Succession Wars I - Succession Wars
 <tonnage>
 55.0
 </tonnage>
-

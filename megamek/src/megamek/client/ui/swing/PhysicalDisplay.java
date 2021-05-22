@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +37,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -47,7 +47,6 @@ import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -420,49 +419,32 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         final Entity en = ce();
         final boolean isAptPiloting = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        final boolean canZweihander = null != en
-                && (en instanceof BipedMech) 
-                && ((BipedMech)en).canZweihander()
+        final boolean canZweihander = (en instanceof BipedMech)
+                && ((BipedMech) en).canZweihander()
                 && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());;
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
+
+        final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient().getGame(), cen,
+                target, PunchAttackAction.LEFT, false);
+        final ToHitData rightArm = PunchAttackAction.toHit(clientgui.getClient().getGame(), cen,
+                target, PunchAttackAction.RIGHT, false);
         
-              
-        final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
-                .getGame(), cen, target, PunchAttackAction.LEFT, false);
-        final ToHitData rightArm = PunchAttackAction.toHit(clientgui
-                .getClient().getGame(), cen, target, PunchAttackAction.RIGHT, false);
-        
-        final double punchOddsRight = Compute.oddsAbove(rightArm.getValue(),
-                isAptPiloting);
+        final double punchOddsRight = Compute.oddsAbove(rightArm.getValue(), isAptPiloting);
         final int punchDmgRight = PunchAttackAction.getDamageFor(en,
-                PunchAttackAction.RIGHT, (target instanceof Infantry)
-                        && !(target instanceof BattleArmor), false);
+                PunchAttackAction.RIGHT, target.isConventionalInfantry(), false);
         
-        final double punchOddsLeft = Compute.oddsAbove(leftArm.getValue(),
-                isAptPiloting);
-        final int punchDmgLeft = PunchAttackAction.getDamageFor(en,
-                PunchAttackAction.LEFT, (target instanceof Infantry)
-                        && !(target instanceof BattleArmor), false);
+        final double punchOddsLeft = Compute.oddsAbove(leftArm.getValue(), isAptPiloting);
+        final int punchDmgLeft = PunchAttackAction.getDamageFor(en, PunchAttackAction.LEFT,
+                target.isConventionalInfantry(), false);
         
-        String title = Messages.getString("PhysicalDisplay.PunchDialog.title", //$NON-NLS-1$
-                new Object[] { target.getDisplayName() }); 
-        String message = Messages
-                .getString("PhysicalDisplay.PunchDialog.message", //$NON-NLS-1$ 
-                        new Object[] {
-                                rightArm.getValueAsString(),
-                                punchOddsRight,
-                                rightArm.getDesc(),
-                                punchDmgRight,
-                                rightArm.getTableDesc(),
-                                leftArm.getValueAsString(),
-                                punchOddsLeft,
-                                leftArm.getDesc(),
-                                punchDmgLeft,
-                                leftArm.getTableDesc() });
+        String title = Messages.getString("PhysicalDisplay.PunchDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.PunchDialog.message",
+                rightArm.getValueAsString(), punchOddsRight, rightArm.getDesc(), punchDmgRight,
+                rightArm.getTableDesc(), leftArm.getValueAsString(), punchOddsLeft,
+                leftArm.getDesc(), punchDmgLeft, leftArm.getTableDesc());
         if (isMeleeMaster) {
-            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n"
-                    + message;
+            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n" + message;
         }
         if (clientgui.doYesNoDialog(title, message)) {
             // check for retractable blade that can be extended in each arm
@@ -474,12 +456,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && ((Mech) ce()).hasRetractedBlade(Mech.LOC_LARM)) {
-                leftBladeExtend = clientgui.doYesNoDialog(Messages
-                        .getString("PhysicalDisplay.ExtendBladeDialog.title"),
-                        Messages.getString(
-                                "PhysicalDisplay.ExtendBladeDialog.message",
-                                new Object[] { ce().getLocationName(
-                                        Mech.LOC_LARM) }));
+                leftBladeExtend = clientgui.doYesNoDialog(
+                        Messages.getString("PhysicalDisplay.ExtendBladeDialog.title"),
+                        Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
+                                ce().getLocationName(Mech.LOC_LARM)));
             }
             if ((en instanceof Mech)
                     && (target instanceof Entity)
@@ -487,11 +467,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     && clientgui.getClient().getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && ((Mech) en).hasRetractedBlade(Mech.LOC_RARM)) {
-                rightBladeExtend = clientgui.doYesNoDialog(Messages
-                        .getString("PhysicalDisplay.ExtendBladeDialog"
-                                + ".title"), Messages.getString(
-                        "PhysicalDisplay.ExtendBladeDialog.message",
-                        new Object[] { en.getLocationName(Mech.LOC_RARM) }));
+                rightBladeExtend = clientgui.doYesNoDialog(
+                        Messages.getString("PhysicalDisplay.ExtendBladeDialog" + ".title"),
+                        Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
+                                en.getLocationName(Mech.LOC_RARM)));
             }
             
             boolean zweihandering = false;
@@ -499,16 +478,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if(canZweihander) {
                 
                 //need to choose a primary arm. Do it based on highest predicted damage     		
-                ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient()
-                        .getGame(), cen, target, PunchAttackAction.LEFT, true);
-                ToHitData rightArmZwei = PunchAttackAction.toHit(clientgui
-                        .getClient().getGame(), cen, target, PunchAttackAction.RIGHT, true);
-                int damageRightZwei = PunchAttackAction.getDamageFor(en,
-                        PunchAttackAction.RIGHT, (target instanceof Infantry)
-                                && !(target instanceof BattleArmor), true);
-                int damageLeftZwei = PunchAttackAction.getDamageFor(en,
-                        PunchAttackAction.LEFT, (target instanceof Infantry)
-                                && !(target instanceof BattleArmor), true);
+                ToHitData leftArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),
+                        cen, target, PunchAttackAction.LEFT, true);
+                ToHitData rightArmZwei = PunchAttackAction.toHit(clientgui.getClient().getGame(),
+                        cen, target, PunchAttackAction.RIGHT, true);
+                int damageRightZwei = PunchAttackAction.getDamageFor(en, PunchAttackAction.RIGHT,
+                        target.isConventionalInfantry(), true);
+                int damageLeftZwei = PunchAttackAction.getDamageFor(en, PunchAttackAction.LEFT,
+                        target.isConventionalInfantry(), true);
                 double oddsLeft = Compute.oddsAbove(leftArmZwei.getValue(), isAptPiloting);
                 double oddsRight = Compute.oddsAbove(rightArmZwei.getValue(), isAptPiloting);
                 ToHitData toHitZwei = rightArmZwei;
@@ -521,19 +498,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     armChosenZwei = PunchAttackAction.LEFT;
                 } 
                               
-                zweihandering = clientgui.doYesNoDialog(Messages
-                        .getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
+                zweihandering = clientgui.doYesNoDialog(
+                        Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
                         Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.message",
-                            new Object[] { 
-                                    toHitZwei.getValueAsString(),
-                                    oddsZwei,
-                                    toHitZwei.getDesc(),
-                                    damageZwei,
-                                    toHitZwei.getTableDesc()}));
+                                toHitZwei.getValueAsString(), oddsZwei, toHitZwei.getDesc(),
+                                damageZwei, toHitZwei.getTableDesc()));
             }
             
-            if(zweihandering) {
-                if(armChosenZwei==PunchAttackAction.LEFT) {
+            if (zweihandering) {
+                if (armChosenZwei==PunchAttackAction.LEFT) {
                     leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
                 } else {
                     rightArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
@@ -666,24 +639,14 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         
         final double kickOdds = Compute.oddsAbove(attackLeg.getValue(),
                 isAptPiloting);
-        final int kickDmg = KickAttackAction.getDamageFor(en, attackSide,
-                (target instanceof Infantry)
-                        && !(target instanceof BattleArmor));
+        final int kickDmg = KickAttackAction.getDamageFor(en, attackSide, target.isConventionalInfantry());
         
-        String title = Messages.getString("PhysicalDisplay.KickDialog.title", //$NON-NLS-1$ 
-                new Object[]{target.getDisplayName()});
-        String message = Messages
-                .getString("PhysicalDisplay.KickDialog.message", //$NON-NLS-1$ 
-                        new Object[] {
-                                attackLeg.getValueAsString(),
-                                kickOdds,
-                                attackLeg.getDesc(),
-                                kickDmg,
-                                attackLeg.getTableDesc() });
+        String title = Messages.getString("PhysicalDisplay.KickDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.KickDialog.message",
+                attackLeg.getValueAsString(), kickOdds, attackLeg.getDesc(), kickDmg, attackLeg.getTableDesc());
         
         if (isMeleeMaster) {
-            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n"
-                    + message;
+            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n" + message;
         }
         
         if (clientgui.doYesNoDialog(title, message)) {
@@ -945,33 +908,26 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
                 Mounted club = clubs.get(loop);
-                boolean targetConvInf = (target instanceof Infantry)
-                        && !(target instanceof BattleArmor);
-                final ToHitData toHit = ClubAttackAction.toHit(clientgui
-                        .getClient().getGame(), cen, target, club, ash
-                        .getAimTable(), false);
+                final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient().getGame(), cen,
+                        target, club, ash.getAimTable(), false);
                 final int dmg = ClubAttackAction.getDamageFor(ce(), club,
-                        targetConvInf, false);
+                        target.isConventionalInfantry(), false);
                 // Need to do this outside getDamageFor, as it only returns int
                 String dmgString = dmg + "";
-                if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
-                        || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
-                        || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
-                        && targetConvInf) {
+                if ((club.getType().hasSubType(MiscType.S_COMBINE)
+                        || club.getType().hasSubType(MiscType.S_CHAINSAW)
+                        || club.getType().hasSubType(MiscType.S_DUAL_SAW))
+                        && target.isConventionalInfantry()) {
                     dmgString = "1d6";
                 }
-                names[loop] = Messages.getString(
-                                "PhysicalDisplay.ChooseClubDialog.line", //$NON-NLS-1$
-                                new Object[] { club.getName(),
-                                        toHit.getValueAsString(), dmgString });
+                names[loop] = Messages.getString("PhysicalDisplay.ChooseClubDialog.line",
+                        club.getName(), toHit.getValueAsString(), dmgString);
             }
 
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages.getString("PhysicalDisplay.ChooseClubDialog.message"), //$NON-NLS-1$
-                            Messages.getString("PhysicalDisplay.ChooseClubDialog.title"), //$NON-NLS-1$
-                            JOptionPane.QUESTION_MESSAGE, null, names, null);
+            String input = (String) JOptionPane.showInputDialog(clientgui,
+                    Messages.getString("PhysicalDisplay.ChooseClubDialog.message"),
+                    Messages.getString("PhysicalDisplay.ChooseClubDialog.title"),
+                    JOptionPane.QUESTION_MESSAGE, null, names, null);
             if (input != null) {
                 for (int i = 0; i < clubs.size(); i++) {
                     if (input.equals(names[i])) {
@@ -1007,61 +963,45 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        final boolean canZweihander = null != en
-                && (en instanceof BipedMech) 
-                && ((BipedMech)en).canZweihander()
+        final boolean canZweihander = (en instanceof BipedMech)
+                && ((BipedMech) en).canZweihander()
                 && Compute.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
-                
+
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable(), false);
-        boolean targetConvInf = (target instanceof Infantry)
-                && !(target instanceof BattleArmor);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(),
                 isAptPiloting);
-        final int clubDmg = ClubAttackAction.getDamageFor(en, club,
-                targetConvInf, false);
+        final int clubDmg = ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), false);
         // Need to do this outside getDamageFor, as it only returns int
         String dmgString = clubDmg + "";
-        if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
-                || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
-                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
-                && targetConvInf) {
+        if ((club.getType().hasSubType(MiscType.S_COMBINE)
+                || club.getType().hasSubType(MiscType.S_CHAINSAW)
+                || club.getType().hasSubType(MiscType.S_DUAL_SAW))
+                && target.isConventionalInfantry()) {
             dmgString = "1d6";
         }
-        String title = Messages.getString("PhysicalDisplay.ClubDialog.title", //$NON-NLS-1$ 
-                new Object[] { target.getDisplayName() });
-        String message = Messages
-                .getString("PhysicalDisplay.ClubDialog.message", //$NON-NLS-1$ 
-                        new Object[] { 
-                                toHit.getValueAsString(),
-                                clubOdds,
-                                toHit.getDesc(),
-                                dmgString,
-                                toHit.getTableDesc() });
+        String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
+        String message = Messages.getString("PhysicalDisplay.ClubDialog.message",
+                toHit.getValueAsString(), clubOdds, toHit.getDesc(), dmgString, toHit.getTableDesc());
         
         if (isMeleeMaster) {
-            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n"
-                    + message;
+            message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n" + message;
         }
         
         if (clientgui.doYesNoDialog(title, message)) {
             boolean zweihandering = false;
             if(canZweihander) {
-                ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient()
-                        .getGame(), cen, target, club, ash.getAimTable(), true);
-                zweihandering = clientgui.doYesNoDialog(Messages
-                        .getString("PhysicalDisplay.ZweihanderClubDialog.title"),
+                ToHitData toHitZwei = ClubAttackAction.toHit(clientgui.getClient().getGame(), cen,
+                        target, club, ash.getAimTable(), true);
+                zweihandering = clientgui.doYesNoDialog(Messages.getString("PhysicalDisplay.ZweihanderClubDialog.title"),
                         Messages.getString("PhysicalDisplay.ZweihanderClubDialog.message",
-                                new Object[] { 
-                                        toHitZwei.getValueAsString(),
-                                        Compute.oddsAbove(toHit.getValue(),
-                                                isAptPiloting),
-                                        toHitZwei.getDesc(),
-                                        ClubAttackAction.getDamageFor(en, club,
-                                                targetConvInf, true),
-                                        toHitZwei.getTableDesc() }));
+                                toHitZwei.getValueAsString(),
+                                Compute.oddsAbove(toHit.getValue(), isAptPiloting),
+                                toHitZwei.getDesc(),
+                                ClubAttackAction.getDamageFor(en, club, target.isConventionalInfantry(), true),
+                                toHitZwei.getTableDesc()));
             }
-            
+
             disableButtons();
             // declare searchlight, if possible
             if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
@@ -1513,7 +1453,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             setVibroEnabled(false);
         }
         setSearchlightEnabled((ce() != null) && (target != null)
-                && ce().isUsingSpotlight());
+                && ce().isUsingSearchlight());
     }
 
     /**
@@ -1535,11 +1475,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         // control pressed means a line of sight check.
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+        if ((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0) {
             return;
         }
         if (clientgui.getClient().isMyTurn()
-            && ((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0)) {
+            && (b.getButton() == MouseEvent.BUTTON1)) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(
                         clientgui.getBoardView().getLastCursor())) {

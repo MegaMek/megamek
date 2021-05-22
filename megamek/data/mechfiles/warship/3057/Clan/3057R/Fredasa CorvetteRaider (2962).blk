@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -254,4 +254,3 @@ Naval Laser 45
 <escape_pod>
 0
 </escape_pod>
-

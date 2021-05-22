@@ -3,38 +3,40 @@ Axman
 AXM-2N
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3049
+source:TRO 3050 - Clan Invasion
+rules level:2
 
-Mass:65
-Engine:260 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
+heat sinks:10 Double
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous
-LA Armor:17
-RA Armor:17
-LT Armor:21
-RT Armor:21
-CT Armor:28
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:21
+RT armor:21
+CT armor:28
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
-Weapons:4
-1 ISLRM15, Right Torso, Ammo:16
-1 ISLRM15, Left Torso
-3 ISMediumLaser, Right Arm
-1 ISLargePulseLaser, Left Arm
+Weapons:6
+Large Pulse Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -43,51 +45,51 @@ Lower Arm Actuator
 Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
 Hatchet
 Hatchet
 Hatchet
 Hatchet
 Hatchet
+Medium Laser
+Medium Laser
+Medium Laser
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo
-ISLRM15 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
 ISCASE
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15
-ISLRM15
-ISLRM15
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+LRM 15
+LRM 15
+LRM 15
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -103,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,4 +149,18 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview: If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
+capabilities: A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
+deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. The first production variant to appear, the -2N replaced the massive but short-ranged autocannon with twin LRM racks. Famously used by Adam Steiner, this variant proved more useful against the mysterious Clan invaders and their long ranged weaponry. The design proved more popular in Lyran space as a result, and after the formation of the Rebpulic remained only in their hands and the hands of the small but fiercly patriotic Filtvelt Coalition.
+systemmanufacturer:CHASSIS:Dorwinion
+systemmode:CHASSIS:AXM Standard
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260 XL
+systemmanufacturer:ARMOR:Kallon
+systemmode:ARMOR:Unity Weave Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Johnston
+systemmode:COMMUNICATIONS:Wide Band
+systemmanufacturer:TARGETING:Rander
+systemmode:TARGETING:Pinpoint-HY
 

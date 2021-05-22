@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Interdictor Pocket Warship
 </Model>
 
 <year>
-3075
+3074
 </year>
 
 <originalBuildYear>
-3075
+3074
 </originalBuildYear>
 
 <type>
@@ -42,7 +42,7 @@ smallcraftbay:2.0:2:1
 2ndclassquarters:0.0:0
 crewquarters:154.0:0
 battlearmorbay:6.0:1:5
-cargobay:502.0:2:6
+cargobay:500.0:2:6
 </transporters>
 
 <SafeThrust>
@@ -224,4 +224,3 @@ TRO 3085 - Jihad
 <escape_pod>
 6
 </escape_pod>
-

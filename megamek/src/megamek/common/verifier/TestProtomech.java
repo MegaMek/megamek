@@ -27,7 +27,6 @@ import megamek.common.ITechManager;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -342,9 +341,7 @@ public class TestProtomech extends TestEntity {
     public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
             int posWeight) {
         for (Mounted m : getEntity().getMisc()) {
-            MiscType mt = (MiscType) m.getType();
-
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
@@ -357,9 +354,7 @@ public class TestProtomech extends TestEntity {
     @Override
     public StringBuffer printWeapon(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getWeaponList()) {
-            WeaponType mt = (WeaponType) m.getType();
-
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20))
@@ -838,13 +833,26 @@ public class TestProtomech extends TestEntity {
                 || (location == Protomech.LOC_RARM)) {
             if (proto.isQuad()) {
                 return 0;
+            } else if (proto.getWeight() < 3) {
+                return 2;
+            } else if (proto.getWeight() < 10) {
+                return 4;
+            } else {
+                return 6;
             }
-            return Math.min(proto.getOInternal(location) * 2, 6);
         } else if (location == Protomech.LOC_BODY) {
             return 0;
-        } else {
-            return proto.getOInternal(location) * 2;
+        } else if (proto.isQuad()) {
+            switch ((int) proto.getWeight()) {
+                case 3:
+                    return 12;
+                case 4:
+                case 5:
+                    return 14;
+                // else drop through
+            }
         }
+        return proto.getOInternal(location) * 2;
     }
     
 }

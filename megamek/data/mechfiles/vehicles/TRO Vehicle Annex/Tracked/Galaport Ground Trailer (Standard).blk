@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -58,10 +58,8 @@ cargobay:88.0:1:1
 </armor>
 
 <Body Equipment>
-SV Chassis Mod [Tractor]
 SV Chassis Mod [Trailer]
 Environmental Sealing
-Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>
@@ -90,6 +88,14 @@ Environmental Sealed Chassis
 2
 </structural_tech_rating>
 
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
 <source>
 TRO VAr - Age of War
 </source>
@@ -101,4 +107,3 @@ TRO VAr - Age of War
 <fuel>
 0.0
 </fuel>
-

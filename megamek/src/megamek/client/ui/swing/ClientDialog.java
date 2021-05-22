@@ -14,39 +14,61 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
 
+import javax.swing.Box;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * A MegaMek Dialog box.
  */
 public class ClientDialog extends JDialog {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6154951760485853883L;
+    
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 
     protected JFrame owner = null;
+    private boolean isScaling = false;
 
-    /**
-     * @param owner - the <code>Frame</code> that owns this dialog.
-     * @param title - the title of this Dialog window
+    /** 
+     * Creates a basic ClientDialog.
+     * @see JDialog#JDialog(java.awt.Frame, String) 
      */
     public ClientDialog(JFrame owner, String title) {
         super(owner, title);
         this.owner = owner;
     }
 
+    /** 
+     * Creates a ClientDialog with modality as given by modal.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
     public ClientDialog(JFrame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.owner = owner;
+    }
+    
+    /** 
+     * Creates a ClientDialog with modality as given by modal. This dialog
+     * will automatically scale with the current GUI scaling value. Results of
+     * this may vary with the complexity of the dialog; manual scaling will
+     * often be better.
+     * @see JDialog#JDialog(java.awt.Frame, String, boolean) 
+     */
+    public ClientDialog(JFrame owner, String title, boolean modal, boolean scale) {
+        super(owner, title, modal);
+        this.owner = owner;
+        isScaling = scale;
     }
 
     /**
@@ -71,7 +93,7 @@ public class ClientDialog extends JDialog {
      * @param desiredDimension the desired dimension of this dialog (you might
      *            not get it)
      */
-    protected void setLocationAndSize(Dimension desiredDimension) {
+    public void setLocationAndSize(Dimension desiredDimension) {
         int height, width;
 
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -98,5 +120,72 @@ public class ClientDialog extends JDialog {
         setSize(width, height);
         setLocationRelativeTo(owner);
     }
-
+    
+    /** Center the dialog within the owner frame.  */
+    public void center() {
+        if (owner == null) {
+            return;
+        }
+        
+        setLocation(owner.getLocation().x + (owner.getSize().width / 2) 
+              - (getSize().width / 2),
+              owner.getLocation().y + (owner.getSize().height / 2) 
+              - (getSize().height / 2));
     }
+    
+    /** 
+     * Adds a row (line) with the two JComponents <code>label, secondC</code>
+     * to the given <code>panel</code>, using constraints c. The label will be
+     * right-aligned, the secondC left-aligned to bring them close together. 
+     * Only useful for simple panels with GridBagLayout.
+     */
+    public void addOptionRow(JPanel targetP, GridBagConstraints c, JLabel label, Component secondC) {
+        int oldGridW = c.gridwidth;
+        int oldAnchor = c.anchor;
+        
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        targetP.add(label, c);
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        targetP.add(secondC, c);
+        
+        c.gridwidth = oldGridW;
+        c.anchor = oldAnchor;
+    }
+    
+    /** 
+     * Adds a spacer row (line) to the given <code>panel</code>, 
+     * using constraints c. Only useful for simple panels with GridBagLayout.
+     */
+    public void addSpacerRow(JPanel targetP, GridBagConstraints c, int vGap) {
+        int oldGridW = c.gridwidth;
+        
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        targetP.add(Box.createVerticalStrut(vGap), c);
+        
+        c.gridwidth = oldGridW;
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (isScaling && b) {
+            guiScale();
+            super.setVisible(true);
+        } else {
+            super.setVisible(b);
+        }
+    }
+    
+    /** 
+     * Applies the GUI Scaling on the event thread as demanded
+     * by {@link java.awt.Container#getComponent(int)}. 
+     */
+    public void guiScale() {
+        UIUtil.adjustDialog(getContentPane());
+        pack();
+        center();
+    }
+
+}

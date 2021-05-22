@@ -18,6 +18,7 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.IGame;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -66,8 +67,9 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
             .setISAdvancement(3031, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
-            .setISApproximate(true, false, false, true, false)
-            .setPrototypeFactions(F_FS,F_DC);
+            .setISApproximate(false, false, false, true, false)
+            .setPrototypeFactions(F_FS,F_DC)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*

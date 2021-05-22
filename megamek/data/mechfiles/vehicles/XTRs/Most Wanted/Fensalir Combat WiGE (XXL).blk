@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Fensalir Combat WiGE
 3084
 </year>
 
+<originalBuildYear>
+3084
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -33,7 +37,7 @@ WiGE
 </motion_type>
 
 <transporters>
-CargoBay:10:1
+cargobay:10.0:1:1
 </transporters>
 
 <cruiseMP>
@@ -65,11 +69,7 @@ ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 IS Ammo SRM-6
 IS Ammo MG - Full
-Machine Gun (ST)
-Machine Gun (ST)
-Machine Gun (ST)
-Machine Gun (ST)
-ISSponsonTurret
+SponsonTurret
 </Body Equipment>
 
 <Front Equipment>
@@ -78,10 +78,13 @@ SRM 6
 </Front Equipment>
 
 <Right Equipment>
+Machine Gun(ST)
+Machine Gun(ST)
 </Right Equipment>
 
 <Left Equipment>
-
+Machine Gun(ST)
+Machine Gun(ST)
 </Left Equipment>
 
 <Rear Equipment>
@@ -95,4 +98,3 @@ XTRO Most Wanted - Jihad
 <tonnage>
 80.0
 </tonnage>
-

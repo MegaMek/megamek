@@ -33,8 +33,8 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
 		super();
 
 		name = "Grenade (Non-Inferno)";
-		setInternalName(name);
-		addLookupName("InfantryGrenade");
+		setInternalName("InfantryGrenade");
+		addLookupName(name);
 		addLookupName("Grenades");
 		ammoType = AmmoType.T_NA;
 		cost = 16;

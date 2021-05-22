@@ -3,13 +3,11 @@ package megamek.client.bot.princess;
 import java.util.HashMap;
 import java.util.Map;
 
+import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GET;
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GUESS;
 
@@ -43,7 +41,7 @@ public final class FiringPlanCalculationParameters {
         private EntityState shooterState = null;
         private Targetable target = null;
         private EntityState targetState = null;
-        private int maxHeat = FireControl.DOES_NOT_TRACK_HEAT;
+        private int maxHeat = Entity.DOES_NOT_TRACK_HEAT;
         private Map<Mounted, Double> ammoConservation = new HashMap<>();
         private FiringPlanCalculationType calculationType = GUESS;
 
@@ -91,11 +89,7 @@ public final class FiringPlanCalculationParameters {
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {
-                DefaultMmLogger.getInstance().log(getClass(),
-                                                  "setMaxHeat(int)",
-                                                  LogLevel.WARNING,
-                                                  "Invalid max heat: "
-                                                  + value);
+                MegaMek.getLogger().warning("Invalid max heat: " + value);
                 maxHeat = 0;
                 return this;
             }

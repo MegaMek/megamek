@@ -17,7 +17,7 @@
 	</faction>
 	<faction key='BAN' name='Bandit Caste' minor='false' clan='true' periphery='false'>
 		<years>2830-</years>
-		<ratingLevels>Sol</ratingLevels>
+		<ratingLevels>Solahma</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='BoS' name='Barony of Strang' minor='true' clan='false' periphery='true'>

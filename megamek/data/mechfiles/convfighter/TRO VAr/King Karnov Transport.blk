@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -85,13 +85,13 @@ cargobay:76.0:1:1
 </Right Wing Equipment>
 
 <Aft Equipment>
-Lift Hoist/Arresting Hoist
 </Aft Equipment>
 
 <Wings Equipment>
 </Wings Equipment>
 
 <Body Equipment>
+Lift Hoist/Arresting Hoist
 PropChassisMod
 VSTOLChassisMod
 </Body Equipment>
@@ -104,6 +104,14 @@ VSTOLChassisMod
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
 <source>
 TRO Vehicle Annex (r) - Clan Invasion
 </source>
@@ -111,4 +119,3 @@ TRO Vehicle Annex (r) - Clan Invasion
 <tonnage>
 200.0
 </tonnage>
-

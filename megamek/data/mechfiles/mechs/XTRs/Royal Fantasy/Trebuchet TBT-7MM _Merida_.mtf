@@ -1,0 +1,151 @@
+Version:1.0
+Trebuchet
+TBT-7MM 'Merida'
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3100
+source:XTRO Royal Fantasy
+rules level:5
+
+mass:50
+engine:250 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 Double
+walk mp:5
+jump mp:0
+
+armor:Reflective(Inner Sphere)
+LA armor:16
+RA armor:15
+LT armor:15
+RT armor:15
+CT armor:24
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:7
+RTR armor:7
+RTC armor:8
+
+Weapons:4
+Streak LRM 15, Left Torso
+Streak LRM 15, Right Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallVibroblade
+IS Endo Steel
+IS Endo Steel
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Reflective
+IS Reflective
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

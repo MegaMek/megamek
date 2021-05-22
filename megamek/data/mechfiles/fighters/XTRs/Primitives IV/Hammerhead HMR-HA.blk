@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ HMR-HA
 </Model>
 
 <year>
-2402
+2407
 </year>
 
 <originalBuildYear>
-2402
+2407
 </originalBuildYear>
 
 <type>
@@ -105,4 +105,3 @@ XTRO Primitives IV - Age of War
 <tonnage>
 75.0
 </tonnage>
-

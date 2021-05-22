@@ -3,41 +3,43 @@ Caesar
 CES-3R 'Archangel'
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3057
-Source:TRO 3050 - Clan Invasion
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3057
+source:TRO 3050 - Clan Invasion
+rules level:4
 
-Mass:70
-Engine:280 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Double
-Walk MP:4
-Jump MP:0
+heat sinks:17 Double
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:4
+jump mp:0
 
-Armor:Standard(IS/Clan)
-LA Armor:22
-RA Armor:22
-LT Armor:20
-RT Armor:20
-CT Armor:28
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Clan)
+LA armor:22
+RA armor:22
+LT armor:20
+RT armor:20
+CT armor:28
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:7
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Center Torso
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Torso
 ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
 Gauss Rifle, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder

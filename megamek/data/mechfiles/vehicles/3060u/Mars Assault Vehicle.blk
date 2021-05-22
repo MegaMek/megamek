@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,8 +21,12 @@ Mars Assault Vehicle
 </Model>
 
 <year>
-2842
+2871
 </year>
+
+<originalBuildYear>
+2871
+</originalBuildYear>
 
 <type>
 Clan Level 2
@@ -32,6 +36,9 @@ Clan Level 2
 Tracked
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 2
 </cruiseMP>
@@ -39,6 +46,10 @@ Tracked
 <engine_type>
 0
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 1
@@ -57,6 +68,7 @@ Tracked
 </armor>
 
 <Body Equipment>
+Clan Machine Gun Ammo - Half
 Clan Gauss Ammo
 Clan Gauss Ammo
 Clan Streak SRM 6 Ammo
@@ -96,14 +108,12 @@ CLERLargeLaser
 CLGaussRifle
 CLMG
 CLMG
-Clan Machine Gun Ammo - Half
 </Turret Equipment>
 
 <source>
-Succession Wars
+TRO 3060 - Succession Wars
 </source>
 
 <tonnage>
 100.0
 </tonnage>
-

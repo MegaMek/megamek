@@ -1,23 +1,22 @@
-Version:1.0
+Version:1.1
 Thunderbolt
 C
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
+TechBase:Mixed (Clan Chassis)
 Era:3050
-Source:Clan Invasion
 Rules Level:4
 
 Mass:65
-Engine:260 Fusion Engine(IS)
+Engine:260 Fusion Engine (Clan)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:15 Single
+Heat Sinks:24 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(Inner Sphere)
+Armor:Standard Armor (Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:24
@@ -31,11 +30,11 @@ RTR Armor:6
 RTC Armor:11
 
 Weapons:5
-ER Medium Laser, Left Arm
-ER Small Laser, Left Arm
-ER Small Laser, Left Arm
-Large Pulse Laser, Right Arm
-ER Large Laser, Left Torso
+1 CLLargePulseLaser, Right Arm
+1 CLERLargeLaser, Left Torso
+1 CLERSmallLaser, Left Arm
+1 CLERSmallLaser, Left Arm
+1 CLERMediumLaser, Left Arm
 
 Left Arm:
 Shoulder
@@ -66,9 +65,9 @@ CLLargePulseLaser
 -Empty-
 
 Left Torso:
+Heat Sink
+Heat Sink
 CLERLargeLaser
--Empty-
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -80,11 +79,11 @@ CLERLargeLaser
 -Empty-
 
 Right Torso:
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -94,18 +93,18 @@ Right Torso:
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Engine
+Engine
+Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
--Empty-
--Empty-
+Engine
+Engine
+Engine
+Heat Sink
+Heat Sink
 
 Head:
 Life Support
@@ -114,12 +113,6 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Left Leg:
 Hip
@@ -128,12 +121,6 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Leg:
 Hip
@@ -142,11 +129,3 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-imagefile:.\data\images\fluff\Mech\Thunderbolt3050.jpg

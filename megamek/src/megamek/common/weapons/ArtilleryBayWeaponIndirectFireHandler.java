@@ -1,19 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -23,15 +19,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
-import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
@@ -50,13 +45,8 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
-
 
     /**
      * This consructor may only be used for deserialization.
@@ -64,7 +54,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     protected ArtilleryBayWeaponIndirectFireHandler() {
         super();
     }
-    
 
     /**
      * @param t
@@ -92,7 +81,6 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         
     @Override
     protected void useAmmo() {
-        final String METHOD_NAME = "useAmmo()";
         nweaponsHit = weapon.getBayWeapons().size();
         for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
@@ -101,7 +89,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
 
             if (bayWAmmo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                logDebug(METHOD_NAME, "Handler can't find any ammo! Oh no!");
+                MegaMek.getLogger().debug("Handler can't find any ammo! Oh no!");
             }
 
             int shots = bayW.getCurrentShots();
@@ -326,7 +314,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(toHit.getValue());
+            r.add(toHit);
             vPhaseReport.addElement(r);
         }
 
@@ -623,7 +611,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // area effect damage is double
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             toReturn /= 0.5;
         }
 

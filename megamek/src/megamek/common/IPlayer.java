@@ -1,17 +1,20 @@
-/**
+/*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
+
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.icons.Camouflage;
 
 import java.util.Vector;
 
@@ -23,25 +26,11 @@ import java.util.Vector;
  * To change this template use File | Settings | File Templates.
  */
 public interface IPlayer extends ITurnOrdered {
-    public static final int PLAYER_NONE = -1;
-    public static final int TEAM_NONE = 0;
-    public static final int TEAM_UNASSIGNED = -1;
-    public static final String[] colorNames = { "Blue", "Red", "Green", "Cyan",
-            "Pink", "Orange", "Gray", "Brown", "Purple", "Turquoise ",
-            "Maroon", "Spring Green", "Gold", "Sienna", "Violet", "Navy",
-            "Olive Drab", "Fuchsia", "FireBrick", "Dark Golden Rod", "Coral",
-            "Chartreuse", "Deep Purple", "Yellow" };
-    public static final String[] teamNames = {"No Team", "Team 1", "Team 2",
-                                              "Team 3", "Team 4", "Team 5"};
-    public static final int MAX_TEAMS = teamNames.length;
-    /**
-     * The "no camo" category.
-     */
-    public static final String NO_CAMO = "-- No Camo --";
-    /**
-     * The category for camos in the root directory.
-     */
-    public static final String ROOT_CAMO = "-- General --";
+    int PLAYER_NONE = -1;
+    int TEAM_NONE = 0;
+    int TEAM_UNASSIGNED = -1;
+    String[] teamNames = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
+    int MAX_TEAMS = teamNames.length;
 
     Vector<Minefield> getMinefields();
 
@@ -79,13 +68,13 @@ public interface IPlayer extends ITurnOrdered {
 
     int getNbrMFInferno();
 
-    void setCamoCategory(String name);
+    Camouflage getCamouflage();
 
-    String getCamoCategory();
+    void setCamouflage(Camouflage camouflage);
 
-    void setCamoFileName(String name);
+    PlayerColour getColour();
 
-    String getCamoFileName();
+    void setColour(PlayerColour colour);
 
     void setGame(IGame game);
 
@@ -119,10 +108,6 @@ public interface IPlayer extends ITurnOrdered {
 
     void setObserver(boolean observer);
 
-    int getColorIndex();
-
-    void setColorIndex(int index);
-
     int getStartingPos();
 
     void setStartingPos(int startingPos);
@@ -150,6 +135,14 @@ public interface IPlayer extends ITurnOrdered {
 
     boolean hasTAG();
 
+    int getEntityCount();
+
+    int getInitialEntityCount();
+
+    void setInitialEntityCount(final int initialEntityCount);
+
+    void changeInitialEntityCount(final int initialEntityCountChange);
+
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
@@ -163,18 +156,16 @@ public interface IPlayer extends ITurnOrdered {
      */
     int getFledBV();
 
-    void setInitialBV();
-
-    /**
-     * Used to increase the initial BV by the specified value, which may be necessary if the player reinforces.
-     * @param bv
-     */
-    void increaseInitialBV(int bv);
-
     int getInitialBV();
 
+    void setInitialBV(final int initialBV);
+
+    void changeInitialBV(final int initialBVChange);
+
+    @Override
     void setInitCompensationBonus(int newBonus);
 
+    @Override
     int getInitCompensationBonus();
 
     void setConstantInitBonus(int b);
@@ -200,7 +191,9 @@ public interface IPlayer extends ITurnOrdered {
     Vector<Integer> getAirborneVTOL();
     
     // Make sure IPlayer implements both
+    @Override
     boolean equals(Object obj);
     
+    @Override
     int hashCode();
 }

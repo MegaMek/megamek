@@ -36,13 +36,15 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryHoldoutNeedlerpistol");
 		addLookupName("Holdout Needler Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 20;
 		bv = 0.10;
 		tonnage = .00005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.11;
 		infantryRange = 0;
+		ammoWeight = 0.00003;
+		shots = 5;
 		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)

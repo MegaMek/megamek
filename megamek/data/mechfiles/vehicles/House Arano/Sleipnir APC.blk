@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Sleipnir APC
+Sleipnir APC Tank
 </Name>
 
 <Model>
-
+(Standard)
 </Model>
 
 <year>
@@ -57,6 +57,7 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -76,7 +77,6 @@ Machine Gun
 Machine Gun
 Medium Laser
 Medium Laser
-IS Machine Gun Ammo - Half
 </Turret Equipment>
 
 <source>
@@ -90,4 +90,3 @@ House Arano
 <fuelType>
 PETROCHEMICALS
 </fuelType>
-

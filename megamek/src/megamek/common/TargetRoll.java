@@ -47,7 +47,7 @@ public class TargetRoll implements Serializable {
      */
     public static final int CHECK_FALSE = Integer.MIN_VALUE + 1;
 
-    private ArrayList<TargetRollModifier> modifiers = new ArrayList<TargetRollModifier>();
+    private List<TargetRollModifier> modifiers = new ArrayList<>();
 
     private int total;
 
@@ -103,7 +103,7 @@ public class TargetRoll implements Serializable {
     }
 
     public List<TargetRollModifier> getModifiers() {
-        return new ArrayList<TargetRollModifier>(modifiers);
+        return new ArrayList<>(modifiers);
     }
 
     /**
@@ -111,7 +111,7 @@ public class TargetRoll implements Serializable {
      */
     public String getDesc() {
         boolean first = true;
-        StringBuffer allDesc = new StringBuffer();
+        StringBuilder allDesc = new StringBuilder();
 
         for (TargetRollModifier modifier : modifiers) {
 
@@ -126,13 +126,12 @@ public class TargetRoll implements Serializable {
             // add desc
             if (first) {
                 first = false;
+                allDesc.append(modifier.getValue());
             } else {
-                allDesc.append((modifier.getValue() < 0 ? " - " : " + "));
+                allDesc.append((modifier.getValue() < 0 ? " - " : " + "))
+                        .append(Math.abs(modifier.getValue()));
             }
-            allDesc.append(Math.abs(modifier.getValue()));
-            allDesc.append(" (");
-            allDesc.append(modifier.getDesc());
-            allDesc.append(")");
+            allDesc.append(" (").append(modifier.getDesc()).append(")");
         }
 
         return allDesc.toString();
@@ -231,7 +230,7 @@ public class TargetRoll implements Serializable {
      */
 
     public void removeAutos(boolean removeImpossibles) {
-        ArrayList<TargetRollModifier> toKeep = new ArrayList<TargetRollModifier>();
+        List<TargetRollModifier> toKeep = new ArrayList<>();
         for (TargetRollModifier modifier : modifiers) {
             if (!removeImpossibles) {
                 if ((modifier.getValue() != AUTOMATIC_FAIL)
@@ -270,5 +269,4 @@ public class TargetRoll implements Serializable {
             total += modifier.getValue();
         }
     }
-
 }

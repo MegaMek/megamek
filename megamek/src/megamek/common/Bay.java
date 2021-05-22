@@ -247,7 +247,7 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
+     *         returned <code>List</code> is independent from the under- lying
      *         data structure; modifying one does not affect the other.
      */
     @Override
@@ -256,6 +256,21 @@ public class Bay implements Transporter, ITechnology {
         Vector<Entity> loaded = new Vector<Entity>();
         for (int unit : troops) {
             loaded.add(game.getEntity(unit));
+        }
+        return loaded;
+    }
+    
+    /**
+     * Generate a raw list of the Ids stored in troops. 
+     * Used by MHQ in cases where we can't get the entities via Game
+     *
+     * @return
+     */
+    public List<Integer> getLoadedUnitIds() {
+        // Return a copy of our list of troops.
+        List<Integer> loaded = new ArrayList<>();
+        for (int id : troops) {
+            loaded.add(id);
         }
         return loaded;
     }
@@ -536,6 +551,19 @@ public class Bay implements Transporter, ITechnology {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
+    /**
+     * Shared by several types of bays
+     * @return Tech advancement for advanced robotic transport system.
+     */
+    public static TechAdvancement artsTechAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
+                .setApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_WB)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
     public TechAdvancement getTechAdvancement() {
         return Bay.techAdvancement();
     }
@@ -644,6 +672,13 @@ public class Bay implements Transporter, ITechnology {
      */
     public long getCost() {
         return 0;
+    }
+    
+    /**
+     * @return Safe launch rate for this particular bay: # of intact doors x 2
+     */
+    public int getSafeLaunchRate() {
+        return getCurrentDoors() * 2;
     }
 
  } // End package class TroopSpace implements Transporter

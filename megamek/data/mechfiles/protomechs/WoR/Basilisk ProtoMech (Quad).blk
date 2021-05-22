@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Basilisk ProtoMech (Quad)
 </Model>
 
 <year>
-3075
+3072
 </year>
 
 <originalBuildYear>
-3075
+3072
 </originalBuildYear>
 
 <type>
@@ -95,4 +95,3 @@ WoRS - Jihad
 <tonnage>
 7.0
 </tonnage>
-

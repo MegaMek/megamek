@@ -45,14 +45,16 @@ public class CLImprovedSRM6 extends SRMWeapon {
         this.criticals = 2;
         this.bv = 79;
         this.cost = 80000;
-        this.shortAV = 8;
-        this.maxRange = RANGE_SHORT;
+        this.shortAV = 9;
+        this.medAV = 9;
+        this.maxRange = RANGE_MED;
         ammoType = AmmoType.T_SRM_IMP;
         rulesRefs = "96, IO";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2815, 2817, 2819, 2828, 3080)
+            .setClanApproximate(true,false,false,true,false)
             .setPrototypeFactions(F_CCC).setProductionFactions(F_CCC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }

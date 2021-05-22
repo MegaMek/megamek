@@ -1,38 +1,37 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
+
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.icons.Camouflage;
+import megamek.common.options.OptionsConstants;
 
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Vector;
-
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.options.OptionsConstants;
 
 /**
  * Represents a player in the game.
  */
 public final class Player extends TurnOrdered implements IPlayer {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6828849559007455760L;
 
     private transient IGame game;
 
-    private String name = "unnamed";
+    private String name;
     private int id;
 
     private int team = TEAM_NONE;
@@ -41,13 +40,9 @@ public final class Player extends TurnOrdered implements IPlayer {
     private boolean ghost = false; // disconnected player
     private boolean observer = false;
 
-    private boolean see_entire_board = false; // Player can observe
-    // double blind games
+    private boolean see_entire_board = false; // Player can observe double blind games
 
-    private int colorIndex = 0;
-
-    // these are game-specific, and maybe should be seperate from the player
-    // object
+    // these are game-specific, and maybe should be separate from the player object
     private int startingPos = Board.START_ANY;
 
     // number of minefields
@@ -58,8 +53,9 @@ public final class Player extends TurnOrdered implements IPlayer {
     private int num_mf_inferno = 0;
 
     // hexes that are automatically hit by artillery
-    private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
+    private Vector<Coords> artyAutoHitHexes = new Vector<>();
 
+    private int initialEntityCount;
     private int initialBV;
 
     // initiative bonuses go here because we don't know if teams are rolling
@@ -68,17 +64,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     private int constantInitBonus = 0;
     private int streakCompensationBonus = 0;
 
-    private String camoCategory = IPlayer.NO_CAMO;
+    private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
+    private PlayerColour colour = PlayerColour.BLUE;
 
-    private String camoFileName = null;
-
-    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
+    private Vector<Minefield> visibleMinefields = new Vector<>();
 
     private boolean admitsDefeat = false;
     
     /**
      * Boolean that keeps track of whether a player has accepted another 
-     * player's request to chang teams.
+     * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
 
@@ -175,23 +170,13 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void setCamoCategory(String name) {
-        camoCategory = name;
+    public Camouflage getCamouflage() {
+        return camouflage;
     }
 
     @Override
-    public String getCamoCategory() {
-        return camoCategory;
-    }
-
-    @Override
-    public void setCamoFileName(String name) {
-        camoFileName = name;
-    }
-
-    @Override
-    public String getCamoFileName() {
-        return camoFileName;
+    public void setCamouflage(Camouflage camouflage) {
+        this.camouflage = camouflage;
     }
 
     public Player(int id, String name) {
@@ -288,13 +273,13 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public int getColorIndex() {
-        return colorIndex;
+    public PlayerColour getColour() {
+        return colour;
     }
 
     @Override
-    public void setColorIndex(int index) {
-        colorIndex = index;
+    public void setColour(PlayerColour colour) {
+        this.colour = Objects.requireNonNull(colour, "Colour cannot be set to null");
     }
 
     @Override
@@ -386,10 +371,10 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean hasTAG() {
-        for (Iterator<Entity> e = game
-                .getSelectedEntities(new EntitySelector() {
+        for (Iterator<Entity> e = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = getId();
 
+                    @Override
                     public boolean accept(Entity entity) {
                         if (entity.getOwner() == null) {
                             return false;
@@ -409,20 +394,35 @@ public final class Player extends TurnOrdered implements IPlayer {
         return false;
     }
 
+    @Override
+    public int getEntityCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count());
+    }
+
+    @Override
+    public int getInitialEntityCount() {
+        return initialEntityCount;
+    }
+
+    @Override
+    public void setInitialEntityCount(final int initialEntityCount) {
+        this.initialEntityCount = initialEntityCount;
+    }
+
+    @Override
+    public void changeInitialEntityCount(final int initialEntityCountChange) {
+        this.initialEntityCount += initialEntityCountChange;
+    }
+
     /**
      * @return The combined Battle Value of all the player's current assets.
      */
     @Override
     public int getBV() {
-        int bv = 0;
-
-        for (Entity entity : game.getEntitiesVector()) {
-            if (equals(entity.getOwner()) && !entity.isDestroyed()
-                    && !entity.isTrapped()) {
-                bv += entity.calculateBattleValue();
-            }
-        }
-        return bv;
+        return game.getPlayerEntities(this, true).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped())
+                .mapToInt(Entity::calculateBattleValue).sum();
     }
 
     /**
@@ -433,6 +433,7 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public int getFledBV() {
+        //TODO: I'm not sure how squadrons are treated here - see getBV()
         Enumeration<Entity> fledUnits = game.getRetreatedEntities();
         int bv = 0;
         while (fledUnits.hasMoreElements()) {
@@ -445,18 +446,18 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void setInitialBV() {
-        initialBV = getBV();
-    }
-
-    @Override
-    public void increaseInitialBV(int bv) {
-        initialBV += bv;
-    }
-
-    @Override
     public int getInitialBV() {
         return initialBV;
+    }
+
+    @Override
+    public void setInitialBV(final int initialBV) {
+        this.initialBV = initialBV;
+    }
+
+    @Override
+    public void changeInitialBV(final int initialBVChange) {
+        this.initialBV += initialBVChange;
     }
 
     @Override
@@ -525,6 +526,11 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
+        
+        if (game == null) {
+            return 0;
+        }
+        
         for (Entity entity : game.getEntitiesVector()) {
             if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
@@ -561,9 +567,8 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public Vector<Integer> getAirborneVTOL() {
-
         //a vector of unit ids
-        Vector<Integer> units = new Vector<Integer>();
+        Vector<Integer> units = new Vector<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (((entity instanceof VTOL)
@@ -577,6 +582,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         return units;
     }
     
+    @Override
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }

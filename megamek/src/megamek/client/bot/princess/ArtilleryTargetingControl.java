@@ -92,7 +92,7 @@ public class ArtilleryTargetingControl {
             // the damage done is actual damage - 10 * # hexes from center
             int currentDamage = damage - distanceFromCenter * 10;
 
-            for(Coords currentCoords : BotGeometry.getHexDonut(coords, distanceFromCenter)) {
+            for(Coords currentCoords : coords.allAtDistance(distanceFromCenter)) {
                 totalDamage += calculateDamageValueForHex(currentDamage, currentCoords, shooter, game, owner);
             }
         }
@@ -194,9 +194,9 @@ public class ArtilleryTargetingControl {
         for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
-            // skip airborne entities
-            if(!e.isAirborne() && !e.isAirborneVTOLorWIGE()) {
-                targetSet.add(new HexTarget(e.getPosition(), game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+            // skip airborne entities, and those off board - we'll handle them later
+            if(!e.isAirborne() && !e.isAirborneVTOLorWIGE() && !e.isOffBoard()) {
+                targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
                 // of the entity. 
@@ -204,8 +204,14 @@ public class ArtilleryTargetingControl {
             }
         }
         
+        for(Entity enemy : game.getAllOffboardEnemyEntities(shooter.getOwner())) {
+            if(enemy.isOffBoardObserved(shooter.getOwner().getTeam())) {
+                targetSet.add(enemy);
+            }
+        }
+        
         for(Coords coords : owner.getStrategicBuildingTargets()) {
-            targetSet.add(new HexTarget(coords, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+            targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             
             // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
             // of the strategic targets.
@@ -224,10 +230,10 @@ public class ArtilleryTargetingControl {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
         // of the designated coordinates 
         for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
-            for(Coords donutHex : BotGeometry.getHexDonut(coords, radius)) {
+            for(Coords donutHex : coords.allAtDistance(radius)) {
                 // don't bother adding off-board donuts.
                 if(game.getBoard().contains(donutHex)) {
-                    targetList.add(new HexTarget(donutHex, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY));
+                    targetList.add(new HexTarget(donutHex, Targetable.TYPE_HEX_ARTILLERY));
                 }
             }
         }
@@ -298,8 +304,14 @@ public class ArtilleryTargetingControl {
                 
                 // for each enemy unit, evaluate damage value of firing at its hex.
                 // keep track of top target hexes with the same value and fire at them
-                for(Targetable hexTarget : targetSet) {                    
-                    double damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
+                for(Targetable hexTarget : targetSet) {
+                    double damageValue = 0.0;
+                    if(hexTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                        damageValue = damage;
+                    } else {
+                        damageValue = calculateDamageValue(damage, hexTarget.getPosition(), shooter, game, owner);
+                    }
+                    
                     WeaponFireInfo wfi = new WeaponFireInfo(shooter, hexTarget,
                             currentWeapon, game, false, owner);
                     
@@ -327,11 +339,15 @@ public class ArtilleryTargetingControl {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
                     int ammoID = findAmmo(shooter, currentWeapon, game);
-                    aaa.setAmmoId(ammoID);
-                    actualFireInfo.setAction(aaa);
-                    retval.add(actualFireInfo);
-                    retval.setUtility(retval.getUtility() + maxDamage);
-                    owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                    if (ammoID > NO_AMMO) {
+                        //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
+                        aaa.setAmmoId(ammoID);
+                        aaa.setAmmoCarrier(shooter.getId());
+                        actualFireInfo.setAction(aaa);
+                        retval.add(actualFireInfo);
+                        retval.setUtility(retval.getUtility() + maxDamage);
+                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                    }
                 }
             } else if(currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);
@@ -382,7 +398,7 @@ public class ArtilleryTargetingControl {
         int ammoEquipmentNum = NO_AMMO;
         
         // simply grab the first valid ammo and let 'er rip.
-        for(Mounted ammo : shooter.getAmmo()) {            
+        for(Mounted ammo : shooter.getAmmo()) {
             if(!ammo.isAmmoUsable() || !AmmoType.isAmmoValid(ammo, (WeaponType) currentWeapon.getType())) {
                 continue;
             }

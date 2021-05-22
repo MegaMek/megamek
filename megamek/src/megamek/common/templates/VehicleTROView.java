@@ -14,11 +14,13 @@
 package megamek.common.templates;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import megamek.common.Entity;
 import megamek.common.EntityFluff;
+import megamek.common.GunEmplacement;
 import megamek.common.Messages;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
@@ -44,6 +46,14 @@ public class VehicleTROView extends TROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
+        if (tank instanceof GunEmplacement) {
+            if (html) {
+                return "gunemplacement.ftlh";
+            } else {
+                return "gunemplacement.ftl";
+            }
+        }
+
         if (html) {
             return "vehicle.ftlh";
         }
@@ -53,14 +63,14 @@ public class VehicleTROView extends TROView {
     @SuppressWarnings("unchecked")
     @Override
     protected void initModel(EntityVerifier verifier) {
-        setModelData("formatArmorRow", new FormatTableRowMethod(new int[] { 20, 10, 10 },
-                new Justification[] { Justification.LEFT, Justification.CENTER, Justification.CENTER }));
+        setModelData("formatArmorRow", new FormatTableRowMethod(new int[]{20, 10, 10},
+                new Justification[]{Justification.LEFT, Justification.CENTER, Justification.CENTER}));
         addBasicData(tank);
         addArmorAndStructure();
         final int nameWidth = addEquipment(tank);
         setModelData("formatEquipmentRow",
-                new FormatTableRowMethod(new int[] { nameWidth, 12, 12 }, new Justification[] { Justification.LEFT,
-                        Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER }));
+                new FormatTableRowMethod(new int[]{nameWidth, 12, 12}, new Justification[]{Justification.LEFT,
+                        Justification.CENTER, Justification.CENTER, Justification.CENTER, Justification.CENTER}));
         addFluff();
         setModelData("isOmni", tank.isOmni());
         setModelData("isVTOL", tank.hasETypeFlag(Entity.ETYPE_VTOL));
@@ -120,28 +130,28 @@ public class VehicleTROView extends TROView {
         }
     }
 
-    private static final int[][] TANK_ARMOR_LOCS = { { Tank.LOC_FRONT }, { Tank.LOC_RIGHT, Tank.LOC_LEFT },
-            { Tank.LOC_REAR }, { Tank.LOC_TURRET }, { Tank.LOC_TURRET_2 }, { VTOL.LOC_ROTOR } };
+    private static final int[][] TANK_ARMOR_LOCS = {{Tank.LOC_FRONT}, {Tank.LOC_RIGHT, Tank.LOC_LEFT},
+            {Tank.LOC_REAR}, {Tank.LOC_TURRET}, {Tank.LOC_TURRET_2}, {VTOL.LOC_ROTOR}};
 
-    private static final int[][] SH_TANK_ARMOR_LOCS = { { SuperHeavyTank.LOC_FRONT },
-            { SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT },
-            { SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT }, { SuperHeavyTank.LOC_REAR },
-            { SuperHeavyTank.LOC_TURRET }, { SuperHeavyTank.LOC_TURRET_2 } };
+    private static final int[][] SH_TANK_ARMOR_LOCS = {{SuperHeavyTank.LOC_FRONT},
+            {SuperHeavyTank.LOC_FRONTRIGHT, SuperHeavyTank.LOC_FRONTLEFT},
+            {SuperHeavyTank.LOC_REARRIGHT, SuperHeavyTank.LOC_REARLEFT}, {SuperHeavyTank.LOC_REAR},
+            {SuperHeavyTank.LOC_TURRET}, {SuperHeavyTank.LOC_TURRET_2}};
 
     private void addArmorAndStructure() {
         if (tank.hasETypeFlag(Entity.ETYPE_SUPER_HEAVY_TANK)) {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), SH_TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, SH_TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), SH_TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, SH_TANK_ARMOR_LOCS));
             if (tank.hasPatchworkArmor()) {
                 setModelData("patchworkByLoc", addPatchworkATs(tank, SH_TANK_ARMOR_LOCS));
             }
         } else {
             setModelData("structureValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOInternal(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOInternal, TANK_ARMOR_LOCS));
             setModelData("armorValues",
-                    addArmorStructureEntries(tank, (en, loc) -> en.getOArmor(loc), TANK_ARMOR_LOCS));
+                    addArmorStructureEntries(tank, Entity::getOArmor, TANK_ARMOR_LOCS));
             if (tank.hasPatchworkArmor()) {
                 setModelData("patchworkByLoc", addPatchworkATs(tank, TANK_ARMOR_LOCS));
             }
@@ -154,5 +164,25 @@ public class VehicleTROView extends TROView {
             return Messages.getString("TROView.Sponson");
         }
         return entity.getLocationName(mounted.getLocation());
+    }
+
+    @Override
+    protected int addEquipment(Entity entity, boolean includeAmmo) {
+        int retVal = super.addEquipment(entity, includeAmmo);
+        if (tank.getExtraCrewSeats() > 0) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> list = (List<Map<String, Object>>) getModelData("equipment");
+            Map<String, Object> seatEntry = new HashMap<>();
+            if (tank.getExtraCrewSeats() > 1) {
+                seatEntry.put("name", String.format("%d Extra Crew Seats", tank.getExtraCrewSeats()));
+            } else {
+                seatEntry.put("name", "Extra Combat Seat");
+            }
+            seatEntry.put("location", tank.getLocationName(Tank.LOC_BODY));
+            seatEntry.put("tonnage", tank.getExtraCrewSeats() * 0.5);
+            seatEntry.put("slots", tank.getExtraCrewSeats());
+            list.add(seatEntry);
+        }
+        return retVal;
     }
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Cockatrice Monitor Platform
 </Model>
 
 <year>
-3064
+3062
 </year>
 
 <originalBuildYear>
-3064
+3062
 </originalBuildYear>
 
 <type>
@@ -176,4 +176,3 @@ Jihad Hot Spots: Terra - Civil War
 <escape_pod>
 0
 </escape_pod>
-

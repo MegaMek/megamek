@@ -43,11 +43,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 public class Board implements Serializable, IBoard {
     private static final long serialVersionUID = -5744058872091016636L;
@@ -275,48 +277,17 @@ public class Board implements Serializable, IBoard {
         newData(width, height, new IHex[width * height], null);
     }
 
-    public Enumeration<Coords> getHexesAtDistance(Coords coords, int distance) {
-        // Initialize the one necessary variable.
-        Vector<Coords> retVal = new Vector<Coords>();
-
-        // Handle boundary conditions.
-        if (distance < 0) {
-            return retVal.elements();
-        }
-        if (distance == 0) {
-            retVal.add(coords);
-            return retVal.elements();
-        }
-
-        // Okay, handle the "real" case.
-        // This is a bit of a cludge. Is there a better way to do this?
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (coords.distance(x, y) == distance) {
-                    retVal.add(new Coords(x, y));
-                    // retVal.add(getHex(x, y));
-                }
-            }
-        }
-        return retVal.elements();
-    }
-
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; null
-     *         otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public IHex getHex(int x, int y) {
-        if (contains(x, y)) {
-            return data[(y * width) + x];
-        }
-        return null;
+    @Override
+    public @Nullable IHex getHex(final int x, final int y) {
+        return contains(x, y) ? data[(y * width) + x] : null;
     }
 
     /**
@@ -324,7 +295,7 @@ public class Board implements Serializable, IBoard {
      * coordinates.
      */
     public IHex getHexInDir(Coords c, int dir) {
-        return getHexInDir(c.getX(), c.getY(), dir);
+        return getHex(c.xInDir(dir), c.yInDir(dir));
     }
 
     /**
@@ -372,7 +343,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // building from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create building.");
+                                MegaMek.getLogger().error("Unable to create building.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create building at " + coords.toString() + "!\n");
@@ -402,7 +373,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // fuel tank from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create fuel tank.");
+                                MegaMek.getLogger().error("Unable to create fuel tank.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create fuel tank at " + coords.toString() + "!\n");
@@ -432,7 +403,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // bridge from the board.
                             if (errBuff == null) {
-                                System.err.println("Unable to create bridge.");
+                                MegaMek.getLogger().error("Unable to create bridge.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create bridge at " + coords.toString() + "!\n");
@@ -491,14 +462,163 @@ public class Board implements Serializable, IBoard {
             return;
         }
 
+        // Always make the coords of the hex match the actual position on the board
+        hex.setCoords(new Coords(x, y));
+        
         hex.clearExits();
         for (int i = 0; i < 6; i++) {
             IHex other = getHexInDir(x, y, i);
             hex.setExits(other, i, roadsAutoExit);
         }
+        
+        // Internally handled terrain (inclines, cliff-bottoms)
+        initializeAutomaticTerrain(x, y);
+        
+        // Add woods/jungle elevation where none was saved
+        initializeFoliageElev(x, y);
+        
         if (event) {
             processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
         }
+    }
+    
+    /** Adds the FOLIAGE_ELEV terrain when none is present. */
+    private void initializeFoliageElev(int x, int y) {
+        IHex hex = getHex(x, y);
+
+        // If the foliage elevation is present or the hex doesn't even have foliage,
+        // nothing needs to be done
+        if (hex.containsTerrain(Terrains.FOLIAGE_ELEV) || 
+                (!hex.containsTerrain(Terrains.WOODS) && !hex.containsTerrain(Terrains.JUNGLE))) {
+            return;
+        }
+        
+        // Foliage is missing, therefore add it with the standard TW values
+        // elevation 3 for Ultra Woods/Jungle and 2 for Light/Heavy
+        if (hex.terrainLevel(Terrains.WOODS) == 3 || hex.terrainLevel(Terrains.JUNGLE) == 3) {
+            hex.addTerrain(Terrains.getTerrainFactory()
+                    .createTerrain(Terrains.FOLIAGE_ELEV, 3));    
+        } else {
+            hex.addTerrain(Terrains.getTerrainFactory()
+                    .createTerrain(Terrains.FOLIAGE_ELEV, 2));
+        }
+    }
+    
+    /** 
+     * Checks all hex edges of the hex at (x,y) if automatically handled 
+     * terrains such as inclines must be placed or removed. 
+     */
+    private void initializeAutomaticTerrain(int x, int y) {
+        IHex hex = getHex(x, y);
+        int origCliffTopExits = 0;
+        int correctedCliffTopExits = 0;
+        int cliffBotExits = 0;
+        int inclineTopExits = 0;
+        int inclineBotExits = 0;
+        int highInclineTopExits = 0;
+        int highInclineBotExits = 0;
+
+        // Get the currently set cliff-tops for correction. When exits
+        // are not specified, the cliff-tops are removed.
+        if (hex.containsTerrain(Terrains.CLIFF_TOP) 
+                && hex.getTerrain(Terrains.CLIFF_TOP).hasExitsSpecified()) {
+            origCliffTopExits = hex.getTerrain(Terrains.CLIFF_TOP).getExits();
+        }
+
+        for (int i = 0; i < 6; i++) {
+            IHex other = getHexInDir(x, y, i);
+            if (other == null) {
+                continue;
+            }
+
+//            int levelDiff = hex.getLevel() - other.getLevel();
+            int levelDiff = hex.floor() - other.floor();
+            int levelDiffToWaterSurface = hex.floor() - other.getLevel();
+            boolean inWater = hex.containsTerrain(Terrains.WATER);
+            boolean towardsWater = other.containsTerrain(Terrains.WATER);
+            boolean manualCliffTopExitInThisDir = ((origCliffTopExits & (1 << i)) != 0);
+            boolean cliffTopExitInThisDir = false;
+
+            if ( ((levelDiff == 1) || (levelDiff == 2))  
+                    && manualCliffTopExitInThisDir ) {
+                correctedCliffTopExits += (1 << i);
+                cliffTopExitInThisDir = true;
+            }
+
+            // Should there be an incline top?
+            if ( ((levelDiff == 1) || (levelDiff == 2))  
+                    && !cliffTopExitInThisDir 
+                    && !inWater
+                    && !towardsWater) {
+                inclineTopExits += (1 << i);
+            }
+            
+            if (towardsWater
+                    && !inWater
+                    && !cliffTopExitInThisDir 
+                    && ((levelDiffToWaterSurface == 1) || levelDiffToWaterSurface == 2)) {
+                inclineTopExits += (1 << i);
+            }
+
+            // Should there be a high level cliff top?
+            if (levelDiff > 2 
+                    && !inWater
+                    && (!towardsWater || levelDiffToWaterSurface > 2)) {
+                highInclineTopExits += (1 << i);
+            }
+            
+            // Should there be an incline bottom or a cliff bottom?
+            // This needs to check for a cliff-top in the other hex and
+            // in the opposite direction
+            if ((levelDiff == -1) || (levelDiff == -2)) {
+                if (other.hasCliffTopTowards(hex)) {
+                    cliffBotExits += (1 << i);
+                } else if (!inWater) {
+                    inclineBotExits += (1 << i);
+                }
+            }
+
+            // Should there be a high level cliff bottom?
+            if (levelDiff < -2 && !inWater) {
+                highInclineBotExits += (1 << i);
+            }
+        }
+        addOrRemoveAutoTerrain(hex, Terrains.CLIFF_TOP, correctedCliffTopExits);
+        addOrRemoveAutoTerrain(hex, Terrains.CLIFF_BOTTOM, cliffBotExits);
+        if (GUIPreferences.getInstance().getHexInclines()) {
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_TOP, inclineTopExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_BOTTOM, inclineBotExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
+            addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_BOTTOM, highInclineBotExits);
+        } else {
+            hex.removeTerrain(Terrains.INCLINE_TOP);
+            hex.removeTerrain(Terrains.INCLINE_BOTTOM);
+            hex.removeTerrain(Terrains.INCLINE_HIGH_TOP);
+            hex.removeTerrain(Terrains.INCLINE_HIGH_BOTTOM);
+        }
+    }
+
+    /** 
+     * Adds automatically handled terrain such as inclines when the given
+     * exits value is not 0, otherwise removes it.
+     */
+    private void addOrRemoveAutoTerrain(IHex hex, int terrainType, int exits) {
+        if (exits > 0) {
+            hex.addTerrain(Terrains.getTerrainFactory()
+                    .createTerrain(terrainType, 1, true, exits));
+        } else {
+            hex.removeTerrain(terrainType);
+        }
+    }
+    
+    /** Rebuilds automatic terrains for the whole board. */
+    public void initializeAllAutomaticTerrain() {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                initializeAutomaticTerrain(x, y);
+            }
+        }
+        processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
     }
 
     /**
@@ -527,16 +647,12 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public IHex getHex(Coords c) {
-        if (c == null) {
-            return null;
-        }
-        return getHex(c.getX(), c.getY());
+    @Override
+    public @Nullable IHex getHex(final @Nullable Coords c) {
+        return (c == null) ? null : getHex(c.getX(), c.getY());
     }
 
     /**
@@ -603,7 +719,7 @@ public class Board implements Serializable, IBoard {
             if (currHex.hasExitableTerrain()) {
                 for (int dir = 0; dir < 6; dir++) {
                     if (currHex.containsExit(dir)) {
-                        needsUpdate.add(new Coords(Coords.xInDir(x, y, dir), Coords.yInDir(x, y, dir)));
+                        needsUpdate.add(currCoord.translated(dir));
                     }
                 }
             }
@@ -646,9 +762,7 @@ public class Board implements Serializable, IBoard {
     public static boolean boardIsSize(final File filepath, final BoardDimensions size) {
         int boardx = 0;
         int boardy = 0;
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(filepath));
+        try (Reader r = new BufferedReader(new FileReader(filepath))) {
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -664,7 +778,6 @@ public class Board implements Serializable, IBoard {
                     break;
                 }
             }
-            r.close();
         } catch (IOException ex) {
             return false;
         }
@@ -683,9 +796,7 @@ public class Board implements Serializable, IBoard {
     public static BoardDimensions getSize(final File filepath) {
         int boardx = 0;
         int boardy = 0;
-        try {
-            // make inpustream for board
-            Reader r = new BufferedReader(new FileReader(filepath));
+        try (Reader r = new BufferedReader(new FileReader(filepath))) {
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -701,11 +812,26 @@ public class Board implements Serializable, IBoard {
                     break;
                 }
             }
-            r.close();
         } catch (IOException ex) {
             return null;
         }
         return new BoardDimensions(boardx, boardy);
+    }
+    
+    public static boolean isValid(String board) {
+        Board tempBoard = new Board(16, 17);
+        if (!board.endsWith(".board")) {
+            board += ".board";
+        }
+
+        StringBuffer errBuff = new StringBuffer();
+        try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), board).getFile())) {
+            tempBoard.load(is, errBuff, false);
+        } catch (IOException ex) {
+            return false;
+        }
+        
+        return tempBoard.isValid();
     }
 
     /**
@@ -806,16 +932,10 @@ public class Board implements Serializable, IBoard {
      */
     @Override
     public void load(final File filepath) {
-        // load a board
-        try {
-            java.io.InputStream is = new FileInputStream(filepath);
-            // tell the board to load!
+        try (InputStream is = new FileInputStream(filepath)) {
             load(is);
-            // okay, done!
-            is.close();
-        } catch (java.io.IOException ex) {
-            System.err.println("error opening file to load board!");
-            System.err.println(ex);
+        } catch (IOException ex) {
+            MegaMek.getLogger().error("IO Error opening file to load board! " + ex);
         }
     }
 
@@ -829,16 +949,14 @@ public class Board implements Serializable, IBoard {
     public void load(InputStream is, StringBuffer errBuff, boolean continueLoadOnError) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
+        int index = 0;
         resetStoredElevation();
-        try {
-            Reader r = new BufferedReader(new InputStreamReader(is));
+        try (Reader r = new BufferedReader(new InputStreamReader(is))) {
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
             st.wordChars('_', '_');
-            int x_pos = 1;
-            int y_pos = 1;
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
                 if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("size")) {
                     // read rest of line
@@ -877,13 +995,9 @@ public class Board implements Serializable, IBoard {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval + "" : st.sval;
                     }
                     int elevation = Integer.parseInt(args[1]);
-                    int newIndex = indexFor(args[0], nw, y_pos);
-                    nd[newIndex] = new Hex(elevation, args[2], args[3], new Coords(x_pos - 1, y_pos - 1));
-                    x_pos++;
-                    if (x_pos > nw) {
-                        y_pos++;
-                        x_pos = 1;
-                    }
+                    // The coordinates in the .board file are ignored!
+                    nd[index] = new Hex(elevation, args[2], args[3], new Coords(index % nw, index / nw));
+                    index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
                     st.nextToken();
                     File bgFile = new MegaMekFile(Configuration.boardBackgroundsDir(),
@@ -891,8 +1005,7 @@ public class Board implements Serializable, IBoard {
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
                     } else {
-                        System.err.println("Board specified background image, " + "but path couldn't be found! Path: "
-                                + bgFile.getPath());
+                        MegaMek.getLogger().error("Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
@@ -928,8 +1041,7 @@ public class Board implements Serializable, IBoard {
                 }
             }
         } catch (IOException ex) {
-            System.err.println("i/o error reading board");
-            System.err.println(ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
 
         // fill nulls with blank hexes
@@ -943,10 +1055,10 @@ public class Board implements Serializable, IBoard {
         if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            System.err.println("Error reading board, data invalid.");
+            MegaMek.getLogger().error("Invalid board data!");
             newData(nw, nh, nd, errBuff);
         } else if (errBuff == null){
-            System.err.println("Error reading board, data invalid.");
+            MegaMek.getLogger().error("Invalid board data!");
         }
 
     }
@@ -1010,23 +1122,11 @@ public class Board implements Serializable, IBoard {
         return true;
     }
 
-    private int indexFor(String hexNum, int width, int row) {
-        int substringDiff = 2;
-        if (row > 99) {
-            substringDiff = Integer.toString(width).length();
-        }
-        int x = Integer.parseInt(hexNum.substring(0, hexNum.length() - substringDiff)) - 1;
-        int y = Integer.parseInt(hexNum.substring(hexNum.length() - substringDiff)) - 1;
-        return (y * width) + x;
-    }
-
     /**
      * Writes data for the board, as text to the OutputStream
      */
     public void save(OutputStream os) {
-        try {
-            Writer w = new OutputStreamWriter(os);
-            // write
+        try (Writer w = new OutputStreamWriter(os)) {
             w.write("size " + width + " " + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
@@ -1036,6 +1136,7 @@ public class Board implements Serializable, IBoard {
                 boolean firstTerrain = true;
 
                 StringBuffer hexBuff = new StringBuffer("hex ");
+                // The coordinates in the .board file are ignored when loading the board!
                 hexBuff.append(new Coords(i % width, i / width).getBoardNum());
                 hexBuff.append(" ");
                 hexBuff.append(hex.getLevel());
@@ -1043,6 +1144,10 @@ public class Board implements Serializable, IBoard {
                 int terrainTypes[] = hex.getTerrainTypes();
                 for (int j = 0; j < terrainTypes.length; j++) {
                     int terrType = terrainTypes[j];
+                    // do not save internally handled terrains
+                    if (Terrains.AUTOMATIC.contains(terrType)) {
+                        continue;
+                    }
                     ITerrain terrain = hex.getTerrain(terrType);
                     if (terrain != null) {
                         if (!firstTerrain) {
@@ -1073,8 +1178,7 @@ public class Board implements Serializable, IBoard {
             // make sure it's written
             w.flush();
         } catch (IOException ex) {
-            System.err.println("i/o error writing board");
-            System.err.println(ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
     }
 
@@ -1087,8 +1191,7 @@ public class Board implements Serializable, IBoard {
             oos.writeObject(this);
             oos.flush();
         } catch (IOException ex) {
-            System.err.println("i/o error writing board");
-            System.err.println(ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
     }
 
@@ -1433,9 +1536,7 @@ public class Board implements Serializable, IBoard {
 
             // Handle garbage input.
             if (bldg == null) {
-                System.err.print("Could not find a match for ");
-                System.err.print(other);
-                System.err.println(" to update.");
+                MegaMek.getLogger().error("Could not find a match for " + other + " to update.");
                 continue;
             }
             Enumeration<Coords> coordsEnum = bldg.getCoords();
@@ -1845,5 +1946,39 @@ public class Board implements Serializable, IBoard {
         } else {
             annotations.put(c, a);
         }
+    }
+
+    /** 
+     * Sets a tileset theme for all hexes of the board. 
+     * Passing null as newTheme resets the theme to the 
+     * theme specified in the board file. 
+     */ 
+    public void setTheme(String newTheme) {
+        boolean reset = newTheme == null;
+        
+        for (int c = 0; c < width * height; c++) {
+            if (reset) {
+                data[c].resetTheme();
+            } else {
+                data[c].setTheme(newTheme);
+            }
+        }
+        processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
+    }
+    
+    public boolean isOnBoardEdge(Coords c) {
+        return (c.getX() == 0) 
+                || (c.getY() == 0)
+                || (c.getX() == (width - 1)) 
+                || (c.getY() == (height - 1));
+    }
+    
+    public static Board createEmptyBoard(int width, int height) {
+        IHex[] hexes = new IHex[width * height];
+        for (int i = 0; i < width * height; i++) {
+            hexes[i] = new Hex();
+        }
+        Board result = new Board(width, height, hexes);
+        return result;
     }
 }

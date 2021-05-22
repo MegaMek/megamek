@@ -12,14 +12,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common.loaders;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
@@ -28,6 +23,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class BLKFile {
 
@@ -49,6 +45,8 @@ public class BLKFile {
     public static final int EXTERNAL = 13;
     
     private static final String COMSTAR_BAY = "c*";
+
+    static final String BLK_EXTRA_SEATS = "extra_seats";
     
     /**
      * If a vehicular grenade launcher does not have a facing provided, assign a default facing.
@@ -61,6 +59,79 @@ public class BLKFile {
      */
     protected int defaultVGLFacing(int location, boolean rear) {
         return rear ? 3 : 0;
+    }
+
+    public int defaultAeroVGLFacing(int location, boolean rearFacing) {
+        switch (location) {
+            case Aero.LOC_LWING:
+                return rearFacing ? 4 : 5;
+            case Aero.LOC_RWING:
+                return rearFacing ? 2 : 1;
+            case Aero.LOC_AFT:
+                return 4;
+            case Aero.LOC_NOSE:
+            default:
+                return 0;
+        }
+    }
+
+    /** Legacy support for Drone Carrier Control System capacity using additional equipment */
+    int legacyDCCSCapacity = 0;
+    /** Legacy support for MASH capacity using additional equipment */
+    int mashOperatingTheaters = 0;
+
+    /**
+     * Legacy support for variable sized equipment that expands capacity by using an
+     * additional MiscType.
+     *
+     * @param lookup The lookup name
+     */
+    boolean checkLegacyExtraEquipment(String lookup) {
+        switch (lookup) {
+            case "MASH Operation Theater":
+                mashOperatingTheaters++;
+                return true;
+            case "ISDroneExtra":
+            case "CLDroneExtra":
+                legacyDCCSCapacity++;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Legacy support for variable equipment that had a separate EquipmentType entry for each possible
+     * size
+     *
+     * @param eqName The equipment lookup name
+     * @return       The size of the equipment
+     */
+    static double getLegacyVariableSize(String eqName) {
+        if (eqName.startsWith("Cargo")
+                || eqName.startsWith("Liquid Storage")
+                || eqName.startsWith("Communications Equipment")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
+                    eqName.indexOf(" ton")));
+        }
+        if (eqName.startsWith("CommsGear")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf(":") + 1));
+        }
+        if (eqName.startsWith("Mission Equipment Storage")) {
+            int pos = eqName.indexOf("(");
+            if (pos > 0) {
+                return Double.parseDouble(eqName.substring(pos + 1,
+                        eqName.indexOf("kg")).trim());
+            } else {
+                // If the internal name does not include a size, it's the original 20 kg version.
+                return 0.02;
+            }
+        }
+        if (eqName.startsWith("Ladder")) {
+            return Double.parseDouble(eqName.substring(eqName.indexOf("(") + 1,
+                    eqName.indexOf("m)")));
+        }
+        return 1.0;
     }
 
     protected void loadEquipment(Entity t, String sName, int nLoc)
@@ -81,18 +152,27 @@ public class BLKFile {
         if (saEquip[0] != null) {
             for (String s : saEquip) {
                 String equipName = s.trim();
+                boolean isOmniMounted = false;
                 boolean isTurreted = false;
                 boolean isPintleTurreted = false;
-                if (equipName.toUpperCase().endsWith("(ST)")) {
-                    isTurreted = true;
-                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
+                }
+                if (equipName.toUpperCase().endsWith(":OMNI")) {
+                    isOmniMounted = true;
+                    equipName = equipName.substring(0, equipName.length() - 5).trim();
                 }
                 if (equipName.toUpperCase().endsWith("(PT)")) {
                     isPintleTurreted = true;
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
-                boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
-                equipName = equipName.replace(":OMNI", "");
+                if (equipName.toUpperCase().endsWith("(ST)")) {
+                    isTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
 
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
@@ -121,6 +201,14 @@ public class BLKFile {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
+                }
+
+                // The stealth armor mount is added when the armor type is set
+                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                    continue;
+                }
 
                 if (etype != null) {
                     try {
@@ -136,11 +224,45 @@ public class BLKFile {
                                 mount.setFacing(facing);
                             }
                         }
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            mount.setSize(size);
+                        } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
+                                && size > 1) {
+                            // The ammo bin is created by Entity#addEquipment but the size has not
+                            // been set yet, so if the unit carries multiple clips the number of
+                            // shots needs to be adjusted.
+                            mount.setSize(size);
+                            assert(mount.getLinked() != null);
+                            mount.getLinked().setOriginalShots((int) size
+                                * ((InfantryWeapon) mount.getType()).getShots());
+                            mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
                 } else if (!equipName.equals("")) {
                     t.addFailedEquipment(equipName);
+                }
+            }
+        }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : t.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
                 }
             }
         }
@@ -203,31 +325,31 @@ public class BLKFile {
         }
         
         if (dataFile.exists("manufacturer")) {
-        	e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
+            e.getFluff().setManufacturer(dataFile.getDataAsString("manufacturer")[0]);
         }
 
         if (dataFile.exists("primaryFactory")) {
-        	e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
+            e.getFluff().setPrimaryFactory(dataFile.getDataAsString("primaryFactory")[0]);
         }
         
         if (dataFile.exists("systemManufacturers")) {
-        	for (String line : dataFile.getDataAsString("systemManufacturers")) {
-        		String[] fields = line.split(":");
-        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
-        		if ((null != comp) && (fields.length > 1)) {
-        			e.getFluff().setSystemManufacturer(comp, fields[1]);
-        		}
-        	}
+            for (String line : dataFile.getDataAsString("systemManufacturers")) {
+                String[] fields = line.split(":");
+                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemManufacturer(comp, fields[1]);
+                }
+            }
         }
 
         if (dataFile.exists("systemModels")) {
-        	for (String line : dataFile.getDataAsString("systemModels")) {
-        		String[] fields = line.split(":");
-        		EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
-        		if ((null != comp) && (fields.length > 1)) {
-        			e.getFluff().setSystemModel(comp, fields[1]);
-        		}
-        	}
+            for (String line : dataFile.getDataAsString("systemModels")) {
+                String[] fields = line.split(":");
+                EntityFluff.System comp = EntityFluff.System.parse(fields[0]);
+                if ((null != comp) && (fields.length > 1)) {
+                    e.getFluff().setSystemModel(comp, fields[1]);
+                }
+            }
         }
 
         if (dataFile.exists("imagepath")) {
@@ -470,7 +592,7 @@ public class BLKFile {
         }
         blk.writeBlockData("transporters", transporter_array);
 
-        if (!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
+        if (!t.isConventionalInfantry()) {
             if (t instanceof Aero){
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -651,7 +773,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            if (!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
+            if (!(t.isConventionalInfantry() && (i == Infantry.LOC_INFANTRY))) {
                 blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
             }
         }
@@ -695,12 +817,12 @@ public class BLKFile {
         
         List<String> list = t.getFluff().createSystemManufacturersList();
         if (!list.isEmpty()) {
-        	blk.writeBlockData("systemManufacturers", list);
+            blk.writeBlockData("systemManufacturers", list);
         }
 
         list = t.getFluff().createSystemModelsList();
         if (!list.isEmpty()) {
-        	blk.writeBlockData("systemModels", list);
+            blk.writeBlockData("systemModels", list);
         }
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
@@ -772,11 +894,11 @@ public class BLKFile {
             
             EquipmentType et = infantry.getArmorKit();
             if (et != null) {
-            	blk.writeBlockData("armorKit", et.getInternalName());
+                blk.writeBlockData("armorKit", et.getInternalName());
             }
-            if (infantry.getDamageDivisor() != 1) {
+            if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
-                        Double.toString(infantry.getDamageDivisor()));
+                        Double.toString(infantry.getArmorDamageDivisor()));
             }
             if (infantry.isArmorEncumbering()) {
                 blk.writeBlockData("encumberingarmor", "true");
@@ -801,14 +923,14 @@ public class BLKFile {
             }
             ArrayList<String> augmentations = new ArrayList<>();
             for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
-            		e.hasMoreElements();) {
-            	final IOption o = e.nextElement();
-            	if (o.booleanValue()) {
-            		augmentations.add(o.getName());
-            	}
+                    e.hasMoreElements();) {
+                final IOption o = e.nextElement();
+                if (o.booleanValue()) {
+                    augmentations.add(o.getName());
+                }
             }
             if (augmentations.size() > 0) {
-            	blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
+                blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());
@@ -852,6 +974,9 @@ public class BLKFile {
             }
             if (!t.isSupportVehicle() && t.isTrailer()) {
                 blk.writeBlockData("trailer", 1);
+            }
+            if (tank.getExtraCrewSeats() > 0) {
+                blk.writeBlockData(BLK_EXTRA_SEATS, tank.getExtraCrewSeats());
             }
         }
         
@@ -950,6 +1075,9 @@ public class BLKFile {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof Protomech && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";
+        } else if (m.getType().isVariableSize()
+                || (m.getEntity().isSupportVehicle() && (m.getType() instanceof InfantryWeapon))) {
+            name += ":SIZE:" + m.getSize();
         }
         return name;
     }
@@ -967,10 +1095,14 @@ public class BLKFile {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
-            	boolean isPod = transporter.endsWith(":omni");
-            	transporter = transporter.replace(":omni", "");
+                boolean isPod = transporter.endsWith(":omni");
+                transporter = transporter.replace(":omni", "");
+                boolean hasARTS = transporter.startsWith("arts");
+                if (hasARTS) {
+                    transporter = transporter.substring(4);
+                }
 
-            	// TroopSpace:
+                // TroopSpace:
                 if (transporter.startsWith("troopspace:")) {
                     // Everything after the ':' should be the space's size.
                     double fsize = Double.parseDouble(transporter.substring(11));
@@ -998,11 +1130,11 @@ public class BLKFile {
                 } else if (transporter.startsWith("asfbay:")) {
                     String numbers = transporter.substring(7);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                    e.addTransporter(new ASFBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS), isPod);
                 } else if (transporter.startsWith("smallcraftbay:")) {
                     String numbers = transporter.substring(14);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
+                    e.addTransporter(new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS), isPod);
                 } else if (transporter.startsWith("mechbay:")) {
                     String numbers = transporter.substring(8);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
@@ -1043,15 +1175,18 @@ public class BLKFile {
                 } else if (transporter.startsWith("navalrepairpressurized:")) {
                     String numbers = transporter.substring("navalrepairpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), true), isPod);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
+                            pbi.getFacing(), true, hasARTS), isPod);
                 } else if (transporter.startsWith("navalrepairunpressurized:")) {
                     String numbers = transporter.substring("navalrepairunpressurized:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing(), false), isPod);
+                    e.addTransporter(new NavalRepairFacility(pbi.getSize(), pbi.getDoors(),
+                            pbi.getBayNumber(), pbi.getFacing(), false, hasARTS), isPod);
                 } else if (transporter.startsWith("reinforcedrepairfacility:")) {
                     String numbers = transporter.substring("reinforcedrepairfacility:".length());
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getFacing()), isPod);
+                    e.addTransporter(new ReinforcedRepairFacility(pbi.getSize(), pbi.getDoors(),
+                            pbi.getBayNumber(), pbi.getFacing()), isPod);
                 } else if (transporter.startsWith("crewquarters:")) {
                     String numbers = transporter.substring(13);
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);

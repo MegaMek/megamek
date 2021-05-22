@@ -33,9 +33,9 @@ import megamek.common.MechWarrior;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.TagInfo;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
@@ -167,8 +167,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // Infantry squads are also hard to hit -- including for other infantry,
         // it seems (the rule is "all attacks"). However, this only applies to
         // proper squads deployed as such.
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)
-            && ((Infantry) target).isSquad()) {
+        if (target.isConventionalInfantry() && ((Infantry) target).isSquad()) {
             toHit.addModifier(1, "infantry squad target");
         }
 
@@ -191,6 +190,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
+        }
+        
+        if ((ae instanceof TripodMech) && ae.getCrew().hasDedicatedPilot()) {
+            toHit.addModifier(-1, "attacker is tripod with dedicated pilot");
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three
@@ -270,6 +273,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.append(te.getStealthModifier(RangeType.RANGE_MINIMUM, ae));
             }
         }
+        
         if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }

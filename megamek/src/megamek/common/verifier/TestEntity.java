@@ -19,6 +19,7 @@
 
 package megamek.common.verifier;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -254,7 +255,12 @@ public abstract class TestEntity implements TestEntityOption {
         if (kg) {
             weight *= 1000;
         }
-        return String.format("%3.1f%s", weight, (kg ? " kg" : ""));
+        if (weight < 0.5) {
+            // For small equipment show as many decimal places as needed.
+            return DecimalFormat.getInstance().format(weight);
+        } else {
+            return String.format("%3.1f%s", weight, (kg ? " kg" : ""));
+        }
     }
 
     /**
@@ -279,18 +285,19 @@ public abstract class TestEntity implements TestEntityOption {
      * @param etype         The entity type bit mask
      * @param industrial    For mechs; industrial mechs can only use certain armor types
      *                      unless allowing experimental rules
+     * @param primitive     Whether the unit is primitive/retrotech
      * @param movementMode  For vehicles; hardened armor is illegal for some movement modes 
      * @param techManager   The constraints used to filter the armor types
      * @return A list of all armors that meet the tech constraints
      */
-    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial,
+    public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, boolean primitive,
             EntityMovementMode movementMode, ITechManager techManager) {
         if ((etype & Entity.ETYPE_BATTLEARMOR) != 0) {
             return TestBattleArmor.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_SMALL_CRAFT) != 0) {
             return TestSmallCraft.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_JUMPSHIP) != 0) {
-            return TestAdvancedAerospace.legalArmorsFor(techManager);
+            return TestAdvancedAerospace.legalArmorsFor(techManager, primitive);
         } else if ((etype & (Entity.ETYPE_FIXED_WING_SUPPORT | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_SUPPORT_VTOL)) != 0) {
             return TestSupportVehicle.legalArmorsFor(techManager);
         } else if ((etype & Entity.ETYPE_AERO) != 0) {
@@ -326,22 +333,29 @@ public abstract class TestEntity implements TestEntityOption {
      * Additional crew requirements for vehicles and aerospace vessels for certain types of
      * equipment.
      */
-    public static int equipmentCrewRequirements(EquipmentType eq) {
-        if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_MASH)
-                    || eq.hasFlag(MiscType.F_MASH_EXTRA)
-                    || eq.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+    public static int equipmentCrewRequirements(Mounted mounted) {
+        if (mounted.getType() instanceof MiscType) {
+            if (mounted.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
                 return 5;
             }
-            if (eq.hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (mounted.getType().hasFlag(MiscType.F_MASH)) {
+                return 5 * (int) mounted.getSize();
+            }
+            if (mounted.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 return 3;
             }
-            if (eq.hasFlag(MiscType.F_COMMUNICATIONS)) {
-                return (int) eq.getTonnage(null);
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                return (int) mounted.getTonnage();
             }
-            if (eq.hasFlag(MiscType.F_MOBILE_HPG)) {
+            if (mounted.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
                 // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
-                return eq.hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
+                return mounted.getType().hasFlag(MiscType.F_TANK_EQUIPMENT)? 1 : 10;
+            }
+            if (mounted.getType().hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+                return 6;
+            }
+            if (mounted.getType().hasFlag(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+                return 12;
             }
         }
         return 0;
@@ -567,7 +581,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            buff.append(StringUtil.makeLength(mt.getName(), 20));
+            buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
                             getPrintSize() - 5 - 20)).append(
@@ -695,7 +709,7 @@ public abstract class TestEntity implements TestEntityOption {
         return buff.toString();
     }
 
-    public int calcMiscCrits(MiscType mt) {
+    public int calcMiscCrits(MiscType mt, double size) {
         if (mt.hasFlag(MiscType.F_CLUB)
                 && (mt.hasSubType(MiscType.S_HATCHET)
                         || mt.hasSubType(MiscType.S_SWORD)
@@ -804,7 +818,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             return 10;
         }
-        return mt.getCriticals(getEntity());
+        return mt.getCriticals(getEntity(), size);
     }
 
     /**
@@ -815,8 +829,19 @@ public abstract class TestEntity implements TestEntityOption {
      * @return The number of heat sinks required in construction
      */
     protected int heatNeutralHSRequirement() {
+        return calcHeatNeutralHSRequirement(getEntity());
+    }
+
+    /**
+     * Computes heat sink requirement for heat-neutral units (vehicles, conventional fighters,
+     * protomechs). This is a total of energy weapons that don't use ammo and some other miscellaneous
+     * equipment.
+     *
+     * @return The number of heat sinks required in construction
+     */
+    public static int calcHeatNeutralHSRequirement(Entity entity) {
         int heat = 0;
-        for (Mounted m : getEntity().getWeaponList()) {
+        for (Mounted m : entity.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
                     || wt.hasFlag(WeaponType.F_PPC)
@@ -841,16 +866,16 @@ public abstract class TestEntity implements TestEntityOption {
                 heat += 5;
             }
         }
-        for (Mounted m : getEntity().getMisc()) {
+        for (Mounted m : entity.getMisc()) {
             // Spot welders are treated as energy weapons on units that don't have a fusion or fission engine
             if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
-                && getEntity().hasEngine() && (getEntity().getEngine().isFusion()
-                                                || getEntity().getEngine().getEngineType() == Engine.FISSION)) {
+                && entity.hasEngine() && (entity.getEngine().isFusion()
+                                                || (entity.getEngine().getEngineType() == Engine.FISSION))) {
                 continue;
             }
             heat += m.getType().getHeat();
         }
-        if (getEntity().hasStealth()) {
+        if (entity.hasStealth()) {
             heat += 10;
         }
         return heat;

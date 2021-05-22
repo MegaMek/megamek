@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -33,17 +34,20 @@ public class SmallCraft extends Aero {
         { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
     private int nBattleArmor = 0;
-    private int nMarines = 0;
     private int nOtherPassenger = 0;
+    
+    // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
+    private Map<String,Integer> nOtherCrew = new HashMap<>();
+    private Map<String,Integer> passengers = new HashMap<>();
     
     // escape pods and lifeboats
     private int escapePods = 0;
     private int lifeBoats = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
     
     private static final TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
@@ -84,6 +88,7 @@ public class SmallCraft extends Aero {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
     }
     
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
@@ -96,6 +101,7 @@ public class SmallCraft extends Aero {
         nGunners = gunners;
     }
     
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -104,6 +110,7 @@ public class SmallCraft extends Aero {
         nBattleArmor = ba;
     }
 
+    @Override
     public void setNMarines(int marines) {
         nMarines = marines;
     }
@@ -146,6 +153,72 @@ public class SmallCraft extends Aero {
         return nOtherPassenger;
     }
     
+    /**
+     * Returns a mapping of how many crewmembers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getNOtherCrew() {
+        return nOtherCrew;
+    }
+    
+    /**
+     * Convenience method to return all crew from other craft aboard from the above Map
+     * @return
+     */
+    public int getTotalOtherCrew() {
+        int toReturn = 0;
+        for (String name : getNOtherCrew().keySet()) {
+            toReturn += getNOtherCrew().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of crewmembers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these crew came from
+     * @param n The number to add
+     */
+    public void addNOtherCrew(String id, int n) {
+       if (nOtherCrew.containsKey(id)) {
+           nOtherCrew.replace(id, nOtherCrew.get(id) + n);
+       } else {
+           nOtherCrew.put(id, n);
+       }
+    }
+    
+    /**
+     * Returns a mapping of how many passengers from other units this unit is carrying
+     * and what ship they're from by external ID 
+     */
+    public Map<String,Integer> getPassengers() {
+        return passengers;
+    }
+    
+    /**
+     * Convenience method to return all passengers aboard from the above Map
+     * @return
+     */
+    public int getTotalPassengers() {
+        int toReturn = 0;
+        for (String name : getPassengers().keySet()) {
+            toReturn += getPassengers().get(name);
+        }
+        return toReturn;
+    }
+    
+    /**
+     * Adds a number of passengers from another ship keyed by that ship's external ID
+     * @param id The external ID of the ship these passengers came from
+     * @param n The number to add
+     */
+    public void addPassengers(String id, int n) {
+       if (passengers.containsKey(id)) {
+           passengers.replace(id, passengers.get(id) + n);
+       } else {
+           passengers.put(id, n);
+       }
+    }
+    
     public void setEscapePods(int n) {
         escapePods = n;
     }
@@ -153,6 +226,23 @@ public class SmallCraft extends Aero {
     @Override
     public int getEscapePods() {
         return escapePods;
+    }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
     }
 
     public void setLifeBoats(int n) {
@@ -162,6 +252,23 @@ public class SmallCraft extends Aero {
     @Override
     public int getLifeBoats() {
         return lifeBoats;
+    }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
     }
     
     @Override
@@ -604,13 +711,15 @@ public class SmallCraft extends Aero {
 
     @Override
     public double getArmorWeight() {
-        // first I need to subtract SI bonus from total armor
-        int armorPoints = getTotalOArmor();
+        // first I need to subtract SI bonus from total armor. We need to retain the fractional part
+        //  for primitive craft because the primitive multiplier is applied to both before rounding.
+        double armorPoints = getTotalOArmor();
         int freeSI = getSI() * (locations() - 1); // no armor in hull location
         if (isPrimitive()) {
-            freeSI = (int) (freeSI * 0.66);
+            armorPoints -= freeSI * 0.66;
+        } else {
+            armorPoints -= freeSI;
         }
-        armorPoints -= freeSI;
         double armorPerTon = SmallCraft.armorPointsPerTon(getWeight(), isSpheroid(),
                 getArmorType(0), TechConstants.isClan(getArmorTechLevel(0)));
 

@@ -40,6 +40,7 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * A utility class for retrieving unit information in a formatted string.
@@ -365,7 +366,7 @@ public class MechView {
                         .append(a.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
             if (a.getHeatSinkHits() > 0) {
-                hsString.append(" ").append(warningStart()).append(a.getHeatSinkHits())
+                hsString.append(warningStart()).append(" (").append(a.getHeatSinkHits())
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(Messages.getString("MechView.HeatSinks"), hsString.toString())); //$NON-NLS-1$
@@ -887,7 +888,7 @@ public class MechView {
                 continue;
             }
             // Ignore bay ammo bins for unused munition types
-            if (mounted.getAmmoCapacity() == 0) {
+            if (mounted.getSize() == 0) {
                 continue;
             }
             
@@ -909,6 +910,30 @@ public class MechView {
                 ammoTable.addRowWithBgColor("yellow", row);
             } else {
                 ammoTable.addRow(row);
+            }
+        }
+        if (entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            for (Mounted mounted : entity.getWeaponList()) {
+                String[] row = {mounted.getName(),
+                        entity.getLocationAbbr(mounted.getLocation()),
+                        String.valueOf((int) mounted.getSize() * ((InfantryWeapon) mounted.getType()).getShots()),
+                        ""};
+                if (entity.isOmni()) {
+                    row[3] = mounted.isOmniPodMounted() ?
+                            Messages.getString("MechView.Pod") : //$NON-NLS-1$
+                            Messages.getString("MechView.Fixed"); //$NON-NLS-1$
+                }
+                int shotsLeft = 0;
+                for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
+                    shotsLeft += current.getUsableShotsLeft();
+                }
+                if (mounted.isDestroyed()) {
+                    ammoTable.addRowWithBgColor("red", row);
+                } else if (shotsLeft < 1) {
+                    ammoTable.addRowWithBgColor("yellow", row);
+                } else {
+                    ammoTable.addRow(row);
+                }
             }
         }
         return ammoTable;
@@ -941,24 +966,15 @@ public class MechView {
             String name = mounted.getName();
             if ((((mounted.getLocation() == Entity.LOC_NONE)
                         // Mechs can have zero-slot equipment in LOC_NONE that needs to be shown.
-                        && (!isMech || mounted.getType().getCriticals(entity) > 0)))
+                        && (!isMech || mounted.getCriticals() > 0)))
                     || name.contains("Jump Jet")
                     || (name.contains("CASE")
                         && !name.contains("II")
                         && entity.isClan())
                     || (name.contains("Heat Sink") 
                         && !name.contains("Radical"))
-                    || name.contains("Endo Steel")
-                    || name.contains("Ferro-Fibrous")
-                    || name.contains("Reactive")
-                    || name.contains("BA Stealth")
-                    || name.contains("BA Fire Resistant")
-                    || name.contains("BA Mimetic")
-                    || name.contains("BA Standard")
-                    || name.contains("BA Advanced")
-                    || name.contains("Reflective")
-                    || name.contains("Ferro-Lamellor")
-                    || name.contains("Standard")) {
+                    || EquipmentType.isArmorType(mounted.getType())
+                    || EquipmentType.isStructureType(mounted.getType())) {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }
@@ -1022,6 +1038,10 @@ public class MechView {
                 crewTable.addRow(Messages.getString("MechView.BAMarines"), String.valueOf(a.getNBattleArmor())); // $NON-NLS-1$
             }
             retVal.add(crewTable);
+        }
+        if (isVehicle && ((Tank) entity).getExtraCrewSeats() > 0) {
+            retVal.add(new SingleLine(Messages.getString("MechView.ExtraCrewSeats")
+                    + ((Tank) entity).getExtraCrewSeats()));
         }
         return retVal;
     }

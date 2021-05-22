@@ -3,32 +3,32 @@ Marauder IIC
 5
 
 Config:Biped
-TechBase:Clan
-Era:3070
-Source:Jihad
-Rules Level:2
+techbase:Clan
+era:3070
+source:Jihad
+rules level:2
 
-Mass:85
-Engine:340 Fusion (Clan) Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:85
+engine:340 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:19 Double
-Walk MP:4
-Jump MP:0
+heat sinks:19 Double
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:23
-RA Armor:23
-LT Armor:22
-RT Armor:22
-CT Armor:34
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Ferro-Fibrous(Clan)
+LA armor:23
+RA armor:23
+LT armor:22
+RT armor:22
+CT armor:34
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:5
 ER PPC, Left Arm
@@ -44,9 +44,9 @@ Lower Arm Actuator
 CLERPPC
 CLERPPC
 CLAPGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -60,9 +60,9 @@ CLDoubleHeatSink
 CLERPPC
 CLERPPC
 CLAPGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -72,11 +72,11 @@ CLHAG20
 CLHAG20
 CLHAG20
 CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
 CLAPGaussRifle Ammo
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
@@ -86,10 +86,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -150,3 +150,4 @@ CLDoubleHeatSink
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\3085 Marauder IIC .jpg
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Demon Tank
 2729
 </year>
 
+<originalBuildYear>
+2729
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -49,6 +56,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -61,7 +69,6 @@ Wheeled
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 </Rear Equipment>
 
 <Turret Equipment>
@@ -76,4 +83,3 @@ TRO 3050 - Star League
 <tonnage>
 60.0
 </tonnage>
-

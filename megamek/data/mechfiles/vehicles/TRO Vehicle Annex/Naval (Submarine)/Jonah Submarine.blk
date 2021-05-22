@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -85,6 +85,18 @@ RemoteSensorDispenser
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<notes>
+Armor exceeds point limit for 2.0-ton Submarine support vehicle: 5 points > 4.
+</notes>
+
 <source>
 TRO VAr - Star League
 </source>
@@ -96,4 +108,3 @@ TRO VAr - Star League
 <fuel>
 0.0
 </fuel>
-

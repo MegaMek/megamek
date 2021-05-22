@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Karnov UR Transport
 </Model>
 
 <year>
-3081
+3080
 </year>
 
 <originalBuildYear>
-3081
+3080
 </originalBuildYear>
 
 <type>
@@ -68,11 +68,10 @@ cargobay:14.0:1:1
 <Body Equipment>
 IS Vehicular Stealth
 IS Vehicular Stealth
+IS Vehicular Stealth
 ISVTOLJetBooster
 ISAngelECMSuite
-ISSponsonTurret
-Machine Gun(ST)
-Machine Gun(ST)
+SponsonTurret
 IS Machine Gun Ammo - Half
 </Body Equipment>
 
@@ -80,9 +79,11 @@ IS Machine Gun Ammo - Half
 </Front Equipment>
 
 <Right Equipment>
+Machine Gun(ST)
 </Right Equipment>
 
 <Left Equipment>
+Machine Gun(ST)
 </Left Equipment>
 
 <Rear Equipment>
@@ -98,4 +99,3 @@ XTRO Most Wanted - Jihad
 <tonnage>
 45.0
 </tonnage>
-

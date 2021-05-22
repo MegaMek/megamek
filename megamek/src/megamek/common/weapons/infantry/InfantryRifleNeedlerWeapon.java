@@ -35,13 +35,16 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
 		name = "Needler Rifle";
 		setInternalName(name);
 		addLookupName("InfantryNeedlerRifle");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 75;
 		bv = 0.21;
 		tonnage = .001;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
 		infantryDamage = 0.23;
 		infantryRange = 0;
+		ammoWeight = 0.0002;
+		ammoCost = 2;
+		shots = 20;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

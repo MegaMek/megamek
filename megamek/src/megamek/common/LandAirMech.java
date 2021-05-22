@@ -717,7 +717,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Small/torso-mounted cockpit penalty?
         if ((getCockpitType() == Mech.COCKPIT_SMALL)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             roll.addModifier(1, "Small Cockpit");
         }
 
@@ -1031,7 +1032,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     @Override
     public boolean canFall(boolean gyroLegDamage) {
-        return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
+        return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE() && super.canFall(gyroLegDamage);
     }
     
     private static final TechAdvancement[] TA_LAM = {
@@ -1972,7 +1973,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return LOC_RT;
         } else if (emptyBaysInLoc(LOC_LT) >= cost) {
             return LOC_LT;
-        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
+        } else if (emptyBaysInLoc(LOC_CT) >= cost) {
             return LOC_CT;
         } else {
             return LOC_NONE;
@@ -2002,7 +2003,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (type >= 0) {
                 slots = BombType.getBombCost(type);
             } else {
-                slots = mounted.getType().getCriticals(this);
+                slots = mounted.getCriticals();
             }
         }
         for (int i = 0; i < crits[loc].length; i++) {

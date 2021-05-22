@@ -44,7 +44,6 @@ import megamek.client.ui.Messages;
 
 import megamek.common.ASFBay;
 import megamek.common.Aero;
-import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.CriticalSlot;
 import megamek.common.DockingCollar;
@@ -159,7 +158,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weighty = 0.0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         panMain.add(panArmor, gridBagConstraints);
-        if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))) {
+        if (!entity.isConventionalInfantry()) {
             gridBagConstraints.gridy = 1;
             gridBagConstraints.weighty = 1.0;
             panMain.add(new JScrollPane(panSystem), gridBagConstraints);
@@ -174,11 +173,9 @@ public class UnitEditorDialog extends JDialog {
         getContentPane().add(panMain, BorderLayout.CENTER);
 
         JButton butOK = new JButton(Messages.getString("Okay"));
-        butOK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOkayActionPerformed(evt);
-                setVisible(false);
-            }
+        butOK.addActionListener(evt -> {
+            btnOkayActionPerformed(evt);
+            setVisible(false);
         });
         JButton butCancel = new JButton(Messages.getString("Cancel"));
         butCancel.addActionListener(new java.awt.event.ActionListener() {
@@ -201,8 +198,7 @@ public class UnitEditorDialog extends JDialog {
         if (entity instanceof Aero) {
             initAeroArmorPanel();
             return;
-        } else if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        } else if (entity.isConventionalInfantry()) {
             initInfantryArmorPanel();
             return;
         }
@@ -360,7 +356,7 @@ public class UnitEditorDialog extends JDialog {
                     || !m.getType().isHittable() || m.isWeaponGroup()) {
                 continue;
             }
-            int nCrits = m.getType().getCriticals(entity);
+            int nCrits = m.getCriticals();
             int eqNum = entity.getEquipmentNum(m);
             int hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                     eqNum, m.getLocation());
@@ -692,8 +688,8 @@ public class UnitEditorDialog extends JDialog {
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.motiveDamage")
                 + "</b><br></html>"), gridBagConstraints);
         int motiveHits = 0;
-        // FIXME: motive hits arent working quite right
-        if (tank.isImmobile()) {
+        // Do not check the crew when determining if we're immobile here
+        if (tank.isImmobile(false)) {
             motiveHits = 4;
         } else if (tank.hasHeavyMovementDamage()) {
             motiveHits = 3;
@@ -1212,9 +1208,8 @@ public class UnitEditorDialog extends JDialog {
                 } else {
                     entity.setInternal(internal, i);
                 }
-                if ((entity instanceof Infantry)
-                        && !(entity instanceof BattleArmor)) {
-                    ((Infantry) entity).applyDamage();
+                if (entity.isConventionalInfantry()) {
+                    entity.applyDamage();
                 }
             }
             if (null != spnArmor[i]) {
@@ -1363,6 +1358,9 @@ public class UnitEditorDialog extends JDialog {
             if (null != motiveCrit) {
                 tank.resetMovementDamage();
                 tank.addMovementDamage(motiveCrit.getHits());
+
+                // Apply movement damage immediately in case we've decided to immobilize the tank
+                tank.applyMovementDamage();
             }
             if ((tank instanceof VTOL) && (null != flightStabilizerCrit)) {
                 if (flightStabilizerCrit.getHits() > 0) {

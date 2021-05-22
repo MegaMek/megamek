@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -27,21 +26,17 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Configuration;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.DirectoryItems;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Set of elements to represent pilot information in MechDisplay
  */
-
 public class PilotMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***"; //$NON-NLS-1$
@@ -59,20 +54,11 @@ public class PilotMapSet implements DisplayMapSet {
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 
-    // keep track of portrait images
-    private DirectoryItems portraits;
-
     /**
      * This constructor have to be called only from addNotify() method
      */
     public PilotMapSet(JComponent c) {
         comp = c;
-        try {
-            portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance());
-        } catch (Exception e) {
-            portraits = null;
-        }
         setAreas();
         setBackGround();
     }
@@ -195,9 +181,7 @@ public class PilotMapSet implements DisplayMapSet {
             pilotL.setVisible(true);
             pilotR.setVisible(true);
 
-            if (null != getPortrait(en.getCrew(), slot)) {
-                portraitArea.setIdleImage(getPortrait(en.getCrew(), slot));
-            }
+            portraitArea.setIdleImage(en.getCrew().getPortrait(slot).getImage());
 
             if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));
@@ -342,51 +326,6 @@ public class PilotMapSet implements DisplayMapSet {
         PMSimpleLabel l = new PMSimpleLabel(s, fm, Color.white);
         l.moveTo(x, y);
         return l;
-    }
-
-    /**
-     * Get the portrait for the given pilot.
-     *
-     * @return The <code>Image</code> of the pilot's portrait. This value will
-     *         be <code>null</code> if no portrait was selected or if there was
-     *         an error loading it.
-     */
-    public Image getPortrait(Crew pilot, int slot) {
-
-        String category = pilot.getPortraitCategory(slot);
-        String file = pilot.getPortraitFileName(slot);
-
-        // Return a null if the player has selected no portrait file.
-        if ((null == category) || (null == file) || (null == portraits)) {
-            return null;
-        }
-
-        if (Crew.PORTRAIT_NONE.equals(file)) {
-            file = "default.gif"; //$NON-NLS-1$
-        }
-
-        if (Crew.ROOT_PORTRAIT.equals(category)) {
-            category = "";
-        }
-
-        // Try to get the player's portrait file.
-        Image portrait = null;
-        try {
-            portrait = (Image) portraits.getItem(category, file);
-            if (null == portrait) {
-                // the image could not be found so switch to default one
-                category = "";
-                file = "default.gif";
-                portrait = (Image) portraits.getItem(category, file);
-            }
-            // make sure no images are longer than 72 pixels
-            if (null != portrait) {
-                portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
-            }
-        } catch (Exception err) {
-            err.printStackTrace();
-        }
-        return portrait;
     }
 
 }

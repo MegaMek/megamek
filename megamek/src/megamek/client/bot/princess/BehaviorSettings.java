@@ -722,8 +722,6 @@ public class BehaviorSettings {
      */
     Element toXml(final Document doc,
                   final boolean includeTargets) {
-        final String METHOD_NAME = "toXml(Document, boolean)";
-        
         try {
             final Element behavior = doc.createElement("behavior");
 
@@ -792,7 +790,7 @@ public class BehaviorSettings {
 
             return behavior;
         } catch (final Exception e) {
-            getLogger().error(getClass(), METHOD_NAME, e);
+            getLogger().error(e);
             
         }
 

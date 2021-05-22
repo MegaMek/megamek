@@ -43,11 +43,11 @@ public abstract class LRTWeapon extends MissileWeapon {
     }
     
     @Override
-    public double getTonnage(Entity entity, int location) {
+    public double getTonnage(Entity entity, int location, double size) {
         if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
             return getRackSize() * 0.2;
         } else {
-            return super.getTonnage(entity, location);
+            return super.getTonnage(entity, location, size);
         }
     }
     /*

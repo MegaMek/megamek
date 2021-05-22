@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Swallow Attack WIGE
 3092
 </year>
 
+<originalBuildYear>
+3092
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 WiGE
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 7
@@ -56,7 +63,6 @@ WiGE
 </armor>
 
 <Body Equipment>
-ISFlotationHull
 ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
@@ -83,4 +89,3 @@ TRO 3145 Lyran Commonwealth - Early Republic
 <tonnage>
 45.0
 </tonnage>
-

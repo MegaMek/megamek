@@ -2,61 +2,89 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Glaive Medium Tank
 </Name>
+
 <Model>
 (Standard)
 </Model>
-<Tonnage>
-45
-</Tonnage>
+
+<year>
+3066
+</year>
+
+<originalBuildYear>
+3066
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 27
 17
 17
 12
 15
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Body Equipment>
+
+<Front Equipment>
+LRM 15
+ISArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISERLargeLaser
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
 </Turret Equipment>
-<Front Equipment>
-ISLRM15
-ISArtemisIV
-ISMG Ammo (100)
-</Front Equipment>
-<Body Equipment>
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3066
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+45.0
+</tonnage>

@@ -41,7 +41,7 @@ public enum EntityMovementMode {
     INF_UMU ("umu", "scuba", "motorized scuba"),
     AEROSPACE, // this might be a synonym for AERODYNE.
     AIRSHIP ("airship"),
-    STATION_KEEPING ("station", "station_keeping", "satellite"),
+    STATION_KEEPING ("station", "station_keeping", "satellite", "station-keeping"),
     RAIL ("rail"),
     MAGLEV ("maglev");
 

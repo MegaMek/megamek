@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,15 +21,15 @@ Planetlifter Air Transport
 </Model>
 
 <year>
-2623
+2676
 </year>
 
 <originalBuildYear>
-2623
+2676
 </originalBuildYear>
 
 <type>
-IS Level 1
+IS Level 2
 </type>
 
 <motion_type>
@@ -103,4 +103,3 @@ TRO 3039 - Star League
 <tonnage>
 50.0
 </tonnage>
-

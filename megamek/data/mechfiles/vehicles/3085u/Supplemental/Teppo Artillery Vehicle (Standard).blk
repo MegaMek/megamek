@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,6 +23,10 @@ Teppo Artillery Vehicle
 <year>
 3086
 </year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
 
 <type>
 IS Level 4
@@ -63,6 +67,12 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
 ISGuardianECMSuite
 ISCASE
 ISAMS Ammo
@@ -79,12 +89,6 @@ ISArrowIV
 ISArrowIV
 ISAntiMissileSystem
 Light Machine Gun
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
 </Front Equipment>
 
 <Front Right Equipment>
@@ -117,4 +121,3 @@ TRO 3085S - Early Republic
 <tonnage>
 150.0
 </tonnage>
-

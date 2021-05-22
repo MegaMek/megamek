@@ -36,10 +36,13 @@ public class InfantryPistolAutoPistolWeapon extends InfantryWeapon {
 		setInternalName(name);
 		addLookupName("InfantryAutopistol");
 		addLookupName("Auto Pistol");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 50;
 		bv = 0.19;
 		tonnage = .0005;
+		ammoWeight = 0.00014;
+		ammoCost = 2;
+		shots = 10;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.21;
 		infantryRange = 0;

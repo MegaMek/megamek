@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Pollux ADA Heavy Tank
 </Model>
 
 <year>
-2700
+2710
 </year>
 
 <type>
@@ -91,4 +91,3 @@ Hist LOT II
 <tonnage>
 75.0
 </tonnage>
-

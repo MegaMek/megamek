@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Mk VI
 2384
 </year>
 
+<originalBuildYear>
+2384
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -31,6 +35,9 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -40,10 +47,6 @@ Tracked
 1
 </engine_type>
 
-<fuel>
-2
-</fuel>
-
 <armor>
 17
 16
@@ -52,26 +55,16 @@ Tracked
 16
 </armor>
 
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
-
-
 <Body Equipment>
 Armored Chassis
 Advanced Fire Control
 IS Ammo AC/5
 IS Ammo LRM-10
 IS Ammo SRM-4
-IS Machine Gun Ammo - Half
+IS Ammo MG - Full
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -90,6 +83,22 @@ SRM 4
 Machine Gun
 </Turret Equipment>
 
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
 <source>
 XTRO Primitives I - Age of War
 </source>
@@ -98,3 +107,10 @@ XTRO Primitives I - Age of War
 75.0
 </tonnage>
 
+<fuel>
+2.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.text.NumberFormat;
@@ -19,8 +18,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -38,9 +37,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * compiler catches my "= for ==" errors.
  */
 public class BattleArmor extends Infantry {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4594311535026187825L;
     /*
      * Infantry have no critical slot limitations. IS squads usually have 4 men,
@@ -97,8 +93,8 @@ public class BattleArmor extends Infantry {
         "BA Manipulator Adaptation [Mine Clearance Equipment]", "BA Manipulators [Battle Claw]",
         "BA Manipulator Adaptation [Magnetic Battle Claw]", "BA Manipulator Adaptation [Vibro-Claw]",
         "BA Manipulators [Heavy Battle Claw]", "BA Manipulator Adaptation [Heavy Magnetic Battle Claw]",
-        "BA Manipulator Adaptation [Heavy Vibro-Claw", "BA Manipulators [Salvage Arm]", "BA Manipulators [Cargo Lifter]",
-    "BA Manipulators [Industrial Drill]" };
+        "BA Manipulator Adaptation [Heavy Vibro-Claw]", "BA Manipulators [Salvage Arm]", "BA Manipulators [Cargo Lifter]",
+        "BA Manipulators [Industrial Drill]" };
 
     public static final int CHASSIS_TYPE_BIPED = 0;
     public static final int CHASSIS_TYPE_QUAD = 1;
@@ -370,7 +366,7 @@ public class BattleArmor extends Infantry {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD), //light
-            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2864, 3052, 3052)
                 .setClanAdvancement(2840, 2868, 2875)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CGS)
                 .setProductionFactions(F_CWF, F_FS, F_LC, F_CS).setTechRating(RATING_E)
@@ -1339,27 +1335,24 @@ public class BattleArmor extends Infantry {
         }
 
         // Stealthy units alreay have their to-hit mods defined.
-        if (isStealthy
-                && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))
-                && !hasMyomerBooster()) {
+        if (isStealthy && !ae.isConventionalInfantry() && !hasMyomerBooster()) {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                result = new TargetRoll(shortStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll(mediumStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME:
-            case RangeType.RANGE_LOS:
-                result = new TargetRoll(longStealthMod, stealthName);
-                break;
-            case RangeType.RANGE_OUT:
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown range constant: " + range);
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    result = new TargetRoll(shortStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    result = new TargetRoll(mediumStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
+                    result = new TargetRoll(longStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -1440,8 +1433,7 @@ public class BattleArmor extends Infantry {
         for (Mounted mounted : getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
                     && ((MiscType) mounted.getType()).hasFlag(MiscType.F_BA_MANIPULATOR)) {
-                long itemCost = (long) mounted.getType().getCost(this,
-                        mounted.isArmored(), mounted.getLocation());
+                long itemCost = (long) mounted.getCost();
                 manipulatorCost += itemCost;
             }
 
@@ -2131,18 +2123,14 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isCrippled() {
-        double activeTroopPercent = (double) getNumberActiverTroopers()
-                / getSquadSize();
+        double activeTroopPercent = (double) getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: only "
-                        + NumberFormat.getPercentInstance().format(
-                                activeTroopPercent) + " troops remaining.");
-            }
+            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+                    + NumberFormat.getPercentInstance().format(activeTroopPercent) + " troops remaining.");
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override

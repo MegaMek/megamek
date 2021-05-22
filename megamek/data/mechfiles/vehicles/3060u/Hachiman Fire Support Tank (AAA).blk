@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ Hachiman Fire Support Tank
 </year>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
@@ -91,4 +91,3 @@ Jihad
 <tonnage>
 50.0
 </tonnage>
-

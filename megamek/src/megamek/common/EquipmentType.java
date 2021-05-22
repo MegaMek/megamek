@@ -24,9 +24,11 @@ import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
@@ -240,12 +242,20 @@ public class EquipmentType implements ITechnology {
         return name;
     }
 
+    public String getName(double size) {
+        return getName();
+    }
+
     public String getDesc() {
         String result = EquipmentMessages.getString("EquipmentType." + name);
         if (result != null) {
             return result;
         }
         return name;
+    }
+
+    public String getDesc(double size) {
+        return getDesc();
     }
 
     public String getInternalName() {
@@ -318,7 +328,19 @@ public class EquipmentType implements ITechnology {
      * @return       The weight of the equipment in tons
      */
     public double getTonnage(@Nullable Entity entity) {
-        return getTonnage(entity, Entity.LOC_NONE);
+        return getTonnage(entity, Entity.LOC_NONE, 1.0);
+    }
+
+    /**
+     * Calculates the weight of the equipment. If {@code entity} is {@code null}, equipment without
+     * a fixed weight will return {@link EquipmentType#TONNAGE_VARIABLE}.
+     *
+     * @param entity The unit the equipment is mounted on
+     * @param size   The size of variable-sized equipment
+     * @return       The weight of the equipment in tons
+     */
+    public double getTonnage(@Nullable Entity entity, double size) {
+        return getTonnage(entity, Entity.LOC_NONE, size);
     }
 
     /**
@@ -327,9 +349,10 @@ public class EquipmentType implements ITechnology {
      *
      * @param entity   The unit the equipment is mounted on
      * @param location The mount location
+     * @param size     The size (for variable-sized equipment)
      * @return         The weight of the equipment in tons
      */
-    public double getTonnage(Entity entity, int location) {
+    public double getTonnage(Entity entity, int location, double size) {
         return tonnage;
     }
 
@@ -341,14 +364,15 @@ public class EquipmentType implements ITechnology {
      *
      * @param entity        The unit the equipment is mounted on
      * @param location      The mount location
+     * @param size          The size (for variable-sized equipment)
      * @param defaultMethod The rounding method to use for any variable weight equipment. Any equipment
      *                      that is normally rounded to either the half ton or kg based on unit type
      *                      will have this method applied instead.
      * @return              The weight of the equipment in tons
      */
-    public double getTonnage(Entity entity, int location, RoundWeight defaultMethod) {
+    public double getTonnage(Entity entity, int location, double size, RoundWeight defaultMethod) {
         // Default implementation does not deal with variable-weight equipment.
-        return getTonnage(entity, location);
+        return getTonnage(entity, location, size);
     }
 
     void setTonnage(double tonnage) {
@@ -356,6 +380,10 @@ public class EquipmentType implements ITechnology {
     }
 
     public int getCriticals(Entity entity) {
+        return getCriticals(entity, 1.0);
+    }
+
+    public int getCriticals(Entity entity, double size) {
         return criticals;
     }
 
@@ -415,15 +443,6 @@ public class EquipmentType implements ITechnology {
             Mounted ammo = mounted.getLinked();
             if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
                     || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
-                return false;
-            }
-
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getAmmoType() == AmmoType.T_LRM)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
                 return false;
             }
         }
@@ -709,6 +728,7 @@ public class EquipmentType implements ITechnology {
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
             BombType.initializeTypes();
+            SmallWeaponAmmoType.initializeTypes();
             for (EquipmentType et : allTypes) {
                 if (et.getTechAdvancement().getStaticTechLevel() == null) {
                     et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()
@@ -759,6 +779,18 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is armor. This works
+     * by comparing the results of {@link #getName()} to the armor names array and returning
+     * {@code true} if there is a match.
+     *
+     * @param et The equipment instance to test
+     * @return   Whether the equipment is an armor type
+     */
+    public static boolean isArmorType(EquipmentType et) {
+        return getArmorType(et) != T_ARMOR_UNKNOWN;
+    }
     
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
@@ -785,6 +817,18 @@ public class EquipmentType implements ITechnology {
         }
         return clan ? "Clan " + structureNames[structureType] : "IS "
                 + structureNames[structureType];
+    }
+
+    /**
+     * Convenience method to test whether an EquipmentType instance is mech structure. This works
+     * by comparing the results of {@link #getName()} to the structure names array and returning
+     * {@code true} if there is a match.
+     *
+     * @param et The equipment instance to test
+     * @return   Whether the equipment is a structure type
+     */
+    public static boolean isStructureType(EquipmentType et) {
+        return getStructureType(et) != T_STRUCTURE_UNKNOWN;
     }
 
     public static String getBaArmorTypeName(int armorType) {
@@ -1022,9 +1066,18 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * For variable-sized equipment this assumes a size of 1.0.
+     *
      * @return The C-Bill cost of the piece of equipment.
      */
     public double getCost(Entity entity, boolean armored, int loc) {
+        return getCost(entity, armored, loc, 1.0);
+    }
+
+    /**
+     * @return The C-Bill cost of the piece of equipment.
+     */
+    public double getCost(Entity entity, boolean armored, int loc, double size) {
         return cost;
     }
 
@@ -1055,6 +1108,28 @@ public class EquipmentType implements ITechnology {
 
     public boolean isVariableCriticals() {
         return criticals == CRITICALS_VARIABLE;
+    }
+
+    /**
+     * @return Whether the item's size is variable independent of external factors
+     */
+    public boolean isVariableSize() {
+        return false;
+    }
+
+    /**
+     * @return The increment between sizes of variable-sized equipment
+     */
+    public Double variableStepSize() {
+        return 1.0;
+    }
+
+    /**
+     * @return The maximum size of variable-sized equipment. Items with no maximum
+     *         return {@code null}.
+     */
+    public @Nullable Double variableMaxSize() {
+        return null;
     }
 
     public TechAdvancement getTechAdvancement() {
@@ -1271,42 +1346,60 @@ public class EquipmentType implements ITechnology {
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
+            w.write("Type,Name,Tech Base,Rules,Tech Rating,Static Tech Level,Introduction Date,Prototype Date,Production Date,Common Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV,Alias");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                     .hasMoreElements();) {
                 EquipmentType type = e.nextElement();
                 if (type instanceof AmmoType) {
-                    w.write("A,");
+                    w.write("A");
                 } else if (type instanceof WeaponType) {
-                    w.write("W,");
+                    w.write("W");
                 } else {
-                    w.write("M,");
-                }
-                w.write(type.getName());
-                w.write(",");
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year
-                            + "-"
-                            + TechConstants.getTechName(type.getTechLevel(year)));
-                }
-                w.write(",");
-                for (int year : type.getTechLevels().keySet()) {
-                    w.write(year
-                            + "-"
-                            + TechConstants.getLevelName(type
-                                    .getTechLevel(year)));
+                    w.write("M");
                 }
 
-                w.write(",");
+                w.write(",\"");
+                w.write(type.getName());
+
+                // Gather the unique tech levels for this equipment ...
+                List<Integer> levels = type.getTechLevels().keySet().stream()
+                        .map(year -> type.getTechLevel(year))
+                        .sorted()   // ordered for ease of use
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // ... and use them to output the tech names ...
+                w.write("\",\"");
+                w.write(levels.stream()
+                        .map(TechConstants::getTechName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                // ... and associated rules levels.
+                w.write("\",\"");
+                w.write(levels.stream()
+                        .map(TechConstants::getLevelName)
+                        .distinct()
+                        .collect(Collectors.joining("/")));
+
+                w.write("\",\"");
                 w.write(type.getFullRatingName());
-                w.write(",");
-                w.write(getEquipDateAsString(type.getIntroductionDate()));
-                w.write(",");
-                w.write(getEquipDateAsString(type.getExtinctionDate()));
-                w.write(",");
-                w.write(getEquipDateAsString(type.getReintroductionDate()));
-                w.write(",");
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getStaticTechLevel().toString());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getIntroductionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getPrototypeDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getProductionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getCommonDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getExtinctionDateName());
+                w.write("\",\"");
+                w.write(type.getTechAdvancement().getReintroductionDateName());
+                w.write("\",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
                 } else {
@@ -1322,7 +1415,7 @@ public class EquipmentType implements ITechnology {
                 if (type.cost == EquipmentType.COST_VARIABLE) {
                     w.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false, -1)));
+                    w.write(Double.toString(type.getCost(null, false, -1, 1.0)));
                 }
                 w.write(",");
                 if (type.bv == EquipmentType.BV_VARIABLE) {
@@ -1334,7 +1427,7 @@ public class EquipmentType implements ITechnology {
                 for (Enumeration<String> names = type.getNames(); names
                         .hasMoreElements();) {
                     String name = names.nextElement();
-                    w.write(name + ",");
+                    w.write("\"" + name + "\",");
                 }
                 w.newLine();
             }
@@ -1360,11 +1453,14 @@ public class EquipmentType implements ITechnology {
     }
 
     public String getShortName() {
-        if (shortName.trim().length() < 1) {
+        if (shortName.isBlank()) {
             return getName();
         }
-
         return shortName;
+    }
+
+    public String getShortName(double size) {
+        return getShortName();
     }
 
     @Override

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
 
@@ -56,7 +56,25 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
             fullMovePaths.addAll(super.GenerateAllPaths(altitudePath.clone()));
         }
         
-        return fullMovePaths;
+        List<MovePath> fullMovePathsWithTurns = new ArrayList<>();
+        
+        for (MovePath movePath : fullMovePaths) {
+            fullMovePathsWithTurns.add(movePath);
+            
+            MoveStep lastStep = movePath.getLastStep();
+            
+            if ((lastStep != null) && lastStep.canAeroTurn(game)) {
+                MovePath left = movePath.clone();
+                left.addStep(MoveStepType.TURN_LEFT);
+                fullMovePathsWithTurns.add(left);
+                
+                MovePath right = movePath.clone();
+                right.addStep(MoveStepType.TURN_RIGHT);
+                fullMovePathsWithTurns.add(right);
+            }
+        }
+        
+        return fullMovePathsWithTurns;
     }
     
     /**

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.BombType;
@@ -166,7 +166,7 @@ public class BombAttackHandler extends WeaponHandler {
                     r = new Report(3150);
                     r.newlines = 0;
                     r.subject = subjectId;
-                    r.add(typeModifiedToHit.getValue());
+                    r.add(typeModifiedToHit);
                     vPhaseReport.addElement(r);
                 }
 
@@ -254,7 +254,7 @@ public class BombAttackHandler extends WeaponHandler {
                 } else if (type == BombType.B_THUNDER) {
                     server.deliverThunderMinefield(drop, ae.getOwner().getId(),
                             20, ae.getId());
-                    ArrayList<Coords> hexes = Compute.coordsAtRange(drop, 1);
+                    List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {
                         server.deliverThunderMinefield(c,
                                 ae.getOwner().getId(), 20, ae.getId());

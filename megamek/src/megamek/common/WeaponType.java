@@ -18,7 +18,7 @@ import java.math.BigInteger;
 
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.SpaceBombAttack;
@@ -722,15 +722,15 @@ public class WeaponType extends EquipmentType {
 
     // get stuff for AT2
     // separate attack value by range. It will make weapon bays easier
-    public double shortAV = 0.0;
-    public double medAV = 0;
-    public double longAV = 0;
-    public double extAV = 0;
-    public int missileArmor = 0;
-    public int maxRange = RANGE_SHORT;
-    public boolean capital = false;
-    public boolean subCapital = false;
-    public int atClass = CLASS_NONE;
+    protected double shortAV = 0.0;
+    protected double medAV = 0;
+    protected double longAV = 0;
+    protected double extAV = 0;
+    protected int missileArmor = 0;
+    protected int maxRange = RANGE_SHORT;
+    protected boolean capital = false;
+    protected boolean subCapital = false;
+    protected int atClass = CLASS_NONE;
 
     public void setDamage(int inD) {
         damage = inD;
@@ -956,7 +956,7 @@ public class WeaponType extends EquipmentType {
     }
 
     public int[] getATRanges() {
-        if (capital) {
+        if (isCapital()) {
             return new int[]
                 { Integer.MIN_VALUE, 12, 24, 40, 50 };
         }
@@ -1014,7 +1014,7 @@ public class WeaponType extends EquipmentType {
     // Probably not the best place for this
     public EquipmentType getBayType() {
         // return the correct weapons bay for the given type of weapon
-        switch (atClass) {
+        switch (getAtClass()) {
             case (CLASS_LASER):
                 return EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
             case (CLASS_AMS):
@@ -1050,14 +1050,14 @@ public class WeaponType extends EquipmentType {
             case (CLASS_ROCKET_LAUNCHER):
                 return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
             case (CLASS_CAPITAL_LASER):
-                if (subCapital) {
+                if (isSubCapital()) {
                     return EquipmentType.get(EquipmentTypeLookup.SCL_BAY);
                 }
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
             case (CLASS_CAPITAL_PPC):
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
             case (CLASS_CAPITAL_AC):
-                if (subCapital) {
+                if (isSubCapital()) {
                     return EquipmentType.get(EquipmentTypeLookup.SCC_BAY);
                 }
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
@@ -1066,7 +1066,7 @@ public class WeaponType extends EquipmentType {
             case (CLASS_CAPITAL_MD):
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
             case (CLASS_CAPITAL_MISSILE):
-                if (subCapital) {
+                if (isSubCapital()) {
                     return EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY);
                 }
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
@@ -2026,11 +2026,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAGaussRifleGrandMauler());
 //        EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
 //        EquipmentType.addType(new ISBAMortarHeavy());
-//        EquipmentType.addType(new ISBARecoillessRifleHeavy());
         EquipmentType.addType(new ISBAGaussRifleKingDavidLight());
 //        EquipmentType.addType(new ISBAMortarLight());
-//        EquipmentType.addType(new ISBARecoillessRifleLight());
-//        EquipmentType.addType(new ISBARecoillessRifleMedium());
         EquipmentType.addType(new ISBAGrenadeLauncherMicro());
 //        EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());
@@ -2254,15 +2251,15 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored, int loc) {
+    public double getCost(Entity entity, boolean isArmored, int loc, double size) {
         if (isArmored) {
             double armoredCost = cost;
-            armoredCost += 150000 * getCriticals(entity);
+            armoredCost += 150000 * getCriticals(entity, size);
 
             return armoredCost;
         }
 
-        return super.getCost(entity, isArmored, loc);
+        return super.getCost(entity, isArmored, loc, size);
     }
 
     public boolean isSplitable() {

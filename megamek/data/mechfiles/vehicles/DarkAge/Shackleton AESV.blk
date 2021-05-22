@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -56,7 +56,7 @@ Wheeled
 
 <Body Equipment>
 Armored Chassis
-Environmental Sealed Chassis
+Environmental Sealing
 ISOffRoadChassis
 ISArmoredMotiveSystem
 Communications Equipment (1 ton)
@@ -103,4 +103,3 @@ Intersteller Players 3 - Early Republic
 <fuel>
 0.0
 </fuel>
-

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,9 +32,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import megamek.common.BipedMech;
 import megamek.common.Entity;
@@ -92,7 +88,7 @@ public class TdbFile implements IMechLoader {
             TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
             
             return tdbFile;
-        } catch (JAXBException | SAXException | ParserConfigurationException e) {
+        } catch (Exception e) {
             throw new EntityLoadingException("   Failure to parse XML ("
                     + e.getLocalizedMessage() + ")", e);
         }
@@ -409,7 +405,7 @@ public class TdbFile implements IMechLoader {
                         }
                         if (bFound) {
                             m.setFoundCrits(m.getFoundCrits() + 1);
-                            if (m.getFoundCrits() >= etype.getCriticals(mech)) {
+                            if (m.getFoundCrits() >= m.getCriticals()) {
                                 vSplitWeapons.remove(m);
                             }
                             // if we're in a new location, set the

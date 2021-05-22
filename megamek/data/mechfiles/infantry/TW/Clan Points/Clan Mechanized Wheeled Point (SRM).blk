@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -40,11 +40,11 @@ Total Warfare - Succession Wars
 </source>
 
 <squad_size>
-4
+5
 </squad_size>
 
 <squadn>
-5
+4
 </squadn>
 
 <secondn>
@@ -62,4 +62,3 @@ SRM Launcher (Hvy, One-Shot)
 <armorKit>
 ClanKit
 </armorKit>
-

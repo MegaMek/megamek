@@ -25,8 +25,10 @@ import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
+import megamek.MegaMek;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.common.enums.Gender;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,7 +48,6 @@ public class MULParser {
 
     public static final String VERSION = "version";
 
-    public static final MMLogger logger = DefaultMmLogger.getInstance();
     /**
      * The names of the various elements recognized by this parser.
      */
@@ -87,6 +88,17 @@ public class MULParser {
     private static final String NC3LINK = "NC3_link";
     private static final String LINK = "link";
     private static final String RFMG = "rfmg";
+    private static final String ESCCRAFT = "EscapeCraft";
+    private static final String ID = "id";
+    private static final String ESCCREW = "EscapedCrew";
+    private static final String ESCPASS = "EscapedPassengers";
+    private static final String NUMBER = "number";
+    private static final String ORIG_PODS = "ONumberOfPods";
+    private static final String ORIG_MEN = "ONumberOfMen";
+    private static final String CONVEYANCE = "Conveyance";
+    private static final String GAME = "Game";
+    private static final String FORCE = "Force";
+    private static final String FORCEATT = "force";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -103,6 +115,7 @@ public class MULParser {
 
     private static final String NAME = "name";
     private static final String SIZE = "size";
+    private static final String CURRENTSIZE = "currentsize";
 
     private static final String EXT_ID = "externalId";
     private static final String PICKUP_ID = "pickUpId";
@@ -151,6 +164,8 @@ public class MULParser {
     private static final String CAPACITY = "capacity";
     private static final String IS_HIT = "isHit";
     private static final String MUNITION = "munition";
+    private static final String STANDARD = "standard";
+    private static final String INFERNO = "inferno";
     private static final String DIRECTION = "direction";
     private static final String INTEGRITY = "integrity";
     private static final String SINK = "sinks";
@@ -168,6 +183,7 @@ public class MULParser {
     private static final String KFBOOM = "kfboom";
     private static final String BAYDOORS = "doors";
     private static final String BAY = "transportBay";
+    private static final String LOADED = "loaded";
     private static final String BAYDAMAGE = "damage";
     private static final String WEAPONS_BAY_INDEX = "weaponsBayIndex";
     private static final String MDAMAGE = "damage";
@@ -508,6 +524,22 @@ public class MULParser {
                     parseBAMEA(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BA_APM)) {
                     parseBAAPM(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCCRAFT)) {
+                    parseEscapeCraft(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCPASS)) {
+                    parseEscapedPassengers(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ESCCREW)) {
+                    parseEscapedCrew(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ORIG_PODS)) {
+                    parseOSI(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ORIG_MEN)) {
+                    parseOMen(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(CONVEYANCE)) {
+                    parseConveyance(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(GAME)) {
+                    parseId(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(FORCE)) {
+                    parseForce(currEle, entity);
                 }
             }
         }
@@ -526,12 +558,15 @@ public class MULParser {
     private Entity getEntity(String chassis, String model){
         Entity newEntity = null;
 
-        //first check for ejected mechwarriors and vee crews
-        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
+        //first check for ejected mechwarriors, vee crews, escape pods and spacecraft crews
+        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME) 
+                || chassis.equals(EjectedCrew.SPACE_EJECT_NAME)) {
             return new EjectedCrew();
         } else if (chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
                     || chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
             return new MechWarrior();
+        } else if (chassis.equals(EscapePods.POD_EJECT_NAME)) {
+            return new EscapePods();
         }
 
         // Did we find required attributes?
@@ -667,9 +702,8 @@ public class MULParser {
         }
 
         // Camo
-        // Must be a null, and not an empty string, if it isn't being used. - Dylan 2014-04-04
-        entity.setCamoCategory(entityTag.getAttribute(CAMO_CATEGORY).equals("") ? null : entityTag.getAttribute(CAMO_CATEGORY));
-        entity.setCamoFileName(entityTag.getAttribute(CAMO_FILENAME).equals("") ? null : entityTag.getAttribute(CAMO_FILENAME));
+        entity.getCamouflage().setCategory(entityTag.getAttribute(CAMO_CATEGORY));
+        entity.getCamouflage().setFilename(entityTag.getAttribute(CAMO_FILENAME));
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);
@@ -679,7 +713,7 @@ public class MULParser {
         entity.setExternalIdAsString(extId);
 
         // external id
-        if(entity instanceof MechWarrior) {
+        if (entity instanceof MechWarrior) {
             String pickUpId = entityTag.getAttribute(PICKUP_ID);
             if ((null == pickUpId) || (pickUpId.length() == 0)) {
                 pickUpId = "-1";
@@ -718,12 +752,11 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
-                inf.setDamageDivisor(Double.parseDouble(armorDiv));
+                inf.setArmorDamageDivisor(Double.parseDouble(armorDiv));
             }
             if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
                 inf.setArmorEncumbering(true);
@@ -749,7 +782,7 @@ public class MULParser {
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if(infSquadNum.length() > 0) {
+            if (infSquadNum.length() > 0) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
@@ -931,6 +964,23 @@ public class MULParser {
                 crew.setSize(crewSize);
             } else if (null != entity) {
                 crew.setSize(Compute.getFullCrewSize(entity));
+                //Reset the currentSize equal to the max size
+                crew.setCurrentSize(Compute.getFullCrewSize(entity));
+            }
+        }
+        
+        if (attributes.containsKey(CURRENTSIZE)) {
+            if (attributes.get(CURRENTSIZE).length() > 0) {
+                int crewCurrentSize = 1;
+                try {
+                    crewCurrentSize = Integer.parseInt(attributes.get(CURRENTSIZE));
+                } catch (NumberFormatException e) {
+                    // Do nothing, this field isn't required
+                }
+                crew.setCurrentSize(crewCurrentSize);
+            } else if (null != entity) {
+                //Reset the currentSize equal to the max size
+                crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
         }
 
@@ -1015,23 +1065,86 @@ public class MULParser {
      * @param attributes A map of attribute values keyed to the attribute names.
      */
     private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
+        final boolean hasGun = attributes.containsKey(GUNNERY) && (attributes.get(GUNNERY).length() > 0);
+        final boolean hasRpgGun = attributes.containsKey(GUNNERYL) && (attributes.get(GUNNERYL).length() > 0) &&
+                attributes.containsKey(GUNNERYM) && (attributes.get(GUNNERYM).length() > 0) &&
+                attributes.containsKey(GUNNERYB) && (attributes.get(GUNNERYB).length() > 0);
+
         // Did we find required attributes?
-        if (!attributes.containsKey(GUNNERY) || (attributes.get(GUNNERY).length() == 0)) {
+        if (!hasGun && !hasRpgGun) {
             warning.append("Could not find gunnery for pilot.\n");
         } else if (!attributes.containsKey(PILOTING) || (attributes.get(PILOTING).length() == 0)) {
             warning.append("Could not find piloting for pilot.\n");
         } else {
             // Try to get a good gunnery value.
             int gunVal = -1;
-            try {
-                gunVal = Integer.parseInt(attributes.get(GUNNERY));
-            } catch (NumberFormatException ignored) {
-                // Handled by the next if test.
+            if (hasGun) {
+                try {
+                    gunVal = Integer.parseInt(attributes.get(GUNNERY));
+                } catch (NumberFormatException ignored) {
+                    // Handled by the next if test.
+                }
+
+                if ((gunVal < 0)
+                        || (gunVal > Crew.MAX_SKILL)) {
+                    warning.append("Found invalid gunnery value: ")
+                            .append(attributes.get(GUNNERY)).append(".\n");
+                    return;
+                }
             }
-            if ((gunVal < 0) || (gunVal > Crew.MAX_SKILL)) {
-                warning.append("Found invalid gunnery value: ")
-                        .append(attributes.get(GUNNERY)).append(".\n");
-                return;
+
+            // get RPG skills
+            int gunneryLVal = -1;
+            int gunneryMVal = -1;
+            int gunneryBVal = -1;
+            if (hasRpgGun) {
+                if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
+                    try {
+                        gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryLVal < 0)
+                            || (gunneryLVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYL)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
+                    try {
+                        gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryMVal < 0)
+                            || (gunneryMVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYM)).append(".\n");
+                        return;
+                    }
+                }
+                if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
+                    try {
+                        gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
+                    } catch (NumberFormatException ignored) {
+                        // Handled by the next if test.
+                    }
+                    if ((gunneryBVal < 0)
+                            || (gunneryBVal > Crew.MAX_SKILL)) {
+                        warning.append("Found invalid piloting value: ")
+                                .append(attributes.get(GUNNERYB)).append(".\n");
+                        return;
+                    }
+                }
+            }
+
+            if (!hasGun) {
+                gunVal = (gunneryLVal + gunneryMVal + gunneryBVal) / 3;
+            } else if (!hasRpgGun) {
+                gunneryLVal = gunVal;
+                gunneryMVal = gunVal;
+                gunneryBVal = gunVal;
             }
 
             // Try to get a good piloting value.
@@ -1054,46 +1167,6 @@ public class MULParser {
                     toughVal = Integer.parseInt(attributes.get(TOUGH));
                 } catch (NumberFormatException ignored) {
                     // Handled by the next if test.
-                }
-            }
-            // get RPG skills
-            int gunneryLVal = gunVal;
-            int gunneryMVal = gunVal;
-            int gunneryBVal = gunVal;
-            if ((attributes.containsKey(GUNNERYL)) && (attributes.get(GUNNERYL).length() > 0)) {
-                try {
-                    gunneryLVal = Integer.parseInt(attributes.get(GUNNERYL));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryLVal < 0) || (gunneryLVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYL)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYM)) && (attributes.get(GUNNERYM).length() > 0)) {
-                try {
-                    gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryMVal < 0) || (gunneryMVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYM)).append(".\n");
-                    return;
-                }
-            }
-            if ((attributes.containsKey(GUNNERYB)) && (attributes.get(GUNNERYB).length() > 0)) {
-                try {
-                    gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
-                } catch (NumberFormatException ignored) {
-                    // Handled by the next if test.
-                }
-                if ((gunneryBVal < 0) || (gunneryBVal > Crew.MAX_SKILL)) {
-                    warning.append("Found invalid piloting value: ")
-                            .append(attributes.get(GUNNERYB)).append(".\n");
-                    return;
                 }
             }
 
@@ -1122,7 +1195,7 @@ public class MULParser {
             if ((attributes.containsKey(NAME)) && (attributes.get(NAME).length() > 0)) {
                 crew.setName(attributes.get(NAME), slot);
             } else {
-                crew.setName(Crew.UNNAMED_FULL_NAME, slot);
+                crew.setName(RandomNameGenerator.UNNAMED_FULL_NAME, slot);
             }
 
             if ((attributes.containsKey(NICK)) && (attributes.get(NICK).length() > 0)) {
@@ -1130,7 +1203,7 @@ public class MULParser {
             }
 
             if ((attributes.containsKey(GENDER)) && (attributes.get(GENDER).length() > 0)){
-                crew.setGender(Integer.parseInt(attributes.get(GENDER)), slot);
+                crew.setGender(Gender.parseFromString(attributes.get(GENDER)), slot);
             }
 
             if ((attributes.containsKey(CAT_PORTRAIT)) && (attributes.get(CAT_PORTRAIT).length() > 0)) {
@@ -1176,8 +1249,7 @@ public class MULParser {
                     }
                     crew.setExtraDataForCrewMember(slot, extraData);
                 } catch (Exception e) {
-                    logger.error(getClass(), "setPilotAttributes",
-                            "Error in loading MUL, issues with extraData elements!");
+                    MegaMek.getLogger().error("Error in loading MUL, issues with extraData elements!");
                 }
             }
         } // End have-required-fields
@@ -1363,6 +1435,8 @@ public class MULParser {
         String destroyed = slotTag.getAttribute(IS_DESTROYED);
         String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
+        String standard = slotTag.getAttribute(STANDARD);
+        String inferno = slotTag.getAttribute(INFERNO);
         String quirks = slotTag.getAttribute(QUIRKS);
         String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
@@ -1684,6 +1758,23 @@ public class MULParser {
                                 .append(" slot tag.\n");
                     }
                 }
+                if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
+                    for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
+                        if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                            if (!inferno.isEmpty()) {
+                                String[] fields = inferno.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        } else {
+                            if (!standard.isEmpty()) {
+                                String[] fields = standard.split(":");
+                                ammo.setShotsLeft(Integer.parseInt(fields[0]));
+                                ammo.setOriginalShots(Integer.parseInt(fields[1]));
+                            }
+                        }
+                    }
+                }
 
             } // End have-equipment
 
@@ -1971,7 +2062,9 @@ public class MULParser {
     				currentbay.setBayDamage(Double.parseDouble(currNode.getTextContent()));
     			} else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
                     currentbay.setCurrentDoors(Integer.parseInt(currNode.getTextContent()));
-    		    }
+    		    } else if (nodeName.equalsIgnoreCase(LOADED)) {
+                    currentbay.troops.add(Integer.parseInt(currNode.getTextContent()));
+                }
     	    }
         }
     } // End parseTransportBay
@@ -2121,6 +2214,163 @@ public class MULParser {
                 continue;
             }
         }
+    }
+    
+    /**
+     * Parse an EscapeCraft tag for the given <code>Entity</code>.
+     *
+     * @param escCraftTag
+     * @param entity
+     */
+    private void parseEscapeCraft(Element escCraftTag, Entity entity){
+        if (!(entity instanceof SmallCraft || entity instanceof Jumpship)) {
+            warning.append("Found an EscapeCraft tag but Entity is not a " +
+                    "Crewed Spacecraft!\n");
+            return;
+        }
+        try {
+            String id = escCraftTag.getAttribute(ID);
+            ((Aero) entity).addEscapeCraft(id);
+        } catch (Exception e) {
+            warning.append("Invalid external entity id in EscapeCraft tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an EscapedPassengers tag for the given <code>Entity</code>.
+     *
+     * @param escPassTag
+     * @param entity
+     */
+    private void parseEscapedPassengers(Element escPassTag, Entity entity){
+        if (!(entity instanceof EjectedCrew || entity instanceof SmallCraft)) {
+            warning.append("Found an EscapedPassengers tag but Entity is not a " +
+                    "Spacecraft Crew or Small Craft!\n");
+            return;
+        }
+        // Deal with any child nodes
+        NodeList nl = escPassTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String id = currEle.getAttribute(ID);
+                String number = currEle.getAttribute(NUMBER);
+                int value = Integer.parseInt(number);
+                if (entity instanceof EjectedCrew) {
+                    ((EjectedCrew) entity).addPassengers(id, value);
+                } else if (entity instanceof SmallCraft) {
+                    ((SmallCraft) entity).addPassengers(id, value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Parse an EscapedCrew tag for the given <code>Entity</code>.
+     *
+     * @param escCrewTag
+     * @param entity
+     */
+    private void parseEscapedCrew(Element escCrewTag, Entity entity){
+        if (!(entity instanceof EjectedCrew || entity instanceof SmallCraft)) {
+            warning.append("Found an EscapedCrew tag but Entity is not a " +
+                    "Spacecraft Crew or Small Craft!\n");
+            return;
+        }
+        // Deal with any child nodes
+        NodeList nl = escCrewTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                Element currEle = (Element)currNode;
+                String id = currEle.getAttribute(ID);
+                String number = currEle.getAttribute(NUMBER);
+                int value = Integer.parseInt(number);
+                if (entity instanceof EjectedCrew) {
+                    ((EjectedCrew) entity).addNOtherCrew(id, value);
+                } else if (entity instanceof SmallCraft) {
+                    ((SmallCraft) entity).addNOtherCrew(id, value);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Parse an original si tag for the given <code>Entity</code>. Used by Escape Pods
+     *
+     * @param OsiTag
+     * @param entity
+     */
+    private void parseOSI(Element OsiTag, Entity entity){
+        String value = OsiTag.getAttribute(NUMBER);
+        try {
+            int newSI = Integer.parseInt(value);
+            ((Aero) entity).set0SI(newSI);
+        } catch (Exception e) {
+            warning.append("Invalid SI value in original structural integrity tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an original men tag for the given <code>Entity</code>. Used by Escaped spacecraft crew
+     *
+     * @param OMenTag
+     * @param entity
+     */
+    private void parseOMen(Element OMenTag, Entity entity){
+        String value = OMenTag.getAttribute(NUMBER);
+        try {
+            int newMen = Integer.parseInt(value);
+            ((Infantry) entity).initializeInternal(newMen, Infantry.LOC_INFANTRY);
+        } catch (Exception e) {
+            warning.append("Invalid internal value in original number of men tag.\n");
+        }
+    }
+    
+    /**
+     * Parse a conveyance tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
+     *
+     * @param conveyanceTag
+     * @param entity
+     */
+    private void parseConveyance(Element conveyanceTag, Entity entity){
+        String value = conveyanceTag.getAttribute(ID);
+        try {
+            int id = Integer.parseInt(value);
+            entity.setTransportId(id);
+        } catch (Exception e) {
+            warning.append("Invalid transport id in conveyance tag.\n");
+        }
+    }
+    
+    /**
+     * Parse an id tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
+     *
+     * @param idTag
+     * @param entity
+     */
+    private void parseId(Element idTag, Entity entity){
+        String value = idTag.getAttribute(ID);
+        //Safety. We don't want to mess with autoassigned game Ids
+        if (entity.getGame() != null) {
+            return;
+        }
+        try {
+            int id = Integer.parseInt(value);
+            entity.setId(id);
+        } catch (Exception e) {
+            warning.append("Invalid id in conveyance tag.\n");
+        }
+    }
+    
+    /**
+     * Parse a force tag for the given <code>Entity</code>. 
+     */
+    private void parseForce(Element forceTag, Entity entity){
+        entity.setForceString(forceTag.getAttribute(FORCEATT));
     }
 
     /**

@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
+
 /**
  * @author Sebastian Brocks
  */
@@ -33,12 +35,15 @@ public class InfantryRifleLaserWeapon extends InfantryWeapon {
 		name = "Laser Rifle";
 		setInternalName(name);
 		addLookupName("InfantryLaserRifle");
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 1250;
 		bv = 1.43;
 		tonnage = .005;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.28;
 		infantryRange = 2;
+		ammoWeight = 0.0003;
+		shots = 6;
 		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2230, 2300, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false)

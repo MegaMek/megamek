@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Pariah (Septicemia)
 Prime
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3072
-Source:TRO 3075
+Source:TRO 3075- Jihad
 Rules Level:2
 
 Mass:55
@@ -147,4 +147,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The backbone of The Society's military forces, the Septicemia was a utilitarian medium-class workhorse.
+
+Devoid of the more experimental technology utilized by the Cephalus and Osteon to allow it to be built in higher volumes, the Septicemia saves weight with an XL Engine, Endo Steel chassis, and nine tons of Ferro-Fibrous armor. While the location of its weaponry in its torsos hampers its ability to carry Battle Armor, this was intentional to try and ensure hand actuators were retained to maximize its physical combat abilities.
+
+capabilities:The primary configuration of the Septicemia is a long-range combatant. Its largest weapon is a HAG 40, though it can only deliver twelve payloads. An ER Large Laser provides effective backup and gives the 'Mech staying power. Both guns are aided by a Targeting Computer..
+
+deployment:Planning their OmniMech forces around a single mass-produced design intended to work in concert with two rarer but cutting-edge units, the Septicemia was built using proven technology with a focus towards mutual support on the battlefield, its every aspect intended to allow it to engage the Clan toumans using methods of warfare they found dezgra. Appearing during the Wars of Reaving when Clan warriors were even more intent on an exceedingly strict adherence of zellbrigen to avoid accusations of Taint, the Septicemia would prove frighteningly effective, earning it the nickname of "Pariah" by the Clan Diamond Shark forces that first faced it on Babylon in 3072.
+
+history:Despite its role in the Wars of Reaving, the Septicemia would see service after the conflict in the toumans of the four surviving Homeworld Clans. Avoiding extinction unlike the Cephalus and Osteon due to the capture of its production plant and lack of integrated Nova Combined Electronic Warfare System, while the other surviving Clans would push for a renaming of the Septicemia to excise its Taint (Void and Codex being popular suggestions), Khan Magnus DelVillar from Clan Stone Lion successfully campaigned against any moves to rename or remodel the design, citing that it would serve as a constant reminder of the dark crucible from which the Clans had emerged. 
+manufacturer:Kerensky Memorial Manufacturing
+primaryfactory:Strana Mechty
+systemmanufacturer:CHASSIS:55T Battle Epsilon-5 Profile Endo-Steel
+systemmanufacturer:ENGINE:275 Type II XL
+systemmanufacturer:ARMOR:Compound SJ8CW Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:GBX Series Integrated II
+systemmanufacturer:TARGETING:Cat’s Eye MD7
 

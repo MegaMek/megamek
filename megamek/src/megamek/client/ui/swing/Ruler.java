@@ -375,6 +375,10 @@ public class Ruler extends JDialog implements BoardViewListener {
             // leave at default value
         }
 
+        if (!client.getGame().getBoard().contains(start) || !client.getGame().getBoard().contains(end)) {
+            return;
+        }
+        
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
         ToHitData thd;
         if (flip) {
@@ -438,7 +442,7 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     public void hexMoused(BoardViewEvent b) {
-        if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+        if ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
                 addPoint(b.getCoords());
             }

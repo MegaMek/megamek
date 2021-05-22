@@ -2,17 +2,16 @@
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BasicStroke;
@@ -29,7 +28,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -46,6 +44,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -56,6 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -67,7 +67,6 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -86,6 +85,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.IGame.Phase;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -98,7 +98,8 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -108,13 +109,6 @@ import megamek.common.util.MegaMekFile;
  * to return from method? -uses break-to-label -uses while-true
  */
 public class MiniMap extends JPanel {
-
-    // these indices match those in Terrains.java, and are therefore sensitive
-    // to any changes there
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6964529682842424060L;
     private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
@@ -132,7 +126,7 @@ public class MiniMap extends JPanel {
     private static final int SCROLL_PANE_WIDTH = 160;
     private static final int SCROLL_PANE_HEIGHT = 200;
 
-    private Image m_mapImage;
+    private BufferedImage m_mapImage;
     private IBoardView m_bview;
     private IGame m_game;
     private IBoard m_board;
@@ -149,16 +143,17 @@ public class MiniMap extends JPanel {
     // unit representation
     private Vector<int[]> roadHexIndexes = new Vector<int[]>();
     private int zoom = GUIPreferences.getInstance().getMinimapZoom();
-    private int[] fontSize = {6, 8, 10, 12, 14, 16};
-    private int[] hexSide = {3, 5, 6, 8, 10, 12};
-    private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
-    private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
-    private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
-    private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
-    private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
-    private int[] unitSizes = {5, 6, 7, 8, 9, 10};
-    private int[] stratZoom = {8, 9, 11, 12, 14, 16};
-    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
+    
+    private int[] fontSize = {6, 6, 8, 10, 12, 14, 16};
+    private int[] hexSide = {2, 3, 5, 6, 8, 10, 12};
+    private int[] hexSideByCos30 = {2, 3, 4, 5, 7, 9, 10};
+    private int[] hexSideBySin30 = {1, 2, 2, 3, 4, 5, 6};
+    private int[] halfRoadWidthByCos30 = {0, 0, 0, 1, 2, 2, 3};
+    private int[] halfRoadWidthBySin30 = {0, 0, 0, 1, 1, 1, 2};
+    private int[] halfRoadWidth = {0, 0, 0, 1, 2, 3, 3};
+    private int[] unitSizes = {4, 5, 6, 7, 8, 9, 10};
+    private int[] stratZoom = {7, 8, 9, 11, 12, 14, 16};
+    private int[] unitBorder = {1, 1, 1, 1, 2, 2, 2};
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     Coords firstLOS;
@@ -373,10 +368,8 @@ public class MiniMap extends JPanel {
                 size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
                 updateSize = true;
             }
-            if (size.height < GUIPreferences.getInstance()
-                                            .getMinimumSizeHeight()) {
-                size.height = GUIPreferences.getInstance()
-                                            .getMinimumSizeHeight();
+            if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
+                size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
                 updateSize = true;
             }
             if (updateSize) {
@@ -433,7 +426,7 @@ public class MiniMap extends JPanel {
         m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
         m_terrainColors[Terrains.FIELDS] = new Color(250, 255, 205);
         m_terrainColors[Terrains.INDUSTRIAL] = new Color(112, 138, 144);
-        m_terrainColors[Terrains.SPACE] = Color.gray;
+        m_terrainColors[Terrains.SPACE] = Color.BLACK;
 
         // now try to read in the config file
         int red;
@@ -572,8 +565,7 @@ public class MiniMap extends JPanel {
 
         // ensure its on screen
         Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
         for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
@@ -633,7 +625,7 @@ public class MiniMap extends JPanel {
             ((JDialog) m_dialog).pack();
         }
         // m_dialog.setVisible(true);
-        m_mapImage = createImage(getSize().width, getSize().height);
+        m_mapImage = ImageUtil.createAcceleratedImage(getSize().width, getSize().height);
 
         terrainBuffer = createImage(getSize().width, getSize().height);
         Graphics gg = terrainBuffer.getGraphics();
@@ -700,34 +692,33 @@ public class MiniMap extends JPanel {
         }
 
         Graphics g = m_mapImage.getGraphics();
-        // Activate AA
-        if (GUIPreferences.getInstance().getAntiAliasing()) {
-            ((Graphics2D)g).setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        GUIPreferences.AntiAliasifSet(g);
         
         Color oldColor = g.getColor();
-        // g.setColor(BACKGROUND);
-        // g.fillRect(0, 0, getSize().width, getSize().height);
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
             Graphics gg = terrainBuffer.getGraphics();
-            // Activate AA
-            if (GUIPreferences.getInstance().getAntiAliasing()) {
-                ((Graphics2D)gg).setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-            }
+            GUIPreferences.AntiAliasifSet(gg);
             for (int j = 0; j < m_board.getWidth(); j++) {
                 for (int k = 0; k < m_board.getHeight(); k++) {
                     IHex h = m_board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h, j, k));
-                        paintCoord(gg, j, k, true);
+                        if (h.containsTerrain(Terrains.SPACE)) {
+                            paintSpaceCoord(gg, j, k, true);
+                        } else {
+                            paintCoord(gg, j, k, true);
+                        }
                     }
                     addRoadElements(h, j, k);
+                    // Color invalid hexes red when in the Map Editor
+                    if ((m_game != null) && 
+                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
+                            && !h.isValid(null)) {
+                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        paintCoord(gg, j, k, true);
+                    }
                 }
             }
             // draw backbuffer
@@ -834,7 +825,7 @@ public class MiniMap extends JPanel {
         ((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
         
         g.drawRect(
-                (int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+                (int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
                 (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
                 (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
                 (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
@@ -948,19 +939,19 @@ public class MiniMap extends JPanel {
                 String label;
                 switch (heightDisplayMode) {
                     case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.NoHeightLabel"); 
                         break;
                     case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.GroundHeightLabel");
                         break;
                     case SHOW_BUILDING_HEIGHT:
-                        label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.BuildingHeightLabel"); 
                         break;
                     case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                        label = Messages.getString("MiniMap.TotalHeightLabel"); 
                         break;
                     default:
-                        label = ""; //$NON-NLS-1$
+                        label = "";
                 }
                 g.drawString(label, 17, (getSize().height - 14) + 12);
             }
@@ -994,45 +985,41 @@ public class MiniMap extends JPanel {
             }
         }
     }
+    
+    private int[] xPoints(int x, int y) {
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int[] xPoints = new int[6];
+        xPoints[0] = baseX;
+        xPoints[1] = baseX + hexSideBySin30[zoom];
+        xPoints[2] = xPoints[1] + hexSide[zoom];
+        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
+        xPoints[4] = xPoints[2];
+        xPoints[5] = xPoints[1];
+        return xPoints;
+    }
+    
+    private int[] yPoints(int x, int y) {
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int[] yPoints = new int[6];
+        yPoints[0] = baseY;
+        yPoints[1] = baseY + hexSideByCos30[zoom];
+        yPoints[2] = yPoints[1];
+        yPoints[3] = baseY;
+        yPoints[4] = baseY - hexSideByCos30[zoom];
+        yPoints[5] = yPoints[4];
+        return yPoints;
+    }
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        yPoints[1] = baseY + hexSideByCos30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        yPoints[2] = yPoints[1];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-        yPoints[3] = baseY;
-        xPoints[4] = xPoints[2];
-        yPoints[4] = baseY - hexSideByCos30[zoom];
-        xPoints[5] = xPoints[1];
-        yPoints[5] = yPoints[4];
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
         g.setColor(c);
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints = new int[6];
-        int[] yPoints = new int[6];
-        xPoints[0] = baseX;
-        yPoints[0] = baseY;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        yPoints[1] = baseY + hexSideByCos30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        yPoints[2] = yPoints[1];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
-        yPoints[3] = baseY;
-        xPoints[4] = xPoints[2];
-        yPoints[4] = baseY - hexSideByCos30[zoom];
-        xPoints[5] = xPoints[1];
-        yPoints[5] = yPoints[4];
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
             Color oldColor = g.getColor();
@@ -1040,6 +1027,32 @@ public class MiniMap extends JPanel {
             g.drawPolygon(xPoints, yPoints, 6);
             g.setColor(oldColor);
         }
+    }
+    
+    private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int[] xPoints = xPoints(x, y);
+        int[] yPoints = yPoints(x, y);
+        g.fillPolygon(xPoints, yPoints, 6);
+        if (border) {
+            Color oldColor = g.getColor();
+            g.setColor(new Color(20,20,60));
+            g.drawPolygon(xPoints, yPoints, 6);
+            g.setColor(oldColor);
+        }
+        // Drop in a star
+        int dx = (int)(Math.random() * hexSide[zoom]);
+        int dy = (int)((Math.random() - 0.5) * hexSideByCos30[zoom]);
+        int c = (int)(Math.random() * 180);
+        g.setColor(new Color(c,c,c));
+        if (Math.random() < 0.1) {
+            g.setColor(new Color(c,c/10,c/10)); // red star
+        } else if (Math.random() < 0.1) {
+            int factor = (int)(Math.random()*10) + 1;
+            g.setColor(new Color(c/factor,c/factor,c)); // blue star
+        }
+        g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }
 
     /**
@@ -1092,7 +1105,7 @@ public class MiniMap extends JPanel {
             yPoints[3] = yPoints[0] - 2;
             yPoints[2] = yPoints[1] - 2;
         }
-        g.setColor(PlayerColors.getColor(source.getOwner().getColorIndex()));
+        g.setColor(source.getOwner().getColour().getColour());
         g.fillPolygon(xPoints, yPoints, 4);
         g.setColor(Color.black);
         g.drawPolygon(xPoints, yPoints, 4);
@@ -1107,10 +1120,8 @@ public class MiniMap extends JPanel {
                         && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
-                    Entity attackTarget = m_game.getEntity(otherAttack
-                            .getEntityId());
-                    g.setColor(PlayerColors.getColor(attackTarget.getOwner()
-                            .getColorIndex()));
+                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
+                    g.setColor(attackTarget.getOwner().getColour().getColour());
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -1118,13 +1129,10 @@ public class MiniMap extends JPanel {
                     yPoints[1] = yPoints[2];
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
-                    if (((source.getPosition().getX() > target.getPosition()
-                            .getX()) && (source.getPosition().getY() < target
-                            .getPosition().getY()))
-                            || ((source.getPosition().getX() < target
-                                    .getPosition().getX()) && (source
-                                    .getPosition().getY() > target
-                                    .getPosition().getY()))) {
+                    if (((source.getPosition().getX() > target.getPosition().getX()) 
+                            && (source.getPosition().getY() < target.getPosition().getY()))
+                            || ((source.getPosition().getX() < target.getPosition().getX()) 
+                                    && (source.getPosition().getY() > target.getPosition().getY()))) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -1247,6 +1255,20 @@ public class MiniMap extends JPanel {
         Graphics2D g2 = (Graphics2D)g;
         Stroke svStroke = g2.getStroke();
 
+        // Choose player or team color depending on preferences
+        Color iconColor = entity.getOwner().getColour().getColour(false);
+        if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
+            boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
+            boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());
+            if (isLocalPlayer) {
+                iconColor = GUIPreferences.getInstance().getMyUnitColor();
+            } else if (isLocalTeam) {
+                iconColor = GUIPreferences.getInstance().getAllyUnitColor();
+            } else {
+                iconColor = GUIPreferences.getInstance().getEnemyUnitColor();
+            }
+        }
+
         if (GUIPreferences.getInstance().getBoolean(GUIPreferences.MMSYMBOL)) {
             AffineTransform svTransform = g2.getTransform();
 
@@ -1306,9 +1328,8 @@ public class MiniMap extends JPanel {
                 form = STRAT_INFANTRY;
             }
 
-            // Fill the form in player color
-            g2.setColor(new Color(PlayerColors.getColorRGB(
-                    entity.getOwner().getColorIndex())));
+            // Fill the form in player color / team color
+            g.setColor(iconColor);
             g2.fill(form);
 
             // Add the weight class or other lettering for certain units
@@ -1349,10 +1370,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawOval(baseX - radius, baseY - radius, dia, dia);
 
-                // Fill the icon according to player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillOval(baseX - radius, baseY - radius, dia, dia);
 
                 // Draw a white border to better show the player color
@@ -1365,10 +1384,8 @@ public class MiniMap extends JPanel {
                 g.setColor(new Color(100,100,100,200));
                 g.drawPolygon(xPoints, yPoints, xPoints.length);
 
-                // Fill the icon according to the player color
-                Color pColor = new Color(
-                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-                g.setColor(pColor);
+                // Fill the form in player color / team color
+                g.setColor(iconColor);
                 g.fillPolygon(xPoints, yPoints, xPoints.length);
 
                 // Draw a white border to better show the player color
@@ -1603,14 +1620,6 @@ public class MiniMap extends JPanel {
                 return new Color(r, g, b);
 
         }
-        /*
-         * if (terrain < 5){ level = (int) Math.abs(x.floor()); // By experiment
-         * it is possible to make only 6 distinctive color steps if (level > 5)
-         * level = 5; int r = terrColor.getRed()-level30; int g =
-         * terrColor.getGreen()-level30; int b = terrColor.getBlue()-level30; if
-         * (r < 0) r = 0; if (g < 0) g = 0; if (b < 0) b = 0; return new
-         * Color(r, g, b); }
-         */
         return terrColor;
     }
 
@@ -1649,12 +1658,6 @@ public class MiniMap extends JPanel {
                 }
             }
         }
-        /*
-         * restX = hexSideBySin30[zoom] + hexSide[zoom] - restX; restY -=
-         * hexSideByCos30[zoom]; if (hexSideBySin30[zoom]restX >
-         * hexSideByCos30[zoom]restY) gridX ++; if (-hexSideBySin30[zoom]restX >
-         * hexSideByCos30[zoom]restY) gridY --;
-         */
         if (gridX < 0) {
             gridX = 0;
         }
@@ -1685,23 +1688,31 @@ public class MiniMap extends JPanel {
         if (y > (getSize().height - 14) && !dragging) {
             if (minimized) {
                 setSize(getSize().width, heightBufer);
-                m_mapImage = createImage(getSize().width, heightBufer);
+                m_mapImage =  ImageUtil.createAcceleratedImage(getSize().width, heightBufer);
                 minimized = false;
                 initializeMap();
             } else {
                 if (x < 14) {
-                    zoomIn();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
                 } else if ((x < 28) && (zoom > 2)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-                            : heightDisplayMode;
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
-                    zoomOut();
+                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
+                        zoomOut();
+                    } else {
+                        zoomIn();
+                    }
                 } else {
                     // Minimize button
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
-                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
+
+                    m_mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
 
                     minimized = true;
                     initializeMap();
@@ -1713,9 +1724,8 @@ public class MiniMap extends JPanel {
                 || (y > (getSize().height - topMargin - 14))) {
                 return;
             }
-            if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                m_bview
-                        .checkLOS(translateCoords(x - leftMargin, y - topMargin));
+            if ((me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
+                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
@@ -1764,6 +1774,22 @@ public class MiniMap extends JPanel {
     protected GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesMMDir(), m_game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+				File imgFile = new File(dir, "round_" + m_game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+                try {
+                    ImageIO.write(m_mapImage, "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
             drawMap();
         }
 
@@ -1887,5 +1913,140 @@ public class MiniMap extends JPanel {
             // if (!minimized) initializeMap();
         }
     };
+    
+    public BufferedImage getImage() {
+        drawMapOrig();
+        return m_mapImage;
+    }
+    
+    // Used only internally for creating a minimap image
+    private MiniMap(IBoard board) throws IOException {
+        m_board = board;
+        initializeColors();
+    }
+    
+    //TODO: definitely integrate this with the normal drawMapOrig!!!!!
+    private void drawForImage() {
+        Graphics g = m_mapImage.getGraphics();
+        // Activate AA
+        GUIPreferences.AntiAliasifSet(g);
+        
+        Color oldColor = g.getColor();
+        g.setColor(oldColor);
+        if (!minimized) {
+            roadHexIndexes.removeAllElements();
+            Graphics gg = terrainBuffer.getGraphics();
+            GUIPreferences.AntiAliasifSet(gg);
+            for (int j = 0; j < m_board.getWidth(); j++) {
+                for (int k = 0; k < m_board.getHeight(); k++) {
+                    IHex h = m_board.getHex(j, k);
+                    if (dirtyMap || dirty[j / 10][k / 10]) {
+                        gg.setColor(terrainColor(h, j, k));
+                        if (h.containsTerrain(Terrains.SPACE)) {
+                            paintSpaceCoord(gg, j, k, true);
+                        } else {
+                            paintCoord(gg, j, k, true);
+                        }
+                    }
+                    addRoadElements(h, j, k);
+                    // Color invalid hexes red when in the Map Editor
+                    if ((m_game != null) && 
+                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
+                            && !h.isValid(null)) {
+                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        paintCoord(gg, j, k, true);
+                    }
+                }
+            }
+            // draw backbuffer
+            g.drawImage(terrainBuffer, 0, 0, this);
+
+            if (!roadHexIndexes.isEmpty()) {
+                paintRoads(g);
+            }
+
+            if (SHOW_NO_HEIGHT != heightDisplayMode) {
+                for (int j = 0; j < m_board.getWidth(); j++) {
+                    for (int k = 0; k < m_board.getHeight(); k++) {
+                        IHex h = m_board.getHex(j, k);
+                        paintHeight(g, h, j, k);
+                    }
+                }
+            }
+
+        }
+
+    }
+    
+    private void initializeMapForImage() {
+        int currentHexSide = hexSide[zoom];
+        int currentHexSideByCos30 = hexSideByCos30[zoom];
+        int currentHexSideBySin30 = hexSideBySin30[zoom];
+        int requiredWidth = m_board.getWidth() * (currentHexSide + currentHexSideBySin30)
+                        + currentHexSideBySin30 ;
+        int requiredHeight = (((2 * m_board.getHeight()) + 1)
+                          * currentHexSideByCos30);
+
+        m_mapImage = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
+        terrainBuffer = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
+        Graphics gg = terrainBuffer.getGraphics();
+        gg.setColor(BACKGROUND);
+        gg.fillRect(0, 0, getSize().width, getSize().height);
+    }
+
+    public static BufferedImage getBoardMinimapImage(IBoard board) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = 1;
+            int largerEdge = Math.max(board.getWidth(), board.getHeight());
+            if (largerEdge > 30) {
+                tempMM.zoom = 2;
+            }
+            if (largerEdge > 60) {
+                tempMM.zoom = 0;
+            }
+            if (largerEdge < 20) {
+                tempMM.zoom = 3;
+            }
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
+    
+    public static BufferedImage getBoardMinimapImageMaxZoom(IBoard board) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = tempMM.hexSide.length-1;
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
+    
+    public static BufferedImage getBoardMinimapImage(IBoard board, int zoom) {
+        try {
+            MiniMap tempMM = new MiniMap(board);
+            tempMM.zoom = zoom;
+            tempMM.initializeMapForImage();
+            tempMM.drawForImage();
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
+            tempMM.setEnabled(false);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
+    }
 
 }

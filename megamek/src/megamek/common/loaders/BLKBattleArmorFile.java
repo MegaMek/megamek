@@ -90,20 +90,27 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        EntityMovementMode nMotion = EntityMovementMode.NONE;
-        if (sMotion.equalsIgnoreCase("leg")) {
-            nMotion = EntityMovementMode.INF_LEG;
-        } else if (sMotion.equalsIgnoreCase("jump")) {
-            nMotion = EntityMovementMode.INF_JUMP;
-        } else if (sMotion.equalsIgnoreCase("vtol")) {
-            nMotion = EntityMovementMode.VTOL;
-        } else if (sMotion.equalsIgnoreCase("umu")) {
-            nMotion = EntityMovementMode.INF_UMU;
+        t.setMovementMode(EntityMovementMode.getMode(sMotion));
+        // Add equipment to calculate unit tech advancement correctly
+        try {
+            switch (t.getMovementMode()) {
+                case INF_JUMP:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_JUMP_JET), Entity.LOC_NONE);
+                    break;
+                case VTOL:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_VTOL), Entity.LOC_NONE);
+                    break;
+                case INF_UMU:
+                    t.addEquipment(EquipmentType.get(EquipmentTypeLookup.BA_UMU), Entity.LOC_NONE);
+                    break;
+                case NONE:
+                    throw new EntityLoadingException("Invalid movement type: " + sMotion);
+                default:
+                    break;
+            }
+        } catch (LocationFullException ignore) {
+            // Adding to LOC_NONE
         }
-        if (nMotion == EntityMovementMode.NONE) {
-            throw new EntityLoadingException("Invalid movement type: " + sMotion);
-        }
-        t.setMovementMode(nMotion);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
@@ -217,7 +224,13 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                             shotString.replace(":Shots", "").replace("#", ""));
                     saEquip[x] = saEquip[x].replace(shotString, "");
                 }
-                
+                double size = 0.0;
+                int sizeIndex = saEquip[x].toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(saEquip[x].substring(sizeIndex + 6));
+                    saEquip[x] = saEquip[x].substring(0, sizeIndex);
+                }
+
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -234,7 +247,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                         if (numShots != 0 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
                             m.setOriginalShots(numShots);
-                            m.setAmmoCapacity(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
+                            m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
                         if ((etype instanceof MiscType)
                                 && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {
@@ -250,6 +263,12 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                             }
                         }
                         m.setSquadSupportWeapon(sswMounted);
+                        if (etype.isVariableSize()) {
+                            if (size == 0.0) {
+                                size = getLegacyVariableSize(equipName);
+                            }
+                            m.setSize(size);
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

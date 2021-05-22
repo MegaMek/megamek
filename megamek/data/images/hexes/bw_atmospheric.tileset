@@ -36,10 +36,33 @@
 # smoke
 # elevator
 
-include "bloodwolf/grass/ThemeGrass.tileinc"
+include "incline/inclines2.tileinc"
+include "high_incline/high_inclines.tileinc"
+include "Cliff/Cliffs.tileinc"
+
+#include "bloodwolf/grass/ThemeGrass.tileinc"
 
 super * "rough:1" "lunar" "transparent/rough_0.png;transparent/rough_0.png(0,72-84,-72);transparent/rough_0.png(84,0--84,72);transparent/rough_0.png(84,72--84,-72);transparent/rough_1.png;transparent/rough_1.png(0,72-84,-72);transparent/rough_1.png(84,0--84,72);transparent/rough_1.png(84,72--84,-72);transparent/rough_2.png;transparent/rough_2.png(0,72-84,-72);transparent/rough_2.png(84,0--84,72);transparent/rough_2.png(84,72--84,-72)"
 super * "rough:2" "lunar" "transparent/ultra_rough.png;transparent/ultra_rough.png(0,72-84,-72);transparent/ultra_rough.png(84,0--84,72);transparent/ultra_rough.png(84,72--84,-72)"
+
+
+base 0 "" "desert" "bloodwolf/hq_boring/beige_plains_0.png"
+base 1 "" "desert" "bloodwolf/hq_boring/beige_plains_1.png"
+base 2 "" "desert" "bloodwolf/hq_boring/beige_plains_2.png"
+base 3 "" "desert" "bloodwolf/hq_boring/beige_plains_3.png"
+base 4 "" "desert" "bloodwolf/hq_boring/beige_plains_4.png"
+base 5 "" "desert" "bloodwolf/hq_boring/beige_plains_5.png"
+base 6 "" "desert" "bloodwolf/hq_boring/beige_plains_6.png"
+base 7 "" "desert" "bloodwolf/hq_boring/beige_plains_6.png"
+base 8 "" "desert" "bloodwolf/hq_boring/beige_plains_6.png"
+base 9 "" "desert" "bloodwolf/hq_boring/beige_plains_6.png"
+base 10 "" "desert" "bloodwolf/hq_boring/beige_plains_6.png"
+base -1 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_1.png"
+base -2 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_2.png"
+base -3 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_3.png"
+base -4 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_4.png"
+base -5 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_5.png"
+base -6 "" "desert" "bloodwolf/hq_boring/beige_sinkhole_6.png"
 
 base 0 "" "lunar" "largeTextures/textureLunar.jpg"
 base 1 "" "lunar" "largeTextures/textureLunar.jpg"
@@ -105,8 +128,9 @@ include "StandardIncludes/StandardThemes.tileinc"
 
 super * "water:0" "" "bloodwolf/hq_boring/blue_water_0.png;bloodwolf/hq_boring/blue_water_0.png(0,72-84,-72);bloodwolf/hq_boring/blue_water_0.png(84,0--84,72);bloodwolf/hq_boring/blue_water_0.png(84,72--84,-72)"
 
-super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_1.png(0,72-84,-72);bloodwolf/hq_boring/swamp_1.png(84,0--84,72);bloodwolf/hq_boring/swamp_1.png(84,72--84,-72)"
-super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_0.png(0,72-84,-72);bloodwolf/hq_boring/swamp_0.png(84,0--84,72);bloodwolf/hq_boring/swamp_0.png(84,72--84,-72)"
+super * "swamp:1" "desert" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_0.png(0,72-84,-72);bloodwolf/hq_boring/swamp_0.png(84,0--84,72);bloodwolf/hq_boring/swamp_0.png(84,72--84,-72)"
+super * "swamp:1" "" "bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_1.png(0,72-84,-72);bloodwolf/hq_boring/swamp_1.png(84,0--84,72);bloodwolf/hq_boring/swamp_1.png(84,72--84,-72)"
+
 super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_0.gif(0,72-84,-72);swamp/quicksand_0.gif(84,0--84,72);swamp/quicksand_0.gif(84,72--84,-72);swamp/quicksand_1.gif;swamp/quicksand_1.gif(0,72-84,-72);swamp/quicksand_1.gif(84,0--84,72);swamp/quicksand_1.gif(84,72--84,-72);swamp/quicksand_2.gif;swamp/quicksand_2.gif(0,72-84,-72);swamp/quicksand_2.gif(84,0--84,72);swamp/quicksand_2.gif(84,72--84,-72);swamp/quicksand_3.gif;swamp/quicksand_3.gif(0,72-84,-72);swamp/quicksand_3.gif(84,0--84,72);swamp/quicksand_3.gif(84,72--84,-72)"
 super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_0.gif(0,72-84,-72);swamp/quicksand_0.gif(84,0--84,72);swamp/quicksand_0.gif(84,72--84,-72);swamp/quicksand_1.gif;swamp/quicksand_1.gif(0,72-84,-72);swamp/quicksand_1.gif(84,0--84,72);swamp/quicksand_1.gif(84,72--84,-72);swamp/quicksand_2.gif;swamp/quicksand_2.gif(0,72-84,-72);swamp/quicksand_2.gif(84,0--84,72);swamp/quicksand_2.gif(84,72--84,-72);swamp/quicksand_3.gif;swamp/quicksand_3.gif(0,72-84,-72);swamp/quicksand_3.gif(84,0--84,72);swamp/quicksand_3.gif(84,72--84,-72)"
 
@@ -127,21 +151,21 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 super * "water:1" "" "bloodwolf/hq_boring/blue_water_1.png;bloodwolf/hq_boring/blue_water_1.png(0,72-84,-72);bloodwolf/hq_boring/blue_water_1.png(84,0--84,72);bloodwolf/hq_boring/blue_water_1.png(84,72--84,-72)"
 
-super * "woods:1" "tropical" "bloodwolf/jungle/light_jungle1.png;bloodwolf/jungle/light_jungle1.png(0,72-84,-72);bloodwolf/jungle/light_jungle1.png(84,0--84,72);bloodwolf/jungle/light_jungle1.png(84,72--84,-72);bloodwolf/jungle/light_jungle2.png;bloodwolf/jungle/light_jungle2.png(0,72-84,-72);bloodwolf/jungle/light_jungle2.png(84,0--84,72);bloodwolf/jungle/light_jungle2.png(84,72--84,-72);bloodwolf/jungle/light_jungle3.png;bloodwolf/jungle/light_jungle3.png(0,72-84,-72);bloodwolf/jungle/light_jungle3.png(84,0--84,72);bloodwolf/jungle/light_jungle3.png(84,72--84,-72)"
-super * "woods:2" "tropical" "bloodwolf/jungle/heavy_jungle1.png;bloodwolf/jungle/heavy_jungle1.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle1.png(84,0--84,72);bloodwolf/jungle/heavy_jungle1.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle2.png;bloodwolf/jungle/heavy_jungle2.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle2.png(84,0--84,72);bloodwolf/jungle/heavy_jungle2.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle3.png;bloodwolf/jungle/heavy_jungle3.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle3.png(84,0--84,72);bloodwolf/jungle/heavy_jungle3.png(84,72--84,-72)"
-super * "woods:3" "tropical" "bloodwolf/jungle/uhj0.png;bloodwolf/jungle/uhj0.png(0,72-84,-72);bloodwolf/jungle/uhj0.png(84,0--84,72);bloodwolf/jungle/uhj0.png(84,72--84,-72)"
+super * "woods:1;foliage_elev:*" "tropical" "bloodwolf/jungle/light_jungle1.png;bloodwolf/jungle/light_jungle1.png(0,72-84,-72);bloodwolf/jungle/light_jungle1.png(84,0--84,72);bloodwolf/jungle/light_jungle1.png(84,72--84,-72);bloodwolf/jungle/light_jungle2.png;bloodwolf/jungle/light_jungle2.png(0,72-84,-72);bloodwolf/jungle/light_jungle2.png(84,0--84,72);bloodwolf/jungle/light_jungle2.png(84,72--84,-72);bloodwolf/jungle/light_jungle3.png;bloodwolf/jungle/light_jungle3.png(0,72-84,-72);bloodwolf/jungle/light_jungle3.png(84,0--84,72);bloodwolf/jungle/light_jungle3.png(84,72--84,-72)"
+super * "woods:2;foliage_elev:*" "tropical" "bloodwolf/jungle/heavy_jungle1.png;bloodwolf/jungle/heavy_jungle1.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle1.png(84,0--84,72);bloodwolf/jungle/heavy_jungle1.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle2.png;bloodwolf/jungle/heavy_jungle2.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle2.png(84,0--84,72);bloodwolf/jungle/heavy_jungle2.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle3.png;bloodwolf/jungle/heavy_jungle3.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle3.png(84,0--84,72);bloodwolf/jungle/heavy_jungle3.png(84,72--84,-72)"
+super * "woods:3;foliage_elev:*" "tropical" "bloodwolf/jungle/uhj0.png;bloodwolf/jungle/uhj0.png(0,72-84,-72);bloodwolf/jungle/uhj0.png(84,0--84,72);bloodwolf/jungle/uhj0.png(84,72--84,-72)"
 
-super * "woods:1" "snow" "bloodwolf/snow/snow_l_woods_0.png;bloodwolf/snow/snow_l_woods_0.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_0.png(84,0--84,72);bloodwolf/snow/snow_l_woods_0.png(84,72--84,-72);bloodwolf/snow/snow_l_woods_1.png;bloodwolf/snow/snow_l_woods_1.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_1.png(84,0--84,72);bloodwolf/snow/snow_l_woods_1.png(84,72--84,-72);bloodwolf/snow/snow_l_woods_2.png;bloodwolf/snow/snow_l_woods_2.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_2.png(84,0--84,72);bloodwolf/snow/snow_l_woods_2.png(84,72--84,-72)"
-super * "woods:2" "snow" "bloodwolf/snow/snow_h_woods_0.png;bloodwolf/snow/snow_h_woods_0.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_0.png(84,0--84,72);bloodwolf/snow/snow_h_woods_0.png(84,72--84,-72);bloodwolf/snow/snow_h_woods_1.png;bloodwolf/snow/snow_h_woods_1.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_1.png(84,0--84,72);bloodwolf/snow/snow_h_woods_1.png(84,72--84,-72);bloodwolf/snow/snow_h_woods_2.png;bloodwolf/snow/snow_h_woods_2.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_2.png(84,0--84,72);bloodwolf/snow/snow_h_woods_2.png(84,72--84,-72)"
+super * "woods:1;foliage_elev:*" "snow" "bloodwolf/snow/snow_l_woods_0.png;bloodwolf/snow/snow_l_woods_0.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_0.png(84,0--84,72);bloodwolf/snow/snow_l_woods_0.png(84,72--84,-72);bloodwolf/snow/snow_l_woods_1.png;bloodwolf/snow/snow_l_woods_1.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_1.png(84,0--84,72);bloodwolf/snow/snow_l_woods_1.png(84,72--84,-72);bloodwolf/snow/snow_l_woods_2.png;bloodwolf/snow/snow_l_woods_2.png(0,72-84,-72);bloodwolf/snow/snow_l_woods_2.png(84,0--84,72);bloodwolf/snow/snow_l_woods_2.png(84,72--84,-72)"
+super * "woods:2;foliage_elev:*" "snow" "bloodwolf/snow/snow_h_woods_0.png;bloodwolf/snow/snow_h_woods_0.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_0.png(84,0--84,72);bloodwolf/snow/snow_h_woods_0.png(84,72--84,-72);bloodwolf/snow/snow_h_woods_1.png;bloodwolf/snow/snow_h_woods_1.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_1.png(84,0--84,72);bloodwolf/snow/snow_h_woods_1.png(84,72--84,-72);bloodwolf/snow/snow_h_woods_2.png;bloodwolf/snow/snow_h_woods_2.png(0,72-84,-72);bloodwolf/snow/snow_h_woods_2.png(84,0--84,72);bloodwolf/snow/snow_h_woods_2.png(84,72--84,-72)"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf0.png(0,72-84,-72);hq_boring/lf0.png(84,0--84,72);hq_boring/lf0.png(84,72--84,-72);hq_boring/lf1.png;hq_boring/lf1.png(0,72-84,-72);hq_boring/lf1.png(84,0--84,72);hq_boring/lf1.png(84,72--84,-72);hq_boring/lf2.png;hq_boring/lf2.png(0,72-84,-72);hq_boring/lf2.png(84,0--84,72);hq_boring/lf2.png(84,72--84,-72);hq_boring/lf3.png;hq_boring/lf3.png(0,72-84,-72);hq_boring/lf3.png(84,0--84,72);hq_boring/lf3.png(84,72--84,-72)"
-super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf0.png(0,72-84,-72);hq_boring/hf0.png(84,0--84,72);hq_boring/hf0.png(84,72--84,-72);hq_boring/hf1.png;hq_boring/hf1.png(0,72-84,-72);hq_boring/hf1.png(84,0--84,72);hq_boring/hf1.png(84,72--84,-72);hq_boring/hf2.png;hq_boring/hf2.png(0,72-84,-72);hq_boring/hf2.png(84,0--84,72);hq_boring/hf2.png(84,72--84,-72)"
-super * "woods:3" "" "bloodwolf/hq_boring/uhf0.png;bloodwolf/hq_boring/uhf0.png(0,72-84,-72);bloodwolf/hq_boring/uhf0.png(84,0--84,72);bloodwolf/hq_boring/uhf0.png(84,72--84,-72)"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+super * "woods:1;foliage_elev:*" "" "hq_boring/lf0.png;hq_boring/lf0.png(0,72-84,-72);hq_boring/lf0.png(84,0--84,72);hq_boring/lf0.png(84,72--84,-72);hq_boring/lf1.png;hq_boring/lf1.png(0,72-84,-72);hq_boring/lf1.png(84,0--84,72);hq_boring/lf1.png(84,72--84,-72);hq_boring/lf2.png;hq_boring/lf2.png(0,72-84,-72);hq_boring/lf2.png(84,0--84,72);hq_boring/lf2.png(84,72--84,-72);hq_boring/lf3.png;hq_boring/lf3.png(0,72-84,-72);hq_boring/lf3.png(84,0--84,72);hq_boring/lf3.png(84,72--84,-72)"
+super * "woods:2;foliage_elev:*" "" "hq_boring/hf0.png;hq_boring/hf0.png(0,72-84,-72);hq_boring/hf0.png(84,0--84,72);hq_boring/hf0.png(84,72--84,-72);hq_boring/hf1.png;hq_boring/hf1.png(0,72-84,-72);hq_boring/hf1.png(84,0--84,72);hq_boring/hf1.png(84,72--84,-72);hq_boring/hf2.png;hq_boring/hf2.png(0,72-84,-72);hq_boring/hf2.png(84,0--84,72);hq_boring/hf2.png(84,72--84,-72)"
+super * "woods:3;foliage_elev:*" "" "bloodwolf/hq_boring/uhf0.png;bloodwolf/hq_boring/uhf0.png(0,72-84,-72);bloodwolf/hq_boring/uhf0.png(84,0--84,72);bloodwolf/hq_boring/uhf0.png(84,72--84,-72)"
 
-super * "jungle:1" "" "bloodwolf/jungle/light_jungle1.png;bloodwolf/jungle/light_jungle1.png(0,72-84,-72);bloodwolf/jungle/light_jungle1.png(84,0--84,72);bloodwolf/jungle/light_jungle1.png(84,72--84,-72);bloodwolf/jungle/light_jungle2.png;bloodwolf/jungle/light_jungle2.png(0,72-84,-72);bloodwolf/jungle/light_jungle2.png(84,0--84,72);bloodwolf/jungle/light_jungle2.png(84,72--84,-72);bloodwolf/jungle/light_jungle3.png;bloodwolf/jungle/light_jungle3.png(0,72-84,-72);bloodwolf/jungle/light_jungle3.png(84,0--84,72);bloodwolf/jungle/light_jungle3.png(84,72--84,-72)"
-super * "jungle:2" "" "bloodwolf/jungle/heavy_jungle1.png;bloodwolf/jungle/heavy_jungle1.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle1.png(84,0--84,72);bloodwolf/jungle/heavy_jungle1.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle2.png;bloodwolf/jungle/heavy_jungle2.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle2.png(84,0--84,72);bloodwolf/jungle/heavy_jungle2.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle3.png;bloodwolf/jungle/heavy_jungle3.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle3.png(84,0--84,72);bloodwolf/jungle/heavy_jungle3.png(84,72--84,-72)"
-super * "jungle:3" "" "bloodwolf/jungle/uhj0.png;bloodwolf/jungle/uhj0.png(0,72-84,-72);bloodwolf/jungle/uhj0.png(84,0--84,72);bloodwolf/jungle/uhj0.png(84,72--84,-72)"
+super * "jungle:1;foliage_elev:*" "" "bloodwolf/jungle/light_jungle1.png;bloodwolf/jungle/light_jungle1.png(0,72-84,-72);bloodwolf/jungle/light_jungle1.png(84,0--84,72);bloodwolf/jungle/light_jungle1.png(84,72--84,-72);bloodwolf/jungle/light_jungle2.png;bloodwolf/jungle/light_jungle2.png(0,72-84,-72);bloodwolf/jungle/light_jungle2.png(84,0--84,72);bloodwolf/jungle/light_jungle2.png(84,72--84,-72);bloodwolf/jungle/light_jungle3.png;bloodwolf/jungle/light_jungle3.png(0,72-84,-72);bloodwolf/jungle/light_jungle3.png(84,0--84,72);bloodwolf/jungle/light_jungle3.png(84,72--84,-72)"
+super * "jungle:2;foliage_elev:*" "" "bloodwolf/jungle/heavy_jungle1.png;bloodwolf/jungle/heavy_jungle1.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle1.png(84,0--84,72);bloodwolf/jungle/heavy_jungle1.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle2.png;bloodwolf/jungle/heavy_jungle2.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle2.png(84,0--84,72);bloodwolf/jungle/heavy_jungle2.png(84,72--84,-72);bloodwolf/jungle/heavy_jungle3.png;bloodwolf/jungle/heavy_jungle3.png(0,72-84,-72);bloodwolf/jungle/heavy_jungle3.png(84,0--84,72);bloodwolf/jungle/heavy_jungle3.png(84,72--84,-72)"
+super * "jungle:3;foliage_elev:*" "" "bloodwolf/jungle/uhj0.png;bloodwolf/jungle/uhj0.png(0,72-84,-72);bloodwolf/jungle/uhj0.png(84,0--84,72);bloodwolf/jungle/uhj0.png(84,72--84,-72)"
 
 super * "water:2" "" "bloodwolf/hq_boring/blue_water_2.png;bloodwolf/hq_boring/blue_water_2.png(0,72-84,-72);bloodwolf/hq_boring/blue_water_2.png(84,0--84,72);bloodwolf/hq_boring/blue_water_2.png(84,72--84,-72)"
 super * "water:3" "" "bloodwolf/hq_boring/blue_water_3.png;bloodwolf/hq_boring/blue_water_3.png(0,72-84,-72);bloodwolf/hq_boring/blue_water_3.png(84,0--84,72);bloodwolf/hq_boring/blue_water_3.png(84,72--84,-72)"
@@ -187,23 +211,24 @@ super * "geyser:3" "" "boring/geyservent.gif"
 
 include "StandardIncludes/StandardElevator.tileinc"
 
-base 0 "" "" "bloodwolf/hq_boring/beige_plains_0.png"
-base 1 "" "" "bloodwolf/hq_boring/beige_plains_1.png"
-base 2 "" "" "bloodwolf/hq_boring/beige_plains_2.png"
-base 3 "" "" "bloodwolf/hq_boring/beige_plains_3.png"
-base 4 "" "" "bloodwolf/hq_boring/beige_plains_4.png"
-base 5 "" "" "bloodwolf/hq_boring/beige_plains_5.png"
-base 6 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
-base 7 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
-base 8 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
-base 9 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
-base 10 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
-base -1 "" "" "bloodwolf/hq_boring/beige_sinkhole_1.png"
-base -2 "" "" "bloodwolf/hq_boring/beige_sinkhole_2.png"
-base -3 "" "" "bloodwolf/hq_boring/beige_sinkhole_3.png"
-base -4 "" "" "bloodwolf/hq_boring/beige_sinkhole_4.png"
-base -5 "" "" "bloodwolf/hq_boring/beige_sinkhole_5.png"
-base -6 "" "" "bloodwolf/hq_boring/beige_sinkhole_6.png"
+
+base 0 "" "" "bloodwolf/grass/grass_plains_0.gif"
+base 1 "" "" "bloodwolf/grass/grass_plains_1.gif"
+base 2 "" "" "bloodwolf/grass/grass_plains_2.gif"
+base 3 "" "" "bloodwolf/grass/grass_plains_3.gif"
+base 4 "" "" "bloodwolf/grass/grass_plains_4.gif"
+base 5 "" "" "bloodwolf/grass/grass_plains_5.gif"
+base 6 "" "" "bloodwolf/grass/grass_plains_6.gif"
+base 7 "" "" "bloodwolf/grass/grass_plains_6.gif"
+base 8 "" "" "bloodwolf/grass/grass_plains_6.gif"
+base 9 "" "" "bloodwolf/grass/grass_plains_6.gif"
+base 10 "" "" "bloodwolf/grass/grass_plains_6.gif"
+base -1 "" "" "bloodwolf/grass/grass_sinkhole_1.gif"
+base -2 "" "" "bloodwolf/grass/grass_sinkhole_2.gif"
+base -3 "" "" "bloodwolf/grass/grass_sinkhole_3.gif"
+base -4 "" "" "bloodwolf/grass/grass_sinkhole_4.gif"
+base -5 "" "" "bloodwolf/grass/grass_sinkhole_5.gif"
+base -6 "" "" "bloodwolf/grass/grass_sinkhole_6.gif
 
 base 0 "space:1" "" "largeTextures/BigSpace.jpg"
 

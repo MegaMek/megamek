@@ -1,11 +1,11 @@
-Version:1.0
+Version:1.1
 Turkina
 C
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3052
-Source:TRO 3058 - Clan Invasion
+source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:95
@@ -155,4 +155,15 @@ CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 
+overview:The Turkina is a powerful OmniMech that was first seen in the Turkina Keshik at the Battle of Tukayyid, and entered general service with Clan Jade Falcon following the end of the Refusal War. In a design oddity, the Turkina mounts enough jump jets to vault 90 meters hardwired onto the frame, rather than using them in modular pods. While this simplified repair, it also uses tonnage that could be devoted to other systems when a mission does not call for jumping. Designers also included fifteen double heat sinks, four more than could be fit into the engine, so they are fixed in the torso. The Turkina has 42 tons available for modular pods.
 
+capabilities:Another variant that seems to be based on combating the Inner Sphere, the Turkina C is designed for urban combat. An LB-X Autocannon/20 and twin Large Pulse Lasers can open up holes in enemy 'Mechs, while the Streak SRM-6 and paired Medium Pulse Lasers exploit them. Paired Anti-Personnel Pods, Machine Guns, and Flamers discourage conventional forces from closing. An Active Probe finds most hidden units, ensuring the MechWarrior is rarely surprised.
+
+history:The Turkina is named after Turkina, the first Jade Falcon to be tamed, who inspired the leaders of Clan Jade Falcon in its early days. The name of the Turkina Keshik is also derived from this bird.
+manufacturer:Complex Beta, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF Standard
+systemmanufacturer:ENGINE:285 JF Extralight
+systemmanufacturer:ARMOR:JF Standard
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFIX/Olivetti Pinpoint Advanced

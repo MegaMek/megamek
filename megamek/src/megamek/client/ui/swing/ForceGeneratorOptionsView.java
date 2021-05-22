@@ -3,7 +3,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +38,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import megamek.MegaMek;
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.CrewDescriptor;
 import megamek.client.ratgenerator.FactionRecord;
@@ -57,8 +55,6 @@ import megamek.common.EntityWeightClass;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.UnitType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -677,8 +673,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                DefaultMmLogger.getInstance().log(getClass(),  "refreshUnitTypes()",
-                        LogLevel.WARNING, "No unit type node found.");
+                MegaMek.getLogger().warning("No unit type node found.");
                 cbUnitType.addItem(null);
             }
         } else {
@@ -753,8 +748,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 }
             }
         } else {
-            DefaultMmLogger.getInstance().log(getClass(), "refreshFormations()",
-                    LogLevel.WARNING, "No eschelon node found.");
+            MegaMek.getLogger().warning("No eschelon node found.");
         }
 
         if (hasCurrent) {
@@ -798,8 +792,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     }
                 }
             } else {
-                DefaultMmLogger.getInstance().log(getClass(), "refreshRatings()",
-                        LogLevel.WARNING, "No rating found.");
+                MegaMek.getLogger().warning("No rating found.");
             }
         }
 
@@ -1151,20 +1144,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     static class UnitRenderer extends DefaultTreeCellRenderer {
-        /**
-         * 
-         */
         private static final long serialVersionUID = -5915350078441133119L;
 
-        private MechTileset mt;
-
         public UnitRenderer() {
-            mt = new MechTileset(new File("data/images/units"));
-            try {
-                mt.loadFromFile("mechset.txt");
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
+
         }
 
         @Override

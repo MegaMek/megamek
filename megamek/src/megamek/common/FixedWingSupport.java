@@ -360,7 +360,6 @@ public class FixedWingSupport extends ConvFighter {
 
         // Compute final structural cost
         int structCostIdx = i++;
-        costs[i++] = 0;
         for (int c = 0; c < structCostIdx; c++) {
             costs[structCostIdx] += costs[c];
         }
@@ -418,6 +417,8 @@ public class FixedWingSupport extends ConvFighter {
             case STATION_KEEPING:
                 priceMultiplier = 1 + weight / 75.0;
                 break;
+            default:
+                break;
         }
         return priceMultiplier;
     }
@@ -449,9 +450,9 @@ public class FixedWingSupport extends ConvFighter {
         // find the maximum length of the columns.
         for (int l = 0; l < left.size(); l++) {
 
-            if (l == 8) {
+            if (l == 6) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);
@@ -499,6 +500,11 @@ public class FixedWingSupport extends ConvFighter {
 
         bvText.append(endTable);
         bvText.append("</BODY></HTML>");
+    }
+
+    @Override
+    public double getBVTypeModifier() {
+        return 1.0;
     }
 
     public long getEntityType(){

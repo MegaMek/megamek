@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Tiamat Pocket Warship
 </Model>
 
 <year>
-3078
+3079
 </year>
 
 <originalBuildYear>
-3078
+3079
 </originalBuildYear>
 
 <type>
@@ -290,4 +290,3 @@ Jihad Hot Spots: Terra - Jihad
 <escape_pod>
 0
 </escape_pod>
-

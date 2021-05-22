@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Mobile Long Tom Artillery Ammunition Carriage
+Mobile Long Tom Artillery Ammunition Trailer
 </Name>
 
 <Model>
@@ -24,6 +24,10 @@ LT-MOB-25
 2602
 </year>
 
+<originalBuildYear>
+2602
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 0
@@ -81,3 +88,6 @@ TRO 3039 - Star League
 1
 </hasNoControlSystems>
 
+<trailer>
+1
+</trailer>

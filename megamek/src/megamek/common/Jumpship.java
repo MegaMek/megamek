@@ -78,16 +78,16 @@ public class Jumpship extends Aero {
     boolean hasLF = false;
 
     // crew and passengers
-    private int nCrew = 0;
-    private int nPassenger = 0;
-    private int nMarines = 0;
     private int nBattleArmor = 0;
     private int nOtherCrew = 0;
     private int nOfficers = 0;
     private int nGunners = 0;
+    
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
+    private int escapePodsLaunched = 0;
+    private int lifeBoatsLaunched = 0;
 
     // Battlestation
     private boolean isBattleStation = false;
@@ -310,6 +310,11 @@ public class Jumpship extends Aero {
         return (isPrimitive() ? Jumpship.COLLAR_NO_BOOM : Jumpship.COLLAR_STANDARD);
     }
     
+    /** Returns the number of free Docking Collars. */
+    public int getFreeDockingCollars() {
+        return getDockingCollars().stream().mapToInt(dc -> (int) dc.getUnused()).sum();
+    }
+    
     /**
      * Get the number of damaged docking collars on the ship.
      * Used by crit damage string on unit display
@@ -509,6 +514,23 @@ public class Jumpship extends Aero {
     public int getEscapePods() {
         return escapePods;
     }
+    
+    /**
+     * Returns the total number of escape pods launched so far
+     */
+    @Override
+    public int getLaunchedEscapePods() {
+        return escapePodsLaunched;
+    }
+    
+    /**
+     * Updates the total number of escape pods launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedEscapePods(int n) {
+        escapePodsLaunched = n;
+    }
 
     public void setLifeBoats(int n) {
         lifeBoats = n;
@@ -518,7 +540,25 @@ public class Jumpship extends Aero {
     public int getLifeBoats() {
         return lifeBoats;
     }
+    
+    /**
+     * Returns the total number of life boats launched so far
+     */
+    @Override
+    public int getLaunchedLifeBoats() {
+        return lifeBoatsLaunched;
+    }
+    
+    /**
+     * Updates the total number of life boats launched so far
+     * @param n The number to change
+     */
+    @Override
+    public void setLaunchedLifeBoats(int n) {
+        lifeBoatsLaunched = n;
+    }
 
+    @Override
     public void setNCrew(int crew) {
         nCrew = crew;
     }
@@ -528,6 +568,7 @@ public class Jumpship extends Aero {
         return nCrew;
     }
 
+    @Override
     public void setNPassenger(int pass) {
         nPassenger = pass;
     }
@@ -555,10 +596,16 @@ public class Jumpship extends Aero {
         return nPassenger;
     }
 
+    @Override
     public void setNMarines(int m) {
         nMarines = m;
     }
 
+    /**
+     * Returns the number of marines assigned to a unit
+     * Used for abandoning a unit
+     * @return
+     */
     public int getNMarines() {
         return nMarines;
     }
@@ -1220,7 +1267,7 @@ public class Jumpship extends Aero {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
@@ -1493,7 +1540,7 @@ public class Jumpship extends Aero {
                     }
                     if ((mLinker.getType() instanceof MiscType)
                             && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        dBV *= 1.25;
+                        dBV *= 1.15;
                     }
                 }
 
@@ -1785,7 +1832,7 @@ public class Jumpship extends Aero {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -1979,21 +2026,13 @@ public class Jumpship extends Aero {
         }
 
         // now I need to determine base armor points by type and weight
-        double baseArmor = 0.8;
-        if (isClan()) {
-            baseArmor = 1.0;
-        }
+        boolean clan = TechConstants.isClan(getArmorTechLevel(firstArmorIndex()));
+        double baseArmor = clan ? 1.0 : 0.8;
 
         if (weight >= 250000) {
-            baseArmor = 0.4;
-            if (isClan()) {
-                baseArmor = 0.5;
-            }
+            baseArmor = clan ? 0.5 : 0.4;
         } else if (weight >= 150000) {
-            baseArmor = 0.6;
-            if (isClan()) {
-                baseArmor = 0.7;
-            }
+            baseArmor = clan ? 0.7 : 0.6;
         }
 
         if (armorType[0] == EquipmentType.T_ARMOR_LC_FERRO_IMP) {
@@ -2040,9 +2079,9 @@ public class Jumpship extends Aero {
         int driveIdx = 0;
         double driveCosts = 0;
         // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks());
+        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
         // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks());
+        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
         // Controller
         driveCost[driveIdx++] += 50000000.0;
         // Tankage
@@ -2050,7 +2089,7 @@ public class Jumpship extends Aero {
         // Sail
         driveCost[driveIdx++] += 50000.0 * (30 + (weight / 7500.0));
         // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks()); 
+        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
         
         for (int i = 0; i < driveIdx; i++) {
             driveCosts += driveCost[i];
@@ -2094,11 +2133,11 @@ public class Jumpship extends Aero {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }

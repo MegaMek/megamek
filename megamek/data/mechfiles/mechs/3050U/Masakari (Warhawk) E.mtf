@@ -1,35 +1,36 @@
-Version:1.0
+Version:1.1
 Masakari (Warhawk)
 E
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3069
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Clan
+era:3069
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:85
-Engine:340 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:85
+engine:340 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:20 Double
-Base Chassis Heat Sinks:13
-Walk MP:4
-Jump MP:0
+heat sinks:20 Double
+base chassis heat sinks:13
+nocrit:Standard:None
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:28
-RA Armor:28
-LT Armor:26
-RT Armor:26
-CT Armor:42
-HD Armor:9
-LL Armor:35
-RL Armor:35
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Ferro-Fibrous(Clan)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:42
+HD armor:9
+LL armor:35
+RL armor:35
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:6
 Plasma Cannon, Left Arm
@@ -111,8 +112,8 @@ Fusion Engine
 
 Head:
 Life Support
-Cockpit
 Sensors
+Cockpit
 Clan Ferro-Fibrous
 Sensors
 Life Support
@@ -151,4 +152,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:Introduced by Clan Smoke Jaguar in 2999 in preparation for the anticipated return to the Inner Sphere, while the Dragoon Compromise stalled such plans, the Jaguars unleashed the powerful Warhawk on their Warden opponents to deadly effect. The Warhawk was powered by a massive 340 XL Engine that gave it a top speed of 64.8 km/h and mounted thirteen and a half tons of Ferro-Fibrous armor to protect itself from enemy fire. To dissipate the massive waste heat produced in its various configurations, it carried a staggering twenty double heat sinks. Additionally, though not truly fixed equipment on the chassis, the Warhawk managed to incorporate an advanced Targeting Computer into each of its configurations, making all of its direct fire weapons extremely accurate.
+
+capabilities:A sort of fusion between the B and C variants, the Warhawk E mounted an ER PPC, a Large Pulse Laser, and an SRM-6. The new addition to the design was three Plasma Cannons. The Targeting Computer made the energy weapons more accurate.
+
+deployment:Deployed extensively in the Jaguar frontline forces, and often seen paired with the Dire Wolf, the design truly came to prominence as originally intended, on the battlefields of the Jaguars' Invasion Corridor and earned the code name of Masakari - a Japanese battle-axe used on medieval Terra - from warriors within the DCMS who faced it.
+
+Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad.
+manufacturer:Phan Industrialplex, Abysmal Manufacturing Complex,  Kindraa Kline Primary Production Facility
+primaryfactory:Huntress, Huntress, Dagda
+systemmanufacturer:CHASSIS:Huntress WH
+systemmanufacturer:ENGINE:General Systems 340 XL
+systemmanufacturer:ARMOR:Forging X85 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Series 10 CBS MultiFreq
+systemmanufacturer:TARGETING:HawkEye J360
 

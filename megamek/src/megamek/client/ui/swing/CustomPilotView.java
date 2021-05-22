@@ -1,44 +1,50 @@
 /*
- *  This file is part of MegaMek
- * Copyright (C) 2017 - The MegaMek Team
+ * Copyright (C) 2017 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
+import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooserDialog;
+import megamek.client.ui.swing.dialog.imageChooser.PortraitChooserDialog;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
 import megamek.common.LAMPilot;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
@@ -48,21 +54,15 @@ import megamek.common.preference.PreferenceManager;
  * for the entire crew.
  * 
  * @author Neoancient
- *
  */
 public class CustomPilotView extends JPanel {
-    
-    /**
-     * 
-     */
     private static final long serialVersionUID = 345126674612500365L;
 
     private final Entity entity;
-    private int gender;
+    private Gender gender = Gender.RANDOMIZE;
 
     private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
-    private final PortraitChoiceDialog portraitDialog;
     private final JTextField fldNick = new JTextField(20);
     private final JTextField fldGunnery = new JTextField(3);
     private final JTextField fldGunneryL = new JTextField(3);
@@ -79,8 +79,11 @@ public class CustomPilotView extends JPanel {
     
     private final JComboBox<String> cbBackup = new JComboBox<>();
     
-    private final ArrayList<Entity> entityUnitNum = new ArrayList<>();
+    private final List<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
+    
+    private String portraitCategory;
+    private String portraitFilename;
 
     public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
@@ -95,29 +98,39 @@ public class CustomPilotView extends JPanel {
             add(chkMissing, GBC.eop());
         }
         
-        JButton button = new JButton();
-        button.setPreferredSize(new Dimension(72, 72));
-        button.setText(Messages.getString("CustomMechDialog.labPortrait"));
-        button.setActionCommand("portrait"); //$NON-NLS-1$
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                portraitDialog.setVisible(true);
+        JButton portraitButton = new JButton();
+        portraitButton.setPreferredSize(new Dimension(72, 72));
+        portraitButton.setName("portrait");
+        portraitButton.addActionListener(e -> {
+            AbstractIconChooserDialog portraitDialog = new PortraitChooserDialog(parent,
+                    entity.getCrew().getPortrait(slot));
+            int result = portraitDialog.showDialog();
+            if (result == JOptionPane.OK_OPTION) {
+                if (portraitDialog.getSelectedItem() != null) {
+                    portraitCategory = portraitDialog.getSelectedItem().getCategory();
+                    portraitFilename = portraitDialog.getSelectedItem().getFilename();
+                    portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
+                }
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(), button);
-        portraitDialog.setPilot(entity.getCrew(), slot);
-        add(button, GBC.std().gridheight(2));
+        portraitCategory = entity.getCrew().getPortraitCategory(slot);
+        portraitFilename = entity.getCrew().getPortraitFileName(slot);
+        portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
+        add(portraitButton, GBC.std().gridheight(2));
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
+        JButton button = new JButton(Messages.getString("CustomMechDialog.RandomName"));
         button.addActionListener(e -> {
-            boolean isFemale = parent.clientgui.getClient().getRandomNameGenerator().isFemale();
-            this.gender = Crew.getGenderAsInt(isFemale);
-            fldName.setText(parent.clientgui.getClient().getRandomNameGenerator().generate(isFemale));
+            gender = RandomGenderGenerator.generate();
+            fldName.setText(RandomNameGenerator.getInstance().generate(gender, entity.getOwner().getName()));
         });
         add(button, GBC.eop());
 
-        button = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
+        button = new JButton(Messages.getString("CustomMechDialog.RandomCallsign"));
+        button.addActionListener(e -> fldNick.setText(RandomCallsignGenerator.getInstance().generate()));
+        add(button, GBC.eop());
+
+        button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
         button.addActionListener(e -> {
             int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
@@ -130,51 +143,51 @@ public class CustomPilotView extends JPanel {
         });
         add(button, GBC.eop());
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
+        label = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldName, GBC.eol());
         fldName.setText(entity.getCrew().getName(slot));
 
-        label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT); //$NON-NLS-1$
+        label = new JLabel(Messages.getString("CustomMechDialog.labNick"), SwingConstants.RIGHT);
         add(label, GBC.std());
         add(fldNick, GBC.eop());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
         if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryL, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryM, GBC.eol());
 
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
             
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroL, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroM, GBC.eol());
 
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAeroB, GBC.eol());
             }
 
         } else {
-            label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
+            label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunnery, GBC.eol());
 
             if (entity.getCrew() instanceof LAMPilot) {
-                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT); //$NON-NLS-1$
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT);
                 add(label, GBC.std());
                 add(fldGunneryAero, GBC.eol());
             }
@@ -258,10 +271,10 @@ public class CustomPilotView extends JPanel {
 
         if (entity instanceof Protomech) {
             // All ProtoMechs have a callsign.
-            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " + //$NON-NLS-1$
+            String callsign = Messages.getString("CustomMechDialog.Callsign") + ": " +
                     (entity.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()) +
-                    '-' + entity.getId();//$NON-NLS-1$
+                    '-' + entity.getId();
             label = new JLabel(callsign, SwingConstants.CENTER);
             add(label, GBC.eol().anchor(GridBagConstraints.CENTER));
 
@@ -273,6 +286,7 @@ public class CustomPilotView extends JPanel {
 
                         private final short unitNumber = entity.getUnitNumber();
 
+                        @Override
                         public boolean accept(Entity unitEntity) {
                             return (unitEntity instanceof Protomech)
                                     && (ownerId == unitEntity.getOwnerId())
@@ -359,7 +373,7 @@ public class CustomPilotView extends JPanel {
         return fldNick.getText();
     }
 
-    public int getGender() {
+    public Gender getGender() {
         return gender;
     }
     
@@ -412,11 +426,11 @@ public class CustomPilotView extends JPanel {
     }
     
     public String getPortraitCategory() {
-        return portraitDialog.getCategory();
+        return portraitCategory;
     }
     
     public String getPortraitFilename() {
-        return portraitDialog.getFileName();
+        return portraitFilename;
     }
     
     public Entity getEntityUnitNumSwap() {

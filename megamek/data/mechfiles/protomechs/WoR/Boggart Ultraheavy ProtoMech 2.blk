@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,11 +21,11 @@ Boggart Ultraheavy ProtoMech
 </Model>
 
 <year>
-3075
+3072
 </year>
 
 <originalBuildYear>
-3075
+3072
 </originalBuildYear>
 
 <type>
@@ -104,4 +104,3 @@ Wars of Reaving - Jihad
 <tonnage>
 13.0
 </tonnage>
-

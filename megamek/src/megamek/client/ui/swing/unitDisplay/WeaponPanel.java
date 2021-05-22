@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractListModel;
@@ -45,12 +46,10 @@ import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -71,7 +70,7 @@ import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -251,7 +250,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 game = unitDisplay.getClientGUI().getClient().getGame();
             }
 
-            StringBuffer wn = new StringBuffer(mounted.getDesc());
+            StringBuilder wn = new StringBuilder(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
             wn.append(en.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
@@ -262,31 +261,31 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             // determine shots left & total shots left
             if ((wtype.getAmmoType() != AmmoType.T_NA)
                     && (!wtype.hasFlag(WeaponType.F_ONESHOT)
-                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))) {
+                            || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                    && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                 int shotsLeft = 0;
                 if ((mounted.getLinked() != null)
                     && !mounted.getLinked().isDumping()) {
                     shotsLeft = mounted.getLinked().getUsableShotsLeft();
                 }
 
-                EquipmentType typeUsed = null;
-                if (mounted.getLinked() != null) {
-                    typeUsed = mounted.getLinked().getType();
-                }
-
-                int totalShotsLeft = en.getTotalMunitionsOfType(typeUsed);
+                int totalShotsLeft = en.getTotalMunitionsOfType(mounted);
 
                 wn.append(" ("); //$NON-NLS-1$
                 wn.append(shotsLeft);
                 wn.append('/'); //$NON-NLS-1$
                 wn.append(totalShotsLeft);
                 wn.append(')'); //$NON-NLS-1$
-            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+            } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                    || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
                 int totalShots = 0;
+                long munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
                 for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
-                    shotsLeft += current.getUsableShotsLeft();
-                    totalShots++;
+                    if (((AmmoType) current.getType()).getMunitionType() == munition) {
+                        shotsLeft += current.getUsableShotsLeft();
+                        totalShots += current.getOriginalShots();
+                    }
                 }
                 wn.append(" (").append(shotsLeft) //$NON-NLS-1$
                     .append("/").append(totalShots).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1437,22 +1436,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
+        if ((wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
-            if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
-                wDamageTrooperR
-                        .setText(Double.toString((double) Math
-                                .round(((Infantry) entity)
-                                               .getDamagePerTrooper() * 1000) / 1000));
+            if (entity.isConventionalInfantry()) {
+                wDamageTrooperR.setText(Double.toString((double) Math.round(
+                        ((Infantry) entity).getDamagePerTrooper() * 1000) / 1000));
             } else {
-                wDamageTrooperR.setText(Double.toString(inftype
-                                                                .getInfantryDamage()));
+                wDamageTrooperR.setText(Double.toString(inftype.getInfantryDamage()));
             }
-            // what a nightmare to set up all the range info for infantry
-            // weapons
+            // what a nightmare to set up all the range info for infantry weapons
             wMinL.setVisible(false);
             wShortL.setVisible(false);
             wMedL.setVisible(false);
@@ -1876,7 +1870,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
-        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
+                || (entity.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
             int count = 0;
             vAmmo = new ArrayList<>();
             for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
@@ -1905,7 +1900,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             vAmmo = new ArrayList<Mounted>();
             int nCur = -1;
             int i = 0;
-            for (Mounted mountedAmmo : entity.getAmmo()) {
+            //Ammo sharing between adjacent trailers
+            List<Mounted> fullAmmoList = new ArrayList<Mounted>(entity.getAmmo());
+            if (entity.getTowedBy() != Entity.NONE) {
+                Entity ahead = entity.getGame().getEntity(entity.getTowedBy());
+                fullAmmoList.addAll(ahead.getAmmo());
+            }
+            if (entity.getTowing() != Entity.NONE) {
+                Entity behind = entity.getGame().getEntity(entity.getTowing());
+                fullAmmoList.addAll(behind.getAmmo());
+            }
+            for (Mounted mountedAmmo : fullAmmoList) {
                 AmmoType atype = (AmmoType) mountedAmmo.getType();
                 // for all aero units other than fighters,
                 // ammo must be located in the same place to be usable
@@ -1917,19 +1922,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
 
                 boolean rightBay = true;
-                if (entity.usesWeaponBays()
-                    && !(entity instanceof FighterSquadron)) {
-                    rightBay = oldmount.ammoInBay(entity
-                                                          .getEquipmentNum(mountedAmmo));
+                if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
+                    rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
                 }
                 
                 // covers the situation where a weapon using non-caseless ammo should 
                 // not be able to switch to caseless on the fly and vice versa
-                boolean amCaseless = ((AmmoType) mounted.getLinked().getType()).getMunitionType() == AmmoType.M_CASELESS;
-                boolean etCaseless = ((AmmoType) atype).getMunitionType() == AmmoType.M_CASELESS;
-                boolean caselessMismatch = amCaseless != etCaseless;                
+                boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay && !caselessMismatch
+                if (mountedAmmo.isAmmoUsable() && same && rightBay && canSwitchToAmmo
                     && (atype.getAmmoType() == wtype.getAmmoType())
                     && (atype.getRackSize() == wtype.getRackSize())) {
 
@@ -2128,7 +2129,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         int ammoIndex = m.getDesc().indexOf(
                 Messages.getString("MechDisplay.0")); //$NON-NLS-1$
         int loc = m.getLocation();
-        if (loc != Entity.LOC_NONE) {
+        if (!m.getEntity().equals(entity)) {
+            sb.append("[TR] "); //$NON-NLS-1$
+        } else if (loc != Entity.LOC_NONE) {
             sb.append('[').append(entity.getLocationAbbr(loc)).append("] "); //$NON-NLS-1$
         }
         if (ammoIndex == -1) {
@@ -2657,6 +2660,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // this ammo
                 for (int wid : mWeap.getBayWeapons()) {
                     Mounted bWeap = entity.getEquipment(wid);
+                    // FIXME: Consider new AmmoType::equals / BombType::equals
                     if (bWeap.getType().equals(sWeap.getType())) {
                         entity.loadWeapon(bWeap, mAmmo);
                         // Alert the server of the update.

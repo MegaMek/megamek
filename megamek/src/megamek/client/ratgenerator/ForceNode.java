@@ -19,9 +19,8 @@ import java.util.stream.Collectors;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import megamek.MegaMek;
 import megamek.common.EntityMovementMode;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
 
 /**
  * 
@@ -137,8 +136,7 @@ public class ForceNode extends RulesetNode {
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
                                 if (null == ft) {
-                                    DefaultMmLogger.getInstance().log(getClass(), "apply(ForceDescriptor)",
-                                            LogLevel.ERROR, "Could not parse formation type " + content);
+                                    MegaMek.getLogger().error("Could not parse formation type " + content);
                                 }
                                 fd.setFormationType(ft);
                             }
@@ -169,8 +167,7 @@ public class ForceNode extends RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                DefaultMmLogger.getInstance().log(getClass(), "apply(ForceDescriptor)",
-                                        LogLevel.ERROR, "Force generator could not parse mission role " + p);
+                                MegaMek.getLogger().error("Force generator could not parse mission role " + p);
                             }
                         }
                         break;

@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -57,18 +58,20 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
-import megamek.client.RandomUnitGenerator;
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
-import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
+import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -84,12 +87,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
-public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener, TreeSelectionListener {
-
-    /**
-     *
-     */
+public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
     
     @SuppressWarnings("unused")
@@ -109,10 +107,10 @@ WindowListener, TreeSelectionListener {
     private MechSearchFilter searchFilter;
 
     private JLabel m_labelPlayer = new JLabel(Messages
-            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT); //$NON-NLS-1$
+            .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT);
 
-    private JComboBox<String> m_chPlayer = new JComboBox<String>();
-    private JComboBox<String> m_chType = new JComboBox<String>();
+    private JComboBox<String> m_chPlayer = new JComboBox<>();
+    private JComboBox<String> m_chType = new JComboBox<>();
 
     private JTree m_treeRAT = new JTree();
     private JTabbedPane m_pMain = new JTabbedPane();
@@ -388,8 +386,8 @@ WindowListener, TreeSelectionListener {
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(pRATGenTop), c);
         
-        m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR, m_clientgui);
-        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER, null);
+        m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
+        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
         
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -539,20 +537,23 @@ WindowListener, TreeSelectionListener {
         m_pRightPane.add(m_pPreview, CARD_PREVIEW);
         m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
         
-        m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pRightPane);
+        m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);
 
         // construct the main dialog
         setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(800,500));
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pSplit, BorderLayout.CENTER);
         validate();
-        pack();
         setLocationRelativeTo(cl.frame);
         
+        m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
+        setSize(guip.getRndArmySizeWidth(), guip.getRndArmySizeHeight());
+        setLocation(guip.getRndArmyPosX(), guip.getRndArmyPosY());
+        
         m_client.getGame().addGameListener(gameListener);
+        addWindowListener(windowListener);
     }
 
     public void valueChanged(TreeSelectionEvent ev) {
@@ -766,15 +767,14 @@ WindowListener, TreeSelectionListener {
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
                     unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
-            } catch (NumberFormatException ex) {
-                //ignored
-            }finally{
+            } catch (NumberFormatException ignored) {
+            } finally {
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
-            for(int sel : m_lRAT.getSelectedRows()) {
+            for (int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {
                 	armyModel.addUnit(ms);
@@ -788,34 +788,23 @@ WindowListener, TreeSelectionListener {
         }
     }
 
-    public void windowActivated(WindowEvent arg0) {
-        //ignored
-    }
+    WindowListener windowListener = new WindowAdapter() {
 
-    public void windowClosed(WindowEvent arg0) {
-        //ignored
-    }
+        public void windowClosed(WindowEvent arg0) {
+            saveWindowSettings();
+        }
 
-    public void windowClosing(WindowEvent arg0) {
-        setVisible(false);
-    }
+        private void saveWindowSettings() {
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setRndArmySizeHeight(getSize().height);
+            guip.setRndArmySizeWidth(getSize().width);
+            guip.setRndArmyPosX(getLocation().x);
+            guip.setRndArmyPosY(getLocation().y);
+            guip.setRndArmySplitPos(m_pSplit.getDividerLocation());
+        }
 
-    public void windowDeactivated(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowDeiconified(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowIconified(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowOpened(WindowEvent arg0) {
-        //ignored
-    }
-
+    };
+    
 	private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
         String clientName = m_clientgui.getClient().getName();
@@ -839,9 +828,9 @@ WindowListener, TreeSelectionListener {
     }
 
     private void updateTechChoice() {
-        int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
-                .getOptions().stringOption("techlevel"));
-        int maxTech;
+        final int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
+                .getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+        final int maxTech;
         switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO:
                 maxTech = TechConstants.T_INTRO_BOXSET;
@@ -860,20 +849,19 @@ WindowListener, TreeSelectionListener {
                 break;
             default:
                 maxTech = TechConstants.T_TW_ALL;
+                break;
         }
 
         m_chType.removeAllItems();
         for (int i = 0; i <= maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        int savedSelection = GUIPreferences.getInstance().getRATTechLevel();
-        savedSelection = Math.min(savedSelection, maxTech - 1);
-        m_chType.setSelectedIndex(savedSelection);
+        m_chType.setSelectedIndex(Math.min(GUIPreferences.getInstance().getRATTechLevel(), maxTech));
     }
 
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
-        if(null == rats) {
+        if (null == rats) {
             return;
         }  
         
@@ -949,10 +937,10 @@ WindowListener, TreeSelectionListener {
     	if (fRec != null) {
 			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
 			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-			        (List<Integer>)m_pRATGenOptions.getListOption("weightClasses"),
+			        (List<Integer>) m_pRATGenOptions.getListOption("weightClasses"),
 					m_pRATGenOptions.getIntegerOption("networkMask"),
-					(List<EntityMovementMode>)m_pRATGenOptions.getListOption("motiveTypes"),
-					(List<MissionRole>)m_pRATGenOptions.getListOption("roles"),
+					(List<EntityMovementMode>) m_pRATGenOptions.getListOption("motiveTypes"),
+					(List<MissionRole>) m_pRATGenOptions.getListOption("roles"),
 					m_pRATGenOptions.getIntegerOption("roleStrictness"));
 			ratModel.refreshData();
     	}
@@ -971,7 +959,7 @@ WindowListener, TreeSelectionListener {
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if(cs.useAverageSkills()) {
+            if (cs.useAverageSkills()) {
                 int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
     
                 int gunnery = skills[0];
@@ -982,15 +970,15 @@ WindowListener, TreeSelectionListener {
 
                 if (e.getCrew() instanceof LAMPilot) {
                     skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             e.getCrew().sortRandomSkills();
             if (cs.generateNames()) {
-                boolean isFemale = m_client.getRandomNameGenerator().isFemale();
-                e.getCrew().setGender(isFemale, i);
-                e.getCrew().setName(m_client.getRandomNameGenerator().generate(isFemale), i);
+                Gender gender = RandomGenderGenerator.generate();
+                e.getCrew().setGender(gender, i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

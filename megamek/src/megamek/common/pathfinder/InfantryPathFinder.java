@@ -52,12 +52,15 @@ public class InfantryPathFinder {
      * @param startingEdge the starting node. Should be empty.
      */
     public void run(MovePath startingEdge) {
-        final String METHOD_NAME = "run";
-        
         try {
             infantryPaths = new ArrayList<MovePath>();
             // add an option to stand still
             infantryPaths.add(startingEdge);
+            
+            // if, for some reason, the entity has already moved this turn or otherwise can't move, don't bother calculating paths for it
+            if(!startingEdge.getEntity().isSelectableThisTurn()) {
+                return;
+            }
             
             // for an infantry unit with n MP, the total number of paths should be 6 * n*(n+1)/2 + 1 (triangular rule, plus "stand still")
             infantryPaths.addAll(generateChildren(startingEdge));
@@ -71,12 +74,16 @@ public class InfantryPathFinder {
             
             // now that we've got all our possible destinations, make sure to try every possible rotation,
             // since facing matters for field guns and if using the "dig in" and "vehicle cover" tacops rules.
+            List<MovePath> rotatedPaths = new ArrayList<>();
+            
             for(MovePath path : infantryPaths) {
-                infantryPaths.addAll(AeroPathUtil.generateValidRotations(path));
+                rotatedPaths.addAll(AeroPathUtil.generateValidRotations(path));
             }
             
+            infantryPaths.addAll(rotatedPaths);
+            
             // add "flee" option if we haven't done anything else
-            if(startingEdge.getFinalCoords().isOnBoardEdge(game.getBoard()) &&
+            if(game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
@@ -93,9 +100,9 @@ public class InfantryPathFinder {
                     + " Try setting time limit to lower value, or "//$NON-NLS-1$
                     + "increase java memory limit.";
             
-            getLogger().log(this.getClass(), METHOD_NAME, LogLevel.ERROR, memoryMessage, e);
+            getLogger().error(memoryMessage, e);
         } catch(Exception e) {
-            getLogger().error(this.getClass(), METHOD_NAME, e); //do something, don't just swallow the exception, good lord
+            getLogger().error(e); //do something, don't just swallow the exception, good lord
         }
     }
     

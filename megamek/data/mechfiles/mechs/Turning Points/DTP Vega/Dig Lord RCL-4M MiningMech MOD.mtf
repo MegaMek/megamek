@@ -3,38 +3,40 @@ Dig Lord
 RCL-4M MiningMech MOD
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3130
-Source:DTP: Vega - Dark Ages
-Rules Level:3
+techbase:Inner Sphere
+era:3132
+source:DTP: Vega - Dark Ages
+rules level:3
 
-Mass:65
-Engine:195 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:65
+engine:195 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:3 Single
-Walk MP:3
-Jump MP:0
+heat sinks:3 Single
+nocrit:Industrial:None
+nocrit:IS Heavy Industrial:None
+walk mp:3
+jump mp:0
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:14
-RT Armor:14
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Heavy Industrial(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:2
-SRM 4, Right Torso
 AC/10, Left Torso
+SRM 4, Right Torso
 
 Left Arm:
 Shoulder
@@ -103,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Extended Fuel Tank (1 ton)
+Extended Fuel Tank
 -Empty-
 
 Head:

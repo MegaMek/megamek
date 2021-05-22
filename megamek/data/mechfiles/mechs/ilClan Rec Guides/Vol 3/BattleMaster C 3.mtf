@@ -1,0 +1,164 @@
+Version:1.1
+BattleMaster
+C 3
+
+Config:Biped
+techbase:Clan
+era:3145
+source:ilClan Vol 3 - Dark Age
+rules level:4
+
+mass:85
+engine:340 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:18 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:24
+RA armor:24
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:10
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+ER PPC, Right Arm
+Streak SRM 6, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLMG
+CLMG
+Clan Machine Gun Ammo - Half
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser (R)
+Clan Streak SRM 6 Ammo
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser (R)
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Trellshire Heavy Industries
+primaryfactory:Twycross
+systemmanufacturer:CHASSIS:Hollis Mark X
+systemmanufacturer:ENGINE:VOX 340
+systemmanufacturer:ARMOR:AM15
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:'Hephaestus' CT-44 with Targeting Computer
+

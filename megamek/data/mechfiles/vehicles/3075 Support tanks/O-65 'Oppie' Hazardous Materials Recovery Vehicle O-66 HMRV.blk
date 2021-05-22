@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -59,7 +59,7 @@ liquidcargobay:22.91:1:1
 
 <Body Equipment>
 Paramedic Equipment
-Environmental Sealed Chassis
+Environmental Sealing
 SV Chassis Mod [Tractor]
 </Body Equipment>
 
@@ -113,4 +113,3 @@ TRO 3075 - Succession Wars
 <fuel>
 0.0
 </fuel>
-

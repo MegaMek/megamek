@@ -67,10 +67,8 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
-import megamek.common.logging.LogLevel;
 import megamek.common.net.Packet;
 import megamek.common.options.GameOptions;
-import megamek.common.preference.PreferenceManager;
 import megamek.server.SmokeCloud;
 
 /**
@@ -143,10 +141,7 @@ public class Precognition implements Runnable {
     @SuppressWarnings("unchecked")
     void handlePacket(Packet c) {
         if (c == null) {
-            getOwner().log(getClass(),
-                           "handlePacket(Packet)",
-                           LogLevel.WARNING,
-                           "client: got null packet"); //$NON-NLS-1$
+            getOwner().getLogger().warning("Client: got null packet");
             return;
         }
         // Game isn't thread safe; other threads shouldn't use  game while
@@ -320,8 +315,7 @@ public class Precognition implements Runnable {
     }
 
     private void pause() {
-        final String METHOD_NAME = "pause()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             getWaitWhenDone().set(true);
@@ -332,19 +326,18 @@ public class Precognition implements Runnable {
                 }
             }
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     synchronized void unPause() {
-        final String METHOD_NAME = "unpause()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             getWaitWhenDone().set(false);
             notifyAll();
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -354,13 +347,12 @@ public class Precognition implements Runnable {
      * something something.
      */
     private synchronized void wakeUp() {
-        final String METHOD_NAME = "wake_up()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             notifyAll();
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -373,8 +365,7 @@ public class Precognition implements Runnable {
      * locations call this right before making a move. automatically pauses.
      */
     void ensureUpToDate() {
-        final String METHOD_NAME = "insureUpToDate()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             pause();
@@ -407,20 +398,18 @@ public class Precognition implements Runnable {
                 Integer entityId = getDirtyUnits().pollFirst();
                 Entity entity = getGame().getEntity(entityId);
                 if (entity != null) {
-                    getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
+                    getOwner().getLogger().debug("recalculating paths for " + entity.getDisplayName());
                     getPathEnumerator().recalculateMovesFor(entity);
-                    getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity
-                            .getDisplayName());
+                    getOwner().getLogger().debug("finished recalculating paths for " + entity.getDisplayName());
                 }
             }
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     public void run() {
-        final String METHOD_NAME = "run()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             // todo There's probably a better way to handle this than a loop that only exits on an error.
@@ -434,10 +423,9 @@ public class Precognition implements Runnable {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if ((entity != null) && isEntityOnMap(entity)) {
                         unPause();
-                        getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
+                        getOwner().getLogger().debug("recalculating paths for " + entity.getDisplayName());
                         getPathEnumerator().recalculateMovesFor(entity);
-                        getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity
-                                .getDisplayName());
+                        getOwner().getLogger().debug("finished recalculating paths for " + entity.getDisplayName());
                     }
                 } else if (getWaitWhenDone().get()) {
                     waitForUnpause(); // paused for a reason
@@ -446,7 +434,7 @@ public class Precognition implements Runnable {
                 }
             }
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -459,18 +447,15 @@ public class Precognition implements Runnable {
      * something to do
      */
     private synchronized void waitForUnpause() {
-        final String METHOD_NAME = "wait_for_unpause()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         try {
             while (!getDone().get() &&
                    (getWaitWhenDone().get() ||
                     (getEventsToProcess().isEmpty() &&
                      getDirtyUnits().isEmpty()))) {
-                getOwner().log(getClass(), METHOD_NAME,
-                               "waitWhenDone = " + getWaitWhenDone() +
-                               " :: eventsToProcess = " +
-                               getEventsToProcess().size() +
+                getOwner().getLogger().debug("waitWhenDone = " + getWaitWhenDone() +
+                               " :: eventsToProcess = " + getEventsToProcess().size() +
                                " :: dirtyUnits = " + getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
@@ -481,7 +466,7 @@ public class Precognition implements Runnable {
             }
             getWaiting().set(false);
         } finally {
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -490,8 +475,7 @@ public class Precognition implements Runnable {
      * if a unit has moved, my precaculated paths are no longer valid
      */
     private void processGameEvents() {
-        final String METHOD_NAME = "processGameEvents()";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
 
         // We don't want Game to change while this is happening
         GAME_LOCK.lock();
@@ -499,12 +483,12 @@ public class Precognition implements Runnable {
             LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<>(getEventsToProcess());
             int numEvents = eventsToProcessIterator.size();
             for (int count = 0; count < numEvents; count++) {
-                getOwner().log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
+                getOwner().getLogger().debug("Processing event " + (count + 1) + " out of " + numEvents);
                 GameEvent event = eventsToProcessIterator.get(count);
                 if (event == null) {
                     continue;
                 }
-                getOwner().log(getClass(), METHOD_NAME, "Processing " + event.toString());
+                getOwner().getLogger().debug("Processing " + event.toString());
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement
@@ -532,8 +516,7 @@ public class Precognition implements Runnable {
                     if (position.equals(getPathEnumerator().getLastKnownCoords(entity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    getOwner().log(getClass(), METHOD_NAME,
-                            "Received entity change event for "
+                    getOwner().getLogger().debug("Received entity change event for "
                                     + changeEvent.getEntity().getDisplayName()
                                     + " (ID " + entity.getId() + ")");
                     Integer entityId = changeEvent.getEntity().getId();
@@ -541,9 +524,7 @@ public class Precognition implements Runnable {
 
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
-                    getOwner().log(getClass(), METHOD_NAME,
-                            "Phase change detected: "
-                                    + phaseChange.getNewPhase().name());
+                    getOwner().getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
                     if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
@@ -556,10 +537,10 @@ public class Precognition implements Runnable {
                     }
                 }
             }
-            getOwner().log(getClass(), METHOD_NAME, "Events still to process: " + getEventsToProcess().size());
+            getOwner().getLogger().debug("Events still to process: " + getEventsToProcess().size());
         } finally {
             GAME_LOCK.unlock();
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
@@ -568,8 +549,7 @@ public class Precognition implements Runnable {
      * as any units who's moves contain that unit
      */
     private void dirtifyUnit(int id) {
-        final String METHOD_NAME = "dirtifyUnit(int)";
-        getOwner().methodBegin(getClass(), METHOD_NAME);
+        getOwner().getLogger().methodBegin();
         // Prevent Game from changing while processing
         GAME_LOCK.lock();
         try {
@@ -628,7 +608,7 @@ public class Precognition implements Runnable {
                             msg.append("\n  ").append(e.getDisplayName());
                         }
                     }
-                    getOwner().log(getClass(), METHOD_NAME, msg.toString());
+                    getOwner().getLogger().debug(msg.toString());
                 }
                 getDirtyUnits().addAll(toDirty);
             }
@@ -642,38 +622,28 @@ public class Precognition implements Runnable {
             }
         } finally {
             GAME_LOCK.unlock();
-            getOwner().methodEnd(getClass(), METHOD_NAME);
+            getOwner().getLogger().methodEnd();
         }
     }
 
     PathEnumerator getPathEnumerator() {
         PATH_ENUMERATOR_LOCK.readLock().lock();
         try {
-            getOwner().log(getClass(), "getPathEnumerator()()",
-                           LogLevel.DEBUG,
-                           "PATH_ENUMERATOR_LOCK read locked.");
+            getOwner().getLogger().debug("PATH_ENUMERATOR_LOCK read locked.");
             return pathEnumerator;
         } finally {
             PATH_ENUMERATOR_LOCK.readLock().unlock();
-            getOwner().log(getClass(), "getPathEnumerator()()",
-                           LogLevel.DEBUG,
-                           "PATH_ENUMERATOR_LOCK read unlocked.");
+            getOwner().getLogger().debug("PATH_ENUMERATOR_LOCK read unlocked.");
         }
     }
 
     private void setPathEnumerator(PathEnumerator pathEnumerator) {
         PATH_ENUMERATOR_LOCK.writeLock().lock();
         try {
-            getOwner().log(getClass(),
-                           "setPathEnumerator(PathEnumerator)",
-                           LogLevel.DEBUG,
-                           "PATH_ENUMERATOR_LOCK write locked.");
+            getOwner().getLogger().debug("PATH_ENUMERATOR_LOCK write locked.");
             this.pathEnumerator = pathEnumerator;
         } finally {
-            getOwner().log(getClass(),
-                           "setPathEnumerator(PathEnumerator)",
-                           LogLevel.DEBUG,
-                           "PATH_ENUMERATOR_LOCK write unlocked.");
+            getOwner().getLogger().debug("PATH_ENUMERATOR_LOCK write unlocked.");
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
     }
@@ -709,26 +679,22 @@ public class Precognition implements Runnable {
     void resetGame() {
         GAME_LOCK.lock();
         try {
-            getOwner().log(getClass(), "resetGame()",
-                           LogLevel.DEBUG, "GAME_LOCK write locked.");
+            getOwner().getLogger().debug("GAME_LOCK write locked.");
             game.reset();
         } finally {
             GAME_LOCK.unlock();
-            getOwner().log(getClass(), "resetGame()",
-                           LogLevel.DEBUG, "GAME_LOCK write unlocked.");
+            getOwner().getLogger().debug("GAME_LOCK write unlocked.");
         }
     }
 
     private IGame getGame() {
         GAME_LOCK.lock();
         try {
-            getOwner().log(getClass(), "getGame()",
-                           LogLevel.DEBUG, "GAME_LOCK read locked.");
+            getOwner().getLogger().debug("GAME_LOCK read locked.");
             return game;
         } finally {
             GAME_LOCK.unlock();
-            getOwner().log(getClass(), "getGame()",
-                           LogLevel.DEBUG, "GAME_LOCK read unlocked.");
+            getOwner().getLogger().debug("GAME_LOCK read unlocked.");
         }
     }
    
@@ -750,13 +716,6 @@ public class Precognition implements Runnable {
         } else {
             getGame().setPlayer(pindex, newPlayer);
         }
-
-        PreferenceManager.getClientPreferences().setLastPlayerColor(
-                newPlayer.getColorIndex());
-        PreferenceManager.getClientPreferences().setLastPlayerCategory(
-                newPlayer.getCamoCategory());
-        PreferenceManager.getClientPreferences().setLastPlayerCamoName(
-                newPlayer.getCamoFileName());
     }
 
     /**
@@ -934,7 +893,6 @@ public class Precognition implements Runnable {
      * @param c The packet containing the change.
      */
     private void receiveEntityNovaNetworkModeChange(Packet c) {
-        final String METHOD_NAME = "receiveEntityNovaNetworkModeChange(Packet)";
         try {
             int entityId = c.getIntValue(0);
             String networkID = c.getObject(1).toString();
@@ -943,7 +901,7 @@ public class Precognition implements Runnable {
                 e.setNewRoundNovaNetworkString(networkID);
             }
         } catch (Exception ex) {
-            getOwner().log(getClass(), METHOD_NAME, ex);
+            getOwner().getLogger().error(ex);
         }
 
     }

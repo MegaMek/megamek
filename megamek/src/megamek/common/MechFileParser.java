@@ -25,7 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
@@ -56,7 +58,7 @@ import megamek.common.loaders.MepFile;
 import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.util.BuildingBlock;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -590,42 +592,18 @@ public class MechFileParser {
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
-                if (ent instanceof BipedMech) {
-                    if ((m.getLocation() != Mech.LOC_LLEG)
-                            && (m.getLocation() != Mech.LOC_RLEG)) {
-                        throw new EntityLoadingException(
-                                "Talons are only legal in the Legs for "+ent.getShortName());
+                if (ent instanceof Mech) {
+                    if (!ent.locationIsLeg(m.getLocation())) {
+                        throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
-
-                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LLEG)) {
-                        throw new EntityLoadingException(
-                                "Talons must be in all legs for "+ent.getShortName());
+                    for (int loc = 0; loc < ent.locations(); loc++) {
+                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, -1, loc)) {
+                            throw new EntityLoadingException("Talons must be in all legs for " + ent.getShortName());
+                        }
                     }
-                } else if (ent instanceof QuadMech) {
-                    if ((m.getLocation() != Mech.LOC_LLEG)
-                            && (m.getLocation() != Mech.LOC_RLEG)
-                            && (m.getLocation() != Mech.LOC_LARM)
-                            && (m.getLocation() != Mech.LOC_RARM)) {
-                        throw new EntityLoadingException(
-                                "Talons are only legal in the Legs for "+ent.getShortName());
-                    }
-
-                    if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LLEG)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LARM)
-                            || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
-                                    Mech.LOC_LARM)) {
-                        throw new EntityLoadingException(
-                                "Talons must be in all legs for "+ent.getShortName());
-                    }
-
                 } else {
-                    throw new EntityLoadingException(
-                            "Unable to load talons in non-Mek entity for "+ent.getShortName());
+                    throw new EntityLoadingException("Unable to load talons in non-Mek entity for "
+                            + ent.getShortName());
                 }
             }
 
@@ -739,30 +717,7 @@ public class MechFileParser {
             }
         }
 
-        Vector<Integer> usedMG = new Vector<Integer>();
-        for (Mounted m : ent.getWeaponList()) {
-            // link MGs to their MGA
-            // we are going to use the bayWeapon vector because we can't
-            // directly link them
-            if (m.getType().hasFlag(WeaponType.F_MGA)) {
-                for (Mounted other : ent.getWeaponList()) {
-                    int eqn = ent.getEquipmentNum(other);
-                    if (!usedMG.contains(eqn)
-                            && (m.getLocation() == other.getLocation())
-                            && other.getType().hasFlag(WeaponType.F_MG)
-                            && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) other
-                                    .getType()).getRackSize())
-                            && !m.getBayWeapons().contains(eqn)
-                            && (m.getBayWeapons().size() <= 4)) {
-                        m.addWeaponToBay(eqn);
-                        usedMG.add(eqn);
-                        if (m.getBayWeapons().size() >= 4) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        linkMGAs(ent);
 
         // Don't forget to actually load any applicable weapons.
         ent.loadAllWeapons();
@@ -925,6 +880,51 @@ public class MechFileParser {
         ent.initMilitary();
 
     } // End private void postLoadInit(Entity) throws EntityLoadingException
+
+    /**
+     * Links machine gun arrays to their machine guns using the bayWeapon list.
+     * We take the first qualifying machine gun in the location (correct size and not already
+     * linked to this or another MGA and continue linking successive slots until full or we get to
+     * a slot that does not contain a qualifying machine gun. This allows specifying which guns go
+     * with which array in the event of multiple MGAs in a location or some MGs that are not linked.
+     *
+     * @param entity
+     */
+    static void linkMGAs(Entity entity) {
+        List<Integer> usedMG = new ArrayList<>();
+        for (Mounted mga : entity.getWeaponList()) {
+            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+                // This may be called from MML after changing equipment location, so there
+                // may be old data that needs to be cleared
+                mga.getBayWeapons().clear();
+                for (int i = 0; i < entity.getNumberOfCriticals(mga.getLocation()); i++) {
+                    CriticalSlot slot = entity.getCritical(mga.getLocation(), i);
+                    if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                            && (slot.getMount().getType() instanceof WeaponType)) {
+                        WeaponType wtype = (WeaponType) slot.getMount().getType();
+                        int eqNum = entity.getEquipmentNum(slot.getMount());
+                        if (!usedMG.contains(eqNum)
+                                && wtype.hasFlag(WeaponType.F_MG)
+                                && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
+                            mga.addWeaponToBay(eqNum);
+                            usedMG.add(eqNum);
+                            if (mga.getBayWeapons().size() >= 4) {
+                                break;
+                            }
+                        } else {
+                            if (!mga.getBayWeapons().isEmpty()) {
+                                break;
+                            }
+                        }
+                    } else {
+                        if (!mga.getBayWeapons().isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length == 0) {

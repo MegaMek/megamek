@@ -9,4 +9,4 @@ Tokugawa Heavy Tank (Standard), 5
 LRM Carrier (Standard), 4
 Mamono IFV (Standard), 3
 Kinnol MBT (Standard), 2
-SM2 Heavy Artilley Vehicle (Standard), 1
+SM2 Heavy Artillery Vehicle (Standard), 1

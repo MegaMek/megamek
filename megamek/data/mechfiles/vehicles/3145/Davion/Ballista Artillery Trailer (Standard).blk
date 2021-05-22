@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -61,7 +61,6 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-IS Hardened
 ISC3SlaveUnit
 Communications Equipment (4 ton)
 ISGuardianECMSuite
@@ -123,4 +122,3 @@ TRO 3145 Federated Suns - Early Republic
 <trailer>
 1
 </trailer>
-

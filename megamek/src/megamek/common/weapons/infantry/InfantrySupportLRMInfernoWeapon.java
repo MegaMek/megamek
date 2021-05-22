@@ -35,14 +35,18 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
         super();
 
         name = "LRM Launcher (Corean Farshot) w/Inferno";
-        setInternalName(name);
+        setInternalName("InfantryLRMInferno");
+        addLookupName(name);
         addLookupName("InfantryInfernoLRM");
         addLookupName("LRM Inferno Launcher");
         addLookupName("LRM Inferno Launcher (FarShot)");
-        ammoType = AmmoType.T_NA;
+        ammoType = AmmoType.T_INFANTRY;
         cost = 2000;
         bv = 1.36;
         tonnage = .03;
+        ammoWeight = 0.0083;
+        ammoCost = 1500;
+        shots = 1;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.19;
         infantryRange = 3;

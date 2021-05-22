@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -79,6 +79,14 @@ standardseats:1.0:0
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
 <notes>
 Overweight by 75 kg. The official unit does not account for crew seating.
 </notes>
@@ -94,4 +102,3 @@ HB:House Liao - Civil War
 <fuel>
 0.244
 </fuel>
-

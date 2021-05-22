@@ -20,13 +20,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -34,6 +28,7 @@ import java.util.stream.Collectors;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
+import megamek.MegaMek;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -55,11 +50,10 @@ import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.BayData;
 import megamek.common.verifier.EntityVerifier;
 
@@ -67,7 +61,6 @@ import megamek.common.verifier.EntityVerifier;
  * Fills in a template to produce a unit summary in TRO format.
  *
  * @author Neoancient
- *
  */
 public class TROView {
 
@@ -110,7 +103,7 @@ public class TROView {
                 view.template = TemplateConfiguration.getInstance()
                         .getTemplate("tro/" + view.getTemplateFileName(html));
             } catch (final IOException e) {
-                DefaultMmLogger.getInstance().error(TROView.class, "createView(Entity, boolean)", e);
+                MegaMek.getLogger().error(e);
             }
             view.initModel(view.verifier);
         }
@@ -123,10 +116,6 @@ public class TROView {
 
     protected void setModelData(String key, Object data) {
         model.put(key, data);
-    }
-
-    protected void removeModelData(String key) {
-        model.remove(key);
     }
 
     protected Object getModelData(String key) {
@@ -152,7 +141,7 @@ public class TROView {
                 template.process(model, out);
                 return os.toString();
             } catch (TemplateException | IOException e) {
-                DefaultMmLogger.getInstance().error(getClass(), "processTemplate()", e);
+                MegaMek.getLogger().error(e);
                 e.printStackTrace();
             }
         }
@@ -254,7 +243,7 @@ public class TROView {
             if (m.isOmniPodMounted()) {
                 podSpace += m.getTonnage();
             } else if (m.getType() instanceof WeaponType) {
-                weaponCount.merge(m.getType().getName(), 1, Integer::sum);
+                weaponCount.merge(m.getName(), 1, Integer::sum);
             }
         }
         final List<String> armaments = new ArrayList<>();
@@ -406,6 +395,13 @@ public class TROView {
         return addEquipment(entity, true);
     }
 
+    /**
+     * Test for whether the mount should be included in the equipment inventory section.
+     *
+     * @param mount        The equipment mount
+     * @param includeAmmo  Whether to include ammo in the list
+     * @return             Whether to list the equipment in the inventory section
+     */
     protected boolean skipMount(Mounted mount, boolean includeAmmo) {
         return mount.getLocation() < 0
                 || mount.isWeaponGroup()
@@ -414,44 +410,50 @@ public class TROView {
 
     protected int addEquipment(Entity entity, boolean includeAmmo) {
         final int structure = entity.getStructureType();
-        final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+        final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
                 continue;
             }
-            if (!m.getType().isHittable()) {
+            // Skip armor and structure
+            if (!m.getType().isHittable() && (m.getLocation() >= 0)) {
                 if ((structure != EquipmentType.T_STRUCTURE_UNKNOWN)
                         && (EquipmentType.getStructureType(m.getType()) == structure)) {
                     continue;
                 }
-                if (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType())) {
+                if ((m.getLocation() >= 0)
+                        && (entity.getArmorType(m.getLocation()) == EquipmentType.getArmorType(m.getType()))) {
                     continue;
                 }
             }
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
-                equipment.get(loc).merge(m.getType(), 1, Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize(), m.isArmored()),
+                        1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
         for (final String loc : equipment.keySet()) {
-            for (final Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
-                final EquipmentType eq = entry.getKey();
-                final int count = equipment.get(loc).get(eq);
-                String name = stripNotes(eq.getName());
+            for (final Map.Entry<EquipmentKey, Integer> entry : equipment.get(loc).entrySet()) {
+                final EquipmentType eq = entry.getKey().getType();
+                final int count = equipment.get(loc).get(entry.getKey());
+                String name = stripNotes(entry.getKey().name());
+                if (entry.getKey().isArmored()) {
+                    name += " (Armored)";
+                }
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, eq.getName());
+                    name = String.format("%d %s", count, name);
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
                 if (name.length() >= nameWidth) {
                     nameWidth = name.length() + 1;
                 }
-                fields.put("tonnage", eq.getTonnage(entity) * count);
+                fields.put("tonnage", eq.getTonnage(entity, entry.getKey().getSize()) * count);
                 if (eq instanceof WeaponType) {
                     fields.put("heat", eq.getHeat());
                     fields.put("srv", (int) ((WeaponType) eq).getShortAV());
@@ -477,7 +479,7 @@ public class TROView {
                     fields.put("slots", crits.toString());
                 } else {
                     fields.put("location", loc);
-                    fields.put("slots", eq.getCriticals(entity) * count);
+                    fields.put("slots", eq.getCriticals(entity, entry.getValue()) * count);
                 }
                 eqList.add(fields);
             }
@@ -520,7 +522,7 @@ public class TROView {
                     if (crit.getMount().isOmniPodMounted()) {
                         remaining++;
                     } else if (!crit.getMount().isWeaponGroup()) {
-                        final String key = stripNotes(crit.getMount().getType().getName());
+                        final String key = stripNotes(crit.getMount().getName());
                         fixedCount.merge(key, 1, Integer::sum);
                         fixedWeight.merge(key, crit.getMount().getTonnage(), Double::sum);
                     }
@@ -533,6 +535,11 @@ public class TROView {
                 row.put("equipment", "None");
                 row.put("remaining", remaining);
                 row.put("tonnage", 0.0);
+                row.put("heat", "-");
+                row.put("srv", "-");
+                row.put("mrv", "-");
+                row.put("lrv", "-");
+                row.put("erv", "-");
                 fixedList.add(row);
             } else {
                 boolean firstLine = true;
@@ -546,16 +553,29 @@ public class TROView {
                         row.put("location", "");
                         row.put("remaining", "");
                     }
+
                     if (entry.getValue() > 1) {
                         row.put("equipment", entry.getValue() + " " + entry.getKey());
                     } else {
                         row.put("equipment", entry.getKey());
                     }
+
                     if (fixedWeight.containsKey(entry.getKey())) {
                         // Not valid for mech systems
                         row.put("tonnage", fixedWeight.get(entry.getKey()));
                         fixedTonnage += fixedWeight.get(entry.getKey());
+                    } else {
+                        row.put("tonnage", "");
                     }
+
+                    // FIXME : I am not properly implemented, this is a temporary fix for testing
+                    // FIXME : and needs to be fixed.
+                    row.put("heat", "-");
+                    row.put("srv", "-");
+                    row.put("mrv", "-");
+                    row.put("lrv", "-");
+                    row.put("erv", "-");
+
                     fixedList.add(row);
                 }
             }
@@ -582,8 +602,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                DefaultMmLogger.getInstance().warning(getClass(), "addBays()",
-                        "Could not determine bay type for " + bay.toString());
+                MegaMek.getLogger().warning("Could not determine bay type for " + bay.toString());
             }
         }
         setModelData("bays", bays);
@@ -698,14 +717,16 @@ public class TROView {
     }
 
     /**
-     * Removes parenthetical and bracketed notes from a String
+     * Removes parenthetical and bracketed notes from a String, with the exception
+     * of parenthetical notes that begin with a digit. These are assumed to be
+     * a marker of equipment size and left intact.
      *
-     * @param str
-     *            The String to process
-     * @return The same String with notes removed
+     * @param str The String to process
+     * @return     The same String with notes removed
      */
     protected String stripNotes(String str) {
-        return str.replaceAll("\\s+\\[.*?]", "").replaceAll("\\s+\\(.*?\\)", "");
+        return str.replaceAll("\\s+\\[.*?]", "")
+                .replaceAll("\\s+\\([^\\d].*?\\)", "");
     }
 
     protected static class FormatTableRowMethod implements TemplateMethodModelEx {
@@ -760,5 +781,53 @@ public class TROView {
      */
     public boolean getIncludeFluff() {
         return includeFluff;
+    }
+
+    /**
+     * Tuple composed of EquipmentType and size, used for map keys
+     */
+    static final class EquipmentKey {
+        private final EquipmentType etype;
+        private final double size;
+        private final boolean armored;
+
+        EquipmentKey(EquipmentType etype, double size) {
+            this(etype, size, false);
+        }
+
+        EquipmentKey(EquipmentType etype, double size, boolean armored) {
+            this.etype = etype;
+            this.size = size;
+            this.armored = armored;
+        }
+
+        String name() {
+            return etype.getName(size);
+        }
+
+        EquipmentType getType() {
+            return etype;
+        }
+
+        double getSize() {
+            return size;
+        }
+
+        boolean isArmored() {
+            return armored;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return (o instanceof EquipmentKey)
+                    && (etype.equals(((EquipmentKey) o).etype))
+                    && (size == ((EquipmentKey) o).size)
+                    && (armored == ((EquipmentKey) o).armored);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(etype, size, armored);
+        }
     }
 }

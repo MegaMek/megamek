@@ -3,32 +3,34 @@ Stalker
 STK-3Fk
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2750
-Source:ER 2750
-Rules Level:4
+techbase:Inner Sphere
+era:2750
+source:ER 2750 - Star League
+rules level:4
 
-Mass:85
-Engine:255 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Double
-Walk MP:3
-Jump MP:0
+heat sinks:18 Double
+nocrit:Standard:None
+nocrit:Standard:None
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:23
-RA Armor:23
-LT Armor:25
-RT Armor:25
-CT Armor:36
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:7
-RTR Armor:7
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:23
+RA armor:23
+LT armor:25
+RT armor:25
+CT armor:36
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:7
+RTR armor:7
+RTC armor:11
 
 Weapons:12
 LRM 10, Left Arm
@@ -38,10 +40,10 @@ Medium Laser, Right Arm
 Large Laser, Left Torso
 Streak SRM 2, Left Torso
 Streak SRM 2, Left Torso
+Medium Laser, Left Torso
 Large Laser, Right Torso
 Streak SRM 2, Right Torso
 Streak SRM 2, Right Torso
-Medium Laser, Left Torso
 Medium Laser, Right Torso
 
 Left Arm:
@@ -118,9 +120,9 @@ Head:
 Life Support
 Sensors
 Cockpit
+-Empty-
 Sensors
 Life Support
--Empty-
 -Empty-
 -Empty-
 -Empty-

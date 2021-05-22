@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.preference;
 
 import java.io.BufferedWriter;
@@ -31,7 +30,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(LAST_CONNECT_ADDR, "localhost");
         store.setDefault(LAST_CONNECT_PORT, 2346);
         store.setDefault(LAST_SERVER_PORT, 2346);
-        store.setDefault(MAP_TILESET, "atmospheric.tileset");
+        store.setDefault(MAP_TILESET, "saxarba.tileset");
         store.setDefault(MAX_PATHFINDER_TIME,
                 MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
@@ -54,6 +53,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(MAP_HEIGHT, 1);
         store.setDefault(DEBUG_OUTPUT_ON,false);
         store.setDefault(MEMORY_DUMP_ON,false);
+        store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -200,20 +200,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setValue(LAST_CONNECT_PORT, port);
     }
 
-    public void setLastPlayerCamoName(String camoFileName) {
-        if (camoFileName != null) {
-            store.setValue(LAST_PLAYER_CAMO_NAME, camoFileName);
-        }
-    }
-
-    public void setLastPlayerCategory(String camoCategory) {
-        store.setValue(LAST_PLAYER_CATEGORY, camoCategory);
-    }
-
-    public void setLastPlayerColor(int colorIndex) {
-        store.setValue(LAST_PLAYER_COLOR, colorIndex);
-    }
-
     public void setLastPlayerName(String name) {
         store.setValue(LAST_PLAYER_NAME, name);
     }
@@ -268,6 +254,14 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     public void setGUIName(String guiName) {
         store.setValue(GUI_NAME, guiName);
+    }
+
+    public boolean getShowIPAddressesInChat() {
+        return store.getBoolean(IP_ADDRESSES_IN_CHAT);
+    }
+
+    public void setShowIPAddressesInChat(boolean value) {
+        store.setValue(IP_ADDRESSES_IN_CHAT, value);
     }
 
     protected Locale locale = null;

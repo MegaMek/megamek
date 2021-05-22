@@ -1,0 +1,155 @@
+Version:1.1
+OmniMarauder
+MAD-BR-O
+
+Config:Biped Omnimech
+techbase:Mixed (IS Chassis)
+era:3135
+source:Dark Age
+rules level:3
+
+mass:75
+engine:300 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:17 Double
+base chassis heat sinks:12
+walk mp:4
+jump mp:0
+
+armor:Ferro-Lamellor(Clan)
+LA armor:24
+RA armor:24
+LT armor:24
+RT armor:24
+CT armor:35
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:5
+ER PPC, Left Arm
+ER Medium Laser, Left Arm
+ER PPC, Right Arm
+ER Medium Laser, Right Arm
+HAG/30, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Lamellor
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Hyper-Assault Gauss Rifle/30 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/30 Ammo (omnipod)
+Hyper-Assault Gauss Rifle/30 Ammo (omnipod)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Lamellor
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -74,14 +74,11 @@ public interface IBoard {
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the <code>Hex</code>, if this Board contains the (x, y) location;
-     *         <code>null</code> otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public abstract IHex getHex(int x, int y);
+    @Nullable IHex getHex(int x, int y);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -95,8 +92,6 @@ public interface IBoard {
      *         coordinates.
      */
     public abstract IHex getHexInDir(Coords c, int dir);
-
-    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -145,12 +140,10 @@ public interface IBoard {
     public abstract boolean contains(Coords c);
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public abstract IHex getHex(Coords c);
+    @Nullable IHex getHex(final @Nullable Coords c);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the
@@ -534,17 +527,17 @@ public interface IBoard {
 
     public void setSubBoardHeight(int height);
 
-    public abstract void setNumBoardsWidth(int width);
+    public void setNumBoardsWidth(int width);
 
-    public abstract void setNumBoardsHeight(int height);
+    public void setNumBoardsHeight(int height);
 
-    public abstract void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
+    public void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
 
-    public abstract boolean hasBoardBackground();
+    public boolean hasBoardBackground();
 
-    public abstract boolean isValid();
+    public boolean isValid();
 
-    public abstract boolean isValid(StringBuffer errBuff);
+    public boolean isValid(StringBuffer errBuff);
 
 
     /**
@@ -552,19 +545,19 @@ public interface IBoard {
      * @return The description of the map, if one exists, otherwise null.
      */
     @Nullable
-    public abstract String getDescription();
+    public String getDescription();
 
     /**
      * Sets the description of the map.
      * @param s The description of the map; may be null.
      */
-    public abstract void setDescription(@Nullable String s);
+    public void setDescription(@Nullable String s);
 
     /**
      * Gets every annotations on the map.
      * @return A read-only map of per-hex annotations.
      */
-    public abstract Map<Coords, Collection<String>> getAnnotations();
+    public Map<Coords, Collection<String>> getAnnotations();
 
     /**
      * Gets the annotations associated with a hex.
@@ -572,19 +565,28 @@ public interface IBoard {
      * @param y The Y-Coordinate of the hex.
      * @return A collection of annotations for the hex.
      */
-    public abstract Collection<String> getAnnotations(int x, int y);
+    public Collection<String> getAnnotations(int x, int y);
 
     /**
      * Gets the annotations associated with a hex.
      * @param c Coordinates of the hex.
      * @return A collection of annotations for the hex.
      */
-    public abstract Collection<String> getAnnotations(Coords c);
+    public Collection<String> getAnnotations(Coords c);
 
     /**
      * Sets annotations on a given hex.
      * @param c Coordinates of the hex to apply the annotations to.
      * @param a A collection of annotations to assign to the hex. This may be null.
      */
-    public abstract void setAnnotations(Coords c, @Nullable Collection<String> a);
+    public void setAnnotations(Coords c, @Nullable Collection<String> a);
+    
+    /** Sets a tileset theme for all hexes of the board. */ 
+    public void setTheme(String newTheme);
+    
+    /** Rebuilds automatic terrains for the whole board. */
+    public void initializeAllAutomaticTerrain();
+    
+    /** Returns true when the given Coord c is on the edge of the board. */
+    public boolean isOnBoardEdge(Coords c);
 }

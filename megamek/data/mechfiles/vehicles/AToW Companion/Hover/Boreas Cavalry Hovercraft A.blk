@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,12 +17,16 @@ Boreas Cavalry Hovercraft
 </Name>
 
 <Model>
-(A)
+A
 </Model>
 
 <year>
-3061
+3015
 </year>
+
+<originalBuildYear>
+3015
+</originalBuildYear>
 
 <type>
 Clan Level 5
@@ -32,13 +36,26 @@ Clan Level 5
 Hover
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+standardseats:1.0:0
+</transporters>
+
 <cruiseMP>
-15
+14
 </cruiseMP>
 
 <engine_type>
 6
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<omni>
+1
+</omni>
 
 <armor>
 1
@@ -47,25 +64,14 @@ Hover
 1
 </armor>
 
-<barrating>
-8
-</barrating>
-
-<structural_tech_rating>
-5
-</structural_tech_rating>
-
-<armor_tech_rating>
-5
-</armor_tech_rating>
-
 <Body Equipment>
 BicycleChassisMod
+OmniChassisMod
 Advanced Fire Control
 </Body Equipment>
 
 <Front Equipment>
-InfantryClanSemiPortableHeavyLaser
+Support Laser (Semi-Portable)
 </Front Equipment>
 
 <Right Equipment>
@@ -77,22 +83,38 @@ InfantryClanSemiPortableHeavyLaser
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-standardseats:.025:1
-</transporters>
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+5
+</structural_tech_rating>
+
+<engine_tech_rating>
+5
+</engine_tech_rating>
+
+<armor_tech_rating>
+5
+</armor_tech_rating>
+
+<history>
+These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
+</history>
 
 <source>
 AToW Companion
 </source>
 
 <tonnage>
-.75
+0.75
 </tonnage>
 
-<range>
-1000
-</range>
+<baseChassisFireConWeight>
+0.01
+</baseChassisFireConWeight>
 
-<history>
-These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
-</history>
+<fuel>
+0.029
+</fuel>

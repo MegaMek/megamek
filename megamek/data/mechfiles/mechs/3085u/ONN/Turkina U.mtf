@@ -3,33 +3,33 @@ Turkina
 U
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3077
-Source:Jihad
-Rules Level:4
+techbase:Clan
+era:3077
+source:TRO Clan Invasion - Jihad
+rules level:4
 
-Mass:95
-Engine:285 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:95
+engine:285 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Double
-Base Chassis Heat Sinks:11
-Walk MP:3
-Jump MP:3
+heat sinks:15 Clan Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:3
 
-Armor:Standard(Clan)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:45
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:13
 ER Small Laser, Left Arm
@@ -49,30 +49,30 @@ LRM 15, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLTargeting Computer (omnipod)
-Clan HarJel (armored)
--Empty-
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+Coolant Pod (OMNIPOD) (ARMORED)
+IS HarJel (OMNIPOD) (ARMORED)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLATM9 (omnipod)
-CLATM9 (omnipod)
-CLATM9 (omnipod)
-CLATM9 (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
-Clan Ammo ATM-9 (omnipod)
-Clan Ammo ATM-9 (omnipod)
-Clan HarJel (armored)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+IS HarJel (OMNIPOD) (ARMORED)
 
 Left Torso:
 Fusion Engine
@@ -82,11 +82,11 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-Clan Ammo LRM-15 (omnipod)
-Clan HarJel (armored)
--Empty-
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Liquid Storage (OMNIPOD):SIZE:1.0 (ARMORED)
+IS HarJel (OMNIPOD) (ARMORED)
 
 Right Torso:
 Fusion Engine
@@ -96,11 +96,11 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-Clan Ammo LRM-15 (omnipod)
-Clan HarJel (armored)
--Empty-
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Liquid Storage (OMNIPOD):SIZE:1.0 (ARMORED)
+IS HarJel (OMNIPOD) (ARMORED)
 
 Center Torso:
 Fusion Engine
@@ -114,13 +114,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Clan HarJel (armored)
+IS HarJel (OMNIPOD) (ARMORED)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLActiveProbe (omnipod)
+CLActiveProbe (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -135,8 +135,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons (omnipod)
-Talons (omnipod)
+Talons (OMNIPOD)
+Talons (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -149,8 +149,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons (omnipod)
-Talons (omnipod)
+Talons (OMNIPOD)
+Talons (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -158,4 +158,14 @@ Talons (omnipod)
 -Empty-
 -Empty-
 
+overview:The Turkina is a powerful OmniMech that was first seen in the Turkina Keshik at the Battle of Tukayyid, and entered general service with Clan Jade Falcon following the end of the Refusal War. In a design oddity, the Turkina mounts enough jump jets to vault 90 meters hardwired onto the frame, rather than using them in modular pods. While this simplified repair, it also uses tonnage that could be devoted to other systems when a mission does not call for jumping. Designers also included fifteen double heat sinks, four more than could be fit into the engine, so they are fixed in the torso. The Turkina has 42 tons available for modular pods.
+capabilities:Designed for space operations, this Turkina configuration mounts several experimental systems. A BattleMech HarJel System protects the torso against breaches, and two Liquid Storage tanks provide additional fuel for the jump jets. A Coolant Pod can quickly dissipate the heat built up by the ten ER Small Lasers, twin LRM-15s, and ATM-9. An Active Probe allows the Turkina U to find enemy forces, and the Talons mounted in each leg prevent the Turkina from floating away from the hull. To provide additional protection the Liquid Storage tanks, Harjel systems, and Coolant Pod have all been armored against enemy fire.
+history:The Turkina is named after Turkina, the first Jade Falcon to be tamed, who inspired the leaders of Clan Jade Falcon in its early days. The name of the Turkina Keshik is also derived from this bird.
+manufacturer:Complex Beta, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF Standard
+systemmanufacturer:ENGINE:285 JF Extralight
+systemmanufacturer:ARMOR:JF Standard
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFIX/Olivetti Pinpoint Advanced
 

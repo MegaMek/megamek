@@ -17,6 +17,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -28,7 +29,6 @@ import megamek.common.RangeType;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
-import megamek.common.logging.LogLevel;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.ServerHelper;
 
@@ -115,8 +115,16 @@ public class InfantryFireControl extends FireControl {
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+                int infantryCount = 1;
+                
+                if (shooter.isConventionalInfantry()) {
+                    infantryCount = shooter.getInternal(Infantry.LOC_INFANTRY);
+                } else if (shooter instanceof BattleArmor) {
+                    infantryCount = ((BattleArmor) shooter).getNumberActiverTroopers();
+                }
+                
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
-                        * ((Infantry) shooter).getInternal(Infantry.LOC_INFANTRY);
+                        * infantryCount;
                 // field guns can't fire if the infantry unit has done anything
                 // other than turning
             } else if (targetIsActualInfantry && fieldGunsDoDamage) {
@@ -175,11 +183,11 @@ public class InfantryFireControl extends FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard()
                 || !game.getBoard().contains(shooter.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Shooter's position is NULL/Off Board!");
+            owner.getLogger().error("Shooter's position is NULL/Off Board!");
             return bestPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.log(getClass(), "InfantryFireControl.guessFiringPlan", LogLevel.ERROR, "Target's position is NULL/Off Board!");
+            owner.getLogger().error("Target's position is NULL/Off Board!");
             return bestPlan;
         }
         

@@ -37,7 +37,8 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
 		// Unoffical.
 		// Hammer Feb 2017
 
-		setInternalName(name);
+		setInternalName("InfantryGrenadeInferno");
+		addLookupName(name);
 		addLookupName("InfantryInfernoGrenade");
 		addLookupName("Inferno Grenades");
 		ammoType = AmmoType.T_NA;

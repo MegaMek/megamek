@@ -414,6 +414,10 @@ public class MechSummary implements Serializable {
         equipmentQuantities = new Vector<>(mountedList.size());
         for (Mounted mnt : mountedList)
         {
+            // Ignore weapon groups, as they aren't actually real equipment
+            if (mnt.isWeaponGroup()) {
+                continue;
+            }
             String eqName = mnt.getType().getInternalName();
             int index = equipmentNames.indexOf(eqName);
             if (index == -1) { //We haven't seen this piece of equipment before

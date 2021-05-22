@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2017 - The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -13,22 +13,22 @@
  */
 package megamek.common;
 
+import megamek.client.generator.RandomNameGenerator;
+import megamek.common.enums.Gender;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
+import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
  * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes,
  * and chooses the correct one based on the LAM's current movement mode.
  *
  * @author Neoancient
- *
  */
 public class LAMPilot extends Crew {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -5081079779376940577L;
 
     final private LandAirMech lam;
@@ -39,11 +39,12 @@ public class LAMPilot extends Crew {
     private int pilotingAero;
 
     public LAMPilot(LandAirMech lam) {
-        this(lam, Crew.UNNAMED_FULL_NAME, 4, 5, 4, 5, G_RANDOMIZE, null);
+        this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5,
+                4, 5, Gender.RANDOMIZE, null);
     }
 
     public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech, int gunneryAero,
-            int pilotingAero, int gender, Map<Integer, Map<String, String>> extraData) {
+            int pilotingAero, Gender gender, Map<Integer, Map<String, String>> extraData) {
         super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
@@ -224,9 +225,8 @@ public class LAMPilot extends Crew {
         }
     }
 
-    @Override
-    public String getSkillsAsString(boolean showPiloting) {
-        return getSkillsAsString(0, showPiloting);
+    public String getSkillsAsString(boolean showPiloting, boolean rpgSkills) {
+        return getSkillsAsString(0, showPiloting, rpgSkills);
     }
 
     /**
@@ -234,8 +234,32 @@ public class LAMPilot extends Crew {
      *         (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
      */
     @Override
-    public String getSkillsAsString(int pos, boolean showPiloting) {
-        return getGunneryMech() + "/" + getPilotingMech() + "/" + getGunneryAero() + "/" + getPilotingAero();
+    public String getSkillsAsString(int pos, boolean showPiloting, boolean rpgSkills) {
+        if (showPiloting) {
+            return CrewSkillSummaryUtil.getLAMPilotSkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    getPiloting(pos),
+                    getGunneryAero(),
+                    getGunneryAeroL(),
+                    getGunneryAeroM(),
+                    getGunneryAeroB(),
+                    getPilotingAero(),
+                    rpgSkills);
+        } else {
+            return CrewSkillSummaryUtil.getLAMGunnerySkillSummary(
+                    getGunnery(pos),
+                    getGunneryL(pos),
+                    getGunneryM(pos),
+                    getGunneryB(pos),
+                    getGunneryAero(),
+                    getGunneryAeroL(),
+                    getGunneryAeroM(),
+                    getGunneryAeroB(),
+                    rpgSkills);
+        }
     }
 
     /**
@@ -246,7 +270,7 @@ public class LAMPilot extends Crew {
      */
     @Override
     public Vector<Report> getDescVector(boolean gunneryOnly) {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
         Report r;
 
         r = new Report();

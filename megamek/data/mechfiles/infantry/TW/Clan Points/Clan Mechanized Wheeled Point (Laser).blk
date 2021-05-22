@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -40,11 +40,11 @@ Total Warfare - Succession Wars
 </source>
 
 <squad_size>
-4
+5
 </squad_size>
 
 <squadn>
-4
+5
 </squadn>
 
 <Primary>
@@ -54,4 +54,3 @@ Laser Rifle
 <armorKit>
 ClanKit
 </armorKit>
-

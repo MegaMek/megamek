@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import megamek.MegaMek;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -36,7 +37,6 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogLevel;
 
 /**
@@ -194,8 +194,6 @@ public class ForceDescriptor {
      * Goes through the force tree structure and generates units for all leaf nodes.
      */
     public void generateUnits(Ruleset.ProgressListener l, double progress) {
-        final String METHOD_NAME = "generateUnits(Ruleset#ProgressListener, double)"; //$NON-NLS-1$
-
         //If the parent node has a chassis or model assigned, it carries through to the children.
         if (null != parent) {
             chassis.addAll(parent.getChassis());
@@ -210,9 +208,7 @@ public class ForceDescriptor {
             if (null != mr) {
                 setUnit(mr);
             } else {
-                DefaultMmLogger.getInstance().log(getClass(),
-                        "generateUnits(Ruleset#ProgressListener, double)", LogLevel.ERROR,
-                        "Could not generate unit");
+                MegaMek.getLogger().error("Could not generate unit");
             }
         } else {
             if (null != formationType) {
@@ -241,8 +237,7 @@ public class ForceDescriptor {
                             generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
                         }
                     } catch (NullPointerException ex) {
-                        DefaultMmLogger.getInstance().log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                                "Found null generation rule in force node with formation set.");
+                        MegaMek.getLogger().error("Found null generation rule in force node with formation set.");
                     }
                 }
             } else {
@@ -824,8 +819,7 @@ public class ForceDescriptor {
             }
         };
 
-        DefaultMmLogger.getInstance().log(getClass(), "generate()", LogLevel.DEBUG,
-                "Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
+        MegaMek.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
         return null;
     }
 
@@ -837,12 +831,10 @@ public class ForceDescriptor {
                     entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
                     entity.setExternalIdAsString(UUID.randomUUID().toString());
+                    String forceString = getForceString();
+                    entity.setForceString(forceString);
                 } catch (EntityLoadingException ex) {
-                    DefaultMmLogger.getInstance().log(getClass(),
-                            "loadEntities(Ruleset#ProgressListener, double)", LogLevel.ERROR,
-                            "Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
-                    DefaultMmLogger.getInstance().error(getClass(),
-                            "loadEntities(Ruleset#ProgressListener, double)", ex);
+                    MegaMek.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
                 }
             }
         }
@@ -852,6 +844,29 @@ public class ForceDescriptor {
         if (count == 0 && null != l) {
             l.updateProgress(progress, "Loading entities");
         }
+    }
+    
+    /** Generates a force string for exporting these units to MUL / adding to the game. */
+    private String getForceString() {
+        var ancestors = new ArrayList<ForceDescriptor>();
+        ForceDescriptor p = parent;
+        while (p != null) {
+            ancestors.add(p);
+            p = p.parent;
+        }
+        
+        String forceString = "";
+        int id = 0;
+        for (int i = ancestors.size() - 1; i >= 0; i--) {
+            ForceDescriptor ancestor = ancestors.get(i);
+            id = 17 * id + ancestor.index + 1;
+            forceString += "\\" + ancestor.parseName() + "|" + id;
+        }
+        // Remove the backslash at the start
+        if (forceString.length() > 0) {
+            forceString = forceString.substring(1);
+        }
+        return forceString;
     }
 
     public void assignCommanders() {
@@ -999,8 +1014,8 @@ public class ForceDescriptor {
             for (ForceDescriptor sub : subforces) {
                 if (sub.useWeightClass()) {
                     if (sub.getWeightClass() == null) {
-                        DefaultMmLogger.getInstance().log(getClass(), "assignCommanders()", LogLevel.ERROR,
-                                "Weight class == null for " + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
+                        MegaMek.getLogger().error("Weight class == null for " 
+                                + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
                     } else {
                         wt += sub.getWeightClass();
                         c++;
@@ -1725,9 +1740,8 @@ public class ForceDescriptor {
                 "Element", "(1)", "(2)", "Flight", "Squadron", "Group", "Wing", "Regiment"
         };
 
-        DefaultMmLogger.getInstance().log(getClass(), "show(String, LogLevel)",
-                logLevel, indent + weightClass + " " + unitType + " "
-                        + ((unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER)?airEschelonNames[eschelon]:eschelonNames[eschelon]));
+        MegaMek.getLogger().log(logLevel, indent + weightClass + " " + unitType + " "
+                        + (((unitType == UnitType.AERO) || (unitType == UnitType.CONV_FIGHTER)) ? airEschelonNames[eschelon] : eschelonNames[eschelon]), null);
         for (ForceDescriptor sub : subforces) {
             sub.show(indent + "  ", logLevel);
         }

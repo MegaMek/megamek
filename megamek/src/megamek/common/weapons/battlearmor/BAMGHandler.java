@@ -19,7 +19,6 @@ package megamek.common.weapons.battlearmor;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -111,8 +110,7 @@ public class BAMGHandler extends WeaponHandler {
         Report r = new Report(3220);
         r.subject = subjectId;
         vPhaseReport.add(r);
-        if (weapon.isRapidfire()
-                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+        if (weapon.isRapidfire() && !target.isConventionalInfantry()) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;

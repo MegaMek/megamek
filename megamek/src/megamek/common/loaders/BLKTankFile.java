@@ -15,8 +15,8 @@
 
 package megamek.common.loaders;
 
+import megamek.MegaMek;
 import megamek.common.*;
-import megamek.common.logging.DefaultMmLogger;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -137,6 +137,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         t.setMovementMode(nMotion);
 
         addTransports(t);
+        if (dataFile.exists(BLK_EXTRA_SEATS)) {
+            t.setExtraCrewSeats(dataFile.getDataAsInt(BLK_EXTRA_SEATS)[0]);
+        }
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {
@@ -277,8 +280,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                DefaultMmLogger.getInstance().error(getClass(), "getEntity()",
-                        "While loading " + t.getShortNameRaw()
+                MegaMek.getLogger().error("While loading " + t.getShortNameRaw()
                                 + ": Could not parse ICE fuel type "
                                 + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);

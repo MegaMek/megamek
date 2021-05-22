@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Thang-Ta APC
 </Model>
 
 <year>
-3093
+3079
 </year>
 
 <type>
@@ -87,4 +87,3 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 10.0
 </tonnage>
-

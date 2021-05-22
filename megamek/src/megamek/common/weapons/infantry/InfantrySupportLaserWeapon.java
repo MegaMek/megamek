@@ -37,13 +37,15 @@ public class InfantrySupportLaserWeapon extends InfantryWeapon {
 		addLookupName("InfantrySupportLaser");
 		addLookupName("Infantry Support Laser");
 		addLookupName("InfantrySmallLaser");
-		ammoType = AmmoType.T_NA;
+		ammoType = AmmoType.T_INFANTRY;
 		cost = 10000;
 		bv = 6.02;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
 		infantryDamage = 0.84;
 		infantryRange = 3;
 		crew = 2;
+		ammoWeight = 0.003;
+		shots = 15;
 		damage = 1;
 		minimumRange = 0;
 		shortRange = 3;

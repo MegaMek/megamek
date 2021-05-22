@@ -19,7 +19,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -31,10 +34,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
+import megamek.MegaMek;
+import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -48,6 +49,7 @@ import megamek.utils.MegaMekXmlUtil;
 public class MapSettings implements Serializable {
     private static final long serialVersionUID = -6163977970758303066L;
 
+    @Deprecated
     public static final String BOARD_RANDOM = "[RANDOM]";
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";
@@ -130,6 +132,22 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
+    
+    /** how much foliage at least */
+    @XmlElement(name = "FOLIAGEMINSPOTS")
+    private int minFoliageSpots = 0;
+    /** how much foliage at most */
+    @XmlElement(name = "FOLIAGEMAXSPOTS")
+    private int maxFoliageSpots = 0;
+    /** minimum size of a forest */
+    @XmlElement(name = "FOLIAGEMINHEXES")
+    private int minFoliageSize = 0;
+    /** maximum Size of a forest */
+    @XmlElement(name = "FOLIAGEMAXHEXES")
+    private int maxFoliageSize = 0;
+    /** probability for heavy foliage, Range 0..100 */
+    @XmlElement(name = "FOLIAGEHEAVYPROB")
+    private int probFoliageHeavy = 0;
 
     /** how much rough spots at least */
     @XmlElement(name = "ROUGHMINSPOTS")
@@ -361,9 +379,8 @@ public class MapSettings implements Serializable {
 
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
-        } catch (JAXBException | SAXException | ParserConfigurationException ex) {
-            System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;
@@ -417,6 +434,11 @@ public class MapSettings implements Serializable {
         minForestSize = other.getMinForestSize();
         maxForestSize = other.getMaxForestSize();
         probHeavy = other.getProbHeavy();
+        minFoliageSpots = other.getMinFoliageSpots();
+        maxFoliageSpots = other.getMaxFoliageSpots();
+        minFoliageSize = other.getMinFoliageSize();
+        maxFoliageSize = other.getMaxFoliageSize();
+        probFoliageHeavy = other.getProbFoliageHeavy();
         minRoughSpots = other.getMinRoughSpots();
         maxRoughSpots = other.getMaxRoughSpots();
         minRoughSize = other.getMinRoughSize();
@@ -552,24 +574,47 @@ public class MapSettings implements Serializable {
     public int getMapHeight() {
         return mapHeight;
     }
+    
+    public BoardDimensions getBoardSize() {
+        return new BoardDimensions(boardWidth, boardHeight);  
+    }
 
-    public void setMapSize(int mapWidth, int mapHeight) {
+    public void setMapSize(int newWidth, int newHeight) {
         if ((mapWidth <= 0) || (mapHeight <= 0)) {
-            throw new IllegalArgumentException("Total map area must be positive");
+            throw new IllegalArgumentException("Map width and height must be at least 1!");
         }
-
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
-        // Create null entries for everything that isn't surprise or generated
-        for (int i = 0; i < boardsSelected.size(); i++) {
-            if ((boardsSelected.get(i) != null) && !boardsSelected.get(i).equals(BOARD_GENERATED)
-                    && !boardsSelected.get(i).equals(BOARD_SURPRISE)) {
-                boardsSelected.set(i, null);
+        
+        // If the map size doesn't correspond to the size of boardsselected, correct
+        // that first to be safe, as the changes below are always relative changes.
+        // This happens with MapSettings construction
+        if (boardsSelected.size() != mapWidth * mapHeight) {
+            boardsSelected.clear();
+            boardsSelected.addAll(Collections.nCopies(mapWidth * mapHeight, null));
+        }
+        
+        // Change in height
+        if (newHeight > mapHeight) {
+            boardsSelected.addAll(Collections.nCopies(mapWidth * newHeight - boardsSelected.size(), null));
+        } else if (newHeight < mapHeight) {
+            boardsSelected.subList(mapWidth * newHeight, boardsSelected.size()).clear();
+        }
+        
+        mapHeight = newHeight;
+        
+        // Change in width
+        if (newWidth > mapWidth) {
+            // Add empty boards at the end of each row
+            for (int row = mapHeight - 1; row >= 0; row--) {
+                boardsSelected.addAll(mapWidth * (row + 1), Collections.nCopies(newWidth - mapWidth, null));
+            }
+        } else if (newWidth < mapWidth) {
+            // Remove boards at the end of each row
+            for (int row = mapHeight - 1; row >= 0; row--) {
+                boardsSelected.subList(mapWidth * row + newWidth, mapWidth * (row + 1)).clear();
             }
         }
-        while (boardsSelected.size() < (mapWidth * mapHeight)) {
-            boardsSelected.add(null);
-        }
+        
+        mapWidth = newWidth;
     }
 
     public Iterator<String> getBoardsSelected() {
@@ -602,6 +647,22 @@ public class MapSettings implements Serializable {
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
         boardBuildings = buildings;
     }
+    
+    /**
+     * Replaces all "Surprise..." boards with a random one of the chosen boards 
+     * (which are appended after the "Surprise" string in the board name.)
+     */
+    public void chooseSurpriseBoards() {
+        for (int i = 0; i < boardsSelected.size(); i++) {
+            if (boardsSelected.get(i).startsWith(BOARD_SURPRISE)) {
+                List<String> boards = LobbyUtility.extractSurpriseMaps(boardsSelected.get(i));
+                int rnd = (int)(Math.random() * boards.size());
+                boardsSelected.set(i, boards.get(rnd));
+            }
+        }
+    }
+    
+    
 
     /**
      * Replaces the specified type of board with random boards
@@ -654,16 +715,28 @@ public class MapSettings implements Serializable {
      */
     public void removeUnavailable() {
         for (int i = 0; i < boardsSelected.size(); i++) {
-            // If board is already null or no boards available, remove board
-            if ((boardsSelected.get(i) == null) || (boardsAvailable.size() == 0)) {
-                boardsSelected.set(i, null);
-            } else { // Otherwise, if the name isn't available, remove it
-                String boardName = boardsSelected.get(i);
-                if (boardsSelected.get(i).startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                    boardName = boardName.substring(Board.BOARD_REQUEST_ROTATION.length());
-                }
-                if (boardsAvailable.indexOf(boardName) == -1) {
-                    boardsSelected.set(i, null);
+            String boardName = boardsSelected.get(i);
+            if (boardName != null) {
+                if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
+                    List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
+                    ArrayList<String> remainingBoards = new ArrayList<>();
+                    for (String board: boards) {
+                        if (boardsAvailable.indexOf(board) != -1) {
+                            remainingBoards.add(board);
+                        }
+                    }
+                    if (remainingBoards.isEmpty()) {
+                        boardsSelected.set(i, null);
+                    } else if (remainingBoards.size() == 1) {
+                        boardsSelected.set(i, remainingBoards.get(0));   
+                    } else {
+                        String remBoards = String.join("\n", boards); 
+                        boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
+                    }
+                } else {
+                    if (boardsAvailable.indexOf(boardName) == -1) {
+                        boardsSelected.set(i, null);
+                    }
                 }
             }
         }
@@ -736,6 +809,24 @@ public class MapSettings implements Serializable {
         }
         if (probHeavy > 100) {
             probHeavy = 100;
+        }
+        if (minFoliageSpots < 0) {
+            minFoliageSpots = 0;
+        }
+        if (maxFoliageSpots < minFoliageSpots) {
+            maxFoliageSpots = minFoliageSpots;
+        }
+        if (minFoliageSize < 0) {
+            minFoliageSize = 0;
+        }
+        if (maxFoliageSize < minFoliageSize) {
+            maxFoliageSize = minFoliageSize;
+        }
+        if (probFoliageHeavy < 0) {
+            probFoliageHeavy = 0;
+        }
+        if (probFoliageHeavy > 100) {
+            probFoliageHeavy = 100;
         }
         if (minRoughSpots < 0) {
             minRoughSpots = 0;
@@ -886,53 +977,53 @@ public class MapSettings implements Serializable {
      * @return True if settings are the same.
      */
     public boolean equalMapGenParameters(MapSettings other) {
-        if ((boardWidth != other.getBoardWidth()) || (boardHeight != other.getBoardHeight())
-                || (mapWidth != other.getMapWidth()) || (mapHeight != other.getMapHeight())
-                || (invertNegativeTerrain != other.getInvertNegativeTerrain()) || (hilliness != other.getHilliness())
-                || (cliffs != other.getCliffs()) || (range != other.getRange())
-                || (minWaterSpots != other.getMinWaterSpots()) || (maxWaterSpots != other.getMaxWaterSpots())
-                || (minWaterSize != other.getMinWaterSize()) || (maxWaterSize != other.getMaxWaterSize())
-                || (probDeep != other.getProbDeep()) || (minForestSpots != other.getMinForestSpots())
-                || (maxForestSpots != other.getMaxForestSpots()) || (minForestSize != other.getMinForestSize())
-                || (maxForestSize != other.getMaxForestSize()) || (probHeavy != other.getProbHeavy())
-                || (minRoughSpots != other.getMinRoughSpots()) || (maxRoughSpots != other.getMaxRoughSpots())
-                || (minRoughSize != other.getMinRoughSize()) || (maxRoughSize != other.getMaxRoughSize())
-                || (minSandSpots != other.getMinSandSpots()) || (maxSandSpots != other.getMaxSandSpots())
-                || (minSandSize != other.getMinSandSize()) || (maxSandSize != other.getMaxSandSize())
-                || (minPlantedFieldSpots != other.getMinPlantedFieldSpots())
-                || (maxPlantedFieldSpots != other.getMaxPlantedFieldSpots())
-                || (minPlantedFieldSize != other.getMinPlantedFieldSize())
-                || (maxPlantedFieldSize != other.getMaxPlantedFieldSize())
-                || (minSwampSpots != other.getMinSwampSpots()) || (maxSwampSpots != other.getMaxSwampSpots())
-                || (minSwampSize != other.getMinSwampSize()) || (maxSwampSize != other.getMaxSwampSize())
-                || (minPavementSpots != other.getMinPavementSpots())
-                || (maxPavementSpots != other.getMaxPavementSpots()) || (minPavementSize != other.getMinPavementSize())
-                || (maxPavementSize != other.getMaxPavementSize()) || (minRubbleSpots != other.getMinRubbleSpots())
-                || (maxRubbleSpots != other.getMaxRubbleSpots()) || (minRubbleSize != other.getMinRubbleSize())
-                || (maxRubbleSize != other.getMaxRubbleSize()) || (minFortifiedSpots != other.getMinFortifiedSpots())
-                || (maxFortifiedSpots != other.getMaxFortifiedSpots())
-                || (minFortifiedSize != other.getMinFortifiedSize())
-                || (maxFortifiedSize != other.getMaxFortifiedSize()) || (minIceSpots != other.getMinIceSpots())
-                || (maxIceSpots != other.getMaxIceSpots()) || (minIceSize != other.getMinIceSize())
-                || (maxIceSize != other.getMaxIceSize()) || (probRoad != other.getProbRoad())
-                || (probInvert != other.getProbInvert()) || (probRiver != other.getProbRiver())
-                || (probCrater != other.getProbCrater()) || (minRadius != other.getMinRadius())
-                || (maxRadius != other.getMaxRadius()) || (minCraters != other.getMinCraters())
-                || (maxCraters != other.getMaxCraters()) || (!theme.equals(other.getTheme()))
-                || (fxMod != other.getFxMod()) || (cityBlocks != other.getCityBlocks())
-                || (cityType != other.getCityType()) || (cityMinCF != other.getCityMinCF())
-                || (cityMaxCF != other.getCityMaxCF()) || (cityMinFloors != other.getCityMinFloors())
-                || (cityMaxFloors != other.getCityMaxFloors()) || (cityDensity != other.getCityDensity())
-                || (probFlood != other.getProbFlood()) || (probForestFire != other.getProbForestFire())
-                || (probFreeze != other.getProbFreeze()) || (probDrought != other.getProbDrought())
-                || (algorithmToUse != other.getAlgorithmToUse()) || (mountainHeightMin != other.getMountainHeightMin())
-                || (mountainHeightMax != other.getMountainHeightMax()) || (mountainPeaks != other.getMountainPeaks())
-                || (mountainStyle != other.getMountainStyle()) || (mountainWidthMin != other.getMountainWidthMin())
-                || (mountainWidthMax != other.getMountainWidthMax()) || (boardBuildings != other.getBoardBuildings())) {
-            return false;
-        }
-        return true;
-    } /* equalMapGenParameters */
+        return (boardWidth == other.getBoardWidth()) && (boardHeight == other.getBoardHeight())
+                && (mapWidth == other.getMapWidth()) && (mapHeight == other.getMapHeight())
+                && (invertNegativeTerrain == other.getInvertNegativeTerrain()) && (hilliness == other.getHilliness())
+                && (cliffs == other.getCliffs()) && (range == other.getRange())
+                && (minWaterSpots == other.getMinWaterSpots()) && (maxWaterSpots == other.getMaxWaterSpots())
+                && (minWaterSize == other.getMinWaterSize()) && (maxWaterSize == other.getMaxWaterSize())
+                && (probDeep == other.getProbDeep()) && (minForestSpots == other.getMinForestSpots())
+                && (maxForestSpots == other.getMaxForestSpots()) && (minForestSize == other.getMinForestSize())
+                && (maxForestSize == other.getMaxForestSize()) && (probHeavy == other.getProbHeavy())
+                && (minFoliageSpots == other.getMinFoliageSpots())
+                && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
+                && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
+                && (minRoughSpots == other.getMinRoughSpots()) && (maxRoughSpots == other.getMaxRoughSpots())
+                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize())
+                && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
+                && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
+                && (minPlantedFieldSpots == other.getMinPlantedFieldSpots())
+                && (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots())
+                && (minPlantedFieldSize == other.getMinPlantedFieldSize())
+                && (maxPlantedFieldSize == other.getMaxPlantedFieldSize())
+                && (minSwampSpots == other.getMinSwampSpots()) && (maxSwampSpots == other.getMaxSwampSpots())
+                && (minSwampSize == other.getMinSwampSize()) && (maxSwampSize == other.getMaxSwampSize())
+                && (minPavementSpots == other.getMinPavementSpots())
+                && (maxPavementSpots == other.getMaxPavementSpots()) && (minPavementSize == other.getMinPavementSize())
+                && (maxPavementSize == other.getMaxPavementSize()) && (minRubbleSpots == other.getMinRubbleSpots())
+                && (maxRubbleSpots == other.getMaxRubbleSpots()) && (minRubbleSize == other.getMinRubbleSize())
+                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots())
+                && (maxFortifiedSpots == other.getMaxFortifiedSpots())
+                && (minFortifiedSize == other.getMinFortifiedSize())
+                && (maxFortifiedSize == other.getMaxFortifiedSize()) && (minIceSpots == other.getMinIceSpots())
+                && (maxIceSpots == other.getMaxIceSpots()) && (minIceSize == other.getMinIceSize())
+                && (maxIceSize == other.getMaxIceSize()) && (probRoad == other.getProbRoad())
+                && (probInvert == other.getProbInvert()) && (probRiver == other.getProbRiver())
+                && (probCrater == other.getProbCrater()) && (minRadius == other.getMinRadius())
+                && (maxRadius == other.getMaxRadius()) && (minCraters == other.getMinCraters())
+                && (maxCraters == other.getMaxCraters()) && (theme.equals(other.getTheme()))
+                && (fxMod == other.getFxMod()) && (cityBlocks == other.getCityBlocks())
+                && (cityType.equals(other.getCityType())) && (cityMinCF == other.getCityMinCF())
+                && (cityMaxCF == other.getCityMaxCF()) && (cityMinFloors == other.getCityMinFloors())
+                && (cityMaxFloors == other.getCityMaxFloors()) && (cityDensity == other.getCityDensity())
+                && (probFlood == other.getProbFlood()) && (probForestFire == other.getProbForestFire())
+                && (probFreeze == other.getProbFreeze()) && (probDrought == other.getProbDrought())
+                && (algorithmToUse == other.getAlgorithmToUse()) && (mountainHeightMin == other.getMountainHeightMin())
+                && (mountainHeightMax == other.getMountainHeightMax()) && (mountainPeaks == other.getMountainPeaks())
+                && (mountainStyle == other.getMountainStyle()) && (mountainWidthMin == other.getMountainWidthMin())
+                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings()));
+    }
 
     public int getInvertNegativeTerrain() {
         return invertNegativeTerrain;
@@ -992,6 +1083,26 @@ public class MapSettings implements Serializable {
 
     public int getProbHeavy() {
         return probHeavy;
+    }
+    
+    public int getMinFoliageSpots() {
+        return minFoliageSpots;
+    }
+
+    public int getMaxFoliageSpots() {
+        return maxFoliageSpots;
+    }
+
+    public int getMinFoliageSize() {
+        return minFoliageSize;
+    }
+
+    public int getMaxFoliageSize() {
+        return maxFoliageSize;
+    }
+
+    public int getProbFoliageHeavy() {
+        return probFoliageHeavy;
     }
 
     public int getMinRoughSpots() {
@@ -1291,6 +1402,17 @@ public class MapSettings implements Serializable {
         minForestSize = minSize;
         maxForestSize = maxSize;
         probHeavy = prob;
+    }
+    
+    /**
+     * set the Parameters for the Map Generator
+     */
+    public void setFoliageParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+        minFoliageSpots = minSpots;
+        maxFoliageSpots = maxSpots;
+        minFoliageSize = minSize;
+        maxFoliageSize = maxSize;
+        probFoliageHeavy = prob;
     }
 
     /**

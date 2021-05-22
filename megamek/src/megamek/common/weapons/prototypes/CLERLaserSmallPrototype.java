@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.prototypes;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -62,7 +63,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
             .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
             .setClanApproximate(true, false, false, true, false)
-            .setPrototypeFactions(F_CSJ);
-
+            .setPrototypeFactions(F_CSJ)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

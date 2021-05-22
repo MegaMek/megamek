@@ -19,6 +19,7 @@ package megamek.common;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestEntity;
 
 /**
  * @author Jay Lawson
@@ -47,7 +48,7 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getHeatCapacity() {
-        return 999;
+        return DOES_NOT_TRACK_HEAT;
     }
     
     @Override
@@ -89,9 +90,6 @@ public class ConvFighter extends Aero {
     
     @Override
     public double getBVTypeModifier() {
-        if (hasStealth()) {
-            return 1.4;
-        }
         return 1.1;
     }
 
@@ -136,7 +134,7 @@ public class ConvFighter extends Aero {
         // heat sinks
         int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
-        cost += sinkCost * getHeatSinks();
+        cost += sinkCost * TestEntity.calcHeatNeutralHSRequirement(this);
 
         // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);

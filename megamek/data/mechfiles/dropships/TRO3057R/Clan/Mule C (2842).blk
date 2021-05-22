@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -37,9 +37,12 @@ Spheroid
 </motion_type>
 
 <transporters>
-cargobay:2869.0:2:1
-cargobay:2869.0:2:2
-cargobay:2869.0:2:3
+1stclassquarters:40.0:0
+2ndclassquarters:0.0:0
+crewquarters:105.0:0
+cargobay:2764.5:2:1
+cargobay:2764.5:2:2
+cargobay:2764.5:2:3
 </transporters>
 
 <SafeThrust>
@@ -47,7 +50,7 @@ cargobay:2869.0:2:3
 </SafeThrust>
 
 <heatsinks>
-59
+118
 </heatsinks>
 
 <sink_type>
@@ -62,12 +65,16 @@ cargobay:2869.0:2:3
 1
 </engine_type>
 
+<clan_engine>
+false
+</clan_engine>
+
 <armor_type>
 41
 </armor_type>
 
 <armor_tech>
--1
+2
 </armor_tech>
 
 <armor>
@@ -128,11 +135,11 @@ CLERMediumLaser
 </crew>
 
 <officers>
-0
+4
 </officers>
 
 <gunners>
-0
+3
 </gunners>
 
 <passengers>
@@ -158,4 +165,3 @@ CLERMediumLaser
 <escape_pod>
 2
 </escape_pod>
-

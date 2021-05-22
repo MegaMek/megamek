@@ -37,6 +37,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:10.0
 </transporters>
 
 <SafeThrust>
@@ -92,16 +93,6 @@ CLERPPC:OMNI
 <Aft Equipment>
 CLERLargeLaser:OMNI
 CLERLargeLaser:OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
-Cargo (1 ton):OMNI
 </Aft Equipment>
 
 <Wings Equipment>

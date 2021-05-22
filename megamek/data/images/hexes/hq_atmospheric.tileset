@@ -40,6 +40,12 @@
 # smoke
 # elevator
 
+include "incline/inclines2.tileinc"
+include "high_incline/high_inclines.tileinc"
+include "Cliff/Cliffs.tileinc"
+
+include "hq_boring/ThemeHQDesert.tileinc"
+
 include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
@@ -68,22 +74,22 @@ include "StandardIncludes/StandardLimbs.tileinc"
 
 super * "water:1" "" "transparent/anim_water_1.gif"
 
-super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
+super * "woods:1;foliage_elev:*" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2;foliage_elev:*" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3;foliage_elev:*" "tropical" "jungle/ultra_heavy_jungle1.png"
 
-super * "woods:1" "snow" "snow/snow_lf.png"
-super * "woods:2" "snow" "snow/snow_hf.png"
+super * "woods:1;foliage_elev:*" "snow" "snow/snow_lf.png"
+super * "woods:2;foliage_elev:*" "snow" "snow/snow_hf.png"
 
-super * "woods:1;fluff:12" "" "boring/orchard.png"
-super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
+super * "woods:1;foliage_elev:*;fluff:12" "" "boring/orchard.png"
+super * "woods:1;foliage_elev:*" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
 #hf2.gif has been taken out because it looks too much like ultra heavy
-super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
-super * "woods:3" "" "boring/uhf.gif"
+super * "woods:2;foliage_elev:*" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
+super * "woods:3;foliage_elev:*" "" "boring/uhf.gif"
 
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
+super * "jungle:1;foliage_elev:*" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "jungle:2;foliage_elev:*" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "jungle:3;foliage_elev:*" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:2" "" "transparent/anim_water_2.gif"
 super * "water:3" "" "transparent/anim_water_3.gif"
@@ -129,20 +135,20 @@ super * "geyser:3" "" "boring/geyservent.gif"
 
 include "StandardIncludes/StandardElevator.tileinc"
 
-base 0 "" "" "hq_boring/beige_plains_0.png"
-base 1 "" "" "hq_boring/beige_plains_1.png"
-base 2 "" "" "hq_boring/beige_plains_2.png"
-base 3 "" "" "hq_boring/beige_plains_3.png"
-base 4 "" "" "hq_boring/beige_plains_4.png"
-base 5 "" "" "hq_boring/beige_plains_5.png"
-base 6 "" "" "hq_boring/beige_plains_6.png"
-base 7 "" "" "hq_boring/beige_plains_7.png"
-base 8 "" "" "hq_boring/beige_plains_8.png"
-base 9 "" "" "hq_boring/beige_plains_9.png"
-base 10 "" "" "hq_boring/beige_plains_10.png"
-base -1 "" "" "hq_boring/beige_sinkhole_1.png"
-base -2 "" "" "hq_boring/beige_sinkhole_2.png"
-base -3 "" "" "hq_boring/beige_sinkhole_3.png"
+base 0 "" "" "grass/grass_plains_0.gif"
+base 1 "" "" "grass/grass_plains_1.gif"
+base 2 "" "" "grass/grass_plains_2.gif"
+base 3 "" "" "grass/grass_plains_3.gif"
+base 4 "" "" "grass/grass_plains_4.gif"
+base 5 "" "" "grass/grass_plains_5.gif"
+base 6 "" "" "grass/grass_plains_6.gif"
+base 7 "" "" "grass/grass_plains_7.gif"
+base 8 "" "" "grass/grass_plains_8.gif"
+base 9 "" "" "grass/grass_plains_9.gif"
+base 10 "" "" "grass/grass_plains_10.gif"
+base -1 "" "" "grass/grass_sinkhole_1.gif"
+base -2 "" "" "grass/grass_sinkhole_2.gif"
+base -3 "" "" "grass/grass_sinkhole_3.gif"
 
 base 0 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
 base 1 "bldg_basement_type:*" "" "boring/grey_pavement_1.gif"

@@ -25,19 +25,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.DockingCollar;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.Jumpship;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
 public class BLKJumpshipFile extends BLKFile implements IMechLoader {
@@ -288,12 +276,12 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 newBay = false;
                 String equipName = element.trim();
 
-                // I will need to deal with rear-mounted bays on Dropships
-                if (equipName.startsWith("(R) ")) {
-                    rearMount = true;
-                    equipName = equipName.substring(4);
+                double size = 0.0;
+                int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
+                if (sizeIndex > 0) {
+                    size = Double.parseDouble(equipName.substring(sizeIndex + 6));
+                    equipName = equipName.substring(0, sizeIndex);
                 }
-
                 if (equipName.startsWith("(B) ")) {
                     newBay = true;
                     equipName = equipName.substring(4);
@@ -315,6 +303,9 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
+                }
+                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
+                    continue;
                 }
 
                 if (etype != null) {
@@ -366,8 +357,13 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                             bayDamage = damage;
                         }
                     }
-                    // ammo should also get loaded into the bay
-                    if (newmount.getType() instanceof AmmoType) {
+                    if (etype.isVariableSize()) {
+                        if (size == 0.0) {
+                            size = getLegacyVariableSize(equipName);
+                        }
+                        newmount.setSize(size);
+                    } else if (newmount.getType() instanceof AmmoType) {
+                        // ammo should also get loaded into the bay
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
                     }
                 } else if (!equipName.equals("")) {
@@ -375,6 +371,23 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+        if (mashOperatingTheaters > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASH)) {
+                    // includes one as part of the core component
+                    m.setSize(m.getSize() + mashOperatingTheaters);
+                    break;
+                }
+            }
+        }
+        if (legacyDCCSCapacity > 0) {
+            for (Mounted m : a.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
+                    // core system does not include drone capacity
+                    m.setSize(legacyDCCSCapacity);
+                    break;
+                }
+            }
+        }
     }
-
 }

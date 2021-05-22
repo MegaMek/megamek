@@ -35,6 +35,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
+import megamek.common.OffBoardDirection;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
 import megamek.common.util.generator.ElevationGenerator;
@@ -213,6 +214,19 @@ public class BoardUtilities {
                     mapSettings.getProbHeavy(), mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
+        
+        /* Add foliage (1 elevation high woods) */
+        count = mapSettings.getMinFoliageSpots();
+        if (mapSettings.getMaxFoliageSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxFoliageSpots());
+        }
+        count *= sizeScale;
+        for (int i = 0; i < count; i++) {
+            placeFoliage(result, Terrains.WOODS,
+                    mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
+                    mapSettings.getMaxFoliageSize(), reverseHex, true);
+        }
+        
         /* Add the rough */
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
@@ -443,6 +457,9 @@ public class BoardUtilities {
             int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
             ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
             field.addTerrain(tempTerrain);
+            if (terrainType == Terrains.WOODS) {
+                field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            }
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
                     reverseHex);
@@ -468,6 +485,61 @@ public class BoardUtilities {
             }
 
         }
+    }
+    
+    /**
+     * Places randomly some connected Woods.
+     *
+     * @param board The board the terrain goes on.
+     * @param terrainType The type of terrain to place {@link Terrains}.
+     * @param probMore
+     * @param maxHexes Maximum number of hexes this terrain can cover.
+     * @param reverseHex
+     * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
+     */
+    protected static void placeFoliage(IBoard board, int terrainType, int probMore, int minHexes, int maxHexes,
+            HashMap<IHex, Point> reverseHex, boolean exclusive) {
+        Point p = new Point(Compute.randomInt(board.getWidth()), Compute
+                .randomInt(board.getHeight()));
+        int count = minHexes;
+        if ((maxHexes - minHexes) > 0) {
+            count += Compute.randomInt(maxHexes - minHexes);
+        }
+        IHex field;
+
+        HashSet<IHex> alreadyUsed = new HashSet<IHex>();
+        HashSet<IHex> unUsed = new HashSet<IHex>();
+        field = board.getHex(p.x, p.y);
+        if (!field.containsTerrain(terrainType)) {
+            unUsed.add(field);
+        } else {
+            findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
+                    reverseHex);
+        }
+        ITerrainFactory f = Terrains.getTerrainFactory();
+        for (int i = 0; i < count; i++) {
+            if (unUsed.isEmpty()) {
+                return;
+            }
+            int which = Compute.randomInt(unUsed.size());
+            Iterator<IHex> iter = unUsed.iterator();
+            for (int n = 0; n < (which - 1); n++) {
+                iter.next();
+            }
+            field = iter.next();
+            if (exclusive) {
+                field.removeAllTerrains();
+            }
+            int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
+            ITerrain tempTerrain = f.createTerrain(terrainType, tempInt);
+            field.addTerrain(tempTerrain);
+            field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            unUsed.remove(field);
+            findAllUnused(board, terrainType, alreadyUsed, unUsed, field,
+                    reverseHex);
+        }
+
+        
     }
 
     /**
@@ -846,11 +918,14 @@ public class BoardUtilities {
 
                 if (newlevel <= level) {
                     field.removeTerrain(Terrains.WOODS);
+                    field.removeTerrain(Terrains.FOLIAGE_ELEV);
                     if (newlevel <= 0) {
                         field.addTerrain(f.createTerrain(Terrains.ROUGH, 1));
                     } else {
                         field.addTerrain(f.createTerrain(Terrains.WOODS,
                                 newlevel));
+                        field.addTerrain(f.createTerrain(Terrains.FOLIAGE_ELEV,
+                                newlevel == 3 ? 3 : 2));
                         field.addTerrain(f.createTerrain(Terrains.FIRE, 1));
                     }
                 }
@@ -1564,9 +1639,9 @@ public class BoardUtilities {
     }
 
     /**
-     * Figures out the "opposite" edge for the given entity on the entity's game board
+     * Figures out the "closest" edge for the given entity on the entity's game board
      * @param entity Entity to evaluate
-     * @return the Board.START_ constant representing the "opposite" edge
+     * @return the Board.START_ constant representing the "closest" edge
      */
     public static CardinalEdge getClosestEdge(Entity entity) {
         int distanceToWest = entity.getPosition().getX();
@@ -1585,6 +1660,26 @@ public class BoardUtilities {
         } else {
             return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;
         }
+    }
+    
+    /**
+     * Figures out the "opposite" edge for the given entity.
+     * @param entity Entity to evaluate
+     * @return the Board.START_ constant representing the "opposite" edge
+     */
+    public static CardinalEdge determineOppositeEdge(Entity entity) {
+        IBoard board = entity.getGame().getBoard();
+
+        // the easiest part is if the entity is supposed to start on a particular edge. Just return the opposite edge.
+        int oppositeEdge = board.getOppositeEdge(entity.getStartingPos());
+        if (oppositeEdge != Board.START_NONE) {
+            return CardinalEdge.getCardinalEdge(OffBoardDirection.translateBoardStart(oppositeEdge));
+        }
+
+        // otherwise, we determine which edge of the board is closest to current position and return the opposite edge
+        // in case of tie, vertical distance wins over horizontal distance
+        CardinalEdge closestEdge = getClosestEdge(entity);
+        return CardinalEdge.getOppositeEdge(closestEdge);
     }
 
     protected static class Point {

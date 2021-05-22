@@ -45,7 +45,7 @@ import megamek.common.Mounted;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.MegaMekFile;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -558,8 +558,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
 
         // Show searchlight
-        if (en.hasSpotlight()) {
-            if (en.isUsingSpotlight()) {
+        if (en.hasSearchlight()) {
+            if (en.isUsingSearchlight()) {
                 carrysR.append(Messages.getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
             } else {
                 carrysR.append(Messages.getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$

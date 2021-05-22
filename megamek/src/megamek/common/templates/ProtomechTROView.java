@@ -117,13 +117,13 @@ public class ProtomechTROView extends TROView {
 
     private void addArmorAndStructure() {
         setModelData("structureValues",
-                addArmorStructureEntries(proto, (en, loc) -> en.getOInternal(loc), PROTO_ARMOR_LOCS));
-        setModelData("armorValues", addArmorStructureEntries(proto, (en, loc) -> en.getOArmor(loc), PROTO_ARMOR_LOCS));
+                addArmorStructureEntries(proto, Entity::getOInternal, PROTO_ARMOR_LOCS));
+        setModelData("armorValues", addArmorStructureEntries(proto, Entity::getOArmor, PROTO_ARMOR_LOCS));
     }
 
     @Override
     protected int addEquipment(Entity entity, boolean includeAmmo) {
-        final Map<String, Map<EquipmentType, Integer>> equipment = new HashMap<>();
+        final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
         for (final Mounted m : entity.getEquipment()) {
             if ((m.getLocation() < 0) || m.isWeaponGroup() || (!includeAmmo && (m.getType() instanceof AmmoType))) {
@@ -136,21 +136,21 @@ public class ProtomechTROView extends TROView {
             final String loc = formatLocationTableEntry(entity, m);
             equipment.putIfAbsent(loc, new HashMap<>());
             if (m.getType() instanceof AmmoType) {
-                equipment.get(loc).merge(m.getType(), m.getBaseShotsLeft(), Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), m.getBaseShotsLeft(), Integer::sum);
             } else {
-                equipment.get(loc).merge(m.getType(), 1, Integer::sum);
+                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
         for (final String loc : equipment.keySet()) {
-            for (final Map.Entry<EquipmentType, Integer> entry : equipment.get(loc).entrySet()) {
-                final EquipmentType eq = entry.getKey();
-                final int count = equipment.get(loc).get(eq);
-                String name = stripNotes(eq.getName());
+            for (final Map.Entry<EquipmentKey, Integer> entry : equipment.get(loc).entrySet()) {
+                final EquipmentType eq = entry.getKey().getType();
+                final int count = equipment.get(loc).get(entry.getKey());
+                String name = stripNotes(entry.getKey().name());
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, count);
                 } else if (count > 1) {
-                    name = String.format("%d %ss", count, eq.getName());
+                    name = String.format("%d %ss", count, entry.getKey().name());
                 }
                 final Map<String, Object> fields = new HashMap<>();
                 fields.put("name", name);
@@ -160,7 +160,7 @@ public class ProtomechTROView extends TROView {
                 if (eq instanceof AmmoType) {
                     fields.put("mass", Math.round((((AmmoType) eq).getKgPerShot()) * count));
                 } else {
-                    fields.put("mass", Math.round(eq.getTonnage(entity) * 1000 * count));
+                    fields.put("mass", Math.round(eq.getTonnage(entity, entry.getKey().getSize()) * 1000 * count));
                 }
                 fields.put("location", loc);
                 eqList.add(fields);

@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -10,10 +10,6 @@
  *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
  */
 package megamek.common.weapons.battlearmor;
 
@@ -28,6 +24,7 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * Created on Sep 24, 2004
  */
 public class CLBAMicroBomb extends Weapon {
     /**
@@ -52,7 +49,7 @@ public class CLBAMicroBomb extends Weapon {
         longRange = 0;
         extremeRange = 0;
         bv = 11;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .1;
         criticals = 2;
         cost = 30000;

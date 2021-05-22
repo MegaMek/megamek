@@ -5,17 +5,18 @@ plugins {
 allprojects {
     apply plugin: 'java'
     
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 11
+    targetCompatibility = 11
     
     repositories {
         jcenter()
+        maven { url 'https://jitpack.io' } // SerialKiller master branch
     }
 }
 
 subprojects {
     group = 'org.megamek'
-    version = '0.47.5-SNAPSHOT'
+    version = '0.49.1-SNAPSHOT'
 }
 
 ext {

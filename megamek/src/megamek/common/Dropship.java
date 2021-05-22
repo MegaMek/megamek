@@ -443,11 +443,11 @@ public class Dropship extends SmallCraft {
         int baydoors = 0;
         long bayCost = 0;
         long quartersCost = 0;
+        // Passenger and crew quarters and infantry bays are considered part of the structure
+        // and don't add to the cost
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if (next.isQuarters()) {
-                quartersCost += next.getCost();
-            } else {
+            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
                 bayCost += next.getCost();
             }
         }
@@ -722,7 +722,7 @@ public class Dropship extends SmallCraft {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(etype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
@@ -957,14 +957,14 @@ public class Dropship extends SmallCraft {
                 }
                 // calc MG Array here:
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && (possibleMG.getLocation() == mounted.getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
+                    double mgBV = 0;
+                    for (int eqNum : mounted.getBayWeapons()) {
+                        Mounted mg = getEquipment(eqNum);
+                        if ((mg != null) && (!mg.isDestroyed())) {
+                            mgBV += mg.getType().getBV(this);
                         }
                     }
-                    dBV = mgaBV * 0.67;
+                    dBV = mgBV * 0.67;
                 }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -990,7 +990,7 @@ public class Dropship extends SmallCraft {
                     }
                     if ((mLinker.getType() instanceof MiscType)
                             && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        dBV *= 1.25;
+                        dBV *= 1.15;
                     }
                 }
                 // add up BV of ammo-using weapons for each type of weapon,
@@ -1325,7 +1325,7 @@ public class Dropship extends SmallCraft {
                 bvText.append(startRow);
                 bvText.append(startColumn);
 
-                bvText.append(mtype.getName());
+                bvText.append(mounted.getName());
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(endColumn);
@@ -1894,5 +1894,64 @@ public class Dropship extends SmallCraft {
             specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 60.0));
         }
     }
-
+    
+    @Override
+    public boolean canChangeSecondaryFacing() {
+        // flying dropships can execute the "ECHO" maneuver (stratops 113), aka a torso twist, 
+        // if they have the MP for it
+        return isAirborne() && !isEvading() && (mpUsed <= getRunMP() - 2);
+    }
+    
+    /**
+     * Can this dropship "torso twist" in the given direction?
+     */
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        int rotate = dir - getFacing();
+        if (canChangeSecondaryFacing()) {
+            return (rotate == 0) || (rotate == 1) || (rotate == -1)
+                    || (rotate == -5) || (rotate == 5);
+        }
+        return rotate == 0;
+    }
+    
+    /**
+     * Return the nearest valid direction to "torso twist" in
+     */
+    @Override
+    public int clipSecondaryFacing(int dir) {
+        if (isValidSecondaryFacing(dir)) {
+            return dir;
+        }
+        
+        // can't twist without enough MP
+        if (!canChangeSecondaryFacing()) {
+            return getFacing();
+        }
+        
+        // otherwise, twist once in the appropriate direction
+        final int rotate = (dir + (6 - getFacing())) % 6;
+        
+        return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
+    }
+    
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        
+        if (getGame().useVectorMove()) {
+            setFacing(getSecondaryFacing());
+        }
+        
+        setSecondaryFacing(getFacing());
+    }
+    
+    /**
+     * Utility function that handles situations where a facing change
+     * has some kind of permanent effect on the entity.
+     */
+    @Override
+    public void postProcessFacingChange() {
+        mpUsed += 2;
+    }
 }

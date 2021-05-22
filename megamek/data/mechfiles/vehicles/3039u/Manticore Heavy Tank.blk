@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Manticore Heavy Tank
 </Model>
 
 <year>
-2668
+2575
 </year>
 
 <type>
@@ -79,4 +79,3 @@ TRO 3039 - Star League
 <tonnage>
 60.0
 </tonnage>
-

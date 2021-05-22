@@ -73,7 +73,7 @@ public class BattleArmorTROView extends TROView {
         setModelData("legAttack",
                 (ba.canDoMechanizedBA() && (ba.getWeightClass() < EntityWeightClass.WEIGHT_HEAVY)) ? "Yes" : "No");
         setModelData("mechanized", ba.canDoMechanizedBA() ? "Yes" : "No");
-        setModelData("antiPersonnel", ba.getEquipment().stream().anyMatch(m -> m.isAPMMounted()) ? "Yes" : "No");
+        setModelData("antiPersonnel", ba.getEquipment().stream().anyMatch(Mounted::isAPMMounted) ? "Yes" : "No");
 
         setModelData("massChassis", testBA.getWeightChassis() * 1000);
         setModelData("groundMP", ba.getWalkMP());
@@ -128,7 +128,7 @@ public class BattleArmorTROView extends TROView {
         } else {
             String name = manipulator.getName();
             if (name.contains("[")) {
-                name = name.replaceAll(".*\\[", "").replaceAll("\\].*", "");
+                name = name.replaceAll(".*\\[", "").replaceAll("].*", "");
             }
             retVal.put("eqName", name);
             retVal.put("eqMass", manipulator.getTonnage() * 1000);
@@ -142,10 +142,11 @@ public class BattleArmorTROView extends TROView {
         final String at = EquipmentType.getBaArmorTypeName(ba.getArmorType(BattleArmor.LOC_TROOPER_1),
                 TechConstants.isClan(ba.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
         final EquipmentType armor = EquipmentType.get(at);
-        Map<String, Object> row = null;
+        Map<String, Object> row;
         int nameWidth = 30;
         for (final Mounted m : ba.getEquipment()) {
-            if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack) || (m.getType() == armor)) {
+            if (m.isAPMMounted() || (m.getType() instanceof InfantryAttack)
+                    || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
@@ -162,7 +163,7 @@ public class BattleArmorTROView extends TROView {
             if (name.length() >= nameWidth) {
                 nameWidth = name.length() + 1;
             }
-            row.put("slots", m.getType().getCriticals(ba));
+            row.put("slots", m.getCriticals());
             if (m.getType() instanceof AmmoType) {
                 row.put("mass", ((AmmoType) m.getType()).getKgPerShot() * m.getOriginalShots());
             } else {

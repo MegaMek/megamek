@@ -201,6 +201,46 @@ public class ClubAttackAction extends PhysicalAttackAction {
     }
 
     /**
+     * Modifiers to the to-hit roll for specific weapons
+     *
+     * @param clubType A physical weapon
+     * @return         The modifier to hit with the weapon
+     */
+    public static int getHitModFor(MiscType clubType) {
+        if (clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+            return 2;
+        } else if (clubType.hasSubType(MiscType.S_BACKHOE)
+                || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
+                || clubType.hasSubType(MiscType.S_WRECKING_BALL)
+                || clubType.hasSubType(MiscType.S_LANCE)
+                || clubType.hasSubType(MiscType.S_MACE)
+                || clubType.hasSubType(MiscType.S_MACE_THB)) {
+            return 1;
+        } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
+                || clubType.hasSubType(MiscType.S_DUAL_SAW)
+                || clubType.hasSubType(MiscType.S_FLAIL)) {
+            return 0;
+        } else if (clubType.hasSubType(MiscType.S_HATCHET)
+                || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
+            return -1;
+        } else if (clubType.hasSubType(MiscType.S_COMBINE)
+                || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                || clubType.hasSubType(MiscType.S_SWORD)
+                || clubType.hasSubType(MiscType.S_CHAIN_WHIP)
+                || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
+                || clubType.isVibroblade()
+                || clubType.hasSubType(MiscType.S_COMBINE)) {
+            return -2;
+        } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+            return -3;
+        } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
+            return -4;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
      * 
      * @return true if the entity is zweihandering (attacking with both hands)
      */
@@ -439,38 +479,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Various versions of physical weapons have different base bonuses and
         // penalties.
-        if (clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
-            base += 2;
-        } else if (clubType.hasSubType(MiscType.S_BACKHOE)
-                   || clubType.hasSubType(MiscType.S_ROCK_CUTTER)
-                   || clubType.hasSubType(MiscType.S_WRECKING_BALL)
-                   || clubType.hasSubType(MiscType.S_LANCE)
-                   || clubType.hasSubType(MiscType.S_MACE)
-                   || clubType.hasSubType(MiscType.S_MACE_THB)) {
-            base += 1;
-        } else if (clubType.hasSubType(MiscType.S_CHAINSAW)
-                   || clubType.hasSubType(MiscType.S_DUAL_SAW)
-                   || clubType.hasSubType(MiscType.S_FLAIL)) {
-            base += 0;
-        } else if (clubType.hasSubType(MiscType.S_HATCHET)
-                   || clubType.hasSubType(MiscType.S_MINING_DRILL)) {
-            base -= 1;
-        } else if (clubType.hasSubType(MiscType.S_COMBINE)
-                   || clubType.hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                   || clubType.hasSubType(MiscType.S_SWORD)
-                   || clubType.hasSubType(MiscType.S_CHAIN_WHIP)
-                   || clubType.hasSubType(MiscType.S_SHIELD_SMALL)
-                   || clubType.isVibroblade()
-                   || clubType.hasSubType(MiscType.S_COMBINE)) {
-            base -= 2;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_MEDIUM)) {
-            base -= 3;
-        } else if (clubType.hasSubType(MiscType.S_SHIELD_LARGE)) {
-            base -= 4;
-        } else {
-            base -= 1;
-        }
-
+        base += getHitModFor(clubType);
         toHit = new ToHitData(base, "base");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);

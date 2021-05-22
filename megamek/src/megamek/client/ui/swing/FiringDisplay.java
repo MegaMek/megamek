@@ -15,29 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -46,59 +23,26 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.GameTurn;
-import megamek.common.HexTarget;
-import megamek.common.IAero;
-import megamek.common.IAimingModes;
-import megamek.common.IBoard;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IHex;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.IdealHex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
+import megamek.client.ui.swing.util.TurnTimer;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.util.*;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -106,6 +50,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      *
      */
     private static final long serialVersionUID = -5586388490027013723L;
+
+    /**
+     * timer that ends turn if time limit set in options is over
+     */
+    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -919,12 +868,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
+        //check if there should be a turn timer running
+        tt = TurnTimer.init(this, clientgui.getClient());
     }
 
     /**
      * Does end turn stuff.
      */
     protected void endMyTurn() {
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
         // end my turn, then.
         IGame game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
@@ -1247,6 +1203,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -1278,6 +1235,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
@@ -1435,8 +1393,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 toHitBuff.append(toHit.getDesc());
                 toHitBuff.append("\n");
             }
-            Targetable hexTarget = new HexTarget(c, game.getBoard(),
-                    HexTarget.TYPE_HEX_CLEAR);
+            Targetable hexTarget = new HexTarget(c, HexTarget.TYPE_HEX_CLEAR);
             toHit = WeaponAttackAction.toHit(game, cen, hexTarget, weaponId,
                     Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
             if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
@@ -1542,15 +1499,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // declare searchlight, if possible
         if (GUIPreferences.getInstance().getAutoDeclareSearchlight()
-            && ce().isUsingSpotlight()) {
+            && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         if (isStrafing) {
             for (Coords c : strafingCoords) {
-                targets.add(new HexTarget(c, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR));
+                targets.add(new HexTarget(c, Targetable.TYPE_HEX_CLEAR));
                 Building bldg = game.getBoard().getBuildingAt(c); 
                 if (bldg != null) {
                     targets.add(new BuildingTarget(c, game.getBoard(), false));
@@ -1600,7 +1556,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     && (mounted.getLinked().getType() instanceof AmmoType)) {
                 Mounted ammoMount = mounted.getLinked();
                 AmmoType ammoType = (AmmoType) ammoMount.getType();
-                waa.setAmmoId(ce().getEquipmentNum(ammoMount));
+                waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+                waa.setAmmoCarrier(ammoMount.getEntity().getId());
                 if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) && 
                         ((ammoType.getAmmoType() == AmmoType.T_LRM)
                         || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -1841,9 +1798,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
             facing = (facing + weapon.getFacing()) % 6;
             Coords c = ce().getPosition().translated(facing);
-            IBoard board = clientgui.getClient().getGame().getBoard();
             Targetable hexTarget = 
-                    new HexTarget(c, board, Targetable.TYPE_HEX_CLEAR);
+                    new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
             // Ignore events that will be generated by the select/cursor calls
             setIgnoringEvents(true);
             clientgui.getBoardView().select(c);
@@ -2078,18 +2034,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -2311,7 +2267,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && !ce().isHidden()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
@@ -2533,19 +2489,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
                     && (munitionType == AmmoType.M_FLARE)) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_FLARE_DELIVER);
+                return new HexTarget(pos, Targetable.TYPE_FLARE_DELIVER);
             // Certain mek mortar types and LRMs should target hexes
             } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
                     && ((munitionType == AmmoType.M_AIRBURST) 
                             || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             } else if (munitionType == AmmoType.M_MINE_CLEARANCE) {
-                return new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR);
+                return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             }
         }
         // Get the available choices, depending on friendly fire
@@ -2597,8 +2550,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             IHex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.JUNGLE)) {
-                targets.add(new HexTarget(pos, game.getBoard(),
-                        Targetable.TYPE_HEX_CLEAR));
+                targets.add(new HexTarget(pos, Targetable.TYPE_HEX_CLEAR));
             }
         }
 

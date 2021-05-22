@@ -150,9 +150,7 @@ public class EntityWeightClass {
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return WEIGHT_SMALL_CRAFT;
-        } else if (type.equals("Conventional Fighter")) {
-            return WEIGHT_LIGHT;
-        } else if (type.equals("Aero")) {
+        } else if (type.equals("Aero") || type.equals("Conventional Fighter")) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
@@ -177,83 +175,51 @@ public class EntityWeightClass {
      * @return        The weight class
      */
     public static int getSupportWeightClass(double tonnage, String type) {
-        int i = 0;
-
-        if (type.equals("Wheeled")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Tracked")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Hover")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals(UnitType.getTypeName(UnitType.VTOL))) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("WiGE")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals(UnitType.getTypeName(UnitType.NAVAL))) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Submarine")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Rail")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("MagLev")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Aerodyne")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (fixedwingSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= fixedwingSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Airship")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (airshipSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= airshipSupportVehicleWeightLimits[i]) {
-                    break;
-                }
-            }
-        } else if (type.equals("Satellite")) {
-            for (i = WEIGHT_SMALL_SUPPORT; i < (satelliteSupportVehicleWeightLimits.length - 1); i++) {
-                if (tonnage <= satelliteSupportVehicleWeightLimits[i]) {
-                    break;
-                }
+        double[] weightLimits;
+        switch (EntityMovementMode.getMode(type)) {
+            case WHEELED:
+                weightLimits = wheeledSupportVehicleWeightLimits;
+                break;
+            case TRACKED:
+                weightLimits = trackedSupportVehicleWeightLimits;
+                break;
+            case HOVER:
+                weightLimits = hoverSupportVehicleWeightLimits;
+                break;
+            case VTOL:
+                weightLimits = vtolSupportVehicleWeightLimits;
+                break;
+            case WIGE:
+                weightLimits = wigeSupportVehicleWeightLimits;
+                break;
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                weightLimits = navalSupportVehicleWeightLimits;
+                break;
+            case RAIL:
+            case MAGLEV:
+                weightLimits = railSupportVehicleWeightLimits;
+                break;
+            case AERODYNE:
+                weightLimits = fixedwingSupportVehicleWeightLimits;
+                break;
+            case AIRSHIP:
+                weightLimits = airshipSupportVehicleWeightLimits;
+                break;
+            case STATION_KEEPING:
+                weightLimits = satelliteSupportVehicleWeightLimits;
+                break;
+            default:
+                return WEIGHT_MEDIUM_SUPPORT;
+        }
+        for (int i = WEIGHT_SMALL_SUPPORT; i < weightLimits.length; i++) {
+            if (tonnage <= weightLimits[i]) {
+                return i;
             }
         }
 
-        return i;
+        return WEIGHT_MEDIUM_SUPPORT;
     }
 
     public static int getWeightClass(double tonnage, Entity en) {
@@ -284,8 +250,6 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (en instanceof ConvFighter) {
-            return WEIGHT_LIGHT;
         } else if (en instanceof SmallCraft) {
             return WEIGHT_SMALL_CRAFT;
         } else if (en instanceof Aero) {

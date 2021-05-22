@@ -1,6 +1,7 @@
 package megamek.common;
 
 import junit.framework.TestCase;
+import megamek.server.victory.VictoryResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,7 +32,28 @@ public class GameTest {
 
     @Test
     public void testGetVictoryReport() {
+        IGame game = new Game();
+        game.createVictoryConditions();
+        VictoryResult victoryResult = game.getVictoryResult();
+        TestCase.assertNotNull(victoryResult);
 
+        // Note: this accessors are tested in VictoryResultTest
+        TestCase.assertSame(IPlayer.PLAYER_NONE, victoryResult.getWinningPlayer());
+        TestCase.assertSame(IPlayer.TEAM_NONE, victoryResult.getWinningTeam());
+
+        int winningPlayer = 2;
+        int winningTeam = 5;
+
+        // Test an actual scenario
+        IGame game2 = new Game();
+        game2.setVictoryTeam(winningTeam);
+        game2.setVictoryPlayerId(winningPlayer);
+        game2.setForceVictory(true);
+        game2.createVictoryConditions();
+        VictoryResult victoryResult2 = game2.getVictoryResult();
+
+        TestCase.assertSame(winningPlayer, victoryResult2.getWinningPlayer());
+        TestCase.assertSame(winningTeam, victoryResult2.getWinningTeam());
     }
 
 }

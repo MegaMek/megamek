@@ -17,7 +17,7 @@ VERSION HISTORY:
 + Issue #2963: Armor tooltip matches reality better
 + Issue #2776: Fix for frequent inability to start MegaMek scenarios with bots from MMS files
 + Issue #2727: Restore respect for client-side language settings (some things still aren't translated though)
-+ Data: New sprites and unit file updates.
++ Data: New sprites and unit file updates, updating Flynn Map pack.
 
 0.49.0 (2021-05-01 2130 UTC)
 + Issue #2614: Improved Building Validation

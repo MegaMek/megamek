@@ -148,3 +148,17 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Thug was designed by Maltex Corporation as a direct competitor to the popular Warhammer BattleMech. First seeing production in 2572. 
+
+capabilities:The 13K is a variant of the 12E (Introduced in 3068) that removes many of the traditional strengths of the Thug to increase its damage potential. Introduced in 3068 the missiles have been removed and the 'Mech is now powered by an XL Engine. This, combined with the loss of a half-ton of armor and one of the heat sinks, reduces the much-vaunted survivability of the Thug to make room for three Heavy PPCs. Though this gives the 13K great damage potential, it can quickly overwhelm its heat dissipation system. Two Medium Pulse Lasers provide close range defense in case an enemy gets within the minimum range of the PPCs and an Improved C3 CPU enables it to share targeting telemetry with other units equipped with the same.
+
+history:the Thug sought to directly address some of the challenges which faced the Warhammer, chief of which was to increase armor protection without sacrificing firepower. When compared side-by-side, the Thug has a great many advantages over the Warhammer, yet it never wholly replaced the venerable 'Mech. Still the Thug proved popular enough that Maltex Corporation was forced to contract Earthwerks Incorporated to produce the Thug on Keystone in order to meet demand. Although it has had its detractors, the Thug has proven itself for over five hundred years to be the quintessential "zombie 'Mech." Production of the Thug from Maltex's original factory on Errai ceased when it was destroyed in 2835, one of many causalities of the Succession Wars, leaving only Earthwerks to continue building new Thugs at a rate of twelve per year. Unfortunately the same terrible conflict resulted in the loss of much advanced knowledge and technology, threatening their ability to keep even this meager production rate up. In a twist of fate it was the Warhammer which helped keep the Thug production line alive: with the loss of their original PPC weaponry, Earthwerks instead reworked the design to make use of the extensive stockpile of Donal PPCs used by the Warhammer, allowing new Thugs to be built and repairs to be made more easily. Beyond the few still in service to the Great Houses the largest user of Thugs was ComStar, a fact confirmed upon the reveal of their Com Guards. Eventually the recovery of lostech would allow both Earthwerks and Maltex to restart production of original-model Thugs during the 3050s. These were supplanted by new variants which, following the formation of the Second Star League, were supplied to ComStar, the SLDF, the Draconis Combine and Federated Suns. New Thugs were also built for the Word of Blake and those forces of the Free Worlds League aligned with them during the Jihad.
+
+manufacturer:Maltex Corporation, Earthwerks Incorporated
+primaryfactory:Errai, Keystone
+systemmanufacturer:CHASSIS:Earthwerks VOL Endo Steel
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Mitchell Argon with CASE
+systemmanufacturer:COMMUNICATIONS:Colmax 90
+systemmanufacturer:TARGETING:TharHes Ares-5

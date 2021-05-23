@@ -1158,6 +1158,7 @@ public class BoardEditor extends JPanel
                     newHex.addTerrain(oldHex.getTerrain(terrainID));
                 }
             }
+            newHex.setTheme(oldHex.getTheme());
             board.resetStoredElevation();
             board.setHex(c, newHex);
         }

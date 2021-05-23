@@ -5474,17 +5474,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setWalkEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_WALK).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveWalkEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_WALK.getCmd(), enabled);
     }
 
     private void setTurnEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_TURN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveTurnEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TURN.getCmd(), enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveNextEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_NEXT.getCmd(), enabled);
     }
 
     private void setForwardIniEnabled(boolean enabled) {
@@ -5492,21 +5492,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getOptions()
                      .booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE)) {
             getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(enabled);
-            clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
+            clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FORWARD_INI.getCmd(), enabled);
         } else { // turn them off regardless what is said!
             getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(false);
-            clientgui.getMenuBar().setMoveForwardIniEnabled(false);
+            clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FORWARD_INI.getCmd(), false);
         }
     }
 
     private void setLayMineEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LAY_MINE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveLayMineEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LAY_MINE.getCmd(), enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveLoadEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LOAD.getCmd(), enabled);
     }
 
     private void setMountEnabled(boolean enabled) {
@@ -5516,190 +5516,186 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     
     private void setTowEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_TOW).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveTowEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TOW.getCmd(), enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNLOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveUnloadEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNLOAD.getCmd(), enabled);
     }
     
     private void setDisconnectEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DISCONNECT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveDisconnectEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DISCONNECT.getCmd(), enabled);
     }
 
     private void setJumpEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_JUMP).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveJumpEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_JUMP.getCmd(), enabled);
     }
     
     private void setModeConvertEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveModeConvertEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_MODE_CONVERT.getCmd(), enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_SWIM).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveSwimEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_SWIM.getCmd(), enabled);
     }
 
     private void setBackUpEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_BACK_UP).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveBackUpEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BACK_UP.getCmd(), enabled);
     }
 
     private void setChargeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_CHARGE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveChargeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_CHARGE.getCmd(), enabled);
     }
 
     private void setDFAEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DFA).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveDFAEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DFA.getCmd(), enabled);
     }
 
     private void setGoProneEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_GO_PRONE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveGoProneEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_GO_PRONE.getCmd(), enabled);
     }
 
     private void setFleeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_FLEE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveFleeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FLEE.getCmd(), enabled);
     }
 
     private void setFlyOffEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_FLY_OFF).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveFlyOffEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_FLY_OFF.getCmd(), enabled);
     }
 
     private void setEjectEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EJECT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveEjectEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_EJECT.getCmd(), enabled);
     }
 
     private void setUnjamEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNJAM).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveUnjamEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNJAM.getCmd(), enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled, boolean state) {
         if (state) {
-            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(
-                    Messages.getString("MovementDisplay.butSearchlightOff"));
-            //$NON-NLS-1$
+            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(Messages.getString("MovementDisplay.butSearchlightOff"));
         } else {
-            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(
-                    Messages.getString("MovementDisplay.butSearchlightOn"));
-            //$NON-NLS-1$
+            getBtn(MoveCommand.MOVE_SEARCHLIGHT).setText(Messages.getString("MovementDisplay.butSearchlightOn"));
         }
         getBtn(MoveCommand.MOVE_SEARCHLIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveSearchlightEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_SEARCHLIGHT.getCmd(), enabled);
     }
 
     private void setHullDownEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_HULL_DOWN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveHullDownEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_HULL_DOWN.getCmd(), enabled);
     }
 
     private void setClearEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_CLEAR).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveClearEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_CLEAR.getCmd(), enabled);
     }
 
     private void setGetUpEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_GET_UP).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveGetUpEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_GET_UP.getCmd(), enabled);
     }
 
     private void setRaiseEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_RAISE_ELEVATION).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveRaiseEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_RAISE_ELEVATION.getCmd(), enabled);
     }
 
     private void setLowerEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LOWER_ELEVATION).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveLowerEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LOWER_ELEVATION.getCmd(), enabled);
     }
 
     private void setRecklessEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_RECKLESS).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveRecklessEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_RECKLESS.getCmd(), enabled);
     }
 
     private void setAccEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_ACC).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveAccEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ACC.getCmd(), enabled);
     }
 
     private void setDecEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DEC).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveDecEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DEC.getCmd(), enabled);
     }
 
     private void setAccNEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_ACCN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveAccNEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ACCN.getCmd(), enabled);
     }
 
     private void setDecNEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DECN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveDecNEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DECN.getCmd(), enabled);
     }
 
     private void setEvadeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EVADE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_EVADE.getCmd(), enabled);
     }
     
     private void setBootleggerEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BOOTLEGGER).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveBootleggerEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOOTLEGGER.getCmd(), enabled);
     }
 
     private void setShutdownEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_SHUTDOWN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveShutdownEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_SHUTDOWN.getCmd(), enabled);
     }
 
     private void setStartupEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_STARTUP).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveStartupEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_STARTUP.getCmd(), enabled);
     }
 
     private void setSelfDestructEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_SELF_DESTRUCT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveSelfDestructEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_SELF_DESTRUCT.getCmd(), enabled);
     }
 
     private void setTraitorEnabled(boolean enabled) {
-        clientgui.getMenuBar().setMoveTraitorEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TRAITOR.getCmd(), enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EVADE_AERO).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveEvadeAeroEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_EVADE_AERO.getCmd(), enabled);
     }
 
     private void setRollEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_ROLL).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveRollEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_ROLL.getCmd(), enabled);
     }
 
     private void setLaunchEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_LAUNCH.getCmd(), enabled);
     }
 
     private void setDockEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DOCK).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DOCK.getCmd(), enabled);
     }
 
     private void setRecoverEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_RECOVER).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_RECOVER.getCmd(), enabled);
     }
 
     private void setDropEnabled(boolean enabled) {
@@ -5709,22 +5705,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setJoinEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_JOIN).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveJoinEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_JOIN.getCmd(), enabled);
     }
 
     private void setDumpEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DUMP).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveDumpEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DUMP.getCmd(), enabled);
     }
 
     private void setRamEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_RAM).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveRamEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_RAM.getCmd(), enabled);
     }
 
     private void setHoverEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_HOVER).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveHoverEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_HOVER.getCmd(), enabled);
     }
 
     private void setTakeOffEnabled(boolean enabled) {
@@ -5749,42 +5745,42 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setManeuverEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_MANEUVER).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveManeuverEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_MANEUVER.getCmd(), enabled);
     }
 
     private void setTurnLeftEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_TURN_LEFT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveTurnLeftEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TURN_LEFT.getCmd(), enabled);
     }
 
     private void setTurnRightEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_TURN_RIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveTurnRightEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TURN_RIGHT.getCmd(), enabled);
     }
 
     private void setThrustEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_THRUST).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveThrustEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_THRUST.getCmd(), enabled);
     }
 
     private void setYawEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_YAW).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveYawEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_YAW.getCmd(), enabled);
     }
 
     private void setEndOverEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_END_OVER).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_END_OVER.getCmd(), enabled);
     }
 
     private void setStrafeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_STRAFE).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveStrafeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_STRAFE.getCmd(), enabled);
     }
 
     private void setBombEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_BOMB).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveBombEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_BOMB.getCmd(), enabled);
     }
 
     /**

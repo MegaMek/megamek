@@ -1022,37 +1022,37 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
     protected void setFireEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFireEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
     protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
-        clientgui.getMenuBar().setFireTwistEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
     protected void setSkipEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SKIP).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSkipEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
     }
 
     protected void setFlipArmsEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
     }
 
     protected void setSearchlightEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SEARCHLIGHT.getCmd(), enabled);
     }
 
     protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireModeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
     }
 
     protected void setFireCalledEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
-        clientgui.getMenuBar().setFireCalledEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_CALLED.getCmd(), enabled);
     }
 
     @Override

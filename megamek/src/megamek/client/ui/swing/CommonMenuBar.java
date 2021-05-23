@@ -825,6 +825,20 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      * @param event - the <code>ActionEvent</code> that spawned this call.
      */
     public void actionPerformed(ActionEvent event) {
+        
+        // Changes that are independent of the current state of MM
+        if (event.getActionCommand().equals(ClientGUI.VIEW_INCGUISCALE)) {
+            float guiScale = GUIPreferences.getInstance().getGUIScale();
+            if (guiScale < ClientGUI.MAX_GUISCALE) {
+                GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
+            }
+        } else if (event.getActionCommand().equals(ClientGUI.VIEW_DECGUISCALE)) {
+            float guiScale = GUIPreferences.getInstance().getGUIScale();
+            if (guiScale > ClientGUI.MIN_GUISCALE) {
+                GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
+            }
+        }
+        
         // Pass the action on to each of our listeners.
         Enumeration<ActionListener> iter = actionListeners.elements();
         while (iter.hasMoreElements()) {

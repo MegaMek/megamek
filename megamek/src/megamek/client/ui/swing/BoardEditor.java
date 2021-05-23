@@ -287,8 +287,8 @@ public class BoardEditor extends JPanel
     private FixedYPanel panelBoardSettings = new FixedYPanel();
     
     // Help Texts
-    private JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"),SwingConstants.LEFT);
-    private JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"),SwingConstants.LEFT);
+    private JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"), SwingConstants.LEFT);
+    private JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"), SwingConstants.LEFT);
     
     // Undo / Redo
     private List<ScalingIconButton> undoButtons = new ArrayList<>();

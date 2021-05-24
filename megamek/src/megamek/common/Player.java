@@ -394,10 +394,7 @@ public final class Player extends TurnOrdered implements IPlayer {
                         if (entity.getOwner() == null) {
                             return false;
                         }
-                        if (ownerId == entity.getOwner().getId()) {
-                            return true;
-                        }
-                        return false;
+                        return ownerId == entity.getOwner().getId();
                     }
                 }); e.hasNext(); ) {
             Entity m = e.next();

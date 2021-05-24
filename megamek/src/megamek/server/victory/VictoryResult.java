@@ -21,7 +21,6 @@ import java.util.HashMap;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Report;
-import megamek.server.Server;
 
 /**
  * quick implementation of a Victory.Result stores player scores and a flag if

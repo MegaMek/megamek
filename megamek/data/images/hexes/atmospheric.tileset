@@ -43,14 +43,11 @@ include "incline/inclines2.tileinc"
 include "high_incline/high_inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
-include "Structured_Pavement/Structured_Pavement.tileinc"
-
 include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
 
-# ortho * "water:0" "" "transparent/blue_water_1.png"
-include "Structured_Water/Structured_WaterX.tileinc"
+ortho * "water:0" "" "transparent/blue_water_1.png"
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
 #levels 2 and 3 of swamp are for quicksand
@@ -72,7 +69,7 @@ super * "rubble:6" "" "boring/rubble_ultra.gif"
 
 include "StandardIncludes/StandardLimbs.tileinc"
 
-# ortho * "water:1" "" "transparent/blue_water_1.png"
+ortho * "water:1" "" "transparent/blue_water_1.png"
 
 super * "woods:1;foliage_elev:*" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
 super * "woods:2;foliage_elev:*" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
@@ -97,10 +94,10 @@ super * "jungle:1;foliage_elev:*" "" "jungle/light_jungle1.png;jungle/light_jung
 super * "jungle:2;foliage_elev:*" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
 super * "jungle:3;foliage_elev:*" "" "jungle/ultra_heavy_jungle1.png"
 
-# ortho * "water:2" "" "transparent/blue_water_2.png"
-# ortho * "water:3" "" "transparent/blue_water_3.png"
-# ortho * "water:4" "" "transparent/blue_water_4.png"
-# ortho * "water:*" "" "transparent/blue_water_4.png"
+ortho * "water:2" "" "transparent/blue_water_2.png"
+ortho * "water:3" "" "transparent/blue_water_3.png"
+ortho * "water:4" "" "transparent/blue_water_4.png"
+ortho * "water:*" "" "transparent/blue_water_4.png"
 
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"

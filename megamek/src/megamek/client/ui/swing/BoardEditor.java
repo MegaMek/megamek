@@ -1923,9 +1923,7 @@ public class BoardEditor extends JComponent
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitUp)) {
             cheTerrExitSpecified.setSelected(true);
-            if (texTerrExits.getNumber() < 63) {
-                texTerrExits.incValue();
-            }
+            texTerrExits.incValue();
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
             texTerrExits.decValue();

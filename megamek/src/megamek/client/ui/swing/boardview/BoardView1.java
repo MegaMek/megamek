@@ -1769,10 +1769,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     // Woods Shadow
                     IHex hex = board.getHex(c);
-                    List<Image> orthos = tileManager.orthoFor(hex);
+                    List<Image> supers = tileManager.supersFor(hex);
 
-                    if (!orthos.isEmpty()) {
-                        Image lastSuper = createBlurredShadow(orthos.get(orthos.size()-1));
+                    if (!supers.isEmpty()) {
+                        Image lastSuper = createBlurredShadow(supers.get(supers.size()-1));
                         if (lastSuper == null) {
                             clearShadowMap();
                             return;
@@ -1807,7 +1807,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                     // Bridge Shadow
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
-                        var supers = tileManager.orthoFor(hex);
+                        supers = tileManager.orthoFor(hex);
                         if (supers.isEmpty()) break;
                         Image maskB = createBlurredShadow(supers.get(supers.size() - 1));
                         if (maskB == null) {

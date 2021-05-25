@@ -614,14 +614,13 @@ class EntitySprite extends Sprite {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
                     graph.scale(1 / bv.scale, 1 / bv.scale);
-                    graph.rotate(Math.PI / 30, bv.hex_size.width/2, bv.hex_size.height/2);
+                    graph.rotate(Math.PI / 24, bv.hex_size.width/2, bv.hex_size.height/2);
                     graph.scale(bv.scale, bv.scale);
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.LIGHT_GRAY);
                     graph.draw(bv.facingPolys[entity.getFacing()]);
                     graph.setTransform(tr);
-                    System.out.println("Huhu: " + entity);
                 }
                 
                 if (!entity.isDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
@@ -690,14 +689,13 @@ class EntitySprite extends Sprite {
     }
 
     /** 
-     * Returns true when an indicator should be shown that some of the stacked
-     * units in the hex of this entity's may still move even while the topmost
-     * shown unit may already have moved. 
+     * Returns true when an indicator should be shown that a unit with the same facing
+     * as this unit is stacked below it and can still move.
      */
     private boolean shouldIndicateNotDone() {
-        return (bv.game.getEntitiesVector(entity.getPosition()).indexOf(entity) == 1)
-                && bv.game.getEntitiesVector(entity.getPosition()).stream()
-                .filter(e -> e.getId() != entity.getId())
+        var hexEntities = bv.game.getEntitiesVector(entity.getPosition());
+        return hexEntities.stream()
+                .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
                 .filter(e -> e.getFacing() == entity.getFacing())
                 .anyMatch(e -> !e.isDone());
     }

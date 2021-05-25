@@ -1262,7 +1262,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Hashtable for storing <img> tags containing base64Text src.
      */
-    private void cacheImgTag(Entity entity) {
+    protected void cacheImgTag(Entity entity) {
         if(entity == null) {
             return;
         }

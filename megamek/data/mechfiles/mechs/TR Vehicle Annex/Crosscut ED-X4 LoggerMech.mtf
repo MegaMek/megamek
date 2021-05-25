@@ -3,34 +3,34 @@ Crosscut
 ED-X4 LoggerMech
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2786
-Source:RS IA - Early Succession War
-Rules Level:2
+techbase:Inner Sphere
+era:2876
+source:RS IA - Early Succession War
+rules level:2
 
-Mass:30
-Engine:90 ICE Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:30
+engine:90 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:0 Single
-Walk MP:3
-Jump MP:0
+heat sinks:0 Single
+walk mp:3
+jump mp:0
 
-Armor:Industrial (Inner Sphere)
-LA Armor:3
-RA Armor:3
-LT Armor:5
-RT Armor:5
-CT Armor:5
-HD Armor:4
-LL Armor:4
-RL Armor:4
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
+armor:Industrial (Inner Sphere)
+LA armor:3
+RA armor:3
+LT armor:5
+RT armor:5
+CT armor:5
+HD armor:4
+LL armor:4
+RL armor:4
+RTL armor:3
+RTR armor:3
+RTC armor:3
 
 Weapons:0
 
@@ -77,9 +77,9 @@ Left Torso:
 -Empty-
 
 Right Torso:
-Lift Hoist (R)
-Lift Hoist (R)
-Lift Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
+Lift Hoist/Arresting Hoist (R)
 -Empty-
 -Empty-
 -Empty-
@@ -101,8 +101,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (2 tons)
-Cargo (2 tons)
+Cargo:SIZE:2.0
+Cargo:SIZE:2.0
 
 Head:
 Life Support

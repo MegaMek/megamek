@@ -151,4 +151,16 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Arctic Wolf II is a Clan Wolf-in-Exile Medium OmniMech that was developed during the Jihad, and finally deployed in 3085. 
 
+capabilities:The design is based on the OmniMech variant of the original Arctic Wolf. The original OmniMech version had a number of problems, including technical glitches and a lack of speed. The Arctic Wolf II addresses speed concerns by using the original Arctic Wolf's Light Force 280 rated XL Fusion Engine. Seven Grandthrust Mk. 4 Jump Jets were also installed to increase the Mech's tactical options and exploit capabilities that were gained from the failed OmniMech J Configuration. The 'Mech has over 14 tons of pod space available for its techs to install weapons and equipment. Perhaps one of the Arctic Wolf II's only weaknesses is its light armor protection, boasting only 6.5 ton of Ferro Fibrous armor.
+
+deployment:Designed for flanking actions, the B configuration has four standard SRM 4 launchers mounted in its arms and side torso pods. A single Large Pulse Laser and Small Pulse Laser make up the 'Mechs back up weaponry. The 'Mech is also equipped with an extra Double Heat Sink and three tons of ammunition for its short ranged missile launchers.
+
+primaryfactory:Arc-Royal
+systemmanufacturer:CHASSIS:AR1 Endo Steel
+systemmanufacturer:ENGINE:Light Force 280 XL
+systemmanufacturer:ARMOR:Royal-7a Ferro-Fibrous
+systemmanufacturer:JUMPJET:Grandthrust Mk. 4
+systemmanufacturer:COMMUNICATIONS:HWLR Designation ComSys
+systemmanufacturer:TARGETING:Hunter (7) Dedicated TTS

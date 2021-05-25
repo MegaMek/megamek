@@ -5,7 +5,7 @@ Vulture (2312),3
 Gazelle (2531),4
 Dictator (Standard),5
 Lion (2595),6
-Trojan (Blockade Runner) (2720),5
+Trojan (Blockade Runner),5
 Triumph (2593),4
 Leopard (2537),3
 Black Eagle (Standard),2

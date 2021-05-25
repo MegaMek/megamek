@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import megamek.MegaMek;
 import megamek.common.GameTurn.SpecificEntityTurn;
@@ -50,6 +51,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -174,6 +176,12 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
+    
+    /** 
+     * The forces present in the game. The top level force holds all forces and force-less
+     * entities and should therefore not be shown.
+     */
+    private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
@@ -1017,7 +1025,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> members = new Vector<Entity>();
         //WOR
         // Does the unit have a C3 computer?
-        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3())) {
+        if ((entity != null) && entity.hasAnyC3System()) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
@@ -1301,7 +1309,7 @@ public class Game implements Serializable, IGame {
                 && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());
         }
-
+        
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
             // resetting a UUID that
@@ -3662,6 +3670,22 @@ public class Game implements Serializable, IGame {
         }
         return uuid.toString();
 
+    }
+
+    @Override
+    public synchronized Forces getForces() {
+        return forces;
+    }
+
+    @Override
+    public Stream<Entity> getEntitiesStream() {
+        return getEntitiesVector().stream();
+    }
+
+    @Override
+    public synchronized void setForces(Forces fs) {
+        forces = fs;
+        forces.setGame(this);
     }
 
 }

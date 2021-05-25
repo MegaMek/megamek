@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
@@ -325,13 +326,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-        
-        final WeaponType wtype = (WeaponType) weapon.getType();
-        
-        // This is ok to keep here. No need to process anything further if we're not using a weapon somehow
-        if (!(wtype instanceof WeaponType)) {
+
+        final EquipmentType type = weapon.getType();
+
+        // No need to process anything further if we're not using a weapon somehow
+        if (!(type instanceof WeaponType)) {
+            MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
+        
+        if (target == null) {
+            MegaMek.getLogger().error(attackerId + "Attempting to attack null target");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
+
+        final WeaponType wtype = (WeaponType) type;
 
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
@@ -345,6 +354,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             target = originalTarget;
             originalTarget = tempTarget;
         }
+
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;

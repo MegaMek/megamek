@@ -1,17 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
@@ -31,7 +35,6 @@ import megamek.common.util.ImageUtil;
 /**
  * Contains common functionality for wreck sprites (currently isometric and regular)
  * @author NickAragua
- *
  */
 public abstract class AbstractWreckSprite extends Sprite {
     protected Entity entity;
@@ -52,7 +55,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         // Move to board position, save this origin for correct drawing
         Point hexOrigin = bounds.getLocation();
         Point ePos;
-        if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
+        if ((secondaryPos < 0) || (secondaryPos >= entity.getSecondaryPositions().size())) {
             ePos = bv.getHexLocation(entity.getPosition());
         } else {
             ePos = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
@@ -70,13 +73,14 @@ public abstract class AbstractWreckSprite extends Sprite {
     public void prepare() {
         // figure out size
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+        Font font = new Font("SansSerif", Font.PLAIN, 10);
         Rectangle tempRect = new Rectangle(47, 55, bv.getFontMetrics(font)
                 .stringWidth(shortName) + 1, bv.getFontMetrics(font)
                 .getAscent());
 
         // create image for buffer
-        image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
+        final Rectangle imageBounds = getBounds(); // more efficient than double recreation
+        image = ImageUtil.createAcceleratedImage(imageBounds.width, imageBounds.height);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
@@ -85,7 +89,7 @@ public abstract class AbstractWreckSprite extends Sprite {
                 ((entity.relHeight() >= 0) && entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)) &&
                 !EntityWreckHelper.entityOnBridge(entity);
         
-        if(entityIsUnderwater) {
+        if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
         }
@@ -93,7 +97,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         // draw the 'destroyed decal' where appropriate
         boolean displayDestroyedDecal = EntityWreckHelper.displayDestroyedDecal(entity);
         
-        if(displayDestroyedDecal) {
+        if (displayDestroyedDecal) {
             Image destroyed = bv.tileManager.bottomLayerWreckMarkerFor(entity, 0);
             if (null != destroyed) {
                 graph.drawImage(destroyed, 0, 0, this);
@@ -103,7 +107,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
         
-        if(drawFuelLeak) {
+        if (drawFuelLeak) {
             Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
             if (null != fuelLeak) {
                 graph.drawImage(fuelLeak, 0, 0, this);
@@ -113,7 +117,7 @@ public abstract class AbstractWreckSprite extends Sprite {
         // draw the 'tires' or 'tracks' decal where appropriate
         boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
         
-        if(drawMotiveWreckage) {
+        if (drawMotiveWreckage) {
             Image motiveWreckage = bv.tileManager.bottomLayerMotiveMarkerFor(entity);
             if (null != motiveWreckage) {
                 graph.drawImage(motiveWreckage, 0, 0, this);
@@ -121,9 +125,9 @@ public abstract class AbstractWreckSprite extends Sprite {
         }
         
         // Draw wreck image, if we've got one.
-        Image wreck = null;
+        Image wreck;
         
-        if(EntityWreckHelper.displayDevastation(entity)) {
+        if (EntityWreckHelper.displayDevastation(entity)) {
             // objects in space should not have craters
             wreck = entity.getGame().getBoard().inSpace() ?
                     bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
@@ -138,13 +142,13 @@ public abstract class AbstractWreckSprite extends Sprite {
             graph.drawImage(wreck, 0, 0, this);
         }
         
-        if(entityIsUnderwater) {
+        if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
         }
         
-        if ((secondaryPos < 0) && GUIPreferences.getInstance()
-                .getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+        if ((secondaryPos < 0)
+                && GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
             // draw box with shortName
             Color text = Color.lightGray;
             Color bkgd = Color.darkGray;
@@ -152,15 +156,12 @@ public abstract class AbstractWreckSprite extends Sprite {
 
             graph.setFont(font);
             graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             tempRect.translate(-1, -1);
             graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1,
-                    (tempRect.y + tempRect.height) - 1);
+            graph.drawString(shortName, tempRect.x + 1, (tempRect.y + tempRect.height) - 1);
         }
 
         // create final image

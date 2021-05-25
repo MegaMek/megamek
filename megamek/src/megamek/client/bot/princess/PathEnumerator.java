@@ -37,7 +37,6 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.LogLevel;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
@@ -432,7 +431,6 @@ public class PathEnumerator {
     }
 
 //    public void debugPrintContents() {
-//        final String METHOD_NAME = "debugPrintContents()";
 //        getOwner().getLogger().methodBegin();
 //        try {
 //            for (Integer id : getUnitPaths().keySet()) {
@@ -441,7 +439,7 @@ public class PathEnumerator {
 //                int pathsSize = paths.size();
 //                String msg = "Unit " + entity.getDisplayName() + " has " + pathsSize + " paths and " +
 //                             getUnitPotentialLocations().get(id).size() + " ending locations.";
-//                getOwner().log(getClass(), METHOD_NAME, msg);
+//                getOwner().log(msg);
 //            }
 //        } finally {
 //            getOwner().getLogger().methodEnd();

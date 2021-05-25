@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -206,6 +208,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JComboBox<String> unitStartChar;
     private JTextField maxPathfinderTime;
     private JCheckBox getFocus;
+    private JSlider guiScale;
 
     private JCheckBox keepGameLog;
     private JTextField gameLogFilename;
@@ -427,7 +430,26 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 5)));
         comps.add(row);
-        // --------------        
+        // --------------   
+        guiScale = new JSlider();
+        guiScale.setMajorTickSpacing(3);
+        guiScale.setMinimum(7);
+        guiScale.setMaximum(24);
+        Hashtable<Integer, JComponent> table = new Hashtable<Integer, JComponent>();
+        table.put(7, new JLabel("70%"));
+        table.put(10, new JLabel("100%"));
+        table.put(16, new JLabel("160%"));
+        table.put(22, new JLabel("220%"));
+        guiScale.setLabelTable(table);
+        guiScale.setPaintTicks(true);
+        guiScale.setPaintLabels(true);
+        guiScale.setMaximumSize(new Dimension(250, 100));
+        guiScale.setToolTipText(Messages.getString("CommonSettingsDialog.guiScaleTT"));
+        JLabel guiScaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.guiScale"));
+        row = new ArrayList<>();
+        row.add(guiScaleLabel);
+        row.add(guiScale);
+        comps.add(row);
 
         showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
         showDamageLevel.addItemListener(this);
@@ -529,7 +551,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showPilotPortraitTT);
         comps.add(row);
-        
+
         // Horizontal Line and Spacer
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -769,6 +791,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             GUIPreferences gs = GUIPreferences.getInstance();
             IClientPreferences cs = PreferenceManager.getClientPreferences();
 
+            guiScale.setValue((int)(gs.getGUIScale() * 10));
             autoEndFiring.setSelected(gs.getAutoEndFiring());
             autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
             nagForMASC.setSelected(gs.getNagForMASC());
@@ -784,9 +807,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             showWpsinTT.setSelected(gs.getShowWpsinTT());
             showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
             showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
-
             defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
-            
             mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
             mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
@@ -1012,6 +1033,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
+        gs.setValue(GUIPreferences.GUI_SCALE, (float)(guiScale.getValue()) / 10);
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
                 .charAt(0));
         
@@ -1110,16 +1132,16 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
             int modifiers = 0;
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK))){
-                modifiers |= KeyEvent.SHIFT_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.SHIFT_DOWN_MASK))){
+                modifiers |= KeyEvent.SHIFT_DOWN_MASK;
             }
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.ALT_MASK))){
-                modifiers |= KeyEvent.ALT_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.ALT_DOWN_MASK))){
+                modifiers |= KeyEvent.ALT_DOWN_MASK;
             }
             if (txtModifiers.getText().contains(
-                    KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
-                modifiers |= KeyEvent.CTRL_MASK;
+                    KeyEvent.getModifiersExText(KeyEvent.CTRL_DOWN_MASK))){
+                modifiers |= KeyEvent.CTRL_DOWN_MASK;
             }
 
             if (kcb.modifiers != modifiers){
@@ -1728,7 +1750,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             gbc.anchor = GridBagConstraints.CENTER;
 
             final JTextField modifiers = new JTextField(10);
-            modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
+            modifiers.setText(KeyEvent.getModifiersExText(kcb.modifiers));
             for (KeyListener kl : modifiers.getKeyListeners()){
                 modifiers.removeKeyListener(kl);
             }
@@ -1738,7 +1760,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 @Override
                 public void keyPressed(KeyEvent evt) {
                     modifiers.setText(
-                            KeyEvent.getKeyModifiersText(evt.getModifiers()));
+                            KeyEvent.getModifiersExText(evt.getModifiersEx()));
                     evt.consume();
                 }
 
@@ -1932,7 +1954,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         if (event.getValueIsAdjusting()) {
             return;
         }
-        if (event.getSource().equals(advancedKeys)) {
+        if (event.getSource().equals(advancedKeys) && !advancedKeys.isSelectionEmpty()) {
             advancedValue.setText(GUIPreferences.getInstance().getString(
                     "Advanced" + advancedKeys.getSelectedValue().option));
             advancedKeyIndex = advancedKeys.getSelectedIndex();

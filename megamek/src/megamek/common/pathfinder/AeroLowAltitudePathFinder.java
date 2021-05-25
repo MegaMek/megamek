@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
 import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.MovePath;

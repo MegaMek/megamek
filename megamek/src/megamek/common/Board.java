@@ -281,18 +281,13 @@ public class Board implements Serializable, IBoard {
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the Hex, if this Board contains the (x, y) location; null
-     *         otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public IHex getHex(int x, int y) {
-        if (contains(x, y)) {
-            return data[(y * width) + x];
-        }
-        return null;
+    @Override
+    public @Nullable IHex getHex(final int x, final int y) {
+        return contains(x, y) ? data[(y * width) + x] : null;
     }
 
     /**
@@ -348,7 +343,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // building from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error(this, "Unable to create building.");
+                                MegaMek.getLogger().error("Unable to create building.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create building at " + coords.toString() + "!\n");
@@ -378,7 +373,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // fuel tank from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error(this, "Unable to create fuel tank.");
+                                MegaMek.getLogger().error("Unable to create fuel tank.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create fuel tank at " + coords.toString() + "!\n");
@@ -408,7 +403,7 @@ public class Board implements Serializable, IBoard {
                             // Log the error and remove the
                             // bridge from the board.
                             if (errBuff == null) {
-                                MegaMek.getLogger().error(this, "Unable to create bridge.");
+                                MegaMek.getLogger().error("Unable to create bridge.");
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create bridge at " + coords.toString() + "!\n");
@@ -652,16 +647,12 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public IHex getHex(Coords c) {
-        if (c == null) {
-            return null;
-        }
-        return getHex(c.getX(), c.getY());
+    @Override
+    public @Nullable IHex getHex(final @Nullable Coords c) {
+        return (c == null) ? null : getHex(c.getX(), c.getY());
     }
 
     /**
@@ -826,6 +817,22 @@ public class Board implements Serializable, IBoard {
         }
         return new BoardDimensions(boardx, boardy);
     }
+    
+    public static boolean isValid(String board) {
+        Board tempBoard = new Board(16, 17);
+        if (!board.endsWith(".board")) {
+            board += ".board";
+        }
+
+        StringBuffer errBuff = new StringBuffer();
+        try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), board).getFile())) {
+            tempBoard.load(is, errBuff, false);
+        } catch (IOException ex) {
+            return false;
+        }
+        
+        return tempBoard.isValid();
+    }
 
     /**
      * Can the player deploy an entity here? There are no canon rules for the
@@ -928,7 +935,7 @@ public class Board implements Serializable, IBoard {
         try (InputStream is = new FileInputStream(filepath)) {
             load(is);
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "IO Error opening file to load board! " + ex);
+            MegaMek.getLogger().error("IO Error opening file to load board! " + ex);
         }
     }
 
@@ -998,8 +1005,7 @@ public class Board implements Serializable, IBoard {
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
                     } else {
-                        MegaMek.getLogger().error(this, 
-                                "Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
+                        MegaMek.getLogger().error("Board specified background image, but path couldn't be found! Path: " + bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("description")) {
                     st.nextToken();
@@ -1035,7 +1041,7 @@ public class Board implements Serializable, IBoard {
                 }
             }
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "I/O Error: " + ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
 
         // fill nulls with blank hexes
@@ -1049,10 +1055,10 @@ public class Board implements Serializable, IBoard {
         if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
         } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            MegaMek.getLogger().error(this, "Invalid board data!");
+            MegaMek.getLogger().error("Invalid board data!");
             newData(nw, nh, nd, errBuff);
         } else if (errBuff == null){
-            MegaMek.getLogger().error(this, "Invalid board data!");
+            MegaMek.getLogger().error("Invalid board data!");
         }
 
     }
@@ -1172,7 +1178,7 @@ public class Board implements Serializable, IBoard {
             // make sure it's written
             w.flush();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "I/O Error: " + ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
     }
 
@@ -1185,7 +1191,7 @@ public class Board implements Serializable, IBoard {
             oos.writeObject(this);
             oos.flush();
         } catch (IOException ex) {
-            MegaMek.getLogger().error(this, "I/O Error: " + ex);
+            MegaMek.getLogger().error("I/O Error: " + ex);
         }
     }
 
@@ -1530,7 +1536,7 @@ public class Board implements Serializable, IBoard {
 
             // Handle garbage input.
             if (bldg == null) {
-                MegaMek.getLogger().error(this, "Could not find a match for " + other + " to update.");
+                MegaMek.getLogger().error("Could not find a match for " + other + " to update.");
                 continue;
             }
             Enumeration<Coords> coordsEnum = bldg.getCoords();
@@ -1965,5 +1971,14 @@ public class Board implements Serializable, IBoard {
                 || (c.getY() == 0)
                 || (c.getX() == (width - 1)) 
                 || (c.getY() == (height - 1));
+    }
+    
+    public static Board createEmptyBoard(int width, int height) {
+        IHex[] hexes = new IHex[width * height];
+        for (int i = 0; i < width * height; i++) {
+            hexes[i] = new Hex();
+        }
+        Board result = new Board(width, height, hexes);
+        return result;
     }
 }

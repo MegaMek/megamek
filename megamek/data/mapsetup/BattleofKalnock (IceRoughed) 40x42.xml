@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>20</BOARDWIDTH>
+    <BOARDHEIGHT>14</BOARDHEIGHT>
+    <MAPWIDTH>2</MAPWIDTH>
+    <MAPHEIGHT>3</MAPHEIGHT>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -4- Up-Left</BOARDS>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -1- Up-Right</BOARDS>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -5- Middle-Left</BOARDS>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -2- Middle-Right</BOARDS>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -6- Down-Left</BOARDS>
+    <BOARDS>\unofficial\Battle of Kalnock\20x14 Battle of Kalnock (IceRoughed) -3- Down-Right</BOARDS>
+</MAPSETUP>

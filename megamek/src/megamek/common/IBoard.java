@@ -74,14 +74,11 @@ public interface IBoard {
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the <code>Hex</code>, if this Board contains the (x, y) location;
-     *         <code>null</code> otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public abstract IHex getHex(int x, int y);
+    @Nullable IHex getHex(int x, int y);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -143,12 +140,10 @@ public interface IBoard {
     public abstract boolean contains(Coords c);
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public abstract IHex getHex(Coords c);
+    @Nullable IHex getHex(final @Nullable Coords c);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the

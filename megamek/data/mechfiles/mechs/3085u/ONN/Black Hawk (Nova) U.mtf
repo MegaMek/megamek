@@ -3,33 +3,33 @@ Black Hawk (Nova)
 U
 
 Config:Biped Omnimech
-TechBase:Mixed (Clan Chassis)
-Era:3077
-Source:Jihad
-Rules Level:4
+techbase:Mixed (Clan Chassis)
+era:3077
+source:Jihad
+rules level:4
 
-Mass:50
-Engine:250 XL (Clan) Engine
-Structure:IS Standard
-Myomer:Standard
+mass:50
+engine:250 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:10
-Walk MP:5
-Jump MP:5
+heat sinks:14 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:5
 
-Armor:Standard(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:23
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:8
-RTR Armor:8
-RTC Armor:8
+armor:Standard(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:23
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:8
+RTR armor:8
+RTC armor:8
 
 Weapons:14
 Micro Pulse Laser, Left Arm
@@ -52,26 +52,26 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMicroPulseLaser (omnipod)
-CLMicroPulseLaser (omnipod)
-CLMicroPulseLaser (omnipod)
-Sword (omnipod)
-Sword (omnipod)
-Sword (omnipod)
-Sword (omnipod)
+CLMicroPulseLaser (OMNIPOD)
+CLMicroPulseLaser (OMNIPOD)
+CLMicroPulseLaser (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
+Sword (OMNIPOD)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-Spot Welder (omnipod)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+Spot Welder (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -82,12 +82,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLLightActiveProbe (omnipod)
-Liquid Storage (1 ton) (omnipod)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLLightActiveProbe (OMNIPOD)
+Liquid Storage (OMNIPOD):SIZE:1.0
 
 Right Torso:
 Fusion Engine
@@ -96,12 +96,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-Clan Machine Gun Ammo - Half (omnipod)
-Liquid Storage (1 ton) (omnipod)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Machine Gun Ammo - Half (OMNIPOD)
+Liquid Storage (OMNIPOD):SIZE:1.0
 
 Center Torso:
 Fusion Engine
@@ -115,13 +115,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Clan HarJel
+IS HarJel (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite (omnipod)
+CLECMSuite (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -159,5 +159,15 @@ Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\Black Hawk 3050U.jpg
+overview:The Nova is a versatile medium OmniMech that is capable of acting as a workhorse design in most forces. In fact, the design is so well balanced that it inspired the creation of the Black Hawk-KU, an Inner Sphere design based on the Nova and named using the Inner Sphere code name for this 'Mech: Black Hawk.
+capabilities:This unusual configuration appears to be used to support boarding actions against enemy spacecraft. Two torso mounted Liquid Storage tanks provide additional reaction mass for the jump jets. Eight machine guns can rapidly destroy enemy battle armor, while three Heavy Medium Lasers and three Micro Pulse Lasers scour the armor off of hardened targets. To keep track of enemy units, the U configuration carries a Light Active Probe, and a Clan ECM Suite interferes with enemy targeting systems. The right arm carries a Spot Welder presumably to seal hull breaches. Strangely, this configuration carries a Sword, marking the first time a Clan unit has carried a dedicated melee weapon
+history:The Black Hawk's debut battle was the combined assault on Kindraa Smythe-Jewel on Foster in 2872 launched by the Hell's Horses, Clan Coyote and Kindraa Payne that saw the Smythe-Jewels wiped out as a faction.
+manufacturer:Tokasha MechWorks, Olivetti Weaponry
+primaryfactory:Tokasha, Sudeten
+systemmanufacturer:CHASSIS:Star League XTA
+systemmanufacturer:ENGINE:250 XL Model SF-2
+systemmanufacturer:ARMOR:Forge Type HH30
+systemmanufacturer:JUMPJET:Clan Standard Type A2
+systemmanufacturer:COMMUNICATIONS:CH3B
+systemmanufacturer:TARGETING:Version Omega-V TTS
 

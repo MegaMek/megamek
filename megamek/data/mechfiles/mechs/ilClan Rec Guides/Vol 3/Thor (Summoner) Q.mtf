@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Thor (Summoner)
 Q
 
@@ -155,5 +155,20 @@ Jump Jet
 -Empty-
 -Empty-
 
-manufacturer:Svarstaad Industriplex Gamma 
-primaryfactory:Svarstaad
+overview:The Summoner is a highly mobile heavy OmniMech that is commonly used by Clan Jade Falcon in a wide variety of roles. Barely a second generation OmniMech, the Jade Falcons introduced the Summoner just after becoming the first Clan to win OmniMech technology from Clan Coyote in 2863. 
+
+capabilities:This configuration uses a Large Pulse Laser and ER PPC for primary firepower. For close combat it carries a Heavy Small Laser and Heavy Medium Laser and six SRM-4 missile launchers. The Summoner is powered by a lightweight 350 XL engine that gives the 'Mech a top speed of 86.4 km/h. The mobility of the Summoner is enhanced with five jump jets that allow it to jump up to one hundred and fifty meters. The Summoner has fourteen double heat sinks which are capable of handling the heat produced in most of the 'Mechs configurations with ease. To protect it from damage, the Summoner carries nine and a half tons of Ferro-Fibrous armor.
+
+history:The Summoner was dubbed Thor, its Inner Sphere reporting name, by Victor Steiner-Davion himself after fighting one on Trellwan. The name was supposedly inspired by the weapons loadout (in Prime configuration): a PPC and an AC, lightning and thunder, which are associated with the Norse god Thor.
+
+The Summoner's balanced mix of speed, mobility, armor, and firepower make it a highly effective and reliable OmniMech.
+
+Largely supplanted within the Jade Falcons by its successor the Grand Summoner during the Dark Age era, Clan Hell's Horses maintained production of the original on Svarstaad, ensuring by 3150 the Summoner was the oldest continuously produced OmniMech.
+manufacturer:Eagle Craft Group, St. Louis MechWorks, Svarstaad Industriplex Gamma 
+primaryfactory:Ironhold, Niles, Svarstaad
+systemmanufacturer:CHASSIS:JFS-703
+systemmanufacturer:ENGINE:Redline 350 XL
+systemmanufacturer:ARMOR:J63-3E Ferro Fibrous
+systemmanufacturer:JUMPJET:JF Standard
+systemmanufacturer:COMMUNICATIONS:Model J-D 067
+systemmanufacturer:TARGETING:Hawkeye 58

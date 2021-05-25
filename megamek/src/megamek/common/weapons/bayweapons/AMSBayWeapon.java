@@ -19,7 +19,6 @@ package megamek.common.weapons.bayweapons;
 import megamek.common.EquipmentTypeLookup;
 import megamek.common.IGame;
 import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoBayWeaponHandler;

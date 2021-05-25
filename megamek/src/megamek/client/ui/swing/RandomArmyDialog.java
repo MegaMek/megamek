@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
-public class RandomArmyDialog extends JDialog implements ActionListener, WindowListener, TreeSelectionListener {
+public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
     
     @SuppressWarnings("unused")
@@ -536,20 +537,23 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
         m_pRightPane.add(m_pPreview, CARD_PREVIEW);
         m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
         
-        m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pRightPane);
+        m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);
 
         // construct the main dialog
         setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(800,500));
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pSplit, BorderLayout.CENTER);
         validate();
-        pack();
         setLocationRelativeTo(cl.frame);
         
+        m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
+        setSize(guip.getRndArmySizeWidth(), guip.getRndArmySizeHeight());
+        setLocation(guip.getRndArmyPosX(), guip.getRndArmyPosY());
+        
         m_client.getGame().addGameListener(gameListener);
+        addWindowListener(windowListener);
     }
 
     public void valueChanged(TreeSelectionEvent ev) {
@@ -784,34 +788,23 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
         }
     }
 
-    public void windowActivated(WindowEvent arg0) {
-        //ignored
-    }
+    WindowListener windowListener = new WindowAdapter() {
 
-    public void windowClosed(WindowEvent arg0) {
-        //ignored
-    }
+        public void windowClosed(WindowEvent arg0) {
+            saveWindowSettings();
+        }
 
-    public void windowClosing(WindowEvent arg0) {
-        setVisible(false);
-    }
+        private void saveWindowSettings() {
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setRndArmySizeHeight(getSize().height);
+            guip.setRndArmySizeWidth(getSize().width);
+            guip.setRndArmyPosX(getLocation().x);
+            guip.setRndArmyPosY(getLocation().y);
+            guip.setRndArmySplitPos(m_pSplit.getDividerLocation());
+        }
 
-    public void windowDeactivated(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowDeiconified(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowIconified(WindowEvent arg0) {
-        //ignored
-    }
-
-    public void windowOpened(WindowEvent arg0) {
-        //ignored
-    }
-
+    };
+    
 	private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
         String clientName = m_clientgui.getClient().getName();

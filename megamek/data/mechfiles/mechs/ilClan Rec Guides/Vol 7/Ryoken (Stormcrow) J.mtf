@@ -13,7 +13,7 @@ engine:330 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:10
 walk mp:6
 jump mp:0
@@ -38,14 +38,14 @@ Improved Heavy Large Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -54,9 +54,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -66,8 +66,8 @@ CLImprovedHeavyLargeLaser
 Left Torso:
 Fusion Engine
 Fusion Engine
-Hyper-Assault Gauss Rifle/30 Ammo
-Hyper-Assault Gauss Rifle/30 Ammo
+Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -80,10 +80,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -147,4 +147,16 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:The Stormcrow is a wide-spread, second generation OmniMech fielded by many Clans. However, within the Clan Smoke Jaguar touman, the Stormcrow was especially common during the Clan Invasion and was codenamed the Ryoken（a misspelling of ryōken - hunting dog) by the warriors of the DCMS who encountered it. Because of its versatility through its combination of mobility, armor, and firepower in its various configurations, the Stormcrow is a feared opponent on the battlefield.
+capabilities:The Stormcrow is built on a lightweight Endo Steel chassis and is powered by a 330 XL engine that propels it to a top speed of 97.2 km/h. The Stormcrow is protected by nine and a half tons of Ferro-Fibrous armor, giving the 'Mech the ability to survive encounters with other units that it isn't capable of outpacing.
+
+The primary configuration of the Stormcrow is capable of engaging an enemy at any range and uses its speed to strike at its target with a great deal of force and evade a counter attack. The 'Mech's primary weapons are a pair of ER Large Lasers allowing the 'Mech to strike at long range. For close combat, the Stormcrow carries three ER Medium Lasers. To handle the heavy heat load, the Stormcrow Prime has twelve double heat sinks on top of the ten mounted in the base chassis.
+history:The Stormcrow was designed by Clan Hell's Horses and debuted during the Battle of Tokasha. It is also implied that Stormcrow prototypes were produced on Tokasha at Tokasha MechWorks. However, prototypes of the Stormcrow had only just debuted when Clan Ghost Bear won Tokasha through the Battle of Tokasha. As a result of the upheaval, design copies and moulds for the Stormcrow were scattered throughout Clan space. The final production version of the Stormcrow debuted in 2930, when Clan Snow Raven scientists finished with a series of minor design changes and rechristened the OmniMech.
+manufacturer:Industrial Complex Alpha, Various
+primaryfactory:Dante,Various
+systemmanufacturer:CHASSIS:Model MHO-7E Endo-Steel
+systemmanufacturer:ENGINE:Fusion 330 Extralight
+systemmanufacturer:ARMOR:Compound H17/2 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:GBX Series Integrated
+systemmanufacturer:TARGETING:Tokasha B4-T&T
 

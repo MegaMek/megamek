@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
-import megamek.MegaMek;
 import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKConvFighterFile;

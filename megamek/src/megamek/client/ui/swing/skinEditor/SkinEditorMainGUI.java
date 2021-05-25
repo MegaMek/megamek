@@ -51,7 +51,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChatLounge;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.CommonMenuBar;
 import megamek.client.ui.swing.ConfirmDialog;
@@ -67,6 +66,7 @@ import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -106,7 +106,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public UnitDisplay unitDisplay;
 
     protected JComponent curPanel;
-    private ChatLounge chatlounge;
 
     /**
      * Test entity to display in UnitDisplay.
@@ -455,11 +454,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             error.printStackTrace();
         }
 
-        // This is required because the ChatLounge adds the listener to the
-        // MechSummaryCache that must be removed explicitly.
-        if (chatlounge != null) {
-            chatlounge.die();
-        }
         TimerSingleton.getInstance().killTimer();
 
         if (menuBar != null) {
@@ -571,7 +565,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         switch (phase) {
             case PHASE_LOUNGE:
                 component = new ChatLounge(null);
-                chatlounge = (ChatLounge) component;
                 main = "ChatLounge"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);

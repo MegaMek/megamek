@@ -3,55 +3,55 @@ Nobori-nin (Huntsman)
 Prime
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3049
-Source:TRO 3058 - Clan Invasion
-Rules Level:2
+techbase:Clan
+era:3049
+source:TRO 3058 - Clan Invasion
+rules level:2
 
-Mass:50
-Engine:250 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:50
+engine:250 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:10
-Walk MP:5
-Jump MP:5
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:5
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:18
-RT Armor:18
-CT Armor:25
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Ferro-Fibrous(Clan)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:25
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:10
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
 Streak SRM 6, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 Ultra AC/2, Right Arm
-AMS, Left Torso
+Anti-Missile System, Left Torso
 Flamer, Left Torso
-Clan TAG, Left Torso
+TAG (Clan), Left Torso
 LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-Clan Streak SRM 6 Ammo (omnipod)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -60,11 +60,11 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-CLUltraAC2 (omnipod)
-CLUltraAC2 (omnipod)
-Clan Ultra AC/2 Ammo (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLUltraAC2 (OMNIPOD)
+CLUltraAC2 (OMNIPOD)
+Clan Ultra AC/2 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -75,10 +75,10 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLAntiMissileSystem (omnipod)
-CLAMS Ammo (omnipod)
-CLFlamer (omnipod)
-CLTAG (omnipod)
+CLAntiMissileSystem (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
+CLFlamer (OMNIPOD)
+CLTAG (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -89,10 +89,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLLRM10 (omnipod)
-CLArtemisIV (omnipod)
-Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
-CLActiveProbe (omnipod)
+CLLRM10 (OMNIPOD)
+CLArtemisIV (OMNIPOD)
+Clan Ammo LRM-10 (Clan) Artemis-capable (OMNIPOD)
+CLActiveProbe (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -133,7 +133,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-CLAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -147,7 +147,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-CLAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -155,4 +155,15 @@ CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 
+overview:Exemplifying the OmniMech concept, the flexible Huntsman was the premier medium 'Mech of Clan Nova Cat during Operation REVIVAL. No expense has been spared in the construction of this front-line OmniMech that uses an Extra-Light Engine, Endo Steel structure, and nine tons of Ferro-Fibrous armor. Five jump jets enable it to leap up to 150 meters at a time.
+
+capabilities:The primary configuration of the Huntsman sports a myriad of weapons. An Ultra Autocannon/2 and Artemis IV-linked LRM-10 provide long-range capability, while four ER Medium Lasers and a Streak SRM-6 make it a vicious close range 'Mech. A pair of Anti-Personnel Pods and a Flamer protect it from conventional infantry, and an Anti-Missile System provides it with some defense against incoming missiles. An Active Probe finds hidden units, and a TAG spotting laser can designate targets for homing artillery strikes.
+
+history:First seen within the 119th Nova Cat Striker Cluster during the Battle of Luthien, a Draconis Combine Mustered Soldiery intelligence officer dubbed the OmniMech with the name of "Nobori-nin" (Japanese for "Banner-bearer") due to the single fin-like projection rising from the back of the 'Mech reminding him of the banner samurai worn on their backs in feudal Japan. Prized for its flexibility across a wide range of opponents and battlefield conditions, the Huntsman was almost exclusively a Nova Cat design during the initial Clan Invasion, but prior to the Word of Blake Jihad had entered service with Clans Diamond Shark, Cloud Cobra and Star Adder.
+manufacturer:Irece Alpha, Avon Alpha, and Brim Ironworks, Clan Protectorate Arms
+primaryfactory:Irece, Avon, Brim, Asellus Australis
+systemmanufacturer:CHASSIS:Mynx Type Medium Endo Steel
+systemmanufacturer:ENGINE:250 Consolidated XL Fusion
+systemmanufacturer:ARMOR:Alpha Compound Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M50s Standard
 

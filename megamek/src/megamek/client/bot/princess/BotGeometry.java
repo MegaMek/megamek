@@ -15,7 +15,6 @@ package megamek.client.bot.princess;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.MegaMek;
 import megamek.common.Coords;
@@ -124,9 +123,6 @@ public class BotGeometry {
          * Create a hexline from a point and direction
          */
         public HexLine(Coords c, int dir) {
-            @SuppressWarnings("unused")
-            final String METHOD_NAME = "HexLine(Coords, int)";
-
             setDirection(dir);
             if ((getDirection() == 0) || (getDirection() == 3)) {
                 setIntercept(c.getX());

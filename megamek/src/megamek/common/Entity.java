@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
@@ -51,6 +52,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -165,10 +167,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final int USE_STRUCTURAL_RATING = -1;
 
-    public static final String ENTITY_AIR_TO_GROUND_SENSOR_RANGE= Messages.getString("Entity.sensor_range_vs_ground_target");
-
     // Weapon sort order defines
-    public static enum WeaponSortOrder {
+    public enum WeaponSortOrder {
         DEFAULT("DEFAULT"),
         RANGE_LH("RANGE_LH"),
         RANGE_HL("RANGE_HL"),
@@ -301,15 +301,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
     protected boolean selfDestructedThisTurn = false;
-    /**
-     * Variable to store the state of a possible externally mounted searchlight.
-     * True if an operable searchlight is externally mounted, false if one isn't
-     * mounted or if it is destroyed. Other searchlights may be mounted as
-     * equipment on the entity.
+
+    /** 
+     * True when the entity has an undestroyed searchlight that is neither a 
+     * Quirk searchlight nor a mounted (0.5t / 1slot) searchlight.
      */
-    protected boolean hasExternalSpotlight = false;
+    protected boolean hasExternalSearchlight = false;
     protected boolean illuminated = false;
-    protected boolean spotlightIsActive = false;
+    protected boolean searchlightIsActive = false;
     protected boolean usedSearchlight = false;
     protected boolean stuckInSwamp = false;
     protected boolean canUnstickByJumping = false;
@@ -509,10 +508,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected EntityMovementMode movementMode = EntityMovementMode.NONE;
 
-    /**
-     * Flag that determines if this Entity is a hidden unit or not (see TW pg
-     * 259).
-     */
+    /** Flag that determines if this Entity is a hidden unit or not (see TW pg 259). */
     protected boolean isHidden = false;
 
     /**
@@ -851,6 +847,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set of team IDs that have observed this entity making attacks from off-board
      */
     private Set<Integer> offBoardShotObservers;
+    
+    /** 
+     * A String representation of the force hierarchy this entity belongs to.
+     * The String contains all forces from top to bottom separated by backslash
+     * with no backslash at beginning or end. Each force is followed by a unique id
+     * separated by the vertical bar. E.g.
+     * Regiment|1\Battalion B|11\Alpha Company|18\Battle Lance II|112
+     * <P>If this is not empty, the server will attempt to resconstruct the force
+     * hierarchy when it receives this entity and will empty the string.
+     * This should be used for loading/saving MULs or transfer from other sources that
+     * don't have access to the current MM game's forces, such as MekHQ or the Force
+     * Generators. At all other times, forceId should be used instead. 
+     */
+    private String force = "";
+    
+    /** The force this entity belongs to. */
+    private int forceId = Force.NO_FORCE;
     
     /**
      * Generates a new, blank, entity.
@@ -1482,7 +1495,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the player that "owns" this entity.
      */
     public IPlayer getOwner() {
-        return owner;
+        // Replaced 24 NOV 2020
+        // Server and other central classes already used game.getplayer(entity.getownerID())
+        // instead of entity.getowner() and it is noted that getOwner is not reliable. 
+        // The entity owner object would have to be replaced whenever a player is updated 
+        // which does not happen. The player ID on the other hand stays the same and the game
+        // object is not usually replaced. I expect entity.game to be up to date much more than owner.
+        // Unfortunately, entities freshly created may not have the game set. Therefore, fall
+        // back to the old version when game == null or the player is no longer in the game
+        if ((game != null) && (game.getPlayer(ownerId) != null)) {
+            return game.getPlayer(ownerId);
+        } else {
+            return owner;
+        }
     }
 
     public void setOwner(IPlayer player) {
@@ -1502,14 +1527,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
-        if(null == other) {
+        if (null == other) {
             return false;
         }
-        if(null == owner) {
+        if (null == getOwner()) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
         return (id != other.getId())
-            && ((null == other.getOwner()) || owner.isEnemyOf(other.getOwner()));
+            && ((null == other.getOwner()) || getOwner().isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {
@@ -5778,6 +5803,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
+    
+    /** Returns true if the unit has a nonhierarchic C3 system (C3i, NC3 or Nova CEWS). */
+    public boolean hasNhC3() {
+        return hasC3i() || hasNavalC3() || hasNovaCEWS();
+    }
+    
+    /** Returns true if the unit has a standard C3M/S, a Naval C3 or C3i or a Nova CEWS. */
+    public boolean hasAnyC3System() {
+        return hasC3() || hasNhC3();
+    }
 
     public String getC3NetId() {
         if (c3NetIdString == null) {
@@ -6100,17 +6135,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set another <code>Entity</code> as our C3 Master
+     * Set another <code>Entity</code> as C3 Master. Pass (null, true) to disconnect
+     * the entity from a C3 network that isn't its own (C3 Net id with its own id).
      *
      * @param e - the <code>Entity</code> that should be set as our C3 Master.
      */
     public void setC3Master(Entity e, boolean reset) {
         if (e == null) {
             setC3Master(NONE, reset);
-        } else {
-            if (isEnemyOf(e)) {
-                return;
-            }
+        } else if (!isEnemyOf(e)) {
             setC3Master(e.id, reset);
         }
     }
@@ -7510,8 +7543,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                 && ((game.getPlanetaryConditions()
                                         .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                                         || (game.getPlanetaryConditions()
-                                                .getWeather() == PlanetaryConditions.WE_BLIZZARD)
-                                        || (game.getPlanetaryConditions()
                                                 .getWindStrength() >= PlanetaryConditions.WI_STORM))))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
@@ -7933,8 +7964,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
                 roll.addModifier(+1, "fog/rain");
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
                 roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "snow");
             }
         }
@@ -9888,7 +9918,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         // If we have a searchlight, we can use it to assist
-        if (isUsingSpotlight()) {
+        if (isUsingSearchlight()) {
             return true;
         }
         return false;
@@ -10258,9 +10288,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Get the direction the board that the unit will be deployed. If the unit
-     * is to be deployed onboard, the distance will be
-     * <code>IOffBoardDirections.NONE</code>, otherwise it will be one of the
+     * Returns the direction off the board that the unit will be deployed. If the unit
+     * is deployed onboard, IOffBoardDirections.NONE is returned, otherwise one of the
      * values:
      * <ul>
      * <li><code>IOffBoardDirections.NORTH</code></li>
@@ -10268,9 +10297,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <li><code>IOffBoardDirections.EAST</code></li>
      * <li><code>IOffBoardDirections.WEST</code></li>
      * </ul>
-     *
-     * @return the <code>int</code> direction from the board the unit will be
-     * deployed. Only valid values will be returned.
      */
     public OffBoardDirection getOffBoardDirection() {
         return offBoardDirection;
@@ -10349,48 +10375,48 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         captured = arg;
     }
 
-    public void setExternalSpotlight(boolean arg) {
-        hasExternalSpotlight = arg;
+    public void setExternalSearchlight(boolean arg) {
+        hasExternalSearchlight = arg;
     }
 
     /**
-     * Returns state of hasExternalSpotlight, does not consider mounted
-     * spotlights.
+     * Returns state of hasExternalSearchlight, does not consider mounted
+     * searchlights.
      *
      * @return
      */
-    public boolean hasExternaSpotlight() {
-        return hasExternalSpotlight;
+    public boolean hasExternalSearchlight() {
+        return hasExternalSearchlight;
     }
 
     /**
-     * Returns true if the unit has a usable spotlight. It considers both
-     * externally mounted spotlights as well as internally mounted ones.
+     * Returns true if the unit has a usable searchlight. It considers both
+     * externally mounted searchlights as well as internally mounted ones.
      *
      * @return
      */
-    public boolean hasSpotlight() {
+    public boolean hasSearchlight() {
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)
                 && !m.isInoperable()) {
                 return true;
             }
         }
-        return hasExternalSpotlight;
+        return hasExternalSearchlight;
     }
 
     /**
-     * Method to destroy a single spotlight on an entity. Spotlights can be
+     * Method to destroy a single searchlight on an entity. Searchlights can be
      * destroyed on a roll of 7+ on a torso hit on a mek or on a front/side hit
      * on a combat vehicle.
      */
-    public void destroyOneSpotlight() {
-        if (!hasSpotlight()) {
+    public void destroyOneSearchlight() {
+        if (!hasSearchlight()) {
             return;
         }
-        // A random spotlight should be destroyed, but this is easier...
-        if (hasExternalSpotlight) {
-            hasExternalSpotlight = false;
+        // A random searchlight should be destroyed, but this is easier...
+        if (hasExternalSearchlight) {
+            hasExternalSearchlight = false;
         }
 
         for (Mounted m : getMisc()) {
@@ -10402,35 +10428,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // Turn off the light all spot lights were destroyed
-        if (!hasSpotlight()) {
-            setSpotlightState(false);
+        if (!hasSearchlight()) {
+            setSearchlightState(false);
         }
 
     }
 
-    public void setSpotlightState(boolean arg) {
-        if (hasSpotlight()) {
-            spotlightIsActive = arg;
+    public void setSearchlightState(boolean arg) {
+        if (hasSearchlight()) {
+            searchlightIsActive = arg;
             if (arg) {
                 illuminated = true;
             }
         } else {
-            spotlightIsActive = false;
+            searchlightIsActive = false;
         }
     }
 
     public boolean isIlluminated() {
-        // Regardless of illuminated state, if we have a spotlight active we
+        // Regardless of illuminated state, if we have a searchlight active we
         //  are illuminated
-        return illuminated || spotlightIsActive;
+        return illuminated || searchlightIsActive;
     }
 
     public void setIlluminated(boolean arg) {
-        illuminated = spotlightIsActive || arg;
+        illuminated = searchlightIsActive || arg;
     }
 
-    public boolean isUsingSpotlight() {
-        return hasSpotlight() && spotlightIsActive;
+    public boolean isUsingSearchlight() {
+        return hasSearchlight() && searchlightIsActive;
     }
 
     public void setUsedSearchlight(boolean arg) {
@@ -11418,15 +11444,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public abstract boolean isNuclearHardened();
 
-    /**
-     * Set the isHidden state of this entity (used for hidden units rules, TW
-     * pg 259).
-     * @param inVal
-     */
+    /** Set the hidden state of this entity (used for hidden units rules, TW pg 259). */
     public void setHidden(boolean inVal) {
         isHidden = inVal;
     }
-
+    
     public void setMadePointblankShot(boolean inVal) {
         madePointblankShot = inVal;
     }
@@ -11440,10 +11462,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         hiddenActivationPhase = phase;
     }
 
-    /**
-     * Returns true if this unit is currently hidden (hidden units, TW pg 259).
-     * @return
-     */
+    /** Returns true if this unit is currently hidden (hidden units, TW pg 259). */
     public boolean isHidden() {
         return isHidden;
     }
@@ -12183,7 +12202,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // ignore
             }
         }
-
+        
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon)
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
@@ -13205,8 +13224,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if (isAirborne() && game.getBoard().onGround()) {
             return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {" + ENTITY_AIR_TO_GROUND_SENSOR_RANGE + " (" + minGroundSensorRange + "-"
-                    + maxGroundSensorRange + ")}";
+                    + maxSensorRange + ")" + " {" + Messages.getString("Entity.sensor_range_vs_ground_target")
+                    + " (" + minGroundSensorRange + "-" + maxGroundSensorRange + ")}";
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                + maxSensorRange + ")";
@@ -14545,6 +14564,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return pos;
+    }
+    
+    public boolean isC3CompanyCommander() {
+        return getC3MasterId() == id;
+    }
+    
+    public boolean isC3IndependentMaster() {
+        return !isC3CompanyCommander();
     }
 
     /**
@@ -16087,4 +16114,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isOffBoardObserved(int teamID) {
         return offBoardShotObservers.contains(teamID);
     }
+    
+    public String getForceString() {
+        return force;
+    }
+    
+    public void setForceString(String f) {
+        force = f;
+    }
+    
+    public int getForceId() {
+        return forceId;
+    }
+    
+    public void setForceId(int newId) {
+        forceId = newId;
+    }
+    
+    public boolean partOfForce() {
+        return forceId != Force.NO_FORCE;
+    }
+
 }

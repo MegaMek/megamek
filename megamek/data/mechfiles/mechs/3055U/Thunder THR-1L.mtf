@@ -3,35 +3,35 @@ Thunder
 THR-1L
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3055
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3055
+source:TRO 3055 - Clan Invasion
+rules level:2
 
-Mass:70
-Engine:350 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:70
+engine:350 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:5
-Jump MP:0
+heat sinks:11 IS Double
+walk mp:5
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:23
-RT Armor:23
-CT Armor:34
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:23
+RT armor:23
+CT armor:34
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:5
-Autocannon/20, Right Torso
+AC/20, Right Torso
 Medium Pulse Laser, Left Torso
 LRM 5, Left Torso
 Medium Pulse Laser, Right Torso
@@ -149,4 +149,17 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Thunder is a product of the aftermath of the Fourth Succession War.
+
+capabilities:The primary weapon on the Thunder is the massive Kali Yama Big Bore Autocannon/20 which is capable of devastating most lighter 'Mechs with a single shot. This is backed up with three highly accurate Ceres Arms Model W Medium Pulse Lasers. Finally, for token long range defense capabilities, and giving the 'Mech limited indirect fire capabilities, the Thunder carries a Sian/Ceres Jaguar LRM-5 launcher.
+
+history:The 'Mech was built to make the most of new technologies that had made their way to the Capellan Confederation at the beginning of the 3050s. This was done by building the 'Mech around a Magna 350 XL Engine to maximize the available weight in the 'Mech. The Thunder also uses double heat sinks to make it capable of handling a high heat load from its weapons systems. The 'Mech is well protected with thirteen and a half tons of armor. Its weapons payload, and the design in general, uses a mix of advanced and off the shelf parts. This balanced mix makes the Thunder a valuable asset on the modern battlefield.
+
+manufacturer:Ceres Metals Industries
+primaryfactory:Sian, Capella and St. Ives
+systemmanufacturer:CHASSIS:Hollis Mk III
+systemmanufacturer:ENGINE:Magna 350 XL
+systemmanufacturer:ARMOR:Ceres Heavy with CASE
+systemmanufacturer:COMMUNICATIONS:Ceres Metals Model 21-Rs
+systemmanufacturer:TARGETING:C-Apple Churchill
 

@@ -68,21 +68,21 @@ IS Endo Steel
 -Empty-
 
 Left Torso:
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISMediumXPulseLaser
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISMediumXPulseLaser (OMNIPOD)
+IS Gauss Ammo (OMNIPOD)
+IS Gauss Ammo (OMNIPOD)
 ISCASEII
 -Empty-
 
 Right Torso:
-ISMediumXPulseLaser
+ISMediumXPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -104,9 +104,9 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
+ISERPPC (OMNIPOD)
 -Empty-
 
 Head:
@@ -151,4 +151,13 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:StarCorps Industries
+primaryfactory:Crofton
+systemmanufacturer:CHASSIS:StarFrame Heavy Endo Steel
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Garret 
+systemmode:COMMUNICATIONS:T-60 FastScan
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:F22c

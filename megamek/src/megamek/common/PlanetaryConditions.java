@@ -48,13 +48,14 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_SNOW_FLURRIES    = 8;
     public static final int WE_HEAVY_SNOW       = 9;
     public static final int WE_SLEET            = 10;
-    public static final int WE_BLIZZARD         = 11;
-    public static final int WE_ICE_STORM        = 12;
-    public static final int WE_LIGHT_HAIL       = 13;
-    public static final int WE_HEAVY_HAIL       = 14;
+    public static final int WE_ICE_STORM        = 11;
+    public static final int WE_LIGHT_HAIL       = 12;// NYI
+    public static final int WE_HEAVY_HAIL       = 13;// NYI
+    public static final int WE_LIGHTNING_STORM  = 14;// NYI
+    //  public static final int WE_BLIZZARD         = 11; does not exist anymore
     private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Gusting Rain", "Torrential Downpour",
-                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Blizzard",
-                                             "Ice Storm"};//, "Light Hail", "Heavy Hail"};
+                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", 
+                                             "Ice Storm"};//, "Light Hail", "Heavy Hail", "Lightning Storm"};
     public static final int WE_SIZE = weatherNames.length;
 
     //Wind
@@ -257,6 +258,28 @@ public class PlanetaryConditions implements Serializable {
 
         return penalty;
     }
+    
+    /** 
+     * Returns true when the light conditions give a hit penalty and
+     * the hit penalty can be offset by a searchlight, i.e. in full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isSearchlightEffective() {
+        return (lightConditions == L_FULL_MOON) || (lightConditions == L_MOONLESS)
+                || (lightConditions == L_PITCH_BLACK);
+    }
+
+    /** Returns true when the given weather is prohibited for temperatures of 30 degC and more. */
+    public static boolean requiresLowTemp(int weather) {
+        return weather == WE_LIGHT_HAIL ||
+                weather == WE_HEAVY_HAIL ||
+                weather == WE_LIGHT_SNOW || 
+                weather == WE_SLEET ||
+                weather == WE_SNOW_FLURRIES ||
+                weather == WE_HEAVY_SNOW ||
+                weather == WE_ICE_STORM || 
+                weather == WE_MOD_SNOW;
+    }
 
     /**
      * heat bonus to hit for being overheated in darkness
@@ -302,7 +325,7 @@ public class PlanetaryConditions implements Serializable {
         else if((weatherConditions == WE_MOD_RAIN) || (weatherConditions == WE_HEAVY_RAIN)
                 || (weatherConditions == WE_MOD_SNOW) || (weatherConditions == WE_HEAVY_SNOW)
                 || (weatherConditions == WE_SLEET) || (weatherConditions == WE_GUSTING_RAIN)
-                || (weatherConditions == WE_SNOW_FLURRIES) || (weatherConditions == WE_BLIZZARD)) {
+                || (weatherConditions == WE_SNOW_FLURRIES)) {
             return 1;
         }
         else if(weatherConditions == WE_DOWNPOUR) {
@@ -318,7 +341,7 @@ public class PlanetaryConditions implements Serializable {
      */
     public int getWeatherPilotPenalty() {
         if((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_GUSTING_RAIN) || (weatherConditions == WE_BLIZZARD)) {
+                || (weatherConditions == WE_GUSTING_RAIN)) {
             return 1;
         }
         else if(weatherConditions == WE_DOWNPOUR) {
@@ -435,7 +458,7 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_GUSTING_RAIN) || (weatherConditions == WE_SNOW_FLURRIES)) {
             mod += 2;
         }
-        if((weatherConditions == WE_HEAVY_SNOW) || (weatherConditions == WE_BLIZZARD)
+        if((weatherConditions == WE_HEAVY_SNOW)
                 || (weatherConditions == WE_LIGHT_HAIL) || (weatherConditions == WE_HEAVY_HAIL)) {
             mod += 3;
         }
@@ -475,7 +498,6 @@ public class PlanetaryConditions implements Serializable {
         case (WE_HEAVY_RAIN):
         case (WE_GUSTING_RAIN):
         case (WE_HEAVY_SNOW):
-        case WE_BLIZZARD:
             roll = roll + 3;
             break;
         case (WE_DOWNPOUR):
@@ -650,7 +672,7 @@ public class PlanetaryConditions implements Serializable {
             isMechVee = true;
             Spotlight = targetIlluminated;
         }else {
-            Spotlight = en.isUsingSpotlight();
+            Spotlight = en.isUsingSearchlight();
             isMechVee = (en instanceof Mech && !en.isAero()) || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship) || (en instanceof Jumpship);
             isAero = (en.isAero()) && !isLargeCraft;
@@ -702,7 +724,6 @@ public class PlanetaryConditions implements Serializable {
                 || (blowingSand && (windStrength >= WI_MOD_GALE))
                 || (lightConditions == L_FULL_MOON)
                 || (weatherConditions == WE_GUSTING_RAIN)
-                || (weatherConditions == WE_BLIZZARD)
                 || (weatherConditions == WE_ICE_STORM)
                 || (weatherConditions == WE_DOWNPOUR)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
@@ -962,7 +983,6 @@ public class PlanetaryConditions implements Serializable {
             case WE_MOD_SNOW:
             case WE_SNOW_FLURRIES:
             case WE_HEAVY_SNOW:
-            case WE_BLIZZARD:
                 temperature = -50;
                 break;
             case WE_ICE_STORM:
@@ -982,7 +1002,6 @@ public class PlanetaryConditions implements Serializable {
                 shiftWindStrength = false;
                 break;
             case WE_GUSTING_RAIN:
-            case WE_BLIZZARD:
                 windStrength = WI_STRONG_GALE;
                 shiftWindStrength = false;
                 break;

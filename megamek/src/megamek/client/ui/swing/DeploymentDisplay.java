@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -494,19 +495,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn() || (ce() == null)
-                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
 
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-                || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+                || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
         // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
 
         // check for a deployment
         Coords moveto = b.getCoords();
@@ -978,32 +979,32 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private void setNextEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployNextEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_NEXT.getCmd(), enabled);
     }
 
     private void setTurnEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_TURN).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployTurnEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_TURN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_TURN.getCmd(), enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_LOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployLoadEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_LOAD).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_LOAD.getCmd(), enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_UNLOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_UNLOAD).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_UNLOAD.getCmd(), enabled);
     }
 
     private void setRemoveEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_REMOVE).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployNextEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_REMOVE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_REMOVE.getCmd(), enabled);
     }
 
     private void setAssaultDropEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULTDROP.getCmd(), enabled);
     }
 
     /**

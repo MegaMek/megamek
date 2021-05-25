@@ -45,9 +45,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -59,9 +59,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -69,30 +69,30 @@ IS Endo Steel
 IS Endo Steel
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLSRM6
-Clan Ammo SRM-6
-ISCASEII
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLSRM6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
+ISCASEII (OMNIPOD)
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLSRM6
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLSRM6 (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -105,10 +105,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERPPC
-CLERPPC
-CLERLargeLaser
-CLERLargeLaser
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
 
 Head:
 Life Support
@@ -152,4 +152,13 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-
+manufacturer:StarCorps Industries
+primaryfactory:Crofton
+systemmanufacturer:CHASSIS:StarFrame Heavy Endo Steel
+systemmanufacturer:ENGINE:GM
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Garret 
+systemmode:COMMUNICATIONS:T-60 FastScan
+systemmanufacturer:TARGETING:Garret
+systemmode:TARGETING:F22c

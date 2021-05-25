@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Stream;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -31,6 +32,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
@@ -562,6 +564,8 @@ public interface IGame {
      * Returns the actual vector for the entities
      */
     abstract List<Entity> getEntitiesVector();
+    
+    abstract Stream<Entity> getEntitiesStream();
 
     abstract void setEntitiesVector(List<Entity> entities);
 
@@ -1546,4 +1550,12 @@ public interface IGame {
             HashSet<Coords> oldPositions);
 
     public abstract String getUUIDString();
+    
+    abstract Forces getForces();
+    
+    /** 
+     * Overwrites the current forces object with the provided object.
+     * Called from server messages when loading a game.
+     */
+    abstract void setForces(Forces forces);
 }

@@ -1476,7 +1476,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 drawHexBorder(g, p, Color.yellow, 0, 3);
                 String s = x.toString();
-                this.drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
+                drawCenteredText((Graphics2D) g, s, p, Color.yellow, false);
             }
         }
     }
@@ -2484,7 +2484,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = board.getHex(c);
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
-//                            drawOrthograph(c, g);
+                            drawOrthograph(c, g);
                             if (GUIPreferences.getInstance()
                                     .getShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldofFireSprites);
@@ -2738,7 +2738,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        // Orthos 
+        // Orthos = bridges
         List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
@@ -2746,16 +2746,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     dontCache = true;
                 }
                 scaledImage = getScaledImage(image, true);
-//                if (!useIsometric()) {
+                if (!useIsometric()) {
                     g.drawImage(scaledImage, 0, 0, this);
-//                }
-                // draw a shadow for bridge hex.
-//                if (useIsometric()
-//                        && !guip.getBoolean(GUIPreferences.SHADOWMAP)
-//                        && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
-//                    Image shadow = createShadowMask(scaledImage);
-//                    g.drawImage(shadow, 0, 0, this);
-//                }
+                }
             }
         }
 
@@ -3013,11 +3006,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         final IHex oHex = game.getBoard().getHex(c);
         final Point oHexLoc = getHexLocation(c);
-        int elevOffset = 0;
-
         // Adjust the draw height for bridges according to their elevation
-        if (oHex.containsTerrain(Terrains.BRIDGE_ELEV))
-            elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
+        int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
 
         int orthX = oHexLoc.x;
         int orthY = oHexLoc.y - (int) (HEX_ELEV * scale * elevOffset);

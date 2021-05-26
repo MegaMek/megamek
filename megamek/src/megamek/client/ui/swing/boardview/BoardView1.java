@@ -1749,7 +1749,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         n = 5;
         deltaX = lightDirection[0]/n;
         deltaY = lightDirection[1]/n;
-        // 4) woods and bulding shadows (all Orthos except water!)
+        // 4) woods and bulding shadows
         for (int shadowed = board.getMinElevation(); 
                 shadowed <= board.getMaxElevation(); 
                 shadowed++) {

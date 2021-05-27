@@ -1,47 +1,44 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
+import java.awt.event.*;
+import megamek.client.ui.Messages;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Deric "Netzilla" Page (deric dot page at usa dot net)
- * Date: 10/20/12
- * Time: 1:03 PM
+ * Created by User: Deric "Netzilla" Page (deric dot page at usa dot net)
+ * A confirmation dialog for saving changes to a Princess bot that will
+ * also ask if changes should be saved to a target list preset 
  */
 public class SavePrincessDialog extends JDialog implements ActionListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -8941569745045361519L;
+    
     JLabel question;
     JCheckBox saveTargets;
     JButton yesButton;
     JButton noButton;
     boolean save = false;
     boolean saveTargetList = false;
-    ResourceBundle bundle = ResourceBundle.getBundle("megamek.client.messages");
 
     public SavePrincessDialog(Container parent) {
         initGUI(parent);
@@ -52,22 +49,22 @@ public class SavePrincessDialog extends JDialog implements ActionListener {
         setModal(true);
 
         JPanel questionPanel = new JPanel();
-        question = new JLabel(bundle.getString("SavePrincessDialog.question"));
+        question = new JLabel(Messages.getString("SavePrincessDialog.question"));
         questionPanel.add(question);
         add(questionPanel);
 
         JPanel saveTargetsPanel = new JPanel();
-        saveTargets = new JCheckBox(bundle.getString("SavePrincessDialog.saveTargets"));
+        saveTargets = new JCheckBox(Messages.getString("SavePrincessDialog.saveTargets"));
         saveTargetsPanel.add(saveTargets);
         add(saveTargetsPanel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        yesButton = new JButton(bundle.getString("Yes"));
+        yesButton = new JButton(Messages.getString("Yes"));
         yesButton.addActionListener(this);
         buttonPanel.add(yesButton);
 
-        noButton = new JButton(bundle.getString("No"));
+        noButton = new JButton(Messages.getString("No"));
         noButton.addActionListener(this);
         buttonPanel.add(noButton);
 

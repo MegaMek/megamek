@@ -6,6 +6,7 @@ VERSION HISTORY:
 + PR #2877: Report Messages Cleanup
 + PR #2879: Remove unnecessary logging and bot processing of human-readable round reports
 + Issue #2704: Indicate that units may still move on facing arrow
++ Issue #2878: Princess configuration dialog no longer locks up when trying to click Ok
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

@@ -419,7 +419,7 @@ public final class UIUtil {
     }
 
     /** Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been added. */
-    public static void scaleJPopup(final JPopupMenu popup) {
+    public static void scaleMenu(final JComponent popup) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         for (Component comp: popup.getComponents()) {
             if ((comp instanceof JMenuItem)) {
@@ -757,7 +757,7 @@ public final class UIUtil {
     }
     
     /** Internal helper method to adapt items in a JPopupmenu to the GUI scaling. */
-    private static void scaleJMenuItem(final JMenuItem menuItem) {
+    public static void scaleJMenuItem(final JMenuItem menuItem) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         if (menuItem instanceof JMenu) {
             JMenu menu = (JMenu)menuItem;

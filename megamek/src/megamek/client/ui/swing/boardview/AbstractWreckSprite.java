@@ -19,17 +19,16 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.text.MessageFormat;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.EntityWreckHelper;
-import megamek.common.Entity;
-import megamek.common.Terrains;
+import megamek.common.*;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 
 /**
@@ -71,16 +70,8 @@ public abstract class AbstractWreckSprite extends Sprite {
      */
     @Override
     public void prepare() {
-        // figure out size
-        String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
-        Rectangle tempRect = new Rectangle(47, 55, bv.getFontMetrics(font)
-                .stringWidth(shortName) + 1, bv.getFontMetrics(font)
-                .getAscent());
-
         // create image for buffer
-        final Rectangle imageBounds = getBounds(); // more efficient than double recreation
-        image = ImageUtil.createAcceleratedImage(imageBounds.width, imageBounds.height);
+        image = ImageUtil.createAcceleratedImage(BoardView1.HEX_W, BoardView1.HEX_H);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
@@ -147,23 +138,6 @@ public abstract class AbstractWreckSprite extends Sprite {
                     AlphaComposite.SRC_OVER, 1.0f));
         }
         
-        if ((secondaryPos < 0)
-                && GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
-            // draw box with shortName
-            Color text = Color.lightGray;
-            Color bkgd = Color.darkGray;
-            Color bord = Color.black;
-
-            graph.setFont(font);
-            graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            tempRect.translate(-1, -1);
-            graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
-            graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, (tempRect.y + tempRect.height) - 1);
-        }
-
         // create final image
         image = bv.getScaledImage(image, false);
         graph.dispose();
@@ -175,5 +149,25 @@ public abstract class AbstractWreckSprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return false;
+    }
+    
+    public Coords getPosition() {
+        if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
+            return entity.getPosition();
+        } else {
+            return entity.getSecondaryPositions().get(secondaryPos);
+        }
+    }
+    
+    @Override
+    public StringBuffer getTooltip() {
+        StringBuffer result = new StringBuffer();
+        result.append(Messages.getString("BoardView1.Tooltip.Wreckof"));
+        result.append(entity.getChassis());
+        result.append(MessageFormat.format(" ({0})", entity.getOwner().getName()));
+        if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+            result.append(MessageFormat.format(" [ID: {0}]", entity.getId()));
+        }
+        return result;
     }
 }

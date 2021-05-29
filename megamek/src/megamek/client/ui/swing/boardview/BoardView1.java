@@ -15,6 +15,8 @@
 */
 package megamek.client.ui.swing.boardview;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -5972,6 +5974,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (aSprite.isInside(point)) {
                 txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(aSprite.getTooltip().toString());
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
+            }
+        }
+        
+        // Add wreck info
+        var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
+        for (var wSprite : wreckList) {
+            if (wSprite.getPosition().equals(mcoords)) {
+                txt.append("<TABLE BORDER=0 width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append(guiScaledFontHTML());
+                txt.append(wSprite.getTooltip());
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }

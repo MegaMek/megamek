@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Issue #2886: Wreck sprites display correctly when zoomed; removed wreck sprite labels; indicator of what's wrecked shows up in tooltip popup
 + PR #2887: Menu bar scales with the rest of the GUI
 + PR #2885: Fix "weird" keybind defaults
++ Issue #2884: preventing Array Index Out of Bound error when adding bombs to a LAM
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

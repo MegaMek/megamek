@@ -507,65 +507,56 @@ public class GameOptions extends AbstractOptions {
         MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
     }
 
-    @Deprecated
-    private static void processGameOptionNodes(final NodeList nl) {
-        MegaMek.getLogger().info("Loading GameOption Nodes from XML...");
-
-        // Okay, lets iterate through the children, eh?
-        for (int x = 0; x < wList.getLength(); x++) {
-            Node wn2 = wList.item(x);
-
-            // If it's not an element node, we ignore it.
-            if (wn2.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            } else if (!wn2.getNodeName().equalsIgnoreCase("gameOption")) {
-                MekHQ.getLogger().error("Unknown node type not loaded in Game Option nodes: " + wn2.getNodeName());
-                continue;
-            }
-            NodeList nl = wn2.getChildNodes();
-
-            String name = null;
-            String value = null;
-            for (int y = 0; y < nl.getLength(); y++) {
-                Node wn3 = nl.item(y);
-                if (wn3.getNodeName().equalsIgnoreCase("name")) {
-                    name = wn3.getTextContent();
-                } else if (wn3.getNodeName().equalsIgnoreCase("value")) {
-                    value = wn3.getTextContent();
+    /**
+     * This is used to fill a GameOptions object from an XML node list written using writeToXML.
+     * @param nl the node list to parse
+     */
+    public void fillFromXML(final NodeList nl) {
+        for (int x = 0; x < nl.getLength(); x++) {
+            try {
+                final Node wn = nl.item(x);
+                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes())  {
+                    continue;
                 }
-            }
-            if ((null != name) && (null != value)) {
-                IOption option = retVal.getGameOptions().getOption(name);
-                if (null != option) {
-                    if (!option.getValue().toString().equals(value)) {
-                        try {
-                            switch (option.getType()) {
-                                case IOption.STRING:
-                                case IOption.CHOICE:
-                                    option.setValue(value);
-                                    break;
-                                case IOption.BOOLEAN:
-                                    option.setValue(Boolean.valueOf(value));
-                                    break;
-                                case IOption.INTEGER:
-                                    option.setValue(Integer.valueOf(value));
-                                    break;
-                                case IOption.FLOAT:
-                                    option.setValue(Float.valueOf(value));
-                                    break;
+
+                final NodeList nl2 = wn.getChildNodes();
+                IOption option = null;
+                for (int y = 0; y < nl2.getLength(); y++) {
+                    final Node wn2 = nl2.item(y);
+                    switch (wn.getNodeName()) {
+                        case "name":
+                            option = getOption(wn2.getTextContent().trim());
+                            break;
+                        case "value":
+                            final String value = wn2.getTextContent().trim();
+                            if ((option != null) && !option.getValue().toString().equals(value)) {
+                                switch (option.getType()) {
+                                    case IOption.STRING:
+                                    case IOption.CHOICE:
+                                        option.setValue(value);
+                                        break;
+                                    case IOption.BOOLEAN:
+                                        option.setValue(Boolean.valueOf(value));
+                                        break;
+                                    case IOption.INTEGER:
+                                        option.setValue(Integer.valueOf(value));
+                                        break;
+                                    case IOption.FLOAT:
+                                        option.setValue(Float.valueOf(value));
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
-                        } catch (Exception e) {
-                            MegaMek.getLogger().error("Error trying to load option '" + name
-                                    + "' with a value of '" + value + "'.", e);
-                        }
+                            break;
+                        default:
+                            break;
                     }
-                } else {
-                    MegaMek.getLogger().error("Invalid option '" + name + "' when trying to load options file.");
                 }
+            } catch (Exception e) {
+                MegaMek.getLogger().error("Failed to parse Game Option Node", e);
             }
         }
-
-        MegaMek.getLogger().info("Load Game Option Nodes Complete!");
     }
     //endregion MekHQ I/O
 }

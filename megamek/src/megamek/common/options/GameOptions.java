@@ -16,6 +16,8 @@ package megamek.common.options;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -33,6 +35,8 @@ import javax.xml.namespace.QName;
 import megamek.MegaMek;
 import megamek.common.TechConstants;
 import megamek.utils.MegaMekXmlUtil;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Contains the options determining play in the current game.
@@ -419,9 +423,9 @@ public class GameOptions extends AbstractOptions {
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             }
             
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
@@ -444,11 +448,10 @@ public class GameOptions extends AbstractOptions {
     }
 
     private static class GameOptionsInfo extends AbstractOptionsInfo {
-
         private static AbstractOptionsInfo instance = new GameOptionsInfo();
 
         protected GameOptionsInfo() {
-            super("GameOptionsInfo"); //$NON-NLS-1$
+            super("GameOptionsInfo");
         }
 
         public static AbstractOptionsInfo getInstance() {
@@ -460,9 +463,8 @@ public class GameOptions extends AbstractOptions {
      * A helper class for the XML binding.
      */
     @XmlRootElement(name = "options")
-    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlAccessorType(value = XmlAccessType.FIELD)
     private static class GameOptionsXML {
-
         @XmlElement(name = "gameoption", type = BasicOption.class)
         private Vector<IBasicOption> options;
         
@@ -473,12 +475,97 @@ public class GameOptions extends AbstractOptions {
         /**
          * Required for JAXB.
          */
-        @SuppressWarnings("unused")
+        @SuppressWarnings(value = "unused")
         private GameOptionsXML() {
+
         }
 
         public Vector<IBasicOption> getOptions() {
             return options;
         }
     }
+
+    //region MekHQ I/O
+    /**
+     * This is used by MekHQ to write the game options to the standard file
+     *
+     * @param pw the PrintWriter to write to
+     * @param indent the indent to write at
+     */
+    public void writeToXML(final PrintWriter pw, int indent) {
+        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
+            final IOptionGroup group = groups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
+                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "name", option.getName());
+                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
+                MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+            }
+        }
+        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+    }
+
+    @Deprecated
+    private static void processGameOptionNodes(final NodeList nl) {
+        MegaMek.getLogger().info("Loading GameOption Nodes from XML...");
+
+        // Okay, lets iterate through the children, eh?
+        for (int x = 0; x < wList.getLength(); x++) {
+            Node wn2 = wList.item(x);
+
+            // If it's not an element node, we ignore it.
+            if (wn2.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            } else if (!wn2.getNodeName().equalsIgnoreCase("gameOption")) {
+                MekHQ.getLogger().error("Unknown node type not loaded in Game Option nodes: " + wn2.getNodeName());
+                continue;
+            }
+            NodeList nl = wn2.getChildNodes();
+
+            String name = null;
+            String value = null;
+            for (int y = 0; y < nl.getLength(); y++) {
+                Node wn3 = nl.item(y);
+                if (wn3.getNodeName().equalsIgnoreCase("name")) {
+                    name = wn3.getTextContent();
+                } else if (wn3.getNodeName().equalsIgnoreCase("value")) {
+                    value = wn3.getTextContent();
+                }
+            }
+            if ((null != name) && (null != value)) {
+                IOption option = retVal.getGameOptions().getOption(name);
+                if (null != option) {
+                    if (!option.getValue().toString().equals(value)) {
+                        try {
+                            switch (option.getType()) {
+                                case IOption.STRING:
+                                case IOption.CHOICE:
+                                    option.setValue(value);
+                                    break;
+                                case IOption.BOOLEAN:
+                                    option.setValue(Boolean.valueOf(value));
+                                    break;
+                                case IOption.INTEGER:
+                                    option.setValue(Integer.valueOf(value));
+                                    break;
+                                case IOption.FLOAT:
+                                    option.setValue(Float.valueOf(value));
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            MegaMek.getLogger().error("Error trying to load option '" + name
+                                    + "' with a value of '" + value + "'.", e);
+                        }
+                    }
+                } else {
+                    MegaMek.getLogger().error("Invalid option '" + name + "' when trying to load options file.");
+                }
+            }
+        }
+
+        MegaMek.getLogger().info("Load Game Option Nodes Complete!");
+    }
+    //endregion MekHQ I/O
 }

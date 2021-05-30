@@ -22,6 +22,8 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
+import megamek.client.ui.preferences.JSplitPanePreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
@@ -109,6 +111,11 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
                 evt -> getChooser().refreshDirectory()));
 
         return panel;
+    }
+
+    @Override
+    protected void setCustomPreferences(final PreferencesNode preferences) {
+        preferences.manage(new JSplitPanePreference(getChooser().getSplitPane()));
     }
     //endregion Initialization
 

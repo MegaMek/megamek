@@ -88,7 +88,7 @@ public class Camouflage extends AbstractIcon {
         return result;
     }
 
-    //region File IO
+    //region File I/O
     @Override
     public void writeToXML(final PrintWriter pw, final int indent) {
         writeToXML(pw, indent, XML_TAG);
@@ -104,7 +104,7 @@ public class Camouflage extends AbstractIcon {
         }
         return icon;
     }
-    //endregion File IO
+    //endregion File I/O
 
     @Override
     public Camouflage clone() {

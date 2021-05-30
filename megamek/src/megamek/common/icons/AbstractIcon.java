@@ -162,7 +162,7 @@ public abstract class AbstractIcon implements Serializable {
      */
     public abstract Image getBaseImage();
 
-    //region File IO
+    //region File I/O
     public abstract void writeToXML(final PrintWriter pw, final int indent);
 
     protected void writeToXML(final PrintWriter pw, int indent, final String name) {
@@ -203,7 +203,7 @@ public abstract class AbstractIcon implements Serializable {
                 break;
         }
     }
-    //endregion File IO
+    //endregion File I/O
 
     @Override
     public String toString() {

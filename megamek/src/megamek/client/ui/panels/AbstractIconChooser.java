@@ -67,6 +67,12 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     }
     //endregion Constructors
 
+    //region Getters
+    public JSplitPane getSplitPane() {
+        return splitPane;
+    }
+    //endregion Getters
+
     //region Initialization
     private void initialize(final JTree tree) {
         // Set up the image list (right panel)

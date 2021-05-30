@@ -924,7 +924,8 @@ public class Server implements Runnable {
             if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else if (game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+            } else if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) 
+                    && (game.getPhase() != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 endCurrentPhase();
             }
 
@@ -11008,8 +11009,7 @@ public class Server implements Runnable {
         // Check for Mine sweepers
         Mounted minesweeper = null;
         for (Mounted m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady()
-                    && (m.getArmorValue() > 0)) {
+            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
                 minesweeper = m;
                 break; // Can only have one minesweeper
             }
@@ -11018,7 +11018,6 @@ public class Server implements Runnable {
         Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
-
             // vibrabombs are handled differently
             if (mf.getType() == Minefield.TYPE_VIBRABOMB) {
                 continue;
@@ -11026,16 +11025,14 @@ public class Server implements Runnable {
 
             // if we are in the water, then the sea mine will only blow up if at
             // the right depth
-            if (game.getBoard().getHex(mf.getCoords())
-                    .containsTerrain(Terrains.WATER)) {
+            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)) {
                 if ((Math.abs(curElev) != mf.getDepth())
-                    && (Math.abs(curElev + entity.getHeight()) != mf
-                        .getDepth())) {
+                        && (Math.abs(curElev + entity.getHeight()) != mf.getDepth())) {
                     continue;
                 }
             }
 
-            // Check for mine-sweeping.  Vibramines handled elsewhere
+            // Check for mine-sweeping. Vibramines handled elsewhere
             if ((minesweeper != null)
                     && ((mf.getType() == Minefield.TYPE_CONVENTIONAL)
                             || (mf.getType() == Minefield.TYPE_ACTIVE)
@@ -11045,19 +11042,19 @@ public class Server implements Runnable {
 
                 // Report minefield roll
                 if (doBlind()) { // only report if DB, otherwise all players see
-                r = new Report(2152);
-                r.player = mf.getPlayerId();
-                r.add(Minefield.getDisplayableName(mf.getType()));
-                r.add(mf.getCoords().getBoardNum());
-                r.add(roll);
-                r.newlines = 0;
-                vMineReport.add(r);
+                    r = new Report(2152, Report.PLAYER);
+                    r.player = mf.getPlayerId();
+                    r.add(Minefield.getDisplayableName(mf.getType()));
+                    r.add(mf.getCoords().getBoardNum());
+                    r.add(roll);
+                    r.newlines = 0;
+                    vMineReport.add(r);
                 }
 
                 if (roll >= 6) {
                     // Report hit
                     if (doBlind()) {
-                        r = new Report(5543);
+                        r = new Report(5543, Report.PLAYER);
                         r.player = mf.getPlayerId();
                         vMineReport.add(r);
                     }
@@ -11110,7 +11107,7 @@ public class Server implements Runnable {
                 } else {
                     // Report miss
                     if (doBlind()) {
-                        r = new Report(5542);
+                        r = new Report(5542, Report.PLAYER);
                         r.player = mf.getPlayerId();
                         vMineReport.add(r);
                     }
@@ -11120,8 +11117,7 @@ public class Server implements Runnable {
             // check whether we have an active mine
             if ((mf.getType() == Minefield.TYPE_ACTIVE) && isOnGround) {
                 continue;
-            }
-            if ((mf.getType() != Minefield.TYPE_ACTIVE) && !isOnGround) {
+            } else if ((mf.getType() != Minefield.TYPE_ACTIVE) && !isOnGround) {
                 continue;
             }
 
@@ -11147,7 +11143,7 @@ public class Server implements Runnable {
 
             // Report minefield roll
             if (doBlind()) { // Only do if DB, otherwise all players will see
-                r = new Report(2151);
+                r = new Report(2151, Report.PLAYER);
                 r.player = mf.getPlayerId();
                 r.add(Minefield.getDisplayableName(mf.getType()));
                 r.add(mf.getCoords().getBoardNum());
@@ -11160,7 +11156,7 @@ public class Server implements Runnable {
             if (roll < target) {
                 // Report miss
                 if (doBlind()) {
-                    r = new Report(2217);
+                    r = new Report(2217, Report.PLAYER);
                     r.player = mf.getPlayerId();
                     vMineReport.add(r);
                 }
@@ -11169,7 +11165,7 @@ public class Server implements Runnable {
 
             // Report hit
             if (doBlind()) {
-                r = new Report(2270);
+                r = new Report(2270, Report.PLAYER);
                 r.player = mf.getPlayerId();
                 vMineReport.add(r);
             }
@@ -11207,6 +11203,7 @@ public class Server implements Runnable {
                     }
                     vMineReport.addAll(damageEntity(entity, hit, cur_damage));
                 }
+
                 if (entity instanceof Tank) {
                     // Tanks check for motive system damage from minefields as
                     // from a side hit even though the damage proper hits the

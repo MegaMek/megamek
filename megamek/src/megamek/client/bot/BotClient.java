@@ -61,6 +61,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;
+import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -1215,6 +1216,24 @@ public abstract class BotClient extends Client {
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
+    }
+    
+    /**
+     * The bot client doesn't really need a text report
+     * Let's save ourselves a little processing time and not deal with any of it
+     */
+    @Override
+    public String receiveReport(Vector<Report> v) {
+        return "";
+    }
+    
+    /**
+     * The bot client has no need of image tag caching
+     * Let's save ourselves some CPU and memory and not deal with it
+     */
+    @Override
+    protected void cacheImgTag(Entity entity) {
+        
     }
 
     public BoardClusterTracker getClusterTracker() {

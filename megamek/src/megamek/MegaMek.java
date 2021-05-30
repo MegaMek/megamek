@@ -65,7 +65,7 @@ public class MegaMek {
     private static MMLogger logger = null;
     private static MMPreferences preferences = null;
 
-    public static String VERSION = "0.49.1-SNAPSHOT";
+    public static String VERSION = "0.49.2-SNAPSHOT";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 

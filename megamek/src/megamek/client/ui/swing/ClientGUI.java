@@ -808,18 +808,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
                 break;
-            case VIEW_INCGUISCALE:
-                float guiScale = GUIPreferences.getInstance().getGUIScale();
-                if (guiScale < MAX_GUISCALE) {
-                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
-                }
-                break;
-            case VIEW_DECGUISCALE:
-                guiScale = GUIPreferences.getInstance().getGUIScale();
-                if (guiScale > MIN_GUISCALE) {
-                    GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
-                }
-                break;
             case VIEW_KEYBINDS_OVERLAY:
                 bv.toggleKeybindsOverlay();
                 break;

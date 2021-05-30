@@ -31,11 +31,13 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Transitions/Transitions.tileinc"
 include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
 include "saxarba/Includes/Pavement.tileinc"
+
 
 
 #GRAY SAND
@@ -464,6 +466,8 @@ super * "smoke:*" "" "saxarba/misc/light_smoke.png"
 #SCREEN
 super * "screen:*" "" "saxarba/misc/light_smoke.png"
 
+
+
 #####BASE TERRAINS#####
 
 #SPACE
@@ -650,7 +654,6 @@ base 7 "" "lunar" "saxarba/theme_lunar/base_lunar_7.png;saxarba/theme_lunar/base
 base 8 "" "lunar" "saxarba/theme_lunar/base_lunar_8.png;saxarba/theme_lunar/base_lunar_8b.png;saxarba/theme_lunar/base_lunar_8c.png;saxarba/theme_lunar/base_lunar_8d.png;saxarba/theme_lunar/base_lunar_8e.png;saxarba/theme_lunar/base_lunar_8f.png"
 base 9 "" "lunar" "saxarba/theme_lunar/base_lunar_9.png;saxarba/theme_lunar/base_lunar_9b.png;saxarba/theme_lunar/base_lunar_9c.png;saxarba/theme_lunar/base_lunar_9d.png;saxarba/theme_lunar/base_lunar_9e.png;saxarba/theme_lunar/base_lunar_9f.png"
 base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/base_lunar_10b.png;saxarba/theme_lunar/base_lunar_10c.png;saxarba/theme_lunar/base_lunar_10d.png;saxarba/theme_lunar/base_lunar_10e.png;saxarba/theme_lunar/base_lunar_10f.png"
-
 
 
 # To avoid errors

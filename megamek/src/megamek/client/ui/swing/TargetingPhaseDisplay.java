@@ -41,6 +41,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -1551,42 +1552,42 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     private void setFireEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FIRE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFireEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
     private void setTwistEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_TWIST).setEnabled(enabled);
-        clientgui.getMenuBar().setFireTwistEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_SKIP).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSkipEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
     }
 
     private void setFlipArmsEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setFireNextEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SEARCHLIGHT.getCmd(), enabled);
     }
 
     private void setFireModeEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_MODE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireModeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
     }
 
     private void setNextTargetEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT_TARG).setEnabled(enabled);
-        clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT_TARG.getCmd(), enabled);
     }
 
     private void setDisengageEnabled(boolean enabled) {

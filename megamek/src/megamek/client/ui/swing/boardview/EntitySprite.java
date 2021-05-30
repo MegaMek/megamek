@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2014-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
+import megamek.common.IGame.Phase;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -254,7 +255,7 @@ class EntitySprite extends Sprite {
                     }
 
                 } else {
-                    bv.drawCenteredText(g, curStatus.status, 
+                    BoardView1.drawCenteredText(g, curStatus.status, 
                             stR.x+stR.height*0.5f-0.5f, stR.y+stR.height*0.5f-2, curStatus.color, false);
                 }
             }
@@ -267,7 +268,7 @@ class EntitySprite extends Sprite {
             g.setFont(bigFont);
             Point pos = new Point(bv.hex_size.width/2, bv.hex_size.height/2);
             bv.drawTextShadow(g, "!", pos, bigFont);
-            bv.drawCenteredText(g, "!", pos, Color.RED, false);
+            BoardView1.drawCenteredText(g, "!", pos, Color.RED, false);
             return;
         }
         
@@ -278,7 +279,7 @@ class EntitySprite extends Sprite {
         for (Status curStatus: statusStrings) {
             if (!curStatus.small) { // Critical status
                 bv.drawTextShadow(g, curStatus.status, new Point(bv.hex_size.width/2,y), boldFont);
-                bv.drawCenteredText(g, curStatus.status, bv.hex_size.width/2, y, curStatus.color, false);
+                BoardView1.drawCenteredText(g, curStatus.status, bv.hex_size.width/2, y, curStatus.color, false);
                 y -= 14*bv.scale;
             }
         }
@@ -553,7 +554,7 @@ class EntitySprite extends Sprite {
                     textColor = guip.getColor(
                             GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
                 }
-                bv.drawCenteredText(graph, getAdjShortName(),
+                BoardView1.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,
                         labelRect.y + labelRect.height / 2 - 1, textColor,
                         (entity.isDone() && !onlyDetectedBySensors()));
@@ -579,7 +580,31 @@ class EntitySprite extends Sprite {
                             && !((Infantry) entity).isTakingCover())
                     && !(isAero && ((IAero) entity).isSpheroid() && !board
                             .inSpace())) {
-                graph.draw(bv.facingPolys[entity.getFacing()]);
+                // Indicate a stacked unit with the same facing that can still move
+                if (shouldIndicateNotDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                    var tr = graph.getTransform();
+                    // rotate the arrow slightly
+                    graph.scale(1 / bv.scale, 1 / bv.scale);
+                    graph.rotate(Math.PI / 24, bv.hex_size.width/2, bv.hex_size.height/2);
+                    graph.scale(bv.scale, bv.scale);
+                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.LIGHT_GRAY);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                    graph.setTransform(tr);
+                }
+                
+                if (!entity.isDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.WHITE);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                } else {
+                    graph.setColor(Color.GRAY);
+                    graph.fill(bv.facingPolys[entity.getFacing()]);
+                    graph.setColor(Color.LIGHT_GRAY);
+                    graph.draw(bv.facingPolys[entity.getFacing()]);
+                }
             }
 
             // determine secondary facing for non-mechs & flipped arms
@@ -590,14 +615,14 @@ class EntitySprite extends Sprite {
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;
             }
-            // draw red secondary facing arrow if necessary
+            // draw secondary facing arrow if necessary
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
-                graph.setColor(Color.red);
+                graph.setColor(Color.GREEN);
                 graph.draw(bv.facingPolys[secFacing]);
             }
             if (entity.isAero() && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
-                    graph.setColor(Color.red);
+                    graph.setColor(Color.GREEN);
                     graph.draw(bv.facingPolys[head]);
                 }
             }
@@ -632,6 +657,18 @@ class EntitySprite extends Sprite {
         }
 
         graph.dispose();
+    }
+
+    /** 
+     * Returns true when an indicator should be shown that a unit with the same facing
+     * as this unit is stacked below it and can still move.
+     */
+    private boolean shouldIndicateNotDone() {
+        var hexEntities = bv.game.getEntitiesVector(entity.getPosition());
+        return hexEntities.stream()
+                .filter(e -> hexEntities.indexOf(entity) > hexEntities.indexOf(e))
+                .filter(e -> e.getFacing() == entity.getFacing())
+                .anyMatch(e -> !e.isDone());
     }
 
     private Color getDamageColor() {

@@ -1,33 +1,29 @@
 /*
- * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing.util;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import megamek.client.ui.swing.BoardEditor;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
+import java.util.*;
+import megamek.client.ui.swing.*;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated
@@ -36,22 +32,21 @@ import megamek.client.ui.swing.GUIPreferences;
  * dispatched as normal.
  *
  * The idea is that the system is split into two: keys can be bound to string
- * commands, and string commands can be bound to <code>CommandAction</code>
+ * commands, and string commands can be bound to CommandAction
  * objects, which are a simple class that implements an "actionPerformed"
- * method. The class that implements the <code>CommandAction</code> creates the
+ * method. The class that implements the CommandAction creates the
  * object and registers it, agnostic to what key is bound to the command. Then,
  * somewhere else (ie; a file) can specify what keys are bound to what string
  * commands. The possible string commands are specified in
- * <code>KeyCommandBind</code>.
+ * KeyCommandBind.
  *
  * There are three things that need to be done to create a key binding. First, a
- * command must exist, defined in <code>KeyCommandBind</code>. Then, the command
+ * command must exist, defined in KeyCommandBind. Then, the command
  * must be bound to a key in the keybind XML file (mmconf/defaultKeyBinds.xml by
- * default). Finally, a <code>CommandAction</code> needs to be registered
+ * default). Finally, a CommandAction needs to be registered
  * somewhere.
  *
  * @author arlith
- *
  */
 public class MegaMekController implements KeyEventDispatcher {
 
@@ -60,14 +55,10 @@ public class MegaMekController implements KeyEventDispatcher {
     public BoardEditor boardEditor = null;
     public ClientGUI clientgui = null;
 
-    /**
-     * Map that maps a key code to a command string.
-     */
+    /** Maps a key code to a command string. */
     protected Set<KeyCommandBind> keyCmdSet;
 
-    /**
-     * Map that maps command strings to CommandAction objects.
-     */
+    /** Maps command strings to CommandAction objects. */
     protected Map<String, ArrayList<CommandAction>> cmdActionMap;
 
     /**
@@ -76,14 +67,10 @@ public class MegaMekController implements KeyEventDispatcher {
      */
     protected Timer keyRepeatTimer;
 
-    /**
-     * Map that keeps track of the tasks that are currently repeating
-     */
+    /** Keeps track of the tasks that are currently repeating. */
     protected Map<KeyCommandBind, TimerTask> repeatingTasks;
 
-    /**
-     * should we ignore key presses?
-     */
+    /** Should we ignore key presses? */
     protected boolean ignoreKeyPresses = false;
 
     public MegaMekController() {
@@ -105,27 +92,18 @@ public class MegaMekController implements KeyEventDispatcher {
 
         int keyCode = evt.getKeyCode();
         int modifiers = evt.getModifiersEx();
-        // Get a collection of key/cmd binds that match the keycode/modifiers
-        ArrayList<KeyCommandBind> kcbs = KeyCommandBind.getBindByKey(keyCode,
-                modifiers);
 
         // If there's no action associated with this key bind, or the
         // current action is invalid, do not consume this event.
         boolean consumed = false;
 
-        for (KeyCommandBind kcb : kcbs) {
-            // Do we have a binding for this key?
-            if (!keyCmdSet.contains(kcb)) {
+        for (var kcb : KeyCommandBind.getBindByKey(keyCode, modifiers)) {
+            // Do nothing when there is no bind for this key or no action for the bind
+            if (!keyCmdSet.contains(kcb) || (cmdActionMap.get(kcb.cmd) == null)) {
                 continue;
             }
 
-            // Get the actions associated with this key/cmd binding
-            ArrayList<CommandAction> actions = cmdActionMap.get(kcb.cmd);
-            // Skip if we don't have an action vector
-            if (actions == null) {
-                continue;
-            }
-            for (CommandAction action : actions) {
+            for (var action : cmdActionMap.get(kcb.cmd)) {
                 // If the action is null or shouldn't be performed, skip it
                 if ((action == null) || !action.shouldPerformAction()) {
                     continue;
@@ -187,26 +165,17 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Start a new repeating timer task for the given
-     * <code>KeyCommandBind</code>. If the given <code>KeyCommandBind</code>
-     * already has a repeating task, a new one is not added. Also, if there is
-     * no mapped <code>CommandAction<c/code> for the given
-     * <code>KeyCommandBind</code> no task is scheduled.
-     *
-     * @param kcb
+     * Start a new repeating timer task for the given KeyCommandBind. If the given 
+     * KeyCommandBind already has a repeating task, a new one is not added. Also, 
+     * if there is no mapped CommandAction for the given KeyCommandBind no task is scheduled.
      */
     protected void startRepeating(KeyCommandBind kcb, final CommandAction action) {
 
         GUIPreferences guip = GUIPreferences.getInstance();
         // Make sure the delay is positive
-        long delay = Math.max(0,
-                guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY));
+        long delay = Math.max(0, guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_DELAY));
         // Make sure the rate is positive and that it is below a maximum
-        int rate = Math.max(
-                0,
-                Math.min(MAX_REPEAT_RATE,
-                        guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE)));
-
+        int rate = Math.max(0, Math.min(MAX_REPEAT_RATE, guip.getInt(GUIPreferences.ADVANCED_KEY_REPEAT_RATE)));
         long period = (long) (1000.0 / rate);
 
         // If we're already repeating, don't add a new task
@@ -236,23 +205,15 @@ public class MegaMekController implements KeyEventDispatcher {
         keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
     }
 
-    /**
-     * Stops the repeat timer task for the given KeyCommandBind.
-     *
-     * @param kcb
-     */
+    /** Stops the repeat timer task for the given KeyCommandBind. */
     public void stopRepeating(KeyCommandBind kcb) {
-        // If we're not repeating, there's nothing to cancel
-        if (!repeatingTasks.containsKey(kcb)) {
-            return;
+        if (repeatingTasks.containsKey(kcb)) {
+            repeatingTasks.get(kcb).cancel();
+            repeatingTasks.remove(kcb);
         }
-        repeatingTasks.get(kcb).cancel();
-        repeatingTasks.remove(kcb);
     }
 
-    /**
-     * Stop all repeat timers.
-     */
+    /** Stop all repeat timers. */
     public void stopAllRepeating() {
         for (KeyCommandBind kcb : repeatingTasks.keySet()) {
             repeatingTasks.get(kcb).cancel();
@@ -260,11 +221,7 @@ public class MegaMekController implements KeyEventDispatcher {
         }
     }
 
-    /**
-     * Set wether we should ignore key presses or nor
-     *
-     * @param ignoreKeyPresses
-     */
+    /** Set whether key presses should be ignored or not. */
     public void setIgnoreKeyPresses(boolean ignoreKeyPresses) {
         this.ignoreKeyPresses = ignoreKeyPresses;
     }

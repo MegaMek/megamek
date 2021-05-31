@@ -103,7 +103,7 @@ Minefields_PlayerB=1,0,3
 # Assigns a camo to a player; advisable in single player scenarios where the player can't do this
 # The directory and filename must be separated by a comma and the directory must end in a /
 Camo_PlayerA=Clans/Wolf/,Alpha Galaxy.jpg
-Camo_PlayerB=Clans/Burrock/,Alpha.jpg
+Camo_PlayerB=Clans/Burrock/,Clan Burrock.jpg
 
 # Mechlist for each faction -------------------------------------------------
 #

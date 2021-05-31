@@ -36,6 +36,7 @@ include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
+include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
 
 

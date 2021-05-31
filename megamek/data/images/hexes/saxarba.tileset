@@ -36,6 +36,7 @@ include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
+include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
 
 
@@ -99,7 +100,7 @@ super * "water:0" "volcano" "saxarba/theme_volcano/water_volcano_0.png"
 #WATER
 # Garden Lakes use water:0 so they must be included now
 include "saxarba/SMV_Fluff/GardenLakes.tileinc"
-super * "water:0" "" "saxarba/water/water_0.png"
+#super * "water:0" "" "saxarba/water/water_0.png"
 
 #ELEVATOR
 super * "elevator:10" "" "saxarba/misc/elevator_10.png"
@@ -260,7 +261,8 @@ super * "water:1" "lunar" "saxarba/theme_lunar/water_lunar_1.png"
 super * "water:1" "volcano" "saxarba/theme_volcano/water_volcano_1.png"
 
 #WATER
-super * "water:1" "" "saxarba/water/water_1.png"
+#super * "water:1" "" "saxarba/water/water_1.png"
+include "Structured_Water/Structured_Water - Saxarba.tileinc"
 
 #ROADS
 include "saxarba/Includes/BasicRoads.tileinc"

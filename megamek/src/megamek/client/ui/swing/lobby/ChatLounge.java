@@ -73,11 +73,11 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
@@ -365,7 +365,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         CamoChooserDialog ccd = new CamoChooserDialog(clientgui.getFrame(), player.getCamouflage());
 
         // If the dialog was canceled or nothing selected, do nothing
-        if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
+        if (!ccd.showDialog().isConfirmed()) {
             return;
         }
 

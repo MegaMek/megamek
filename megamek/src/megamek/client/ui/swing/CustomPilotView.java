@@ -15,29 +15,13 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
+import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.dialog.imageChooser.AbstractIconChooserDialog;
-import megamek.client.ui.swing.dialog.imageChooser.PortraitChooserDialog;
+import megamek.client.ui.dialogs.AbstractIconChooserDialog;
+import megamek.client.ui.dialogs.PortraitChooserDialog;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
@@ -47,6 +31,12 @@ import megamek.common.Tank;
 import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
@@ -102,15 +92,12 @@ public class CustomPilotView extends JPanel {
         portraitButton.setPreferredSize(new Dimension(72, 72));
         portraitButton.setName("portrait");
         portraitButton.addActionListener(e -> {
-            AbstractIconChooserDialog portraitDialog = new PortraitChooserDialog(parent,
+            final AbstractIconChooserDialog portraitDialog = new PortraitChooserDialog(parent.clientgui.frame,
                     entity.getCrew().getPortrait(slot));
-            int result = portraitDialog.showDialog();
-            if (result == JOptionPane.OK_OPTION) {
-                if (portraitDialog.getSelectedItem() != null) {
-                    portraitCategory = portraitDialog.getSelectedItem().getCategory();
-                    portraitFilename = portraitDialog.getSelectedItem().getFilename();
-                    portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
-                }
+            if (portraitDialog.showDialog().isConfirmed()) {
+                portraitCategory = portraitDialog.getSelectedItem().getCategory();
+                portraitFilename = portraitDialog.getSelectedItem().getFilename();
+                portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
             }
         });
         

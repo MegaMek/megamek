@@ -26,6 +26,8 @@ import javax.swing.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.client.ui.swing.util.UIUtil;
+
 import static megamek.client.ui.Messages.*;
 import megamek.common.*;
 import megamek.common.Entity.WeaponSortOrder;
@@ -381,6 +383,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
         manageMenu();
         
+        adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
@@ -800,7 +803,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
             viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
-        }
+        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        } 
+    }
+    
+    private void adaptToGUIScale() {
+        UIUtil.scaleMenu(this);
     }
 
     public void die() {

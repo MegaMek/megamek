@@ -53,5 +53,5 @@ Unit_Wolves_1_Commander=true
 
 GameOptionsFile=DownOnOurLevel.xml
 
-Camo_Drakons=Rasalhague,3rd Drakons.jpg
-Camo_Wolves=Clans/Wolf,Beta Galaxy.jpg
+Camo_Drakons=Free Rasalhague Republic/,3rd Drakons.jpg
+Camo_Wolves=Clans/Wolf/,Beta Galaxy.jpg

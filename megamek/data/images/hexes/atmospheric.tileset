@@ -80,6 +80,12 @@ super * "woods:3;foliage_elev:*" "tropical" "jungle/ultra_heavy_jungle1.png"
 super * "woods:1;foliage_elev:*" "snow" "snow/snow_lf.png"
 super * "woods:2;foliage_elev:*" "snow" "snow/snow_hf.png"
 
+super * "woods:1" "volcano" "snow/snow_lf.png"
+super * "woods:2" "volcano" "snow/snow_hf.png"
+
+super * "woods:1;fluff:12" "" "boring/orchard.png"
+super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
+
 super * "woods:1;fluff:12;foliage_elev:*" "" "boring/orchard.png"
 super * "woods:1;foliage_elev:*" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy
@@ -100,6 +106,7 @@ super * "rapids:2" "" "transparent/rapids.png"
 
 super * "ice:1" "" "transparent/ice.png"
 
+include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
 include "StandardIncludes/StandardRailMaglev.tileinc"
@@ -111,7 +118,7 @@ include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
 include "StandardIncludes/BuildingsSClassArmor.tileinc"
 include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
 
-include "StandardIncludes/StandardFluff.tileinc"
+
 include "StandardIncludes/StandardFuelTanks.tileinc"
 
 super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"

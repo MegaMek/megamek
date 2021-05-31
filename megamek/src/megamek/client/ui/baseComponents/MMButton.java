@@ -22,6 +22,7 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 /**
  * MMButton is an extension of JButton that overrides the constructors for JButton, albeit with the
@@ -52,6 +53,15 @@ public class MMButton extends JButton {
     }
 
     /**
+     * Creates a JButton with the provided text and name, localized using the provided
+     * resource bundle
+     * @see JButton#JButton(String)
+     */
+    public MMButton(final String name, final ResourceBundle resources, final String text) {
+        this(name, resources.getString(text));
+    }
+
+    /**
      * Creates a JButton with the provided text and name
      * @see JButton#JButton(String)
      */
@@ -70,6 +80,15 @@ public class MMButton extends JButton {
     }
 
     /**
+     * Creates a JButton with the provided text, name, and icon, localized using the provided
+     * resource bundle
+     * @see JButton#JButton(String)
+     */
+    public MMButton(final String name, final ResourceBundle resources, final String text, final Icon icon) {
+        this(name, resources.getString(text), icon);
+    }
+
+    /**
      * creates a JButton with the provided text, name, and icon
      * @see JButton#JButton(String, Icon)
      */
@@ -79,13 +98,34 @@ public class MMButton extends JButton {
     }
 
     /**
+     * Creates a JButton with the provided text, name, and action listener, localized using the
+     * provided resource bundle
+     * @see JButton#JButton(String)
+     */
+    public MMButton(final String name, final ResourceBundle resources, final String text,
+                    final ActionListener actionListener) {
+        this(name, resources.getString(text), actionListener);
+    }
+
+    /**
      * This creates a JButton without any toolTipText.
      * @param name the name of the button
      * @param text the localized text string
      * @param actionListener the {@link ActionListener} to assign to the button
      */
     public MMButton(final String name, final String text, final ActionListener actionListener) {
-        this(text, null, name, actionListener);
+        this(name, text, null, actionListener);
+    }
+
+    /**
+     * Creates a JButton with the provided text, toolTipText, name, and action listener, localized
+     * using the provided resource bundle
+     * @see JButton#JButton(String)
+     */
+    public MMButton(final String name, final ResourceBundle resources, final String text,
+                    final @Nullable String toolTipText, final ActionListener actionListener) {
+        this(name, resources.getString(text), (toolTipText == null) ? null : resources.getString(toolTipText),
+                actionListener);
     }
 
     /**

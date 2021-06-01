@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Objects;
 
+import javax.swing.ImageIcon;
+
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -69,6 +71,16 @@ public class EntityImage {
     private static final int IMG_WIDTH = HexTileset.HEX_W;
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+    
+    private static final ImageIcon overlay = new ImageIcon(Configuration.miscImagesDir() + "camo_overlay.png");
+    private static final int[] pOverlay = new int[IMG_SIZE];
+    static {
+        try {
+            grabImagePixels(overlay.getImage(), pOverlay);
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
+        }
+    }
 
     /** All damage decal/fire/smoke files in DECAL_PATH. */
     private static DirectoryItems DecalImages;
@@ -327,9 +339,15 @@ public class EntityImage {
                 int green1 = (pixel1 >> 8) & 0xff;
                 int blue1 = (pixel1) & 0xff;
 
-                int red2 = red1 * blue / 255;
-                int green2 = green1 * blue / 255;
-                int blue2 = blue1 * blue / 255;
+                // Pretreat with the camo overlay
+                int oalpha = 0;
+                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
+                    oalpha = (pOverlay[i] >> 24) & 0xff;
+                }
+
+                int red2 = red1 * blue * (255 - oalpha) / 65535;
+                int green2 = green1 * blue * (255 - oalpha) / 65535;
+                int blue2 = blue1 * blue * (255 - oalpha) / 65535;
 
                 pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }
@@ -419,7 +437,7 @@ public class EntityImage {
     }
 
     /** Initiates the PixelGrabber for the given image and int array. */
-    private void grabImagePixels(Image img, int[] pixels) throws InterruptedException, RuntimeException {
+    private static void grabImagePixels(Image img, int[] pixels) throws InterruptedException, RuntimeException {
         PixelGrabber pg = new PixelGrabber(img, 0, 0, IMG_WIDTH, IMG_HEIGHT, pixels, 0, IMG_WIDTH);
         pg.grabPixels();
         if ((pg.getStatus() & ImageObserver.ABORT) != 0) {

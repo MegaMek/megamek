@@ -21,6 +21,7 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.enums.ValidationState;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
@@ -68,7 +69,8 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
      */
     protected AbstractValidationButtonDialog(final JFrame frame, final boolean modal,
                                              final String name, final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
+                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name, title);
     }
 
     /**

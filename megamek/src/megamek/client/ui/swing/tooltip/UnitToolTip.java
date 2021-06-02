@@ -256,6 +256,13 @@ public final class UnitToolTip {
         int numPartial = ((curr != orig) && (curr % visUnit) > 0) ? 1 : 0;
         int numIntact = (curr - 1) / visUnit + 1 - numPartial;
         int numDmgd = (orig - 1) / visUnit + 1 - numPartial - numIntact;
+
+        if (curr <= 0) {
+            numPartial = 0;
+            numIntact = 0;
+            numDmgd = (orig - 1) / visUnit + 1;
+        }
+        
         if (numIntact > 0) {
             result.append(guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA));
             result.append(repeat(dChar, numIntact) + "</FONT>");

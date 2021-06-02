@@ -17,12 +17,10 @@ package megamek.client.ui.swing;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.Style;
 import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.Client;

@@ -13,6 +13,7 @@
 */ 
 package megamek.client.ui.swing.util;
 
+import java.util.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -24,38 +25,8 @@ import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
-import javax.swing.JToolTip;
-import javax.swing.JViewport;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.*;
+import javax.swing.border.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -419,7 +390,7 @@ public final class UIUtil {
     }
 
     /** Adapt a JPopupMenu to the GUI scaling. Use after all menu items have been added. */
-    public static void scaleJPopup(final JPopupMenu popup) {
+    public static void scaleMenu(final JComponent popup) {
         Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         for (Component comp: popup.getComponents()) {
             if ((comp instanceof JMenuItem)) {
@@ -630,6 +601,39 @@ public final class UIUtil {
             return tip;
         }
     }
+    
+    /**
+     * This is a specialized JPanel for use with a button bar at the bottom
+     * of a dialog for when it's possible that the button bar has to wrap (is
+     * wider than the dialog and needs to use two or more rows for the buttons).
+     * With a normal JPanel the wrapped buttons just disappear. 
+     * This Panel tries to detect when wrapping occurs and then extends vertically.
+     * Note that it will only extend to two rows, not more. But if three rows of 
+     * buttons are used, this will be very obvious.
+     * The native FlowLayout should be kept for the buttons. 
+     */
+    public static class WrappingButtonPanel extends JPanel {
+        private static final long serialVersionUID = -6966176665047676553L;
+
+        @Override
+        public Dimension getPreferredSize() {
+            int height = super.getPreferredSize().height; 
+            if (getSize().width < super.getPreferredSize().width) {
+                height = height * 2;
+            }
+            return new Dimension(super.getPreferredSize().width, height);
+        }
+        
+        @Override
+        public Dimension getMinimumSize() {
+            return new Dimension(super.getMinimumSize().width, getPreferredSize().height);
+        }
+        
+        @Override
+        public Dimension getMaximumSize() {
+            return new Dimension(super.getMaximumSize().width, getPreferredSize().height);
+        }
+    };
     
     /**
      * Returns a single menu item with the given text, the given command string

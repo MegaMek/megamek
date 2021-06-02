@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;

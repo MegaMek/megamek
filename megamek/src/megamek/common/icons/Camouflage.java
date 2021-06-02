@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,9 +22,11 @@ import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.annotations.Nullable;
+import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
 
 public class Camouflage extends AbstractIcon {
     //region Variable Declarations
@@ -32,6 +34,7 @@ public class Camouflage extends AbstractIcon {
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
     public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
+    public static final String XML_TAG = "camouflage";
     //endregion Variable Declarations
 
     //region Constructors
@@ -39,7 +42,7 @@ public class Camouflage extends AbstractIcon {
         super(NO_CAMOUFLAGE);
     }
 
-    public Camouflage(@Nullable String category, @Nullable String filename) {
+    public Camouflage(final @Nullable String category, final @Nullable String filename) {
         super(category, filename);
     }
     //endregion Constructors
@@ -56,7 +59,7 @@ public class Camouflage extends AbstractIcon {
     //endregion Boolean Methods
 
     @Override
-    public Image getBaseImage() {
+    public @Nullable Image getBaseImage() {
         if (MMStaticDirectoryManager.getCamouflage() == null) {
             return null;
         } else if (COLOUR_CAMOUFLAGE.equals(getCategory()) || NO_CAMOUFLAGE.equals(getCategory())) {
@@ -64,18 +67,16 @@ public class Camouflage extends AbstractIcon {
         }
 
         final String category = ROOT_CATEGORY.equals(getCategory()) ? "" : getCategory();
-        Image camouflage = null;
-
         try {
-            camouflage = (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
+            return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception e) {
             MegaMek.getLogger().error(e);
         }
 
-        return camouflage;
+        return null;
     }
 
-    private Image getColourCamouflageImage(Color colour) {
+    private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
             MegaMek.getLogger().error("A null colour was passed.");
             return null;
@@ -86,6 +87,24 @@ public class Camouflage extends AbstractIcon {
         graphics.fillRect(0, 0, 84, 72);
         return result;
     }
+
+    //region File I/O
+    @Override
+    public void writeToXML(final PrintWriter pw, final int indent) {
+        writeToXML(pw, indent, XML_TAG);
+    }
+
+    public static Camouflage parseFromXML(final Node wn) {
+        final Camouflage icon = new Camouflage();
+        try {
+            icon.parseNodes(wn.getChildNodes());
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+            return new Camouflage();
+        }
+        return icon;
+    }
+    //endregion File I/O
 
     @Override
     public Camouflage clone() {

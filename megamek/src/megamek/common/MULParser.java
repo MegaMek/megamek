@@ -148,7 +148,7 @@ public class MULParser {
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
-    private static final String ALTITUDE = "altitude";
+    public static final String ALTITUDE = "altitude";
     private static final String AUTOEJECT = "autoeject";
     private static final String CONDEJECTAMMO = "condejectammo";
     private static final String CONDEJECTENGINE = "condejectengine";
@@ -1759,7 +1759,6 @@ public class MULParser {
                     }
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
-                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                         if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
                             if (!inferno.isEmpty()) {

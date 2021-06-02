@@ -15,14 +15,12 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
-import megamek.common.Coords;
 import megamek.common.Entity;
 
 /**
@@ -74,11 +72,4 @@ class IsometricWreckSprite extends AbstractWreckSprite {
         return entity;
     }
     
-    public Coords getPosition() {
-        if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
-            return entity.getPosition();
-        } else {
-            return entity.getSecondaryPositions().get(secondaryPos);
-        }
-    }
 }

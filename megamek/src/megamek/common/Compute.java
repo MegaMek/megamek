@@ -4673,10 +4673,8 @@ public class Compute {
         return roll >= tn;
     }
 
-    public static int getVisualRange(IGame game, Entity ae, LosEffects los,
-            boolean teIlluminated) {
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
-                teIlluminated);
+    public static int getVisualRange(IGame game, Entity ae, LosEffects los, boolean teIlluminated) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);
@@ -4869,11 +4867,12 @@ public class Compute {
      * type of target. target may be null here, which gives you the range
      * without target entity modifiers
      */
-    public static int getSensorRangeByBracket(IGame game, Entity ae,
-            Targetable target, LosEffects los) {
+    public static int getSensorRangeByBracket(IGame game, Entity ae, @Nullable Targetable target,
+                                              @Nullable LosEffects los) {
         if (los == null) {
             los = LosEffects.calculateLos(game, ae.getId(), target);
         }
+
         Sensor sensor = ae.getActiveSensor();
         if (null == sensor) {
             return 0;

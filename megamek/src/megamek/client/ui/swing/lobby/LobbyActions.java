@@ -28,9 +28,9 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.*;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
 import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.force.Force;
@@ -246,7 +246,7 @@ public class LobbyActions {
         // The dialog is preset to a random entity's settings
         Entity entity = CollectionUtil.anyOneElement(entities);
         CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getOwner().getCamouflage());
-        if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
+        if (ccd.showDialog().isCancelled()) {
             return;
         }
 
@@ -256,12 +256,8 @@ public class LobbyActions {
         boolean noIndividualCamo = selectedItem.equals(ownerCamo);
 
         // Update all allowed entities with the camo
-        for (Entity ent: entities) {
-            if (noIndividualCamo) {
-                ent.setCamouflage(ownerCamo);
-            } else {
-                ent.setCamouflage(selectedItem);
-            }
+        for (final Entity ent : entities) {
+            ent.setCamouflage(noIndividualCamo ? ownerCamo : selectedItem);
         }
         sendUpdates(entities);
     }

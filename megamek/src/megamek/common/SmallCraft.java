@@ -42,7 +42,6 @@ public class SmallCraft extends Aero {
     // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
     private Map<String,Integer> nOtherCrew = new HashMap<>();
     private Map<String,Integer> passengers = new HashMap<>();
-    private Map<Integer,Integer> nOtherMarines = new HashMap<>();
     
     // escape pods and lifeboats
     private int escapePods = 0;

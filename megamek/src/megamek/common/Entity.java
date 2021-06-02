@@ -1502,8 +1502,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // which does not happen. The player ID on the other hand stays the same and the game
         // object is not usually replaced. I expect entity.game to be up to date much more than owner.
         // Unfortunately, entities freshly created may not have the game set. Therefore, fall
-        // back to the old version when game == null
-        if (game != null) {
+        // back to the old version when game == null or the player is no longer in the game
+        if ((game != null) && (game.getPlayer(ownerId) != null)) {
             return game.getPlayer(ownerId);
         } else {
             return owner;

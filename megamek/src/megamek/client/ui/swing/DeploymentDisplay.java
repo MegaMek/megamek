@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -494,7 +495,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn() || (ce() == null)
-                || ((b.getModifiers() & InputEvent.BUTTON1_DOWN_MASK) == 0)) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
 
@@ -978,32 +979,32 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     private void setNextEnabled(boolean enabled) {
         buttons.get(DeployCommand.DEPLOY_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployNextEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_NEXT.getCmd(), enabled);
     }
 
     private void setTurnEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_TURN).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployTurnEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_TURN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_TURN.getCmd(), enabled);
     }
 
     private void setLoadEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_LOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployLoadEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_LOAD).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_LOAD.getCmd(), enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_UNLOAD).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployUnloadEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_UNLOAD).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_UNLOAD.getCmd(), enabled);
     }
 
     private void setRemoveEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_REMOVE).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployNextEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_REMOVE).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_REMOVE.getCmd(), enabled);
     }
 
     private void setAssaultDropEnabled(boolean enabled) {
-    buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
-        clientgui.getMenuBar().setDeployAssaultDropEnabled(enabled);
+        buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(DeployCommand.DEPLOY_ASSAULTDROP.getCmd(), enabled);
     }
 
     /**

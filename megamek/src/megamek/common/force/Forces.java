@@ -35,6 +35,8 @@ import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.annotations.Nullable;
+
 import static megamek.common.force.Force.*;
 import static java.util.stream.Collectors.*;
 
@@ -49,7 +51,7 @@ public final class Forces implements Serializable {
 
     private static final long serialVersionUID = -1382468145554363945L;
     
-    private HashMap<Integer, Force> forces = new HashMap<Integer, Force>();
+    private HashMap<Integer, Force> forces = new HashMap<>();
     private transient IGame game;
     
     public Forces(IGame g) {
@@ -723,20 +725,27 @@ public final class Forces implements Serializable {
     
     @Override
     public String toString() {
-        List<String> forceStrings = forces.values().stream().map(f -> f.toString()).collect(toList());
+        List<String> forceStrings = forces.values().stream().map(Force::toString).collect(toList());
         return String.join("\n", forceStrings);
     }
     
     /** 
      * Returns a list of all entities of the given force and all its subforces to any depth. 
      */
-    public ArrayList<Entity> getFullEntities(Force force) {
-        ArrayList<Entity> result = new ArrayList<>();
+    public List<Entity> getFullEntities(final @Nullable Force force) {
+        if (force == null) {
+            return new ArrayList<>();
+        }
+
+        final List<Entity> result = new ArrayList<>();
         if (contains(force)) {
-            for (int entityId: force.getEntities()) {
-                result.add(game.getEntity(entityId));
+            for (int entityId : force.getEntities()) {
+                final Entity entity = game.getEntity(entityId);
+                if (entity != null) {
+                    result.add(entity);
+                }
             }
-            for (int subForceId: force.getSubForces()) {
+            for (int subForceId : force.getSubForces()) {
                 result.addAll(getFullEntities(forces.get(subForceId)));
             }
         }

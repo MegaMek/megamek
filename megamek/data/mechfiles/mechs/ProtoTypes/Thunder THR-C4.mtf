@@ -129,3 +129,17 @@ Lower Leg Actuator
 Foot Actuator
 Endo-Steel
 Endo-Steel
+
+overview:The Thunder is a product of the aftermath of the Fourth Succession War.
+
+capabilities:This version of the Thunder replaces the heavy autocannon with a Sian/Ceres Hellcat Thunderbolt 20 missile launcher. It also mounts three Ceres Arms ER Medium Lasers and a single Ceres Arms Model X Medium X-Pulse Laser for close combat. The XL engine is smaller than the standard Thunders engine, reducing the top speed to 64 km/h. To offset this loss of speed, the C4 mounts six Anderson High Propulsion 12s Improved Jump Jets. For protection against ammunition explosions, the four tons of Thunderbolt ammunition is protected by CASE II. Built on an Endo Steel chassis, the rest of the 'Mech is covered in thirteen tons of armor.
+
+history:The 'Mech was built to make the most of new technologies that had made their way to the Capellan Confederation at the beginning of the 3050s. This was done by building the 'Mech around a Magna 350 XL Engine to maximize the available weight in the 'Mech. The Thunder also uses double heat sinks to make it capable of handling a high heat load from its weapons systems. The 'Mech is well protected with thirteen and a half tons of armor. Its weapons payload, and the design in general, uses a mix of advanced and off the shelf parts. This balanced mix makes the Thunder a valuable asset on the modern battlefield.
+
+manufacturer:Ceres Metals Industries
+primaryfactory:Sian, Capella and St. Ives
+systemmanufacturer:CHASSIS:Hollis Mk III
+systemmanufacturer:ENGINE:Magna 350 XL
+systemmanufacturer:ARMOR:Ceres Heavy with CASE
+systemmanufacturer:COMMUNICATIONS:Ceres Metals Model 21-Rs
+systemmanufacturer:TARGETING:C-Apple Churchill

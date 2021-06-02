@@ -30,7 +30,7 @@ public class ScalingPopup extends JPopupMenu {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            UIUtil.scaleJPopup(ScalingPopup.this);
+            UIUtil.scaleMenu(ScalingPopup.this);
             pack();
         } 
         super.setVisible(b);

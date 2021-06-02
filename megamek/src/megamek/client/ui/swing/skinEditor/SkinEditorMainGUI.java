@@ -106,7 +106,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     public UnitDisplay unitDisplay;
 
     protected JComponent curPanel;
-    private ChatLounge chatlounge;
 
     /**
      * Test entity to display in UnitDisplay.
@@ -566,7 +565,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         switch (phase) {
             case PHASE_LOUNGE:
                 component = new ChatLounge(null);
-                chatlounge = (ChatLounge) component;
                 main = "ChatLounge"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);

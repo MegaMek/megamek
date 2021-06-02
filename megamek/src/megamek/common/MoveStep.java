@@ -1942,6 +1942,7 @@ public class MoveStep implements Serializable {
                     case TURN_RIGHT:
                         movementType = EntityMovementType.MOVE_WALK;
                     case CONVERT_MODE:
+                    case SEARCHLIGHT:
                         movementType = EntityMovementType.MOVE_NONE;
                     default:
                         break;

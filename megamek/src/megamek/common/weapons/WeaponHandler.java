@@ -1536,9 +1536,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (calcDmgPerHitReport.size() > 0) {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
+        
+        // a very specific situation where a mech is standing in a height 1 building
+        // or its upper torso is otherwise somehow poking out of said building 
+        boolean targetPokingOutOfShortBuilding =
+                targetHex.ceiling() ==
+                entityTarget.getElevation() + entityTarget.getHeight();
+        boolean legHit = entityTarget.isLeg(hit.getLocation());
+        boolean shortBuildingBlocksLegHit = targetPokingOutOfShortBuilding && legHit;
     
         // A building may be damaged, even if the squad is not.
-        if (bldgAbsorbs > 0) {
+        if (bldgAbsorbs > 0 && (!targetPokingOutOfShortBuilding || legHit)) {
+            if (shortBuildingBlocksLegHit) {
+                //do some shit
+            }
+            
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);

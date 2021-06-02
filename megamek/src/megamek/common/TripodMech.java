@@ -1615,6 +1615,16 @@ public class TripodMech extends Mech {
         }
         return null;
     }
+    
+    /**
+     * Is the given location a leg?
+     */
+    @Override
+    public boolean isLeg(int location) {
+        return (location == Mech.LOC_LLEG) ||
+                (location == Mech.LOC_RLEG) ||
+                (location == Mech.LOC_CLEG);
+    }
 
     /**
      * Can this mech torso twist in the given direction?

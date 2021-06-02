@@ -10973,6 +10973,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
 
     }
+    
+    /**
+     * Is the given location a leg? Probably not by default.
+     */
+    public boolean isLeg(int location) {
+        return false;
+    }
 
     public abstract boolean doomedInExtremeTemp();
 

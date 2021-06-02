@@ -112,8 +112,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
     
     /**
      * Comparator that sorts MovePaths based on, in order, the following criteria:
-     * Minefield hazard (less is better)
-     *
+     * Minefield hazard (stepping on less mines is better)
+     * Least MP used
+     * Most distance moved
      */
     public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator extends MovePathMinMPMaxDistanceComparator {
         @Override

@@ -288,10 +288,10 @@ public class PathEnumerator {
                 
                 //add jumping moves
                 if (mover.getJumpMP() > 0) {
-                	ShortestPathFinder spf = ShortestPathFinder
+                    ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
                                     MoveStepType.FORWARDS, getGame());
-                	spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run((new MovePath(game, mover))
                             .addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());

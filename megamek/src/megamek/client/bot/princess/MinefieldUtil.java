@@ -22,6 +22,7 @@ import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.annotations.Nullable;
 
 /**
  * This class contains logic to evaluate the damage a unit could sustain from
@@ -30,7 +31,7 @@ import megamek.common.MoveStep;
  */
 public class MinefieldUtil {
     /**
-     * Calculate how much damage we'll take from stepping on mines over  a particular path
+     * Calculate how much damage we'll take from stepping on mines over a particular path
      */
     public static double checkPathForMinefieldHazards(MovePath path) {
         double hazardAccumulator = 0;
@@ -48,7 +49,7 @@ public class MinefieldUtil {
     /**
      * Calculate how much damage we'll take from stepping on mines in a particular hex
      */
-    public static double calcMinefieldHazardForHex(MoveStep step, Entity movingUnit, 
+    public static double calcMinefieldHazardForHex(@Nullable MoveStep step, Entity movingUnit, 
             boolean isJumping, boolean lastStep) {
         // if we're not actually taking a step, no minefield hazard
         if ((step == null) || !step.getType().entersNewHex()) {
@@ -63,7 +64,7 @@ public class MinefieldUtil {
         double hazardAccumulator = 0;
         // hovercraft and WIGEs grinding along the ground detonate minefields on a 12
         boolean hoverMovement = movingUnit.getMovementMode() == EntityMovementMode.HOVER ||
-                (movingUnit.getMovementMode() == EntityMovementMode.WIGE && movingUnit.getElevation() == 0);
+                ((movingUnit.getMovementMode() == EntityMovementMode.WIGE) && (movingUnit.getElevation() == 0));
         double hoverMovementMultiplier = hoverMovement ?
                 Compute.oddsAbove(Minefield.HOVER_WIGE_DETONATION_TARGET) : 1;
         

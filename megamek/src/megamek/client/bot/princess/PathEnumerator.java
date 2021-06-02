@@ -42,6 +42,7 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
@@ -269,12 +270,14 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
                                 MoveStepType.FORWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(game, mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
@@ -288,6 +291,7 @@ public class PathEnumerator {
                 	ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
                                     MoveStepType.FORWARDS, getGame());
+                	spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run((new MovePath(game, mover))
                             .addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());

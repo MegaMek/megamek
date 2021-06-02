@@ -540,6 +540,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         double expectedDamageTaken = checkPathForHazards(pathCopy,
                                                          movingUnit,
                                                          game);
+        
+        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
+        
         boolean extremeRange = game.getOptions()
                                    .booleanOption(
                                            OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
@@ -931,12 +934,13 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                     break;
             }
         }
+        
         logMsg.append("\n\tTotal Hazard = ")
               .append(LOG_DECIMAL.format(hazardValue));
 
         return hazardValue;
     }
-
+    
     // Building collapse and basements are handled in PathRanker.validatePaths.
     private double calcBuildingHazard(MoveStep step, Entity movingUnit,
                                       boolean jumpLanding, IBoard board,

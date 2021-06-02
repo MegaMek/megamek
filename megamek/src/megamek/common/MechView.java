@@ -113,10 +113,10 @@ public class MechView {
     public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
         this(entity, showDetail, useAlternateCost, true);
     }
-    
+
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
-     * 
+     *
      * @param entity           The entity to summarize
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
@@ -124,7 +124,25 @@ public class MechView {
      * @param html             If true, produces output formatted as html. If false, formats output
      *                         as plain text.
      */
-    public MechView(Entity entity, boolean showDetail, boolean useAlternateCost, boolean html) {
+    public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
+                    final boolean html) {
+        this(entity, showDetail, useAlternateCost, (entity.getCrew() == null), html);
+    }
+
+    /**
+     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * 
+     * @param entity           The entity to summarize
+     * @param showDetail       If true, shows individual weapons that make up weapon bays.
+     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
+     *                         equipment-only cost for conventional infantry for MekHQ.
+     * @param ignorePilotBV    If true then the BV calculation is done without including the pilot
+     *                         BV modifiers
+     * @param html             If true, produces output formatted as html. If false, formats output
+     *                         as plain text.
+     */
+    public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
+                    final boolean ignorePilotBV, final boolean html) {
         this.entity = entity;
         this.html = html;
         isMech = entity instanceof Mech;
@@ -235,9 +253,8 @@ public class MechView {
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
         DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols); //$NON-NLS-1$
-        sHead.add(new LabeledElement(Messages.getString("MechView.BV"), //$NON-NLS-1$
-                dFormatter.format(entity.calculateBattleValue(false,
-                        null == entity.getCrew()))));
+        sHead.add(new LabeledElement(Messages.getString("MechView.BV"),
+                dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV))));
         double cost = entity.getCost(false);
         if(useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();

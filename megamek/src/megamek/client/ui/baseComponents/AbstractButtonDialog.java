@@ -19,6 +19,7 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.client.ui.enums.DialogResult;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
@@ -62,7 +63,8 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
                                    final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
+                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name, title);
     }
 
     /**

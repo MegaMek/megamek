@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>32</BOARDWIDTH>
+    <BOARDHEIGHT>33</BOARDHEIGHT>
+    <MAPWIDTH>3</MAPWIDTH>
+    <MAPHEIGHT>2</MAPHEIGHT>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport Left</BOARDS>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport</BOARDS>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport Right</BOARDS>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport South West</BOARDS>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport South</BOARDS>
+    <BOARDS>\unofficial\Jayof9s\32x33 Spaceport South East </BOARDS>
+</MAPSETUP>

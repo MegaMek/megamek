@@ -1,0 +1,1 @@
+The images in this directory are temporary images used for the pilot tooltips. They can be safely deleted while not in a MegaMek game.

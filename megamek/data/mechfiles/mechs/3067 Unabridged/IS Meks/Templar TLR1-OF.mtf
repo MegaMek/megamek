@@ -152,4 +152,16 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+capabilities:Another command variation, this configuration mounts a C3 Master computer. It carries three Medium Pulse Lasers, a Heavy PPC, and a Light Gauss Rifle. Four jump jets give it a 120 meter jump range. 
 
+deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
+
+history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
+
+manufacturer:Kallon Industries
+primaryfactory:Talon
+systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel
+systemmanufacturer:ENGINE:KalTek 340 Extralight
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
+systemmanufacturer:TARGETING:Spar 3C MegaTrak

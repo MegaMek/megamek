@@ -4020,7 +4020,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
         ammo.addLookupName("CLProtoAC2Ammo");
         ammo.addLookupName("CLProtoAC2 Ammo");
-        ammo.damagePerShot = 2;
+        ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 40;
@@ -4032,7 +4032,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
 
@@ -4045,7 +4045,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
         ammo.addLookupName("CLProtoAC4Ammo");
         ammo.addLookupName("CLProtoAC4 Ammo");
-        ammo.damagePerShot = 4;
+        ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 20;
@@ -4057,7 +4057,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
 
@@ -4070,7 +4070,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
         ammo.addLookupName("CLProtoAC8Ammo");
         ammo.addLookupName("CLProtoAC8 Ammo");
-        ammo.damagePerShot = 8;
+        ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 10;
@@ -4082,7 +4082,7 @@ public class AmmoType extends EquipmentType {
             .setTechRating(RATING_B).setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             .setClanAdvancement(3070, 3073, 3145).setClanApproximate(true, true, false)
             .setPrototypeFactions(F_CBS).setProductionFactions(F_CBS)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return ammo;
     }
     

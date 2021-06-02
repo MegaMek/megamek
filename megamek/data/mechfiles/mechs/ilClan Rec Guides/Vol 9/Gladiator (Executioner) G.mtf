@@ -153,4 +153,16 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Fast and powerful, the Executioner, known as the Gladiator in the Inner Sphere, is an assault OmniMech often deployed by Clan Ghost Bear. Though originally produced by Clan Ghost Bear, design schematics for the Executioner were actually acquired in a trial with Clan Burrock. Using a massive Heavy Force 380 XL Engine, the Executioner has a top speed of 64.8 km/h. A MASC system enhances the top speed to 86.4 km/h (albeit only in short bursts), and four permanently mounted Pryzhok WM10 jump jets give the 'Mech the ability to propel itself 120 meters into the air. This unusual emphasis on speed gives the Executioner unmatched speed for its weight class, as it is often capable of keeping up with 'Mechs twenty or thirty tons lighter than itself. The Executioner also carries thirteen and a half tons of Ferro-Fibrous armor, which is below average for its weight class, but generally adequate. Sixteen double heat sinks are mounted to cool the 'Mech down. 
 
+capabilities:This variant carries a Streak LRM-15 and ER PPC in the left arm, supported by six ER Medium Lasers in the right arm. All these weapons are tied into a Targeting Computer. For electronic warfare support, it carries a Watchdog CEWS.
+
+deployment:Even though the design has not been used since the 3060s, the Home Clans withdrew it from use after the Wars of Reaving, possibly due to its reputation with the Spheroid Clans like Clan Ghost Bear.
+manufacturer:Alshain BattleWorx 
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:Clan Series Assault SXE
+systemmanufacturer:ENGINE:380 Heavy Force XL
+systemmanufacturer:ARMOR:Arcadia Compound Delta VII Ferro-Fibrous
+systemmanufacturer:JUMPJET:Pryzhok WM 10
+systemmanufacturer:COMMUNICATIONS:Dash-2 Optima
+systemmanufacturer:TARGETING:Hakkøn-Morris LAP

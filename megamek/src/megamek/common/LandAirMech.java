@@ -20,13 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
 
 public class LandAirMech extends BipedMech implements IAero, IBomber {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -8118673802295814548L;
 
     public static final int CONV_MODE_MECH = 0;
@@ -37,7 +34,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public static final int LAM_LANDING_GEAR = 16;
 
-    public static final String systemNames[] = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null,
+    public static final String[] systemNames = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null,
             "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics",
             "Landing Gear" };
 
@@ -1994,6 +1991,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     @Override
     protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
+        if ((loc < 0) || (loc >= crits.length)) {
+            MegaMek.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
+            return;
+        }
+
         mounted.setLocation(loc, false);
         int slots = 1;
         if (mounted.getType() instanceof BombType) {
@@ -2006,6 +2008,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 slots = mounted.getCriticals();
             }
         }
+
         for (int i = 0; i < crits[loc].length; i++) {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
@@ -2021,13 +2024,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 }
             }
         }
+
         if (slots > 0) {
             throw new LocationFullException();
         }
+
         mounted.setBombMounted(true);
+
         if (mounted.getType() instanceof BombType) {
             bombList.add(mounted);
         }
+
         if (mounted.getType() instanceof WeaponType) {
             totalWeaponList.add(mounted);
             weaponList.add(mounted);

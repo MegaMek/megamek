@@ -143,7 +143,7 @@ public class Terrains implements ITerrainFactory {
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
-    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE };
+    public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };
 
     private static final String[] names = { "none", "woods", "water", "rough", "rubble", "jungle", "sand", "tundra",
             "magma", "planted_fields", "heavy_industrial", "space", "pavement", "road", "swamp", "mud", "rapids", "ice",
@@ -211,6 +211,10 @@ public class Terrains implements ITerrainFactory {
     }
 
     /**
+     * Returns a name to be displayed in tooltips. 
+     * Intentionally returns null for terrains that should be treated
+     * separately such as buildings and for terrains that should not be listed
+     * such as cliff-tops.
      * @param type the type of terrain to get the name for
      * @param level the level of the terrain to get the specific name
      * @return a displayable name for this terrain (for tooltips)
@@ -226,22 +230,6 @@ public class Terrains implements ITerrainFactory {
                 return "Heavy building";
             } else if (level == 4) {
                 return "Hardened Building";
-            } else if (level == 5) {
-                return "Wall";
-            } else {
-                return "Building (unknown)";
-            }
-        case (BLDG_CLASS):
-            if (level == 0) {
-                return "Standard";
-            } else if (level == 1) {
-                return "Hangar";
-            } else if (level == 2) {
-                return "Fortress";
-            } else if (level == 3) {
-                return "Gun Emplacement";
-            } else {
-                return "Building Class (unknown)";
             }
         case (WOODS):
             if (level == 1) {
@@ -387,8 +375,6 @@ public class Terrains implements ITerrainFactory {
             } else {
                 return "Extremely high metal content";
             }
-        case (CLIFF_TOP):
-            return "Cliff-Top";
         default:
             return null;
         }

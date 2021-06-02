@@ -30,11 +30,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.dialog.imageChooser.CamoChooserDialog;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
 import megamek.common.Player;
-import megamek.common.icons.AbstractIcon;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -54,7 +53,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
 
     public boolean bSet;
     public int[] playerTypes;
-    public String localName = ""; //$NON-NLS-1$
+    public String localName = "";
 
     @SuppressWarnings("unchecked")
     public ScenarioDialog(final JFrame frame, Player[] pa) {
@@ -80,18 +79,11 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn"));
             curButton.setPreferredSize(new Dimension(84, 72));
             curButton.addActionListener(e -> {
-                CamoChooserDialog ccd = new CamoChooserDialog(frame, curPlayer.getCamouflage());
-
-                // If the dialog was canceled or nothing selected, do nothing
-                if ((ccd.showDialog() == JOptionPane.CANCEL_OPTION) || (ccd.getSelectedItem() == null)) {
-                    return;
+                final CamoChooserDialog ccd = new CamoChooserDialog(frame, curPlayer.getCamouflage());
+                if (ccd.showDialog().isConfirmed()) {
+                    curPlayer.setCamouflage(ccd.getSelectedItem());
+                    curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
                 }
-
-                // Otherwise, update the player data from the selection
-                AbstractIcon selectedIcon = ccd.getSelectedItem();
-                curPlayer.setCamoCategory(selectedIcon.getCategory());
-                curPlayer.setCamoFileName(selectedIcon.getFilename());
-                curButton.setIcon(curPlayer.getCamouflage().getImageIcon());
             });
         }
         getContentPane().setLayout(new BorderLayout());

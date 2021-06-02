@@ -1,6 +1,5 @@
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;

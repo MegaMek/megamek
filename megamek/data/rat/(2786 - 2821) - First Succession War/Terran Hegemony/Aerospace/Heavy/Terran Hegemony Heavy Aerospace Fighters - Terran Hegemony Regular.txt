@@ -1,0 +1,12 @@
+Terran Hegemony Heavy Aerospace Fighters - Terran Hegemony Regular
+Chippewa CHP-W5,2
+Rapier RPR-100,3
+Thunderbird TRB-D36,4
+Stuka STU-K5,5
+Ahab AHB-443,6
+Hammerhead HMR-HD,7
+Rapier RPR-100,6
+Eagle EGL-R6,5
+Ahab AHB-443,4
+Eagle EGL-R6,3
+Rapier RPR-100,2

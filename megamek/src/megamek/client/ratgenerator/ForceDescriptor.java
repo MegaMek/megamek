@@ -831,6 +831,8 @@ public class ForceDescriptor {
                     entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     entity.setCrew(getCo().createCrew(entity.defaultCrewType()));
                     entity.setExternalIdAsString(UUID.randomUUID().toString());
+                    String forceString = getForceString();
+                    entity.setForceString(forceString);
                 } catch (EntityLoadingException ex) {
                     MegaMek.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
                 }
@@ -842,6 +844,29 @@ public class ForceDescriptor {
         if (count == 0 && null != l) {
             l.updateProgress(progress, "Loading entities");
         }
+    }
+    
+    /** Generates a force string for exporting these units to MUL / adding to the game. */
+    private String getForceString() {
+        var ancestors = new ArrayList<ForceDescriptor>();
+        ForceDescriptor p = parent;
+        while (p != null) {
+            ancestors.add(p);
+            p = p.parent;
+        }
+        
+        String forceString = "";
+        int id = 0;
+        for (int i = ancestors.size() - 1; i >= 0; i--) {
+            ForceDescriptor ancestor = ancestors.get(i);
+            id = 17 * id + ancestor.index + 1;
+            forceString += "\\" + ancestor.parseName() + "|" + id;
+        }
+        // Remove the backslash at the start
+        if (forceString.length() > 0) {
+            forceString = forceString.substring(1);
+        }
+        return forceString;
     }
 
     public void assignCommanders() {

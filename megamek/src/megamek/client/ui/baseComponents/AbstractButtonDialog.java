@@ -19,12 +19,12 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.client.ui.enums.DialogResult;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 /**
@@ -63,7 +63,8 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
                                    final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
+                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name, title);
     }
 
     /**
@@ -107,33 +108,18 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      */
     protected JPanel createButtonPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 2));
-        panel.add(createButton("Ok.text", "Ok.toolTipText", "okButton", this::okButtonActionPerformed));
-        panel.add(createButton("Cancel.text", "Cancel.toolTipText", "cancelButton", this::cancelActionPerformed));
+        panel.add(new MMButton("okButton", resources.getString("Ok.text"),
+                resources.getString("Ok.toolTipText"), this::okButtonActionPerformed));
+        panel.add(new MMButton("cancelButton", resources.getString("Cancel.text"),
+                resources.getString("Cancel.toolTipText"), this::cancelActionPerformed));
         return panel;
-    }
-
-    /**
-     * This creates a standard button for use in the dialog
-     * @param text the text resource string
-     * @param toolTipText the toolTipText resource string
-     * @param name the name of the button
-     * @param actionListener the {@link ActionListener} to assign to the button
-     * @return the created button
-     */
-    protected JButton createButton(final String text, final String toolTipText, final String name,
-                                   final ActionListener actionListener) {
-        JButton button = new JButton(resources.getString(text));
-        button.setToolTipText(resources.getString(toolTipText));
-        button.setName(name);
-        button.addActionListener(actionListener);
-        return button;
     }
     //endregion Initialization
 
     //region Button Actions
     /**
-     * This is the default Action Event Listener for the Ok Button's action. This triggers the Ok Action,
-     * sets the result to confirmed, and then sets the dialog so that it is no longer visible.
+     * This is the default Action Event Listener for the Ok Button's action. This triggers the Ok
+     * Action, sets the result to confirmed, and then sets the dialog so that it is no longer visible.
      * @param evt the event triggering this
      */
     protected void okButtonActionPerformed(final ActionEvent evt) {

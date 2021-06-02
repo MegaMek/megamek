@@ -26,7 +26,6 @@ import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;

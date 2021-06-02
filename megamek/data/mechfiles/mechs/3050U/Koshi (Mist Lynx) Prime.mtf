@@ -3,33 +3,33 @@ Koshi (Mist Lynx)
 Prime
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:2926
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Clan
+era:2926
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:25
-Engine:175 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:25
+engine:175 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:7
-Walk MP:7
-Jump MP:6
+heat sinks:10 Clan Double
+base chassis heat sinks:7
+walk mp:7
+jump mp:6
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:4
-RA Armor:4
-LT Armor:7
-RT Armor:7
-CT Armor:10
-HD Armor:9
-LL Armor:5
-RL Armor:5
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Ferro-Fibrous(Clan)
+LA armor:4
+RA armor:4
+LT armor:7
+RT armor:7
+CT armor:10
+HD armor:9
+LL armor:5
+RL armor:5
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
 LRM 10, Left Arm
@@ -42,8 +42,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10 (omnipod)
-Clan Ammo LRM-10 (omnipod)
+CLLRM10 (OMNIPOD)
+Clan Ammo LRM-10 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -56,11 +56,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM4 (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-Clan Streak SRM 4 Ammo (omnipod)
-Clan Machine Gun Ammo - Half (omnipod)
+CLStreakSRM4 (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
+Clan Machine Gun Ammo - Half (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -148,3 +148,16 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:Weighing in at twenty five tons, the Mist Lynx is a lightweight workhorse OmniMech. The Mist Lynx is a common light OmniMech among the Clans that invaded the Inner Sphere, and is part of the toumans of every clan.
+capabilities:he Mist Lynx is built on a lightweight Endo Steel chassis to save weight and is powered by a 175 XL engine that gives the 'Mech a top speed of 118.8 km/h. The Mist Lynx also has six Jump Jets that allow the 'Mech to jump up to one hundred and eighty meters. The Mist Lynx has a fixed Active Probe that allows the 'Mech to protect itself from ambush by letting it detect any hidden enemy units before they can strike. For protection from enemy fire, the Mist Lynx has three and a half tons of Ferro-Fibrous armor.
+deployment:Before the Great Refusal, the Mist Lynx was most prominently fielded by Clan Smoke Jaguar and earned the code name Koshi, or "small death", from the DCMS forces which encountered it during Operation Revival. Designed by Clan Smoke Jaguar around 2910, production of the Mist Lynx was continued by Clans Ice Hellion and Steel Viper after the Annihilation of Clan Smoke Jaguar.
+manufacturer:Huntress Production Facility Epsilon, Arcadia BattleMech Plant CM-O3, Manufacturing Plant SFF-AL1
+primaryfactory:Huntress, Arcadia,  Alnabog
+systemmanufacturer:CHASSIS:Light Series II Endo-steel
+systemmanufacturer:ENGINE:Type II 175 XL
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Clan Light Series Mk. I
+systemmanufacturer:COMMUNICATIONS:Build 1685/5 Tacticom
+systemmanufacturer:TARGETING:Series III GDS with Active Probe
+

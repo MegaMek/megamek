@@ -3,44 +3,44 @@ Thunderbolt
 TDR-1C
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2491
-Source:XTRO Primitives III - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2491
+source:XTRO Primitives III - Age of War
+rules level:4
 
-Mass:65
-Engine:235 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
+mass:65
+engine:235 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:3
-Jump MP:0
+heat sinks:10 Single
+walk mp:3
+jump mp:0
 
-Armor:Primitive(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:24
-RT Armor:24
-CT Armor:30
-HD Armor:9
-LL Armor:27
-RL Armor:27
-RTL Armor:6
-RTR Armor:6
-RTC Armor:10
+armor:Primitive(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:6
+RTR armor:6
+RTC armor:10
 
 Weapons:8
+Machine Gun, Left Arm
+Machine Gun, Left Arm
 Large Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
 LRM 15, Right Torso
 SRM 2, Right Torso
-Machine Gun, Left Arm
-Machine Gun, Left Arm
-Medium Laser, Left Torso
-Medium Laser, Left Torso
-Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -154,4 +154,6 @@ Foot Actuator
 -Empty-
 -Empty-
 
+manufacturer:Earthwerks, Ltd.
+primaryfactory:Tikonov
 

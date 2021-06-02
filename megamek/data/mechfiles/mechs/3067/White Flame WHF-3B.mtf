@@ -3,47 +3,47 @@ White Flame
 WHF-3B
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3065
-Rules Level:2
+techbase:Inner Sphere
+era:3065
 source:TRO 3067
+rules level:2
 
-Mass:70
-Engine:350 Light Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:70
+engine:350 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:5
-Jump MP:5
+heat sinks:11 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Standard Armor
-LA Armor:30
-RA Armor:30
-LT Armor:23
-RT Armor:23
-CT Armor:34
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+FLL armor:30
+FRL armor:30
+LT armor:23
+RT armor:23
+CT armor:34
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:5
-1 ISLargePulseLaser, Right Torso
-1 ISMediumPulseLaser, Right Torso
-2 ISERMediumLaser, Left Torso
-1 ISImprovedC3CPU, Left Torso
-1 ISAntiMissileSystem, Head, Ammo:24
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Large Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Anti-Missile System, Head
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -51,13 +51,13 @@ Endo-Steel
 -Empty-
 -Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,12 +72,12 @@ ISERMediumLaser
 ISERMediumLaser
 ISAMS Ammo
 ISAMS Ammo
-ISImprovedC3CPU
-ISImprovedC3CPU
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISC3iUnit
+ISC3iUnit
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -85,13 +85,13 @@ Fusion Engine
 ISLargePulseLaser
 ISLargePulseLaser
 ISMediumPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,7 +105,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -121,7 +121,7 @@ Life Support
 -Empty-
 -Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -135,7 +135,7 @@ Jump Jet
 -Empty-
 -Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -148,4 +148,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

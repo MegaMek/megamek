@@ -69,7 +69,6 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.net.Packet;
 import megamek.common.options.GameOptions;
-import megamek.common.preference.PreferenceManager;
 import megamek.server.SmokeCloud;
 
 /**

@@ -2,11 +2,8 @@ package megamek.client.bot.princess;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 
 public class UnitBehavior {
     public enum BehaviorType {

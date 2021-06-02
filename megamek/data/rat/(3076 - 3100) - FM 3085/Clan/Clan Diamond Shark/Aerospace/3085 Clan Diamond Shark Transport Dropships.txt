@@ -1,7 +1,7 @@
 3085 Clan Diamond Shark Transport Dropships
 Aqueduct Liquid Carrier (Standard),1
 Mule C (2842),2
-Danais (2720),3
+Danais (Standard),3
 Sassanid (2875),4
 Union C (2829),5
 Union C (2829),6

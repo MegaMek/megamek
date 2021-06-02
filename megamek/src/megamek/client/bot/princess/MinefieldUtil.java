@@ -21,7 +21,6 @@ import megamek.common.EntityMovementMode;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
 /**
@@ -75,7 +74,7 @@ public class MinefieldUtil {
             switch (minefield.getType()) {
                 case Minefield.TYPE_CONVENTIONAL:
                 case Minefield.TYPE_INFERNO:
-                    // if we're either not jumping
+                    // if we're either not jumping or it's the last step
                     if (!isJumping || lastStep) {
                         hazardAccumulator += minefield.getDensity() * hoverMovementMultiplier;
                     }

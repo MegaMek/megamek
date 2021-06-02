@@ -2,6 +2,7 @@ package megamek.server.victory;
 
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
+import megamek.common.force.Forces;
 import megamek.server.Server;
 import junit.framework.TestCase;
 import megamek.common.IGame;
@@ -20,10 +21,12 @@ public class ServerTest {
 
     protected IGame createMockedGame() {
         IGame testGame = Mockito.mock(IGame.class);
+        Forces testForces = new Forces(testGame);
         Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
         Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
         Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
         Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        Mockito.when(testGame.getForces()).thenReturn(testForces);
         return testGame;
     }
 

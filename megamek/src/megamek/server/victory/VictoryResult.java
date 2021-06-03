@@ -58,7 +58,7 @@ public class VictoryResult implements IResult {
         return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
     }
 
-    private int getWinningEntity(HashMap<Integer, Double> entities, int defaultEntity) {
+    private int getWinningPlayerOrTeam(HashMap<Integer, Double> entities, int defaultEntity) {
         double max = Double.MIN_VALUE;
         int maxEntity = defaultEntity;
         boolean draw = false;
@@ -78,11 +78,11 @@ public class VictoryResult implements IResult {
     }
 
     public int getWinningPlayer() {
-        return getWinningEntity(playerScore, IPlayer.PLAYER_NONE);
+        return getWinningPlayerOrTeam(playerScore, IPlayer.PLAYER_NONE);
     }
 
     public int getWinningTeam() {
-        return getWinningEntity(teamScore, IPlayer.TEAM_NONE);
+        return getWinningPlayerOrTeam(teamScore, IPlayer.TEAM_NONE);
     }
 
     protected void updateHiScore() {

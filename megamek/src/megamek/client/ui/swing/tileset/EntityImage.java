@@ -72,15 +72,21 @@ public class EntityImage {
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
     
-    private static final ImageIcon overlay = new ImageIcon(Configuration.miscImagesDir() + "camo_overlay.png");
-    private static final int[] pOverlay = new int[IMG_SIZE];
+    /** Facing-dependent camo overlays (add shadows and highlighting) */ 
+    private static final int[][] pOverlays = new int[6][IMG_SIZE];
     static {
         try {
-            grabImagePixels(overlay.getImage(), pOverlay);
+            for (int i = 0; i < 6; i++) {
+                var overlay = new ImageIcon(Configuration.miscImagesDir() + "/camo_overlay" + i + ".png");
+                grabImagePixels(overlay.getImage(), pOverlays[i]);
+            }
         } catch (Exception e) {
             MegaMek.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
         }
     }
+    
+    /** Controls how much the overlay influences the camo, 0 = not at all, 100 = full. */ 
+    private static final int OVERLAY_INTENSITY = 100;
 
     /** All damage decal/fire/smoke files in DECAL_PATH. */
     private static DirectoryItems DecalImages;
@@ -206,28 +212,31 @@ public class EntityImage {
             return;
         }
 
-        // Apply the player/unit camouflage
-        base = applyColor(base);
+        for (int i = 0; i < 6; i++) {
+            // Apply the player/unit camouflage
+            Image fImage = applyColor(base, i);
 
+            // Add damage scars and smoke/fire; not to Infantry
+            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+                fImage = applyDamageDecal(fImage);
+                // No smoke in the lobby
+                if (!isPreview) {
+                    fImage = applyDamageSmoke(fImage);
+                }
+            }
+
+            // Generate rotated images for the unit and for a wreck
+            facings[i] = rotateImage(fImage, i);
+        }
+
+        // Apply the player/unit camouflage
+        base = applyColor(base, 0);
+        
         // Save a small icon (without damage decals) for the unit overview
         icon = ImageUtil.getScaledImage(base,  56, 48);
-
-        // Add damage scars and smoke/fire; not to Infantry
-        if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
-            base = applyDamageDecal(base);
-            // No smoke in the lobby
-            if (!isPreview) {
-                base = applyDamageSmoke(base);
-            }
-        }
-
-        // Generate rotated images for the unit and for a wreck
-        for (int i = 0; i < 6; i++) {
-            facings[i] = rotateImage(base, i);
-        }
-
+        
         if (wreck != null) {
-            wreck = applyColor(wreck);
+            wreck = applyColor(wreck, 0);
 
             // Add damage scars and smoke/fire; not to Infantry
             if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
@@ -285,7 +294,7 @@ public class EntityImage {
             return null;
         }
 
-        base = applyColor(getBase());
+        base = applyColor(getBase(), 0);
 
         // Add damage scars and smoke/fire; not to Infantry
         if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
@@ -299,7 +308,7 @@ public class EntityImage {
     }
 
     /** Applies the unit individual or player camouflage to the icon. */
-    private Image applyColor(Image image) {
+    private Image applyColor(Image image, int facing) {
         if (image == null) {
             return null;
         }
@@ -339,15 +348,29 @@ public class EntityImage {
                 int green1 = (pixel1 >> 8) & 0xff;
                 int blue1 = (pixel1) & 0xff;
 
-                // Pretreat with the camo overlay
-                int oalpha = 0;
-                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
-                    oalpha = (pOverlay[i] >> 24) & 0xff;
+                // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
+                int oalpha = 128;
+                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
+                        && !isInfantry) {
+                    oalpha = pOverlays[facing][i] & 0xff;
+                    oalpha = OVERLAY_INTENSITY * oalpha / 100;
                 }
+                
+                if (oalpha < 128) {
+                    red1 = red1 * 2 * oalpha / 255;
+                    green1 = green1 * 2 * oalpha / 255;
+                    blue1 = blue1 * 2 * oalpha / 255;
+                } else {
+                    red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
+                    green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
+                    blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+                }
+                
+                int red2 = red1 * blue / 255;
+                int green2 = green1 * blue / 255;
+                int blue2 = blue1 * blue / 255;
 
-                int red2 = red1 * blue * (255 - oalpha) / 65535;
-                int green2 = green1 * blue * (255 - oalpha) / 65535;
-                int blue2 = blue1 * blue * (255 - oalpha) / 65535;
+
 
                 pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }

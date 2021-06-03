@@ -2908,6 +2908,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             setButUnitIDState();
             mekModel.refreshCells();
             refreshTree();
+        } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
+            clientgui.bv.getTilesetManager().reloadUnitIcons();
+            mekModel.refreshCells();
+            refreshTree();
         }
     }
     

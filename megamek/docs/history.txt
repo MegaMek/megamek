@@ -13,6 +13,7 @@ VERSION HISTORY:
 + Issue #2884: preventing Array Index Out of Bound error when adding bombs to a LAM
 + PR #2880: "De-hexed" water and pavement (partial-looking water and pavement hexes that are functionally water and pavement, but look more "realistic" like the recent physical CGL hex maps)
 + PR #2869: Camouflage: Deadborder Pack, Base Component Swapover
++ PR #2898: Princess will now do her best to avoid known minefields
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

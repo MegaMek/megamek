@@ -19,6 +19,7 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 
 import javax.swing.*;
@@ -54,6 +55,7 @@ public class BVDisplayDialog extends AbstractDialog {
         final JEditorPane editorPane = new JEditorPane("text/html", getEntity().getBVText());
         editorPane.setEditable(false);
         editorPane.setCaretPosition(0);
+        editorPane.setFont(UIUtil.getScaledFont());
 
         final JScrollPane scrollPane = new JScrollPane(editorPane);
         scrollPane.setPreferredSize(new Dimension(550, 300));

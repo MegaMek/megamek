@@ -23,6 +23,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
@@ -402,6 +403,12 @@ public class WeaponFireInfo {
         if((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
+        }
+        
+        // this is a special case - if we're considering hitting a swarmed target
+        // that's basically our only option
+        if (weaponType.getInternalName() == Infantry.SWARM_WEAPON_MEK) {
+            return 1;
         }
         
         if (getTarget() instanceof Entity) {

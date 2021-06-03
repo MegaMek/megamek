@@ -60,6 +60,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
@@ -759,6 +760,15 @@ public class Princess extends BotClient {
     @Override
     protected void calculateTargetingOffBoardTurn() {
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        
+        // if we're crippled, off-board and can do so, disengage
+        if (entityToFire.isOffBoard() && entityToFire.canFlee() && entityToFire.isCrippled(true)) {
+            Vector<EntityAction> disengageVector = new Vector<>();
+            disengageVector.add(new DisengageAction(entityToFire.getId()));
+            sendAttackData(entityToFire.getId(), disengageVector);
+            sendDone(true);
+        }
+        
         FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
         
         sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());

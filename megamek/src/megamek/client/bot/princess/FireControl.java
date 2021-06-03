@@ -2290,9 +2290,6 @@ public class FireControl {
     /**
      * Determines if the given entity (potentially employing a given firing plan)
      * can/should spot. If yes, then return a spot action.
-     * @param plan
-     * @param spotter
-     * @return
      */
     public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
     	// logic applies as follows:
@@ -3181,7 +3178,8 @@ public class FireControl {
         Vector<EntityAction> unjamVector = new Vector<>();
         
         // apparently, only tank type units can unjam weapons/clear turrets
-        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+        // unconscious crews can't do this
+        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK) || !shooter.getCrew().isActive()) {
             return unjamVector;
         }
         
@@ -3239,7 +3237,9 @@ public class FireControl {
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
         // no search light if it's not on, unit doesn't have one, or is hidden
-        if(!shooter.isUsingSearchlight() || !shooter.hasSearchlight() || shooter.isHidden()) {
+        // or the crew is indisposed
+        if(!shooter.isUsingSearchlight() || !shooter.hasSearchlight() || shooter.isHidden()
+                || !shooter.getCrew().isActive()) {
             return null;
         }
         

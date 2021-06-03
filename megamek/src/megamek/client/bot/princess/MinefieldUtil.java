@@ -63,7 +63,7 @@ public class MinefieldUtil {
         
         double hazardAccumulator = 0;
         // hovercraft and WIGEs grinding along the ground detonate minefields on a 12
-        boolean hoverMovement = movingUnit.getMovementMode() == EntityMovementMode.HOVER ||
+        boolean hoverMovement = (movingUnit.getMovementMode() == EntityMovementMode.HOVER) ||
                 ((movingUnit.getMovementMode() == EntityMovementMode.WIGE) && (movingUnit.getElevation() == 0));
         double hoverMovementMultiplier = hoverMovement ?
                 Compute.oddsAbove(Minefield.HOVER_WIGE_DETONATION_TARGET) : 1;

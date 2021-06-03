@@ -1,10 +1,11 @@
 package megamek.common;
 
-import junit.framework.TestCase;
 import megamek.server.victory.VictoryResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class GameTest {
@@ -14,9 +15,9 @@ public class GameTest {
         // Default test
         IGame game = new Game();
         game.cancelVictory();
-        TestCase.assertFalse(game.isForceVictory());
-        TestCase.assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
-        TestCase.assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
+        assertFalse(game.isForceVictory());
+        assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
+        assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
 
         // Test with members set to specific values
         IGame game2 = new Game();
@@ -25,9 +26,9 @@ public class GameTest {
         game2.setForceVictory(true);
 
         game2.cancelVictory();
-        TestCase.assertFalse(game.isForceVictory());
-        TestCase.assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
-        TestCase.assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
+        assertFalse(game.isForceVictory());
+        assertSame(IPlayer.PLAYER_NONE, game.getVictoryPlayerId());
+        assertSame(IPlayer.TEAM_NONE, game.getVictoryTeam());
     }
 
     @Test
@@ -35,11 +36,11 @@ public class GameTest {
         IGame game = new Game();
         game.createVictoryConditions();
         VictoryResult victoryResult = game.getVictoryResult();
-        TestCase.assertNotNull(victoryResult);
+        assertNotNull(victoryResult);
 
         // Note: this accessors are tested in VictoryResultTest
-        TestCase.assertSame(IPlayer.PLAYER_NONE, victoryResult.getWinningPlayer());
-        TestCase.assertSame(IPlayer.TEAM_NONE, victoryResult.getWinningTeam());
+        assertSame(IPlayer.PLAYER_NONE, victoryResult.getWinningPlayer());
+        assertSame(IPlayer.TEAM_NONE, victoryResult.getWinningTeam());
 
         int winningPlayer = 2;
         int winningTeam = 5;
@@ -52,8 +53,8 @@ public class GameTest {
         game2.createVictoryConditions();
         VictoryResult victoryResult2 = game2.getVictoryResult();
 
-        TestCase.assertSame(winningPlayer, victoryResult2.getWinningPlayer());
-        TestCase.assertSame(winningTeam, victoryResult2.getWinningTeam());
+        assertSame(winningPlayer, victoryResult2.getWinningPlayer());
+        assertSame(winningTeam, victoryResult2.getWinningTeam());
     }
 
 }

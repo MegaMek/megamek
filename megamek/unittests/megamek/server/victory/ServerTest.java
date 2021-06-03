@@ -4,17 +4,16 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
 import megamek.common.force.Forces;
 import megamek.server.Server;
-import junit.framework.TestCase;
 import megamek.common.IGame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.*;
 
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class ServerTest {
@@ -42,12 +41,12 @@ public class ServerTest {
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
-        TestCase.assertFalse(testServer.victory());
+        assertFalse(testServer.victory());
 
         //test whether the server.victory() returns true when mocking VictoryResult as true
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
-        TestCase.assertTrue(testServer.victory());
+        assertTrue(testServer.victory());
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ServerTest {
         testServer.setGame(testGame);
         testServer.victory();
 
-        TestCase.assertSame(1, testServer.getvPhaseReport().size());
+        assertSame(1, testServer.getvPhaseReport().size());
 
         // Second test server tests with both a team != TEAM_NONE and a player != PLAYER_NONE
         // Two reports should be generated
@@ -130,7 +129,7 @@ public class ServerTest {
         testServer2.setGame(testGame);
         testServer2.victory();
 
-        TestCase.assertSame(2, testServer2.getvPhaseReport().size());
+        assertSame(2, testServer2.getvPhaseReport().size());
     }
 
 }

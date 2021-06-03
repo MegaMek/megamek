@@ -352,6 +352,7 @@ public class EntityImage {
                     oalpha = pOverlays[facing][i] & 0xff;
                 }
                 
+                // "Overlay" image combination formula
                 if (oalpha < 128) {
                     red1 = red1 * 2 * oalpha / 255;
                     green1 = green1 * 2 * oalpha / 255;
@@ -365,9 +366,6 @@ public class EntityImage {
                 int red2 = red1 * blue / 255;
                 int green2 = green1 * blue / 255;
                 int blue2 = blue1 * blue / 255;
-
-
-
                 pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }
         }

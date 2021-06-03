@@ -85,9 +85,6 @@ public class EntityImage {
         }
     }
     
-    /** Controls how much the overlay influences the camo, 0 = not at all, 100 = full. */ 
-    private static final int OVERLAY_INTENSITY = 100;
-
     /** All damage decal/fire/smoke files in DECAL_PATH. */
     private static DirectoryItems DecalImages;
 
@@ -353,7 +350,6 @@ public class EntityImage {
                 if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
                         && !isInfantry) {
                     oalpha = pOverlays[facing][i] & 0xff;
-                    oalpha = OVERLAY_INTENSITY * oalpha / 100;
                 }
                 
                 if (oalpha < 128) {

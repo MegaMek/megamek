@@ -1182,6 +1182,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 tablePlayers.addRowSelectionInterval(row, row);
             }
         }
+        if (tablePlayers.getSelectedRowCount() == 0 && tablePlayers.getRowCount() > 0) {
+            tablePlayers.addRowSelectionInterval(0, 0);
+        }
     }
 
     /** Updates the camo button to displays the camo of the currently selected player. */ 

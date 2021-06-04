@@ -777,8 +777,9 @@ public class MechView {
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT);
         for (Mounted mounted : entity.getWeaponList()) {
-            String[] row = new String[] { mounted.getDesc(),
-                    entity.getLocationAbbr(mounted.getLocation()), "", "" };
+            String[] row = { mounted.getDesc(),
+                    mounted.allLocations().stream().map(l -> entity.getLocationAbbr(l))
+                            .collect(Collectors.joining("/")), "", "" };
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (entity.isClan()
@@ -795,11 +796,6 @@ public class MechView {
              * //$NON-NLS-1$ .append(mounted.getLinked().getDesc()).append("]");
              * //$NON-NLS-1$ }
              */
-
-            if (mounted.isSplit()) {
-                row[1] += "/" + entity.getLocationAbbr(mounted // $NON-NLS-1$
-                                .getSecondLocation());
-            }
 
             int heat = wtype.getHeat();
             int bWeapDamaged = 0;
@@ -912,7 +908,7 @@ public class MechView {
             if (mounted.getLocation() == Entity.LOC_NONE) {
                 continue;
             }
-            
+
             String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
                     String.valueOf(mounted.getBaseShotsLeft()), "" };
             if (entity.isOmni()) {
@@ -997,7 +993,9 @@ public class MechView {
             }
             nEquip++;
             
-            String[] row = { mounted.getDesc(), entity.getLocationAbbr(mounted.getLocation()), "" };
+            String[] row = { mounted.getDesc(),
+                    mounted.allLocations().stream()
+                            .map(l -> entity.getLocationAbbr(l)).collect(Collectors.joining("/")), "" };
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 row[0] += Messages.getString("MechView.IS"); //$NON-NLS-1$

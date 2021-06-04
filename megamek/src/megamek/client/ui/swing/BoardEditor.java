@@ -2045,7 +2045,7 @@ public class BoardEditor extends JPanel
     
     /** Adapts the whole Board Editor UI to the current guiScale. */
     private void adaptToGUIScale() {
-        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        Font scaledFont = UIUtil.getScaledFont();
 
         butAddTerrain.setFont(scaledFont);
         butBoardNew.setFont(scaledFont);

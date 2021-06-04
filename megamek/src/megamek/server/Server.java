@@ -11135,7 +11135,7 @@ public class Server implements Runnable {
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
                         || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-                    target = 12;
+                    target = Minefield.HOVER_WIGE_DETONATION_TARGET;
                 }
             }
 

@@ -1182,6 +1182,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 tablePlayers.addRowSelectionInterval(row, row);
             }
         }
+        // If no one is selected now (and the table isn't empty), select the first player
+        if ((tablePlayers.getSelectedRowCount() == 0) && (tablePlayers.getRowCount() > 0)) {
+            tablePlayers.addRowSelectionInterval(0, 0);
+        }
     }
 
     /** Updates the camo button to displays the camo of the currently selected player. */ 
@@ -1835,7 +1839,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 final JEditorPane pane = new JEditorPane();
                 pane.setName("helpPane");
                 pane.setEditable(false);
-                pane.setFont(new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+                pane.setFont(UIUtil.getScaledFont());
                 try {
                     pane.setPage(helpfile.toURI().toURL());
                     JScrollPane tScroll = new JScrollPane(pane,
@@ -2071,7 +2075,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /**OK Refreshes the Map Summary, Tech Level and Game Year labels. */
     private void refreshLabels() {
-        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        Font scaledFont = UIUtil.getScaledFont();
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         
         String txt = Messages.getString("ChatLounge.GameYear"); 
@@ -2908,6 +2912,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             setButUnitIDState();
             mekModel.refreshCells();
             refreshTree();
+        } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
+            clientgui.bv.getTilesetManager().reloadUnitIcons();
+            mekModel.refreshCells();
+            refreshTree();
         }
     }
     
@@ -2991,7 +2999,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         mekModel.refreshCells();
         panTeamOverview.adaptToGUIScale();
 
-        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        Font scaledFont = UIUtil.getScaledFont();
         Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
 
         butCompact.setFont(scaledFont);

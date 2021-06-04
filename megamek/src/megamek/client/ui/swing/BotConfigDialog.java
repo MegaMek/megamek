@@ -67,8 +67,8 @@ public class BotConfigDialog extends JDialog implements ActionListener {
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
     protected JCheckBox forcedWithdrawalCheck;
     protected JCheckBox autoFleeCheck;
-    protected JComboBox<String> destinationEdgeCombo; // The board edge to to which the bot will attempt to move.
-    protected JComboBox<String> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
+    protected JComboBox<CardinalEdge> destinationEdgeCombo; // The board edge to to which the bot will attempt to move.
+    protected JComboBox<CardinalEdge> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
     protected JSlider aggressionSlidebar;
     protected JSlider fallShameSlidebar;
     protected JSlider herdingSlidebar;
@@ -185,8 +185,8 @@ public class BotConfigDialog extends JDialog implements ActionListener {
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        destinationEdgeCombo.setSelectedIndex(princessBehavior.getDestinationEdge().getIndex());
-        retreatEdgeCombo.setSelectedIndex(princessBehavior.getRetreatEdge().getIndex());
+        destinationEdgeCombo.setSelectedItem(princessBehavior.getDestinationEdge());
+        retreatEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         targetsListModel.clear();
@@ -379,11 +379,7 @@ public class BotConfigDialog extends JDialog implements ActionListener {
 
         //Row 4 Column 2.
         constraints.gridx++;
-        destinationEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
-                                                           Messages.getString("BotConfigDialog.southEdge"),
-                                                           Messages.getString("BotConfigDialog.westEdge"),
-                                                           Messages.getString("BotConfigDialog.eastEdge"),
-                                                           Messages.getString("BotConfigDialog.noEdge")});
+        destinationEdgeCombo = new JComboBox<>(CardinalEdge.values());
         destinationEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
         destinationEdgeCombo.setSelectedIndex(0);
         destinationEdgeCombo.addActionListener(this);
@@ -398,11 +394,7 @@ public class BotConfigDialog extends JDialog implements ActionListener {
 
         //Row 4 Column 2.
         constraints.gridx++;
-        retreatEdgeCombo = new JComboBox<String>(new String[]{Messages.getString("BotConfigDialog.northEdge"),
-                                                           Messages.getString("BotConfigDialog.southEdge"),
-                                                           Messages.getString("BotConfigDialog.westEdge"),
-                                                           Messages.getString("BotConfigDialog.eastEdge"),
-                                                           Messages.getString("BotConfigDialog.nearestEdge")});
+        retreatEdgeCombo = new JComboBox<>(CardinalEdge.values());
         retreatEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
         retreatEdgeCombo.setSelectedIndex(0);
         panel.add(retreatEdgeCombo, constraints);
@@ -525,7 +517,7 @@ public class BotConfigDialog extends JDialog implements ActionListener {
             getPresetPrincessBehavior();
             setPrincessFields();
         } else if (destinationEdgeCombo.equals(e.getSource())) {
-            if (CardinalEdge.getCardinalEdge(destinationEdgeCombo.getSelectedIndex()) == CardinalEdge.NEAREST_OR_NONE) {
+            if (destinationEdgeCombo.getSelectedItem() == CardinalEdge.NONE) {
                 autoFleeCheck.setSelected(false);
                 autoFleeCheck.setEnabled(false);
             } else {
@@ -553,8 +545,8 @@ public class BotConfigDialog extends JDialog implements ActionListener {
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setDestinationEdge(destinationEdgeCombo.getSelectedIndex());
-        tempBehavior.setRetreatEdge(retreatEdgeCombo.getSelectedIndex());
+        tempBehavior.setDestinationEdge((CardinalEdge) destinationEdgeCombo.getSelectedItem());
+        tempBehavior.setRetreatEdge((CardinalEdge) retreatEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());

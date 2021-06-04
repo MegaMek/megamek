@@ -74,6 +74,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.UnitReadoutDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
@@ -1482,40 +1483,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * so that multiple dialogs dont appear exactly on top of each other. 
      */
     private void mechReadout(Entity entity, int index) {
-        final ClientDialog dialog = new ClientDialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false, true);
-        final int height = 600;
-        final int width = 500;
-
-        MechView mv = new MechView(entity, false);
-        // The label must want a fixed width to enforce linebreaks on fluff text
-        JLabel mechSummary = new JLabel("<HTML>" + mv.getMechReadoutHead()
-        + mv.getMechReadoutBasic() + mv.getMechReadoutLoadout()
-        + mv.getMechReadoutFluff()) {
-            private static final long serialVersionUID = 2989361635430008853L;
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(width - 10, super.getPreferredSize().height);
-            }
-        };
-        mechSummary.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JScrollPane tScroll = new JScrollPane(mechSummary,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        tScroll.getVerticalScrollBar().setUnitIncrement(16);
-        dialog.add(tScroll, BorderLayout.CENTER);
-
-        JButton button = new DialogButton(Messages.getString("Okay"));
-        button.addActionListener(e -> dialog.setVisible(false));
-        JPanel okayPanel = new JPanel(new FlowLayout());
-        okayPanel.add(button);
-        dialog.add(okayPanel, BorderLayout.PAGE_END);
-
-        Dimension sz = new Dimension(scaleForGUI(width), scaleForGUI(height));
-        dialog.setPreferredSize(sz);
-        dialog.center();
+        final UnitReadoutDialog dialog = new UnitReadoutDialog(clientgui.frame, entity);
         dialog.setVisible(true);
-        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
+//        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
     }
 
     /** 

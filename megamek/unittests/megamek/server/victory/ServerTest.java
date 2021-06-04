@@ -32,7 +32,7 @@ public class ServerTest {
 
     @Test
     public void testVictory() throws IOException {
-        Server testServer = new Server("test", 123);
+        Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
@@ -51,7 +51,7 @@ public class ServerTest {
 
     @Test
     public void testVictoryDrawReport() throws IOException {
-        Server testServer = new Server("test", 4);
+        Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
@@ -64,7 +64,7 @@ public class ServerTest {
 
     @Test
     public void testVictoryFalseReport() throws IOException {
-        Server testServer = new Server("test", 8);
+        Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
@@ -78,7 +78,7 @@ public class ServerTest {
 
     @Test
     public void testCancelVictory() throws IOException {
-        Server testServer = new Server("test", 7);
+        Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         IGame testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);

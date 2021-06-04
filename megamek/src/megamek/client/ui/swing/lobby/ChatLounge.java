@@ -1485,7 +1485,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void mechReadout(Entity entity, int index) {
         final UnitReadoutDialog dialog = new UnitReadoutDialog(clientgui.frame, entity);
         dialog.setVisible(true);
-//        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
+        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
     }
 
     /** 

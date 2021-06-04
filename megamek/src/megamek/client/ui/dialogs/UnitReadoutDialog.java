@@ -19,7 +19,6 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.util.Objects;
 import javax.swing.*;
 import megamek.client.ui.baseComponents.AbstractDialog;
@@ -28,7 +27,7 @@ import megamek.common.*;
 
 /** A dialog showing the unit readout for a given unit. */
 public class UnitReadoutDialog extends AbstractDialog {
-    
+
     private final Entity entity;
 
     /** Constructs a non-modal dialog showing the readout (TRO) of the given entity. */ 
@@ -47,21 +46,15 @@ public class UnitReadoutDialog extends AbstractDialog {
     protected Container createCenterPane() {
         MechView mv = new MechView(entity, false);
         // The label must want a fixed width to enforce linebreaks on fluff text
-        JLabel mechSummary = new JLabel("<HTML>" + mv.getMechReadoutHead()
-        + mv.getMechReadoutBasic() + mv.getMechReadoutLoadout()
-        + mv.getMechReadoutFluff()) {
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(500, super.getPreferredSize().height);
-            }
-        };
+        JLabel mechSummary = new JLabel("<HTML>" + mv.getMechReadoutHead() + mv.getMechReadoutBasic()
+                + mv.getMechReadoutLoadout() + mv.getMechReadoutFluff());
         mechSummary.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JScrollPane tScroll = new JScrollPane(mechSummary,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         tScroll.getVerticalScrollBar().setUnitIncrement(16);
-//        mechSummary.setFont(UIUtil.);
+        mechSummary.setFont(UIUtil.getScaledFont());
         return tScroll;
     }
 

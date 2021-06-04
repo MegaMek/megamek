@@ -16474,6 +16474,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>non_standard</quirk>
 		<quirk>imp_com</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>SM5 Field Commander</chassis>
+		<unitType>Tank</unitType>
+		<quirk>prototype</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Sniper Artillery</chassis>

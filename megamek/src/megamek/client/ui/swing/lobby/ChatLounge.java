@@ -1182,6 +1182,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 tablePlayers.addRowSelectionInterval(row, row);
             }
         }
+        // If no one is selected now (and the table isn't empty), select the first player
         if (tablePlayers.getSelectedRowCount() == 0 && tablePlayers.getRowCount() > 0) {
             tablePlayers.addRowSelectionInterval(0, 0);
         }

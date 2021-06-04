@@ -42,16 +42,10 @@ public class BVDisplayDialog extends AbstractDialog {
     }
     //endregion Constructors
 
-    //region Getters
-    public Entity getEntity() {
-        return entity;
-    }
-    //endregion Getters
-
     //region Initialization
     @Override
     protected Container createCenterPane() {
-        final JEditorPane editorPane = new JEditorPane("text/html", getEntity().getBVText());
+        final JEditorPane editorPane = new JEditorPane("text/html", entity.getBVText());
         editorPane.setEditable(false);
         editorPane.setCaretPosition(0);
 

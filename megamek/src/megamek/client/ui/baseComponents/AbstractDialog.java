@@ -75,6 +75,21 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         setName(name);
         setFrame(frame);
         this.resources = resources;
+        // Escape keypress
+        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSE_ACTION);
+        getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, CLOSE_ACTION);
+        getRootPane().getActionMap().put(CLOSE_ACTION, new AbstractAction() {
+            private static final long serialVersionUID = 95171770700983453L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelActionPerformed(evt);
+            }
+        });
+
+        addWindowListener(this);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     //endregion Constructors
 
@@ -96,7 +111,6 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * Anything that overrides this method MUST end by calling {@link AbstractDialog#finalizeInitialization()}
      */
     protected void initialize() {
-        setLayout(new BorderLayout());
         add(createCenterPane(), BorderLayout.CENTER);
         finalizeInitialization();
     }
@@ -113,22 +127,6 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      */
     protected void finalizeInitialization() {
         pack();
-
-        // Escape keypress
-        final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSE_ACTION);
-        getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, CLOSE_ACTION);
-        getRootPane().getActionMap().put(CLOSE_ACTION, new AbstractAction() {
-            private static final long serialVersionUID = 95171770700983453L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelActionPerformed(evt);
-            }
-        });
-
-        addWindowListener(this);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferences();
     }
 

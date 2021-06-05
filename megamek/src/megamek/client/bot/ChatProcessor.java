@@ -300,7 +300,7 @@ public class ChatProcessor {
 
         // If instructed to, flee.
         if (command.toLowerCase().startsWith(ChatCommands.FLEE.getAbbreviation())) {
-            if (arguments == null || arguments.length == 0) {
+            if ((arguments == null) || (arguments.length == 0)) {
                 msg = "Please specify retreat edge.";
                 princess.sendChat(msg);
                 return;

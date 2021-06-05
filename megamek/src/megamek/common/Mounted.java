@@ -1076,9 +1076,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         List<Integer> locations = new ArrayList<>();
         if (getType().isSpreadable()) {
             for (int loc = 0; loc < getEntity().locations(); loc++) {
-                if (getEntity().isFighter() && (loc == Aero.LOC_WINGS)) {
-                    continue;
-                }
                 for (int slot = 0; slot < getEntity().getNumberOfCriticals(loc); slot++) {
                     final CriticalSlot crit = getEntity().getCritical(loc, slot);
                     if ((crit != null) && ((crit.getMount() == this) || (crit.getMount2() == this))) {

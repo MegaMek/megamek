@@ -777,9 +777,7 @@ public class MechView {
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT);
         for (Mounted mounted : entity.getWeaponList()) {
-            String[] row = { mounted.getDesc(),
-                    mounted.allLocations().stream().map(l -> entity.getLocationAbbr(l))
-                            .collect(Collectors.joining("/")), "", "" };
+            String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (entity.isClan()
@@ -993,9 +991,7 @@ public class MechView {
             }
             nEquip++;
             
-            String[] row = { mounted.getDesc(),
-                    mounted.allLocations().stream()
-                            .map(l -> entity.getLocationAbbr(l)).collect(Collectors.joining("/")), "" };
+            String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 row[0] += Messages.getString("MechView.IS"); //$NON-NLS-1$

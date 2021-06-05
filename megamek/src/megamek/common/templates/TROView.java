@@ -604,7 +604,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                MegaMek.getLogger().warning("Could not determine bay type for " + bay.toString());
+                MegaMek.getLogger().warning("Could not determine bay type for " + bay);
             }
         }
         setModelData("bays", bays);

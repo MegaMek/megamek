@@ -30,6 +30,7 @@ public class EntityReadoutDialog extends AbstractDialog {
 
     private final JFrame parent;
     private final Entity entity;
+    private EntityViewPane entityView;
 
     /** Constructs a non-modal dialog showing the readout (TRO) of the given entity. */ 
     public EntityReadoutDialog(final JFrame frame, final Entity entity) {
@@ -47,7 +48,8 @@ public class EntityReadoutDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        return new EntityViewPane(parent, entity);
+        entityView = new EntityViewPane(parent, entity);
+        return entityView;
     }
-
+    
 }

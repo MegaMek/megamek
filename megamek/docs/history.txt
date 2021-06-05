@@ -18,6 +18,7 @@ VERSION HISTORY:
 + PR #2903: Camouflage: Layered Overlay
 + Issue #2883: Can once again issue flee command to allied bots, but need to specify an edge (see docs); 
 	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
++ PR #2912: Show all locations for spreadable equipment in summary view
 
 
 0.49.1 (2021-05-23 1630 UTC)

@@ -164,7 +164,7 @@ public class BoardClusterTracker {
      */
     public Set<Coords> getDestinationCoords(Entity entity, CardinalEdge edge, boolean terrainReduction) {
         CardinalEdge actualEdge = edge;
-        if(edge == CardinalEdge.NEAREST) {
+        if (edge == CardinalEdge.NEAREST) {
             actualEdge = BoardUtilities.getClosestEdge(entity);
         } else if (edge == CardinalEdge.NONE) {
             return Collections.emptySet();

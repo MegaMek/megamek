@@ -1844,7 +1844,7 @@ public class Princess extends BotClient {
     CardinalEdge getHomeEdge(Entity entity) {
         // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge        
         if(entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
-            if(getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
+            if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
                 return BoardUtilities.getClosestEdge(entity);                
             } else {
                 return getBehaviorSettings().getRetreatEdge();

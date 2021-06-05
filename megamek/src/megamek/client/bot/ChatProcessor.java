@@ -311,7 +311,7 @@ public class ChatProcessor {
             try {
                 int edgeIndex = Integer.parseInt(arguments[0]);
                 edge = CardinalEdge.getCardinalEdge(edgeIndex);
-            } catch (Exception e) { }
+            } catch (Exception ignored) { }
             
             if (edge == null) {
                 msg = "Please specify valid retreat edge, a number between 0 and 4 inclusive.";

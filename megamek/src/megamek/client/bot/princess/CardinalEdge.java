@@ -68,13 +68,13 @@ public enum CardinalEdge {
         // attempt enum parse
         try {
             return valueOf(source);
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         
         // attempt "legacy" parse
         try {
             int edgeIndex = Integer.parseInt(source);
             return getCardinalEdge(edgeIndex);
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         
         return CardinalEdge.NONE;
     }

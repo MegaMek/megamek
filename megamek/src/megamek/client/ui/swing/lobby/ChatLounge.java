@@ -74,7 +74,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.dialogs.UnitReadoutDialog;
+import megamek.client.ui.dialogs.EntityReadoutDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.DialogButton;
@@ -1483,7 +1483,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * so that multiple dialogs dont appear exactly on top of each other. 
      */
     private void mechReadout(Entity entity, int index) {
-        final UnitReadoutDialog dialog = new UnitReadoutDialog(clientgui.frame, entity);
+        final EntityReadoutDialog dialog = new EntityReadoutDialog(clientgui.frame, entity);
         dialog.setVisible(true);
         dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
     }

@@ -22,40 +22,32 @@ import java.awt.Container;
 import java.util.Objects;
 import javax.swing.*;
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.panes.EntityViewPane;
 import megamek.common.*;
 
 /** A dialog showing the unit readout for a given unit. */
-public class UnitReadoutDialog extends AbstractDialog {
+public class EntityReadoutDialog extends AbstractDialog {
 
+    private final JFrame parent;
     private final Entity entity;
 
     /** Constructs a non-modal dialog showing the readout (TRO) of the given entity. */ 
-    public UnitReadoutDialog(final JFrame frame, final Entity entity) {
+    public EntityReadoutDialog(final JFrame frame, final Entity entity) {
         this(frame, false, entity);
     }
 
     /** Constructs a dialog showing the readout (TRO) of the given entity with the given modality. */
-    public UnitReadoutDialog(final JFrame frame, final boolean modal, final Entity entity) {
-        super(frame, modal, "BVDisplayDialog", "BVDisplayDialog.title");
+    public EntityReadoutDialog(final JFrame frame, final boolean modal, final Entity entity) {
+        super(frame, modal, "EntityReadoutDialog", "EntityReadoutDialog.title");
+        setTitle(getTitle() + entity.getShortNameRaw());
         this.entity = Objects.requireNonNull(entity);
+        parent = frame;
         initialize();
     }
 
     @Override
     protected Container createCenterPane() {
-        MechView mv = new MechView(entity, false);
-        // The label must want a fixed width to enforce linebreaks on fluff text
-        JLabel mechSummary = new JLabel("<HTML>" + mv.getMechReadoutHead() + mv.getMechReadoutBasic()
-                + mv.getMechReadoutLoadout() + mv.getMechReadoutFluff());
-        mechSummary.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JScrollPane tScroll = new JScrollPane(mechSummary,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        tScroll.getVerticalScrollBar().setUnitIncrement(16);
-        mechSummary.setFont(UIUtil.getScaledFont());
-        return tScroll;
+        return new EntityViewPane(parent, entity);
     }
 
 }

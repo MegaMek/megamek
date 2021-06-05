@@ -1088,6 +1088,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 s.prepare();
             }
         }
+        if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
+            getTilesetManager().reloadUnitIcons();
+        }
         if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
                 || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)

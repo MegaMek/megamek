@@ -44,6 +44,8 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
+    
+    public static final int HOVER_WIGE_DETONATION_TARGET = 12;
 
     public static final int MAX_DAMAGE = 30;
 

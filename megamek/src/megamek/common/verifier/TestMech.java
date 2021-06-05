@@ -39,6 +39,12 @@ import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
+import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.ISHeavyPPC;
+import megamek.common.weapons.ppc.ISLightPPC;
+import megamek.common.weapons.ppc.ISPPC;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 public class TestMech extends TestEntity {
@@ -1493,13 +1499,344 @@ public class TestMech extends TestEntity {
                 illegal = true;
             }
         }
+
+        illegal |= hasMissingWeaponLinkages(buff);
         
         return illegal;
     }
 
     /**
+     * Determines if the entity has missing weapon linkages.
+     * @param buff The buffer containing validation errors.
+     * @return A value indicating whether or not there are missing weapon linkages on the entity.
+     */
+    public boolean hasMissingWeaponLinkages(StringBuffer buff) {
+        boolean illegal = false;
+
+        Map<Mounted, Mounted> linked = new HashMap<>();
+        Map<Mounted, Mounted> linkedBy = new HashMap<>();
+
+        // Walk through the list of equipment.
+        for (Mounted m : mech.getMisc()) {
+
+            // link laser insulators
+            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR))) {
+                // get the mount directly before the insulator, this is the
+                // weapon
+                Mounted weapon = mech.getEquipment().get(
+                        mech.getEquipment().indexOf(m) - 1);
+                // already linked?
+                if (linkedBy.get(weapon) != null) {
+                    continue;
+                }
+                if (!(weapon.getType() instanceof WeaponType)
+                        && !(weapon.getType().hasFlag(WeaponType.F_LASER))) {
+                    continue;
+                }
+                // check location
+                if (weapon.getLocation() == m.getLocation()) {
+                    linked.put(m, weapon);
+                    linkedBy.put(weapon, m);
+                    continue;
+                }
+                if (linked.get(m) == null) {
+                    buff.append(String.format("Unable to match laser insulator to laser in %s.%n", mech.getLocationName(m.getLocation())));
+                    // huh. this shouldn't happen
+                    illegal = true;
+                }
+            }
+
+            // link DWPs to their weapons
+            if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    if (!mWeapon.isDWPMounted()) {
+                        continue;
+                    }
+                    // already linked?
+                    if (linkedBy.get(mWeapon) != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        linked.put(m, mWeapon);
+                        linkedBy.put(mWeapon, m);
+                        break;
+                    }
+                }
+                if (linked.get(m) == null) {
+                    // huh. this shouldn't happen
+                    buff.append(String.format("Unable to match DWP to weapon in %s.%n", mech.getLocationName(m.getLocation())));
+                    illegal = true;
+                }
+            }
+
+            // Link AP weapons to their AP Mount, when applicable
+            if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    // Can only link APM mounted weapons that aren't linked
+                    if (!mWeapon.isAPMMounted()
+                            || (linkedBy.get(mWeapon) != null)) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        linked.put(m, mWeapon);
+                        linkedBy.put(mWeapon, m);
+                        break;
+                    }
+                }
+            }
+
+            // Link Artemis IV fire-control systems to their missle racks.
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) 
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
+                    && (linked.get(m) == null)) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // only srm, lrm and mml are valid for artemis
+                    if ((wtype.getAmmoType() != AmmoType.T_LRM)
+                            && (wtype.getAmmoType() != AmmoType.T_LRM_IMP)
+                            && (wtype.getAmmoType() != AmmoType.T_MML)
+                            && (wtype.getAmmoType() != AmmoType.T_SRM)
+                            && (wtype.getAmmoType() != AmmoType.T_SRM_IMP)
+                            && (wtype.getAmmoType() != AmmoType.T_NLRM)
+                            && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO)
+                            && (wtype.getAmmoType() != AmmoType.T_SRM_TORPEDO)
+                            && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO_COMBO)) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (linkedBy.get(mWeapon) != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        linked.put(m, mWeapon);
+                        linkedBy.put(mWeapon, m);
+                        break;
+                    }
+                }
+
+                if (linked.get(m) == null) {
+                    // huh. this shouldn't happen
+                    buff.append(String.format("Unable to match Artemis in %s to launcher.%n", mech.getLocationName(m.getLocation())));
+                    illegal = true;
+                }
+            } // End link-Artemis
+            // Link RISC Laser Pulse Module to their lasers
+            else if ((m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                    && (linked.get(m) == null))) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // only IS lasers that are not pulse are allows
+                    if (wtype.hasFlag(WeaponType.F_PULSE) || TechConstants.isClan(wtype.getTechLevel(mech.getYear()))) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (linkedBy.get(mWeapon) != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        linked.put(m, mWeapon);
+                        linkedBy.put(mWeapon, m);
+                        break;
+                    }
+                }
+
+                if (linked.get(m) == null) {
+                    // huh. this shouldn't happen
+                    buff.append(String.format("Unable to match RISC Laser Pulse Model to laser in %s.%n", mech.getLocationName(m.getLocation())));
+                    illegal = true;
+                }
+            } // End link-RISC laser pulse module
+            else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
+                    && (linked.get(m) == null)
+                    && (mech instanceof Mech)) {
+                // Find an ECM suite to link to the stealth system.
+                // Stop looking after we find the first ECM suite.
+                for (Mounted mEquip : mech.getMisc()) {
+                    MiscType mtype = (MiscType) mEquip.getType();
+                    if (mtype.hasFlag(MiscType.F_ECM)) {
+                        linked.put(m, mEquip);
+                        linkedBy.put(mEquip, m);
+                        break;
+                    }
+                }
+
+                if (linked.get(m) == null) {
+                    // This mech has stealth armor but no ECM. Probably
+                    // an improperly created custom.
+                    buff.append("Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.\n");
+                    illegal = true;
+                }
+            } // End link-Stealth
+              // Link PPC Capacitor to PPC it its location.
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && (linked.get(m) == null)) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // Only PPCS are Valid
+                    if (!wtype.hasFlag(WeaponType.F_PPC)) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (linkedBy.get(mWeapon) != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+
+                        // Only Legal IS PPC's are allowed.
+                        if ((mWeapon.getType() instanceof ISPPC)
+                                || (mWeapon.getType() instanceof ISLightPPC)
+                                || (mWeapon.getType() instanceof ISHeavyPPC)
+                                || (mWeapon.getType() instanceof ISERPPC)
+                                || (mWeapon.getType() instanceof ISSnubNosePPC)
+                                || (mWeapon.getType() instanceof CLERPPC && mech.getYear() >= 3101)) {
+                            linked.put(m, mWeapon);
+                            linkedBy.put(mWeapon, m);
+                            break;
+                        }
+                    }
+                }
+            } // End link-PPC Capacitor
+
+            // Link MRM Apollo fire-control systems to their missle racks.
+            else if (m.getType().hasFlag(MiscType.F_APOLLO)
+                    && (linked.get(m) == null)) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : mech.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // only srm and lrm are valid for artemis
+                    if (wtype.getAmmoType() != AmmoType.T_MRM) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (linkedBy.get(mWeapon) != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        linked.put(m, mWeapon);
+                        linkedBy.put(mWeapon, m);
+                        break;
+                    }
+
+                }
+
+                if (linked.get(m) == null) {
+                    // huh. this shouldn't happen
+                    buff.append(String.format("Unable to match Apollo to launcher in %s.%n", mech.getLocationName(m.getLocation())));
+                    illegal = true;
+                }
+            } // End link-Apollo
+        } // Check the next piece of equipment.
+
+        // Walk through the list of equipment.
+        Map<Mounted, Mounted> crossLinkedBy = new HashMap<>();
+        for (Mounted m : mech.getMisc()) {
+
+            // Link PPC Capacitor to PPC it its location.
+            if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && (linked.get(m) == null)) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : mech.getWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    //Handle weapon bays
+                    if (wtype.getBayType().equals(EquipmentType.get(EquipmentTypeLookup.PPC_BAY))){
+                        for (int wId : mWeapon.getBayWeapons()) {
+                            Mounted bayMountedWeapon = mech.getEquipment(wId);
+                            WeaponType bayWeapType = (WeaponType) bayMountedWeapon.getType();
+
+                            // Check for PPC that isn't crosslinked
+                            if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
+                                    (crossLinkedBy.get(bayMountedWeapon) != null)){
+                                continue;
+                            }
+
+                            // check location
+                            if (bayMountedWeapon.getLocation() == m.getLocation()) {
+
+                                // Only Legal IS PPC's are allowed.
+                                if ((bayWeapType instanceof ISPPC)
+                                        || (bayWeapType instanceof ISLightPPC)
+                                        || (bayWeapType instanceof ISHeavyPPC)
+                                        || (bayWeapType instanceof ISERPPC)
+                                        || (bayWeapType instanceof ISSnubNosePPC)
+                                        || (bayWeapType instanceof CLERPPC && mech.getYear() >= 3101)) {
+                                    linked.put(m, bayMountedWeapon);
+                                    crossLinkedBy.put(bayMountedWeapon, m);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // Check for PPC that isn't crosslinked
+                    if (!wtype.hasFlag(WeaponType.F_PPC) ||
+                            (crossLinkedBy.get(mWeapon) != null)) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+
+                        // Only Legal IS PPC's are allowed.
+                        if ((mWeapon.getType() instanceof ISPPC)
+                                || (mWeapon.getType() instanceof ISLightPPC)
+                                || (mWeapon.getType() instanceof ISHeavyPPC)
+                                || (mWeapon.getType() instanceof ISERPPC)
+                                || (mWeapon.getType() instanceof ISSnubNosePPC)
+                                || (mWeapon.getType() instanceof CLERPPC && mech.getYear() >= 3101)) {
+                            linked.put(m, mWeapon);
+                            crossLinkedBy.put(mWeapon, m);
+                            break;
+                        }
+                    }
+                }
+
+                if (linked.get(m) == null) {
+                    buff.append(String.format("No available PPC to match Capacitor in %s.%n", mech.getLocationName(m.getLocation())));
+                    // huh. this shouldn't happen
+                    illegal = true;
+                }
+
+            } // End crossLink-PPC Capacitor
+
+        } // Check the next piece of equipment.
+
+        return illegal;
+    }
+
+    /**
      * @param misc A type of equipment
-     * @return     Whether the equipment replaces the hand actuator when mounted in an arm
+     * @return Whether the equipment replaces the hand actuator when mounted in an
+     *         arm
      */
     public static boolean replacesHandActuator(MiscType misc) {
         return misc.hasFlag(MiscType.F_SALVAGE_ARM)

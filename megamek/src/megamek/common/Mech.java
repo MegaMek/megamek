@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import megamek.MegaMek;
 import megamek.common.loaders.MtfFile;
@@ -2096,6 +2097,18 @@ public abstract class Mech extends Entity {
         }
         // other weapons into the secondary
         return true;
+    }
+
+    @Override
+    public String joinLocationAbbr(List<Integer> locations, int limit) {
+        // If all locations are torso, strip the T from all but the last location.
+        // e.g. R/L/CT
+        if ((locations.size() > limit) && locations.stream().allMatch(this::locationIsTorso)) {
+            return locations.stream().map(l -> getLocationAbbr(l).replace("T", ""))
+                    .collect(Collectors.joining("/")) + "T";
+        } else {
+            return super.joinLocationAbbr(locations, limit);
+        }
     }
 
     /*

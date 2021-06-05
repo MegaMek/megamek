@@ -3168,6 +3168,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Joins the abbreviations for the locations into a String with / as the separator.
+     * If the number of locations exceeds the provided limit, the result is
+     * abbreviated. By default the abbreviation is simply an asterisk, but Mechs have
+     * specific abbreviations locations that include all torso or leg positions.
+     *
+     * @param locations A list of location indices
+     * @param limit     The maximum number of locations to show in full
+     * @return          A string formatted for display that shows the locations
+     */
+    public String joinLocationAbbr(List<Integer> locations, int limit) {
+        if (locations.size() > limit) {
+            return "*";
+        } else {
+            return locations.stream().map(l -> getLocationAbbr(l)).collect(Collectors.joining("/"));
+        }
+    }
+
+    /**
      * Rolls the to-hit number
      */
     public abstract HitData rollHitLocation(int table, int side,

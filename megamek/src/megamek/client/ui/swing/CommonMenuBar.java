@@ -449,8 +449,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
             // Only here the actual user preference is changed. The listeners should
-            // just set thew visibility of the map based on guip.getMinimapEnabled()
-            guip.setMinimapEnabled(!guip.getMinimapEnabled());
+            // just adjust the visibility of the map dialog based on guip.getMinimapEnabled()
+            boolean newSetting = !guip.getMinimapEnabled();
+            guip.setMinimapEnabled(newSetting);
+            viewMiniMap.setSelected(newSetting);
         }
         
         // Pass the action on to each of our listeners.
@@ -811,8 +813,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean)e.getNewValue());
-        } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
-            viewMiniMap.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         } 

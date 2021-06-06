@@ -1082,9 +1082,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_OFFBOARD:
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
-//                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
-//                }
+                setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
                 break;
             case PHASE_INITIATIVE_REPORT:
             case PHASE_TARGETING_REPORT:

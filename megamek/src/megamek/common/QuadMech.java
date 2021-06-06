@@ -873,17 +873,6 @@ public class QuadMech extends Mech {
         }
         return false;
     }
-    
-    /**
-     * Is the given location a leg?
-     */
-    @Override
-    public boolean isLeg(int location) {
-        return (location == Mech.LOC_LLEG) ||
-                (location == Mech.LOC_CLEG) ||
-                (location == Mech.LOC_RARM) ||
-                (location == Mech.LOC_LARM);
-    }
 
     /**
      * Checks for functional AES in all legs

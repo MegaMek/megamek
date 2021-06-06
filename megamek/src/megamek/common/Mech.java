@@ -6262,15 +6262,6 @@ public abstract class Mech extends Entity {
         }
         return false;
     }
-    
-    /**
-     * Is the given location a leg?
-     */
-    @Override
-    public boolean isLeg(int location) {
-        return (location == Mech.LOC_LLEG) ||
-                (location == Mech.LOC_RLEG);
-    }
 
     @Override
     public boolean doomedInExtremeTemp() {

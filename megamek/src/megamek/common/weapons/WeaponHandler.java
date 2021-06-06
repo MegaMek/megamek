@@ -1483,13 +1483,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
         boolean isIndirect = wtype.hasModes()
                 && weapon.curMode().equals("Indirect");
         IHex targetHex = game.getBoard().getHex(target.getPosition());
+        // a specific situation where a mech is standing in depth 1 water
+        boolean mechPokingOutOfShallowWater = targetHex.containsTerrain(Terrains.WATER) &&
+                entityTarget.relHeight() <= targetHex.surface();
+        
+        // a very specific situation where a mech is standing in a height 1 building
+        // or its upper torso is otherwise somehow poking out of said building 
+        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
+        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
+        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
+        
+        boolean partialCoverForIndirectFire = 
+                isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
 
         //For indirect fire, remove leg hits only if target is in water partial cover
         //Per TW errata for indirect fire
-        if ((!isIndirect 
-                || (isIndirect 
-                        && targetHex.containsTerrain(Terrains.WATER) 
-                        && entityTarget.relHeight() <= targetHex.surface()))
+        if ((!isIndirect || partialCoverForIndirectFire) 
                 && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(), Compute.targetSideTable(ae, entityTarget,
                         weapon.getCalledShot().getCall()))) {
@@ -1517,7 +1526,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             Report.addNewline(vPhaseReport);
         }
 
-        // for non-salvo shots, report that the aimed shot was successfull
+        // for non-salvo shots, report that the aimed shot was successful
         // before applying damage
         if (hit.hitAimedLocation() && !bSalvo) {
             Report r = new Report(3410);
@@ -1537,20 +1546,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
         
-        // a very specific situation where a mech is standing in a height 1 building
-        // or its upper torso is otherwise somehow poking out of said building 
-        boolean targetPokingOutOfShortBuilding =
-                targetHex.ceiling() ==
-                entityTarget.getElevation() + entityTarget.getHeight();
-        boolean legHit = entityTarget.isLeg(hit.getLocation());
-        boolean shortBuildingBlocksLegHit = targetPokingOutOfShortBuilding && legHit;
-    
+        // if the target was in partial cover, then we already handled
+        // damage absorption by the partial cover, if it would have happened
+        boolean targetStickingOutOfBuilding = 
+                entityTarget.relHeight() >= targetHex.ceiling();
+        
         // A building may be damaged, even if the squad is not.
-        if (bldgAbsorbs > 0 && (!targetPokingOutOfShortBuilding || legHit)) {
-            if (shortBuildingBlocksLegHit) {
-                //do some shit
-            }
-            
+        if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {            
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
@@ -1568,7 +1570,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.indent(2);
             vPhaseReport.add(r);
         // Cases where absorbed damage doesn't reduce incoming damage
-        } else if (bldgAbsorbs < 0) {
+        } else if ((bldgAbsorbs < 0) && !targetStickingOutOfBuilding) {
             int toBldg = -bldgAbsorbs;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
@@ -1584,7 +1586,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         // some buildings scale remaining damage that is not absorbed
         // TODO: this isn't quite right for castles brian
-        if (null != bldg) {
+        if ((null != bldg) && !targetStickingOutOfBuilding) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 

@@ -757,6 +757,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
+            LosEffects shortBuildingCover = new LosEffects();
+            shortBuildingCover.setTargetCover(LosEffects.COVER_HORIZONTAL);
+            shortBuildingCover.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+            shortBuildingCover.setCoverBuildingPrimary(game.getBoard().getBuildingAt(target.getPosition()));
+            toHit.append(shortBuildingCover.losModifiers(game));
+        }
+        
         // Collect the modifiers for the target's condition/actions 
         toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
                     wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
@@ -4444,6 +4452,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             losMods = los.losModifiers(game, eistatus, underWater);
         }
         
+        // target in short building
+        if ((te != null) && targHex.containsTerrain(Terrains.BLDG_ELEV) 
+                // target in partial water
+                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == partialWaterLevel)
+                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == te.relHeight())) { 
+            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+            losMods = los.losModifiers(game, eistatus, underWater);
+        }
+        
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
@@ -4549,6 +4566,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         return toHit;
+    }
+    
+    /**
+     * Quick routine to determine if the target should be treated as being in a short building.
+     */
+    public static boolean targetInShortCoverBuilding(Targetable target) {
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return false;
+        }
+        
+        IHex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        if (targetHex == null) {
+            return false;
+        }
+        
+        return targetHex.containsTerrain(Terrains.BUILDING) &&
+                ((Entity) target).relHeight() == targetHex.ceiling();
     }
     
     /**

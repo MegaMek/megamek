@@ -1550,36 +1550,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // damage absorption by the partial cover, if it would have happened
         boolean targetStickingOutOfBuilding = 
                 entityTarget.relHeight() >= targetHex.ceiling();
-        
-        // A building may be damaged, even if the squad is not.
-        if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {            
-            int toBldg = Math.min(bldgAbsorbs, nDamage);
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        // Units on same level, report building absorbs no damage
-        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
-            Report.addNewline(vPhaseReport);
-            Report r = new Report(9976);
-            r.subject = ae.getId();
-            r.indent(2);
-            vPhaseReport.add(r);
-        // Cases where absorbed damage doesn't reduce incoming damage
-        } else if ((bldgAbsorbs < 0) && !targetStickingOutOfBuilding) {
-            int toBldg = -bldgAbsorbs;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
+                
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, targetHex, bldgAbsorbs, 
+                vPhaseReport, bldg, targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
@@ -1628,6 +1601,46 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((ae instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
+    }
+    
+    /**
+     * Worker function to (maybe) have a building absorb damage meant for the entity
+     */
+    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, IHex targetHex, 
+            int bldgAbsorbs, Vector<Report> vPhaseReport, Building bldg, boolean targetStickingOutOfBuilding) {
+
+        // if the building will absorb some damage and the target is actually
+        // entirely inside the building:
+        if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {            
+            int toBldg = Math.min(bldgAbsorbs, nDamage);
+            nDamage -= toBldg;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        // Units on same level, report building absorbs no damage
+        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(9976);
+            r.subject = ae.getId();
+            r.indent(2);
+            vPhaseReport.add(r);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if ((bldgAbsorbs < 0) && !targetStickingOutOfBuilding) {
+            int toBldg = -bldgAbsorbs;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        }
+        
+        return nDamage;
     }
 
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,

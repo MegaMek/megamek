@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.prototypes;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.other.NarcWeapon;
 
 /**
@@ -55,6 +56,7 @@ public class ISNarcPrototype extends NarcWeapon {
             .setISAdvancement(2580, DATE_NONE, DATE_NONE, 2587, DATE_NONE)
             .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+            .setProductionFactions(F_TH)            
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

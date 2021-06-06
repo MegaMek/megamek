@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.prototypes;
 
+import megamek.common.SimpleTechLevel;
+
 /**
  * @author Andrew Hunter
  */
@@ -57,6 +59,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
         .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
         .setClanApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_CHH);
+        .setPrototypeFactions(F_CHH)
+        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

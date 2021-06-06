@@ -329,7 +329,7 @@ public class MekTableModel extends AbstractTableModel {
                 if (column == COLS.UNIT.ordinal()) {
                     setToolTipText(unitTooltips.get(row));
                     final Camouflage camouflage = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                    Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camouflage, this);
+                    final Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camouflage, this);
                     if (!compact) {
                         setIcon(icon, size);
                         setIconTextGap(UIUtil.scaleForGUI(10));

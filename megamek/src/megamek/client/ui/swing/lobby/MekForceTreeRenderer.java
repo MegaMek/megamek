@@ -35,6 +35,7 @@ import megamek.common.*;
 import megamek.common.force.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /** A specialized renderer for the Mek Force tree. */
@@ -124,8 +125,9 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
         return null;
     }
 
-    private void setIcon(Image image, int size) {
-        setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+    private void setIcon(Image image, int height) {
+        int width = height * image.getWidth(null) / image.getHeight(null);
+        setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
     }
 
     MekForceTreeRenderer(ChatLounge cl) {

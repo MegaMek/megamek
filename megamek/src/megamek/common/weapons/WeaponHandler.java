@@ -1479,6 +1479,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         missed = false;
 
         initHit(entityTarget);
+        hit.setLocation(Mech.LOC_LLEG);
         
         boolean isIndirect = wtype.hasModes()
                 && weapon.curMode().equals("Indirect");

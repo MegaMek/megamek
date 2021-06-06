@@ -29,6 +29,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.BombType;
+import megamek.common.Building;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
@@ -757,6 +758,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        // "hack" to cover the situation where the target is standing in a short
+        // building which provides it partial cover. Unlike other partial cover situations,
+        // this occurs regardless of other LOS consideration.
         if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
             LosEffects shortBuildingCover = new LosEffects();
             shortBuildingCover.setTargetCover(LosEffects.COVER_HORIZONTAL);
@@ -4453,11 +4457,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // target in short building
-        if ((te != null) && targHex.containsTerrain(Terrains.BLDG_ELEV) 
-                // target in partial water
+        if ((te != null) && targHex.containsTerrain(Terrains.BLDG_ELEV)
                 && (targHex.terrainLevel(Terrains.BLDG_ELEV) == partialWaterLevel)
-                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == te.relHeight())) { 
-            los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == te.relHeight())) {
+            
+            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
+            
+            // other existing partial cover takes
+            // precedence over being inside a short building
+            if (los.getCoverBuildingPrimary() == null) {
+                los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+                los.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+                los.setCoverBuildingPrimary(currentBuilding);
+                los.setCoverLocPrimary(target.getPosition());
+            } else if (!currentBuilding.equals(los.getCoverBuildingPrimary())) {
+                los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
+                los.setDamagableCoverTypeSecondary(LosEffects.DAMAGABLE_COVER_BUILDING);
+                los.setCoverBuildingSecondary(currentBuilding);
+                los.setCoverLocSecondary(target.getPosition());
+            }
+            
             losMods = los.losModifiers(game, eistatus, underWater);
         }
         

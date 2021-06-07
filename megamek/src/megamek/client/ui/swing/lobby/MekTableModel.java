@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.*;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
@@ -357,8 +358,13 @@ public class MekTableModel extends AbstractTableModel {
         }
         
         private void setIcon(Image image, int height) {
-            int width = height * image.getWidth(null) / image.getHeight(null);
-            setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
+            if ((image.getHeight(null) > 0) && (image.getWidth(null) > 0)) {
+                int width = height * image.getWidth(null) / image.getHeight(null);
+                setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
+            } else {
+                MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+                setIcon(null);
+            }
         }
     }
     

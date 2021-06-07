@@ -29,6 +29,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
+
+import megamek.MegaMek;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -126,8 +128,13 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
     }
 
     private void setIcon(Image image, int height) {
-        int width = height * image.getWidth(null) / image.getHeight(null);
-        setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
+        if ((image.getHeight(null) > 0) && (image.getWidth(null) > 0)) {
+            int width = height * image.getWidth(null) / image.getHeight(null);
+            setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
+        } else {
+            MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            setIcon(null);
+        }
     }
 
     MekForceTreeRenderer(ChatLounge cl) {

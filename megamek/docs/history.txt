@@ -20,6 +20,8 @@ VERSION HISTORY:
 	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
 + PR #2912: Show all locations for spreadable equipment in summary view
 + PR #2916: CommonMenuBar maintenance (checkbox items)
++ Issue #2897: Princess will now attack with swarming BA
++ Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

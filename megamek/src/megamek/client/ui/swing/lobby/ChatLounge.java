@@ -73,6 +73,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.dialogs.BotConfigDialog2;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -1707,7 +1708,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         c.getLocalPlayer().getName());
                 
             } else if (ev.getSource().equals(butAddBot)) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
+                BotConfigDialog2 bcd = new BotConfigDialog2(clientgui.frame);
                 bcd.setVisible(true);
                 if (bcd.dialogAborted) {
                     return; // user didn't click 'ok', add no bot

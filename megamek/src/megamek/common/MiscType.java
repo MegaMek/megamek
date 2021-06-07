@@ -285,6 +285,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(222);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(223);
     public static final BigInteger F_RAM_PLATE = BigInteger.valueOf(1).shiftLeft(224);
+    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1502,6 +1503,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISMASC());
         EquipmentType.addType(MiscType.createCLMASC());
         EquipmentType.addType(MiscType.createTSM());
+        EquipmentType.addType(MiscType.createPrototypeTSM());
         EquipmentType.addType(MiscType.createC3S());
         EquipmentType.addType(MiscType.createC3SBS());
         EquipmentType.addType(MiscType.createC3I());
@@ -9048,6 +9050,27 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.ITSM);
         misc.addLookupName("IS Industrial TSM");
         misc.addLookupName("Industrial TSM");
+        misc.tonnage = 0;
+        misc.criticals = 6;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_TSM).or(F_PROTOTYPE).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "103,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+                .setISAdvancement(3028, DATE_NONE, DATE_NONE, 3050).setPrototypeFactions(F_CC)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
+    public static MiscType createPrototypeTSM() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Prototype Triple Strength Myomer";
+        misc.setInternalName("Prototype TSM");
+        misc.shortName = misc.internalName;
         misc.tonnage = 0;
         misc.criticals = 12;
         misc.hittable = false;

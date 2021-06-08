@@ -762,11 +762,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // building which provides it partial cover. Unlike other partial cover situations,
         // this occurs regardless of other LOS consideration.
         if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
-            LosEffects shortBuildingCover = new LosEffects();
-            shortBuildingCover.setTargetCover(LosEffects.COVER_HORIZONTAL);
-            shortBuildingCover.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
-            shortBuildingCover.setCoverBuildingPrimary(game.getBoard().getBuildingAt(target.getPosition()));
-            toHit.append(shortBuildingCover.losModifiers(game));
+            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
+
+            LosEffects shortBuildingLos = new LosEffects();
+            shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);
+            shortBuildingLos.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+            shortBuildingLos.setCoverBuildingPrimary(currentBuilding);
+            shortBuildingLos.setCoverLocPrimary(target.getPosition());
+            
+            los.add(shortBuildingLos);
+            toHit.append(shortBuildingLos.losModifiers(game));
         }
         
         // Collect the modifiers for the target's condition/actions 
@@ -4453,30 +4458,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) { 
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus, underWater);
-        }
-        
-        // target in short building
-        if ((te != null) && targHex.containsTerrain(Terrains.BLDG_ELEV)
-                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == partialWaterLevel)
-                && (targHex.terrainLevel(Terrains.BLDG_ELEV) == te.relHeight())) {
-            
-            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
-            
-            // other existing partial cover takes
-            // precedence over being inside a short building
-            if (los.getCoverBuildingPrimary() == null) {
-                los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-                los.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
-                los.setCoverBuildingPrimary(currentBuilding);
-                los.setCoverLocPrimary(target.getPosition());
-            } else if (!currentBuilding.equals(los.getCoverBuildingPrimary())) {
-                los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-                los.setDamagableCoverTypeSecondary(LosEffects.DAMAGABLE_COVER_BUILDING);
-                los.setCoverBuildingSecondary(currentBuilding);
-                los.setCoverLocSecondary(target.getPosition());
-            }
-            
             losMods = los.losModifiers(game, eistatus, underWater);
         }
         

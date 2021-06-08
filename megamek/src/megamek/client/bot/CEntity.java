@@ -301,7 +301,7 @@ public class CEntity {
 
                 // If this is a Mech equipped with TSM, push for the sweet
                 // spot at 9 heat
-                if (((Mech) entity).hasTSM()) {
+                if (((Mech) entity).hasTSM(false)) {
                     tsm_offset = true;
                 }
 

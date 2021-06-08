@@ -553,7 +553,7 @@ public class MechFileParser {
                             MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if (ent.hasTargComp()
-                        || ((Mech) ent).hasTSM()
+                        || ((Mech) ent).hasTSM(true)
                         || (((Mech) ent).hasMASC() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(

@@ -204,7 +204,7 @@ public class TripodMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if ((heat >= 9) && hasTSM() && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
+            if ((heat >= 9) && hasTSM(false) && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
                 wmp += 2;
             }
         }

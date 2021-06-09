@@ -22,7 +22,9 @@ import java.util.List;
 import megamek.common.Coords;
 
 public class SmokeCloud implements Serializable{
-    
+
+    private static final long serialVersionUID = -8937331680271675046L;
+
     public static final int SMOKE_NONE = 0;
     public static final int SMOKE_LIGHT = 1;
     public static final int SMOKE_HEAVY = 2;
@@ -30,10 +32,7 @@ public class SmokeCloud implements Serializable{
     public static final int SMOKE_LI_HEAVY = 4;
     public static final int SMOKE_CHAFF_LIGHT = 5;
     public static final int SMOKE_GREEN = 6; // Anti-TSM smoke
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -8937331680271675046L;
+
     private int smokeDuration = 0;
     private final List<Coords> smokeHexList = new ArrayList<>();
     private int smokeLevel = 1;

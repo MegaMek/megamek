@@ -678,6 +678,18 @@ public final class UnitToolTip {
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             result.append(addToTT("Sensors", BR, entity.getSensorDesc()));
         }
+        
+        if (entity.hasINarcPodsAttached()) {
+            result.append(guiScaledFontHTML(uiLightRed()));
+            result.append(addToTT("INarced", BR));
+            result.append("</FONT>");
+        }
+        
+        if (entity.hasNarcPodsAttached()) {
+            result.append(guiScaledFontHTML(uiLightRed()));
+            result.append(addToTT("Narced", BR));
+            result.append("</FONT>");
+        }
 
         // Towing
         if (entity.getAllTowedUnits().size() > 0) {

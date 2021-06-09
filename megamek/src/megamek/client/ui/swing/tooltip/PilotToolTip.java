@@ -91,7 +91,7 @@ public final class PilotToolTip {
             }
             
             if (!crew.getStatusDesc(i).isEmpty()) {
-                result.append("<BR>" + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
                 result.append(" (" + crew.getStatusDesc(i) + ")</FONT>");
             }
             result.append("<BR>");

@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -203,7 +204,7 @@ public class TripodMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if ((heat >= 9) && hasTSM() && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
+            if ((heat >= 9) && hasTSM(false) && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
                 wmp += 2;
             }
         }
@@ -977,6 +978,16 @@ public class TripodMech extends Mech {
     @Override
     public int locations() {
         return 9;
+    }
+
+    @Override
+    public String joinLocationAbbr(List<Integer> locations, int limit) {
+        // If we need to abbreviate something that occupies all leg locations, simply return "Legs"
+        if ((locations.size() > limit) && (locations.size() == 3) && locations.stream().allMatch(this::locationIsLeg)) {
+            return "Legs";
+        } else {
+            return super.joinLocationAbbr(locations, limit);
+        }
     }
 
     /*

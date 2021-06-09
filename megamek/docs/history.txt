@@ -13,6 +13,17 @@ VERSION HISTORY:
 + Issue #2884: preventing Array Index Out of Bound error when adding bombs to a LAM
 + PR #2880: "De-hexed" water and pavement (partial-looking water and pavement hexes that are functionally water and pavement, but look more "realistic" like the recent physical CGL hex maps)
 + PR #2869: Camouflage: Deadborder Pack, Base Component Swapover
++ PR #2898: Princess will now do her best to avoid known minefields
++ PR #2896: Base Components: Using proper locale
++ PR #2903: Camouflage: Layered Overlay
++ Issue #2883: Can once again issue flee command to allied bots, but need to specify an edge (see docs); 
+	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
++ PR #2912: Show all locations for spreadable equipment in summary view
++ PR #2916: CommonMenuBar maintenance (checkbox items)
++ Issue #2897: Princess will now attack with swarming BA
++ Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
++ PR #2924: Per current errata, "short" buildings now provide partial cover for tall units (e.g. mechs) rather than enclosing them completely
++ PR #2923: Prototype TSM
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

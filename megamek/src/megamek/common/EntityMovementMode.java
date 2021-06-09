@@ -77,4 +77,21 @@ public enum EntityMovementMode {
     {
         return t.name();
     }
+    
+    /**
+     * Whether this movement mode is capable of detonating minefields.
+     */
+    public boolean detonatesGroundMinefields() {
+        return (this == BIPED) ||
+                (this == TRIPOD) ||
+                (this == QUAD) ||
+                (this == TRACKED) ||
+                (this == WHEELED) ||
+                (this == HOVER) || // a lot less likely, but...
+                (this == INF_LEG) ||
+                (this == INF_MOTORIZED) ||
+                (this == INF_JUMP) ||
+                (this == RAIL) ||
+                (this == MAGLEV);
+    }
 }

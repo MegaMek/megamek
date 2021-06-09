@@ -85,7 +85,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
 
     // The View menu
-    private JMenuItem viewMiniMap;
+    private JCheckBoxMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
     private JMenuItem viewAccessibilityWindow;
     private JCheckBoxMenuItem viewKeybindsOverlay;
@@ -101,7 +101,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewMovModEnvelope;
     private JMenuItem viewChangeTheme;
     private JMenuItem viewLOSSetting;
-    private JMenuItem viewUnitOverview;
+    private JCheckBoxMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
     private JMenuItem viewGameOptions;
     private JMenuItem viewClientSettings;
@@ -195,10 +195,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewKeybindsOverlay = createCbxMenuItem(menu, getString("CommonMenuBar.viewKeyboardShortcuts"), VIEW_KEYBINDS_OVERLAY);
         viewKeybindsOverlay.setState(GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
         viewResetWindowPositions = createMenuItem(menu, getString("CommonMenuBar.viewResetWindowPos"), VIEW_RESET_WINDOW_POSITIONS);
-        //TODO: show minimap should be a checkbox
-        viewMiniMap = createMenuItem(menu, getString("CommonMenuBar.viewMiniMap"), VIEW_MINI_MAP, KeyEvent.VK_M);
-        //TODO: show unit overview should be a checkbox
-        viewUnitOverview = createMenuItem(menu, getString("CommonMenuBar.viewUnitOverview"), VIEW_UNIT_OVERVIEW, KeyEvent.VK_U);
+        viewMiniMap = createCbxMenuItem(menu, getString("CommonMenuBar.viewMiniMap"), VIEW_MINI_MAP, KeyEvent.VK_M);
+        viewMiniMap.setState(GUIPreferences.getInstance().getMinimapEnabled());
+        viewUnitOverview = createCbxMenuItem(menu, getString("CommonMenuBar.viewUnitOverview"), VIEW_UNIT_OVERVIEW, KeyEvent.VK_U);
+        viewUnitOverview.setState(GUIPreferences.getInstance().getShowUnitOverview());
         viewZoomIn = createMenuItem(menu, getString("CommonMenuBar.viewZoomIn"), VIEW_ZOOM_IN);
         viewZoomOut = createMenuItem(menu, getString("CommonMenuBar.viewZoomOut"), VIEW_ZOOM_OUT);
         menu.addSeparator();
@@ -434,17 +434,25 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
      */
     public void actionPerformed(ActionEvent event) {
         
+        GUIPreferences guip = GUIPreferences.getInstance();
+        
         // Changes that are independent of the current state of MM
         if (event.getActionCommand().equals(ClientGUI.VIEW_INCGUISCALE)) {
             float guiScale = GUIPreferences.getInstance().getGUIScale();
             if (guiScale < ClientGUI.MAX_GUISCALE) {
-                GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
+                guip.setValue(GUIPreferences.GUI_SCALE, guiScale + 0.1);
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_DECGUISCALE)) {
             float guiScale = GUIPreferences.getInstance().getGUIScale();
             if (guiScale > ClientGUI.MIN_GUISCALE) {
-                GUIPreferences.getInstance().setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
+                guip.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
+        } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
+            // Only here the actual user preference is changed. The listeners should
+            // just adjust the visibility of the map dialog based on guip.getMinimapEnabled()
+            boolean newSetting = !guip.getMinimapEnabled();
+            guip.setMinimapEnabled(newSetting);
+            viewMiniMap.setSelected(newSetting);
         }
         
         // Pass the action on to each of our listeners.
@@ -803,6 +811,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
             viewKeybindsOverlay.setSelected((Boolean)e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
+            viewUnitOverview.setSelected((Boolean)e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         } 

@@ -626,7 +626,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         mechImageList.clear();
         mechImages.clear();
         hexTileset.clearAllHexes();
-    }    
+    }  
+    
+    public synchronized void reloadUnitIcons() {
+        mechImages.clear();
+    }
     
     /** Returns the number of available ultralight destroyed bottom decal images. */
     private int getULightDecalCount() {

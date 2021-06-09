@@ -588,7 +588,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             boolean hasTSM = false;
             boolean mtHeat = false;
-            if (((Mech) en).hasTSM()) {
+            if (((Mech) en).hasTSM(false)) {
                 hasTSM = true;
             }
 

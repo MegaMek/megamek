@@ -22,10 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
@@ -1064,6 +1061,38 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setSecondLocation(int location, boolean rearMounted) {
         secondLocation = location;
         this.rearMounted = rearMounted;
+    }
+
+    /**
+     * Fetches all locations that contain this equipment. This is primarily for
+     * spreadable equipment, can be placed in locations other than the primary or secondary,
+     * but will also work for non-spreadable equipment.
+     *
+     * @return A list of indices for all locations that contain this equipment.
+     * @see #getLocation()
+     * @see #getSecondLocation()
+     */
+    public List<Integer> allLocations() {
+        List<Integer> locations = new ArrayList<>();
+        if (getType().isSpreadable()) {
+            for (int loc = 0; loc < getEntity().locations(); loc++) {
+                for (int slot = 0; slot < getEntity().getNumberOfCriticals(loc); slot++) {
+                    final CriticalSlot crit = getEntity().getCritical(loc, slot);
+                    if ((crit != null) && ((crit.getMount() == this) || (crit.getMount2() == this))) {
+                        locations.add(loc);
+                        break;
+                    }
+                }
+            }
+        } else {
+            if (getLocation() >= 0) {
+                locations.add(getLocation());
+            }
+            if (getSecondLocation() >= 0) {
+                locations.add(getSecondLocation());
+            }
+        }
+        return locations;
     }
 
     public Mounted getLinked() {

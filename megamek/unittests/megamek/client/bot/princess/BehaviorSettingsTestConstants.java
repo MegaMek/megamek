@@ -39,8 +39,8 @@ public class BehaviorSettingsTestConstants {
     public static final String GOOD_BEHAVIOR_XML =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -57,8 +57,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_NULL_NAME =
             "<behavior>\n" +
             "    <name>" + null + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -75,8 +75,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_EMPTY_NAME =
             "<behavior>\n" +
             "    <name></name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -94,7 +94,7 @@ public class BehaviorSettingsTestConstants {
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + null + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -111,8 +111,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + null + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -129,8 +129,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_NULL_AUTO_FLEE =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + null + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -147,8 +147,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_TOO_BIG_FALL_SHAME =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + BAD_INDEX_BIG + "</fallShameIndex>\n" +
@@ -165,8 +165,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_TOO_SMALL_FALL_SHAME =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + BAD_INDEX_SMALL + "</fallShameIndex>\n" +
@@ -183,8 +183,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_NULL_STRATEGIC_TARGET =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -199,8 +199,8 @@ public class BehaviorSettingsTestConstants {
     public static final String BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +
@@ -215,8 +215,8 @@ public class BehaviorSettingsTestConstants {
     public static final String GOOD_BEHAVIOR_XML_NO_TARGETS =
             "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
-            "    <retreatEdge>" + GOOD_HOME_EDGE.getIndex() + "</retreatEdge>\n" +
-            "    <destinationEdge>" + GOOD_DESTINATION_EDGE.getIndex() + "</destinationEdge>\n" +
+            "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
+            "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
             "    <forcedWithdrawal>" + GOOD_FORCED_WITHDRAWAL + "</forcedWithdrawal>\n" +
             "    <autoFlee>" + GOOD_AUTO_FLEE + "</autoFlee>\n" +
             "    <fallShameIndex>" + GOOD_FALL_SHAME_INDEX + "</fallShameIndex>\n" +

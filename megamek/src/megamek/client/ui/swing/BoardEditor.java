@@ -1040,6 +1040,7 @@ public class BoardEditor extends JPanel
         // Set up the minimap 
         minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false);
         minimapW.setLocation(guip.getMinimapPosX(), guip.getMinimapPosY());
+        minimapW.setAutoRequestFocus(false);
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
@@ -1049,7 +1050,7 @@ public class BoardEditor extends JPanel
             frame.dispose();
         }
         minimapW.add(minimap);
-        minimapW.setVisible(true);
+        minimapW.setVisible(guip.getMinimapEnabled());
     }
     
     /**
@@ -1864,7 +1865,7 @@ public class BoardEditor extends JPanel
             cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            minimapW.setVisible(!minimapW.isVisible());
+            minimapW.setVisible(guip.getMinimapEnabled());
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) {
             showAbout();
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) {
@@ -2045,7 +2046,7 @@ public class BoardEditor extends JPanel
     
     /** Adapts the whole Board Editor UI to the current guiScale. */
     private void adaptToGUIScale() {
-        Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        Font scaledFont = UIUtil.getScaledFont();
 
         butAddTerrain.setFont(scaledFont);
         butBoardNew.setFont(scaledFont);

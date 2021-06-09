@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
+import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -105,6 +106,30 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                 return s;
             } else {
                 return second.getHexesMoved() - first.getHexesMoved();
+            }
+        }
+    }
+    
+    /**
+     * Comparator that sorts MovePaths based on, in order, the following criteria:
+     * Minefield hazard (stepping on less mines is better)
+     * Least MP used
+     * Most distance moved
+     */
+    public static class MovePathMinefieldAvoidanceMinMPMaxDistanceComparator extends MovePathMinMPMaxDistanceComparator {
+        @Override
+        public int compare(MovePath first, MovePath second) {
+            Double firstMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(first.getLastStep(), 
+                    first.getEntity(), first.isJumping(), false);
+            Double secondMinefieldScore = MinefieldUtil.calcMinefieldHazardForHex(second.getLastStep(), 
+                    second.getEntity(), second.isJumping(), false);
+               
+            int s = secondMinefieldScore.compareTo(firstMinefieldScore);
+            
+            if (s == 0) {
+                return super.compare(first, second);
+            } else {
+                return s;
             }
         }
     }

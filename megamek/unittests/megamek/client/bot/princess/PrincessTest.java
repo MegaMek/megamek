@@ -395,7 +395,7 @@ public class PrincessTest {
         Mockito.when(mockPrincess.isFallingBack(Mockito.any(Entity.class))).thenCallRealMethod();
        
         BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
-        Mockito.when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST_OR_NONE);
+        Mockito.when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NONE);
         Mockito.when(mockBehavior.isForcedWithdrawal()).thenReturn(true);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         
@@ -404,6 +404,10 @@ public class PrincessTest {
 
         // A mobile mech that wants to fall back (for any reason).
         Mockito.when(mockMech.isCrippled(Mockito.anyBoolean())).thenReturn(true);
+        Assert.assertTrue(mockPrincess.isFallingBack(mockMech));
+        
+        // A mech whose bot is set for a destination edge
+        Mockito.when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NEAREST);
         Assert.assertTrue(mockPrincess.isFallingBack(mockMech));
     }
 

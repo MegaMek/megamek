@@ -11135,7 +11135,7 @@ public class Server implements Runnable {
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
                         || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-                    target = 12;
+                    target = Minefield.HOVER_WIGE_DETONATION_TARGET;
                 }
             }
 
@@ -17018,8 +17018,7 @@ public class Server implements Runnable {
                 roll = Compute.d6(2);
                 int toHitValue = toHit.getValue();
                 String toHitDesc = toHit.getDesc();
-                if ((ae instanceof Mech) && (((Mech) ae).hasTSM() && (ae.heat >= 9))
-                        && (!((Mech) te).hasTSM() || ((((Mech) te).hasTSM()) && (te.heat < 9)))) {
+                if ((ae instanceof Mech) && ((Mech) ae).hasActiveTSM(false)) {
                     toHitValue -= 2;
                     toHitDesc += " -2 (TSM Active Bonus)";
                 }
@@ -24655,11 +24654,10 @@ public class Server implements Runnable {
         } else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
-        // mechs with TSM hit by anti-tsm missiles this round get another
+        // mechs with prototype TSM hit by anti-tsm missiles this round get another
         // crit
         if ((en instanceof Mech) && en.hitThisRoundByAntiTSM) {
-            Mech mech = (Mech) en;
-            if (mech.hasTSM()) {
+            if (((Mech) en).antiTSMVulnerable()) {
                 r = new Report(6430);
                 r.subject = en.getId();
                 r.indent(2);

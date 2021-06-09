@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.bot.princess.FireControl;
+import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.pathfinder.BoardClusterTracker.MovementType;
 
 /**
@@ -116,6 +117,14 @@ public class BulldozerMovePath extends MovePath {
                     additionalCosts.put(mp.getFinalCoords(), mp.getCachedEntityState().getJumpMP());
                 }
             }
+        }
+        
+        // we want to discourage running over minefields
+        double minefieldFactor = MinefieldUtil.calcMinefieldHazardForHex(mp.getLastStep(), mp.getEntity(), 
+                mp.isJumping(), false);
+        
+        if (minefieldFactor > 0) {
+            additionalCosts.put(mp.getFinalCoords(), (int) Math.ceil(minefieldFactor));
         }
 
         return mp;

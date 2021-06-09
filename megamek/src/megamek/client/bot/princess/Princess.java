@@ -60,6 +60,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.actions.DisengageAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.SearchlightAttackAction;
@@ -759,6 +760,16 @@ public class Princess extends BotClient {
     @Override
     protected void calculateTargetingOffBoardTurn() {
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
+        
+        // if we're crippled, off-board and can do so, disengage
+        if (entityToFire.isOffBoard() && entityToFire.canFlee() && entityToFire.isCrippled(true)) {
+            Vector<EntityAction> disengageVector = new Vector<>();
+            disengageVector.add(new DisengageAction(entityToFire.getId()));
+            sendAttackData(entityToFire.getId(), disengageVector);
+            sendDone(true);
+            return;
+        }
+        
         FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
         
         sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
@@ -1136,7 +1147,7 @@ public class Princess extends BotClient {
      * @return Whether or not the entity is falling back.
      */
     boolean isFallingBack(final Entity entity) {
-        return (getBehaviorSettings().getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) ||
+        return (getBehaviorSettings().shouldGoHome()) ||
                 (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
     }
 
@@ -1844,7 +1855,7 @@ public class Princess extends BotClient {
     CardinalEdge getHomeEdge(Entity entity) {
         // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge        
         if(entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
-            if(getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST_OR_NONE) {
+            if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
                 return BoardUtilities.getClosestEdge(entity);                
             } else {
                 return getBehaviorSettings().getRetreatEdge();

@@ -17,6 +17,7 @@
 package megamek.common;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -161,7 +162,7 @@ public class QuadMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
-            if ((heat >= 9) && hasTSM() && legsDestroyed < 2
+            if ((heat >= 9) && hasTSM(false) && legsDestroyed < 2
                     && movementMode != EntityMovementMode.TRACKED
                     && movementMode != EntityMovementMode.WHEELED) {
                 wmp += 2;
@@ -421,6 +422,16 @@ public class QuadMech extends Mech {
     @Override
     protected double getLegActuatorCost() {
         return (weight * 150 * 4) + (weight * 80 * 4) + (weight * 120 * 4);
+    }
+
+    @Override
+    public String joinLocationAbbr(List<Integer> locations, int limit) {
+        // If we need to abbreviate something that occupies all leg locations, simply return "Legs"
+        if ((locations.size() > limit) && (locations.size() == 4) && locations.stream().allMatch(this::locationIsLeg)) {
+            return "Legs";
+        } else {
+            return super.joinLocationAbbr(locations, limit);
+        }
     }
 
     @Override

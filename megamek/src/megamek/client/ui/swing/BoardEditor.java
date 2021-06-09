@@ -1518,7 +1518,7 @@ public class BoardEditor extends JPanel
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
             MegaMek.getLogger().error(e);
         }

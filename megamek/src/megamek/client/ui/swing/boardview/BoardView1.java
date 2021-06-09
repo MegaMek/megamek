@@ -2336,7 +2336,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Set zoom to base, so we get a consist board image
 
         int oldZoom = zoomIndex;
-        if (useBaseZoom && zoomIndex != BASE_ZOOM_INDEX) {
+        if (useBaseZoom) {
             zoomIndex = BASE_ZOOM_INDEX;
             zoom();
         }

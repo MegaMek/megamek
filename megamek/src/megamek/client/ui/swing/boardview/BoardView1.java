@@ -115,6 +115,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.FuelTank;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -5797,12 +5798,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)
                     }));
                 } else {
-                    Building bldg = game.getBoard().getBuildingAt(mcoords);
+                    FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
                     txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.FuelTank", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                             bldg.toString(),
-                            bldg.getCurrentCF(mcoords)
+                            bldg.getCurrentCF(mcoords),
+                            bldg.getMagnitude()
                     }));
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$

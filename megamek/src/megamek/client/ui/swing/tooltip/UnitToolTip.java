@@ -679,6 +679,12 @@ public final class UnitToolTip {
             result.append(addToTT("Sensors", BR, entity.getSensorDesc()));
         }
 
+        if (entity.hasAnyTypeNarcPodsAttached()) {
+            result.append(guiScaledFontHTML(uiLightRed()));
+            result.append(addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", BR));
+            result.append("</FONT>");
+        }
+        
         // Towing
         if (entity.getAllTowedUnits().size() > 0) {
             String unitList = entity.getAllTowedUnits().stream()

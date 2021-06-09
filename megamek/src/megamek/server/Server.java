@@ -134,8 +134,8 @@ public class Server implements Runnable {
      * The DamageType enumeration is used for the damageEntity function.
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET,
-        NONPENETRATING
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, INFERNO, IGNORE_PASSENGER,
+        ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET, NONPENETRATING
     }
 
     // public static final String LEGAL_CHARS =
@@ -10834,7 +10834,7 @@ public class Server implements Runnable {
                             critRollMod -= 2;
                         }
                         vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(),
-                                critRollMod, 0, true));
+                                critRollMod, 0, DamageType.INFERNO));
                     }
                 } else if (te instanceof ConvFighter) {
                     // CFs take a point SI damage for every three missiles that hit.
@@ -21793,7 +21793,7 @@ public class Server implements Runnable {
      * @param ammoExplosion ammo explosion type damage is applied directly to the IS,
      *                      hurts the pilot, causes auto-ejects, and can blow the unit to
      *                      smithereens
-     * @param bFrag         The DamageType of the attack.
+     * @param damageType         The DamageType of the attack.
      * @param damageIS      Should the target location's internal structure be damaged
      *                      directly?
      * @param areaSatArty   Is the damage from an area saturating artillery attack?
@@ -21803,7 +21803,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+            boolean ammoExplosion, DamageType damageType, boolean damageIS,
             boolean areaSatArty, boolean throughFront, boolean underWater,
             boolean nukeS2S) {
 
@@ -21826,7 +21826,7 @@ public class Server implements Runnable {
             new_hit.setCapMisCritMod(hit.getCapMisCritMod());
             new_hit.setSingleAV(hit.getSingleAV());
             new_hit.setAttackerId(hit.getAttackerId());
-            return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag,
+            return damageEntity(fighter, new_hit, damage, ammoExplosion, damageType,
                                 damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
 
@@ -21839,7 +21839,7 @@ public class Server implements Runnable {
             for (int i = 0; i < ((BattleArmor) te).getTroopers(); i++) {
                 hit.setLocation(BattleArmor.LOC_TROOPER_1 + i);
                 if (te.getInternal(hit) > 0) {
-                    vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, bFrag,
+                    vDesc.addAll(damageEntity(te, hit, damage, ammoExplosion, damageType,
                             damageIS, false, throughFront, underWater, nukeS2S));
                 }
             }
@@ -22062,7 +22062,7 @@ public class Server implements Runnable {
         // it does double damage to infantry...
         // We're actually going to abuse this for AX-head warheads, too, so as
         // to not add another parameter.
-        switch (bFrag) {
+        switch (damageType) {
             case FRAGMENTATION:
                 // Fragmentation missiles deal full damage to conventional
                 // infantry
@@ -22135,9 +22135,6 @@ public class Server implements Runnable {
                     r.indent(2);
                     vDesc.addElement(r);
                 }
-                break;
-            case ANTI_TSM:
-                te.hitThisRoundByAntiTSM = true;
                 break;
             case NAIL_RIVET:
                 // no damage against armor of BAR rating >=5
@@ -22409,7 +22406,7 @@ public class Server implements Runnable {
                 Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
                 // Does an exterior passenger absorb some of the damage?
                 if (!ammoExplosion && (null != passenger) && !passenger.isDoomed()
-                        && (bFrag != DamageType.IGNORE_PASSENGER)) {
+                        && (damageType != DamageType.IGNORE_PASSENGER)) {
                     damage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
                 }
 
@@ -22420,7 +22417,7 @@ public class Server implements Runnable {
                 int swarmer = te.getSwarmAttackerId();
                 if ((!(te instanceof Mech) || bTorso) && (swarmer != Entity.NONE)
                         && ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) && (Compute.d6() >= 5)
-                        && (bFrag != DamageType.IGNORE_PASSENGER) && !ammoExplosion) {
+                        && (damageType != DamageType.IGNORE_PASSENGER) && !ammoExplosion) {
                     Entity swarm = game.getEntity(swarmer);
                     // Yup. Roll up some hit data for that passenger.
                     r = new Report(6076);
@@ -23353,7 +23350,7 @@ public class Server implements Runnable {
                         // if this is damage from a nail/rivet gun, and we
                         // transfer
                         // to a location that has armor, and BAR >=5, no damage
-                        if ((bFrag == DamageType.NAIL_RIVET)
+                        if ((damageType == DamageType.NAIL_RIVET)
                             && (te.getArmor(nextHit.getLocation()) > 0)
                             && (te.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
@@ -23391,7 +23388,7 @@ public class Server implements Runnable {
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.isRear(),
-                            hit.glancingMod() + critBonus, damage_orig));
+                            hit.glancingMod() + critBonus, damage_orig, damageType));
                 }
                 crits = 0;
 
@@ -24659,20 +24656,6 @@ public class Server implements Runnable {
         } else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
-        // mechs with prototype TSM hit by anti-tsm missiles this round get another
-        // crit
-        if ((en instanceof Mech) && en.hitThisRoundByAntiTSM) {
-            if (((Mech) en).antiTSMVulnerable()) {
-                r = new Report(6430);
-                r.subject = en.getId();
-                r.indent(2);
-                r.addDesc(en);
-                r.newlines = 0;
-                vDesc.addElement(r);
-                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), false, damageCaused));
-            }
-            en.hitThisRoundByAntiTSM = false;
-        }
 
         // if using buffered VDNI then a possible pilot hit
         if (en.hasAbility(OptionsConstants.MD_BVDNI) && !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -26331,8 +26314,8 @@ public class Server implements Runnable {
      */
 
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear, int critMod, int damage,
-                                         boolean damagedByFire) {
-        return criticalEntity(en, loc, isRear, critMod, true, false, damage, damagedByFire);
+                                         DamageType damageType) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage, damageType);
     }
 
     /**
@@ -26996,7 +26979,7 @@ public class Server implements Runnable {
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage) {
         return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital,
-                damage, false);
+                damage, DamageType.NONE);
     }
 
     /**
@@ -27005,7 +26988,7 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
             int critMod, boolean rollNumber, boolean isCapital, int damage,
-            boolean damagedByFire) {
+            DamageType damageType) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -27021,7 +27004,7 @@ public class Server implements Runnable {
         }
 
         if (en instanceof Tank) {
-            return criticalTank((Tank) en, loc, critMod, damage, damagedByFire);
+            return criticalTank((Tank) en, loc, critMod, damage, damageType.equals(DamageType.INFERNO));
         }
 
         if (en instanceof Aero) {
@@ -27076,7 +27059,6 @@ public class Server implements Runnable {
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-                return vDesc;
             } else if ((!advancedCrit && (roll >= 8) && (roll <= 9))
                     || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
@@ -27189,8 +27171,21 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 }
             }
+            if (damageType.equals(DamageType.ANTI_TSM) && (en instanceof Mech)
+                    && ((Mech) en).antiTSMVulnerable()) {
+                r = new Report(6430);
+                r.subject = en.getId();
+                r.indent(2);
+                r.addDesc(en);
+                r.newlines = 1;
+                vDesc.addElement(r);
+                hits++;
+            }
         } else {
             hits = 1;
+        }
+        if (hits <= 0) {
+            return vDesc;
         }
 
         // Check if there is the potential for a reactive armor crit

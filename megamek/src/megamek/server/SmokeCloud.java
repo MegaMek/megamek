@@ -17,6 +17,7 @@ package megamek.server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.Coords;
 
@@ -28,12 +29,13 @@ public class SmokeCloud implements Serializable{
     public static final int SMOKE_LI_LIGHT = 3;
     public static final int SMOKE_LI_HEAVY = 4;
     public static final int SMOKE_CHAFF_LIGHT = 5;
+    public static final int SMOKE_GREEN = 6; // Anti-TSM smoke
     /**
      * 
      */
     private static final long serialVersionUID = -8937331680271675046L;
     private int smokeDuration = 0;
-    private ArrayList<Coords> smokeHexList = new ArrayList<Coords>();
+    private final List<Coords> smokeHexList = new ArrayList<>();
     private int smokeLevel = 1;
     private boolean didDrift = false;
     
@@ -54,7 +56,7 @@ public class SmokeCloud implements Serializable{
     }
     
     public void setSmokeLevel(int level){
-        this.smokeLevel = Math.min(4, level);
+        this.smokeLevel = Math.min(6, level);
     }
     
     /**
@@ -66,6 +68,7 @@ public class SmokeCloud implements Serializable{
             case SMOKE_LIGHT:
             case SMOKE_LI_LIGHT:
             case SMOKE_CHAFF_LIGHT:
+            default:
                 smokeLevel = SMOKE_NONE;
                 break;
             case SMOKE_HEAVY:
@@ -74,15 +77,14 @@ public class SmokeCloud implements Serializable{
             case SMOKE_LI_HEAVY:
                 smokeLevel = SMOKE_LI_LIGHT;
                 break;
-            default:
-                smokeLevel = SMOKE_NONE;
         }
     }
     
     /**
      * Returns the level of smoke, odd levels will correspond to light smoke
      * while even levels will be heavy smoke.
-     * @return
+     *
+     * @return The smoke level
      */
     public int getSmokeLevel(){
         return smokeLevel;
@@ -96,7 +98,7 @@ public class SmokeCloud implements Serializable{
         this.smokeHexList.remove(coords);
     }
     
-    public ArrayList<Coords> getCoordsList(){
+    public List<Coords> getCoordsList(){
         return this.smokeHexList;
     }
     

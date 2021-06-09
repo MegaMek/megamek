@@ -32,7 +32,7 @@ import megamek.server.Server.DamageType;
 /**
  * @author Sebastian Brocks
  */
-public class LRMAntiTSMHandler extends LRMHandler {
+public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
     private static final long serialVersionUID = 5702089152489814687L;
 
     /**

@@ -517,8 +517,10 @@ public class MechSummaryCache {
         }
 
         if (e instanceof Mech){
-            if (((Mech)e).hasTSM()) {
+            if (((Mech) e).hasTSM(false)) {
                 ms.setMyomerName("Triple-Strength");
+            } else if (((Mech) e).hasTSM(true)) {
+                    ms.setMyomerName("Prototype Triple-Strength");
             } else if (((Mech)e).hasIndustrialTSM()) {
                 ms.setMyomerName("Industrial Triple-Strength");
             } else {

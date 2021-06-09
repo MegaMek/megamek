@@ -162,7 +162,7 @@ public class QuadMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
-            if ((heat >= 9) && hasTSM() && legsDestroyed < 2
+            if ((heat >= 9) && hasTSM(false) && legsDestroyed < 2
                     && movementMode != EntityMovementMode.TRACKED
                     && movementMode != EntityMovementMode.WHEELED) {
                 wmp += 2;

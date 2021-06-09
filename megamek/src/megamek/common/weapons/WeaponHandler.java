@@ -1464,13 +1464,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     *
-     * @param entityTarget
-     * @param vPhaseReport
-     * @param bldg
-     * @param hits
-     * @param nCluster
-     * @param bldgAbsorbs
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -1479,14 +1472,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         missed = false;
 
         initHit(entityTarget);
-        hit.setLocation(Mech.LOC_LLEG);
         
-        boolean isIndirect = wtype.hasModes()
-                && weapon.curMode().equals("Indirect");
+        boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
+        
         IHex targetHex = game.getBoard().getHex(target.getPosition());
-        // a specific situation where a mech is standing in depth 1 water
-        boolean mechPokingOutOfShallowWater = targetHex.containsTerrain(Terrains.WATER) &&
-                entityTarget.relHeight() <= targetHex.surface();
+        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
         
         // a very specific situation where a mech is standing in a height 1 building
         // or its upper torso is otherwise somehow poking out of said building 
@@ -1549,10 +1539,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
-        boolean targetStickingOutOfBuilding = 
-                entityTarget.relHeight() >= targetHex.ceiling();
+        boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
+        Compute.isInBuilding(game, entityTarget);
                 
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, targetHex, bldgAbsorbs, 
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
@@ -1605,10 +1595,29 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
     
     /**
+     * Worker function - does the entity gain partial cover from shallow water?
+     */
+    protected boolean unitGainsPartialCoverFromWater(IHex targetHex, Entity entityTarget) {
+        return (targetHex != null) && 
+                targetHex.containsTerrain(Terrains.WATER) &&
+                (entityTarget.relHeight() == targetHex.surface());
+    }
+    
+    /**
+     * Worker function - is a part of this unit inside the hex's terrain features, 
+     * but part sticking out?
+     */
+    protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+        return (targetHex != null) &&
+                (entityTarget.getElevation() < targetHex.ceiling()) &&
+                (entityTarget.relHeight() >= targetHex.ceiling());
+    }
+    
+    /**
      * Worker function to (maybe) have a building absorb damage meant for the entity
      */
-    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, IHex targetHex, 
-            int bldgAbsorbs, Vector<Report> vPhaseReport, Building bldg, boolean targetStickingOutOfBuilding) {
+    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs, 
+            Vector<Report> vPhaseReport, Building bldg, boolean targetStickingOutOfBuilding) {
 
         // if the building will absorb some damage and the target is actually
         // entirely inside the building:

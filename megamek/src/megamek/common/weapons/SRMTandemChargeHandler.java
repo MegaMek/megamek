@@ -101,10 +101,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
         IHex targetHex = game.getBoard().getHex(target.getPosition());
-        boolean targetStickingOutOfBuilding = 
-                entityTarget.relHeight() >= targetHex.ceiling();
+        boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, targetHex, bldgAbsorbs, 
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 

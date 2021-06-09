@@ -23,6 +23,7 @@ VERSION HISTORY:
 + Issue #2897: Princess will now attack with swarming BA
 + Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
 + PR #2924: Per current errata, "short" buildings now provide partial cover for tall units (e.g. mechs) rather than enclosing them completely
++ PR #2923: Prototype TSM
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

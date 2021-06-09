@@ -424,7 +424,7 @@ public final class UIUtil {
         
         public Content() {
             super();
-            setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
+            setBorder(BorderFactory.createEmptyBorder(8, 25, 5, 25));
             setAlignmentX(Component.LEFT_ALIGNMENT);
         }
     }
@@ -494,9 +494,8 @@ public final class UIUtil {
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
+            return new Point(parentDialog.getWidth() - p.x, 0);
         }
         
         @Override
@@ -525,9 +524,8 @@ public final class UIUtil {
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
+            return new Point(parentDialog.getWidth() - p.x, 0);
         }
         
         @Override
@@ -553,12 +551,16 @@ public final class UIUtil {
             super();
             parentDialog = parent;
         }
+        
+        public TipCombo(E[] items, JDialog parent) {
+            super(items);
+            parentDialog = parent;
+        }
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
+            return new Point(parentDialog.getWidth() - p.x, 0);
         }
         
         @Override
@@ -584,12 +586,16 @@ public final class UIUtil {
             super(n);
             parentDialog = parent;
         }
+        
+        public TipTextField(String text, int n, JDialog parent) {
+            super(text, n);
+            parentDialog = parent;
+        }
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
+            return new Point(parentDialog.getWidth() - p.x, 0);
         }
         
         @Override

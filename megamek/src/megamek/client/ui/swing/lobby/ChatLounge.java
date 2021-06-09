@@ -2454,6 +2454,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
                 break;
                 
+            case PlayerTablePopup.PTP_REPLACE:
+                IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+                var bcd = new BotConfigDialog2(clientgui.frame, player);
+                bcd.setVisible(true);
+
+                if (!bcd.dialogAborted) {
+                    BotClient c = bcd.getSelectedBot(client().getHost(), client().getPort());
+                    c.setClientGUI(clientgui);
+                    c.getGame().addGameListener(new BotGUI(c));
+                    try {
+                        c.connect();
+                    } catch (Exception ex) {
+                        clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"),
+                                Messages.getString("ChatLounge.AlertBot.message"));
+                    }
+                    clientgui.getBots().put(bcd.getBotName(), c);
+                }
             }
         }
     };
@@ -3526,6 +3543,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return clientgui.getClient().getGame();
     }
     
+    /** Convenience for clientgui.getClient() */
     Client client() {
         return clientgui.getClient();
     }

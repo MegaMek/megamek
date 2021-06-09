@@ -25,11 +25,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -38,29 +34,32 @@ import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.HelpDialog;
-import megamek.client.ui.swing.MMToggleButton;
-import megamek.client.ui.swing.SavePrincessDialog;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.Content;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.util.UIUtil.OptionPanel;
+import megamek.client.ui.swing.util.UIUtil.TipCombo;
+import megamek.client.ui.swing.util.UIUtil.TipTextField;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
 
 /** A dialog box to configure (Princess) bot properties. */
-public class BotConfigDialog2 extends AbstractButtonDialog implements ActionListener {
+public class BotConfigDialog2 extends AbstractButtonDialog implements ActionListener, ListSelectionListener {
 
     private static final String PRINCESS_PANEL = "princess_config";
     private static final String TESTBOT_PANEL = "testbot_config";
     private static final String UNIT_TARGET = Messages.getString("BotConfigDialog.targetUnit");
     private static final String BUILDING_TARGET = Messages.getString("BotConfigDialog.targetBuilding");
+    private static final int TOOLTIP_WIDTH = 300;
     private static final long serialVersionUID = -544663266637225925L;
 
     private JList<String> playersToReplace;
@@ -74,7 +73,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     private JComboBox<String> targetTypeCombo;
     private JButton addTargetButton;
     private JButton removeTargetButton;
-    private JButton princessHelpButton;
+    private JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.princessHelpButtonCaption"));
     private JList<String> targetsList;
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
     protected MMToggleButton forcedWithdrawalCheck;
@@ -86,14 +85,15 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     protected JSlider herdingSlidebar;
     protected JSlider selfPreservationSlidebar;
     protected JSlider braverySlidebar;
-    private JComboBox<String> princessBehaviorNames;
+    private TipCombo<String> princessBehaviorNames;
 
-    protected JTextField nameField;
+    protected TipTextField nameField;
     public boolean dialogAborted = true; // did user not click Ok button?
 
     // Are we replacing an existing player?
     private final Set<IPlayer> ghostPlayers = new HashSet<>();
     private final boolean replacePlayer;
+    private final boolean replaceSinglePlayer;
 
     protected final JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
@@ -121,6 +121,17 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
             ghostPlayers.addAll(ghosts);
         }
         replacePlayer = !ghostPlayers.isEmpty();
+        replaceSinglePlayer = false;
+        initialize();
+        UIUtil.adjustDialog(getContentPane());
+    }
+    
+    public BotConfigDialog2(JFrame parent, IPlayer toReplace) {
+        super(parent, "Ok.text", "Ok.text");
+        Objects.requireNonNull(toReplace);
+        replacePlayer = false;
+        replaceSinglePlayer = true;
+        ghostPlayers.add(toReplace);
         initialize();
         UIUtil.adjustDialog(getContentPane());
     }
@@ -137,7 +148,8 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     protected Container createCenterPane() {
         botSpecificCardsPanel = new JPanel(new CardLayout());
         botSpecificCardsPanel.add(new JPanel(), TESTBOT_PANEL);
-        JScrollPane princessScroll = new JScrollPane(princessPanel());
+        var princessScroll = new JScrollPane(princessPanel());
+        princessScroll.getVerticalScrollBar().setUnitIncrement(16);
         botSpecificCardsPanel.add(princessScroll, PRINCESS_PANEL);
         CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
         cardlayout.show(botSpecificCardsPanel, PRINCESS_PANEL);
@@ -153,164 +165,157 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         result.add(retreatSection());
         result.add(devSection());
         return result;
+    }
+    
+    private JPanel behaviorSection() {
+        JPanel result = new OptionPanel("BotConfigDialog.behaviorSection");
+        Content panContent = new Content(new GridLayout(6, 1, 0, 5));
+        result.add(panContent);
         
-        
-
-        //Setup layout.
-//        JPanel panel = new JPanel();
-//        GridBagConstraints constraints = new GridBagConstraints();
-//        GridBagLayout layout = new GridBagLayout();
-//        panel.setLayout(layout);
-//
-//        //Initialize constraints.
-//        constraints.gridheight = 1;
-//        constraints.gridwidth = 1;
-//        constraints.insets = new Insets(2, 2, 2, 2);
-//        constraints.anchor = GridBagConstraints.NORTHWEST;
-//        constraints.fill = GridBagConstraints.HORIZONTAL;
-//
-//        //Row 1 Column 1
-//        constraints.gridy = 0;
-//        constraints.gridx = 0;
-//        JLabel behaviorNameLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
-//        panel.add(behaviorNameLabel, constraints);
-//
-//        //Row 1 Column 2
-//        constraints.gridx++;
-//        constraints.gridwidth = 2;
-//        princessBehaviorNames = new JComboBox<>(behaviorSettingsFactory.getBehaviorNames());
-//        princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
-//        princessBehaviorNames.setToolTipText(Messages.getString("BotConfigDialog.behaviorToolTip"));
-//        princessBehaviorNames.addActionListener(this);
+        var choosePanel = new JPanel();
+        princessBehaviorNames = new TipCombo<>(behaviorSettingsFactory.getBehaviorNames(), this);
+        princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
+        princessBehaviorNames.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.behaviorToolTip")));
+        princessBehaviorNames.addActionListener(this);
 //        princessBehaviorNames.setEditable(true);
-//        panel.add(princessBehaviorNames, constraints);
-//
-//        //Row 2 Column 1
-//        constraints.gridx = 0;
-//        constraints.gridwidth = 1;
-//        constraints.gridy++;
-//        JLabel verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"));
-//        panel.add(verbosityLabel, constraints);
-//
-//        //Row 2 Column 2;
-//        constraints.gridx++;
-//        constraints.gridwidth = 2;
-//        verbosityCombo = new JComboBox<>(LogLevel.getLogLevelNames());
-//        verbosityCombo.setToolTipText(Messages.getString("BotConfigDialog.verbosityToolTip"));
-//        verbosityCombo.setSelectedIndex(0);
-//        panel.add(verbosityCombo, constraints);
-//
-//        //Row 3 Column 1.
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        constraints.gridwidth = 1;
-//        forcedWithdrawalCheck = new JCheckBox(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
-//        forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
-//        panel.add(forcedWithdrawalCheck, constraints);
-//
-//        //Row 3 Column 3.
-//        constraints.gridx++;
-//        autoFleeCheck = new JCheckBox(Messages.getString("BotConfigDialog.autoFleeCheck"));
-//        autoFleeCheck.setToolTipText(Messages.getString("BotConfigDialog.autoFleeTooltip"));
-//        autoFleeCheck.addActionListener(this);
-//        autoFleeCheck.setEnabled(false);
-//        panel.add(autoFleeCheck, constraints);
-//
-//        //Row 4 Column 1.
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        JLabel homeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
-//        layout.setConstraints(homeEdgeLabel, constraints);
-//        panel.add(homeEdgeLabel);
-//
-//        //Row 4 Column 2.
-//        constraints.gridx++;
-//        destinationEdgeCombo = new JComboBox<>(CardinalEdge.values());
-//        destinationEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
-//        destinationEdgeCombo.setSelectedIndex(0);
-//        destinationEdgeCombo.addActionListener(this);
-//        panel.add(destinationEdgeCombo, constraints);
-//        
-//        //Row 4.1 Column 1.
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        JLabel retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
-//        layout.setConstraints(retreatEdgeLabel, constraints);
-//        panel.add(retreatEdgeLabel);
-//
-//        //Row 4 Column 2.
-//        constraints.gridx++;
-//        retreatEdgeCombo = new JComboBox<>(CardinalEdge.values());
-//        retreatEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
-//        retreatEdgeCombo.setSelectedIndex(0);
-//        panel.add(retreatEdgeCombo, constraints);
-//
-//        //Row 5.
-//        constraints.gridx = 0;
-//        constraints.gridy++;
-//        constraints.gridwidth = 3;
-////        JPanel sliderPanel = buildSliderPanel();
-//        JPanel sliderPanel = behaviorSection();
-//        layout.setConstraints(sliderPanel, constraints);
-//        panel.add(sliderPanel);
-//
-//        //Row 6 Column 1.
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        constraints.gridwidth = 1;
-//        JLabel targetsLabel = new JLabel(Messages.getString("BotConfigDialog.targetsLabel"));
-//        panel.add(targetsLabel, constraints);
-//
-//        //Row 6 Column 2.
-//        constraints.gridx++;
-//        targetTypeCombo = new JComboBox<>(new String[]{BUILDING_TARGET, UNIT_TARGET});
-//        targetTypeCombo.setToolTipText(Messages.getString("BotConfigDialog.targetTypeTooltip"));
-//        targetTypeCombo.setSelectedIndex(0);
-//        panel.add(targetTypeCombo, constraints);
-//
-//        // Row 6 Column 3.
-//        constraints.gridx++;
-//        targetId = new JTextField();
-//        targetId.setToolTipText(Messages.getString("BotConfigDialog.princessTargetIdToolTip"));
-//        targetId.setColumns(4);
-//        panel.add(targetId, constraints);
-//
-//        //Row 7.
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        constraints.gridwidth = 3;
-//        panel.add(buildStrategicTargetsButtonPanel(), constraints);
-//
-//        //Row 8
-//        constraints.gridy++;
-//        constraints.gridx = 0;
-//        constraints.gridwidth = 3;
-//        targetsList = new JList<>(targetsListModel);
-//        targetsList.setToolTipText(Messages.getString("BotConfigDialog.princessStrategicTargetsToolTip"));
-//        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//        targetsList.setLayoutOrientation(JList.VERTICAL);
-//        JScrollPane targetScroller = new JScrollPane(targetsList);
-//        targetScroller.setAlignmentX(LEFT_ALIGNMENT);
-//        panel.add(targetScroller, constraints);
-//
-//        //Row 9, Column 2
-//        constraints.gridy++;
-//        constraints.gridx = 1;
-//        constraints.gridwidth = 1;
-//        princessHelpButton = new JButton(Messages.getString("BotConfigDialog.princessHelpButtonCaption"));
-//        princessHelpButton.addActionListener(this);
-////        panel.add(princessHelpButton, constraints);
-//
-//        // if we don't have a behavior already selected when initializing this panel
-//        // then set a default one
-//        if(princessBehavior == null) {
-//            getPresetPrincessBehavior();
-//        }
-//        
-//        setPrincessFields();
-//        panel.validate();
-//        return panel;
+        
+        JLabel behaviorNameLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
+        choosePanel.add(behaviorNameLabel);
+        choosePanel.add(princessBehaviorNames);
+        panContent.add(choosePanel);
+
+        braverySlidebar = buildSlider(Messages.getString("BotConfigDialog.braverySliderMin"),
+                                      Messages.getString("BotConfigDialog.braverySliderMax"),
+                                      Messages.getString("BotConfigDialog.braveryTooltip"),
+                                      Messages.getString("BotConfigDialog.braverySliderTitle"));
+        panContent.add(braverySlidebar);
+
+        selfPreservationSlidebar = buildSlider(Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
+                                               Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
+                                               Messages.getString("BotConfigDialog.selfPreservationTooltip"),
+                                               Messages.getString("BotConfigDialog.selfPreservationSliderTitle"));
+        panContent.add(selfPreservationSlidebar);
+
+        aggressionSlidebar = buildSlider(Messages.getString("BotConfigDialog.aggressionSliderMin"),
+                                         Messages.getString("BotConfigDialog.aggressionSliderMax"),
+                                         Messages.getString("BotConfigDialog.aggressionTooltip"),
+                                         Messages.getString("BotConfigDialog.aggressionSliderTitle"));
+        panContent.add(aggressionSlidebar);
+
+        herdingSlidebar = buildSlider(Messages.getString("BotConfigDialog.herdingSliderMin"),
+                                      Messages.getString("BotConfigDialog.herdingSliderMax"),
+                                      Messages.getString("BotConfigDialog.herdingToolTip"),
+                                      Messages.getString("BotConfigDialog.herdingSliderTitle"));
+        panContent.add(herdingSlidebar);
+
+        fallShameSlidebar = buildSlider(Messages.getString("BotConfigDialog.fallShameSliderMin"),
+                                        Messages.getString("BotConfigDialog.fallShameSliderMax"),
+                                        Messages.getString("BotConfigDialog.fallShameToolTip"),
+                                        Messages.getString("BotConfigDialog.fallShameSliderTitle"));
+        panContent.add(fallShameSlidebar);
+        return result;
+    }
+    
+    private JPanel targetsSection() {
+        JPanel result = new OptionPanel("BotConfigDialog.targetsSection");
+        Content panContent = new Content();
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
+        result.add(panContent);
+
+        JPanel typePanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        panContent.add(typePanel);
+        
+        targetTypeCombo = new JComboBox<>(new String[] { BUILDING_TARGET, UNIT_TARGET });
+        targetTypeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.targetTypeTooltip")));
+        targetTypeCombo.setSelectedIndex(0);
+        typePanel.add(targetTypeCombo);
+
+        targetId = new JTextField();
+        targetId.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessTargetIdToolTip")));
+        targetId.setColumns(4);
+        typePanel.add(targetId);
+        
+        addTargetButton = new JButton(Messages.getString("BotConfigDialog.princessAddTargetButtonCaption"));
+        addTargetButton.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessAddTargetButtonToolTip")));
+        addTargetButton.addActionListener(this);
+        typePanel.add(addTargetButton);
+
+        JPanel listPanel = new JPanel(new GridLayout(1, 3, 20, 0));
+        panContent.add(listPanel);
+        
+        targetsList = new JList<>(targetsListModel);
+        targetsList.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessStrategicTargetsToolTip")));
+        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        targetsList.getSelectionModel().addListSelectionListener(this);
+        targetsList.setLayoutOrientation(JList.VERTICAL);
+        JScrollPane targetScroller = new JScrollPane(targetsList);
+        listPanel.add(targetScroller);
+        
+        removeTargetButton = new JButton(Messages.getString("BotConfigDialog.princessRemoveTargetButtonCaption"));
+        removeTargetButton.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessRemoveTargetButtonToolTip")));
+        removeTargetButton.addActionListener(this);
+        listPanel.add(removeTargetButton);
+        
+        return result;
+    }
+    
+    private JPanel retreatSection() {
+        JPanel result = new OptionPanel("BotConfigDialog.retreatSection");
+        Content panContent = new Content();
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
+        result.add(panContent);
+
+        autoFleeCheck = new MMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
+        autoFleeCheck.setToolTipText(formatTooltip(formatTooltip(Messages.getString("BotConfigDialog.autoFleeTooltip"))));
+        autoFleeCheck.addActionListener(this);
+        autoFleeCheck.setEnabled(false);
+        
+        var homeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
+
+        homeEdgeCombo = new JComboBox<>(CardinalEdge.values());
+        homeEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.homeEdgeTooltip")));
+        homeEdgeCombo.setSelectedIndex(0);
+        homeEdgeCombo.addActionListener(this);
+
+        forcedWithdrawalCheck = new MMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
+        forcedWithdrawalCheck.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip")));
+
+        var retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
+        
+        retreatEdgeCombo = new JComboBox<>(CardinalEdge.values());
+        retreatEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.retreatEdgeTooltip")));
+        retreatEdgeCombo.setSelectedIndex(0);
+
+        var firstLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        var secondLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        firstLine.add(autoFleeCheck);
+        firstLine.add(Box.createHorizontalStrut(20));
+        firstLine.add(homeEdgeLabel);
+        firstLine.add(homeEdgeCombo);
+        secondLine.add(forcedWithdrawalCheck);
+        secondLine.add(Box.createHorizontalStrut(20));
+        secondLine.add(retreatEdgeLabel);
+        secondLine.add(retreatEdgeCombo);
+        panContent.add(firstLine);
+        panContent.add(Box.createVerticalStrut(5));
+        panContent.add(secondLine);
+        
+        return result;
+    }
+    
+    private JPanel devSection() {
+        JPanel result = new OptionPanel("BotConfigDialog.debugSection");
+        Content panContent = new Content(new FlowLayout(FlowLayout.LEFT));
+        result.add(panContent);
+
+        var verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT);
+        panContent.add(verbosityLabel);
+
+        verbosityCombo = new JComboBox<>(LogLevel.getLogLevelNames());
+        verbosityCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.verbosityToolTip")));
+        verbosityCombo.setSelectedIndex(0);
+        panContent.add(verbosityCombo);
+        return result;
     }
     
     private JPanel headerSection() {
@@ -390,7 +395,6 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         for (int id : princessBehavior.getPriorityUnitTargets()) {
             targetsListModel.addElement(UNIT_TARGET + ": " + id);
         }
-        repaint();
     }
 
     private JLabel buildSliderLabel(String caption) {
@@ -405,7 +409,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         sliderLabels.put(0, buildSliderLabel("0 - " + minMsgProperty));
         sliderLabels.put(10, buildSliderLabel("10 - " + maxMsgProperty));
         sliderLabels.put(5, buildSliderLabel("5"));
-        thisSlider.setToolTipText(toolTip);
+        thisSlider.setToolTipText(formatTooltip(toolTip));
         thisSlider.setLabelTable(sliderLabels);
         thisSlider.setPaintLabels(true);
         thisSlider.setMinorTickSpacing(1);
@@ -419,94 +423,31 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
 
     @Override
     protected JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+        JPanel result = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
-        if (!replacePlayer) {
-            JPanel namepanel = new JPanel(new FlowLayout());
-            namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
-            nameField = new JTextField();
+        var namepanel = new JPanel();
+        namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
+        nameField = new TipTextField("Princess", 12, this);
+        nameField.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.namefield.tooltip")));
+        namepanel.add(nameField);
+        result.add(namepanel);
+        if (!replacePlayer && !replaceSinglePlayer) {
             nameField.setText("Princess");
-            nameField.setColumns(12);
-            nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
-            namepanel.add(nameField);
-            panel.add(namepanel);
+        } else if (replaceSinglePlayer) {
+            nameField.setText(ghostPlayers.stream().findFirst().get().getName());
+            nameField.setEnabled(false);
         }
 
         butOK.addActionListener(this);
-        panel.add(butOK);
+        result.add(butOK);
         
-        princessHelpButton = new JButton(Messages.getString("BotConfigDialog.princessHelpButtonCaption"));
         princessHelpButton.addActionListener(this);
-        panel.add(princessHelpButton);
+        result.add(princessHelpButton);
 
-//        panel.validate();
-        return panel;
+        return result;
     }
-
-    private JPanel buildSliderPanel() {
-        JPanel panel = new JPanel(new GridLayout(6, 1, 0, 5));
-        
-        var choosePanel = new JPanel();
-        princessBehaviorNames = new JComboBox<>(behaviorSettingsFactory.getBehaviorNames());
-        princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
-        princessBehaviorNames.setToolTipText(Messages.getString("BotConfigDialog.behaviorToolTip"));
-        princessBehaviorNames.addActionListener(this);
-        princessBehaviorNames.setEditable(true);
-        
-        JLabel behaviorNameLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
-        choosePanel.add(behaviorNameLabel);
-        choosePanel.add(princessBehaviorNames);
-        panel.add(choosePanel);
-
-        braverySlidebar = buildSlider(Messages.getString("BotConfigDialog.braverySliderMin"),
-                                      Messages.getString("BotConfigDialog.braverySliderMax"),
-                                      Messages.getString("BotConfigDialog.braveryTooltip"),
-                                      Messages.getString("BotConfigDialog.braverySliderTitle"));
-        panel.add(braverySlidebar);
-
-        selfPreservationSlidebar = buildSlider(Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
-                                               Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
-                                               Messages.getString("BotConfigDialog.selfPreservationTooltip"),
-                                               Messages.getString("BotConfigDialog.selfPreservationSliderTitle"));
-        panel.add(selfPreservationSlidebar);
-
-        aggressionSlidebar = buildSlider(Messages.getString("BotConfigDialog.aggressionSliderMin"),
-                                         Messages.getString("BotConfigDialog.aggressionSliderMax"),
-                                         Messages.getString("BotConfigDialog.aggressionTooltip"),
-                                         Messages.getString("BotConfigDialog.aggressionSliderTitle"));
-        panel.add(aggressionSlidebar);
-
-        herdingSlidebar = buildSlider(Messages.getString("BotConfigDialog.herdingSliderMin"),
-                                      Messages.getString("BotConfigDialog.herdingSliderMax"),
-                                      Messages.getString("BotConfigDialog.herdingToolTip"),
-                                      Messages.getString("BotConfigDialog.herdingSliderTitle"));
-        panel.add(herdingSlidebar);
-
-        fallShameSlidebar = buildSlider(Messages.getString("BotConfigDialog.fallShameSliderMin"),
-                                        Messages.getString("BotConfigDialog.fallShameSliderMax"),
-                                        Messages.getString("BotConfigDialog.fallShameToolTip"),
-                                        Messages.getString("BotConfigDialog.fallShameSliderTitle"));
-        panel.add(fallShameSlidebar);
-        return panel;
-    }
-
     
-    private JPanel buildStrategicTargetsButtonPanel() {
-        JPanel panel = new JPanel(new GridLayout(1, 2, 20, 0));
-        addTargetButton = new JButton(Messages.getString("BotConfigDialog.princessAddTargetButtonCaption"));
-        addTargetButton.setToolTipText(Messages.getString("BotConfigDialog.princessAddTargetButtonToolTip"));
-        addTargetButton.addActionListener(this);
-        panel.add(addTargetButton);
-
-        removeTargetButton = new JButton(Messages.getString("BotConfigDialog.princessRemoveTargetButtonCaption"));
-        removeTargetButton.setToolTipText(Messages.getString("BotConfigDialog.princessRemoveTargetButtonToolTip"));
-        removeTargetButton.addActionListener(this);
-        panel.add(removeTargetButton);
-
-        return panel;
-    }
-
-    private void launchPrincessHelp() {
+    private void showPrincessHelp() {
         try {
             // Get the correct help file.
             StringBuilder helpPath = new StringBuilder("file:///");
@@ -541,6 +482,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         } else if (princessBehaviorNames.equals(e.getSource())) {
             getPresetPrincessBehavior();
             setPrincessFields();
+            
         } else if (homeEdgeCombo.equals(e.getSource())) {
             if (homeEdgeCombo.getSelectedItem() == CardinalEdge.NONE) {
                 autoFleeCheck.setSelected(false);
@@ -549,8 +491,9 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
                 autoFleeCheck.setEnabled(true);
                 autoFleeCheck.setSelected(true);
             }
+            
         } else if (princessHelpButton.equals(e.getSource())) {
-            launchPrincessHelp();
+            showPrincessHelp();
         }
     }
 
@@ -610,11 +553,11 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
      * @return A new bot-controlled client.
      */
     public BotClient getSelectedBot(String host, int port) {
-        Princess toReturn = new Princess(getBotName(), host, port,
-                                             LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
-        toReturn.setBehaviorSettings(princessBehavior);
-        toReturn.getLogger().debug(toReturn.getBehaviorSettings().toLog());
-        return toReturn;
+        Princess result = new Princess(getBotName(), host, port,
+                LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
+        result.setBehaviorSettings(princessBehavior);
+        result.getLogger().debug(result.getBehaviorSettings().toLog());
+        return result;
     }
 
     public String getBotName() {
@@ -630,99 +573,22 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         }
         return playersToReplace.getSelectedValuesList();
     }
-
     
-    private JPanel behaviorSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.behaviorNameLabel");
-        Content panContent = new Content(new GridLayout(1,1));
-        result.add(panContent);
-        panContent.add(buildSliderPanel());
-        return result;
+    /** Completes the tooltip for this dialog, setting its width and adding HTML tags. */
+    private String formatTooltip(String text) {
+        String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return UIUtil.scaleStringForGUI(result);
     }
-    
-    private JPanel targetsSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.targetsLabel");
-        Content panContent = new Content();
-        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
-        result.add(panContent);
 
-        JPanel typePanel = new JPanel(new GridLayout(1, 2, 20, 0));
-        targetTypeCombo = new JComboBox<>(new String[] {BUILDING_TARGET, UNIT_TARGET});
-        targetTypeCombo.setToolTipText(Messages.getString("BotConfigDialog.targetTypeTooltip"));
-        targetTypeCombo.setSelectedIndex(0);
-        typePanel.add(targetTypeCombo);
-
-        targetId = new JTextField();
-        targetId.setToolTipText(Messages.getString("BotConfigDialog.princessTargetIdToolTip"));
-        targetId.setColumns(4);
-        typePanel.add(targetId);
-        panContent.add(typePanel);
-
-        panContent.add(buildStrategicTargetsButtonPanel());
-
-        targetsList = new JList<>(targetsListModel);
-        targetsList.setToolTipText(Messages.getString("BotConfigDialog.princessStrategicTargetsToolTip"));
-        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        targetsList.setLayoutOrientation(JList.VERTICAL);
-        JScrollPane targetScroller = new JScrollPane(targetsList);
-        panContent.add(targetScroller);
-        return result;
-    }
-    
-    private JPanel retreatSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.homeEdgeLabel");
-        Content panContent = new Content();
-        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
-        result.add(panContent);
-
-        JPanel homeEdgePanel = new JPanel(new GridLayout(1, 2, 20, 20));
-        homeEdgePanel.setBorder(new EmptyBorder(5, 0, 5, 0));
-        autoFleeCheck = new MMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
-        autoFleeCheck.setToolTipText(Messages.getString("BotConfigDialog.autoFleeTooltip"));
-        autoFleeCheck.addActionListener(this);
-        autoFleeCheck.setEnabled(false);
-        homeEdgePanel.add(autoFleeCheck);
+    @Override
+    public void valueChanged(ListSelectionEvent event) {
+        if (event.getValueIsAdjusting()) {
+            return;
+        }
         
-        JLabel homeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
-        homeEdgePanel.add(homeEdgeLabel);
-
-        homeEdgeCombo = new JComboBox<>(CardinalEdge.values());
-        homeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
-        homeEdgeCombo.setSelectedIndex(0);
-        homeEdgeCombo.addActionListener(this);
-        homeEdgePanel.add(homeEdgeCombo);
-        panContent.add(homeEdgePanel);
-
-        JPanel retreatEdgePanel = new JPanel(new GridLayout(1, 2, 20, 20));
-        retreatEdgePanel.setBorder(new EmptyBorder(5, 0, 5, 0));
-        forcedWithdrawalCheck = new MMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
-        forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
-        retreatEdgePanel.add(forcedWithdrawalCheck);
-        JLabel retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
-        retreatEdgePanel.add(retreatEdgeLabel);
-
-        retreatEdgeCombo = new JComboBox<>(CardinalEdge.values());
-        retreatEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.retreatEdgeTooltip"));
-        retreatEdgeCombo.setSelectedIndex(0);
-        retreatEdgePanel.add(retreatEdgeCombo);
-        panContent.add(retreatEdgePanel);
-        return result;
-    }
-    
-    private JPanel devSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.targetsLabel");
-        Content panContent = new Content(new GridLayout(1, 2, 20, 20));
-        result.add(panContent);
-
-        JLabel verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"));
-        panContent.add(verbosityLabel);
-
-        verbosityCombo = new JComboBox<>(LogLevel.getLogLevelNames());
-        verbosityCombo.setToolTipText(Messages.getString("BotConfigDialog.verbosityToolTip"));
-        verbosityCombo.setSelectedIndex(0);
-        panContent.add(verbosityCombo);
-        return result;
+        if (event.getSource().equals(targetsList.getSelectionModel())) {
+            removeTargetButton.setEnabled(!targetsList.isSelectionEmpty());
+        }
     }
 }
 

@@ -17,45 +17,25 @@ package megamek.client.ui.swing.dialog;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
-import megamek.client.ui.swing.AdvancedSearchDialog;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MechViewPanel;
-import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.MechFileParser;
-import megamek.common.MechSearchFilter;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechView;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
+import megamek.client.ui.panes.EntityViewPane;
+import megamek.client.ui.swing.*;
+import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.templates.TROView;
+import megamek.common.options.*;
 import megamek.common.util.sorter.NaturalOrderComparator;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.swing.event.*;
+import javax.swing.table.*;
+
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.*;
+import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -96,8 +76,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
-    private MechViewPanel panelMechView;
-    private MechViewPanel panelTROView;
+    protected EntityViewPane panePreview;
     private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
@@ -188,15 +167,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         getContentPane().setLayout(new GridBagLayout());
 
         //region Unit Preview Pane
-        JTabbedPane panePreview = new JTabbedPane();
-
-        panelMechView = new MechViewPanel();
-        panelMechView.setMinimumSize(new Dimension(300, 500));
-        panelMechView.setPreferredSize(new Dimension(300, 600));
-        panePreview.addTab("Summary", panelMechView);
-
-        panelTROView = new MechViewPanel();
-        panePreview.addTab("TRO", panelTROView);
+        panePreview = new EntityViewPane(frame, null);
         //endregion Unit Preview Pane
 
         //region Selection Panel
@@ -587,34 +558,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
-        boolean populateTextFields = true;
-
         Entity selectedEntity = getSelectedEntity();
-        // null entity, so load a default unit.
+        panePreview.updateDisplayedEntity(selectedEntity);
+        // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
-            panelMechView.reset();
             labelImage.setIcon(null);
-            return null;
         }
-
-        MechView mechView = null;
-        TROView troView = null;
-        try {
-            mechView = new MechView(selectedEntity, false);
-            troView = TROView.createView(selectedEntity, true);
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
-            // error: unit didn't load right. this is bad news.
-            populateTextFields = false;
-        }
-        if (populateTextFields) {
-            panelMechView.setMech(selectedEntity, mechView);
-            panelTROView.setMech(selectedEntity, troView);
-        } else {
-            panelMechView.reset();
-            panelTROView.reset();
-        }
-
         return selectedEntity;
     }
 

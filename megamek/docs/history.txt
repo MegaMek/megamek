@@ -24,6 +24,13 @@ VERSION HISTORY:
 + Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
 + PR #2924: Per current errata, "short" buildings now provide partial cover for tall units (e.g. mechs) rather than enclosing them completely
 + PR #2923: Prototype TSM
++ Issue #2672: Fuel Tank Magnitude Tooltip Correction
++ PR #2915: Improved unit image scaling in the lobby
++ Issue #929: Narced status on unit tooltip
++ Issue #2920: Prevent lock-up when resolving homing artillery attacks vs tagged hex
++ PR #2929: Players can now skip deploying minefields
++ Issue #2543: Board images save at current zoom, game summary at zoom 1
++ PR #2910: UnitReadoutDialog Standardization
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

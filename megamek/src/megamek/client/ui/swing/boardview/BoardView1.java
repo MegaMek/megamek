@@ -115,6 +115,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.FuelTank;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -2332,16 +2333,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         graph.drawString(string, x, y);
     }
 
-    /**
-     * This method creates an image the size of the entire board (all
-     * mapsheets), draws the hexes onto it, and returns that image.
-     */
-    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consist board image
 
         int oldZoom = zoomIndex;
-        zoomIndex = BASE_ZOOM_INDEX;
-        zoom();
+        if (useBaseZoom) {
+            zoomIndex = BASE_ZOOM_INDEX;
+            zoom();
+        }
 
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
@@ -5336,7 +5335,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
-                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                    ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
                     MegaMek.getLogger().error(ex);
                 }
@@ -5797,12 +5796,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)
                     }));
                 } else {
-                    Building bldg = game.getBoard().getBuildingAt(mcoords);
+                    FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
                     txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.FuelTank", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                             bldg.toString(),
-                            bldg.getCurrentCF(mcoords)
+                            bldg.getCurrentCF(mcoords),
+                            bldg.getMagnitude()
                     }));
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$

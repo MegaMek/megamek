@@ -6819,16 +6819,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         iNarcPods.clear();
     }
 
-    /**
-     * Do we have any iNarc Pods attached?
-     *
-     * @return true iff one or more iNarcPods are attached.
-     */
+    /** Returns true if any iNarc pods are attached to this unit. */
     public boolean hasINarcPodsAttached() {
-        if (iNarcPods.size() > 0) {
-            return true;
-        }
-        return false;
+        return !iNarcPods.isEmpty();
+    }
+    
+    /** Returns true if any Narc pods are attached to this unit. (Ignores iNarc) */
+    public boolean hasNarcPodsAttached() {
+        return !narcPods.isEmpty();
+    }
+    
+    /** Returns true if any Narc or iNarc pods are attached to this unit. */
+    public boolean hasAnyTypeNarcPodsAttached() {
+        return hasINarcPodsAttached() || hasNarcPodsAttached();
     }
 
     /**

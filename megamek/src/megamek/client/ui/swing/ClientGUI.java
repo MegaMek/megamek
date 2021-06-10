@@ -2297,7 +2297,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileBoardImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
             e.printStackTrace();
         }

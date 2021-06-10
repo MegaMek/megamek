@@ -1897,7 +1897,7 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
-                int rapidsLevel =  curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
+                int rapidsLevel = curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
                 if (!curHex.containsTerrain(Terrains.WATER)
                         || (curHex.getTerrain(Terrains.WATER).getLevel() == 0)) {
                     setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel), 

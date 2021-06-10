@@ -22042,6 +22042,17 @@ public class Server implements Runnable {
             isFerroFibrousTarget = true;
         }
 
+        // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
+        if (damageType.equals(DamageType.ANTI_TSM) && te.isConventionalInfantry() && te.antiTSMVulnerable()) {
+            int burst = Compute.d6(2);
+            r = new Report(6434);
+            r.subject = te_n;
+            r.add(burst);
+            r.indent(2);
+            vDesc.addElement(r);
+            damage += burst;
+        }
+
         // area effect against infantry is double damage
         if (isPlatoon && areaSatArty) {
             // PBI. Double damage.
@@ -22145,17 +22156,6 @@ public class Server implements Runnable {
                     r.subject = te_n;
                     r.indent(2);
                     vDesc.addElement(r);
-                }
-                break;
-            case ANTI_TSM:
-                if (te.isConventionalInfantry() && te.antiTSMVulnerable()) {
-                    int burst = Compute.d6(2);
-                    r = new Report(6434);
-                    r.subject = te_n;
-                    r.add(burst);
-                    r.indent(2);
-                    vDesc.addElement(r);
-                    damage += burst;
                 }
                 break;
             case NAIL_RIVET:

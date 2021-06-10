@@ -289,7 +289,7 @@ public class MechFileParser {
                             && mount.getType().hasFlag(WeaponType.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_LASER)
+                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
                             && !mount.getType().isClan());
                 }
 

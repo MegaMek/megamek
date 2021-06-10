@@ -22058,10 +22058,7 @@ public class Server implements Runnable {
             r.indent(2);
             vDesc.addElement(r);
         }
-        // If dealing with fragmentation missiles,
-        // it does double damage to infantry...
-        // We're actually going to abuse this for AX-head warheads, too, so as
-        // to not add another parameter.
+
         switch (damageType) {
             case FRAGMENTATION:
                 // Fragmentation missiles deal full damage to conventional
@@ -22134,6 +22131,17 @@ public class Server implements Runnable {
                     r.subject = te_n;
                     r.indent(2);
                     vDesc.addElement(r);
+                }
+                break;
+            case ANTI_TSM:
+                if (te.isConventionalInfantry() && te.antiTSMVulnerable()) {
+                    int burst = Compute.d6(2);
+                    r = new Report(6434);
+                    r.subject = te_n;
+                    r.add(burst);
+                    r.indent(2);
+                    vDesc.addElement(r);
+                    damage += burst;
                 }
                 break;
             case NAIL_RIVET:
@@ -35033,21 +35041,20 @@ public class Server implements Runnable {
      * a hex with green smoke.
      *
      * @param entity An entity subject to anti-TSM damage
-     * @param missileHit Whether the check is cause by a missile as opposed to
-     *                   entering the hex. Infantry takes more damage from a hit.
+     * @return The damage reports
      */
-    public void doGreenSmokeDamage(Entity entity, boolean missileHit) {
-        // ignore if we're flying over the smoke
-        if (entity.getElevation() >= 2) {
-            return;
-        }
+    public Vector<Report> doGreenSmokeDamage(Entity entity) {
         Vector<Report> reports = new Vector<>();
+        // ignore if we're flying over the smoke or we're already toast
+        if ((entity.getElevation() >= 2) || entity.isDestroyed() || entity.isDoomed()) {
+            return reports;
+        }
         Report r = new Report(6432);
         r.subject = entity.getId();
         r.addDesc(entity);
         reports.add(r);
         if (entity.isConventionalInfantry()) {
-            reports.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), Compute.d6(missileHit ? 2 : 1)));
+            reports.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), Compute.d6()));
         } else {
             for (int loc = 0; loc < entity.locations(); loc++) {
                 if ((entity.getArmor(loc) <= 0 || (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) < 0)))
@@ -35063,10 +35070,10 @@ public class Server implements Runnable {
             }
         }
         // Only report if the exposure has some effect
-        if (reports.size() > 1) {
-            addReport(reports);
+        if (reports.size() == 1) {
+            reports.clear();
         }
-        addNewLines();
+        return reports;
     }
 
     /**

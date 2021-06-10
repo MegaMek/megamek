@@ -1577,8 +1577,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,
                             underWater, nukeS2S));
-            if (damageType.equals(DamageType.ANTI_TSM) && entityTarget.antiTSMVulnerable()) {
-                server.doGreenSmokeDamage(entityTarget, true);
+            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech) && entityTarget.antiTSMVulnerable()) {
+                vPhaseReport.addAll(server.doGreenSmokeDamage(entityTarget));
             }
             // for salvo shots, report that the aimed location was hit after
             // applying damage, because the location is first reported when

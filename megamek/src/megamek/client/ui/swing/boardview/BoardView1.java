@@ -2333,16 +2333,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         graph.drawString(string, x, y);
     }
 
-    /**
-     * This method creates an image the size of the entire board (all
-     * mapsheets), draws the hexes onto it, and returns that image.
-     */
-    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consist board image
 
         int oldZoom = zoomIndex;
-        zoomIndex = BASE_ZOOM_INDEX;
-        zoom();
+        if (useBaseZoom) {
+            zoomIndex = BASE_ZOOM_INDEX;
+            zoom();
+        }
 
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
@@ -5337,7 +5335,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
-                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                    ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
                     MegaMek.getLogger().error(ex);
                 }

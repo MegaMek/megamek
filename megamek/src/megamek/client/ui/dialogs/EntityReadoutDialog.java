@@ -23,12 +23,13 @@ import java.util.Objects;
 import javax.swing.*;
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.panes.EntityViewPane;
+import megamek.client.ui.preferences.JTabbedPanePreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.*;
 
 /** A dialog showing the unit readout for a given unit. */
 public class EntityReadoutDialog extends AbstractDialog {
 
-    private final JFrame parent;
     private final Entity entity;
     private EntityViewPane entityView;
 
@@ -42,14 +43,19 @@ public class EntityReadoutDialog extends AbstractDialog {
         super(frame, modal, "EntityReadoutDialog", "EntityReadoutDialog.title");
         setTitle(getTitle() + entity.getShortNameRaw());
         this.entity = Objects.requireNonNull(entity);
-        parent = frame;
         initialize();
     }
 
     @Override
     protected Container createCenterPane() {
-        entityView = new EntityViewPane(parent, entity);
+        entityView = new EntityViewPane(getFrame(), entity);
         return entityView;
+    }
+    
+    @Override
+    protected void setCustomPreferences(final PreferencesNode preferences) {
+        super.setCustomPreferences(preferences);
+        preferences.manage(new JTabbedPanePreference(entityView));
     }
     
 }

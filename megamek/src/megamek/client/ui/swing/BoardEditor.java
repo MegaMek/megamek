@@ -1263,11 +1263,12 @@ public class BoardEditor extends JPanel
     }
     
     /**
-     * Add to the terrain from one of the easy access buttons
+     * Cycle the terrain level (mouse wheel behavior) from the easy access buttons
      */
     private void addSetTerrainEasy(int type, int level) {
-        boolean exitsSpecified = cheTerrExitSpecified.isSelected();
-        int exits = texTerrExits.getNumber();
+        ITerrain present = curHex.getTerrain(type);
+        boolean exitsSpecified = present.hasExitsSpecified();
+        int exits = present.getExits();
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
@@ -1896,16 +1897,20 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
-                addSetTerrainEasy(Terrains.RAPIDS, curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1);
+                int rapidsLevel =  curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
                 if (!curHex.containsTerrain(Terrains.WATER)
                         || (curHex.getTerrain(Terrains.WATER).getLevel() == 0)) {
-                    addSetTerrainEasy(Terrains.WATER, 1);
+                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel), 
+                            TF.createTerrain(Terrains.WATER, 1));
+                } else {
+                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel),
+                            curHex.getTerrain(Terrains.WATER));
                 }
             } else {
                 if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                     curHex.removeAllTerrains();
                 }
-                addSetTerrainEasy(Terrains.WATER, 1);
+                setConvenientTerrain(ae, TF.createTerrain(Terrains.WATER, 1));
             }
         } else if (ae.getSource().equals(buttonSw)) {
             setConvenientTerrain(ae, TF.createTerrain(Terrains.SWAMP, 1));

@@ -2756,10 +2756,10 @@ public class Compute {
                 case SmokeCloud.SMOKE_LI_LIGHT:
                 case SmokeCloud.SMOKE_LI_HEAVY:
                 case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                case SmokeCloud.SMOKE_GREEN:
                     toHit.addModifier(1, "target in light smoke");
                     break;
                 case SmokeCloud.SMOKE_HEAVY:
-                case SmokeCloud.SMOKE_GREEN:
                     if (eistatus > 0) {
                         toHit.addModifier(1, "target in heavy smoke");
                     } else {
@@ -2842,10 +2842,10 @@ public class Compute {
             case SmokeCloud.SMOKE_LI_LIGHT:
             case SmokeCloud.SMOKE_LI_HEAVY:
             case SmokeCloud.SMOKE_CHAFF_LIGHT:
+            case SmokeCloud.SMOKE_GREEN:
                 toHit.addModifier(1, "target in light smoke");
                 break;
             case SmokeCloud.SMOKE_HEAVY:
-            case SmokeCloud.SMOKE_GREEN:
                 if (eistatus > 0) {
                     toHit.addModifier(1, "target in heavy smoke");
                 } else {

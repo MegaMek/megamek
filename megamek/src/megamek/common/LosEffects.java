@@ -1237,10 +1237,10 @@ public class LosEffects {
                         case SmokeCloud.SMOKE_LI_LIGHT:
                         case SmokeCloud.SMOKE_LI_HEAVY:
                         case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                        case SmokeCloud.SMOKE_GREEN:
                             los.lightSmoke++;
                             break;
                         case SmokeCloud.SMOKE_HEAVY:
-                        case SmokeCloud.SMOKE_GREEN:
                             los.heavySmoke++;
                             break;
                     }

@@ -4909,6 +4909,14 @@ public class Server implements Runnable {
             updateVisibilityIndicator(losCache);
         }
 
+        // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled
+        // hex takes damage.
+        if ((md.getHexesMoved() == 0)
+                && (game.getBoard().getHex(md.getFinalCoords()).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
+                && entity.antiTSMVulnerable()) {
+            addReport(doGreenSmokeDamage(entity));
+        }
+
         // This entity's turn is over.
         // N.B. if the entity fell, a *new* turn has already been added.
         endCurrentTurn(entity);
@@ -8080,6 +8088,12 @@ public class Server implements Runnable {
                     doFlamingDamage(entity, curPos);
                 }
             }
+
+            if ((game.getBoard().getHex(curPos).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
+                    && !stepMoveType.equals(EntityMovementType.MOVE_JUMP) && entity.antiTSMVulnerable()) {
+                addReport(doGreenSmokeDamage(entity));
+            }
+
             // check for extreme gravity movement
             if (!i.hasMoreElements() && !firstStep) {
                 checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);

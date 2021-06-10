@@ -3,6 +3,7 @@ package megamek.server.victory;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.IPlayer;
 import megamek.common.force.Forces;
+import megamek.common.options.GameOptions;
 import megamek.server.Server;
 import megamek.common.IGame;
 import org.junit.Test;
@@ -26,6 +27,7 @@ public class ServerTest {
         Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
         Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
         Mockito.when(testGame.getForces()).thenReturn(testForces);
+        Mockito.when(testGame.getOptions()).thenReturn(new GameOptions());
         return testGame;
     }
 

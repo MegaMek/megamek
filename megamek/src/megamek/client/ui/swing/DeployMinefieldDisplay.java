@@ -140,9 +140,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
         setRemoveMineEnabled(true);
-        if (!p.hasMinefields()) {
-            butDone.setEnabled(true);
-        }
+        butDone.setEnabled(true);
     }
 
     /**
@@ -192,7 +190,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
                 if (mf.getPlayerId() == clientgui.getClient().getLocalPlayer().getId()) {
-                    butDone.setEnabled(false);
                     mfRemoved.add(mf);
                     deployedMinefields.removeElement(mf);
                     if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
@@ -308,12 +305,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 deployedMinefields.addElement(mf);
             }
             clientgui.bv.refreshDisplayables();            
-        }
-
-        if ((p.getNbrMFConventional() == 0) && (p.getNbrMFCommand() == 0)
-                && (p.getNbrMFVibra() == 0) && (p.getNbrMFActive() == 0)
-                && (p.getNbrMFInferno() == 0)) {
-            butDone.setEnabled(true);
         }
 
         setConventionalEnabled(p.getNbrMFConventional());

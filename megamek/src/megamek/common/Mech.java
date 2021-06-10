@@ -896,13 +896,7 @@ public abstract class Mech extends Entity {
         return false;
     }
 
-    /**
-     * Check for vulnerability to anti-TSM munitions. ATSM affects prototype TSM and
-     * any industrial TSM created before 3050. I don't see any alternative to using the
-     * construction year here.
-     *
-     * @return Whether the mech TSM that is affected by ATSM munitions
-     */
+    @Override
     public boolean antiTSMVulnerable() {
         for (Mounted m : getMisc()) {
             if ((m.getType().hasFlag(MiscType.F_TSM) && m.getType().hasFlag(MiscType.F_PROTOTYPE))

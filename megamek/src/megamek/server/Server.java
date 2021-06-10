@@ -27065,6 +27065,7 @@ public class Server implements Runnable {
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
+                return vDesc;
             } else if ((!advancedCrit && (roll >= 10) && (roll <= 11))
                     || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;
@@ -27172,20 +27173,16 @@ public class Server implements Runnable {
                 }
             }
             if (damageType.equals(DamageType.ANTI_TSM) && (en instanceof Mech)
-                    && ((Mech) en).antiTSMVulnerable()) {
+                    && en.antiTSMVulnerable()) {
                 r = new Report(6430);
                 r.subject = en.getId();
                 r.indent(2);
                 r.addDesc(en);
-                r.newlines = 1;
                 vDesc.addElement(r);
                 hits++;
             }
         } else {
             hits = 1;
-        }
-        if (hits <= 0) {
-            return vDesc;
         }
 
         // Check if there is the potential for a reactive armor crit
@@ -35027,6 +35024,47 @@ public class Server implements Runnable {
             }
         } else {
             addReport(destroyEntity(en, "fell into magma", false, false));
+        }
+        addNewLines();
+    }
+
+    /**
+     * Applies damage to any eligible unit hit by anti-TSM missiles or entering
+     * a hex with green smoke.
+     *
+     * @param entity An entity subject to anti-TSM damage
+     * @param missileHit Whether the check is cause by a missile as opposed to
+     *                   entering the hex. Infantry takes more damage from a hit.
+     */
+    public void doGreenSmokeDamage(Entity entity, boolean missileHit) {
+        // ignore if we're flying over the smoke
+        if (entity.getElevation() >= 2) {
+            return;
+        }
+        Vector<Report> reports = new Vector<>();
+        Report r = new Report(6432);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        reports.add(r);
+        if (entity.isConventionalInfantry()) {
+            reports.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), Compute.d6(missileHit ? 2 : 1)));
+        } else {
+            for (int loc = 0; loc < entity.locations(); loc++) {
+                if ((entity.getArmor(loc) <= 0 || (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) < 0)))
+                        && !entity.isLocationBlownOff(loc)) {
+                    r = new Report(6433);
+                    r.subject = entity.getId();
+                    r.add(entity.getLocationName(loc));
+                    r.indent(1);
+                    reports.add(r);
+                    reports.addAll(damageEntity(entity, new HitData(loc), 6, false,
+                            DamageType.ANTI_TSM, true));
+                }
+            }
+        }
+        // Only report if the exposure has some effect
+        if (reports.size() > 1) {
+            addReport(reports);
         }
         addNewLines();
     }

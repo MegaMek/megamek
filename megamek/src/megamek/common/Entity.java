@@ -9290,6 +9290,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Check for vulnerability to anti-TSM munitions. ATSM affects mechs with prototype TSM and
+     * any industrial TSM created before 3050, and conventional infantry with TSM implants.
+     *
+     * @return Whether the unit is affected by ATSM munitions
+     */
+    public boolean antiTSMVulnerable() {
+        return false;
+    }
+
+    /**
      * Record if the unit is just combat-lossed or if it has been utterly
      * destroyed.
      *

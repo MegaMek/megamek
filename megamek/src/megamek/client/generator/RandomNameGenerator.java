@@ -177,13 +177,11 @@ public class RandomNameGenerator implements Serializable {
             // clan key provided that exists.
             // If the key isn't set by either case above, then the name is generated based on the
             // default faction key
-            MegaMek.getLogger().warning("Generating Name with base faction " + faction + " gender " + gender + " clan " + isClan);
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
-            MegaMek.getLogger().warning("Generating Name with faction " + faction + " surname code " + ethnicCode + " given name code " + givenNameEthnicCode);
 
             name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
 

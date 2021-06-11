@@ -43,7 +43,7 @@ public class Victory implements Serializable {
 
     private IVictoryConditions[] buildVClist(GameOptions options) {
         neededVictoryConditions = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
-        List<IVictoryConditions> victories = new ArrayList<IVictoryConditions>();
+        List<IVictoryConditions> victories = new ArrayList<>();
         // BV related victory conditions
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victories.add(new BVDestroyedVictory(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));

@@ -57,6 +57,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -176,8 +177,8 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
-    
-    /** 
+
+    /**
      * The forces present in the game. The top level force holds all forces and force-less
      * entities and should therefore not be shown.
      */
@@ -1309,7 +1310,7 @@ public class Game implements Serializable, IGame {
                 && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());
         }
-        
+
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
             // resetting a UUID that
@@ -3388,8 +3389,13 @@ public class Game implements Serializable, IGame {
         victory = new Victory(getOptions());
     }
 
+    @Deprecated
     public Victory getVictory() {
         return victory;
+    }
+
+    public VictoryResult getVictoryResult() {
+        return victory.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is
@@ -3686,6 +3692,15 @@ public class Game implements Serializable, IGame {
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
+    }
+
+    /**
+     * cancel victory from the server.java moved here
+     */
+    public void cancelVictory(){
+        setForceVictory(false);
+        setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        setVictoryTeam(IPlayer.TEAM_NONE);
     }
 
 }

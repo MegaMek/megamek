@@ -189,11 +189,17 @@ public interface IPlayer extends ITurnOrdered {
      * @return a vector of relevant entity ids
      */
     Vector<Integer> getAirborneVTOL();
-    
+
     // Make sure IPlayer implements both
     @Override
     boolean equals(Object obj);
     
     @Override
     int hashCode();
+
+    /**
+     * function from server.java
+     * @return string of playercolor
+     */
+    public String getColorForPlayer();
 }

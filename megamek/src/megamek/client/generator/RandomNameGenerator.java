@@ -177,11 +177,13 @@ public class RandomNameGenerator implements Serializable {
             // clan key provided that exists.
             // If the key isn't set by either case above, then the name is generated based on the
             // default faction key
+            MegaMek.getLogger().warning("Generating Name with base faction " + faction + " gender " + gender + " clan " + isClan);
             faction = factionEthnicCodes.containsKey(faction) ? faction
                     : ((isClan && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
+            MegaMek.getLogger().warning("Generating Name with faction " + faction + " surname code " + ethnicCode + " given name code " + givenNameEthnicCode);
 
             name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
 
@@ -338,8 +340,7 @@ public class RandomNameGenerator implements Serializable {
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
             while (input.hasNextLine()) {
-                String[] values = input.nextLine().split(",");
-
+                final String[] values = input.nextLine().split(",");
                 if (values.length >= 2) {
                     historicalEthnicity.put(Integer.parseInt(values[0]), values[1]);
                 }
@@ -352,22 +353,14 @@ public class RandomNameGenerator implements Serializable {
     private void initializeFactions() {
         factionGivenNames = new HashMap<>();
         factionEthnicCodes = new HashMap<>();
-        loadFactionsFromFile(new File(MegaMekConstants.NAME_FACTIONS_DIRECTORY_PATH));
-        loadFactionsFromFile(new File(MegaMekConstants.USER_NAME_FACTIONS_DIRECTORY_PATH));
-    }
+        final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap = new HashMap<>();
+        final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap = new HashMap<>();
+        loadFactionsFromFile(new File(MegaMekConstants.NAME_FACTIONS_DIRECTORY_PATH),
+                factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
+        loadFactionsFromFile(new File(MegaMekConstants.USER_NAME_FACTIONS_DIRECTORY_PATH),
+                factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
 
-    private void loadFactionsFromFile(final File file) {
-        if (!file.exists() || !file.isDirectory()) {
-            return;
-        }
-
-        final String[] filenames = file.list();
-
-        if ((filenames == null) || (filenames.length == 0)) {
-            if (!factionGivenNames.isEmpty()) {
-                return;
-            }
-
+        if (factionGivenNamesLoadMap.isEmpty() || factionEthnicCodesLoadMap.isEmpty()) {
             MegaMek.getLogger().error("No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow players to
@@ -383,45 +376,71 @@ public class RandomNameGenerator implements Serializable {
                 factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
             }
         } else {
-            for (final String filename : filenames) {
-                // Determine the key based on the file name
-                final String key = filename.split("\\.csv")[0];
-
-                if (key.isBlank()) {
-                    continue;
+            for (final Map.Entry<String, Map<Integer, Map<Integer, Integer>>> externalEntry : factionGivenNamesLoadMap.entrySet()) {
+                factionGivenNames.put(externalEntry.getKey(), new HashMap<>());
+                for (final Map.Entry<Integer, Map<Integer, Integer>> middleEntry : externalEntry.getValue().entrySet()) {
+                    factionGivenNames.get(externalEntry.getKey()).put(middleEntry.getKey(), new WeightedIntMap<>());
+                    for (final Map.Entry<Integer, Integer> internalEntry : middleEntry.getValue().entrySet()) {
+                        factionGivenNames.get(externalEntry.getKey()).get(middleEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+                    }
                 }
+            }
 
-                loadFactionFile(key, new File(file, filename));
+            for (final Map.Entry<String, Map<Integer, Integer>> externalEntry : factionEthnicCodesLoadMap.entrySet()) {
+                factionEthnicCodes.put(externalEntry.getKey(), new WeightedIntMap<>());
+                for (final Map.Entry<Integer, Integer> internalEntry : externalEntry.getValue().entrySet()) {
+                    factionEthnicCodes.get(externalEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+                }
             }
         }
     }
 
-    private void loadFactionFile(final String key, final File file) {
-        if (!file.exists()) {
+    private void loadFactionsFromFile(final File file,
+                                      final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
+                                      final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
+        if (!file.exists() || !file.isDirectory()) {
             return;
         }
 
-        factionGivenNames.putIfAbsent(key, new HashMap<>());
-        factionEthnicCodes.putIfAbsent(key, new WeightedIntMap<>());
+        final String[] filenames = file.list();
+        if ((filenames != null) && (filenames.length > 0)) {
+            for (final String filename : filenames) {
+                if (!filename.endsWith(".csv")) {
+                    continue;
+                }
+                loadFactionFile(new File(file, filename), filename.split("\\.csv")[0],
+                        factionGivenNamesLoadMap, factionEthnicCodesLoadMap);
+            }
+        }
+    }
+
+    private void loadFactionFile(final File file, final String key,
+                                 final Map<String, Map<Integer, Map<Integer, Integer>>> factionGivenNamesLoadMap,
+                                 final Map<String, Map<Integer, Integer>> factionEthnicCodesLoadMap) {
+        if (!file.exists() || key.isBlank()) {
+            return;
+        }
+
+        factionGivenNamesLoadMap.putIfAbsent(key, new HashMap<>());
+        factionEthnicCodesLoadMap.putIfAbsent(key, new HashMap<>());
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
-
             while (input.hasNextLine()) {
-                String[] values = input.nextLine().split(",");
-                int ethnicCode = Integer.parseInt(values[0]);
+                final String[] values = input.nextLine().split(",");
+                final int ethnicCode = Integer.parseInt(values[0]);
 
-                factionGivenNames.get(key).put(ethnicCode, new WeightedIntMap<>());
+                factionGivenNamesLoadMap.get(key).put(ethnicCode, new HashMap<>());
 
                 // Add information to maps
                 // The weights for ethnic given names for each surname ethnicity will be
                 // stored in the file at i + 2, so that is where we will parse them from
                 for (int i = 1; i <= historicalEthnicity.size(); i++) {
-                    factionGivenNames.get(key).get(ethnicCode).add(Integer.parseInt(values[i + 2].trim()), i);
+                    factionGivenNamesLoadMap.get(key).get(ethnicCode).put(i, Integer.parseInt(values[i + 2].trim()));
                 }
 
-                if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
-                    factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
+                if (!factionGivenNamesLoadMap.get(key).get(ethnicCode).isEmpty()) {
+                    factionEthnicCodesLoadMap.get(key).put(ethnicCode, Integer.parseInt(values[2]));
                 } else {
                     MegaMek.getLogger().error("There are no possible options for " + ethnicCode + " for file " + file);
                 }
@@ -457,26 +476,26 @@ public class RandomNameGenerator implements Serializable {
         loadNamesFromFile(new File(MegaMekConstants.SURNAME_FILE), surnamesLoadMap);
         loadNamesFromFile(new File(MegaMekConstants.USER_SURNAME_FILE), surnamesLoadMap);
 
-        for (final Map.Entry<Integer, Map<String, Integer>> entry : maleGivenNamesLoadMap.entrySet()) {
-            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
-                maleGivenNames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+        for (final Map.Entry<Integer, Map<String, Integer>> externalEntry : maleGivenNamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : externalEntry.getValue().entrySet()) {
+                maleGivenNames.get(externalEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
             }
         }
 
-        for (final Map.Entry<Integer, Map<String, Integer>> entry : femaleGivenNamesLoadMap.entrySet()) {
-            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
-                femaleGivenNames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+        for (final Map.Entry<Integer, Map<String, Integer>> externalEntry : femaleGivenNamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : externalEntry.getValue().entrySet()) {
+                femaleGivenNames.get(externalEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
             }
         }
 
-        for (final Map.Entry<Integer, Map<String, Integer>> entry : surnamesLoadMap.entrySet()) {
-            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
-                surnames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+        for (final Map.Entry<Integer, Map<String, Integer>> externalEntry : surnamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : externalEntry.getValue().entrySet()) {
+                surnames.get(externalEntry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
             }
         }
     }
 
-    private void loadNamesFromFile(final File file, Map<Integer, Map<String, Integer>> map) {
+    private void loadNamesFromFile(final File file, final Map<Integer, Map<String, Integer>> map) {
         if (!file.exists()) {
             return;
         }
@@ -485,12 +504,11 @@ public class RandomNameGenerator implements Serializable {
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
-
             input.nextLine(); // this is used to skip over the header line
 
             while (input.hasNextLine()) {
                 lineNumber++;
-                String[] values = input.nextLine().split(",");
+                final String[] values = input.nextLine().split(",");
                 if (values.length < 3) {
                     MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                     continue;

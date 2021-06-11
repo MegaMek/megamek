@@ -9,11 +9,11 @@ The default file implementation is the userdata file overriding the core data fi
 ## General Suite Directories/Files:
 ### data/names/
 factions/: This subdirectory holds faction-specific name generation files. The individual faction files are line-based merge implemented, so that you may override any line of the default file by writing the historical ethnic code in the userdata folder.
-callsigns.csv: This file contains weighted callsigns used in the random callsign generator. This file is merge implemented, with callsigns duplicated in the userdata folder having the userdata weight instead of the default weight.
-femaleGivenNames.csv: This file contains weighted historical ethnic code organized name used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight.
+callsigns.csv: This file contains weighted callsigns used in the random callsign generator. This file is merge implemented, with callsigns duplicated in the userdata folder having the userdata weight instead of the default weight. The first line of this file must be the standard header of "Callsign,Weight".
+femaleGivenNames.csv: This file contains weighted historical ethnic code organized name used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight. The first line of this file must be the standard header of "Ethnic Code,Name,Weight".
 historicalEthnicity.csv: This file contains historical ethnic codes and their names. This file is merge implemented, with duplicated codes overwritten by the value in the userdata file.
-maleGivenNames.csv: This file contains weighted historical ethnic code organized names used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight.
-surnames.csv: This file contains weighted historical ethnic code organized surnames used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight.
+maleGivenNames.csv: This file contains weighted historical ethnic code organized names used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight. The first line of this file must be the standard header of "Ethnic Code,Name,Weight".
+surnames.csv: This file contains weighted historical ethnic code organized surnames used in the random name generator. This file is merge implemented, with names duplicated in the userdata folder having the userdata weight instead of the default weight. The first line of this file must be the standard header of "Ethnic Code,Name,Weight".
 
 ## MegaMek-specific Folders/Files:
 

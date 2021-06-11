@@ -37,6 +37,7 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
         super();
         ammoType = AmmoType.T_SRM_STREAK;
         toHitModifier = -1;
+        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
     }
 
     /*

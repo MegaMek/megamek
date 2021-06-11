@@ -31,6 +31,7 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
     public ExtendedLRMWeapon() {
         super();
         ammoType = AmmoType.T_EXLRM;
+        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
         minimumRange = 10;
         shortRange = 12;
         mediumRange = 22;

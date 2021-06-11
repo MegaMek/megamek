@@ -41,8 +41,8 @@ build/
 /megamek/mmconf/*.preferences
 
 # UserData
-/megamek/userdata/
-!/megamek/userdata/userDataReadMe.txt
+megamek/userdata/**
+!/megamek/userdata/README.md
 
 # Save Games
 /megamek/savegames

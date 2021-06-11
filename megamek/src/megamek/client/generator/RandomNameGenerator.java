@@ -21,16 +21,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import megamek.MegaMek;
-import megamek.common.Configuration;
+import megamek.MegaMekConstants;
 import megamek.common.enums.Gender;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.weightedMaps.WeightedIntMap;
 
 /**
  * This class sets up a random name generator that can then be used to generate random pilot names.
  * It has a couple different settings and flexible input file directory locations
  *
- * Files are located in {@link Configuration#namesDir()}. All files are comma spaced csv files
+ * Files are located in /data/names/. All files are comma spaced csv files
  *
  * The historicalEthnicity.csv file shows the correspondence between the different ethnic names
  * and their numeric code in the database. This file is used to initialize the name mapping, and
@@ -48,7 +47,7 @@ import megamek.common.util.weightedMaps.WeightedIntMap;
  * The Weight is an Integer that is used to set the generation chance of the name. The higher the number,
  * the more common the name is.
  *
- * Faction files are located in factions subdirectory of {@link Configuration#namesDir()}
+ * Faction files are located in /data/names/factions/ directory.
  * The faction key is the filename without the extension.
  * The faction files will have varying number of fields depending on how many ethnic groups exist.
  * The faction file does two things:
@@ -75,15 +74,6 @@ import megamek.common.util.weightedMaps.WeightedIntMap;
 public class RandomNameGenerator implements Serializable {
     //region Variable Declarations
     private static final long serialVersionUID = 5765118329881301375L;
-
-    //region Local File Names
-    // TODO : Move these so they can be changed on demand
-    private static final String DIR_NAME_FACTIONS = "factions"; // Faction Subdirectory
-    private static final String GIVEN_NAME_MALE_FILE = "maleGivenNames.csv"; // Male Given Name Filename
-    private static final String GIVEN_NAME_FEMALE_FILE = "femaleGivenNames.csv"; // Female Given Name Filename
-    private static final String SURNAME_FILE = "surnames.csv"; // Surname List Filename
-    private static final String HISTORICAL_ETHNICITY_FILE = "historicalEthnicity.csv"; // Historical Ethnicity Filename
-    //endregion Local File Names
 
     private static RandomNameGenerator rng; // This is using a singleton, because only a single usage of this class is required
 
@@ -328,57 +318,56 @@ public class RandomNameGenerator implements Serializable {
     }
 
     private void populateNames() {
-        //region Variable Instantiation
-        int numEthnicCodes = 0;
-        //endregion Variable Instantiation
+        initializeHistoricalEthnicity();
+        initializeFactions();
+        initializeNames();
+        initialized = true;
+    }
 
-        //region Map Instantiation
-        maleGivenNames = new HashMap<>();
-        femaleGivenNames = new HashMap<>();
-        surnames = new HashMap<>();
-        factionGivenNames = new HashMap<>();
-        factionEthnicCodes = new HashMap<>();
+    private void initializeHistoricalEthnicity() {
         historicalEthnicity = new HashMap<>();
+        loadHistoricalEthnicityFromFile(new File(MegaMekConstants.HISTORICAL_ETHNICITY_FILE));
+        loadHistoricalEthnicityFromFile(new File(MegaMekConstants.USER_HISTORICAL_ETHNICITY_FILE));
+    }
 
-        // Determine the number of ethnic codes
-        File masterAncestryFile = new MegaMekFile(Configuration.namesDir(), HISTORICAL_ETHNICITY_FILE).getFile();
-        try (InputStream is = new FileInputStream(masterAncestryFile);
+    private void loadHistoricalEthnicityFromFile(final File file) {
+        if (!file.exists()) {
+            return;
+        }
+
+        try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
-
             while (input.hasNextLine()) {
                 String[] values = input.nextLine().split(",");
 
                 if (values.length >= 2) {
                     historicalEthnicity.put(Integer.parseInt(values[0]), values[1]);
                 }
-                numEthnicCodes++;
             }
-        } catch (IOException e) {
-            MegaMek.getLogger().error("Could not find " + masterAncestryFile + "!");
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Failed to parse historical ethnicity file " + file, e);
+        }
+    }
+
+    private void initializeFactions() {
+        factionGivenNames = new HashMap<>();
+        factionEthnicCodes = new HashMap<>();
+        loadFactionsFromFile(new File(MegaMekConstants.NAME_FACTIONS_DIRECTORY_PATH));
+        loadFactionsFromFile(new File(MegaMekConstants.USER_NAME_FACTIONS_DIRECTORY_PATH));
+    }
+
+    private void loadFactionsFromFile(final File file) {
+        if (!file.exists() || !file.isDirectory()) {
             return;
         }
 
-        // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
-        for (int i = 1; i <= numEthnicCodes; i++) {
-            maleGivenNames.put(i, new WeightedIntMap<>());
-            femaleGivenNames.put(i, new WeightedIntMap<>());
-            surnames.put(i, new WeightedIntMap<>());
-        }
-        //endregion Map Instantiation
+        final String[] filenames = file.list();
 
-        //region Read Names
-        readNamesFileToMap(maleGivenNames, GIVEN_NAME_MALE_FILE);
-        readNamesFileToMap(femaleGivenNames, GIVEN_NAME_FEMALE_FILE);
-        readNamesFileToMap(surnames, SURNAME_FILE);
-        //endregion Read Names
+        if ((filenames == null) || (filenames.length == 0)) {
+            if (!factionGivenNames.isEmpty()) {
+                return;
+            }
 
-        //region Faction Files
-        // all faction files should be in the faction directory
-        File factionsDir = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
-        String[] fileNames = factionsDir.list();
-
-        if ((fileNames == null) || (fileNames.length == 0)) {
-            //region No Factions Specified
             MegaMek.getLogger().error("No faction files found!");
 
             // We will create a general list where everything is weighted at one to allow players to
@@ -388,62 +377,111 @@ public class RandomNameGenerator implements Serializable {
             factionEthnicCodes.put(KEY_DEFAULT_FACTION, new WeightedIntMap<>());
 
             // Add information to maps
-            for (int i = 1; i <= numEthnicCodes; i++) {
+            for (int i = 1; i <= historicalEthnicity.size(); i++) {
                 factionGivenNames.get(KEY_DEFAULT_FACTION).put(i, new WeightedIntMap<>());
                 factionGivenNames.get(KEY_DEFAULT_FACTION).get(i).add(1, i);
                 factionEthnicCodes.get(KEY_DEFAULT_FACTION).add(1, i);
             }
-            //endregion No Factions Specified
         } else {
-            for (String filename : fileNames) {
+            for (final String filename : filenames) {
                 // Determine the key based on the file name
-                String key = filename.split("\\.csv")[0];
+                final String key = filename.split("\\.csv")[0];
 
-                // Just check with the ethnic codes, as if it has the key then the two names
-                // maps do
-                if ((key.length() < 1) || factionEthnicCodes.containsKey(key)) {
+                if (key.isBlank()) {
                     continue;
                 }
 
-                // Initialize Maps
-                factionGivenNames.put(key, new HashMap<>());
-                factionEthnicCodes.put(key, new WeightedIntMap<>());
-
-                File factionFile = new MegaMekFile(factionsDir, filename).getFile();
-                try (InputStream is = new FileInputStream(factionFile);
-                     Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
-
-                    while (input.hasNextLine()) {
-                        String[] values = input.nextLine().split(",");
-                        int ethnicCode = Integer.parseInt(values[0]);
-
-                        factionGivenNames.get(key).put(ethnicCode, new WeightedIntMap<>());
-
-                        // Add information to maps
-                        // The weights for ethnic given names for each surname ethnicity will be
-                        // stored in the file at i + 2, so that is where we will parse them from
-                        for (int i = 1; i <= numEthnicCodes; i++) {
-                            factionGivenNames.get(key).get(ethnicCode).add(Integer.parseInt(values[i + 2].trim()), i);
-                        }
-
-                        if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
-                            factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
-                        } else {
-                            MegaMek.getLogger().error("There are no possible options for " + ethnicCode + " for key " + key);
-                        }
-                    }
-                } catch (IOException fne) {
-                    MegaMek.getLogger().error("Could not find " + factionFile + "!");
-                }
+                loadFactionFile(key, new File(file, filename));
             }
         }
-        initialized = true;
-        //endregion Faction Files
     }
 
-    private void readNamesFileToMap(Map<Integer, WeightedIntMap<String>> map, String fileName) {
+    private void loadFactionFile(final String key, final File file) {
+        if (!file.exists()) {
+            return;
+        }
+
+        factionGivenNames.putIfAbsent(key, new HashMap<>());
+        factionEthnicCodes.putIfAbsent(key, new WeightedIntMap<>());
+
+        try (InputStream is = new FileInputStream(file);
+             Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
+
+            while (input.hasNextLine()) {
+                String[] values = input.nextLine().split(",");
+                int ethnicCode = Integer.parseInt(values[0]);
+
+                factionGivenNames.get(key).put(ethnicCode, new WeightedIntMap<>());
+
+                // Add information to maps
+                // The weights for ethnic given names for each surname ethnicity will be
+                // stored in the file at i + 2, so that is where we will parse them from
+                for (int i = 1; i <= historicalEthnicity.size(); i++) {
+                    factionGivenNames.get(key).get(ethnicCode).add(Integer.parseInt(values[i + 2].trim()), i);
+                }
+
+                if (!factionGivenNames.get(key).get(ethnicCode).isEmpty()) {
+                    factionEthnicCodes.get(key).add(Integer.parseInt(values[2]), ethnicCode);
+                } else {
+                    MegaMek.getLogger().error("There are no possible options for " + ethnicCode + " for file " + file);
+                }
+            }
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Failed to parse " + file, e);
+        }
+    }
+
+    private void initializeNames() {
+        maleGivenNames = new HashMap<>();
+        femaleGivenNames = new HashMap<>();
+        surnames = new HashMap<>();
+
+        final Map<Integer, Map<String, Integer>> maleGivenNamesLoadMap = new HashMap<>();
+        final Map<Integer, Map<String, Integer>> femaleGivenNamesLoadMap = new HashMap<>();
+        final Map<Integer, Map<String, Integer>> surnamesLoadMap = new HashMap<>();
+
+        // Then immediately instantiate the number of weighted maps needed for Given Names and Surnames
+        for (int i = 1; i <= historicalEthnicity.size(); i++) {
+            maleGivenNames.put(i, new WeightedIntMap<>());
+            femaleGivenNames.put(i, new WeightedIntMap<>());
+            surnames.put(i, new WeightedIntMap<>());
+            maleGivenNamesLoadMap.put(i, new HashMap<>());
+            femaleGivenNamesLoadMap.put(i, new HashMap<>());
+            surnamesLoadMap.put(i, new HashMap<>());
+        }
+
+        loadNamesFromFile(new File(MegaMekConstants.GIVEN_NAME_MALE_FILE), maleGivenNamesLoadMap);
+        loadNamesFromFile(new File(MegaMekConstants.USER_GIVEN_NAME_MALE_FILE), maleGivenNamesLoadMap);
+        loadNamesFromFile(new File(MegaMekConstants.GIVEN_NAME_FEMALE_FILE), femaleGivenNamesLoadMap);
+        loadNamesFromFile(new File(MegaMekConstants.USER_GIVEN_NAME_FEMALE_FILE), femaleGivenNamesLoadMap);
+        loadNamesFromFile(new File(MegaMekConstants.SURNAME_FILE), surnamesLoadMap);
+        loadNamesFromFile(new File(MegaMekConstants.USER_SURNAME_FILE), surnamesLoadMap);
+
+        for (final Map.Entry<Integer, Map<String, Integer>> entry : maleGivenNamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
+                maleGivenNames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+            }
+        }
+
+        for (final Map.Entry<Integer, Map<String, Integer>> entry : femaleGivenNamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
+                femaleGivenNames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+            }
+        }
+
+        for (final Map.Entry<Integer, Map<String, Integer>> entry : surnamesLoadMap.entrySet()) {
+            for (final Map.Entry<String, Integer> internalEntry : entry.getValue().entrySet()) {
+                surnames.get(entry.getKey()).add(internalEntry.getValue(), internalEntry.getKey());
+            }
+        }
+    }
+
+    private void loadNamesFromFile(final File file, Map<Integer, Map<String, Integer>> map) {
+        if (!file.exists()) {
+            return;
+        }
+
         int lineNumber = 0;
-        File file = new MegaMekFile(Configuration.namesDir(), fileName).getFile();
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
@@ -458,7 +496,7 @@ public class RandomNameGenerator implements Serializable {
                     continue;
                 }
 
-                map.get(Integer.parseInt(values[0])).add(Integer.parseInt(values[2]), values[1]);
+                map.get(Integer.parseInt(values[0])).put(values[1], Integer.parseInt(values[2]));
             }
         } catch (IOException e) {
             MegaMek.getLogger().error("Could not find " + file + "!");

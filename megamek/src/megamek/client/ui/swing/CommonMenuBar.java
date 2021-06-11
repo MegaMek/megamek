@@ -351,7 +351,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         createMenuItem(menu, getString("CommonMenuBar.fireClearTurret"), FIRE_CLEAR_TURRET.getCmd()); 
         createMenuItem(menu, getString("CommonMenuBar.fireClearWeaponJam"), FIRE_CLEAR_WEAPON.getCmd()); 
         menu.addSeparator();
-        createMenuItem(menu, getString("CommonMenuBar.fireStrafe"), FIRE_CLEAR_WEAPON.getCmd()); 
+        createMenuItem(menu, getString("CommonMenuBar.fireStrafe"), FIRE_STRAFE.getCmd()); 
         menu.addSeparator();
         fireCancel = createMenuItem(menu, getString("CommonMenuBar.fireCancel"), FIRE_CANCEL.getCmd(), KeyEvent.VK_ESCAPE); 
         menu.addSeparator();

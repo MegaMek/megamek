@@ -2290,9 +2290,6 @@ public class FireControl {
     /**
      * Determines if the given entity (potentially employing a given firing plan)
      * can/should spot. If yes, then return a spot action.
-     * @param plan
-     * @param spotter
-     * @return
      */
     public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
     	// logic applies as follows:
@@ -3181,25 +3178,26 @@ public class FireControl {
         Vector<EntityAction> unjamVector = new Vector<>();
         
         // apparently, only tank type units can unjam weapons/clear turrets
-        if(!shooter.hasETypeFlag(Entity.ETYPE_TANK)) {
+        // unconscious crews can't do this
+        if (!shooter.hasETypeFlag(Entity.ETYPE_TANK) || !shooter.getCrew().isActive()) {
             return unjamVector;
         }
         
         Tank tankShooter = (Tank) shooter;
         
         // can't unjam if crew is stunned. Skip the rest of the logic to save time. 
-        if(tankShooter.getStunnedTurns() > 0) {
+        if (tankShooter.getStunnedTurns() > 0) {
             return unjamVector;
         }
         
         // step 1: loop through all the unit's jammed weapons to determine the biggest one
-        for(Mounted mounted : tankShooter.getJammedWeapons()) {
+        for (Mounted mounted : tankShooter.getJammedWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
-            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
             }
             
-            if(weaponDamage > maxJammedDamage) {
+            if (weaponDamage > maxJammedDamage) {
                     maxDamageWeaponID = shooter.getEquipmentNum(mounted);
                     maxJammedDamage = weaponDamage;
             }
@@ -3207,13 +3205,13 @@ public class FireControl {
                 
         // if any of the unit's weapons are jammed, unjam the biggest one.
         // we can only unjam one per turn.
-        if(maxDamageWeaponID >= 0) {
+        if (maxDamageWeaponID >= 0) {
             RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
                     shooter.getId(), maxDamageWeaponID);
             
             unjamVector.add(rwma);
         // if the unit has a jammed turret, attempt to clear it
-        } else if(tankShooter.canClearTurret()) {
+        } else if (tankShooter.canClearTurret()) {
             UnjamTurretAction uta = new UnjamTurretAction(shooter.getId());
             unjamVector.add(uta);
         }
@@ -3239,14 +3237,16 @@ public class FireControl {
      */
     public SearchlightAttackAction getSearchLightAction(Entity shooter, FiringPlan plan) {
         // no search light if it's not on, unit doesn't have one, or is hidden
-        if(!shooter.isUsingSearchlight() || !shooter.hasSearchlight() || shooter.isHidden()) {
+        // or the crew is indisposed
+        if (!shooter.isUsingSearchlight() || !shooter.hasSearchlight() || shooter.isHidden()
+                || !shooter.getCrew().isActive()) {
             return null;
         }
         
         // assemble set of targets we're planning on shooting
         Set<Coords> planTargets = new HashSet<>();
-        if(plan != null) {
-            for(WeaponFireInfo wfi : plan) {
+        if (plan != null) {
+            for (WeaponFireInfo wfi : plan) {
                 planTargets.add(wfi.getTarget().getPosition());
             }
         }
@@ -3264,55 +3264,55 @@ public class FireControl {
         Targetable bestTarget = null;
         int bestTargetScore = 0;
 
-        for(Targetable target : getTargetableEnemyEntities(shooter, shooter.getGame(), owner.getFireControlState())) {
+        for (Targetable target : getTargetableEnemyEntities(shooter, shooter.getGame(), owner.getFireControlState())) {
             int score = 0;
             
-            for(Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
+            for (Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
                 // if it's already lit up, don't count it 
-                if(shooter.getGame().isPositionIlluminated(intervening) > 0) {
+                if (shooter.getGame().isPositionIlluminated(intervening) > 0) {
                     continue;
                 }
                 
-                for(Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
+                for (Entity ent : shooter.getGame().getEntitiesVector(intervening, true)) {
                     // don't count ourselves, or the target if it's already lit itself up
                     // or the target if it will be lit up by a previously declared search light
-                    if((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
+                    if ((ent.getId() == shooter.getId()) || ent.isIlluminated()) {
                         continue;
                     } else {
                         boolean willbeIlluminated = false;
                         
-                        for(SearchlightAttackAction searchlight : searchlights) {
+                        for (SearchlightAttackAction searchlight : searchlights) {
                             if(searchlight.willIlluminate(shooter.getGame(), ent)) {
                                 willbeIlluminated = true;
                                 break;
                             }
                         }
                         
-                        if(willbeIlluminated) {
+                        if (willbeIlluminated) {
                             continue;
                         }
                     }
                     
-                    if(ent.isEnemyOf(shooter)) {
+                    if (ent.isEnemyOf(shooter)) {
                         score++;
                     } else {
                         score--;
                     }
                     
-                    if(planTargets.contains(intervening)) {
+                    if (planTargets.contains(intervening)) {
                         score++;
                     }
                 }
             }
             
             // don't bother considering impossible searchlight actions
-            if(score > bestTargetScore && SearchlightAttackAction.isPossible(shooter.getGame(), shooter.getId(), target, null)) {
+            if (score > bestTargetScore && SearchlightAttackAction.isPossible(shooter.getGame(), shooter.getId(), target, null)) {
                 bestTargetScore = score;
                 bestTarget = target;
             }
         }
         
-        if(bestTarget != null) {
+        if (bestTarget != null) {
             SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetType(), bestTarget.getTargetId());
             return slaa;
         }

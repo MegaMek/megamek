@@ -545,7 +545,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
             }
         };
-
+        minimapW.setAutoRequestFocus(false);
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
@@ -1082,9 +1082,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_OFFBOARD:
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
-                }
+                setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
                 break;
             case PHASE_INITIATIVE_REPORT:
             case PHASE_TARGETING_REPORT:
@@ -1309,18 +1307,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    /** Switches the Minimap and the MechDisplay an and off together.
-     *  If the MechDisplay is active, both will be hidden, else
-     *  both will be shown.
+    /** 
+     * Switches the Minimap and the MechDisplay an and off together.
+     * If the MechDisplay is active, both will be hidden, else
+     * both will be shown.
      */
     public void toggleMMUDDisplays() {
-        if (mechW.isVisible()) {
-            setDisplayVisible(false);
-            setMapVisible(false);
-        } else {
-            setDisplayVisible(true);
-            setMapVisible(true);
-        }
+        boolean wasVisible = mechW.isVisible();
+        setDisplayVisible(!wasVisible);
+        GUIPreferences.getInstance().setMinimapEnabled(!wasVisible);
+        toggleMap();
     }
 
     /**
@@ -1373,25 +1369,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.refreshDisplayables();
     }
 
-    /**
-     * Toggles the minimap window Also, toggles the minimap enabled setting
-     */
+    /** Shows or hides the minimap based on the current menu setting. */
     private void toggleMap() {
-        minimapW.setVisible(!minimapW.isVisible());
-        GUIPreferences.getInstance().setMinimapEnabled(minimapW.isVisible());
-        if (minimapW.isVisible()) {
-            frame.requestFocus();
-        }
+        setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
     }
 
-    /**
-     * Sets the visibility of the minimap window
+    /** 
+     * Shows or hides the minimap based on the given visible. This works independently 
+     * of the current menu setting, so it should be used only when the minimap is to 
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby. 
+     * Does not change the menu bar setting. 
      */
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
-        if (visible) {
-            frame.requestFocus();
-        }
     }
 
     private boolean fillPopup(Coords coords) {
@@ -2307,7 +2297,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileBoardImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
             e.printStackTrace();
         }

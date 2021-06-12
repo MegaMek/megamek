@@ -511,7 +511,7 @@ public class Server implements Runnable {
                 ((WeaponHandler) handler).restore();
             }
         }
-        
+
         game.getForces().setGame(game);
 
     }
@@ -924,7 +924,7 @@ public class Server implements Runnable {
             if (game.phaseHasTurns(game.getPhase()) && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) 
+            } else if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE)
                     && (game.getPhase() != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 endCurrentPhase();
             }
@@ -1392,31 +1392,31 @@ public class Server implements Runnable {
             .filter(f -> f.getOwnerId() != pid)
             .filter(f -> forces.getForce(f.getParentId()).getOwnerId() == pid)
             .forEach(forces::promoteForce);
-        
+
         // remove other player's units from player's forces
         game.getEntitiesVector().stream()
             .filter(e -> e.getOwnerId() != pid)
             .filter(e -> e.partOfForce())
             .filter(e -> forces.getForce(e.getForceId()).getOwnerId() == pid)
             .forEach(forces::removeEntityFromForces);
-        
+
         // delete forces of player
         forces.deleteForces(forces.getAllForces().stream()
             .filter(f -> f.getOwnerId() == pid)
             .filter(f -> f.isTopLevel() || !forces.getOwner(f.getParentId()).equals(player))
             .collect(Collectors.toList()));
-        
+
         Collection<Entity> delEntities = game.getEntitiesVector().stream()
                 .filter(e -> e.getOwner().equals(player)).collect(Collectors.toList());
-        
+
         // remove entities of player from any forces, disembark and C3 disconnect them
         delEntities.stream().forEach(forces::removeEntityFromForces);
         ServerLobbyHelper.lobbyUnload(game, delEntities);
         ServerLobbyHelper.performC3Disconnect(game, delEntities);
-        
+
         // delete entities of player
         delEntities.stream().forEach(e -> game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED));
-        
+
         // send full update
         send(createFullEntitiesPacket());
     }
@@ -1723,7 +1723,7 @@ public class Server implements Runnable {
                 r.messageId = 7005;
             } else {
                 r.messageId = 7010;
-                r.add(Server.getColorForPlayer(player));
+                r.add(player.getColorForPlayer());
             }
         } else {
             // Team victory
@@ -1741,10 +1741,10 @@ public class Server implements Runnable {
                 continue;
             }
             r = new Report(7016, Report.PUBLIC);
-            r.add(Server.getColorForPlayer(player));
+            r.add(player.getColorForPlayer());
             r.add(player.getBV());
             r.add(player.getInitialBV());
-            r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
+            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000.0) / 100.0));
             r.add(player.getFledBV());
             r.add(player.getEntityCount());
             r.add(player.getInitialEntityCount());
@@ -1903,6 +1903,7 @@ public class Server implements Runnable {
     /**
      * Cancels the force victory
      */
+    @Deprecated
     public void cancelVictory() {
         game.setForceVictory(false);
         game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
@@ -2405,7 +2406,7 @@ public class Server implements Runnable {
                         r.type = Report.PLAYER;
                         r.player = player.getId();
                     }
-                    r.add(Server.getColorForPlayer(player));
+                    r.add(player.getColorForPlayer());
                     r.add(player.getBV());
                     r.add(player.getInitialBV());
                     r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
@@ -3267,43 +3268,9 @@ public class Server implements Runnable {
      * add some reports to reporting
      */
     public boolean victory() {
-        VictoryResult vr = game.getVictory().checkForVictory(game, game.getVictoryContext());
-        for (Report r : vr.getReports()) {
+        VictoryResult vr = game.getVictoryResult();
+        for (Report r : vr.processVictory(game)) {
             addReport(r);
-        }
-
-        if (vr.victory()) {
-            boolean draw = vr.isDraw();
-            int wonPlayer = vr.getWinningPlayer();
-            int wonTeam = vr.getWinningTeam();
-
-            if (wonPlayer != IPlayer.PLAYER_NONE) {
-                Report r = new Report(7200, Report.PUBLIC);
-                r.add(Server.getColorForPlayer(game.getPlayer(wonPlayer)));
-                addReport(r);
-            }
-            if (wonTeam != IPlayer.TEAM_NONE) {
-                Report r = new Report(7200, Report.PUBLIC);
-                r.add("Team " + wonTeam);
-                addReport(r);
-            }
-            if (draw) {
-                // multiple-won draw
-                game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
-                game.setVictoryTeam(IPlayer.TEAM_NONE);
-            } else {
-                // nobody-won draw or
-                // single player won or
-                // single team won
-                game.setVictoryPlayerId(wonPlayer);
-                game.setVictoryTeam(wonTeam);
-            }
-        } else {
-            game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
-            game.setVictoryTeam(IPlayer.TEAM_NONE);
-            if (game.isForceVictory()) {
-                cancelVictory();
-            }
         }
         return vr.victory();
     }// end victory
@@ -3799,6 +3766,7 @@ public class Server implements Runnable {
         send(createTurnVectorPacket());
     }
 
+    @Deprecated
     private static String getColorForPlayer(IPlayer p) {
         return "<B><font color='" + p.getColour().getHexString(0x00F0F0F0) + "'>" + p.getName() + "</font></B>";
     }
@@ -3849,7 +3817,7 @@ public class Server implements Runnable {
                     IPlayer player = getPlayer(t.getPlayerNum());
                     if (null != player) {
                         r = new Report(1050, Report.PUBLIC);
-                        r.add(Server.getColorForPlayer(player));
+                        r.add(player.getColorForPlayer());
                         addReport(r);
                     }
                 }
@@ -3868,7 +3836,7 @@ public class Server implements Runnable {
                 if (team.getNonObserverSize() == 1) {
                     final IPlayer player = team.getNonObserverPlayers().nextElement();
                     r = new Report(1015, Report.PUBLIC);
-                    r.add(Server.getColorForPlayer(player));
+                    r.add(player.getColorForPlayer());
                     r.add(team.getInitiative().toString());
                     addReport(r);
                 } else {
@@ -17018,8 +16986,7 @@ public class Server implements Runnable {
                 roll = Compute.d6(2);
                 int toHitValue = toHit.getValue();
                 String toHitDesc = toHit.getDesc();
-                if ((ae instanceof Mech) && (((Mech) ae).hasTSM() && (ae.heat >= 9))
-                        && (!((Mech) te).hasTSM() || ((((Mech) te).hasTSM()) && (te.heat < 9)))) {
+                if ((ae instanceof Mech) && ((Mech) ae).hasActiveTSM(false)) {
                     toHitValue -= 2;
                     toHitDesc += " -2 (TSM Active Bonus)";
                 }
@@ -24655,11 +24622,10 @@ public class Server implements Runnable {
         } else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
             vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
-        // mechs with TSM hit by anti-tsm missiles this round get another
+        // mechs with prototype TSM hit by anti-tsm missiles this round get another
         // crit
         if ((en instanceof Mech) && en.hitThisRoundByAntiTSM) {
-            Mech mech = (Mech) en;
-            if (mech.hasTSM()) {
+            if (((Mech) en).antiTSMVulnerable()) {
                 r = new Report(6430);
                 r.subject = en.getId();
                 r.indent(2);
@@ -29726,7 +29692,7 @@ public class Server implements Runnable {
         Map<Integer, Integer> idMap = new HashMap<>();
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
-        
+
         for (final Entity entity : entities) {
 
             // Verify the entity's design
@@ -29887,7 +29853,7 @@ public class Server implements Runnable {
                 entity.getOwner().changeInitialEntityCount(1);
                 entity.getOwner().changeInitialBV(entity.calculateBattleValue());
             }
-            
+
             // Restore forces from MULs or other external sources from the forceString, if any
             if (entity.getForceString().length() > 0) {
                 ArrayList<Force> forceList = Forces.parseForceString(entity);
@@ -29991,7 +29957,7 @@ public class Server implements Runnable {
         }
 
         List<Integer> changedForces = new ArrayList<Integer>(forceMapping.values());
-        
+
         send(createAddEntityPacket(entityIds, changedForces));
     }
 
@@ -30014,7 +29980,7 @@ public class Server implements Runnable {
         }
         game.addEntity(fs);
         var formerCarriers = new HashSet<Entity>();
-        
+
         for (int id : fighters) {
             Entity fighter = game.getEntity(id);
             if (null != fighter) {
@@ -30054,9 +30020,9 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     /**
-     * Updates multiple entities with the info from the client. Only valid 
+     * Updates multiple entities with the info from the client. Only valid
      * during the lobby phase!
      * Will only update units that are teammates of the sender. Other entities
      * remain unchanged but still be sent back to overwrite incorrect client changes.
@@ -30079,7 +30045,7 @@ public class Server implements Runnable {
         }
         send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, newEntities));
     }
-    
+
     /**
      * Handles a packet detailing removal of a list of forces. Only valid during the lobby phase.
      * @param c the packet to be processed
@@ -30088,7 +30054,7 @@ public class Server implements Runnable {
     private void receiveForcesDelete(Packet c, int connIndex) {
         @SuppressWarnings("unchecked")
         List<Integer> forceList = (List<Integer>) c.getObject(0);
-        
+
         // Gather the forces and entities to be deleted
         Forces forces = game.getForces();
         Set<Force> delForces = new HashSet<>();
@@ -30103,13 +30069,13 @@ public class Server implements Runnable {
         Set<Entity> updateCandidates = new HashSet<>();
         updateCandidates.addAll(ServerLobbyHelper.lobbyUnload(game, delEntities));
         updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
-        
+
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
         if (!updateCandidates.isEmpty()) {
             send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
-        
+
         // Delete entities and forces
         for (Entity entity : delEntities) {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
@@ -30414,28 +30380,28 @@ public class Server implements Runnable {
     private void receiveEntityDelete(Packet c, int connIndex) {
         @SuppressWarnings("unchecked")
         List<Integer> ids = (List<Integer>) c.getObject(0);
-        
+
         Set<Entity> delEntities = new HashSet<>();
         ids.stream().map(id -> game.getEntity(id)).forEach(delEntities::add);
-        
+
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
         updateCandidates.addAll(ServerLobbyHelper.lobbyUnload(game, delEntities));
         updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
-        
+
         // Units that get deleted must not receive updates
         updateCandidates.removeIf(e -> delEntities.contains(e));
         if (!updateCandidates.isEmpty()) {
             send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
         }
-        
+
         ArrayList<Force> affectedForces = new ArrayList<>();
         for (Integer entityId : ids) {
             final Entity entity = game.getEntity(entityId);
 
             // Players can delete units of their teammates
             if ((entity != null) && (!entity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
-                
+
                 affectedForces.addAll(game.getForces().removeEntityFromForces(entity));
 
                 // If we're deleting a ProtoMech, recalculate unit numbers.
@@ -30853,7 +30819,7 @@ public class Server implements Runnable {
         data[2] = forceList;
         return new Packet(Packet.COMMAND_ENTITY_ADD, data);
     }
-    
+
     /**
      * Creates a packet detailing the removal of an entity. Maintained for
      * backwards compatibility.

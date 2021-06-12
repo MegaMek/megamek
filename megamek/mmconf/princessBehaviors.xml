@@ -92,10 +92,10 @@
   </behavior>
   <behavior>
     <name>BERSERK</name>
-    <destinationEdge>NEAREST</destinationEdge>
+    <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>false</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>2</fallShameIndex>
     <hyperAggressionIndex>10</hyperAggressionIndex>
@@ -107,10 +107,10 @@
   </behavior>
   <behavior>
     <name>Brawler (pPT)</name>
-    <destinationEdge>NEAREST</destinationEdge>
+    <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>4</hyperAggressionIndex>
@@ -152,31 +152,16 @@
   </behavior>
   <behavior>
     <name>COWARDLY</name>
-    <destinationEdge>NEAREST</destinationEdge>
+    <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>8</fallShameIndex>
     <hyperAggressionIndex>1</hyperAggressionIndex>
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
-    <name>DEFAULT_TEST</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NORTH</retreatEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>5</fallShameIndex>
-    <hyperAggressionIndex>5</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

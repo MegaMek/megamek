@@ -371,8 +371,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
             damage = 0;
         }
-        if (((entity.heat >= 9) && ((Mech) entity).hasTSM())
-                || ((Mech) entity).hasIndustrialTSM()) {
+        if (((Mech) entity).hasActiveTSM()) {
             multiplier *= 2.0f;
         }
         int toReturn = (int) Math.floor(damage * multiplier)

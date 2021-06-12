@@ -5670,7 +5670,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private void setTraitorEnabled(boolean enabled) {
-        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TRAITOR.getCmd(), enabled);
+     // Menu entry does not exist
+//        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_TRAITOR.getCmd(), enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {
@@ -5690,7 +5691,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setDockEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DOCK).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DOCK.getCmd(), enabled);
+        // Menu entry does not exist
+//        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_DOCK.getCmd(), enabled);
     }
 
     private void setRecoverEnabled(boolean enabled) {
@@ -5700,6 +5702,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     private void setDropEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_DROP).setEnabled(enabled);
+        // Menu entry does not exist
         // clientgui.getMenuBar().setMoveDropEnabled(enabled);
     }
 

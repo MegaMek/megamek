@@ -4,8 +4,8 @@
 <#if moveType??><b>Movement Type: </b>${moveType}<br/></#if>
 <#if frameDesc??><b>Chassis: </b>${frameDesc}<br/></#if>
 <b>Power Plant: </b>${engineDesc}<br/>
-<b>Cruising Speed: </b>${cruisingSpeed} kph<br/>
-<b>Maximum Speed: </b>${maxSpeed} kph<br/>
+<#if cruisingSpeed??><b>Cruising Speed: </b>${cruisingSpeed} kph<br/></#if>
+<#if cruisingSpeed??><b>Maximum Speed: </b>${maxSpeed} kph<br/></#if>
 <#if jumpDesc??>
 <b>Jump Jets: </b>${jjDesc}<br/>
 <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jump Capacity: </b>${jumpCapacity} meters<br/>

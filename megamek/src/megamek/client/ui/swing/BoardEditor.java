@@ -1040,6 +1040,7 @@ public class BoardEditor extends JPanel
         // Set up the minimap 
         minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false);
         minimapW.setLocation(guip.getMinimapPosX(), guip.getMinimapPosY());
+        minimapW.setAutoRequestFocus(false);
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
@@ -1049,7 +1050,7 @@ public class BoardEditor extends JPanel
             frame.dispose();
         }
         minimapW.add(minimap);
-        minimapW.setVisible(true);
+        minimapW.setVisible(guip.getMinimapEnabled());
     }
     
     /**
@@ -1262,11 +1263,12 @@ public class BoardEditor extends JPanel
     }
     
     /**
-     * Add to the terrain from one of the easy access buttons
+     * Cycle the terrain level (mouse wheel behavior) from the easy access buttons
      */
     private void addSetTerrainEasy(int type, int level) {
-        boolean exitsSpecified = cheTerrExitSpecified.isSelected();
-        int exits = texTerrExits.getNumber();
+        ITerrain present = curHex.getTerrain(type);
+        boolean exitsSpecified = present.hasExitsSpecified();
+        int exits = present.getExits();
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
@@ -1517,7 +1519,7 @@ public class BoardEditor extends JPanel
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileImage);
         } catch (IOException e) {
             MegaMek.getLogger().error(e);
         }
@@ -1864,7 +1866,7 @@ public class BoardEditor extends JPanel
             cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            minimapW.setVisible(!minimapW.isVisible());
+            minimapW.setVisible(guip.getMinimapEnabled());
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) {
             showAbout();
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) {
@@ -1895,16 +1897,20 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
-                addSetTerrainEasy(Terrains.RAPIDS, curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1);
+                int rapidsLevel = curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
                 if (!curHex.containsTerrain(Terrains.WATER)
                         || (curHex.getTerrain(Terrains.WATER).getLevel() == 0)) {
-                    addSetTerrainEasy(Terrains.WATER, 1);
+                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel), 
+                            TF.createTerrain(Terrains.WATER, 1));
+                } else {
+                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel),
+                            curHex.getTerrain(Terrains.WATER));
                 }
             } else {
                 if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                     curHex.removeAllTerrains();
                 }
-                addSetTerrainEasy(Terrains.WATER, 1);
+                setConvenientTerrain(ae, TF.createTerrain(Terrains.WATER, 1));
             }
         } else if (ae.getSource().equals(buttonSw)) {
             setConvenientTerrain(ae, TF.createTerrain(Terrains.SWAMP, 1));

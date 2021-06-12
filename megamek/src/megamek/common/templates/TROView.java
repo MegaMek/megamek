@@ -233,8 +233,10 @@ public class TROView {
                 + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
                 () -> stripNotes(entity.getEngine().getEngineName())));
-        model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
-        model.put("maxSpeed", entity.getRunMP() * 10.8);
+        if (!entity.isAero()) {
+            model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
+            model.put("maxSpeed", entity.getRunMP() * 10.8);
+        }
         model.put("armorDesc",
                 formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();
@@ -602,7 +604,7 @@ public class TROView {
                 bayRow.put("doors", bay.getDoors());
                 bays.add(bayRow);
             } else {
-                MegaMek.getLogger().warning("Could not determine bay type for " + bay.toString());
+                MegaMek.getLogger().warning("Could not determine bay type for " + bay);
             }
         }
         setModelData("bays", bays);

@@ -34,6 +34,7 @@ VERSION HISTORY:
 + Issue #2917: Fixing Structured_Water directory reference
 + Issue #2003: Fix terrain exit issue in map editor
 + PR #2937: CommonMenuBar and MovementDisplay Menu entry corrections
++ PR #2941: Prevent rendering failures in lobby when using LAMs in fighter mode
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

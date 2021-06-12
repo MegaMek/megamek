@@ -2751,17 +2751,21 @@ public class Compute {
             }
         }
         if (!isAboveSmoke && !isUnderwater && !underwaterWeapon) {
-            if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
-                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
-                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
-                || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
-                toHit.addModifier(1, "target in light smoke");
-            } else if (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
-                if (eistatus > 0) {
-                    toHit.addModifier(1, "target in heavy smoke");
-                } else {
-                    toHit.addModifier(2, "target in heavy smoke");
-                }
+            switch (hex.terrainLevel(Terrains.SMOKE)) {
+                case SmokeCloud.SMOKE_LIGHT:
+                case SmokeCloud.SMOKE_LI_LIGHT:
+                case SmokeCloud.SMOKE_LI_HEAVY:
+                case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                case SmokeCloud.SMOKE_GREEN:
+                    toHit.addModifier(1, "target in light smoke");
+                    break;
+                case SmokeCloud.SMOKE_HEAVY:
+                    if (eistatus > 0) {
+                        toHit.addModifier(1, "target in heavy smoke");
+                    } else {
+                        toHit.addModifier(2, "target in heavy smoke");
+                    }
+                    break;
             }
         }
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
@@ -2833,17 +2837,21 @@ public class Compute {
             }
         }
 
-        if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
-            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
-            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
-            || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
-            toHit.addModifier(1, "light smoke");
-        } else if (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
-            if (eistatus > 0) {
-                toHit.addModifier(1, "heavy smoke");
-            } else {
-                toHit.addModifier(2, "heavy smoke");
-            }
+        switch (hex.terrainLevel(Terrains.SMOKE)) {
+            case SmokeCloud.SMOKE_LIGHT:
+            case SmokeCloud.SMOKE_LI_LIGHT:
+            case SmokeCloud.SMOKE_LI_HEAVY:
+            case SmokeCloud.SMOKE_CHAFF_LIGHT:
+            case SmokeCloud.SMOKE_GREEN:
+                toHit.addModifier(1, "target in light smoke");
+                break;
+            case SmokeCloud.SMOKE_HEAVY:
+                if (eistatus > 0) {
+                    toHit.addModifier(1, "target in heavy smoke");
+                } else {
+                    toHit.addModifier(2, "target in heavy smoke");
+                }
+                break;
         }
 
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {

@@ -40,6 +40,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
     public AdvancedSRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM_ADVANCED;
+        flags = flags.andNot(F_ARTEMIS_COMPATIBLE);
     }
 
     /*

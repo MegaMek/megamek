@@ -378,7 +378,7 @@ class LobbyMekCellFormatter {
                 result.append(aero.getCurrentVelocity());
                 if (mapType != MapSettings.MEDIUM_SPACE) {
                     result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
-                    result.append(entity.getAltitude());
+                    result.append(aero.getAltitude());
                 } 
                 if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
                     result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
@@ -633,7 +633,7 @@ class LobbyMekCellFormatter {
         // Starting values for Altitude / Velocity / Elevation
         if (!isCarried) {
             if (entity.isAero()) {
-                Aero aero = (Aero) entity;
+                IAero aero = (IAero) entity;
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
                 result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
                 result.append(aero.getCurrentVelocity());

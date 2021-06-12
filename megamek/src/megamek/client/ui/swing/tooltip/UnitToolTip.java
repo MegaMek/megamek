@@ -608,8 +608,7 @@ public final class UnitToolTip {
         // Velocity, Altitude, Elevation
         if (entity.isAero()) {
             result.append(guiScaledFontHTML(uiLightViolet()));
-            Aero aero = (Aero) entity;
-            result.append(addToTT("AeroVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude()));
+            result.append(addToTT("AeroVelAlt", BR, ((IAero) entity).getCurrentVelocity(), entity.getAltitude()));
             result.append("</FONT>");
         } else if (entity.getElevation() != 0) {
             result.append(guiScaledFontHTML(uiLightViolet()));

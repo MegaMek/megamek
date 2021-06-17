@@ -1540,7 +1540,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-        Compute.isInBuilding(game, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
@@ -1611,7 +1610,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * but part sticking out?
      */
     protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+        // target needs to be on the board,
+        // be tall enough for it to make a difference,
+        // target "feet" are below the "ceiling"
+        // target "head" is above the "ceiling"
         return (targetHex != null) &&
+                (entityTarget.getHeight() > 0) &&
                 (entityTarget.getElevation() < targetHex.ceiling()) &&
                 (entityTarget.relHeight() >= targetHex.ceiling());
     }

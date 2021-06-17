@@ -4582,6 +4582,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         return targetHex.containsTerrain(Terrains.BUILDING) &&
+                ((Entity) target).getHeight() > 0 &&
                 ((Entity) target).relHeight() == targetHex.ceiling();
     }
     

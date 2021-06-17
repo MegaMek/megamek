@@ -179,7 +179,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public JDialog mechW;
     public UnitDisplay mechD;
     public JDialog minimapW;
-    public MiniMap minimap;
     private MapMenu popup;
     private UnitOverview uo;
     private Ruler ruler;

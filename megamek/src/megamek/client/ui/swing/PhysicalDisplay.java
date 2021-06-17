@@ -581,7 +581,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.minimap.refreshMap();
 
         // and prevent duplicates
         setSearchlightEnabled(false);

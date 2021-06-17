@@ -57,8 +57,8 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Displays all the mapsheets in a scaled-down size. 
- *  -move the buttons from graphics to real Swing
+ * Obviously, displays the map in scaled-down size. 
+ * TBD: -move the buttons from graphics to real Swing
  * buttons -clean up listenercode.. -initializecolors is fugly 
  *  -uses break-to-label -uses while-true
  */
@@ -131,11 +131,12 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private boolean dragging = false;
 
     /** 
-     * Returns a dialog with a minimap for the given boardview and game.
+     * Returns a non-modal dialog with a minimap for the given game.
 
      * @param parent The frame to use as parent frame for the dialog
-     * @param bv A boardview showing the map
-     * @param game A game containing at least the board
+     * @param bv Optional: A boardview showing the map
+     * @param game A game containing at least the board, but not necessarily anything else
+     * @param cg Optional: A ClientGUI object housing this minimap
      */
     public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, IGame game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
@@ -169,6 +170,10 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         return getMinimapImage(game, null, zoom);
     }
     
+    /** 
+     * Returns a minimap image of the given board at the given zoom index. The 
+     * game and boardview object will be used to display additional information.
+     */
     public static BufferedImage getMinimapImage(IGame game, IBoardView bv, int zoom) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable

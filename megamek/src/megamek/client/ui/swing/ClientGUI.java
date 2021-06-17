@@ -480,10 +480,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
              */
             @Override
             protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
+                e.setSource(ClientGUI.this);
+                menuBar.dispatchEvent(e);
                 // Make the source be the ClientGUI and not the dialog
                 // This prevents a ClassCastException in ToolTipManager
-                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);
@@ -528,45 +528,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
-        // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
-                e.setSource(ClientGUI.this);// avoid ClassCastException in TooltipManager
-                curPanel.dispatchEvent(e);
-                if (!e.isConsumed()) {
-                    super.processKeyEvent(e);
-                }
-            }
-        };
-        minimapW.setAutoRequestFocus(false);
-        x = GUIPreferences.getInstance().getMinimapPosX();
-        y = GUIPreferences.getInstance().getMinimapPosY();
-        try {
-            minimap = new MiniMap(minimapW, this, bv);
-        } catch (IOException e) {
-            MegaMek.getLogger().fatal(e);
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message1") + e);
-            die();
-        }
-        h = minimap.getSize().height;
-        w = minimap.getSize().width;
-        if (((x + 10) >= virtualBounds.getWidth()) || ((x + w) < 10)) {
-            x = (int)virtualBounds.getWidth() - w;
-        }
-        if (((y + 10) > virtualBounds.getHeight()) || ((y + h) < 10)) {
-            y = (int)virtualBounds.getHeight() - h;
-        }
-        minimapW.setLocation(x, y);
-        minimapW.addWindowListener(this);
-        minimapW.add(minimap);
+        minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -955,7 +917,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
-            GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
@@ -1082,7 +1043,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_OFFBOARD:
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
-                setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
+                if (frame.isShowing()) {
+                    setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
+                }
                 break;
             case PHASE_INITIATIVE_REPORT:
             case PHASE_TARGETING_REPORT:
@@ -1737,9 +1700,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(minimapW)) {
-            setMapVisible(false);
-        } else if (windowEvent.getWindow().equals(mechW)) {
+        if (windowEvent.getWindow().equals(mechW)) {
             setDisplayVisible(false);
         }
     }

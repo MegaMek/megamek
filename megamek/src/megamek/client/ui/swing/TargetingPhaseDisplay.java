@@ -826,7 +826,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.minimap.drawMap();
+        clientgui.minimap.refreshMap();
 
         // refresh weapon panel, as bth will have changed
         updateTarget();
@@ -902,7 +902,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(waa);
-        clientgui.minimap.drawMap();
+        clientgui.minimap.refreshMap();
 
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -1020,7 +1020,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.bv.refreshAttacks();
-                clientgui.minimap.drawMap();
+                clientgui.minimap.refreshMap();
             }
         }
     }    

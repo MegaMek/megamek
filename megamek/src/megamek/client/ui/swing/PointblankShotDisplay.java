@@ -753,7 +753,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         // and add it into the game, temporarily
         game.addAction(waa);
         
-        clientgui.minimap.drawMap();
+        clientgui.minimap.refreshMap();
 
         // set the weapon as used
         mounted.setUsedThisRound(true);

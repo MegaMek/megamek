@@ -972,7 +972,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
                             || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                         buttonBoard = BoardUtilities.generateRandom(mapSettings);
-                        image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
+                        image = MiniMap.getMinimapImageMaxZoom(buttonBoard);
                     } else { 
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
@@ -989,10 +989,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                             }
-                            image = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
+                            image = MiniMap.getMinimapImageMaxZoom(buttonBoard);
                         } else {
                             buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
-                            BufferedImage emptyBoardMap = MiniMap.getBoardMinimapImageMaxZoom(buttonBoard);
+                            BufferedImage emptyBoardMap = MiniMap.getMinimapImageMaxZoom(buttonBoard);
                             markServerSideBoard(emptyBoardMap);
                             image = emptyBoardMap;
                         }
@@ -3232,6 +3232,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (largerEdge > 40) {
                 zoom = 0;
             }
+            if (board.getWidth() < 25) {
+                zoom = Math.max(zoom, 3);
+            }
             float scale = GUIPreferences.getInstance().getGUIScale();
             zoom = (int)(scale*zoom);
             if (zoom > 6) {
@@ -3240,7 +3243,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (zoom < 0) {
                 zoom = 0;
             }
-            BufferedImage bufImage = MiniMap.getBoardMinimapImage(board, zoom);
+            BufferedImage bufImage = MiniMap.getMinimapImage(board, zoom);
 
             // Add the board name label and the server-side board label if necessary
             String text = LobbyUtility.cleanBoardName(boardName, mapSettings);

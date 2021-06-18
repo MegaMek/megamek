@@ -1340,7 +1340,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.minimap.drawMap();
 
         // refresh weapon panel, as bth will have changed
         updateTarget();
@@ -1589,8 +1588,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             game.addAction(waa);
         
         }
-        clientgui.minimap.drawMap();
-
         // set the weapon as used
         mounted.setUsedThisRound(true);
 
@@ -1757,7 +1754,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.bv.refreshAttacks();
-                clientgui.minimap.drawMap();
             }
         }
     }

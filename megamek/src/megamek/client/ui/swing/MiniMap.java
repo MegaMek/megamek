@@ -1,384 +1,245 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.swing;
 
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.*;
+import static megamek.common.Terrains.*;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Stroke;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
+import java.awt.event.*;
+import java.awt.font.*;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import megamek.client.Client;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
-import megamek.client.event.BoardViewListenerAdapter;
-import megamek.client.ui.IBoardView;
+import megamek.client.event.*;
+import megamek.client.ui.*;
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.VTOL;
+import megamek.client.ui.minimap.MiniMapUnitSymbols;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.BoardEvent;
-import megamek.common.event.BoardListener;
-import megamek.common.event.BoardListenerAdapter;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.event.*;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
- * real public API for this with interfaces -decouple rest of the application
- * -use JPanel instead of canvas -move the buttons from graphics to real Swing
- * buttons -clean up listenercode.. -initializecolors is fugly -uses exception
- * to return from method? -uses break-to-label -uses while-true
+ * Obviously, displays the map in scaled-down size. 
+ * TBD: -move the buttons from graphics to real Swing
+ * buttons -clean up listenercode.. -initializecolors is fugly 
+ *  -uses break-to-label -uses while-true
  */
-public class MiniMap extends JPanel {
-    private static final long serialVersionUID = 6964529682842424060L;
-    private static final Color[] m_terrainColors = new Color[Terrains.SIZE];
+public final class MiniMap extends JPanel implements IPreferenceChangeListener {
+    
+    private static final Color[] terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color ULTRA_HEAVY_WOODS;
     private static Color BACKGROUND;
     private static Color SINKHOLE;
     private static Color SMOKE_AND_FIRE;
 
+    private static final int[] FONT_SIZE = {6, 6, 8, 10, 12, 14, 16};
+    private static final int[] HEX_SIDE = {2, 3, 5, 6, 8, 10, 12};
+    private static final int[] HEX_SIDE_BY_COS30 = {2, 3, 4, 5, 7, 9, 10};
+    private static final int[] HEX_SIDE_BY_SIN30 = {1, 2, 2, 3, 4, 5, 6};
+    private static final int[] HALF_ROAD_WIDTH_BY_COS30 = {0, 0, 0, 1, 2, 2, 3};
+    private static final int[] HALF_ROAD_WIDTH_BY_SIN30 = {0, 0, 0, 1, 1, 1, 2};
+    private static final int[] HALF_ROAD_WIDTH = {0, 0, 0, 1, 2, 3, 3};
+    private static final int[] UNIT_SIZES = {4, 5, 6, 7, 8, 9, 10};
+    private static final int[] UNIT_SCALE = {7, 8, 9, 11, 12, 14, 16};
+    private static final int MAX_ZOOM = HEX_SIDE.length - 1;
+    
     private static final int SHOW_NO_HEIGHT = 0;
     private static final int SHOW_GROUND_HEIGHT = 1;
     private static final int SHOW_BUILDING_HEIGHT = 2;
     private static final int SHOW_TOTAL_HEIGHT = 3;
     private static final int NBR_MODES = 3;
 
-    private static final int SCROLL_PANE_WIDTH = 160;
-    private static final int SCROLL_PANE_HEIGHT = 200;
-
-    private BufferedImage m_mapImage;
-    private IBoardView m_bview;
-    private IGame m_game;
-    private IBoard m_board;
-    private Container m_dialog;
-    private static final int margin = 6;
+    private static final int DIALOG_MARGIN = 6;
+    private static final int MARGIN = 3;
+    
+    /** The minimap zoom at which game summary images are saved regardless of the ingame minimap setting. */
+    private static final int GAME_SUMMARY_ZOOM = 4;
+    
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    
+    private BufferedImage mapImage;
+    private IBoardView bv;
+    private IGame game;
+    private IBoard board;
+    private JDialog dialog;
+    private Client client;
+    private ClientGUI clientGui = null;
+    
+    private int margin = MARGIN;
     private int topMargin;
     private int leftMargin;
     //This value is variable.
     //if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
     private int buttonHeight = 0;
+    /** Indicates if the minimap has been rolled up using the wide green button. */
     private boolean minimized = false;
-    private int heightBufer;
-    private int unitSize = 6;// variable which define size of triangle for
-    // unit representation
-    private Vector<int[]> roadHexIndexes = new Vector<int[]>();
-    private int zoom = GUIPreferences.getInstance().getMinimapZoom();
-    
-    private int[] fontSize = {6, 6, 8, 10, 12, 14, 16};
-    private int[] hexSide = {2, 3, 5, 6, 8, 10, 12};
-    private int[] hexSideByCos30 = {2, 3, 4, 5, 7, 9, 10};
-    private int[] hexSideBySin30 = {1, 2, 2, 3, 4, 5, 6};
-    private int[] halfRoadWidthByCos30 = {0, 0, 0, 1, 2, 2, 3};
-    private int[] halfRoadWidthBySin30 = {0, 0, 0, 1, 1, 1, 2};
-    private int[] halfRoadWidth = {0, 0, 0, 1, 2, 3, 3};
-    private int[] unitSizes = {4, 5, 6, 7, 8, 9, 10};
-    private int[] stratZoom = {7, 8, 9, 11, 12, 14, 16};
-    private int[] unitBorder = {1, 1, 1, 1, 2, 2, 2};
-
+    private int heightBuffer;
+    private int unitSize = 6;
+    /** A list of information on hexes with roads or bridges. */
+    private List<int[]> roadHexes = new ArrayList<>();
+    private int zoom = GUIP.getMinimapZoom();
     private int heightDisplayMode = SHOW_NO_HEIGHT;
-    Coords firstLOS;
-    Coords secondLOS;
+    
+    private Coords firstLOS;
+    private Coords secondLOS;
 
-    private Client m_client;
-
-    private ClientGUI clientgui = null;
-
-    boolean dirtyMap = true;
-    boolean[][] dirty;
+    /** Signifies that the whole minimap must be repainted. */
+    private boolean dirtyMap = true;
+    /** Keeps track of portions of the minimap that must be repainted. */
+    private boolean[][] dirty = new boolean[1][1];
     private Image terrainBuffer;
     
-    // Here come the Strat Ops / NATO unit symbols
-    Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
-    private static final Path2D STRAT_BASERECT;
-    private static final Path2D STRAT_INFANTRY;
-    private static final Path2D STRAT_MECH;
-    private static final Path2D STRAT_VTOL;
-    private static final Path2D STRAT_TANKTRACKED;
-    private static final Path2D STRAT_AERO;
-    private static final Path2D STRAT_SPHEROID;
-    private static final Path2D STRAT_HOVER;
-    private static final Path2D STRAT_WHEELED;
-    private static final Path2D STRAT_NAVAL;
-    private static final Dimension SYMBOLSIZE = new Dimension(167,103);
+    private Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
     private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
-    private static final double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
     
-    static {
-        // Base rectangle for all units
-        STRAT_BASERECT = new Path2D.Double();
-        STRAT_BASERECT.moveTo(-SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
-        STRAT_BASERECT.lineTo( SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
-        STRAT_BASERECT.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
-        STRAT_BASERECT.lineTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
-        STRAT_BASERECT.closePath();
-        
-        // Infantry Symbol
-        STRAT_INFANTRY = new Path2D.Double();
-        STRAT_INFANTRY.append(STRAT_BASERECT, false);
-        STRAT_INFANTRY.moveTo(-SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
-        STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
-        STRAT_INFANTRY.moveTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
-        STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
-        
-        STRAT_VTOL = new Path2D.Double();
-        STRAT_VTOL.append(STRAT_BASERECT, false);
-        STRAT_VTOL.moveTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
-        STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
-        STRAT_VTOL.lineTo( 0,  0);
-        STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
-        
-        STRAT_VTOL.moveTo( SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
-        STRAT_VTOL.lineTo( SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
-        STRAT_VTOL.lineTo( 0, 0);
-        STRAT_VTOL.closePath();
-        
-        STRAT_TANKTRACKED = new Path2D.Double();
-        STRAT_TANKTRACKED.append(STRAT_BASERECT, false);
-        double small = SYMBOLSIZE.getWidth()/20; 
-        STRAT_TANKTRACKED.moveTo(-SYMBOLSIZE.getWidth()/3+small, -SYMBOLSIZE.getHeight()/4);
-        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3-small, -SYMBOLSIZE.getHeight()/4);
-        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
-        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3,        SYMBOLSIZE.getHeight()/4-small);
-        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3-small,  SYMBOLSIZE.getHeight()/4);
-        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3+small,  SYMBOLSIZE.getHeight()/4);
-        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,        SYMBOLSIZE.getHeight()/4-small);
-        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
-        STRAT_TANKTRACKED.closePath();
-        
-        STRAT_MECH = new Path2D.Double();
-        STRAT_MECH.append(STRAT_BASERECT, false);
-        
-        STRAT_MECH.moveTo(-STRAT_CX-1.5*small, -SYMBOLSIZE.getHeight()/4);
-        STRAT_MECH.lineTo(-STRAT_CX-3.0*small,  SYMBOLSIZE.getHeight()/4);
-        STRAT_MECH.lineTo(-STRAT_CX+3.0*small,  SYMBOLSIZE.getHeight()/4);
-        STRAT_MECH.lineTo(-STRAT_CX+1.5*small, -SYMBOLSIZE.getHeight()/4);
-        STRAT_MECH.closePath();
-        
-        STRAT_AERO = new Path2D.Double();
-        STRAT_AERO.append(STRAT_BASERECT, false);
-        double rad = SYMBOLSIZE.getWidth()/5;
-        double r72 = Math.toRadians(72);
-        STRAT_AERO.moveTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+2*r72), rad/3*Math.sin(Math.PI/2+2*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+1*r72), -rad*Math.sin(Math.PI/2+1*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+1*r72), rad/3*Math.sin(Math.PI/2+1*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+2*r72), -rad*Math.sin(Math.PI/2+2*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2), rad/3*Math.sin(Math.PI/2));
-        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+3*r72), -rad*Math.sin(Math.PI/2+3*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+4*r72), rad/3*Math.sin(Math.PI/2+4*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+4*r72), -rad*Math.sin(Math.PI/2+4*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+3*r72), rad/3*Math.sin(Math.PI/2+3*r72));
-        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
-        STRAT_AERO.closePath();
-        
-        STRAT_SPHEROID = new Path2D.Double();
-        STRAT_SPHEROID.append(STRAT_BASERECT, false);
-        STRAT_SPHEROID.moveTo(rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
-        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+r72),   -rad*Math.sin(Math.PI/2+r72));
-        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+2*r72), -rad*Math.sin(Math.PI/2+2*r72));
-        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+3*r72), -rad*Math.sin(Math.PI/2+3*r72));
-        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+4*r72), -rad*Math.sin(Math.PI/2+4*r72));
-        STRAT_SPHEROID.closePath();
-        
-        STRAT_HOVER = new Path2D.Double();
-        STRAT_HOVER.append(STRAT_BASERECT, false);
-        STRAT_HOVER.moveTo(-SYMBOLSIZE.getWidth()/3,  small);
-        STRAT_HOVER.lineTo(-SYMBOLSIZE.getWidth()/3, -small);
-        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/3, -small);
-        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/3,  small);
-
-        STRAT_HOVER.moveTo(-SYMBOLSIZE.getWidth()/6, -small);
-        STRAT_HOVER.lineTo(-SYMBOLSIZE.getWidth()/6, +small);
-        STRAT_HOVER.moveTo(0, -small);
-        STRAT_HOVER.lineTo(0, +small);
-        STRAT_HOVER.moveTo( SYMBOLSIZE.getWidth()/6, -small);
-        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/6, +small);
-        
-        STRAT_WHEELED = new Path2D.Double();
-        STRAT_WHEELED.append(STRAT_BASERECT, false);
-        double smallr = SYMBOLSIZE.getWidth()/17;
-        STRAT_WHEELED.moveTo(-STRAT_CX-smallr*2, -smallr);
-        STRAT_WHEELED.lineTo(+STRAT_CX+smallr*2, -smallr);
-        STRAT_WHEELED.moveTo(-STRAT_CX, -smallr);
-        STRAT_WHEELED.lineTo(-STRAT_CX-smallr, 0);
-        STRAT_WHEELED.lineTo(-STRAT_CX, +smallr);
-        STRAT_WHEELED.lineTo(-STRAT_CX+smallr, 0);
-        STRAT_WHEELED.closePath();
-        STRAT_WHEELED.moveTo( STRAT_CX, -smallr);
-        STRAT_WHEELED.lineTo( STRAT_CX-smallr, 0);
-        STRAT_WHEELED.lineTo( STRAT_CX, +smallr);
-        STRAT_WHEELED.lineTo( STRAT_CX+smallr, 0);
-        STRAT_WHEELED.closePath();
-        STRAT_WHEELED.moveTo(0, -smallr);
-        STRAT_WHEELED.lineTo(-smallr, 0);
-        STRAT_WHEELED.lineTo(0, +smallr);
-        STRAT_WHEELED.lineTo(smallr, 0);
-        STRAT_WHEELED.closePath();
-        
-        STRAT_NAVAL = new Path2D.Double();
-        STRAT_NAVAL.append(STRAT_BASERECT, false);
-        STRAT_NAVAL.moveTo(0, -SYMBOLSIZE.getHeight()/3);
-        STRAT_NAVAL.lineTo(0,  SYMBOLSIZE.getHeight()/3);
-        STRAT_NAVAL.moveTo(-STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
-        STRAT_NAVAL.lineTo( STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
-        
-        STRAT_NAVAL.moveTo(rad, 0);
-        STRAT_NAVAL.curveTo(
-                rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
-                rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
-                0, SYMBOLSIZE.getHeight()/3);
-        STRAT_NAVAL.curveTo(
-                -rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
-                -rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
-                -rad, 0);
-    }
-    
-    // are we drag-scrolling?
     private boolean dragging = false;
 
-    /**
-     * Creates and lays out a new mech display.
+    /** 
+     * Returns a non-modal dialog with a minimap for the given game.
+
+     * @param parent The frame to use as parent frame for the dialog
+     * @param bv Optional: A boardview showing the map
+     * @param game A game containing at least the board, but not necessarily anything else
+     * @param cg Optional: A ClientGUI object housing this minimap
      */
-    public MiniMap(Container d, IGame g, IBoardView bview) throws IOException {
-        m_game = g;
-        m_bview = bview;
-        m_dialog = d;
-        m_board = m_game.getBoard();
-        m_bview.addBoardViewListener(boardViewListener);
-        m_game.addGameListener(gameListener);
-        m_board.addBoardListener(boardListener);
-        initialize();
+    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, IGame game, @Nullable ClientGUI cg) {
+        var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
+        result.setAutoRequestFocus(false);
+        result.setFocusable(false);
+        result.setFocusableWindowState(false);
+        result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
+        result.setResizable(false);
+        result.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                GUIP.setMinimapEnabled(false);
+            }
+        });
+        
+        result.add(new MiniMap(result, game, bv, cg));
+        result.pack();
+        return result;
+    }
+    
+
+    /** Returns a minimap image of the given board at the maximum zoom index. */
+    public static BufferedImage getMinimapImageMaxZoom(IBoard board) {
+        return getMinimapImage(board, MAX_ZOOM);
+    }
+    
+    /** Returns a minimap image of the given board at the given zoom index. */
+    public static BufferedImage getMinimapImage(IBoard board, int zoom) {
+        IGame game = new Game();
+        game.setBoard(board);
+        return getMinimapImage(game, null, zoom);
+    }
+    
+    /** 
+     * Returns a minimap image of the given board at the given zoom index. The 
+     * game and boardview object will be used to display additional information.
+     */
+    public static BufferedImage getMinimapImage(IGame game, IBoardView bv, int zoom) {
+        try {
+            // Send the fail image when the zoom index is wrong to make this noticeable
+            if ((zoom < 0) || (zoom > MAX_ZOOM)) {
+                throw new Exception("The given zoom index is out of bounds.");
+            }
+            MiniMap tempMM = new MiniMap(null, game, bv, null);
+            tempMM.zoom = zoom;
+            tempMM.initializeMap();
+            tempMM.drawMap(true);
+            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.mapImage);
+            return img;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ImageUtil.failStandardImage();
+        }
     }
 
-    public MiniMap(Container d, IBoard b) throws IOException {
-        m_dialog = d;
-        m_board = b;
-        initialize();
-    }
-
-    public MiniMap(Container d, ClientGUI c, IBoardView bview) throws IOException {
-        this(d, c.getClient().getGame(), bview);
-        clientgui = c;
-
-        // this may come in useful later...
-        m_client = c.getClient();
-        assert (m_client != null);
-    }
-
-    public void setBoard(IBoard board) {
-        m_board = board;
-        initializeMap();
-    }
-
-    private void initialize() throws IOException {
+    /** 
+     * Creates a minimap panel. The only required parameter is a game that contains the board 
+     * to display. When the dialog is not null, it is assumed that this minimap will 
+     * be visible for a while and it will register itself to various objects
+     * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
+     * used to create a snapshot image. When a boardview is given, the visible area is shown.
+     */
+    private MiniMap(@Nullable JDialog dlg, IGame g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
+        game = Objects.requireNonNull(g);
+        board = Objects.requireNonNull(game.getBoard());
+        bv = bview;
+        dialog = dlg;
+        clientGui = cg;
+        if (clientGui != null) {
+            client = clientGui.getClient();
+        }
         initializeColors();
-        addMouseListener(mouseListener);
-        addMouseMotionListener(mouseMotionListener);
-        addMouseWheelListener(mouseWheelListener);
-        addComponentListener(componentListener);
-        m_dialog.addComponentListener(componentListener);
-        if (m_dialog instanceof JDialog) {
+        if (dialog != null) {
+            initializeDialog();
+            initializeListeners();
             buttonHeight = 14;
-            ((JDialog) m_dialog).setResizable(false);
+            margin = DIALOG_MARGIN;
+        }
+    }
 
-            // TODO: replace this quick-and-dirty with some real size
-            // calculator.
-            Dimension size = getSize();
-            boolean updateSize = false;
-            if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
-                size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
-                updateSize = true;
-            }
-            if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
-                size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
-                updateSize = true;
-            }
-            if (updateSize) {
-                setSize(size);
-            }
-            setLocation(GUIPreferences.getInstance().getMinimapPosX(),
-                        GUIPreferences.getInstance().getMinimapPosY());
+    /** Registers the minimap as listener to the given game, board, boardview (that are not null). */
+    private void initializeListeners() {
+        game.addGameListener(gameListener);
+        board.addBoardListener(boardListener);
+        if (bv != null) {
+            bv.addBoardViewListener(boardViewListener);
+        }
+        GUIP.addPreferenceChangeListener(this);
+    }
 
-            ((JDialog) m_dialog).pack();
+    /** Adds listeners to the dialog to manipulate the minimap if it has an assoicated dialog. */
+    private void initializeDialog() {
+        if (dialog != null) {
+            dialog.addMouseListener(mouseListener);
+            dialog.addMouseMotionListener(mouseMotionListener);
+            dialog.addMouseWheelListener(mouseWheelListener);
+            dialog.addComponentListener(componentListener);
+            dialog.addComponentListener(componentListener);
         }
     }
 
@@ -389,146 +250,143 @@ public class MiniMap extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        if (m_mapImage != null) {
-            g.drawImage(m_mapImage, 0, 0, this);
-            // drawBox(g); this would be a nice place to draw a visible-area box
-            paintBVSection(g); // Happy to oblige
+        if (mapImage != null) {
+            g.drawImage(mapImage, 0, 0, this);
+            paintVisibleSection(g);
         }
     }
 
-    /**
-     * Initialize default colours and override with config file if there is one.
-     */
-    private void initializeColors() throws IOException {
+    /** Initialize default colors and override with config file if there is one. */
+    private void initializeColors() {
 
-        // set up defaults -- this might go away later...
         BACKGROUND = Color.black;
-        m_terrainColors[0] = new Color(218, 215, 170);
+        terrainColors[0] = new Color(218, 215, 170);
         SINKHOLE = new Color(218, 215, 170);
-        m_terrainColors[Terrains.WOODS] = new Color(180, 230, 130);
+        terrainColors[WOODS] = new Color(180, 230, 130);
         HEAVY_WOODS = new Color(160, 200, 100);
         ULTRA_HEAVY_WOODS = new Color(0, 100, 0);
-        m_terrainColors[Terrains.ROUGH] = new Color(215, 181, 0);
-        m_terrainColors[Terrains.RUBBLE] = new Color(200, 200, 200);
-        m_terrainColors[Terrains.WATER] = new Color(200, 247, 253);
-        m_terrainColors[Terrains.PAVEMENT] = new Color(204, 204, 204);
-        m_terrainColors[Terrains.ROAD] = new Color(71, 79, 107);
-        m_terrainColors[Terrains.FIRE] = Color.red;
-        m_terrainColors[Terrains.SMOKE] = new Color(204, 204, 204);
+        terrainColors[ROUGH] = new Color(215, 181, 0);
+        terrainColors[RUBBLE] = new Color(200, 200, 200);
+        terrainColors[WATER] = new Color(200, 247, 253);
+        terrainColors[PAVEMENT] = new Color(204, 204, 204);
+        terrainColors[ROAD] = new Color(71, 79, 107);
+        terrainColors[FIRE] = Color.red;
+        terrainColors[SMOKE] = new Color(204, 204, 204);
         SMOKE_AND_FIRE = new Color(153, 0, 0);
-        m_terrainColors[Terrains.SWAMP] = new Color(49, 136, 74);
-        m_terrainColors[Terrains.BUILDING] = new Color(204, 204, 204);
-        m_terrainColors[Terrains.FUEL_TANK] = new Color(255, 204, 204);
-        m_terrainColors[Terrains.BRIDGE] = new Color(109, 55, 25);
-        m_terrainColors[Terrains.ICE] = new Color(204, 204, 255);
-        m_terrainColors[Terrains.MAGMA] = new Color(200, 0, 0);
-        //m_terrainColors[Terrains.MUD] = new Color(218, 160, 100);
-        m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
-        m_terrainColors[Terrains.FIELDS] = new Color(250, 255, 205);
-        m_terrainColors[Terrains.INDUSTRIAL] = new Color(112, 138, 144);
-        m_terrainColors[Terrains.SPACE] = Color.BLACK;
+        terrainColors[SWAMP] = new Color(49, 136, 74);
+        terrainColors[BUILDING] = new Color(204, 204, 204);
+        terrainColors[FUEL_TANK] = new Color(255, 204, 204);
+        terrainColors[BRIDGE] = new Color(109, 55, 25);
+        terrainColors[ICE] = new Color(204, 204, 255);
+        terrainColors[MAGMA] = new Color(200, 0, 0);
+        //m_terrainColors[MUD] = new Color(218, 160, 100);
+        terrainColors[JUNGLE] = new Color(180, 230, 130);
+        terrainColors[FIELDS] = new Color(250, 255, 205);
+        terrainColors[INDUSTRIAL] = new Color(112, 138, 144);
+        terrainColors[SPACE] = Color.BLACK;
 
         // now try to read in the config file
         int red;
         int green;
         int blue;
 
-        File coloursFile = new MegaMekFile(
-                Configuration.hexesDir(), GUIPreferences.getInstance().getMinimapColours()
-        ).getFile();
+        File coloursFile = new MegaMekFile(Configuration.hexesDir(), GUIP.getMinimapColours()).getFile();
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {
             return;
         }
+        
+        try (Reader cr = new FileReader(coloursFile)) {
+            StreamTokenizer st = new StreamTokenizer(cr);
 
-        Reader cr = new FileReader(coloursFile);
-        StreamTokenizer st = new StreamTokenizer(cr);
+            st.lowerCaseMode(true);
+            st.quoteChar('"');
+            st.commentChar('#');
 
-        st.lowerCaseMode(true);
-        st.quoteChar('"');
-        st.commentChar('#');
+            scan:
+            while (true) {
+                red = 0;
+                green = 0;
+                blue = 0;
 
-        scan:
-        while (true) {
-            red = 0;
-            green = 0;
-            blue = 0;
+                switch (st.nextToken()) {
+                    case StreamTokenizer.TT_EOF:
+                        break scan;
+                    case StreamTokenizer.TT_EOL:
+                        break scan;
+                    case StreamTokenizer.TT_WORD:
+                        // read in
+                        String key = st.sval;
+                        if (key.equals("unitsize")) { 
+                            st.nextToken();
+                            unitSize = (int) st.nval;
+                        } else if (key.equals("background")) { 
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-            switch (st.nextToken()) {
-                case StreamTokenizer.TT_EOF:
-                    break scan;
-                case StreamTokenizer.TT_EOL:
-                    break scan;
-                case StreamTokenizer.TT_WORD:
-                    // read in
-                    String key = st.sval;
-                    if (key.equals("unitsize")) { //$NON-NLS-1$
-                        st.nextToken();
-                        unitSize = (int) st.nval;
-                    } else if (key.equals("background")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                            BACKGROUND = new Color(red, green, blue);
+                        } else if (key.equals("heavywoods")) { 
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-                        BACKGROUND = new Color(red, green, blue);
-                    } else if (key.equals("heavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                            HEAVY_WOODS = new Color(red, green, blue);
+                        } else if (key.equals("ultraheavywoods")) { 
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-                        HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("ultraheavywoods")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                            ULTRA_HEAVY_WOODS = new Color(red, green, blue);
+                        } else if (key.equals("sinkhole")) { 
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-                        ULTRA_HEAVY_WOODS = new Color(red, green, blue);
-                    } else if (key.equals("sinkhole")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                            SINKHOLE = new Color(red, green, blue);
+                        } else if (key.equals("smokeandfire")) { 
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-                        SINKHOLE = new Color(red, green, blue);
-                    } else if (key.equals("smokeandfire")) { //$NON-NLS-1$
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
+                            SMOKE_AND_FIRE = new Color(red, green, blue);
+                        } else {
+                            st.nextToken();
+                            red = (int) st.nval;
+                            st.nextToken();
+                            green = (int) st.nval;
+                            st.nextToken();
+                            blue = (int) st.nval;
 
-                        SMOKE_AND_FIRE = new Color(red, green, blue);
-                    } else {
-                        st.nextToken();
-                        red = (int) st.nval;
-                        st.nextToken();
-                        green = (int) st.nval;
-                        st.nextToken();
-                        blue = (int) st.nval;
-
-                        m_terrainColors[Terrains.getType(key)] = new Color(red,
-                                                                           green, blue);
-                    }
+                            terrainColors[getType(key)] = new Color(red, green, blue);
+                        }
+                        break;
+                }
             }
+        } catch (Exception e) {
+            // Fall back to the default colors
+            e.printStackTrace();
         }
-
-        cr.close();
     }
 
-    private void clean() {
+    /** Marks all the minimap as clean (not requiring an update). */
+    private void markAsClean() {
         dirtyMap = false;
         for (int i = 0; i < dirty.length; i++) {
             for (int j = 0; j < dirty[i].length; j++) {
@@ -538,108 +396,41 @@ public class MiniMap extends JPanel {
     }
 
     void initializeMap() {
+        dirty = new boolean[(board.getWidth() / 10) + 1][(board.getHeight() / 10) + 1];
+        dirtyMap = true;
+        unitSize = UNIT_SIZES[zoom];
 
-        // sanity check (cfg file could be hosed)
-        if (zoom < 0) {
-            zoom = 0;
-        } else if (zoom > (hexSide.length - 1)) {
-            zoom = (hexSide.length - 1);
-        }
-
-        int requiredWidth, requiredHeight;
-        int currentHexSide = hexSide[zoom];
-        int currentHexSideByCos30 = hexSideByCos30[zoom];
-        int currentHexSideBySin30 = hexSideBySin30[zoom];
         topMargin = margin;
         leftMargin = margin;
-        requiredWidth = (m_board.getWidth()
-                         * (currentHexSide + currentHexSideBySin30))
-                        + currentHexSideBySin30 + (2 * margin);
-        requiredHeight = (((2 * m_board.getHeight()) + 1)
-                          * currentHexSideByCos30) + (2 * margin) + buttonHeight;
+        int requiredWidth = (board.getWidth() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
+                + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
+        int requiredHeight = (((2 * board.getHeight()) + 1)
+                * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
-        dirty = new boolean[(m_board.getWidth() / 10) + 1][(m_board.getHeight() / 10) + 1];
-        dirtyMap = true;
-        
-        unitSize = unitSizes[zoom];
+        if (dialog != null) {
+            setSize(new Dimension(requiredWidth, requiredHeight));
+            setPreferredSize(new Dimension(requiredWidth, requiredHeight));
+            dialog.pack();
+            mapImage = ImageUtil.createAcceleratedImage(getSize().width, getSize().height);
+            terrainBuffer = createImage(getSize().width, getSize().height);
 
-        // ensure its on screen
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (int j = 0; j < gs.length; j++) {
-            GraphicsDevice gd = gs[j];
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (int i = 0; i < gc.length; i++) {
-                virtualBounds = virtualBounds.union(gc[i].getBounds());
+            // Center the minimap in the dialog
+            if (getSize().width > requiredWidth) {
+                leftMargin = ((getSize().width - requiredWidth) / 2) + DIALOG_MARGIN;
             }
-        }
-        // zoom out if its too big for the screen
-        while ((zoom > 0)
-               && ((requiredWidth > virtualBounds.width) || (requiredHeight > virtualBounds.height))) {
-            zoom--;
-            currentHexSide = hexSide[zoom];
-            currentHexSideByCos30 = hexSideByCos30[zoom];
-            currentHexSideBySin30 = hexSideBySin30[zoom];
-            requiredWidth = (m_board.getWidth()
-                             * (currentHexSide + currentHexSideBySin30))
-                            + currentHexSideBySin30 + (2 * margin);
-            requiredHeight = (((2 * m_board.getHeight()) + 1)
-                              * currentHexSideByCos30) + (2 * margin) + buttonHeight;
-        }
-        int x = getParent().getLocation().x;
-        int y = getParent().getLocation().y;
-        if ((x + requiredWidth) > virtualBounds.getMaxX()) {
-            x = (int) (virtualBounds.getMaxX() - requiredWidth);
-        }
-        if (x < virtualBounds.getMinX()) {
-            x = (int) (virtualBounds.getMinX());
-        }
-        if ((y + requiredHeight) > virtualBounds.getMaxY()) {
-            y = (int) (virtualBounds.getMaxY() - requiredHeight);
-        }
-        if (y < virtualBounds.getMinY()) {
-            y = (int) (virtualBounds.getMinY());
-        }
-        getParent().setLocation(x, y);
-        int xTemp = requiredWidth;
-        int yTemp = requiredHeight;
-
-        if (m_dialog instanceof JScrollPane) {
-            //For the scrollPane, enforce the minimum size.
-            if (requiredWidth < SCROLL_PANE_WIDTH) {
-                xTemp = SCROLL_PANE_WIDTH;
+            if (getSize().height > requiredHeight) {
+                topMargin = ((getSize().height - requiredHeight) / 2) + DIALOG_MARGIN;
             }
-            if (requiredHeight < SCROLL_PANE_HEIGHT) {
-                yTemp = SCROLL_PANE_HEIGHT;
-            }
+            // Start the refresh timer only for a "live" minimap in a dialog
+            refreshMap();
+            revalidate();
+        } else {
+            mapImage = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
+            terrainBuffer = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
         }
-        
-        if (minimized) {
-            yTemp = 14;
-        }
-        
-        setSize(xTemp, yTemp);
-        setPreferredSize(new Dimension(xTemp, yTemp));
-        if (m_dialog instanceof JDialog) {
-            ((JDialog) m_dialog).pack();
-        }
-        // m_dialog.setVisible(true);
-        m_mapImage = ImageUtil.createAcceleratedImage(getSize().width, getSize().height);
-
-        terrainBuffer = createImage(getSize().width, getSize().height);
         Graphics gg = terrainBuffer.getGraphics();
         gg.setColor(BACKGROUND);
         gg.fillRect(0, 0, getSize().width, getSize().height);
-
-        if (getSize().width > requiredWidth) {
-            leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
-        }
-        if (getSize().height > requiredHeight) {
-            topMargin = ((getSize().height - requiredHeight) / 2) + margin;
-        }
-        drawMap();
-        revalidate();
     }
 
     protected long lastDrawMapReq = 0;
@@ -650,7 +441,7 @@ public class MiniMap extends JPanel {
         public void run() {
             try {
                 if ((System.currentTimeMillis() - lastDrawMapReq) > redrawDelay) {
-                    drawMapOrig();
+                    drawMap();
                 } else {
                     try {
                         Thread.sleep(50);
@@ -665,64 +456,64 @@ public class MiniMap extends JPanel {
         }
     };
 
-    /**
-     * this replaces the original drawmap to speed up updates this can be called
-     * any time necessary
-     */
-    public synchronized void drawMap() {
+    /** Call this to schedule a minimap redraw. */
+    public synchronized void refreshMap() {
         lastDrawMapReq = System.currentTimeMillis();
         SwingUtilities.invokeLater(drawMapable);
     }
-
-    /**
-     * update the backbuffer and repaint.. should not require a synchronized but
-     * i left it there anyways
+    
+    /** 
+     * Draws the minimap to the backbuffer. If the dialog is not visible 
+     * or the minimap is minimized, drawing will be kept to a minimum.
      */
-    protected synchronized void drawMapOrig() {
-        if (lastDrawStarted > lastDrawMapReq) {
+    private void drawMap() {
+        drawMap(false);
+    }
+
+    /** 
+     * Draws the minimap to the backbuffer. When ignoreVisible is true,
+     * the map will be drawn even if it is minimized or not visible.
+     * This can be used to draw the minimap for saving it as an image regardless
+     * of its visual status onscreen.
+     */
+    private synchronized void drawMap(boolean forceDraw) {
+        if ((lastDrawStarted > lastDrawMapReq) && !forceDraw) {
             return;
         }
         lastDrawStarted = System.currentTimeMillis();
-        if (m_mapImage == null) {
+        
+        if (!forceDraw && (dialog != null) && !dialog.isVisible()) {
             return;
         }
-
-        if (!m_dialog.isVisible()) {
-            return;
-        }
-
-        Graphics g = m_mapImage.getGraphics();
+        
+        Graphics g = mapImage.getGraphics();
         GUIPreferences.AntiAliasifSet(g);
         
-        Color oldColor = g.getColor();
-        g.setColor(oldColor);
-        if (!minimized) {
-            roadHexIndexes.removeAllElements();
+        if (!minimized || forceDraw) {
+            roadHexes.clear();
             Graphics gg = terrainBuffer.getGraphics();
             GUIPreferences.AntiAliasifSet(gg);
-            for (int j = 0; j < m_board.getWidth(); j++) {
-                for (int k = 0; k < m_board.getHeight(); k++) {
-                    IHex h = m_board.getHex(j, k);
+            for (int j = 0; j < board.getWidth(); j++) {
+                for (int k = 0; k < board.getHeight(); k++) {
+                    IHex h = board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h, j, k));
-                        if (h.containsTerrain(Terrains.SPACE)) {
+                        if (h.containsTerrain(SPACE)) {
                             paintSpaceCoord(gg, j, k, true);
                         } else {
-                            paintCoord(gg, j, k, true);
+                            paintCoord(gg, j, k, zoom > 1);
                         }
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
-                    if ((m_game != null) && 
-                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
-                            && !h.isValid(null)) {
+                    if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) && !h.isValid(null)) {
                         gg.setColor(GUIPreferences.getInstance().getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
                 }
             }
-            // draw backbuffer
             g.drawImage(terrainBuffer, 0, 0, this);
+            markAsClean();
 
             if (firstLOS != null) {
                 paintSingleCoordBorder(g, firstLOS.getX(), firstLOS.getY(), Color.red);
@@ -731,148 +522,123 @@ public class MiniMap extends JPanel {
                 paintSingleCoordBorder(g, secondLOS.getX(), secondLOS.getY(), Color.red);
             }
 
-            if (!roadHexIndexes.isEmpty()) {
-                paintRoads(g);
-            }
+            paintRoads(g);
 
             if (SHOW_NO_HEIGHT != heightDisplayMode) {
-                for (int j = 0; j < m_board.getWidth(); j++) {
-                    for (int k = 0; k < m_board.getHeight(); k++) {
-                        IHex h = m_board.getHex(j, k);
+                for (int j = 0; j < board.getWidth(); j++) {
+                    for (int k = 0; k < board.getHeight(); k++) {
+                        IHex h = board.getHex(j, k);
                         paintHeight(g, h, j, k);
                     }
                 }
             }
 
-            // draw Drop Zone
-            if ((null != m_client) && (null != m_game)) { // sanity check!
-                if (IGame.Phase.PHASE_DEPLOYMENT == m_game.getPhase()) {
-                    GameTurn turn = m_game.getTurn();
-                    if ((turn != null)
-                        && (turn.getPlayerNum() == m_client.getLocalPlayer()
-                                                           .getId())) {
-                        Entity depEnt = m_bview.getDeployingEntity();
-                        int dir;
-                        // We need to draw the same deployment zone as boardview
-                        if (depEnt != null &&
-                            depEnt.getOwnerId() == turn.getPlayerNum()) {
-                            dir = depEnt.getStartingPos();
-                        } else { // if we can't get the deploy zone from the 
-                            // board view, punt and use the players zone
-                            dir = m_client.getLocalPlayer().getStartingPos();
-                        }
-
-                        for (int j = 0; j < m_board.getWidth(); j++) {
-                            for (int k = 0; k < m_board.getHeight(); k++) {
-                                if (m_board.isLegalDeployment(
-                                        new Coords(j, k), dir)) {
-                                    paintSingleCoordBorder(g, j, k,
-                                                           Color.yellow);
-                                }
-                            }
-                        }
-                    }
-                }
-                
+            drawDeploymentZone(g);
+            
+            if (null != game) {
                 // draw declared fire
-                if ((IGame.Phase.PHASE_FIRING == m_game.getPhase())
-                    || (IGame.Phase.PHASE_PHYSICAL == m_game.getPhase())) {
-                    for (Enumeration<EntityAction> iter = m_game.getActions(); iter
-                            .hasMoreElements(); ) {
-                        EntityAction action = iter.nextElement();
-                        if (action instanceof AttackAction) {
-                            paintAttack(g, (AttackAction) action);
-                        }
+                for (EntityAction action : game.getActionsVector()) {
+                    if (action instanceof AttackAction) {
+                        paintAttack(g, (AttackAction) action);
                     }
                 }
 
                 multiUnits.clear();
-                for (Entity e : m_game.getEntitiesVector()) {
-                    if (e.getPosition() == null) {
-                        continue;
+                for (Entity e : game.getEntitiesVector()) {
+                    if (e.getPosition() != null) {
+                        paintUnit(g, e);
                     }
-                    paintUnit(g, e);
                 }
             }
-            clean();
-        }
+            
 
-        if ((m_client != null) && (m_client.getArtilleryAutoHit() != null)) {
-            for (int i = 0; i < m_client.getArtilleryAutoHit().size(); i++) {
-                drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
+            if ((client != null) && (client.getArtilleryAutoHit() != null)) {
+                for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
+                    drawAutoHit(g, client.getArtilleryAutoHit().get(i));
+                }
             }
         }
 
-        if (m_dialog instanceof JDialog) {
-            drawBtn(g);
+        if (dialog != null) {
+            drawButtons(g);
+            repaint();
         }
-
-        repaint();
     }
     
-    private void paintBVSection(Graphics g) {
-        if (minimized || (m_bview == null)) {
+    /** Indicates the deployment hexes. */
+    private void drawDeploymentZone(Graphics g) {
+        if ((null != client) && (null != game) 
+                && (IGame.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
+            GameTurn turn = game.getTurn();
+            if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
+                Entity deployingUnit = bv.getDeployingEntity();
+                int dir;
+                // We need to draw the same deployment zone as boardview
+                if ((deployingUnit != null) && (deployingUnit.getOwnerId() == turn.getPlayerNum())) {
+                    dir = deployingUnit.getStartingPos();
+                } else { 
+                    // if we can't get the deploy zone from the 
+                    // board view, punt and use the players zone
+                    dir = client.getLocalPlayer().getStartingPos();
+                }
+
+                for (int j = 0; j < board.getWidth(); j++) {
+                    for (int k = 0; k < board.getHeight(); k++) {
+                        if (board.isLegalDeployment(new Coords(j, k), dir)) {
+                            paintSingleCoordBorder(g, j, k, Color.yellow);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /** Draws a box showing the portion of the board that is currently visible in the boardview. */
+    private void paintVisibleSection(Graphics g) {
+        if (minimized || (bv == null)) {
             return;
         }
-        double[] relSize = m_bview.getVisibleArea();
-        for (int i=0;i<4;i++) relSize[i] = Math.min(1, Math.max(0,relSize[i]));
+        double[] relSize = bv.getVisibleArea();
+        for (int i = 0; i < 4; i++)  {
+            // keep between 0 and 1 to not fall outside the minimap
+            relSize[i] = Math.min(1, Math.max(0, relSize[i]));
+        }
         
-        Color sc = g.getColor();
-        Stroke sbs = ((Graphics2D) g).getStroke();
+        int x1 = (int)(relSize[0] * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth()) + leftMargin;
+        int y1 = (int)(relSize[1] * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()) + topMargin;
+        int x2 = (int)((relSize[2]-relSize[0]) * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) * board.getWidth());
+        int y2 = (int)((relSize[3]-relSize[1]) * 2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight());
         
-        // thicker but translucent rect
-        g.setColor(new Color(100,100,160,80));
-        ((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
-        
-        g.drawRect(
-                (int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
-                (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
-                (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
-                (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-        
-        // thin less translucent rect
-        g.setColor(new Color(255,255,255,180));
-        ((Graphics2D) g).setStroke(new BasicStroke(zoom/2));
+        // thicker but translucent rectangle
+        g.setColor(new Color(100, 100, 160, 80));
+        ((Graphics2D) g).setStroke(new BasicStroke(zoom + 2));
+        g.drawRect(x1, y1, x2, y2);
 
-        g.drawRect(
-                (int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
-                (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
-                (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
-                (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-        
-        // restore values
-        ((Graphics2D) g).setStroke(sbs);
-        g.setColor(sc);
-        
+        // thin less translucent rectangle
+        g.setColor(new Color(255, 255, 255, 180));
+        ((Graphics2D) g).setStroke(new BasicStroke(zoom / 2));
+        g.drawRect(x1, y1, x2, y2);
     }
 
-    /**
-     * Draws a red crosshair for artillery autohit hexes (predesignated only).
-     */
+    /** Draws a red crosshair for artillery autohit hexes (predesignated only). */
     private void drawAutoHit(Graphics g, Coords hex) {
-        int baseX = (hex.getX() * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
-                    + hexSide[zoom];
-        int baseY = (((2 * hex.getY()) + 1 + (hex.getX() % 2)) * hexSideByCos30[zoom])
-                    + topMargin;
-        Color alt = g.getColor();
+        int baseX = (hex.getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+        int baseY = (((2 * hex.getY()) + 1 + (hex.getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         g.setColor(Color.RED);
-        g.drawOval(baseX - (unitSize - 1), baseY - (unitSize - 1),
-                   (2 * unitSize) - 2, (2 * unitSize) - 2);
+        g.drawOval(baseX - (unitSize - 1), baseY - (unitSize - 1), (2 * unitSize) - 2, (2 * unitSize) - 2);
         g.drawLine(baseX - unitSize - 1, baseY, (baseX - unitSize) + 3, baseY);
         g.drawLine(baseX + unitSize + 1, baseY, (baseX + unitSize) - 3, baseY);
         g.drawLine(baseX, baseY - unitSize - 1, baseX, (baseY - unitSize) + 3);
         g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
-        g.setColor(alt);
     }
 
     /**
      * Draws green JButton in the bottom to close and open mini map. Height of
      * button is fixed to 14pix.
      */
-    private void drawBtn(Graphics g) {
+    private void drawButtons(Graphics g) {
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];
-        Color oldColor = g.getColor();
         if (minimized) {
             xPoints[0] = Math.round((getSize().width - 11) / 2);
             yPoints[0] = getSize().height - 10;
@@ -891,14 +657,11 @@ public class MiniMap extends JPanel {
         g.setColor(Color.green.darker().darker());
         g.fillRect(0, getSize().height - 14, getSize().width, 14);
         g.setColor(Color.green.darker());
-        g.drawLine(0, getSize().height - 14, getSize().width,
-                   getSize().height - 14);
+        g.drawLine(0, getSize().height - 14, getSize().width, getSize().height - 14);
         g.drawLine(0, getSize().height - 14, 0, getSize().height);
         g.setColor(Color.black);
-        g.drawLine(0, getSize().height - 1, getSize().width,
-                   getSize().height - 1);
-        g.drawLine(getSize().width - 1, getSize().height - 14,
-                   getSize().width - 1, getSize().height);
+        g.drawLine(0, getSize().height - 1, getSize().width, getSize().height - 1);
+        g.drawLine(getSize().width - 1, getSize().height - 14, getSize().width - 1, getSize().height);
         g.setColor(Color.yellow);
         g.fillPolygon(xPoints, yPoints, 3);
 
@@ -906,33 +669,28 @@ public class MiniMap extends JPanel {
         if (!minimized) {
             g.setColor(Color.black);
             g.drawLine(14 - 1, getSize().height - 14, 14 - 1, getSize().height);
-            g.drawLine(getSize().width - 14 - 1, getSize().height - 14,
-                       getSize().width - 14 - 1, getSize().height);
+            g.drawLine(getSize().width - 14 - 1, getSize().height - 14, getSize().width - 14 - 1, getSize().height);
             g.setColor(Color.green.darker());
             g.drawLine(14, getSize().height - 14, 14, getSize().height);
-            g.drawLine(getSize().width - 14, getSize().height - 14,
-                       getSize().width - 14, getSize().height);
+            g.drawLine(getSize().width - 14, getSize().height - 14, getSize().width - 14, getSize().height);
             if (zoom == 0) {
                 g.setColor(Color.gray.brighter());
             } else {
                 g.setColor(Color.yellow);
             }
             g.fillRect(3, (getSize().height - 14) + 6, 8, 2);
-            if (zoom == (hexSide.length - 1)) {
+            if (zoom == (HEX_SIDE.length - 1)) {
                 g.setColor(Color.gray.brighter());
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect((getSize().width - 14) + 3, (getSize().height - 14) + 6, 8,
-                       2);
-            g.fillRect((getSize().width - 14) + 6, (getSize().height - 14) + 3, 2,
-                       8);
+            g.fillRect((getSize().width - 14) + 3, (getSize().height - 14) + 6, 8, 2);
+            g.fillRect((getSize().width - 14) + 6, (getSize().height - 14) + 3, 2, 8);
 
             if (zoom > 2) {
                 // JButton for displying heights.
                 g.setColor(Color.black);
-                g.drawLine(28 - 1, getSize().height - 14, 28 - 1,
-                           getSize().height);
+                g.drawLine(28 - 1, getSize().height - 14, 28 - 1, getSize().height);
                 g.setColor(Color.green.darker());
                 g.drawLine(28, getSize().height - 14, 28, getSize().height);
                 g.setColor(Color.yellow);
@@ -956,65 +714,57 @@ public class MiniMap extends JPanel {
                 g.drawString(label, 17, (getSize().height - 14) + 12);
             }
         }
-
-        g.setColor(oldColor);
-
     }
 
+    /** Writes the height value (hex/building/none) in the minimap hexes. */
     private void paintHeight(Graphics g, IHex h, int x, int y) {
-        if (heightDisplayMode == SHOW_NO_HEIGHT) {
+        if ((heightDisplayMode == SHOW_NO_HEIGHT) || (zoom < 4)) {
             return;
         }
-        if (zoom > 2) {
-            int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-            int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        
+        int height = 0;
+        if ((heightDisplayMode == SHOW_BUILDING_HEIGHT) && h.containsTerrain(BUILDING)) {
+            height = h.ceiling();
+        } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
+            height = h.floor();
+        } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
+            height = (h.containsAnyTerrainOf(BUILDING, FUEL_TANK)) ? h.ceiling() : h.floor();
+        }
+        if (height != 0) {
+            int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
+            int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
             g.setColor(Color.white);
-            int height = 0;
-            if ((h.getTerrain(Terrains.BUILDING) != null)
-                && (heightDisplayMode == SHOW_BUILDING_HEIGHT)) {
-                height = h.ceiling();
-            } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
-                height = h.floor();
-            } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-                height = ((h.getTerrain(Terrains.BUILDING) != null) || (h
-                        .getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling()
-                        : h.floor();
-            }
-            if (height != 0) {
-                g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
-            }
+            g.drawString(height + "", baseX + 5, baseY + 5); 
         }
     }
     
     private int[] xPoints(int x, int y) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int[] xPoints = new int[6];
         xPoints[0] = baseX;
-        xPoints[1] = baseX + hexSideBySin30[zoom];
-        xPoints[2] = xPoints[1] + hexSide[zoom];
-        xPoints[3] = xPoints[2] + hexSideBySin30[zoom];
+        xPoints[1] = baseX + HEX_SIDE_BY_SIN30[zoom];
+        xPoints[2] = xPoints[1] + HEX_SIDE[zoom];
+        xPoints[3] = xPoints[2] + HEX_SIDE_BY_SIN30[zoom];
         xPoints[4] = xPoints[2];
         xPoints[5] = xPoints[1];
         return xPoints;
     }
     
     private int[] yPoints(int x, int y) {
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         int[] yPoints = new int[6];
         yPoints[0] = baseY;
-        yPoints[1] = baseY + hexSideByCos30[zoom];
+        yPoints[1] = baseY + HEX_SIDE_BY_COS30[zoom];
         yPoints[2] = yPoints[1];
         yPoints[3] = baseY;
-        yPoints[4] = baseY - hexSideByCos30[zoom];
+        yPoints[4] = baseY - HEX_SIDE_BY_COS30[zoom];
         yPoints[5] = yPoints[4];
         return yPoints;
     }
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-        int[] xPoints = xPoints(x, y);
-        int[] yPoints = yPoints(x, y);
         g.setColor(c);
-        g.drawPolygon(xPoints, yPoints, 6);
+        g.drawPolygon(xPoints(x, y), yPoints(x, y), 6);
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
@@ -1022,35 +772,33 @@ public class MiniMap extends JPanel {
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
-            Color oldColor = g.getColor();
-            g.setColor(oldColor.darker());
+            g.setColor(g.getColor().darker());
             g.drawPolygon(xPoints, yPoints, 6);
-            g.setColor(oldColor);
+        } else {
+            g.drawPolygon(xPoints, yPoints, 6);
         }
     }
     
     private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
-        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
-        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
+        int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         int[] xPoints = xPoints(x, y);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
-            Color oldColor = g.getColor();
             g.setColor(new Color(20,20,60));
             g.drawPolygon(xPoints, yPoints, 6);
-            g.setColor(oldColor);
         }
         // Drop in a star
-        int dx = (int)(Math.random() * hexSide[zoom]);
-        int dy = (int)((Math.random() - 0.5) * hexSideByCos30[zoom]);
+        int dx = (int)(Math.random() * HEX_SIDE[zoom]);
+        int dy = (int)((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
         int c = (int)(Math.random() * 180);
-        g.setColor(new Color(c,c,c));
+        g.setColor(new Color(c, c, c));
         if (Math.random() < 0.1) {
-            g.setColor(new Color(c,c/10,c/10)); // red star
+            g.setColor(new Color(c, c / 10, c / 10)); // red star
         } else if (Math.random() < 0.1) {
             int factor = (int)(Math.random()*10) + 1;
-            g.setColor(new Color(c/factor,c/factor,c)); // blue star
+            g.setColor(new Color(c / factor, c / factor,c)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
     }
@@ -1059,40 +807,36 @@ public class MiniMap extends JPanel {
      * Draw a line to represent an attack
      */
     private void paintAttack(Graphics g, AttackAction attack) {
-        Entity source = m_game.getEntity(attack.getEntityId());
-        Targetable target = m_game.getTarget(attack.getTargetType(),
-                attack.getTargetId());
+        Entity source = game.getEntity(attack.getEntityId());
+        Targetable target = game.getTarget(attack.getTargetType(), attack.getTargetId());
         // sanity check...
         if ((null == source) || (null == target)) {
             return;
         }
 
         if (attack.getTargetType() == Targetable.TYPE_INARC_POD) {
-            // iNarc pods don't have a position, so lets scrap this idea, shall
-            // we?
+            // iNarc pods don't have a position
             return;
         }
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
             if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                    && (waa.getEntity(m_game).getOwner().getId() != m_client
-                            .getLocalPlayer().getId())) {
+                    && (waa.getEntity(game).getOwner().getId() != client.getLocalPlayer().getId())) {
                 return;
             }
         }
-        Color oldColor = g.getColor();
 
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
 
-        xPoints[0] = ((source.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
-                + leftMargin + ((int) 1.5 * hexSide[zoom])) - 2;
+        xPoints[0] = ((source.getPosition().getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
+                + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
         yPoints[0] = (((2 * source.getPosition().getY()) + 1 + (source
-                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
-        xPoints[1] = ((target.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
-                + leftMargin + ((int) 1.5 * hexSide[zoom])) - 2;
+                .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        xPoints[1] = ((target.getPosition().getX() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
+                + leftMargin + ((int) 1.5 * HEX_SIDE[zoom])) - 2;
         yPoints[1] = (((2 * target.getPosition().getY()) + 1 + (target
-                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
+                .getPosition().getX() % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
         if (((source.getPosition().getX() > target.getPosition().getX()) && (source
@@ -1111,16 +855,14 @@ public class MiniMap extends JPanel {
         g.drawPolygon(xPoints, yPoints, 4);
 
         // if this is mutual fire, draw a half-and-half line
-        for (Enumeration<EntityAction> iter = m_game.getActions(); iter
-                .hasMoreElements();) {
-            EntityAction action = iter.nextElement();
+        for (EntityAction action : game.getActionsVector()) {
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if ((attack.getEntityId() == otherAttack.getTargetId())
                         && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
-                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
+                    Entity attackTarget = game.getEntity(otherAttack.getEntityId());
                     g.setColor(attackTarget.getOwner().getColour().getColour());
 
                     xPoints[0] = xPoints[3];
@@ -1146,148 +888,66 @@ public class MiniMap extends JPanel {
                 }
             }
         }
-
-        g.setColor(oldColor);
     }
 
+    /** Draws the symbol for a single entity. Checks visibility in double blind. */ 
     private void paintUnit(Graphics g, Entity entity) {
-        int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
-                + leftMargin + hexSide[zoom];
-        int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
-                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
-        int[] xPoints;
-        int[] yPoints;
+        int x = entity.getPosition().getX();
+        int y = entity.getPosition().getY();
+        int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
+        int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
 
-        if (EntityVisibilityUtils.onlyDetectedBySensors(m_bview.getLocalPlayer(), entity)) { // Sensor Return
+        if (EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity)) { 
+            // This unit is visible only as a sensor Return
             String sensorReturn = "?";           
-            Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
+            Font font = new Font("SansSerif", Font.BOLD, FONT_SIZE[zoom]);             
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
             int height = getFontMetrics(font).getHeight() / 2 - 2;
             g.setFont(font);
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (!EntityVisibilityUtils.detectedOrHasVisual(m_bview.getLocalPlayer(), m_game, entity)) { // Unseen Unit
-            // Do nothing
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(bv.getLocalPlayer(), game, entity)) {
+            // This unit is not visible, don't draw it
             return;
-        } else if (entity instanceof Mech) {
-            xPoints = new int[3];
-            yPoints = new int[3];
-            xPoints[0] = baseX;
-            yPoints[0] = baseY - unitSize;
-            xPoints[1] = baseX - unitSize;
-            yPoints[1] = baseY + (unitSize / 2);
-            xPoints[2] = baseX + unitSize;
-            yPoints[2] = baseY + (unitSize / 2);
-        } else if (entity instanceof VTOL) {
-            xPoints = new int[8];
-            yPoints = new int[8];
-            xPoints[0] = baseX - unitSize;
-            xPoints[1] = baseX - (unitSize / 3);
-            xPoints[2] = baseX;
-            xPoints[3] = baseX + (unitSize / 3);
-            xPoints[4] = baseX + unitSize;
-            xPoints[5] = xPoints[3];
-            xPoints[6] = xPoints[2];
-            xPoints[7] = xPoints[1];
-            yPoints[0] = baseY;
-            yPoints[1] = baseY - (unitSize / 3);
-            yPoints[2] = baseY - unitSize;
-            yPoints[3] = baseY - (unitSize / 3);
-            yPoints[4] = baseY;
-            yPoints[5] = baseY + (unitSize / 3);
-            yPoints[6] = baseY + unitSize;
-            yPoints[7] = baseY + (unitSize / 3);
-        } else if (entity instanceof Tank) {
-            xPoints = new int[4];
-            yPoints = new int[4];
-            xPoints[0] = baseX - ((unitSize * 2) / 3);
-            yPoints[0] = baseY - ((unitSize * 2) / 3);
-            xPoints[1] = baseX - ((unitSize * 2) / 3);
-            yPoints[1] = baseY + ((unitSize * 2) / 3);
-            xPoints[2] = baseX + ((unitSize * 2) / 3);
-            yPoints[2] = baseY + ((unitSize * 2) / 3);
-            xPoints[3] = baseX + ((unitSize * 2) / 3);
-            yPoints[3] = baseY - ((unitSize * 2) / 3);
-        } else if (entity instanceof Protomech) {
-            xPoints = new int[3];
-            yPoints = new int[3];
-            xPoints[0] = baseX;
-            yPoints[0] = baseY + unitSize;
-            xPoints[1] = baseX + unitSize;
-            yPoints[1] = baseY - (unitSize / 2);
-            xPoints[2] = baseX - unitSize;
-            yPoints[2] = baseY - (unitSize / 2);
-        } else if (entity instanceof GunEmplacement) {
-            int twip = (unitSize * 2) / 3;
-            xPoints = new int[8];
-            yPoints = new int[8];
-            xPoints[0] = baseX - (twip / 2);
-            yPoints[0] = baseY - ((twip * 3) / 2);
-            xPoints[1] = xPoints[0] - twip;
-            yPoints[1] = yPoints[0] + twip;
-            xPoints[2] = xPoints[1];
-            yPoints[2] = yPoints[1] + twip;
-            xPoints[3] = xPoints[2] + twip;
-            yPoints[3] = yPoints[2] + twip;
-            xPoints[4] = xPoints[3] + twip;
-            yPoints[4] = yPoints[3];
-            xPoints[5] = xPoints[4] + twip;
-            yPoints[5] = yPoints[4] - twip;
-            xPoints[6] = xPoints[5];
-            yPoints[6] = yPoints[5] - twip;
-            xPoints[7] = xPoints[6] - twip;
-            yPoints[7] = yPoints[6] - twip;
-        } else {
-            // entity instanceof Infantry
-            xPoints = new int[4];
-            yPoints = new int[4];
-            xPoints[0] = baseX;
-            yPoints[0] = baseY - unitSize;
-            xPoints[1] = baseX - unitSize;
-            yPoints[1] = baseY;
-            xPoints[2] = baseX;
-            yPoints[2] = baseY + unitSize;
-            xPoints[3] = baseX + unitSize;
-            yPoints[3] = baseY;
-        }
+        }  
 
         Graphics2D g2 = (Graphics2D)g;
-        Stroke svStroke = g2.getStroke();
+        Stroke saveStroke = g2.getStroke();
+        AffineTransform saveTransform = g2.getTransform();
+        boolean stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
 
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
-        if (GUIPreferences.getInstance().getTeamColoring() && (m_client != null)) {
-            boolean isLocalTeam = entity.getOwner().getTeam() == m_client.getLocalPlayer().getTeam();
-            boolean isLocalPlayer = entity.getOwner().equals(m_client.getLocalPlayer());
+        if (GUIP.getTeamColoring() && (client != null)) {
+            boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
+            boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
             if (isLocalPlayer) {
-                iconColor = GUIPreferences.getInstance().getMyUnitColor();
+                iconColor = GUIP.getMyUnitColor();
             } else if (isLocalTeam) {
-                iconColor = GUIPreferences.getInstance().getAllyUnitColor();
+                iconColor = GUIP.getAllyUnitColor();
             } else {
-                iconColor = GUIPreferences.getInstance().getEnemyUnitColor();
+                iconColor = GUIP.getEnemyUnitColor();
             }
         }
-
-        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.MMSYMBOL)) {
-            AffineTransform svTransform = g2.getTransform();
-
-            // Transform for placement and scaling
-            AffineTransform t = AffineTransform.getTranslateInstance(baseX, baseY);
-            t.scale(stratZoom[zoom]/100.0d, fontSize[zoom]/100.0d);
-            g2.transform(t);
-
-            // Add a position shift if multiple units are present in this hex
-            Coords p = entity.getPosition();
-            Integer eStack = multiUnits.get(p);
-            if (eStack == null) eStack = 0;
-            eStack++;
-            multiUnits.put(p, eStack);
-            g2.translate(20*(eStack-1), -20*(eStack-1));
-
+        
+        // Transform for placement and scaling
+        var placement = AffineTransform.getTranslateInstance(baseX, baseY);
+        placement.scale(UNIT_SCALE[zoom]/100.0d, UNIT_SCALE[zoom]/100.0d);
+        g2.transform(placement);
+        
+        // Add a position shift if multiple units are present in this hex
+        Coords p = entity.getPosition();
+        int eStack = multiUnits.getOrDefault(p, 0) + 1;
+        multiUnits.put(p, eStack);
+        g2.translate(20 * (eStack - 1), -20 * (eStack - 1));
+        
+        Path2D form = MiniMapUnitSymbols.getForm(entity);
+        
+        if (stratOpsSymbols) {
             // White border to set off the icon from the background
             g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-            g2.setColor(new Color(255,255,255,150));
+            g2.setColor(new Color(255, 255, 255, 150));
             g2.draw(STRAT_BASERECT);
 
             // Black background to fill forms like the Dropship
@@ -1298,34 +958,10 @@ public class MiniMap extends JPanel {
             g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(STRAT_BASERECT);
 
-            // Select the correct form for the entity
-            Path2D form;
-            if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                form = STRAT_MECH;
+            // Set a thin brush for filled areas (leave a thick brush for line symbols
+            if ((entity instanceof Mech) || (entity instanceof Protomech)
+                    || (entity instanceof VTOL) || (entity.isAero())) {
                 g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            } else if (entity instanceof VTOL) {
-                form = STRAT_VTOL;
-                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            } else if (entity instanceof Tank) {
-                if (entity.getMovementMode() == EntityMovementMode.HOVER) {
-                    form = STRAT_HOVER;
-                } else if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
-                    form = STRAT_WHEELED;
-                } else if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL) ||
-                        (entity.getMovementMode() == EntityMovementMode.NAVAL)) {
-                    form = STRAT_NAVAL; 
-                } else {
-                    form = STRAT_TANKTRACKED;
-                }
-            } else if (entity.isAero()) {
-                if (entity.isFighter()) {
-                    form = STRAT_AERO;
-                } else {
-                    form = STRAT_SPHEROID;
-                }
-                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            } else {
-                form = STRAT_INFANTRY;
             }
 
             // Fill the form in player color / team color
@@ -1344,302 +980,247 @@ public class MiniMap extends JPanel {
                     s = STRAT_WEIGHTS[entity.getWeightClass()];
                 }
                 if (!s.equals("")) {
-                    FontRenderContext fontContext = new FontRenderContext(null, true, true);
-                    Font font = new Font("SansSerif", Font.BOLD, 100);
+                    var fontContext = new FontRenderContext(null, true, true);
+                    var font = new Font("SansSerif", Font.BOLD, 100);
                     FontMetrics currentMetrics = getFontMetrics(font);
                     int stringWidth = currentMetrics.stringWidth(s);
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
-                    g2.fill(gv.getOutline((int)STRAT_CX-stringWidth/2,(float)SYMBOLSIZE.getHeight()/3.0f));
+                    g2.fill(gv.getOutline((int) STRAT_CX - stringWidth / 2,
+                            (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
                 }
             } else if (entity instanceof MechWarrior) {
                 g2.setColor(Color.black);
-                g2.fillOval(0 - 25, 0 - 25, 50, 50);
+                g2.fillOval(-25, -25, 50, 50);
             }
             // Draw the unit icon in black
             g2.draw(form);
 
-            g2.setTransform(svTransform);
-            
         } else {
-            // Drawn a circle for MechWarriors
-            if (entity instanceof MechWarrior) {
-                // Draw a slight dark border
-                int radius = unitSize - 3;
-                int dia = radius * 2;
-                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
-                g.setColor(new Color(100,100,100,200));
-                g.drawOval(baseX - radius, baseY - radius, dia, dia);
+            // Standard symbols
+            // White border to set off the icon from the background
+            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            g2.setColor(new Color(255, 255, 255, 150));
+            g2.draw(form);
 
-                // Fill the form in player color / team color
-                g.setColor(iconColor);
-                g.fillOval(baseX - radius, baseY - radius, dia, dia);
-
-                // Draw a white border to better show the player color
-                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-                g.setColor(Color.WHITE);
-                g.drawOval(baseX - radius, baseY - radius, dia, dia);
-            } else {
-                // Draw a slight dark border to set off the icon from the background
-                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
-                g.setColor(new Color(100,100,100,200));
-                g.drawPolygon(xPoints, yPoints, xPoints.length);
-
-                // Fill the form in player color / team color
-                g.setColor(iconColor);
-                g.fillPolygon(xPoints, yPoints, xPoints.length);
-
-                // Draw a white border to better show the player color
-                // maybe useful later: if (!entity.isSelectableThisTurn()) {
-                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-                g.setColor(Color.WHITE);
-                g.drawPolygon(xPoints, yPoints, xPoints.length);
-            }
-
+            // Fill the form in player color / team color
+            g.setColor(iconColor);
+            g2.fill(form);
+            
+            // Black border
+            g2.setColor(Color.BLACK);
+            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.draw(form);
         }
+        
+        g2.setTransform(saveTransform);
         
         // Create a colored circle if this is the selected unit
-        Entity se = (clientgui == null) ? null : 
-            m_game.getEntity(clientgui.getSelectedEntityNum());
+        Entity se = (clientGui == null) ? null : game.getEntity(clientGui.getSelectedEntityNum());
         
         if (entity == se) {
-            g2.setStroke(new BasicStroke(unitBorder[zoom]+1));
-            g2.setColor(GUIPreferences.getInstance().getColor(
-                    GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
-            int rad = unitSize*2-1;
-            g2.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
+            int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;
+            Color color = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+            g2.setColor(color.darker());
+            g2.setStroke(new BasicStroke(unitSize / 5 + 1));
+            g2.drawOval(baseX - rad, baseY - rad, rad * 2, rad * 2);
         }
 
-        g2.setStroke(svStroke);
+        g2.setStroke(saveStroke);
     }
 
+    /** Draws the road elements previously assembles into the roadHexes list. */
     private void paintRoads(Graphics g) {
         int exits = 0;
-        int baseX, baseY, x, y;
+        int baseX;
+        int baseY;
+        int x;
+        int y;
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
-        Color oldColor = g.getColor();
-        g.setColor(m_terrainColors[Terrains.ROAD]);
-        for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter
-                .hasMoreElements(); ) {
-            int[] hex = iter.nextElement();
-            x = hex[0];
-            y = hex[1];
-            baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
-                    + hexSide[zoom];
-            baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
-            exits = hex[2];
+        g.setColor(terrainColors[ROAD]);
+        for (int[] roadEntry : roadHexes) {
+            x = roadEntry[0];
+            y = roadEntry[1];
+            baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+            baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+            exits = roadEntry[2];
             // Is there a North exit?
-            if (0 != (exits & 0x0001)) {
-                xPoints[0] = baseX - halfRoadWidth[zoom];
+            if (0 != (exits & 1)) {
+                xPoints[0] = baseX - HALF_ROAD_WIDTH[zoom];
                 yPoints[0] = baseY;
-                xPoints[1] = baseX - halfRoadWidth[zoom];
-                yPoints[1] = baseY - hexSideByCos30[zoom];
-                xPoints[2] = baseX + halfRoadWidth[zoom];
-                yPoints[2] = baseY - hexSideByCos30[zoom];
-                xPoints[3] = baseX + halfRoadWidth[zoom];
+                xPoints[1] = baseX - HALF_ROAD_WIDTH[zoom];
+                yPoints[1] = baseY - HEX_SIDE_BY_COS30[zoom];
+                xPoints[2] = baseX + HALF_ROAD_WIDTH[zoom];
+                yPoints[2] = baseY - HEX_SIDE_BY_COS30[zoom];
+                xPoints[3] = baseX + HALF_ROAD_WIDTH[zoom];
                 yPoints[3] = baseY;
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
             // Is there a North-East exit?
-            if (0 != (exits & 0x0002)) {
-                xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
-                yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round((baseX + ((3 * hexSide[zoom]) / 4))
-                                        - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY - (hexSideByCos30[zoom] / 2)
-                                        - halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] + (2 * halfRoadWidthBySin30[zoom]);
-                yPoints[2] = yPoints[1] + (2 * halfRoadWidthByCos30[zoom]);
-                xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
-                yPoints[3] = baseY + halfRoadWidthByCos30[zoom];
+            if (0 != (exits & 2)) {
+                xPoints[0] = baseX - HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[0] = baseY - HALF_ROAD_WIDTH_BY_COS30[zoom];
+                xPoints[1] = Math.round((baseX + ((3 * HEX_SIDE[zoom]) / 4)) - HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[1] = Math.round(baseY - (HEX_SIDE_BY_COS30[zoom] / 2) - HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[2] = xPoints[1] + (2 * HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[2] = yPoints[1] + (2 * HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[3] = baseX + HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[3] = baseY + HALF_ROAD_WIDTH_BY_COS30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
             // Is there a South-East exit?
-            if (0 != (exits & 0x0004)) {
-                xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
-                yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX + ((3 * hexSide[zoom]) / 4)
-                                        + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round((baseY + (hexSideByCos30[zoom] / 2))
-                                        - halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] - (2 * halfRoadWidthBySin30[zoom]);
-                yPoints[2] = yPoints[1] + (2 * halfRoadWidthByCos30[zoom]);
-                xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
-                yPoints[3] = baseY + halfRoadWidthByCos30[zoom];
+            if (0 != (exits & 4)) {
+                xPoints[0] = baseX + HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[0] = baseY - HALF_ROAD_WIDTH_BY_COS30[zoom];
+                xPoints[1] = Math.round(baseX + ((3 * HEX_SIDE[zoom]) / 4) + HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[1] = Math.round((baseY + (HEX_SIDE_BY_COS30[zoom] / 2)) - HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[2] = xPoints[1] - (2 * HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[2] = yPoints[1] + (2 * HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[3] = baseX - HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[3] = baseY + HALF_ROAD_WIDTH_BY_COS30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
             // Is there a South exit?
-            if (0 != (exits & 0x0008)) {
-                xPoints[0] = baseX + halfRoadWidth[zoom];
+            if (0 != (exits & 8)) {
+                xPoints[0] = baseX + HALF_ROAD_WIDTH[zoom];
                 yPoints[0] = baseY;
-                xPoints[1] = baseX + halfRoadWidth[zoom];
-                yPoints[1] = baseY + hexSideByCos30[zoom];
-                xPoints[2] = baseX - halfRoadWidth[zoom];
-                yPoints[2] = baseY + hexSideByCos30[zoom];
-                xPoints[3] = baseX - halfRoadWidth[zoom];
+                xPoints[1] = baseX + HALF_ROAD_WIDTH[zoom];
+                yPoints[1] = baseY + HEX_SIDE_BY_COS30[zoom];
+                xPoints[2] = baseX - HALF_ROAD_WIDTH[zoom];
+                yPoints[2] = baseY + HEX_SIDE_BY_COS30[zoom];
+                xPoints[3] = baseX - HALF_ROAD_WIDTH[zoom];
                 yPoints[3] = baseY;
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
             // Is there a South-West exit?
-            if (0 != (exits & 0x0010)) {
-                xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
-                yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round((baseX - ((3 * hexSide[zoom]) / 4))
-                                        + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY + (hexSideByCos30[zoom] / 2)
-                                        + halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] - (2 * halfRoadWidthBySin30[zoom]);
-                yPoints[2] = yPoints[1] - (2 * halfRoadWidthByCos30[zoom]);
-                xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
-                yPoints[3] = baseY - halfRoadWidthByCos30[zoom];
+            if (0 != (exits & 16)) {
+                xPoints[0] = baseX + HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[0] = baseY + HALF_ROAD_WIDTH_BY_COS30[zoom];
+                xPoints[1] = Math.round((baseX - ((3 * HEX_SIDE[zoom]) / 4)) + HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[1] = Math.round(baseY + (HEX_SIDE_BY_COS30[zoom] / 2) + HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[2] = xPoints[1] - (2 * HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[2] = yPoints[1] - (2 * HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[3] = baseX - HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[3] = baseY - HALF_ROAD_WIDTH_BY_COS30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
             // Is there a North-West exit?
-            if (0 != (exits & 0x0020)) {
-                xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
-                yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX - ((3 * hexSide[zoom]) / 4)
-                                        - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round((baseY - (hexSideByCos30[zoom] / 2))
-                                        + halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] + (2 * halfRoadWidthBySin30[zoom]);
-                yPoints[2] = yPoints[1] - (2 * halfRoadWidthByCos30[zoom]);
-                xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
-                yPoints[3] = baseY - halfRoadWidthByCos30[zoom];
+            if (0 != (exits & 32)) {
+                xPoints[0] = baseX - HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[0] = baseY + HALF_ROAD_WIDTH_BY_COS30[zoom];
+                xPoints[1] = Math.round(baseX - ((3 * HEX_SIDE[zoom]) / 4) - HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[1] = Math.round((baseY - (HEX_SIDE_BY_COS30[zoom] / 2)) + HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[2] = xPoints[1] + (2 * HALF_ROAD_WIDTH_BY_SIN30[zoom]);
+                yPoints[2] = yPoints[1] - (2 * HALF_ROAD_WIDTH_BY_COS30[zoom]);
+                xPoints[3] = baseX + HALF_ROAD_WIDTH_BY_SIN30[zoom];
+                yPoints[3] = baseY - HALF_ROAD_WIDTH_BY_COS30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
                 g.fillPolygon(xPoints, yPoints, 4);
             }
 
         }
-        g.setColor(oldColor);
     }
 
-    /**
-     * check if hex contains roadelements and if it does, add to roadHexIndexes
-     */
-    private void addRoadElements(IHex x, int boardX, int boardY) {
-        final int[] roadTypes = new int[]{Terrains.ROAD, Terrains.BRIDGE};
-        for (int j : roadTypes) {
-            if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
-                int[] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
-                roadHexIndexes.addElement(roadHex);
-            }
+    /** If the given hex contains ROAD or BRIDGE, adds an entry to roadHexes. */
+    private void addRoadElements(IHex hex, int boardX, int boardY) {
+        if (hex.containsAnyTerrainOf(ROAD, BRIDGE)) {
+            var terrain = hex.getAnyTerrainOf(ROAD, BRIDGE);
+            roadHexes.add(new int[] { boardX, boardY, terrain.getExits() } );
         }
     }
 
-    private Color terrainColor(IHex x, int boardX, int boardY) {
-        Color terrColor = m_terrainColors[0];
-        if (x.getLevel() < 0) {
-            // sinkholes have their own colour
+    private Color terrainColor(IHex hex, int boardX, int boardY) {
+        Color terrColor = terrainColors[0];
+        if (hex.getLevel() < 0) {
             terrColor = SINKHOLE;
         }
 
         int terrain = 0;
         // Check for Smoke and Fire - this overrides any other colors
-        if (x.containsTerrain(Terrains.SMOKE) && x.containsTerrain(Terrains.FIRE)) {
+        if (hex.containsTerrain(SMOKE) && hex.containsTerrain(FIRE)) {
             terrColor = SMOKE_AND_FIRE;
         // Check for Fire - this overrides any other colors
-        } else if (x.containsTerrain(Terrains.FIRE)) {
-            terrColor = m_terrainColors[Terrains.FIRE];
+        } else if (hex.containsTerrain(FIRE)) {
+            terrColor = terrainColors[FIRE];
         } else { // Otherwise, color based on terrains - higher valued terrains take color precedence
-            for (int j = m_terrainColors.length - 1; j >= 0; j--) {
-                if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
-                    if ((j == Terrains.ROAD) || (j == Terrains.BRIDGE)) {
+            for (int j = terrainColors.length - 1; j >= 0; j--) {
+                if ((hex.getTerrain(j) != null) && (terrainColors[j] != null)) {
+                    if ((j == ROAD) || (j == BRIDGE)) {
                         continue;
                     }
-                    terrColor = m_terrainColors[j];
+                    terrColor = terrainColors[j];
                     terrain = j;
                     // make heavy woods darker
-                    if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE)) && (x.getTerrain(j).getLevel() == 2)) {
+                    if (((j == WOODS) || (j == JUNGLE)) && (hex.getTerrain(j).getLevel() == 2)) {
                         terrColor = HEAVY_WOODS;
                     }
-                    if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE)) && (x.getTerrain(j).getLevel() > 2)) {
+                    if (((j == WOODS) || (j == JUNGLE)) && (hex.getTerrain(j).getLevel() > 2)) {
                         terrColor = ULTRA_HEAVY_WOODS;
                     }
                     break;
                 }
             }
         }
-        int level = 0;
-
-        int r, g, b;
         switch (terrain) {
             case 0:
-            case Terrains.WOODS:
-            case Terrains.JUNGLE:
-            case Terrains.ROUGH:
-            case Terrains.RUBBLE:
-            case Terrains.WATER:
-            case Terrains.PAVEMENT:
-            case Terrains.ICE:
-            case Terrains.FIELDS:
-                level = Math.abs(x.floor());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10) {
-                    level = 10;
-                }
-                r = terrColor.getRed() - (level * 15);
-                g = terrColor.getGreen() - (level * 15);
-                b = terrColor.getBlue() - (level * 15);
-                if (r < 0) {
-                    r = 0;
-                }
-                if (g < 0) {
-                    g = 0;
-                }
-                if (b < 0) {
-                    b = 0;
-                }
-                return new Color(r, g, b);
-            case Terrains.FUEL_TANK:
-            case Terrains.BUILDING:
-                level = Math.abs(x.ceiling());
-                // By experiment it is possible to make only 6 distinctive color
-                // steps
-                if (level > 10) {
-                    level = 10;
-                }
-                r = terrColor.getRed() - (level * 15);
-                g = terrColor.getGreen() - (level * 15);
-                b = terrColor.getBlue() - (level * 15);
-                if (r < 0) {
-                    r = 0;
-                }
-                if (g < 0) {
-                    g = 0;
-                }
-                if (b < 0) {
-                    b = 0;
-                }
-                return new Color(r, g, b);
-
+            case WOODS:
+            case JUNGLE:
+            case ROUGH:
+            case RUBBLE:
+            case WATER:
+            case PAVEMENT:
+            case ICE:
+            case FIELDS:
+                return adjustByLevel(terrColor, Math.abs(hex.floor()));
+            case FUEL_TANK:
+            case BUILDING:
+                return adjustByLevel(terrColor, Math.abs(hex.ceiling()));
         }
         return terrColor;
     }
+    
+    private Color adjustByLevel(Color color, int level) {
+        if (level > 10) {
+            level = 10;
+        }
+        int r = color.getRed() - (level * 15);
+        int g = color.getGreen() - (level * 15);
+        int b = color.getBlue() - (level * 15);
+        if (r < 0) {
+            r = 0;
+        }
+        if (g < 0) {
+            g = 0;
+        }
+        if (b < 0) {
+            b = 0;
+        }
+        return new Color(r, g, b);
+    }
 
+    /** Returns a Board Coord for a given x and y pixel position. */
     private Coords translateCoords(int x, int y) {
-        int gridX = (x / (hexSideBySin30[zoom] + hexSide[zoom]));
-        int restX = x % (hexSideBySin30[zoom] + hexSide[zoom]);
-        int gridY = (y / (2 * hexSideByCos30[zoom]));
-        int restY = y % (2 * hexSideByCos30[zoom]);
+        int gridX = (x / (HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]));
+        int restX = x % (HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]);
+        int gridY = (y / (2 * HEX_SIDE_BY_COS30[zoom]));
+        int restY = y % (2 * HEX_SIDE_BY_COS30[zoom]);
 
         boolean evenColumn = (gridX & 1) == 0;
 
-        if (restY < hexSideByCos30[zoom]) {
+        if (restY < HEX_SIDE_BY_COS30[zoom]) {
             if (evenColumn) {
-                if (restX < ((((restY - hexSideByCos30[zoom])
-                               * hexSideBySin30[zoom]) / hexSideByCos30[zoom]) * -1)) {
+                if (restX < ((((restY - HEX_SIDE_BY_COS30[zoom])
+                               * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                     gridY--;
                 }
             } else {
-                if (restX < ((restY * hexSideBySin30[zoom]) / hexSideByCos30[zoom])) {
+                if (restX < ((restY * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
                     gridX--;
                 } else {
                     gridY--;
@@ -1647,13 +1228,13 @@ public class MiniMap extends JPanel {
             }
         } else {
             if (evenColumn) {
-                if (restX < (((restY - hexSideByCos30[zoom])
-                              * hexSideBySin30[zoom]) / hexSideByCos30[zoom])) {
+                if (restX < (((restY - HEX_SIDE_BY_COS30[zoom])
+                              * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom])) {
                     gridX--;
                 }
             } else {
-                if (restX < ((((restY - (2 * hexSideByCos30[zoom]))
-                               * hexSideBySin30[zoom]) / hexSideByCos30[zoom]) * -1)) {
+                if (restX < ((((restY - (2 * HEX_SIDE_BY_COS30[zoom]))
+                               * HEX_SIDE_BY_SIN30[zoom]) / HEX_SIDE_BY_COS30[zoom]) * -1)) {
                     gridX--;
                 }
             }
@@ -1668,80 +1249,72 @@ public class MiniMap extends JPanel {
         return new Coords(gridX, gridY);
     }
 
-    protected void zoomIn() {
-        if (zoom == 0) {
-            return;
+    /** Zooms out (smaller hexes), if possible. */
+    private void zoomOut() {
+        if (zoom > 0) {
+            zoom--;
+            initializeMap();
+            GUIP.setMinimapZoom(zoom);
         }
-        zoom--;
-        initializeMap();
     }
 
-    protected void zoomOut() {
-        if (zoom == (hexSide.length - 1)) {
-            return;
+    /** Zooms in (larger hexes), if possible. */
+    private void zoomIn() {
+        if (zoom < MAX_ZOOM) {
+            zoom++;
+            initializeMap();
+            GUIP.setMinimapZoom(zoom);
         }
-        zoom++;
-        initializeMap();
     }
 
-    void processMouseClick(int x, int y, MouseEvent me) {
+    private void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14) && !dragging) {
             if (minimized) {
-                setSize(getSize().width, heightBufer);
-                m_mapImage =  ImageUtil.createAcceleratedImage(getSize().width, heightBufer);
+                setSize(getSize().width, heightBuffer);
+                mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
                 minimized = false;
                 initializeMap();
             } else {
                 if (x < 14) {
                     if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
-                        zoomIn();
-                    } else {
                         zoomOut();
+                    } else {
+                        zoomIn();
                     }
                 } else if ((x < 28) && (zoom > 2)) {
                     heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                     initializeMap();
                 } else if (x > (getSize().width - 14)) {
                     if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
-                        zoomOut();
-                    } else {
                         zoomIn();
+                    } else {
+                        zoomOut();
                     }
                 } else {
                     // Minimize button
-                    heightBufer = getSize().height;
+                    heightBuffer = getSize().height;
                     setSize(getSize().width, 14);
-
-                    m_mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
-
+                    mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
                     minimized = true;
                     initializeMap();
                 }  
             }
-        } else if (m_bview != null) {
-            if ((x < margin) || (x > (getSize().width - leftMargin))
+        } else if (bv != null) {
+            if ((x < DIALOG_MARGIN) || (x > (getSize().width - leftMargin))
                 || (y < topMargin)
                 || (y > (getSize().height - topMargin - 14))) {
                 return;
             }
             if ((me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
-                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                bv.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
-                m_bview.centerOnPointRel(
-                        ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
-                        ((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
-                m_bview.stopSoftCentering();
+                bv.centerOnPointRel(
+                        ((double)(x - leftMargin))/(double)((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom])*board.getWidth()),
+                        ((double)(y - topMargin))/(double)(2 * HEX_SIDE_BY_COS30[zoom]*board.getHeight()));
+                bv.stopSoftCentering();
                 repaint();
             }
         }
-    }
-
-    public int getZoom() {
-        return zoom;
-    }
-
-    public void setZoom(int z) {
-        zoom = z;
     }
 
     protected BoardListener boardListener = new BoardListenerAdapter() {
@@ -1752,22 +1325,14 @@ public class MiniMap extends JPanel {
 
         @Override
         public void boardChangedHex(BoardEvent b) {
-            if (dirty == null) {
+            // This must be tolerant since it might be called without notifying us of the boardsize first
+            int x = b.getCoords().getX();
+            int y = b.getCoords().getY();
+            if ((x >= dirty.length) || (y >= dirty[x].length)) {
                 dirtyMap = true;
             } else {
-                /*
-                 * this must be tolerant since it might be called without
-                 * notifying us of the boardsize first
-                 */
-                int x = b.getCoords().getX();
-                int y = b.getCoords().getY();
-                if ((x >= dirty.length) || (y >= dirty[x].length)) {
-                    dirtyMap = true;
-                    return;
-                }
                 dirty[x / 10][y / 10] = true;
             }
-
         }
     };
 
@@ -1777,25 +1342,25 @@ public class MiniMap extends JPanel {
             if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
                     || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
                     || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
-                File dir = new File(Configuration.gameSummaryImagesMMDir(), m_game.getUUIDString());
+                File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-				File imgFile = new File(dir, "round_" + m_game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
 						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
-                    ImageIO.write(m_mapImage, "png", imgFile);
+                    ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
 
             }
-            drawMap();
+            refreshMap();
         }
 
         @Override
         public void gameTurnChange(GameTurnChangeEvent e) {
-            drawMap();
+            refreshMap();
         }
 
         @Override
@@ -1808,14 +1373,19 @@ public class MiniMap extends JPanel {
             if (b != null) {
                 b.addBoardListener(boardListener);
             }
-            m_board = b;
+            board = b;
             initializeMap();
         }
 
         @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
-            drawMap();
+            refreshMap();
         }
+        
+        @Override
+        public void gameNewAction(GameNewActionEvent e) {
+            refreshMap();
+        };
     };
 
     BoardViewListener boardViewListener = new BoardViewListenerAdapter() {
@@ -1843,28 +1413,29 @@ public class MiniMap extends JPanel {
         public void firstLOSHex(BoardViewEvent b) {
             secondLOS = null;
             firstLOS = b.getCoords();
-            drawMap();
+            refreshMap();
         }
 
         @Override
         public void secondLOSHex(BoardViewEvent b, Coords c) {
             firstLOS = c;
             secondLOS = b.getCoords();
-            drawMap();
+            refreshMap();
         }
 
         private void update() {
             firstLOS = null;
             secondLOS = null;
-            drawMap();
+            refreshMap();
         }
     };
 
     MouseListener mouseListener = new MouseAdapter() {
 
+        @Override
         public void mouseReleased(MouseEvent me) {
             // Center main map on clicked area, if there was no dragging
-            if (m_dialog instanceof JDialog && !dragging) {
+            if (dialog instanceof JDialog && !dragging) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
             // Clear up variables related to dragging
@@ -1886,166 +1457,27 @@ public class MiniMap extends JPanel {
         }
     };
 
-    MouseWheelListener mouseWheelListener = new MouseWheelListener() {
-        public void mouseWheelMoved(MouseWheelEvent we) {
-            if (we.getWheelRotation() < 0) {
-                //Zoom Out: The processMouseClick method uses absolute
-                // positions within the minimap to determine what the click
-                // does.  These parameters should activate the zoom-out features
-                processMouseClick(getSize().width - 12, getSize().height - 12, we);
-            } else {
-                //Zoom In: The processMouseClick method uses absolute
-                // positions within the minimap to determine what the click
-                // does.  These parameters should activate the zoom-in features
-                processMouseClick(0, getSize().height - 12, we);
-            }
+    MouseWheelListener mouseWheelListener = (we) -> {
+        if (we.getWheelRotation() < 0) {
+            zoomIn();
+        } else {
+            zoomOut();
         }
     };
+
 
     ComponentListener componentListener = new ComponentAdapter() {
         @Override
         public void componentShown(ComponentEvent ce) {
-            drawMap();
-        }
-
-        @Override
-        public void componentResized(ComponentEvent ce) {
-            // if (!minimized) initializeMap();
+            refreshMap();
         }
     };
     
-    public BufferedImage getImage() {
-        drawMapOrig();
-        return m_mapImage;
-    }
-    
-    // Used only internally for creating a minimap image
-    private MiniMap(IBoard board) throws IOException {
-        m_board = board;
-        initializeColors();
-    }
-    
-    //TODO: definitely integrate this with the normal drawMapOrig!!!!!
-    private void drawForImage() {
-        Graphics g = m_mapImage.getGraphics();
-        // Activate AA
-        GUIPreferences.AntiAliasifSet(g);
-        
-        Color oldColor = g.getColor();
-        g.setColor(oldColor);
-        if (!minimized) {
-            roadHexIndexes.removeAllElements();
-            Graphics gg = terrainBuffer.getGraphics();
-            GUIPreferences.AntiAliasifSet(gg);
-            for (int j = 0; j < m_board.getWidth(); j++) {
-                for (int k = 0; k < m_board.getHeight(); k++) {
-                    IHex h = m_board.getHex(j, k);
-                    if (dirtyMap || dirty[j / 10][k / 10]) {
-                        gg.setColor(terrainColor(h, j, k));
-                        if (h.containsTerrain(Terrains.SPACE)) {
-                            paintSpaceCoord(gg, j, k, true);
-                        } else {
-                            paintCoord(gg, j, k, true);
-                        }
-                    }
-                    addRoadElements(h, j, k);
-                    // Color invalid hexes red when in the Map Editor
-                    if ((m_game != null) && 
-                            (m_game.getPhase() == IGame.Phase.PHASE_UNKNOWN)
-                            && !h.isValid(null)) {
-                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
-                        paintCoord(gg, j, k, true);
-                    }
-                }
-            }
-            // draw backbuffer
-            g.drawImage(terrainBuffer, 0, 0, this);
-
-            if (!roadHexIndexes.isEmpty()) {
-                paintRoads(g);
-            }
-
-            if (SHOW_NO_HEIGHT != heightDisplayMode) {
-                for (int j = 0; j < m_board.getWidth(); j++) {
-                    for (int k = 0; k < m_board.getHeight(); k++) {
-                        IHex h = m_board.getHex(j, k);
-                        paintHeight(g, h, j, k);
-                    }
-                }
-            }
-
-        }
-
-    }
-    
-    private void initializeMapForImage() {
-        int currentHexSide = hexSide[zoom];
-        int currentHexSideByCos30 = hexSideByCos30[zoom];
-        int currentHexSideBySin30 = hexSideBySin30[zoom];
-        int requiredWidth = m_board.getWidth() * (currentHexSide + currentHexSideBySin30)
-                        + currentHexSideBySin30 ;
-        int requiredHeight = (((2 * m_board.getHeight()) + 1)
-                          * currentHexSideByCos30);
-
-        m_mapImage = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
-        terrainBuffer = ImageUtil.createAcceleratedImage(requiredWidth, requiredHeight);
-        Graphics gg = terrainBuffer.getGraphics();
-        gg.setColor(BACKGROUND);
-        gg.fillRect(0, 0, getSize().width, getSize().height);
-    }
-
-    public static BufferedImage getBoardMinimapImage(IBoard board) {
-        try {
-            MiniMap tempMM = new MiniMap(board);
-            tempMM.zoom = 1;
-            int largerEdge = Math.max(board.getWidth(), board.getHeight());
-            if (largerEdge > 30) {
-                tempMM.zoom = 2;
-            }
-            if (largerEdge > 60) {
-                tempMM.zoom = 0;
-            }
-            if (largerEdge < 20) {
-                tempMM.zoom = 3;
-            }
-            tempMM.initializeMapForImage();
-            tempMM.drawForImage();
-            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
-            tempMM.setEnabled(false);
-            return img;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ImageUtil.failStandardImage();
-        }
-    }
-    
-    public static BufferedImage getBoardMinimapImageMaxZoom(IBoard board) {
-        try {
-            MiniMap tempMM = new MiniMap(board);
-            tempMM.zoom = tempMM.hexSide.length-1;
-            tempMM.initializeMapForImage();
-            tempMM.drawForImage();
-            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
-            tempMM.setEnabled(false);
-            return img;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ImageUtil.failStandardImage();
-        }
-    }
-    
-    public static BufferedImage getBoardMinimapImage(IBoard board, int zoom) {
-        try {
-            MiniMap tempMM = new MiniMap(board);
-            tempMM.zoom = zoom;
-            tempMM.initializeMapForImage();
-            tempMM.drawForImage();
-            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.m_mapImage);
-            tempMM.setEnabled(false);
-            return img;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ImageUtil.failStandardImage();
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.MMSYMBOL)
+                || e.getName().equals(GUIPreferences.TEAM_COLORING)) {
+            refreshMap();
         }
     }
 

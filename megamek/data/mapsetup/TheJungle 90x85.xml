@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>30</BOARDWIDTH>
+    <BOARDHEIGHT>17</BOARDHEIGHT>
+    <MAPWIDTH>3</MAPWIDTH>
+    <MAPHEIGHT>5</MAPHEIGHT>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 0 North-Northwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 1 Far North</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 2 North-Northeast</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 3 Northwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 4 North</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 5 Northeast</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 6 West</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 7 Central</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 8 East</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 9 Southwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 10 South</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 11 Southeast</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 12 South-Southwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 13 Far South</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Jungle 14 South-Southeast</BOARDS>
+</MAPSETUP>

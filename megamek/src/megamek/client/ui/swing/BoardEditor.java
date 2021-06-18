@@ -224,7 +224,6 @@ public class BoardEditor extends JPanel
     private CommonSettingsDialog setdlg;
     private ITerrainFactory TF = Terrains.getTerrainFactory();
     private JDialog minimapW;
-    private MiniMap minimap;
     private MegaMekController controller;
     
     // The current files
@@ -274,7 +273,6 @@ public class BoardEditor extends JPanel
     private JButton butBoardSave;
     private JButton butBoardSaveAs;
     private JButton butBoardSaveAsImage;
-    private JButton butMiniMap;
     private JButton butBoardValidate;
     private JButton butSourceFile;
     private MapSettings mapSettings = MapSettings.getInstance();
@@ -910,10 +908,6 @@ public class BoardEditor extends JPanel
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
 
-        // Minimap Toggle
-        butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap"));
-        butMiniMap.setActionCommand(ClientGUI.VIEW_MINI_MAP);
-
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified"));
         cheTerrExitSpecified.addActionListener(e -> {
@@ -1005,14 +999,13 @@ public class BoardEditor extends JPanel
         butSourceFile.setActionCommand(FILE_SOURCEFILE);
 
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
-        addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew, butMiniMap);
+        addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew);
         addManyActionListeners(butDelTerrain, butAddTerrain, butSourceFile);
         
         JPanel panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
         addManyButtons(panButtons, List.of(butBoardNew, butBoardSave, butBoardOpen,
                 butExpandMap, butBoardSaveAs, butBoardSaveAsImage));
         panButtons.add(butBoardValidate);
-        panButtons.add(butMiniMap);
         if (Desktop.isDesktopSupported()) {
             panButtons.add(butSourceFile);
         }
@@ -1036,20 +1029,7 @@ public class BoardEditor extends JPanel
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
-
-        // Set up the minimap 
-        minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false);
-        minimapW.setLocation(guip.getMinimapPosX(), guip.getMinimapPosY());
-        minimapW.setAutoRequestFocus(false);
-        try {
-            minimap = new MiniMap(minimapW, game, bv);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame,
-                    Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
-                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE);
-            frame.dispose();
-        }
-        minimapW.add(minimap);
+        minimapW = MiniMap.createMinimap(frame, bv, game, null);
         minimapW.setVisible(guip.getMinimapEnabled());
     }
     
@@ -2060,7 +2040,6 @@ public class BoardEditor extends JPanel
         butBoardSaveAs.setFont(scaledFont);
         butBoardSaveAsImage.setFont(scaledFont);
         butBoardValidate.setFont(scaledFont);
-        butMiniMap.setFont(scaledFont);
         butExpandMap.setFont(scaledFont);
         butSourceFile.setFont(scaledFont);
         

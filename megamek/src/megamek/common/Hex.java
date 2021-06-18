@@ -432,7 +432,7 @@ public class Hex implements IHex, Serializable {
         if (containsTerrain(type)) {
             return terrains.get(type);
         }
-        for (int moreTypes: types) {
+        for (int moreTypes : types) {
             if (containsTerrain(moreTypes)) {
                 return terrains.get(moreTypes);
             }

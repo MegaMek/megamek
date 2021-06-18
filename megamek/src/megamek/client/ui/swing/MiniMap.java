@@ -28,9 +28,11 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Stroke;
 import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.geom.*;
@@ -90,6 +92,9 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
     private static final int DIALOG_MARGIN = 6;
     private static final int MARGIN = 3;
+    
+    /** The minimap zoom at which game summary images are saved regardless of the ingame minimap setting. */
+    private static final int GAME_SUMMARY_ZOOM = 4;
     
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
@@ -371,6 +376,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
                             terrainColors[getType(key)] = new Color(red, green, blue);
                         }
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -529,9 +535,9 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
             drawDeploymentZone(g);
             
-            if ((null != game)) {
+            if (null != game) {
                 // draw declared fire
-                for (var action : game.getActionsVector()) {
+                for (EntityAction action : game.getActionsVector()) {
                     if (action instanceof AttackAction) {
                         paintAttack(g, (AttackAction) action);
                     }
@@ -562,13 +568,13 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) 
-                && IGame.Phase.PHASE_DEPLOYMENT == game.getPhase() && dialog != null) {
+                && (IGame.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
                 int dir;
                 // We need to draw the same deployment zone as boardview
-                if (deployingUnit != null && deployingUnit.getOwnerId() == turn.getPlayerNum()) {
+                if ((deployingUnit != null) && (deployingUnit.getOwnerId() == turn.getPlayerNum())) {
                     dir = deployingUnit.getStartingPos();
                 } else { 
                     // if we can't get the deploy zone from the 
@@ -849,7 +855,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         g.drawPolygon(xPoints, yPoints, 4);
 
         // if this is mutual fire, draw a half-and-half line
-        for (var action: game.getActionsVector()) {
+        for (EntityAction action : game.getActionsVector()) {
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if ((attack.getEntityId() == otherAttack.getTargetId())
@@ -907,9 +913,9 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }  
 
         Graphics2D g2 = (Graphics2D)g;
-        var saveStroke = g2.getStroke();
-        var saveTransform = g2.getTransform();
-        var stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
+        Stroke saveStroke = g2.getStroke();
+        AffineTransform saveTransform = g2.getTransform();
+        boolean stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
 
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
@@ -924,7 +930,6 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
-
         
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
@@ -933,9 +938,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         
         // Add a position shift if multiple units are present in this hex
         Coords p = entity.getPosition();
-        Integer eStack = multiUnits.get(p);
-        if (eStack == null) eStack = 0;
-        eStack++;
+        int eStack = multiUnits.getOrDefault(p, 0) + 1;
         multiUnits.put(p, eStack);
         g2.translate(20 * (eStack - 1), -20 * (eStack - 1));
         
@@ -979,8 +982,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 if (!s.equals("")) {
                     var fontContext = new FontRenderContext(null, true, true);
                     var font = new Font("SansSerif", Font.BOLD, 100);
-                    var currentMetrics = getFontMetrics(font);
-                    var stringWidth = currentMetrics.stringWidth(s);
+                    FontMetrics currentMetrics = getFontMetrics(font);
+                    int stringWidth = currentMetrics.stringWidth(s);
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
                     g2.fill(gv.getOutline((int) STRAT_CX - stringWidth / 2,
                             (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
@@ -1035,7 +1038,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
         g.setColor(terrainColors[ROAD]);
-        for (var roadEntry: roadHexes) {
+        for (int[] roadEntry : roadHexes) {
             x = roadEntry[0];
             y = roadEntry[1];
             baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
@@ -1268,7 +1271,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         if (y > (getSize().height - 14) && !dragging) {
             if (minimized) {
                 setSize(getSize().width, heightBuffer);
-                mapImage =  ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
+                mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
                 minimized = false;
                 initializeMap();
             } else {
@@ -1346,7 +1349,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
 						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
-                    ImageIO.write(getMinimapImage(game, bv, 4), "png", imgFile);
+                    ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }

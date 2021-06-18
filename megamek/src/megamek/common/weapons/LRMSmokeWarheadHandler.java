@@ -96,6 +96,9 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             }
             
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
+        } else if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+            server.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
+            return false;
         }
         return true;
     }

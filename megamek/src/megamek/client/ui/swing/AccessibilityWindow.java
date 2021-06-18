@@ -79,8 +79,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                systemEvent("Turn changed it is now " + e.getPlayer().getName() + "'s turn.");
-                //systemEvent(cleanHtml(client.roundReport));
+                if (e.getPlayer() != null) {
+                    systemEvent("Turn changed, it is now " + e.getPlayer().getName() + "'s turn.");
+                }
             }
 
             @Override

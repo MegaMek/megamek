@@ -35,6 +35,7 @@ import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
@@ -370,7 +371,7 @@ class LobbyMekCellFormatter {
         // Starting values for Altitude / Velocity / Elevation
         if (!isCarried) {
             if (entity.isAero()) {
-                Aero aero = (Aero) entity;
+                IAero aero = (IAero) entity;
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiGreen()) + "<I>"); 
                 result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
@@ -632,7 +633,7 @@ class LobbyMekCellFormatter {
         // Starting values for Altitude / Velocity / Elevation
         if (!isCarried) {
             if (entity.isAero()) {
-                Aero aero = (Aero) entity;
+                IAero aero = (IAero) entity;
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
                 result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
                 result.append(aero.getCurrentVelocity());

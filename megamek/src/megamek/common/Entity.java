@@ -346,7 +346,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public int wigeBonus = 0;
-    public boolean hitThisRoundByAntiTSM = false;
     public boolean inReverse = false;
     protected boolean struck = false;
     protected boolean fell = false;
@@ -6361,7 +6360,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         wigeLiftoffHover = false;
         gotPavementBonus = false;
         wigeBonus = 0;
-        hitThisRoundByAntiTSM = false;
         inReverse = false;
         hitBySwarmsEntity.clear();
         hitBySwarmsWeapon.clear();
@@ -9292,6 +9290,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return found;
+    }
+
+    /**
+     * Check for vulnerability to anti-TSM munitions. ATSM affects mechs with prototype TSM and
+     * any industrial TSM created before 3050, and conventional infantry with TSM implants.
+     *
+     * @return Whether the unit is affected by ATSM munitions
+     */
+    public boolean antiTSMVulnerable() {
+        return false;
     }
 
     /**

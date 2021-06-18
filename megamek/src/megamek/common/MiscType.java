@@ -2132,7 +2132,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createISMASC() {
         MiscType misc = new MiscType();
 
-        misc.name = "MASC";
+        misc.name = "MASC (Inner Sphere)";
+        misc.shortName = "MASC";
         misc.setInternalName(EquipmentTypeLookup.IS_MASC);
         misc.addLookupName("IS MASC");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -2154,7 +2155,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLMASC() {
         MiscType misc = new MiscType();
 
-        misc.name = "MASC";
+        misc.name = "MASC (Clan)";
+        misc.shortName = "MASC";
         misc.setInternalName(EquipmentTypeLookup.CLAN_MASC);
         misc.addLookupName("Clan MASC");
         misc.tonnage = TONNAGE_VARIABLE;

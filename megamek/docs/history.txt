@@ -37,6 +37,7 @@ VERSION HISTORY:
 + PR #2941: Prevent rendering failures in lobby when using LAMs in fighter mode
 + PR #2934: Complete Anti-TSM "Green Smoke" warhead implementation
 + Issue #2762: Improve the Minimap and fix empty summary screenshots
++ Data:New Sprites, Rec Guide 14, more units with Fluff text.
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

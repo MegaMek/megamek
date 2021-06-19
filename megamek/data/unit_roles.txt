@@ -1244,6 +1244,7 @@ Deimos C:SNIPER
 Deimos D:SNIPER
 Deimos E:BRAWLER
 Deimos Prime:SNIPER
+Deimos H:SNIPER
 Deimos S:SNIPER
 Delphyne (Standard):BRAWLER
 Delphyne 2:BRAWLER
@@ -5742,8 +5743,40 @@ Turkina T:SNIPER
 Turkina E:JUGGERNAUT
 Turkina M:SNIPER
 Turkina X:MISSILE_BOAT
-
 #ilClan Rec Guide 17
+Panther PNT-14R:BRAWLER
+Wolfhound WLF-6S:STRIKER
+Crusader CRD-3R (Crael):BRAWLER
+Crusader CRD-4BR:MISSILE_BOAT
+Crusader CRD-4D:MISSILE_BOAT
+Crusader CRD-4K:MISSILE_BOAT
+Crusader CRD-5M:SKIRMISHER
+Crusader CRD-5S:MISSILE_BOAT
+Crusader CRD-6D:SKIRMISHER
+Crusader CRD-6T:SKIRMISHER
+Crusader CRD-7D:SKIRMISHER
+Crusader CRD-7M:BRAWLER
+Crusader CRD-7M2:BRAWLER
+Crusader CRD-8R:MISSILE_BOAT
+Crusader CRD-9BR:SKIRMISHER
+Crusader CRD-9R:MISSILE_BOAT
+Crusader CRD-10S:MISSILE_BOAT
+Crossbow T:SKIRMISHER
+Crossbow E:SKIRMISHER
+Crossbow F:SKIRMISHER
+Crossbow G:SNIPER
+Crossbow J:SKIRMISHER
+Crossbow W:SNIPER
+Amarok (Standard):JUGGERNAUT
+Amarok 2:BRAWLER
+Amarok 3:JUGGERNAUT
+Bane (Kraken) (Standard):SNIPER
+Bane (Kraken) 2:SNIPER
+Bane (Kraken) 3:MISSILE_BOAT
+Bane (Kraken) 5:SNIPER
+Bane (Kraken) 6:SNIPER
+Bane (Kraken) 7:SNIPER
+
 #ilClan Rec Guide 18
 #ilClan Rec Guide 19
 #ilClan Rec Guide 20

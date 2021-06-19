@@ -3,37 +3,37 @@ Ryoken II
 3
 
 Config:Biped
-TechBase:Clan
-Era:3076
-Source:TRO 3075
-Rules Level:2
+techbase:Clan
+era:3076
+source:TRO 3075
+rules level:2
 
-Mass:75
-Engine:375 XL (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:75
+engine:375 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 Clan Double
+walk mp:5
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:19
-RA Armor:19
-LT Armor:19
-RT Armor:19
-CT Armor:28
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Standard(Clan)
+LA armor:19
+RA armor:19
+LT armor:19
+RT armor:19
+CT armor:28
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:4
 LRM 15, Left Torso
-LRM 15, Right Torso
 HAG/20, Left Torso
+LRM 15, Right Torso
 HAG/20, Right Torso
 
 Left Arm:
@@ -67,30 +67,30 @@ Clan Ammo LRM-15
 Left Torso:
 Fusion Engine
 Fusion Engine
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
 CLLRM15
 CLLRM15
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
 
 Right Torso:
 Fusion Engine
 Fusion Engine
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
 CLLRM15
 CLLRM15
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
 
 Center Torso:
 Fusion Engine
@@ -103,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +148,15 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:After the success of the Mad Cat Mk II design, which increased the tonnage and weaponry of the Mad Cat, Clan Ghost Bear applied these same changes to the medium Ryoken.
+capabilities:The Ryoken II is slower than its antecedent, only capable of 87 km/h, though it has more weight available for equipment and weapons. It is built on an Endo Steel chassis and is protected by thirteen and a half tons of armor.
+deployment:A Hell's Horses' variant from the Jihad era, which is based on the Ryoken II 2 variant. The Horses removed the original's LB2-X guns for a pair of Class 20 Hyper Assault Gauss Rifles mounted in its side torsos, and the pair of LRM 15 launchers from the original Ryoken II. The launchers' ammunition is moved to the 'Mech's arms while the HAG ammunition is stored in the side torsos along with the guns. This variant retains the same armor protection of the Ryoken II 2.
+history:The Ryoken II, first walked off the assembly line in 3075 during the Word of Blake Jihad. When the Ghost Bears later decided to sell some to the Republic of the Sphere, it caused a ruckus among some of the Clans, including a few Trials of Grievance from Clan Hell's Horses.
+manufacturer:Bergan Industries
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:DSAM ENDO 5
+systemmanufacturer:ENGINE:GM 375 Fusion Extralight
+systemmanufacturer:ARMOR:Forging ZK20
+systemmanufacturer:COMMUNICATIONS:Garret GBX-2 Amalgamated Targeting and Tracking
+systemmanufacturer:TARGETING:Alshain B4 Series 2 T&T
 

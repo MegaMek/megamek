@@ -156,4 +156,20 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Deimos is a Clan Assault OmniMech, which was developed by Clan Snow Raven. 
+
+capabilities:The 85-tonner is powered by a Type 255-rated Extralight Fusion Engine, which it shares with the second-line Assault 'Mech, the Omen. Fourteen Double Heat Sinks are fitted to mitigate any heat issues that the 'Mech's systems may generate. Because its top speed is slower than more typical OmniMechs of the same size, engineers installed a MASC system, which allows the Deimos to go marginally faster and keep up with comparable older designs. The 'Mech is protected by 14.5 tons of Standard Armor, where it again differs from more typical contemporaries. Aside from its 43-ton equipment capacity, the 'Mech has a few permanently mounted weapons. These include two ER Medium Lasers, one assigned to each of the 'Mech's side torsos. To provide protection from inbound missile fire, an Anti-Missile System is mounted in the Deimos' head. The single ton of ammunition for the AMS is located in the center torso.
+
+deployment:The E configuration was also introduced during the Dark Age in 3140. It carries a Targeting Computer to control two ER Medium Lasers, two Large Pulse Lasers, an ER PPC, and ER Large Laser. Four Streak SRM-4s are also carried. The Deimos E can also reach speeds nearing 86km/h by using an engine Supercharger and the MASC system. It retains the AMS as well. Finally it mounts a Radical Heat Sink System to augment the sixteen double heat sinks.
+
+history:The 'Mech was first introduced during the middle of the 3060s, allegedly on the Kerensky Cluster world of Lum. However, Inner Sphere intelligence agencies stopped hearing rumors about the 'Mech during the Jihad and it faded from memory. In 3085, the Snow Ravens revealed the existence of the Deimos to the Inner Sphere. It was produced on the Clan's Inner Sphere world, Dante. When it first appeared in the Inner Sphere, the Deimos was considered the pride of the Clan and at least one was assigned to every cluster within the Snow Raven touman.
+
+manufacturer:Snow Raven Industrial Complex Alpha
+primaryfactory:Dante
+systemmanufacturer:CHASSIS:Model MHO-14E Endo-Steel
+systemmanufacturer:ENGINE:Type 255 Extralight
+systemmanufacturer:ARMOR:Longanecker PlastiSteel
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk. 2.2
+systemmanufacturer:TARGETING:Hermes CT-44
+
 

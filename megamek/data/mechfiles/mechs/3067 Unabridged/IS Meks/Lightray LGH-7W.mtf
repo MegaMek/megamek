@@ -131,3 +131,17 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+
+overview:The Lightray was designed by Martinson Armaments to be a heavy scout 'Mech and was put into production in 3064.
+
+capabilities:The Lightray is built on a lightweight Geometric 33B Endo Steel chassis to help maximize the available weight for weapons and equipment and features a gigantic LTV 385 XL engine, the largest that can possibly be carried by a 'Mech its size. The engine allows the scout 'Mech to outpace most other medium designs with a top speed of 118 kilometers per hour, though it lacks the added maneuverability that could be provided by jump jets. The Lightray carries ten and a half tons of Strasbourg Armaments Type 4 Ferro-Fibrous armor, giving the 'Mech a great deal of protection.
+
+deployment:This version carries an Improved C3 Computer, Snub-Nose PPC, ER Medium Laser, and two MML-3 launchers in the left torso. To make room for these weapons, the 7W uses an XL Gyro.
+
+manufacturer:Martinson Armaments
+primaryfactory:Australia, Terra
+systemmanufacturer:CHASSIS:Geometric 33B Endo Steel
+systemmanufacturer:ENGINE:LTV 385 XL
+systemmanufacturer:ARMOR:Strasbourg Armaments Type 4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Blow 107 Net (Improved)
+systemmanufacturer:TARGETING:Scope 3580 with Targeting Computer

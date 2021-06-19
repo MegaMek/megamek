@@ -3,35 +3,35 @@ Grigori
 C-GRG-OA Dominus
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3075
+rules level:2
 
-Mass:60
-Engine:240 Light Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
+mass:60
+engine:240 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:12 Double
-Base Chassis Heat Sinks:9
-Walk MP:4
-Jump MP:4
+heat sinks:12 IS Double
+base chassis heat sinks:9
+walk mp:4
+jump mp:4
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:19
-RA Armor:19
-LT Armor:20
-RT Armor:20
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:20
+RT armor:20
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:6
 Heavy PPC, Right Arm
@@ -58,10 +58,10 @@ ISDoubleHeatSink
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
@@ -72,13 +72,13 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-ISERMediumLaser (omnipod)
-ISMediumPulseLaser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -86,15 +86,15 @@ ISC3iUnit
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-ISERMediumLaser (omnipod)
-ISMediumPulseLaser (omnipod)
-IS Streak SRM 6 Ammo (omnipod)
-ISCASE (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+IS Streak SRM 6 Ammo (OMNIPOD)
+ISCASE (OMNIPOD)
 -Empty-
 
 Center Torso:
@@ -116,8 +116,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISStreakSRM6 (omnipod)
-ISStreakSRM6 (omnipod)
+ISStreakSRM6 (OMNIPOD)
+ISStreakSRM6 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -153,4 +153,19 @@ IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Grigori is one of the Word of Blake's new Celestial series OmniMechs designed by Doctor Devon Cortland.
+
+capabilities:It is constructed on a standard chassis, but makes use of eleven tons of Light Ferro-Fibrous armor, a light fusion engine, and an XL Gyro; as well as the small cockpit that is common to all of the Celestials. Like the other Celestials, the Grigori has a C3i Computer to help direct its fire.
+
+deployment:This variant uses four, torso-mounted jump jets to propel it up to one hundred twenty meters at a time. Its largest weapon is the Heavy PPC that can dish out as much damage as its Clan-tech counterpart. Up close, the Grigori Dominus uses paired ER Medium Lasers and Medium Pulse Lasers, as well as a head-mounted Streak SRM-6. A pair of extra double heat sinks keep heat levels manageable.
+
+history:The Grigori (named after fallen angels from Christianity) was added to the Word of Blake Militia's arsenal in late 3069 as Doctor Cortland oversaw the final production personally.
+
+manufacturer:Gibson Federated BattleMechs, Martinson Armaments
+primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
+systemmanufacturer:CHASSIS:Celestial Series GG1
+systemmanufacturer:ENGINE:GM 240 Light Fusion
+systemmanufacturer:ARMOR:Divine Shield-B Light Ferro
+systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha
+systemmanufacturer:TARGETING:Master’s Sight 1-Omega
 

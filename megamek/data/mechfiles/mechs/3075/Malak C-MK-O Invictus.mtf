@@ -3,35 +3,35 @@ Malak
 C-MK-O Invictus
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3075
+rules level:2
 
-Mass:30
-Engine:210 Light Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
+mass:30
+engine:210 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:8
-Walk MP:7
-Jump MP:0
+heat sinks:10 IS Double
+base chassis heat sinks:8
+walk mp:7
+jump mp:0
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:14
-HD Armor:9
-LL Armor:13
-RL Armor:13
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:14
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:4
 Flamer, Right Arm
@@ -47,9 +47,9 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
 
@@ -58,7 +58,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Flamer (omnipod)
+Flamer (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -73,7 +73,7 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-SRM 2 (omnipod)
+SRM 2 (OMNIPOD)
 ISC3iUnit
 ISC3iUnit
 IS Endo Steel
@@ -84,10 +84,10 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Light PPC (omnipod)
-Light PPC (omnipod)
-IS Ammo SRM-2 (omnipod)
-ISCASE (omnipod)
+Light PPC (OMNIPOD)
+Light PPC (OMNIPOD)
+IS Ammo SRM-2 (OMNIPOD)
+ISCASE (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -114,7 +114,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERMediumLaser (omnipod)
+ISERMediumLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -151,4 +151,17 @@ IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Malak is the lightest in the Word of Blake's Celestial series of OmniMechs designed for the Manei Domini. The Malak, Arabic for "angel," features a dazzling array of new construction materials in an attempt to free up as much weight as possible in a fast and reliable package.
+
+capabilities:The 'Mech is protected with six tons of Light Ferro-Fibrous armor which weighs less than standard armor. To free up even more space, the 'Mech mounts an XL Gyro, and a small cockpit in addition to its Endo Steel frame. A C3i Computer allows it to sync with other Manei Domini so equipped. Nine and a half tons are left for modular equipment.
+
+deployment:The Invictus variant of this light 'Mech features a Light PPC, an ER Medium Laser, and a Flamer that allow it to operate far from supply lines. The SRM-2 is capable of mounting inferno munitions, which can make quick work of vehicles and infantry. To protect the 'Mech from ammunition explosions it mounts CASE in the right torso. For close combat it carries a Retractable Blade.
+
+manufacturer:Gibson Federated BattleMechs, Martinson Armaments
+primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
+systemmanufacturer:CHASSIS:Celestial Series MK1E
+systemmanufacturer:ENGINE:DefHes 210 Light Fusion
+systemmanufacturer:ARMOR:Divine Shield Light Ferro
+systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha with C3i Computer
+systemmanufacturer:TARGETING:Master’s Sight 1-Omega
 

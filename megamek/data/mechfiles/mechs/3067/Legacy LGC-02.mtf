@@ -3,56 +3,56 @@ Legacy
 LGC-02
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3064
-Rules Level:2
+techbase:Inner Sphere
+era:3064
 source:TRO 3067
+rules level:2
 
-Mass:80
-Engine:240 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:3
+heat sinks:10 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Standard Armor
-LA Armor:26
-RA Armor:26
-LT Armor:27
-RT Armor:27
-CT Armor:40
-HD Armor:9
-LL Armor:34
-RL Armor:34
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:27
+RT armor:27
+CT armor:40
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:8
-2 ISERMediumLaser, Right Arm
-1 ISERSmallLaser, Left Arm
-1 ISLRM20, Right Torso, Ammo:36
-1 ISStreakSRM4, Right Torso, Ammo:25
-1 ISMediumPulseLaser, Right Torso
-1 ISLRM20, Left Torso
-1 ISMediumPulseLaser, Left Torso
-1 ISImprovedC3CPU, Left Torso
+ER Small Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+LRM 20, Left Torso
+Medium Pulse Laser, Left Torso
+LRM 20, Right Torso
+Streak SRM 4, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERSmallLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -61,39 +61,39 @@ Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
 ISMediumPulseLaser
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
 ISCASE
 
 Right Torso:
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
 ISStreakSRM4
-ISStreakSRM4 Ammo
 ISMediumPulseLaser
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Streak SRM 4 Ammo
 ISCASE
 
 Center Torso:
@@ -108,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,7 +130,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,11 +144,24 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Legacy was produced as a testbed for new technologies, including the Ultra AC/10 and C3i Computer.
+capabilities:They upgraded its targeting system and included the C3i, which allows six units to coordinate fire. Its thick armor protection, standard fusion engine, and CASE give the Legacy remarkable staying power on the battlefield. One of the weaknesses of the 'Mech is its slow speed compared to other 'Mechs of similar size, but the inclusion of jump jets sought to counter that with superior maneuverability.
+deployment:The -02 variant is designed as a missile boat, replacing the Ultra AC/10s with two Doombud LRM-20s, three tons of ammo for each, and a pair of Medium Pulse Lasers.
+history:At the request of Word of Blake Precentor Martial Cameron St. Jamais. The designers used a failed Star League 'Mech called the Rising Star as the base for the Legacy.
+manufacturer:Skobel MechWorks
+primaryfactory:Russia, Terra
+systemmanufacturer:CHASSIS:Skobel Template 8 Endo Steel
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Aldis Plate with CASE
+systemmanufacturer:JUMPJET:CurtissJet 80
+systemmanufacturer:COMMUNICATIONS:Skobel Wave VII Comm with C3i Computer
+systemmanufacturer:TARGETING:Falcon 15 Watcher
 

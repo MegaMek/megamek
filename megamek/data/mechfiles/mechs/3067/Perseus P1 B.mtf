@@ -3,49 +3,49 @@ Perseus
 P1B
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3058
-Source:TRO 3067
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:TRO 3067
+rules level:2
 
-Mass:75
-Engine:300 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
+mass:75
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:12
-Walk MP:4
-Jump MP:0
+heat sinks:14 IS Double
+base chassis heat sinks:12
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:24
-RT Armor:24
-CT Armor:36
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:24
+RT armor:24
+CT armor:36
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:5
 Large Pulse Laser, Left Arm
 Large Pulse Laser, Left Arm
 Gauss Rifle, Right Arm
 ER Large Laser, Left Torso
-AMS, Head
+Anti-Missile System, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargePulseLaser (omnipod)
-ISLargePulseLaser (omnipod)
-ISLargePulseLaser (omnipod)
-ISLargePulseLaser (omnipod)
+ISLargePulseLaser (OMNIPOD)
+ISLargePulseLaser (OMNIPOD)
+ISLargePulseLaser (OMNIPOD)
+ISLargePulseLaser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -55,13 +55,13 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -70,11 +70,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERLargeLaser (omnipod)
-ISERLargeLaser (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISERLargeLaser (OMNIPOD)
+ISERLargeLaser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -84,10 +84,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Gauss Ammo (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+IS Gauss Ammo (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISAntiMissileSystem (omnipod)
+ISAntiMissileSystem (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAMS Ammo (omnipod)
-ISAMS Ammo (omnipod)
+ISAMS Ammo (OMNIPOD)
+ISAMS Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +150,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Perseus is the product of a program begun by the League Central Coordination and Command to create an OmniMech completely indigenous to the Free Worlds League from concept to production.
+
+capabilities:While on paper the Perseus is a capable 'Mech with forty-tons of available pod space, the design has earned something of a lackluster reputation when compared to other modern OmniMechs such as the Templar or Hauptmann. This is largely due to the small size of it's weapon bays which limit the type of weaponry of the Perseus can mount, only the arms can carry larger autocannons and the hand and lower-arm actuators must be removed to be able do so, with a number of configurations also forced to mount weaponry in the 'Mech's legs. More critically the small size of the bays hampers the volume of extra double heat sinks that can be carried, consequently most of the Perseus's configurations utilize ballistic and missile weaponry over more heat-intensive energy loadouts. Built on a lightweight Endo Steel chassis, the Perseus is powered by a Hermes 300 XL engine helping save even more weight and giving the 'Mech a top speed of 64.8 km/h. The advanced structure and engine save a great deal of weight for weapons and equipment. The Perseus is protected by fourteen tons of Valiant Lamellor armor, giving it around average armor protection for a 'Mech of its size. It also has twelve double heat sinks that are fixed on the chassis.[
+
+deployment:Capable of fighting at close and long ranges, the B configuration has a Gauss Rifle and ER Large Laser for long range combat, though only a single ton of reloads relegates the Gauss to use as a secondary rather than primary weapon. The Perseus B is also capable of handling close combat with two Large Pulse Lasers and has an Anti-Missile System to protect itself from missile attacks.
+
+history:The Perseus shares much with the venerable Orion, a staple of Free Worlds League Military, both broadly resembling the older design visually and using a number of the same components. This similarity prompted more than a few FWLM technicians to nickname the new design the "Omni-Orion" and the deployment of Perseus has largely been to front-line units that fielded large concentrations of its progenitor, replacing older Orions on a one-for-one basis.
+
+manufacturer:Kali Yama Weapons Industries
+primaryfactory:Kalidasa
+systemmanufacturer:CHASSIS:Kali Yama Endo Steel
+systemmanufacturer:ENGINE:Hermes 300 XL
+systemmanufacturer:ARMOR:Valiant Lamellor
+systemmanufacturer:COMMUNICATIONS:Irian Orator-5K
+systemmanufacturer:TARGETING:Wasat Aggressor Type 5 with OmniLink
 

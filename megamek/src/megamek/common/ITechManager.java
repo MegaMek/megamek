@@ -30,7 +30,7 @@ public interface ITechManager {
     int getTechIntroYear();
     
     /**
-     * @return The date to use in determining the current tech level if {@link variableTechLevel()}
+     * @return The date to use in determining the current tech level if {@link #useVariableTechLevel()}
      *         is true.
      */
     int getGameYear();
@@ -64,7 +64,7 @@ public interface ITechManager {
     SimpleTechLevel getTechLevel();
     
     /**
-     * @return If true and {@link getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
+     * @return If true and {@link #getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
      */
     boolean unofficialNoYear();
     

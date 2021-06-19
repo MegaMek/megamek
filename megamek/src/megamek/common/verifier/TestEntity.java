@@ -1547,7 +1547,8 @@ public abstract class TestEntity implements TestEntityOption {
          */
         boolean hasUnlinked = false;
         for (Mounted mount : getEntity().getTotalWeaponList()) {
-            if (compatibility.test((WeaponType) mount.getType())) {
+            if (!mount.isWeaponGroup() && 
+                    compatibility.test((WeaponType) mount.getType())) {
                 linkedCount++;
                 if (mount.getLinkedBy() == null) {
                     hasUnlinked = true;

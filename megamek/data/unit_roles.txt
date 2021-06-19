@@ -3490,6 +3490,7 @@ Pegasus Scout Hover Tank X:STRIKER
 Pegasus Scout Hover Tank X-Pulse:STRIKER
 Pendragon PDG-1R:MISSILE_BOAT
 Pendragon PDG-1X MUSE RED:MISSILE_BOAT
+Pendragon PDG-3R:SNIPER
 Penetrator PTR-4D:SKIRMISHER
 Penetrator PTR-4F:MISSILE_BOAT
 Penetrator PTR-6M:SKIRMISHER
@@ -4634,6 +4635,7 @@ Thor II (Grand Summoner) A:SNIPER
 Thor II (Grand Summoner) B:MISSILE_BOAT
 Thor II (Grand Summoner) C:SKIRMISHER
 Thor II (Grand Summoner) D:SNIPER
+Thor II (Grand Summoner) E:SNIPER
 Thorn THE-F:STRIKER
 Thorn THE-N:STRIKER
 Thorn THE-N1:SNIPER
@@ -4700,6 +4702,7 @@ Thunderbird TRB-D56:ATTACK_FIGHTER
 Thunderbird TRB-XTS:ATTACK_FIGHTER
 Thunderbolt C:SNIPER
 Thunderbolt IIC (Standard):BRAWLER
+Thunderbolt IIC 2:SKIRMISHER
 Thunderbolt TDR-10M:SNIPER
 Thunderbolt TDR-10M (Ilyena):SNIPER
 Thunderbolt TDR-10M (Salazar):BRAWLER
@@ -5026,6 +5029,7 @@ Vixen (Incubus) 2:STRIKER
 Vixen (Incubus) 3:STRIKER
 Vixen (Incubus) 4:STRIKER
 Vixen (Incubus) 5:STRIKER
+Vixen (Incubus) 6:BRAWLER
 Void Medium Battle Armor (DCA):SCOUT
 Void Medium Battle Armor (Minelayer):AMBUSHER
 Void Medium Battle Armor (Nova Cat):SCOUT

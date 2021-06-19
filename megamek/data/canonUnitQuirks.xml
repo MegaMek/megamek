@@ -13508,7 +13508,16 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>CLImprovedHeavyLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
-
+	
+	<unit>
+		<chassis>Thunderbolt IIC</chassis>
+		<model>2</model>
+		<unitType>Mech</unitType>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	
 	<unit>
 		<chassis>Thunder Fox</chassis>
 		<unitType>Mech</unitType>

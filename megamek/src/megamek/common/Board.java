@@ -834,9 +834,13 @@ public class Board implements Serializable, IBoard {
             st.quoteChar('"');
             st.wordChars('_', '_');
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
-                if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("tags")) {
+                if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("tag")) {
                     st.nextToken();
-                    result.add(st.sval);
+                    if (st.ttype == '"') {
+                        result.add(st.sval);
+                    }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("end")) {
+                    break;
                 }
             }
         } catch (IOException ex) {
@@ -1163,6 +1167,9 @@ public class Board implements Serializable, IBoard {
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
             }
+            for (String tag : tags) {
+                w.write("tag \"" + tag + "\"\r\n");
+            }
             for (int i = 0; i < data.length; i++) {
                 IHex hex = data[i];
                 boolean firstTerrain = true;
@@ -1400,6 +1407,11 @@ public class Board implements Serializable, IBoard {
      */
     public Enumeration<Building> getBuildings() {
         return buildings.elements();
+    }
+    
+    @Override
+    public Vector<Building> getBuildingsVector() {
+        return buildings;
     }
 
     /**
@@ -2014,9 +2026,19 @@ public class Board implements Serializable, IBoard {
         return result;
     }
     
-    private void addTag(String newTag) {
+    @Override
+    public void addTag(String newTag) {
         tags.add(newTag);
     }
     
+    @Override
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+    
+    @Override
+    public Set<String> getTags() {
+        return Collections.unmodifiableSet(tags);
+    }
     
 }

@@ -91,8 +91,10 @@ import megamek.common.force.*;
 import megamek.common.options.*;
 import megamek.common.preference.*;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.BoardsTagger;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 import static megamek.common.util.CollectionUtil.*;
@@ -235,6 +237,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private MapListMouseAdapter mapListMouseListener = new MapListMouseAdapter(); 
     
     LobbyActions lobbyActions = new LobbyActions(this); 
+    
+    private Map<String, String> boardTags = new HashMap<>();
     
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -779,12 +783,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** 
      * Returns the available boards that match the given search string
      * (path or file name contains the search string.) 
+     * The search string is split at ";" and search results for the tokens
+     * are ANDed.
      */
     protected List<String> getSearchedItems(String searchString) {
         String lowerCaseSearchString = searchString.toLowerCase();
-        return mapSettings.getBoardsAvailableVector().stream()
-                .filter(b -> b.toLowerCase().contains(lowerCaseSearchString) && isBoardFile(b))
-                .collect(Collectors.toList());
+        String[] searchStrings = lowerCaseSearchString.split(";");
+        List<String> result = mapSettings.getBoardsAvailableVector();
+        for (String token : searchStrings) {
+            List<String> byFilename = mapSettings.getBoardsAvailableVector().stream()
+                    .filter(b -> b.toLowerCase().contains(token) && isBoardFile(b))
+                    .collect(Collectors.toList());
+            List<String> byTags = boardTags.entrySet().stream()
+                    .filter(e -> e.getValue().contains(token))
+                    .map(e -> e.getKey())
+                    .collect(Collectors.toList());
+            List<String> tokenResult = CollectionUtil.union(byFilename, byTags);
+            result = result.stream().filter(tokenResult::contains).collect(toList());
+        }
+        return result;
     }
     
     /** 
@@ -901,7 +918,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         List<String> availBoards = new ArrayList<>(); 
         availBoards.add(MapSettings.BOARD_GENERATED);
         availBoards.addAll(mapSettings.getBoardsAvailableVector());
+        refreshBoardTags();
         refreshBoardsAvailable(availBoards);
+    }
+    
+    private void refreshBoardTags() {
+        boardTags.clear();
+        for (String boardName : mapSettings.getBoardsAvailableVector()) {
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            Set<String> tags = Board.getTags(boardFile);
+            boardTags.put(boardName, String.join("||", tags).toLowerCase());
+        }
     }
     
     /** 
@@ -3024,6 +3051,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         lblSearch.setFont(scaledFont);
         fldSearch.setFont(scaledFont);
+        String searchTip = Messages.getString("ChatLounge.map.searchTip") + "<BR>";
+        searchTip += autoTagHTMLTable();
+        fldSearch.setToolTipText(UIUtil.scaleStringForGUI(searchTip));
         
         ((TitledBorder)panUnitInfo.getBorder()).setTitleFont(scaledFont);
         ((TitledBorder)panPlayerInfo.getBorder()).setTitleFont(scaledFont);
@@ -3047,6 +3077,29 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 locationOnComponent.x, locationOnComponent.y, 0, 0, 1, false, 0);
         manager.mouseMoved(event);
     }
+    
+    private String autoTagHTMLTable() {
+        String result = "<TABLE><TR>"+ UIUtil.guiScaledFontHTML();
+        int colCount = 0;
+        var autoTags = BoardsTagger.Tags.values();
+        for (BoardsTagger.Tags tag : autoTags) {
+            if (colCount == 0) {
+                result += "<TR>";
+            }
+            result += "<TD>" + tag.tagName + "</TD>";
+            colCount++;
+            if (colCount == 3) {
+                colCount = 0;
+                result += "</TR>";
+            }
+        }
+        if (colCount != 0) {
+            result += "</TR>";
+        }
+        result += "</TABLE>";
+        return result;
+    }
+    
     
     /** 
      * Mouse Listener for the table header of the Mek Table.

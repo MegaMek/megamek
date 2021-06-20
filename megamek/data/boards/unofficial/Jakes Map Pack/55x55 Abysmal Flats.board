@@ -1,4 +1,7 @@
 size 55 55
+tag "Rough (Auto)"
+tag "MarsTheme (Auto)"
+tag "Flat (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 0 "" "mars"
 hex 0301 0 "" "mars"

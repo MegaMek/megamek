@@ -1,4 +1,7 @@
 size 16 17
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "Flat (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""
 hex 0301 0 "pavement:1" ""

@@ -2,6 +2,7 @@ size 30 17
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
 tag "HighHills (Auto)"
+tag "Jungle (Auto)"
 hex 0101 6 "" "grass"
 hex 0201 6 "" "grass"
 hex 0301 6 "jungle:1;foliage_elev:2" "grass"

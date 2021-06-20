@@ -1,6 +1,7 @@
 size 16 17
 tag "GrassTheme (Auto)"
 tag "Flat (Auto)"
+tag "Jungle (Auto)"
 hex 0101 0 "" ""
 hex 0201 2 "" ""
 hex 0301 2 "" ""

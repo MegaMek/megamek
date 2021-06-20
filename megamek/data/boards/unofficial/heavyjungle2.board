@@ -1,6 +1,7 @@
 size 16 17
 tag "GrassTheme (Auto)"
 tag "Flat (Auto)"
+tag "Jungle (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 0 "" ""
 hex 0201 0 "jungle:1;foliage_elev:2" ""

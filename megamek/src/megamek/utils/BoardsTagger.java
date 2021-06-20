@@ -176,6 +176,7 @@ public class BoardsTagger {
                 IHex hex = board.getHex(x, y);
                 forest += hex.containsAnyTerrainOf(WOODS, JUNGLE) ? 1 : 0;
                 woods += hex.containsTerrain(WOODS) ? 1 : 0;
+                jungles += hex.containsTerrain(JUNGLE) ? 1 : 0;
                 forestHU += hex.containsTerrain(WOODS, 2) ? 1 : 0;
                 forestHU += hex.containsTerrain(WOODS, 3) ? 1 : 0;
                 forestHU += hex.containsTerrain(JUNGLE, 2) ? 1 : 0;

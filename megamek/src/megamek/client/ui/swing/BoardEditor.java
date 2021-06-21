@@ -20,7 +20,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -35,12 +34,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 import javax.imageio.ImageIO;
@@ -50,8 +44,7 @@ import javax.swing.event.*;
 import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListenerAdapter;
+import megamek.client.event.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
@@ -652,6 +645,8 @@ public class BoardEditor extends JPanel
         buttonRedo = prepareButton("ButtonRedo", "Redo", undoButtons, BASE_ARROWBUTTON_ICON_WIDTH);
         buttonUndo.setEnabled(false);
         buttonRedo.setEnabled(false);
+        buttonUndo.setActionCommand(ClientGUI.BOARD_UNDO);
+        buttonRedo.setActionCommand(ClientGUI.BOARD_REDO);
 
         MouseWheelListener wheelListener = e -> {
             int terrain;
@@ -972,22 +967,22 @@ public class BoardEditor extends JPanel
 
         // Board Buttons (Save, Load...)
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
-        butBoardNew.setActionCommand(ClientGUI.FILE_BOARD_NEW);
+        butBoardNew.setActionCommand(ClientGUI.BOARD_NEW);
 
         butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap"));
         butExpandMap.setActionCommand(FILE_BOARD_EDITOR_EXPAND);
 
         butBoardOpen = new JButton(Messages.getString("BoardEditor.butBoardOpen"));
-        butBoardOpen.setActionCommand(ClientGUI.FILE_BOARD_OPEN);
+        butBoardOpen.setActionCommand(ClientGUI.BOARD_OPEN);
 
         butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave"));
-        butBoardSave.setActionCommand(ClientGUI.FILE_BOARD_SAVE);
+        butBoardSave.setActionCommand(ClientGUI.BOARD_SAVE);
 
         butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs"));
-        butBoardSaveAs.setActionCommand(ClientGUI.FILE_BOARD_SAVE_AS);
+        butBoardSaveAs.setActionCommand(ClientGUI.BOARD_SAVE_AS);
 
         butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage"));
-        butBoardSaveAsImage.setActionCommand(ClientGUI.FILE_BOARD_SAVE_AS_IMAGE);
+        butBoardSaveAsImage.setActionCommand(ClientGUI.BOARD_SAVE_AS_IMAGE);
 
         butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate"));
         butBoardValidate.setActionCommand(FILE_BOARD_EDITOR_VALIDATE);
@@ -1760,7 +1755,7 @@ public class BoardEditor extends JPanel
     //
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_NEW)) {
+        if (ae.getActionCommand().equals(ClientGUI.BOARD_NEW)) {
             ignoreHotKeys = true;
             boardNew(true);
             ignoreHotKeys = false;
@@ -1768,19 +1763,19 @@ public class BoardEditor extends JPanel
             ignoreHotKeys = true;
             boardResize();
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_OPEN)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_OPEN)) {
             ignoreHotKeys = true;
             boardLoad();
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SAVE)) {
             ignoreHotKeys = true;
             boardSave(false);
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE_AS)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SAVE_AS)) {
             ignoreHotKeys = true;
             boardSave(true);
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(ClientGUI.FILE_BOARD_SAVE_AS_IMAGE)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SAVE_AS_IMAGE)) {
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
@@ -1955,7 +1950,7 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(buttonUpDn)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
-        } else if (ae.getSource().equals(buttonUndo)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_UNDO)) {
             // The button should not be active when the stack is empty, but
             // let's check nevertheless
             if (undoStack.isEmpty()) { 
@@ -1980,7 +1975,7 @@ public class BoardEditor extends JPanel
                 currentUndoSet = null; // should be anyway
             }
             setFrameTitle();
-        } else if (ae.getSource().equals(buttonRedo)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REDO)) {
             // The button should not be active when the stack is empty, but
             // let's check nevertheless
             if (redoStack.isEmpty()) { 

@@ -72,6 +72,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem boardSaveAs;
     private JMenuItem boardSaveAsImage;
     private JMenuItem boardSaveAsImageUnits;
+    private JMenuItem boardUndo;
+    private JMenuItem boardRedo;
 
     // The Units submenu
     private JMenuItem fileUnitsReinforce;
@@ -171,15 +173,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         // Create the Board sub-menu.
         menu = new JMenu(getString("CommonMenuBar.BoardMenu")); 
         add(menu);
-        boardNew = createMenuItem(menu, getString("CommonMenuBar.fileBoardNew"), FILE_BOARD_NEW);
-        boardOpen = createMenuItem(menu, getString("CommonMenuBar.fileBoardOpen"), FILE_BOARD_OPEN);
-        boardSave = createMenuItem(menu, getString("CommonMenuBar.fileBoardSave"), FILE_BOARD_SAVE);
-        boardSaveAs = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAs"), FILE_BOARD_SAVE_AS);
+        boardNew = createMenuItem(menu, getString("CommonMenuBar.fileBoardNew"), BOARD_NEW);
+        boardOpen = createMenuItem(menu, getString("CommonMenuBar.fileBoardOpen"), BOARD_OPEN);
+        boardSave = createMenuItem(menu, getString("CommonMenuBar.fileBoardSave"), BOARD_SAVE);
+        boardSaveAs = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAs"), BOARD_SAVE_AS);
         menu.addSeparator();
-        boardSaveAsImage = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImage"), FILE_BOARD_SAVE_AS_IMAGE);
+        boardSaveAsImage = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImage"), BOARD_SAVE_AS_IMAGE);
         boardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
-        boardSaveAsImageUnits = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImageUnits"), FILE_BOARD_SAVE_AS_IMAGE_UNITS);
+        boardSaveAsImageUnits = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImageUnits"), BOARD_SAVE_AS_IMAGE_UNITS);
         boardSaveAsImageUnits.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip"));
+        menu.addSeparator();
+        boardUndo = createMenuItem(menu, getString("CommonMenuBar.boardUndo"), BOARD_UNDO); 
+        boardUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+        boardRedo = createMenuItem(menu, getString("CommonMenuBar.boardRedo"), BOARD_REDO);
         menu.addSeparator();
         boardChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
         
@@ -604,6 +610,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
             boardChangeTheme.setEnabled(true);
+            boardUndo.setEnabled(true);
+            boardRedo.setEnabled(true);
         }
         
         // We're in-game.

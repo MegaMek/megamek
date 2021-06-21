@@ -108,12 +108,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
     public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
     //board submenu
-    public static final String FILE_BOARD_NEW = "fileBoardNew";
-    public static final String FILE_BOARD_OPEN = "fileBoardOpen";
-    public static final String FILE_BOARD_SAVE = "fileBoardSave";
-    public static final String FILE_BOARD_SAVE_AS = "fileBoardSaveAs";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_NEW = "fileBoardNew";
+    public static final String BOARD_OPEN = "fileBoardOpen";
+    public static final String BOARD_SAVE = "fileBoardSave";
+    public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
+    public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
+    public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_UNDO = "boardUndo";
+    public static final String BOARD_REDO = "boardRedo";
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
@@ -740,22 +742,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case VIEW_ROUND_REPORT:
                 showRoundReport();
                 break;
-            case FILE_BOARD_SAVE:
+            case BOARD_SAVE:
                 ignoreHotKeys = true;
                 boardSave();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS:
+            case BOARD_SAVE_AS:
                 ignoreHotKeys = true;
                 boardSaveAs();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE:
+            case BOARD_SAVE_AS_IMAGE:
                 ignoreHotKeys = true;
                 boardSaveAsImage(true);
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE_UNITS:
+            case BOARD_SAVE_AS_IMAGE_UNITS:
                 ignoreHotKeys = true;
                 boardSaveAsImage(false);
                 ignoreHotKeys = false;

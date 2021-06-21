@@ -2162,7 +2162,7 @@ public class MULParser {
                     String link = currEle.getAttribute(LINK);
                     int pos = entity.getFreeC3iUUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        System.out.println("Loading C3i UUID " + pos + ": " + link);
+                        MegaMek.getLogger().info("Loading C3i UUID " + pos + ": " + link);
                         entity.setC3iNextUUIDAsString(pos, link);
                     }
                 }
@@ -2195,8 +2195,7 @@ public class MULParser {
                     String link = currEle.getAttribute(LINK);
                     int pos = entity.getFreeNC3UUID();
                     if (!link.isBlank() && (pos != -1)) {
-                        System.out.println("Loading NC3 UUID " + pos +
-                                ": " + link);
+                        MegaMek.getLogger().info("Loading NC3 UUID " + pos + ": " + link);
                         entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
@@ -2428,9 +2427,8 @@ public class MULParser {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());
             mountedManip.setBaMountLoc(baMountLoc);
-        } catch (LocationFullException ex) {
-            // This shouldn't happen for BA...
-            ex.printStackTrace();
+        } catch (LocationFullException e) {
+            MegaMek.getLogger().error(e);
         }
     }
 
@@ -2471,7 +2469,7 @@ public class MULParser {
             entity.getWeaponList().remove(apWeapon);
             entity.getTotalWeaponList().remove(apWeapon);
             // We need to make sure that the weapon has been removed
-            //  from the criticals, otherwise it can cause issues
+            // from the criticals, otherwise it can cause issues
             for (int loc = 0; loc < entity.locations(); loc++) {
                 for (int c = 0; c < entity.getNumberOfCriticals(loc); c++) {
                     CriticalSlot crit = entity.getCritical(loc, c);
@@ -2494,9 +2492,8 @@ public class MULParser {
             apMount.setLinked(newWeap);
             newWeap.setLinked(apMount);
             newWeap.setAPMMounted(true);
-        } catch (LocationFullException ex) {
-            // This shouldn't happen for BA...
-            ex.printStackTrace();
+        } catch (LocationFullException e) {
+            MegaMek.getLogger().error(e);
         }
 
     }
@@ -2522,7 +2519,7 @@ public class MULParser {
 
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());
-        } catch (LocationFullException lfe) {
+        } catch (LocationFullException ignored) {
             // silently swallow it, since dropship locations have about a hundred crit slots
         }
 
@@ -2532,7 +2529,7 @@ public class MULParser {
     /**
      * Determine if unexpected XML entities were encountered during parsing.
      *
-     * @return <code>true</code> if a non-fatal warning occured.
+     * @return <code>true</code> if a non-fatal warning occurred.
      */
     public boolean hasWarningMessage() {
         return (warning.length() > 0);
@@ -2642,13 +2639,13 @@ public class MULParser {
      *            - the <code>int</code> index of the destroyed location.
      */
     private void destroyLocation(Entity en, int loc) {
-
         // mark armor, internal as destroyed
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
         if (en.hasRearArmor(loc)) {
             en.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
         }
+
         // equipment marked missing
         for (Mounted mounted : en.getEquipment()) {
             if (mounted.getLocation() == loc) {

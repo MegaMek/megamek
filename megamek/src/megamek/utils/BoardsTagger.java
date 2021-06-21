@@ -273,7 +273,7 @@ public class BoardsTagger {
         toRemove.forEach(board::removeTag);
 
         // Give the board any applicable tags
-        matchingTags.keySet().stream().map(Tags::getName).forEach(board::addTag);
+        matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).forEach(board::addTag);
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);

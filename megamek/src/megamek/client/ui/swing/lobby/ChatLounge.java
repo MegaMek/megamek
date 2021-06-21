@@ -3086,7 +3086,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (colCount == 0) {
                 result += "<TR>";
             }
-            result += "<TD>" + tag.tagName + "</TD>";
+            result += "<TD>" + tag.getName() + "</TD>";
             colCount++;
             if (colCount == 3) {
                 colCount = 0;

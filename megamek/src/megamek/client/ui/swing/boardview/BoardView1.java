@@ -6722,10 +6722,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
-    public void changeTheme() {
-        if (game == null) return;
+    public String changeTheme() {
+        if (game == null) {
+            return null;
+        }
         IBoard board = game.getBoard();
-        if (board.inSpace()) return;
+        if (board.inSpace()) {
+            return null;
+        }
 
         Set<String> themes = tileManager.getThemes();
         if (themes.remove("")) themes.add("(No Theme)");
@@ -6743,7 +6747,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         setShouldIgnoreKeys(false);
 
         if (selectedTheme == null) {
-            return;
+            return null;
         } else if (selectedTheme.equals("(Original Theme)")) {
             selectedTheme = null;
         } else if (selectedTheme.equals("(No Theme)")) {
@@ -6751,6 +6755,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         board.setTheme(selectedTheme);
+        return selectedTheme;
     }
 
     private Image getBoardBackgroundHexImage(Coords c, IHex hex) {

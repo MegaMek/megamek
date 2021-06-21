@@ -913,7 +913,7 @@ public class BoardEditor extends JPanel
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified"));
         cheTerrExitSpecified.addActionListener(this);
         butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null, BASE_ARROWBUTTON_ICON_WIDTH);
-        texTerrExits = new EditorTextField("0", 2, 0); //$NON-NLS-1$
+        texTerrExits = new EditorTextField("0", 2, 0);
         texTerrExits.addActionListener(this);
         texTerrExits.getDocument().addDocumentListener(this);
         butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -1862,7 +1862,10 @@ public class BoardEditor extends JPanel
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
             bv.toggleIsometric();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {
-            bv.changeTheme();
+            String newTheme = bv.changeTheme();
+            if (newTheme != null) {
+                choTheme.setSelectedItem(newTheme);
+            }
         } else if (ae.getSource().equals(choTheme) ) { 
             curHex.setTheme((String)choTheme.getSelectedItem());
             repaintWorkingHex();

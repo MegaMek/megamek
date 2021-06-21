@@ -20,6 +20,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -910,11 +911,7 @@ public class BoardEditor extends JPanel
 
         // Exits
         cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified"));
-        cheTerrExitSpecified.addActionListener(e -> {
-            noTextFieldUpdate = true;
-            updateWhenSelected();
-            noTextFieldUpdate = false;
-        });
+        cheTerrExitSpecified.addActionListener(this);
         butTerrExits = prepareButton("ButtonExitA", Messages.getString("BoardEditor.butTerrExits"), null, BASE_ARROWBUTTON_ICON_WIDTH);
         texTerrExits = new EditorTextField("0", 2, 0); //$NON-NLS-1$
         texTerrExits.addActionListener(this);
@@ -1343,7 +1340,7 @@ public class BoardEditor extends JPanel
             terrListBlocker = true;
             choTerrainType.setSelectedItem(terrainHelper);
             texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
-            cheTerrExitSpecified.setSelected(terrain.hasExitsSpecified());
+            setExitsState(terrain.hasExitsSpecified());
             texTerrExits.setNumber(terrain.getExits());
             terrListBlocker = false;
         }
@@ -1654,7 +1651,7 @@ public class BoardEditor extends JPanel
             // update the text fields that have just been edited
             if (!terrListBlocker) {
                 noTextFieldUpdate = true;
-                cheTerrExitSpecified.setSelected(true);
+                setExitsState(true);
                 updateWhenSelected();
                 noTextFieldUpdate = false;
             }
@@ -1823,7 +1820,7 @@ public class BoardEditor extends JPanel
         } else if (ae.getSource().equals(texTerrExits)) {
             int exitsVal = texTerrExits.getNumber();
             if (exitsVal == 0) {
-                cheTerrExitSpecified.setSelected(false);
+                setExitsState(false);
             } else if (exitsVal > 63) {
                 texTerrExits.setNumber(63);
             }
@@ -1835,15 +1832,20 @@ public class BoardEditor extends JPanel
             ed.setVisible(true);
             exitsVal = ed.getExits();
             texTerrExits.setNumber(exitsVal);
-            cheTerrExitSpecified.setSelected(exitsVal != 0);
+            setExitsState(exitsVal != 0);
             updateWhenSelected();
+        } else if (ae.getSource().equals(cheTerrExitSpecified)) {
+            noTextFieldUpdate = true;
+            updateWhenSelected();
+            noTextFieldUpdate = false;
+            setExitsState(cheTerrExitSpecified.isSelected());
         } else if (ae.getSource().equals(butExitUp)) {
-            cheTerrExitSpecified.setSelected(true);
+            setExitsState(true);
             texTerrExits.incValue();
             updateWhenSelected();
         } else if (ae.getSource().equals(butExitDown)) {
             texTerrExits.decValue();
-            cheTerrExitSpecified.setSelected(texTerrExits.getNumber() != 0);
+            setExitsState(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
             minimapW.setVisible(guip.getMinimapEnabled());
@@ -2010,6 +2012,15 @@ public class BoardEditor extends JPanel
         }
         refreshTerrainList();
         repaintWorkingHex();
+    }
+    
+    private void setExitsState(boolean newState) {
+        cheTerrExitSpecified.setSelected(newState);
+        if (cheTerrExitSpecified.isSelected()) {
+            texTerrExits.setForeground(null);
+        } else {
+            texTerrExits.setForeground(UIUtil.uiGray());
+        }        
     }
 
     @Override

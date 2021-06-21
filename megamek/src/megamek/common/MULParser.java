@@ -312,9 +312,8 @@ public class MULParser {
 
             // Parse using builder to get DOM representation of the XML file
             xmlDoc = db.parse(fin);
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             warning.append("Error parsing MUL file!\n");
             return;
         }
@@ -602,12 +601,12 @@ public class MULParser {
                 try {
                     newEntity = new MechFileParser(ms.getSourceFile(),
                             ms.getEntryName()).getEntity();
-                } catch (EntityLoadingException excep) {
-                    excep.printStackTrace(System.err);
+                } catch (EntityLoadingException e) {
+                    MegaMek.getLogger().error(e);
                     warning.append("Unable to load mech: ")
                             .append(ms.getSourceFile()).append(": ")
                             .append(ms.getEntryName()).append(": ")
-                            .append(excep.getMessage());
+                            .append(e.getMessage());
                 }
             } // End found-MechSummary
         }
@@ -1815,13 +1814,11 @@ public class MULParser {
         String value = turretLockTag.getAttribute(DIRECTION);
         try {
             int turDir = Integer.parseInt(value);
-            ((Tank) entity).setSecondaryFacing(turDir);
+            entity.setSecondaryFacing(turDir);
             ((Tank) entity).lockTurret(((Tank)entity).getLocTurret());
         } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-            warning.append("Invalid turret lock direction value in " +
-                    "movement tag.\n");
+            MegaMek.getLogger().error(e);
+            warning.append("Invalid turret lock direction value in movement tag.\n");
         }
     }
 
@@ -1838,10 +1835,8 @@ public class MULParser {
             ((Tank) entity).setDualTurretOffset(turDir);
             ((Tank) entity).lockTurret(((Tank)entity).getLocTurret2());
         } catch (Exception e) {
-            System.err.println(e);
-            e.printStackTrace();
-            warning.append("Invalid turret2 lock direction value in " +
-                    "movement tag.\n");
+            MegaMek.getLogger().error(e);
+            warning.append("Invalid turret2 lock direction value in movement tag.\n");
         }
     }
 
@@ -2495,7 +2490,6 @@ public class MULParser {
         } catch (LocationFullException e) {
             MegaMek.getLogger().error(e);
         }
-
     }
 
     /**

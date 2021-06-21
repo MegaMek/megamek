@@ -1,4 +1,7 @@
 size 35 35
+tag "Cliffs (Auto)"
+tag "SnowTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 100 "pavement:1" ""
 hex 0201 100 "pavement:1" ""
 hex 0301 100 "pavement:1" ""

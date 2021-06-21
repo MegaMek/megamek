@@ -1,5 +1,11 @@
 size 16 17
 option exit_roads_to_pavement false
+tag "Foliage (Auto)"
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Swamp (Auto)"
+tag "Flat (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "water:1;mud:1" "grass"
 hex 0201 0 "woods:1;swamp:1;foliage_elev:2" "grass"
 hex 0301 0 "swamp:1" "grass"

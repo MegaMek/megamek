@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
@@ -321,6 +322,9 @@ public interface IBoard {
      * @return an <code>Enumeration</code> of <code>Building</code>s.
      */
     public abstract Enumeration<Building> getBuildings();
+    
+    /** Returns the Vector of all the board's buildings. */
+    public abstract Vector<Building> getBuildingsVector();
 
     /**
      * Get the building at the given coordinates.
@@ -589,4 +593,13 @@ public interface IBoard {
     
     /** Returns true when the given Coord c is on the edge of the board. */
     public boolean isOnBoardEdge(Coords c);
+    
+    /** Add the given tag string to the board's tags list. */
+    public void addTag(String newTag);
+    
+    /** Removes the given tag string from the board's tags list. */
+    public void removeTag(String tag);
+    
+    /** Returns the board's tags list. The list is unmodifiable. Use addTag and removeTag to change it. */
+    public Set<String> getTags();
 }

@@ -1,4 +1,7 @@
 size 32 34
+tag "Water (Auto)"
+tag "DesertTheme (Auto)"
+tag "LowHills (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

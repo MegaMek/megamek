@@ -1,4 +1,6 @@
 size 32 17
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
 hex 0101 7 "" "volcano"
 hex 0201 5 "" "volcano"
 hex 0301 0 "" "volcano"

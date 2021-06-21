@@ -1,4 +1,8 @@
 size 16 17
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
 hex 0101 0 "" ""
 hex 0201 0 "" ""
 hex 0301 0 "" ""

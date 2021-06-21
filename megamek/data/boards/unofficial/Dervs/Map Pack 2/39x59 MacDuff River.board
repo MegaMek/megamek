@@ -1,4 +1,12 @@
 size 39 59
+tag "Rough (Auto)"
+tag "Water (Auto)"
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "IceTerrain (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
 hex 0101 -5 "rough:1" "lunar"
 hex 0201 -4 "rough:2" "lunar"
 hex 0301 -5 "rough:1" "lunar"

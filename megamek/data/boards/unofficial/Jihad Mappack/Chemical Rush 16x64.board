@@ -1,4 +1,13 @@
 size 16 68
+tag "Rough (Auto)"
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HeavyUrban (Auto)"
+tag "HighHills (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 5 "woods:3:36;foliage_elev:3" "grass"
 hex 0201 4 "woods:3:36;foliage_elev:3" "grass"
 hex 0301 3 "woods:2:36;foliage_elev:2" "grass"

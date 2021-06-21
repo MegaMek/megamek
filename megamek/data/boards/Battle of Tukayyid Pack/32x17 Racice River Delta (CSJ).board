@@ -1,4 +1,9 @@
 size 32 17
+tag "Foliage (Auto)"
+tag "Water (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 1 "" "desert"
 hex 0201 1 "" "desert"
 hex 0301 1 "" "desert"

@@ -1,8 +1,8 @@
 size 16 17
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 0 "road:1" ""
 hex 0201 0 "road:1" ""

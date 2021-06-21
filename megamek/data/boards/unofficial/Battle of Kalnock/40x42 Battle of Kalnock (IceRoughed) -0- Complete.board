@@ -1,7 +1,7 @@
 size 40 42
 tag "Rough (Auto)"
-tag "SnowTheme (Auto)"
 tag "Water (Auto)"
+tag "SnowTheme (Auto)"
 tag "LowHills (Auto)"
 hex 0101 -2 "water:5" "snow"
 hex 0201 -2 "water:5" "snow"

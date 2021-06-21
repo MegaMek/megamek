@@ -1,8 +1,8 @@
 size 90 41
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
 tag "Jungle (Auto)"

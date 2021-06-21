@@ -1,8 +1,8 @@
 size 16 17
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "LightForest (Auto)"
+tag "GrassTheme (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 1 "" ""
 hex 0201 1 "" ""
 hex 0301 1 "" ""

@@ -1,13 +1,13 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "SnowTheme (Auto)"
 tag "Water (Auto)"
+tag "SnowTheme (Auto)"
 tag "Roads (Auto)"
-tag "HighHills (Auto)"
 tag "IceTerrain (Auto)"
-tag "LightForest (Auto)"
+tag "HighHills (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 tag "SnowTerrain (Auto)"
 hex 0101 3 "snow:2" "snow"
 hex 0201 3 "snow:2" "snow"

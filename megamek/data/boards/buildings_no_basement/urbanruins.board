@@ -1,12 +1,12 @@
 size 50 50
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "HeavyUrban (Auto)"
-tag "Swamp (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
+tag "Swamp (Auto)"
+tag "HeavyUrban (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 tag "DenseForest (Auto)"

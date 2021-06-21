@@ -1,10 +1,10 @@
 size 32 17
 tag "Rough (Auto)"
 tag "Water (Auto)"
-tag "HighHills (Auto)"
 tag "DesertTheme (Auto)"
-tag "LightForest (Auto)"
+tag "HighHills (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

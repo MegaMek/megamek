@@ -1,11 +1,11 @@
 size 48 51
 option exit_roads_to_pavement false
-tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 -3 "" ""
 hex 0201 -3 "" ""
 hex 0301 -3 "" ""

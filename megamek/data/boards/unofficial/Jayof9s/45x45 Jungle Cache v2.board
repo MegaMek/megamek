@@ -1,6 +1,6 @@
 size 45 45
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Swamp (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "woods:2;swamp:1;foliage_elev:2" "grass"

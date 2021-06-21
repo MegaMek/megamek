@@ -1,7 +1,7 @@
 size 64 68
 tag "Roads (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "(Original Theme)"
 hex 0201 0 "" "(Original Theme)"
 hex 0301 0 "" "(Original Theme)"

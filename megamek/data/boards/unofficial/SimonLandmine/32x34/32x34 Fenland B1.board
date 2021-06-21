@@ -1,10 +1,10 @@
 size 32 34
 option exit_roads_to_pavement false
 tag "Foliage (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "Swamp (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "Swamp (Auto)"
 tag "Fields (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "planted_fields:5" "grass"

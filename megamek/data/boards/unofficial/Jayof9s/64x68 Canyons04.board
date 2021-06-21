@@ -1,6 +1,6 @@
 size 64 68
-tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "woods:3;foliage_elev:3" ""

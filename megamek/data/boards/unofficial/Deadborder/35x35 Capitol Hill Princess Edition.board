@@ -1,10 +1,10 @@
 size 35 35
 tag "GrassTheme (Auto)"
-tag "HeavyUrban (Auto)"
 tag "Roads (Auto)"
+tag "HeavyUrban (Auto)"
 tag "Flat (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 0 "bldg_elev:1;building:4:0;bldg_cf:150" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "road:1:36" "grass"

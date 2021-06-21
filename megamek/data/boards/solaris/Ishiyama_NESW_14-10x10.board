@@ -1,6 +1,6 @@
 size 10 10
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "HighHills (Auto)"
 hex 0101 0 "water:2" ""
 hex 0201 0 "water:2" ""

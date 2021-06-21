@@ -1,7 +1,7 @@
 size 45 45
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
 tag "MarsTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
 hex 0101 4 "" "mars"
 hex 0201 2 "" "mars"

@@ -1,8 +1,8 @@
 size 16 17
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 2 "woods:1;foliage_elev:2" ""
 hex 0201 2 "woods:2;foliage_elev:2" ""
 hex 0301 2 "woods:1;foliage_elev:2" ""

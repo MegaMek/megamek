@@ -1,11 +1,11 @@
 size 64 68
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "HeavyUrban (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
+tag "HeavyUrban (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "water:6" ""

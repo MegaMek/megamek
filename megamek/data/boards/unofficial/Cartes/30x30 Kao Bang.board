@@ -1,7 +1,7 @@
 size 30 30
 tag "Rough (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Swamp (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "" ""

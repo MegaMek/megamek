@@ -1,7 +1,7 @@
 size 32 17
 tag "Rough (Auto)"
-tag "HighHills (Auto)"
 tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 2 "" "desert"

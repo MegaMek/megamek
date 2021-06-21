@@ -1,9 +1,9 @@
 size 16 17
-tag "SnowTheme (Auto)"
 tag "Water (Auto)"
+tag "SnowTheme (Auto)"
 tag "Roads (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 tag "SnowTerrain (Auto)"
 hex 0101 1 "water:2" "snow"
 hex 0201 1 "water:2" "snow"

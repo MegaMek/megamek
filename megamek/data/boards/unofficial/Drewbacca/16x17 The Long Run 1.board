@@ -1,7 +1,7 @@
 size 16 17
 tag "Rough (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""

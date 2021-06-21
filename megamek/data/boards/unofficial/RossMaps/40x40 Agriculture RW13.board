@@ -1,11 +1,11 @@
 size 40 40
 tag "Rough (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "MediumForest (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 2 "" ""
 hex 0201 2 "" ""
 hex 0301 2 "" ""

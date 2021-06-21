@@ -1,12 +1,12 @@
 size 35 35
 option exit_roads_to_pavement false
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "HeavyUrban (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
-tag "HighHills (Auto)"
+tag "HeavyUrban (Auto)"
 tag "IceTerrain (Auto)"
+tag "HighHills (Auto)"
 tag "SnowTerrain (Auto)"
 hex 0101 5 "bldg_elev:1;snow:1;building:4:0;bldg_cf:100" ""
 hex 0201 6 "snow:1" ""

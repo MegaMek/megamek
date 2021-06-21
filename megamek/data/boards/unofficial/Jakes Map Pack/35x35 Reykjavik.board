@@ -1,9 +1,9 @@
 size 35 35
 option exit_roads_to_pavement false
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "HeavyUrban (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "HeavyUrban (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "bldg_elev:5;pavement:1;building:3:12;bldg_cf:150" ""

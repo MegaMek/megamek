@@ -1,8 +1,8 @@
 size 40 40
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 tag "SnowTerrain (Auto)"

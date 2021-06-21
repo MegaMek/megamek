@@ -1,8 +1,8 @@
 size 16 17
 tag "MarsTheme (Auto)"
 tag "Flat (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 0 "" "mars"
 hex 0301 0 "" "mars"

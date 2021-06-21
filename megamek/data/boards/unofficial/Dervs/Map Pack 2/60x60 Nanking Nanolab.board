@@ -1,10 +1,10 @@
 size 60 60
-tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 -1 "" "grass"
 hex 0201 -1 "" "grass"
 hex 0301 -1 "" "grass"

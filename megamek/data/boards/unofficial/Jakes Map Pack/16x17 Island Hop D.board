@@ -1,9 +1,9 @@
 size 16 17
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "Woods (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 3 "woods:2;foliage_elev:2" ""
 hex 0201 3 "woods:2;foliage_elev:2" ""
 hex 0301 3 "" ""

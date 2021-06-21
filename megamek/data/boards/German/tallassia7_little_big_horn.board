@@ -1,7 +1,7 @@
 size 16 17
 tag "GrassTheme (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "rough:1" ""
 hex 0201 2 "" ""
 hex 0301 2 "" ""

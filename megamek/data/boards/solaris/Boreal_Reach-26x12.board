@@ -1,9 +1,9 @@
 size 26 12
 tag "Rough (Auto)"
-tag "SnowTheme (Auto)"
 tag "Water (Auto)"
-tag "HighHills (Auto)"
+tag "SnowTheme (Auto)"
 tag "IceTerrain (Auto)"
+tag "HighHills (Auto)"
 hex 0101 2 "pavement:1" "snow"
 hex 0201 2 "" "snow"
 hex 0301 1 "" "snow"

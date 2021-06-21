@@ -1,7 +1,7 @@
 size 35 35
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 2 "" ""

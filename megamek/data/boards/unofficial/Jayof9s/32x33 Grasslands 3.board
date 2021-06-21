@@ -1,8 +1,8 @@
 size 32 33
 tag "Rough (Auto)"
 tag "GrassTheme (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 1 "" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "" "grass"

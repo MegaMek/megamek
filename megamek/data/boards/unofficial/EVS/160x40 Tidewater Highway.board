@@ -1,14 +1,14 @@
 size 160 140
 option exit_roads_to_pavement false
-tag "Cliffs (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "Swamp (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
+tag "Swamp (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
-tag "DenseForest (Auto)"
 tag "MediumUrban (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 1 "" "grass"
 hex 0201 1 "" "grass"
 hex 0301 1 "" "grass"

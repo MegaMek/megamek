@@ -1,8 +1,8 @@
 size 25 25
 tag "GrassTheme (Auto)"
-tag "LightForest (Auto)"
-tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 4 "pavement:1" "grass"
 hex 0201 4 "pavement:1" "grass"
 hex 0301 4 "pavement:1" "grass"

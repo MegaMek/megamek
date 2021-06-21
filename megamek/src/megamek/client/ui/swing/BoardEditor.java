@@ -1243,9 +1243,13 @@ public class BoardEditor extends JPanel
      * Cycle the terrain level (mouse wheel behavior) from the easy access buttons
      */
     private void addSetTerrainEasy(int type, int level) {
+        boolean exitsSpecified = false;
+        int exits = 0;
         ITerrain present = curHex.getTerrain(type);
-        boolean exitsSpecified = present.hasExitsSpecified();
-        int exits = present.getExits();
+        if (present != null) {
+            exitsSpecified = present.hasExitsSpecified();
+            exits = present.getExits();
+        }
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
@@ -2006,6 +2010,9 @@ public class BoardEditor extends JPanel
     }
     
     private void setConvenientTerrain(ActionEvent event, ITerrain... terrains) {
+        if (terrains.length == 0) {
+            return;
+        }
         if ((event.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
             curHex.removeAllTerrains();
         }
@@ -2015,6 +2022,12 @@ public class BoardEditor extends JPanel
         }
         refreshTerrainList();
         repaintWorkingHex();
+        for (int i = 0; i < lisTerrain.getModel().getSize(); i++) {
+            if (lisTerrain.getModel().getElementAt(i).getTerrain().equals(terrains[0])) {
+                lisTerrain.setSelectedIndex(i);
+                break;
+            }
+        }
     }
     
     private void setExitsState(boolean newState) {

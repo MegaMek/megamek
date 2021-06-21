@@ -19,7 +19,7 @@
 package megamek.utils;
 
 import java.io.*;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import static java.util.stream.Collectors.*;
 import static megamek.common.Terrains.*;
@@ -81,11 +81,14 @@ public class BoardsTagger {
         TAG_FLAT("Flat"),
         TAG_SNOWTERRAIN("SnowTerrain");
 
-        public String tagName;
-        private boolean applies = false;
+        private String tagName;
 
         Tags(String name) {
             tagName = name + AUTO_SUFFIX;
+        }
+        
+        public String getName() {
+            return tagName;
         }
     }
 
@@ -227,39 +230,42 @@ public class BoardsTagger {
         int levelExtent = board.getMaxElevation() - board.getMinElevation();
 
         // Calculate which tags apply
-        Tags.TAG_MEDFOREST.applies = (forest >= normSide * 5) && (forest < normSide * 10) && (forestHU < normSide * 2);
-        Tags.TAG_LIGHTFOREST.applies = (forest >= normSide * 2) && (forestHU < normSide) && (forest < normSide * 5);
-        Tags.TAG_DENSEFOREST.applies = (forest >= normSide * 10) && (forestHU > normSide * 2);
-        Tags.TAG_WOODS.applies = woods > forest / 2;
-        Tags.TAG_JUNGLE.applies = jungles > forest / 2;
-        Tags.TAG_ROADS.applies = roads > 10;
-        Tags.TAG_ROUGH.applies = roughs > normSide / 2;
-        Tags.TAG_FOLIAGE.applies = foliage > 5;
-        Tags.TAG_LAVA.applies = lavas > 5;
-        Tags.TAG_CLIFFS.applies = (cliffsTO > 5) || (highCliffs > 20);
-        Tags.TAG_FIELDS.applies = fields > normSide * 5;
-        Tags.TAG_SWAMP.applies = swamps > normSide;
-        Tags.TAG_DESERT.applies = deserts > area / 2;
-        Tags.TAG_GRASS.applies = grass > area / 2;
-        Tags.TAG_TROPICAL.applies = tropical > area / 2;
-        Tags.TAG_LUNAR.applies = lunar > area / 2;
-        Tags.TAG_MARS.applies = mars > area / 2;
-        Tags.TAG_VOLCANIC.applies = volcanic > area / 2;
-        Tags.TAG_SNOWTHEME.applies = snowTheme > area / 2;
-        Tags.TAG_OCEAN.applies = nEdgeWater > (board.getWidth() * 9 / 10) 
+        var matchingTags = new HashMap<Tags, Boolean>();
+        
+        matchingTags.put(Tags.TAG_MEDFOREST, (forest >= normSide * 5) && (forest < normSide * 10) && (forestHU < normSide * 2));
+        matchingTags.put(Tags.TAG_LIGHTFOREST, (forest >= normSide * 2) && (forestHU < normSide) && (forest < normSide * 5));
+        matchingTags.put(Tags.TAG_DENSEFOREST, (forest >= normSide * 10) && (forestHU > normSide * 2));
+        matchingTags.put(Tags.TAG_WOODS, woods > forest / 2);
+        matchingTags.put(Tags.TAG_JUNGLE,  jungles > forest / 2);
+        matchingTags.put(Tags.TAG_ROADS, roads > 10);
+        matchingTags.put(Tags.TAG_ROUGH, roughs > normSide / 2);
+        matchingTags.put(Tags.TAG_FOLIAGE, foliage > 5);
+        matchingTags.put(Tags.TAG_LAVA, lavas > 5);
+        matchingTags.put(Tags.TAG_CLIFFS, (cliffsTO > 5) || (highCliffs > 20));
+        matchingTags.put(Tags.TAG_FIELDS, fields > normSide * 5);
+        matchingTags.put(Tags.TAG_SWAMP, swamps > normSide);
+        matchingTags.put(Tags.TAG_DESERT, deserts > area / 2);
+        matchingTags.put(Tags.TAG_GRASS, grass > area / 2);
+        matchingTags.put(Tags.TAG_TROPICAL, tropical > area / 2);
+        matchingTags.put(Tags.TAG_LUNAR, lunar > area / 2);
+        matchingTags.put(Tags.TAG_MARS, mars > area / 2);
+        matchingTags.put(Tags.TAG_VOLCANIC, volcanic > area / 2);
+        matchingTags.put(Tags.TAG_SNOWTHEME, snowTheme > area / 2);
+        matchingTags.put(Tags.TAG_OCEAN, nEdgeWater > (board.getWidth() * 9 / 10) 
                 || sEdgeWater > (board.getWidth() * 9 / 10)
                 || eEdgeWater > (board.getHeight() * 9 / 10)
-                || wEdgeWater > (board.getHeight() * 9 / 10);
-        Tags.TAG_HILLS.applies = (levelExtent >= 2) && (levelExtent < 5) && (weighedLevels > normSide * 15);
-        Tags.TAG_HIGHHILLS.applies = (levelExtent >= 5) && (weighedLevels > normSide * 15);
-        Tags.TAG_WATER.applies = water > normSide / 3;
-        Tags.TAG_ICE.applies = ice > normSide / 3;
-        Tags.TAG_LIGHTURBAN.applies = (lowBuildings > normSide) && (highBuildings < normSide / 3) && (lowBuildings < normSide * 2) && (roads > normSide / 3);
-        Tags.TAG_MEDURBAN.applies = !Tags.TAG_LIGHTURBAN.applies && (stdBuildings >= normSide) 
-                && (roads > normSide / 3) && (stdBuildings < normSide * 4);
-        Tags.TAG_HEAVYURBAN.applies = (stdBuildings >= normSide * 4) && (roads > normSide / 3);
-        Tags.TAG_SNOWTERRAIN.applies = (snowTerrain > normSide * 2);
-        Tags.TAG_FLAT.applies = (levelExtent <= 2) && (weighedLevels < normSide * 5);
+                || wEdgeWater > (board.getHeight() * 9 / 10));
+        matchingTags.put(Tags.TAG_HILLS, (levelExtent >= 2) && (levelExtent < 5) && (weighedLevels > normSide * 15));
+        matchingTags.put(Tags.TAG_HIGHHILLS, (levelExtent >= 5) && (weighedLevels > normSide * 15));
+        matchingTags.put(Tags.TAG_WATER, water > normSide / 3);
+        matchingTags.put(Tags.TAG_ICE, ice > normSide / 3);
+        boolean lightUrban = (lowBuildings > normSide) && (highBuildings < normSide / 3) && (lowBuildings < normSide * 2) && (roads > normSide / 3);
+        matchingTags.put(Tags.TAG_LIGHTURBAN, lightUrban);
+        matchingTags.put(Tags.TAG_MEDURBAN, !lightUrban && (stdBuildings >= normSide) 
+                && (roads > normSide / 3) && (stdBuildings < normSide * 4));
+        matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
+        matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
+        matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
 
         // Remove any auto tags that might be present so that auto tags that no longer apply
         // are not left in the board file.
@@ -267,11 +273,11 @@ public class BoardsTagger {
         toRemove.forEach(board::removeTag);
 
         // Give the board any applicable tags
-        Arrays.stream(Tags.values()).filter(t -> t.applies).map(t -> t.tagName).forEach(board::addTag);
+        matchingTags.keySet().stream().map(Tags::getName).forEach(board::addTag);
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);
-            Arrays.stream(Tags.values()).filter(t -> t.applies).forEach(System.out::println);
+            matchingTags.keySet().stream().forEach(System.out::println);
         }
 
         // Re-save the board

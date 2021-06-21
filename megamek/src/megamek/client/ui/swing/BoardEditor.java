@@ -1174,6 +1174,7 @@ public class BoardEditor extends JPanel
      * Refreshes the terrain list to match the current hex
      */
     private void refreshTerrainList() {
+        TerrainTypeHelper selectedEntry = lisTerrain.getSelectedValue();
         ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).removeAllElements();
         lisTerrainRenderer.setTerrainTypes(null);
         int[] terrainTypes = curHex.getTerrainTypes();
@@ -1190,6 +1191,10 @@ public class BoardEditor extends JPanel
             ((DefaultListModel<TerrainTypeHelper>) lisTerrain.getModel()).addElement(tth);
         }
         lisTerrainRenderer.setTerrainTypes(types);
+        // Reselect the formerly selected terrain if possible
+        if (selectedEntry != null) {
+            selectTerrain(selectedEntry.getTerrain());
+        }
     }
 
     /**
@@ -1230,11 +1235,8 @@ public class BoardEditor extends JPanel
             return;
         }
         curHex.addTerrain(toAdd);
-        int formerSelection = lisTerrain.getSelectedIndex();
         noTextFieldUpdate = true;
         refreshTerrainList();
-        lisTerrain.setSelectedIndex(formerSelection);
-        lisTerrain.ensureIndexIsVisible(formerSelection);
         repaintWorkingHex();
         noTextFieldUpdate = false;
     }
@@ -1252,9 +1254,7 @@ public class BoardEditor extends JPanel
         }
         ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
-        TerrainTypeHelper toSelect = new TerrainTypeHelper(toAdd);
         refreshTerrainList();
-        lisTerrain.setSelectedValue(toSelect, true);
         repaintWorkingHex();
     }
     
@@ -1278,6 +1278,7 @@ public class BoardEditor extends JPanel
         }
 
         refreshTerrainList();
+        selectTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, 1));
         repaintWorkingHex();
     }
     
@@ -1298,6 +1299,7 @@ public class BoardEditor extends JPanel
         }
         
         refreshTerrainList();
+        selectTerrain(new Terrain(Terrains.BRIDGE_ELEV, 1));
         repaintWorkingHex();
     }
     
@@ -1323,8 +1325,9 @@ public class BoardEditor extends JPanel
             curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 
                     curTerr.getLevel(), !curTerr.hasExitsSpecified(), curTerr.getExits()));
         }
-
+        
         refreshTerrainList();
+        selectTerrain(new Terrain(Terrains.BLDG_ELEV, 1));
         repaintWorkingHex();
     }
 
@@ -1948,13 +1951,7 @@ public class BoardEditor extends JPanel
             buttonUpDn.setSelected(false);
             setBasicFuelTank();
         } else if (ae.getSource().equals(buttonRd)) {
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
-                curHex.removeAllTerrains();
-            }
-            buttonUpDn.setSelected(false);
-            curHex.addTerrain(TF.createTerrain(Terrains.ROAD, 1));
-            refreshTerrainList();
-            repaintWorkingHex();
+            setConvenientTerrain(ae, TF.createTerrain(Terrains.ROAD, 1));
         } else if (ae.getSource().equals(buttonUpDn)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
@@ -2022,10 +2019,15 @@ public class BoardEditor extends JPanel
         }
         refreshTerrainList();
         repaintWorkingHex();
+        selectTerrain(terrains[0]);
+    }
+    
+    private void selectTerrain(ITerrain terrain) {
         for (int i = 0; i < lisTerrain.getModel().getSize(); i++) {
-            if (lisTerrain.getModel().getElementAt(i).getTerrain().equals(terrains[0])) {
+            ITerrain listEntry = lisTerrain.getModel().getElementAt(i).getTerrain();
+            if (listEntry.getType() == terrain.getType()) {
                 lisTerrain.setSelectedIndex(i);
-                break;
+                return;
             }
         }
     }

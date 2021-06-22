@@ -2,26 +2,25 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server;
 
+import megamek.MegaMek;
+
 import java.util.TimerTask;
 
-class ConnectionWatchdog extends TimerTask {
-
+public class ConnectionWatchdog extends TimerTask {
     private Server server;
-
     private int id;
-
     private int failCount;
 
     public ConnectionWatchdog(Server server, int id) {
@@ -42,16 +41,16 @@ class ConnectionWatchdog extends TimerTask {
             cancel();
             return;
         }
-        System.err.println("Bark Bark");
+
+        MegaMek.getLogger().error("Bark Bark");
         if (failCount > 120) {
             server.getPendingConnection(id).close();
             cancel();
-            System.err.println("Growl");
-            System.err.println("\n\n\n\n\n");
+            MegaMek.getLogger().error("Growl\n\n\n\n\n");
             return;
         }
+
         server.greeting(id);
         failCount++;
     }
-
 }

@@ -51,6 +51,7 @@ import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -2003,7 +2004,43 @@ public class BoardEditor extends JPanel
             setFrameTitle();
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_RAISE)) {
             boardChangeLevel();
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_CLEAR)) {
+            boardClear();
         }
+    }
+    
+    private void boardClear() {
+        if (!MMConfirmDialog.confirm(frame, 
+                Messages.getString("BoardEditor.clearTitle"), Messages.getString("BoardEditor.clearMsg"))) {
+            return;
+        }
+        board.resetStoredElevation();
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                saveToUndo(c);
+                board.setHex(c, new Hex(0));
+            }
+        }
+        correctExits();
+        endCurrentUndoSet();
+    }
+    
+    private void endCurrentUndoSet() {
+        undoStack.push(currentUndoSet);
+        currentUndoSet = null;
+        buttonUndo.setEnabled(true);
+        // Drawing something disables any redo actions
+        redoStack.clear();
+        buttonRedo.setEnabled(false);
+        // When Undo (without Redo) has been used after saving
+        // and the user draws on the board, then it can
+        // no longer know if it's been returned to the saved state
+        // and it will always be treated as changed.
+        if (savedUndoStackSize > undoStack.size()) {
+            canReturnToSaved = false;
+        }
+        hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
     }
     
     /** Changes the level of all the board's hexes by the given delta. */
@@ -2025,20 +2062,7 @@ public class BoardEditor extends JPanel
             }
         }
         correctExits();
-        undoStack.push(currentUndoSet);
-        currentUndoSet = null;
-        buttonUndo.setEnabled(true);
-        // Drawing something disables any redo actions
-        redoStack.clear();
-        buttonRedo.setEnabled(false);
-        // When Undo (without Redo) has been used after saving
-        // and the user draws on the board, then it can
-        // no longer know if it's been returned to the saved state
-        // and it will always be treated as changed.
-        if (savedUndoStackSize > undoStack.size()) {
-            canReturnToSaved = false;
-        }
-        hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
+        endCurrentUndoSet();
     }
 
     private void setConvenientTerrain(ActionEvent event, ITerrain... terrains) {

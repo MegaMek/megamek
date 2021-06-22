@@ -50,6 +50,7 @@ import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.tileset.TilesetManager;
@@ -2006,6 +2007,8 @@ public class BoardEditor extends JPanel
             boardChangeLevel();
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_CLEAR)) {
             boardClear();
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLOOD)) {
+            boardFlood();
         }
     }
     
@@ -2027,20 +2030,22 @@ public class BoardEditor extends JPanel
     }
     
     private void endCurrentUndoSet() {
-        undoStack.push(currentUndoSet);
-        currentUndoSet = null;
-        buttonUndo.setEnabled(true);
-        // Drawing something disables any redo actions
-        redoStack.clear();
-        buttonRedo.setEnabled(false);
-        // When Undo (without Redo) has been used after saving
-        // and the user draws on the board, then it can
-        // no longer know if it's been returned to the saved state
-        // and it will always be treated as changed.
-        if (savedUndoStackSize > undoStack.size()) {
-            canReturnToSaved = false;
+        if ((currentUndoSet != null) && !currentUndoSet.isEmpty()) {
+            undoStack.push(currentUndoSet);
+            currentUndoSet = null;
+            buttonUndo.setEnabled(true);
+            // Drawing something disables any redo actions
+            redoStack.clear();
+            buttonRedo.setEnabled(false);
+            // When Undo (without Redo) has been used after saving
+            // and the user draws on the board, then it can
+            // no longer know if it's been returned to the saved state
+            // and it will always be treated as changed.
+            if (savedUndoStackSize > undoStack.size()) {
+                canReturnToSaved = false;
+            }
+            hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
         }
-        hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
     }
     
     /** Changes the level of all the board's hexes by the given delta. */
@@ -2059,6 +2064,38 @@ public class BoardEditor extends JPanel
                 IHex newHex = board.getHex(c).duplicate();
                 newHex.setLevel(newHex.getLevel() + dlg.getLevelChange());
                 board.setHex(c, newHex);
+            }
+        }
+        correctExits();
+        endCurrentUndoSet();
+    }
+    
+    /** Changes the level of all the board's hexes by the given delta. */
+    private void boardFlood() {
+        var dlg = new FloodDialog(frame);
+        dlg.setVisible(true);
+        if (dlg.getResult() != DialogResult.CONFIRMED) {
+            return;
+        }
+        
+        int surface = dlg.getLevelChange();
+        board.resetStoredElevation();
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                IHex hex = board.getHex(c);
+                if (hex.getLevel() < surface) {
+                    saveToUndo(c);
+                    IHex newHex = hex.duplicate();
+                    int presentDepth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
+                    if (dlg.getRemoveTerrain()) {
+                        newHex.removeAllTerrains();
+                    }
+                    int addedWater = surface - hex.getLevel();
+                    newHex.addTerrain(TF.createTerrain(Terrains.WATER, addedWater + presentDepth));
+                    newHex.setLevel(newHex.getLevel() + addedWater);
+                    board.setHex(c, newHex);
+                }
             }
         }
         correctExits();

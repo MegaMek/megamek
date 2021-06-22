@@ -118,6 +118,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String BOARD_REDO = "boardRedo";
     public static final String BOARD_RAISE = "boardRaise";
     public static final String BOARD_CLEAR = "boardClear";
+    public static final String BOARD_FLOOD = "boardFlood";
+    
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";

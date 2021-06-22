@@ -105,6 +105,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem boardRaise;
     private JMenuItem boardClear;
     private JMenuItem boardFlood;
+    private JMenu boardRemove;
+    private JMenuItem boardRemoveForests;
+    private JMenuItem boardRemoveWater;
+    private JMenuItem boardRemoveRoads;
+    private JMenuItem boardRemoveBuildings;
     private JMenuItem viewLOSSetting;
     private JCheckBoxMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -194,6 +199,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         boardRaise = createMenuItem(menu, getString("CommonMenuBar.boardRaise"), BOARD_RAISE);
         boardClear = createMenuItem(menu, getString("CommonMenuBar.boardClear"), BOARD_CLEAR);
         boardFlood = createMenuItem(menu, getString("CommonMenuBar.boardFlood"), BOARD_FLOOD);
+        boardRemove = new JMenu(getString("CommonMenuBar.boardRemove"));
+        menu.add(boardRemove);
+        boardRemoveForests = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveForests"), BOARD_REMOVE_FORESTS);
+        boardRemoveWater = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveWater"), BOARD_REMOVE_WATER);
+        boardRemoveRoads = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveRoads"), BOARD_REMOVE_ROADS);
+        boardRemoveBuildings = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveBuildings"), BOARD_REMOVE_BUILDINGS);
         
         // Create the view menu.
         menu = new JMenu(getString("CommonMenuBar.ViewMenu"));
@@ -587,6 +598,17 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             boardSaveAs.setEnabled(false);
             boardSaveAsImage.setEnabled(false);
             boardSaveAsImageUnits.setEnabled(false);
+            boardChangeTheme.setEnabled(false);
+            boardUndo.setEnabled(false);
+            boardRedo.setEnabled(false);
+            boardRaise.setEnabled(false);
+            boardClear.setEnabled(false);
+            boardFlood.setEnabled(false);
+            boardRemove.setEnabled(false);
+            boardRemoveBuildings.setEnabled(false);
+            boardRemoveWater.setEnabled(false);
+            boardRemoveRoads.setEnabled(false);
+            boardRemoveForests.setEnabled(false);
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);
@@ -621,6 +643,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             boardRaise.setEnabled(true);
             boardClear.setEnabled(true);
             boardFlood.setEnabled(true);
+            boardRemove.setEnabled(true);
+            boardRemoveBuildings.setEnabled(true);
+            boardRemoveWater.setEnabled(true);
+            boardRemoveRoads.setEnabled(true);
+            boardRemoveForests.setEnabled(true);
         }
         
         // We're in-game.

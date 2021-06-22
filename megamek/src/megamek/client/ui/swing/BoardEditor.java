@@ -2009,9 +2009,40 @@ public class BoardEditor extends JPanel
             boardClear();
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLOOD)) {
             boardFlood();
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_WATER)) {
+            boardRemoveTerrain(Terrains.WATER);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_ROADS)) {
+            boardRemoveTerrain(Terrains.ROAD, Terrains.ROAD_FLUFF);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_FORESTS)) {
+            boardRemoveTerrain(Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_BUILDINGS)) {
+            boardRemoveTerrain(Terrains.BUILDING, Terrains.BLDG_ARMOR, Terrains.BLDG_CF, Terrains.BLDG_CLASS,
+                    Terrains.BLDG_FLUFF, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_ELEV,
+                    Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN);
         }
     }
     
+    /** Removes the given terrain type(s) from the board. */
+    private void boardRemoveTerrain(int type, int... types) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                if (board.getHex(c).containsTerrain(type) || board.getHex(c).containsAnyTerrainOf(types)) {
+                    saveToUndo(c);
+                    IHex newHex = board.getHex(c).duplicate();
+                    newHex.removeTerrain(type);
+                    for (int additional : types) {
+                        newHex.removeTerrain(additional);
+                    }
+                    board.setHex(c, newHex);
+                }
+            }
+        }
+        correctExits();
+        endCurrentUndoSet();
+    }
+    
+    /** Asks for confirmation and clears the whole board (sets all hexes to clear level 0). */ 
     private void boardClear() {
         if (!MMConfirmDialog.confirm(frame, 
                 Messages.getString("BoardEditor.clearTitle"), Messages.getString("BoardEditor.clearMsg"))) {
@@ -2048,7 +2079,7 @@ public class BoardEditor extends JPanel
         }
     }
     
-    /** Changes the level of all the board's hexes by the given delta. */
+    /** Asks for a level delta and changes the level of all the board's hexes by that delta. */
     private void boardChangeLevel() {
         var dlg = new LevelChangeDialog(frame);
         dlg.setVisible(true);
@@ -2070,7 +2101,7 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
     
-    /** Changes the level of all the board's hexes by the given delta. */
+    /** Asks for flooding info and then floods the whole board with water up to a level. */
     private void boardFlood() {
         var dlg = new FloodDialog(frame);
         dlg.setVisible(true);

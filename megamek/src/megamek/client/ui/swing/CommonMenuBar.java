@@ -102,6 +102,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JCheckBoxMenuItem viewMovementEnvelope;
     private JMenuItem viewMovModEnvelope;
     private JMenuItem boardChangeTheme;
+    private JMenuItem boardRaise;
     private JMenuItem viewLOSSetting;
     private JCheckBoxMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -188,6 +189,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         boardRedo = createMenuItem(menu, getString("CommonMenuBar.boardRedo"), BOARD_REDO);
         menu.addSeparator();
         boardChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
+        boardRaise = createMenuItem(menu, getString("CommonMenuBar.boardRaise"), BOARD_RAISE);
         
         // Create the view menu.
         menu = new JMenu(getString("CommonMenuBar.ViewMenu"));
@@ -612,6 +614,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             boardChangeTheme.setEnabled(true);
             boardUndo.setEnabled(true);
             boardRedo.setEnabled(true);
+            boardRaise.setEnabled(true);
         }
         
         // We're in-game.

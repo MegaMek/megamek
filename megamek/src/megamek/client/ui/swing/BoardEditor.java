@@ -48,7 +48,9 @@ import megamek.client.event.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
@@ -244,7 +246,6 @@ public class BoardEditor extends JPanel
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2  
     private int brushSize = 1;
     private int hexLeveltoDraw = -1000;
-    private Font fontElev = new Font("SansSerif", Font.BOLD, 20);
     private Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12);
     private EditorTextField texElev;
     private ScalingIconButton butElevUp;
@@ -1973,6 +1974,7 @@ public class BoardEditor extends JPanel
                 hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
                 buttonRedo.setEnabled(true);
                 currentUndoSet = null; // should be anyway
+                correctExits();
             }
             setFrameTitle();
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REDO)) {
@@ -1996,11 +1998,49 @@ public class BoardEditor extends JPanel
                 buttonUndo.setEnabled(true);
                 hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
                 currentUndoSet = null; // should be anyway
+                correctExits();
             }
             setFrameTitle();
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_RAISE)) {
+            boardChangeLevel();
         }
     }
     
+    /** Changes the level of all the board's hexes by the given delta. */
+    private void boardChangeLevel() {
+        var dlg = new LevelChangeDialog(frame);
+        dlg.setVisible(true);
+        if ((dlg.getResult() != DialogResult.CONFIRMED) || (dlg.getLevelChange() == 0)) {
+            return;
+        }
+        
+        board.resetStoredElevation();
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                saveToUndo(c);
+                IHex newHex = board.getHex(c).duplicate();
+                newHex.setLevel(newHex.getLevel() + dlg.getLevelChange());
+                board.setHex(c, newHex);
+            }
+        }
+        correctExits();
+        undoStack.push(currentUndoSet);
+        currentUndoSet = null;
+        buttonUndo.setEnabled(true);
+        // Drawing something disables any redo actions
+        redoStack.clear();
+        buttonRedo.setEnabled(false);
+        // When Undo (without Redo) has been used after saving
+        // and the user draws on the board, then it can
+        // no longer know if it's been returned to the saved state
+        // and it will always be treated as changed.
+        if (savedUndoStackSize > undoStack.size()) {
+            canReturnToSaved = false;
+        }
+        hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
+    }
+
     private void setConvenientTerrain(ActionEvent event, ITerrain... terrains) {
         if (terrains.length == 0) {
             return;
@@ -2213,10 +2253,11 @@ public class BoardEditor extends JPanel
      * 
      * @author Simon
      */
-    private class EditorTextField extends JTextField {
+    public static class EditorTextField extends JTextField {
         private static final long serialVersionUID = 1137300303131688344L;
         
         private int minValue = Integer.MIN_VALUE;
+        private int maxValue = Integer.MAX_VALUE;
         
         /**
          * Creates an EditorTextField based on JTextField. This is a 
@@ -2246,7 +2287,7 @@ public class BoardEditor extends JPanel
             });
             setMargin(new Insets(1,1,1,1));
             setHorizontalAlignment(JTextField.CENTER);
-            setFont(fontElev);
+            setFont(new Font("SansSerif", Font.BOLD, 20));
             setCursor(Cursor.getDefaultCursor());
         }
         
@@ -2268,6 +2309,30 @@ public class BoardEditor extends JPanel
         public EditorTextField(String text, int columns, int minimum) {
             this(text, columns);
             minValue = minimum;
+        }
+        
+        /**
+         * Creates an EditorTextField based on JTextField. This is a 
+         * specialized field for the BoardEditor that supports 
+         * MouseWheel changes.
+         * 
+         * @param text the initial text
+         * @param columns as in JTextField
+         * @param minimum a minimum value that the EditorTextField
+         * will generally adhere to when its own methods are used
+         * to change its value.
+         * @param maximum a maximum value that the EditorTextField
+         * will generally adhere to when its own methods are used
+         * to change its value.
+         * 
+         * @see javax.swing.JTextField#JTextField(String, int)
+         * 
+         * @author Simon/Juliez
+         */
+        public EditorTextField(String text, int columns, int minimum, int maximum) {
+            this(text, columns);
+            minValue = minimum;
+            maxValue = maximum;
         }
         
         /**
@@ -2297,6 +2362,7 @@ public class BoardEditor extends JPanel
          */
         public void setNumber(int newValue) {
             int value = Math.max(newValue, minValue);
+            value = Math.min(value, maxValue);
             setText(Integer.toString(value));
         }
         

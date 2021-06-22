@@ -13,24 +13,29 @@
  */
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.*;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.force.Force;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -1499,39 +1504,21 @@ public class EntityListFile {
 
     /**
      * Load a list of <code>Entity</code>s from the given file.
-     * <p/>
+     *
      * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
      *
-     * @param file
-     *            - the <code>File</code> to load from.
+     * @param file the <code>File</code> to load from.
      * @return A <code>Vector</code> containing <code>Entity</code>s loaded from
      *         the file. This vector may be empty, but it will not be
      *         <code>null</code>.
-     * @throws IOException
-     *             is thrown on any error.
      */
-    public static Vector<Entity> loadFrom(File file) throws IOException {
-
-        // Create an empty parser.
-        MULParser parser = new MULParser();
-
-        // Open up the file.
-        InputStream listStream = new FileInputStream(file);
-
-        // Read a Vector from the file.
-        parser.parse(listStream);
-        listStream.close();
-
-
-        // Was there any error in parsing?
+    public static Vector<Entity> loadFrom(File file, final GameOptions options) {
+        final MULParser parser = new MULParser(file, options);
         if (parser.hasWarningMessage()) {
-            System.out.println(parser.getWarningMessage());
+            MegaMek.getLogger().error(parser.getWarningMessage());
         }
-
-        // Return the entities.
         return parser.getEntities();
     }
-
 }

@@ -1517,7 +1517,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (unitFile != null) {
             try {
                 // Read the units from the file.
-                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
+                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile, getClient().getGame().getOptions());
 
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {

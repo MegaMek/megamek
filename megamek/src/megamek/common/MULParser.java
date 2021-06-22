@@ -15,6 +15,8 @@
 
 package megamek.common;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -28,7 +30,10 @@ import javax.xml.parsers.DocumentBuilder;
 
 import megamek.MegaMek;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -270,9 +275,10 @@ public class MULParser {
      */
     private Hashtable<String, String> kills;
 
-
     StringBuffer warning;
 
+    //region Constructors
+    @Deprecated // required for deprecated MekHQ-usage
     public MULParser() {
         warning = new StringBuffer();
         entities = new Vector<>();
@@ -285,12 +291,18 @@ public class MULParser {
         pilots = new Vector<>();
     }
 
-    public MULParser(InputStream fin) {
+    public MULParser(final File file, final GameOptions options) {
         this();
-        parse(fin);
-    }
 
-    public void parse(InputStream fin) {
+        try (InputStream is = new FileInputStream(file)) {
+            parse(is, options);
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+        }
+    }
+    //endregion Constructors
+
+    private void parse(final InputStream fin, final GameOptions options) {
         // Reset the warning message.
         warning = new StringBuffer();
 
@@ -324,10 +336,10 @@ public class MULParser {
         // Stupid weird parsing of XML. At least this cleans it up.
         element.normalize();
 
-        parse(element);
+        parse(element, options);
     }
 
-    public void parse(Element element) {
+    public void parse(final Element element, final GameOptions options) {
         String version = element.getAttribute(VERSION);
         if (version.equals("")) {
             warning.append("Warning: No version specified, correct parsing ")
@@ -336,11 +348,11 @@ public class MULParser {
 
         String nodeName = element.getNodeName();
         if (nodeName.equalsIgnoreCase(RECORD)) {
-            parseRecord(element);
+            parseRecord(element, options);
         } else if (nodeName.equalsIgnoreCase(UNIT)) {
-            parseUnit(element, entities);
+            parseUnit(element, options, entities);
         } else if (nodeName.equalsIgnoreCase(ENTITY)) {
-            parseEntity(element, entities);
+            parseEntity(element, options, entities);
         } else {
             warning.append("Error: root element isn't a Record, Unit, or Entity tag! ")
                     .append("Nothing to parse!\n");
@@ -348,10 +360,10 @@ public class MULParser {
     }
 
     /**
-     * Parse a Unit tag.  Unit tags will contain a list of Entity tags.
-     * @param unitNode
+     * Parse a Unit tag. Unit tags will contain a list of Entity tags.
+     * @param unitNode the node containing the unit tag
      */
-    private void parseRecord(Element unitNode) {
+    private void parseRecord(final Element unitNode, final GameOptions options) {
         NodeList nl = unitNode.getChildNodes();
 
         // Iterate through the children, looking for Entity tags
@@ -365,36 +377,38 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(UNIT)) {
-                    parseUnit((Element) currNode, entities);
+                    parseUnit((Element) currNode, options, entities);
                 } else if (nodeName.equalsIgnoreCase(SURVIVORS)) {
-                    parseUnit((Element) currNode, survivors);
+                    parseUnit((Element) currNode, options, survivors);
                 } else if (nodeName.equalsIgnoreCase(ALLIES)) {
-                    parseUnit((Element) currNode, allies);
+                    parseUnit((Element) currNode, options, allies);
                 } else if (nodeName.equalsIgnoreCase(SALVAGE)) {
-                    parseUnit((Element) currNode, salvage);
+                    parseUnit((Element) currNode, options, salvage);
                 } else if (nodeName.equalsIgnoreCase(RETREATED)) {
-                    parseUnit((Element) currNode, retreated);
+                    parseUnit((Element) currNode, options, retreated);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)) {
-                    parseUnit((Element) currNode, devastated);
+                    parseUnit((Element) currNode, options, devastated);
                 } else if (nodeName.equalsIgnoreCase(KILLS)) {
                     parseKills((Element) currNode);
                 } else if (nodeName.equalsIgnoreCase(ENTITY)) {
-                    parseUnit((Element) currNode, entities);
+                    parseUnit((Element) currNode, options, entities);
                 } else if (nodeName.equalsIgnoreCase(PILOT)) {
-                    parsePilot((Element) currNode);
+                    parsePilot((Element) currNode, options);
                 } else if (nodeName.equalsIgnoreCase(CREW)) {
-                    parseCrew((Element) currNode);
+                    parseCrew((Element) currNode, options);
                 }
             }
         }
     }
 
     /**
-     * Parse a Unit tag.  Unit tags will contain a list of Entity tags.
-     * @param unitNode
-     * @param list - which list to add found entities too
+     * Parse a Unit tag. Unit tags will contain a list of Entity tags.
+     * @param unitNode the node containing the unit tag
+     * @param options the game options to parse using
+     * @param list the list to add found entities to
      */
-    private void parseUnit(Element unitNode, Vector<Entity> list) {
+    private void parseUnit(final Element unitNode, final GameOptions options,
+                           final Vector<Entity> list) {
         NodeList nl = unitNode.getChildNodes();
 
         // Iterate through the children, looking for Entity tags
@@ -408,11 +422,11 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(ENTITY)) {
-                    parseEntity((Element) currNode, list);
+                    parseEntity((Element) currNode, options, list);
                 } else if (nodeName.equalsIgnoreCase(PILOT)) {
-                    parsePilot((Element) currNode);
+                    parsePilot((Element) currNode, options);
                 } else if (nodeName.equalsIgnoreCase(CREW)) {
-                    parseCrew((Element) currNode);
+                    parseCrew((Element) currNode, options);
                 }
             }
         }
@@ -447,14 +461,16 @@ public class MULParser {
     }
 
     /**
-     * Parse an Entity tag.  Entity tags will have a number of attributes such
-     * as model, chassis, type, etc.  They should also have a child Pilot tag
-     * and they may also contain some number of location tags.
+     * Parse an Entity tag. Entity tags will have a number of attributes such as model, chassis,
+     * type, etc. They should also have a child Pilot tag and they may also contain some number of
+     * location tags.
      *
-     * @param entityNode
-     * @param list - which list to add found entities too
+     * @param entityNode the node to parse the entity tag from
+     * @param options the game options to parse using
+     * @param list the list to add found entities to
      */
-    private void parseEntity(Element entityNode, Vector<Entity> list) {
+    private void parseEntity(final Element entityNode, final GameOptions options,
+                             final Vector<Entity> list) {
         Entity entity;
 
         // We need to get a new Entity, use the chassis and model to create one
@@ -485,9 +501,9 @@ public class MULParser {
                 Element currEle = (Element) currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(PILOT)) {
-                    parsePilot(currEle, entity);
+                    parsePilot(currEle, options, entity);
                 } else if (nodeName.equalsIgnoreCase(CREW)) {
-                    parseCrew(currEle, entity);
+                    parseCrew(currEle, options, entity);
                 } else if (nodeName.equalsIgnoreCase(LOCATION)) {
                     parseLocation(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(MOVEMENT)) {
@@ -787,25 +803,26 @@ public class MULParser {
     }
 
     /**
-     * Convenience function that calls <code>parsePilot</code> with a null
-     * Entity.
+     * Convenience function that calls <code>parsePilot</code> with a null Entity.
      *
-     * @param pilotNode The Pilot tag to create a <code>Crew</code> from
+     * @param node The Pilot tag to create a <code>Crew</code> from
+     * @param options The options to parse the crew based on
      */
-    private void parsePilot(Element pilotNode) {
-        parsePilot(pilotNode, null);
+    private void parsePilot(final Element node, final GameOptions options) {
+        parsePilot(node, options, null);
     }
 
     /**
-     * Given a pilot tag, read the attributes and create a new <code>Crew</code>
-     * instance.  If a non-null <code>Entity</code> is passed, the new crew will
-     * be set as the crew for the given <code>Entity</code>.
+     * Given a pilot tag, read the attributes and create a new <code>Crew</code> instance. If a
+     * non-null <code>Entity</code> is passed, the new crew will be set as the crew for the given
+     * <code>Entity</code>.
      *
      * @param pilotNode The Pilot tag to create a <code>Crew</code> from
+     * @param options   The options to parse the crew based on
      * @param entity    If non-null, the new <code>Crew</code> will be set as
      *                  the crew of this <code>Entity</code>
      */
-    private void parsePilot(Element pilotNode, Entity entity) {
+    private void parsePilot(final Element pilotNode, final GameOptions options, final Entity entity) {
         Map<String,String> attributes = new HashMap<>();
         for (int i = 0; i < pilotNode.getAttributes().getLength(); i++) {
             final Node node = pilotNode.getAttributes().item(i);
@@ -818,13 +835,13 @@ public class MULParser {
         } else {
             crew = new Crew(CrewType.SINGLE);
         }
-        setCrewAttributes(crew, attributes, entity);
-        setPilotAttributes(crew, 0, attributes);
+        setCrewAttributes(options, entity, crew, attributes);
+        setPilotAttributes(options, crew, 0, attributes);
         // LAMs have a second set of gunnery and piloting stats, so we create a dummy crew
         // and parse a copy of the attributes with the aero stats altered to their non-aero keys,
         // then copy the results into the aero skills of the LAMPilot.
         if (entity instanceof LandAirMech) {
-            crew = LAMPilot.convertToLAMPilot((LandAirMech)entity, crew);
+            crew = LAMPilot.convertToLAMPilot((LandAirMech) entity, crew);
             Crew aeroCrew = new Crew(CrewType.SINGLE);
             Map<String,String> aeroAttributes = new HashMap<>(attributes);
             for (String key : attributes.keySet()) {
@@ -832,39 +849,39 @@ public class MULParser {
                     aeroAttributes.put(key.replace("Aero", ""), attributes.get(key));
                 }
             }
-            setPilotAttributes(aeroCrew, 0, aeroAttributes);
-            ((LAMPilot)crew).setGunneryAero(aeroCrew.getGunnery());
-            ((LAMPilot)crew).setGunneryAeroM(aeroCrew.getGunneryM());
-            ((LAMPilot)crew).setGunneryAeroB(aeroCrew.getGunneryB());
-            ((LAMPilot)crew).setGunneryAeroL(aeroCrew.getGunneryL());
-            ((LAMPilot)crew).setPilotingAero(aeroCrew.getPiloting());
+            setPilotAttributes(options, aeroCrew, 0, aeroAttributes);
+            ((LAMPilot) crew).setGunneryAero(aeroCrew.getGunnery());
+            ((LAMPilot) crew).setGunneryAeroM(aeroCrew.getGunneryM());
+            ((LAMPilot) crew).setGunneryAeroB(aeroCrew.getGunneryB());
+            ((LAMPilot) crew).setGunneryAeroL(aeroCrew.getGunneryL());
+            ((LAMPilot) crew).setPilotingAero(aeroCrew.getPiloting());
             entity.setCrew(crew);
         }
         pilots.add(crew);
     }
 
     /**
-    /**
-     * Convenience function that calls <code>parseCrew</code> with a null
-     * Entity.
+     * Convenience function that calls <code>parseCrew</code> with a null Entity.
      *
-     * @param crewNode The crew tag to create a <code>Crew</code> from
+     * @param node The crew tag to create a <code>Crew</code> from
+     * @param options The game options to create the crew with
      */
-    private void parseCrew(Element crewNode) {
-        parseCrew(crewNode, null);
+    private void parseCrew(final Element node, final GameOptions options) {
+        parseCrew(node, options, null);
     }
 
     /**
      * Used for multi-crew cockpits.
-     * Given a tag, read the attributes and create a new <code>Crew</code>
-     * instance.  If a non-null <code>Entity</code> is passed, the new crew will
-     * be set as the crew for the given <code>Entity</code>.
+     * Given a tag, read the attributes and create a new <code>Crew</code> instance. If a non-null
+     * <code>Entity</code> is passed, the new crew will be set as the crew for the given
+     * <code>Entity</code>.
      *
+     * @param options  The <code>GameOptions</code> set when loading this crew
      * @param crewNode The crew tag to create a <code>Crew</code> from
-     * @param entity   If non-null, the new <code>Crew</code> will be set as
-     *                 the crew of this <code>Entity</code>
+     * @param entity   If non-null, the new <code>Crew</code> will be set as the crew of this Entity
      */
-    private void parseCrew(Element crewNode, Entity entity) {
+    private void parseCrew(final Element crewNode, final GameOptions options,
+                           final @Nullable Entity entity) {
         final Map<String, String> crewAttr = new HashMap<>();
         for (int i = 0; i < crewNode.getAttributes().getLength(); i++) {
             final Node node = crewNode.getAttributes().item(i);
@@ -910,11 +927,11 @@ public class MULParser {
                             .append(" cockpit: ").append(slot);
                 } else {
                     crew.setMissing(false, slot);
-                    setPilotAttributes(crew, slot, pilotAttr);
+                    setPilotAttributes(options, crew, slot, pilotAttr);
                 }
             }
         }
-        setCrewAttributes(crew, crewAttr, entity);
+        setCrewAttributes(options, entity, crew, crewAttr);
     }
 
     /**
@@ -922,12 +939,14 @@ public class MULParser {
      * (single/collective crews) or a <crew> element (multi-crew cockpits). If an <code>Entity</code>
      * is provided, the crew will be assigned to it.
      *
+     * @param options    The <code>GameOptions</code> set when loading this crew
+     * @param entity     The <code>Entity</code> for this crew (or null if the crew has abandoned the unit).
      * @param crew       The crew to set fields for.
      * @param attributes Attribute values of the <code>pilot</code> or <code>crew</code>
      *                   element mapped to the attribute name.
-     * @param entity     The <code>Entity</code> for this crew (or null if the crew has abandoned the unit).
      */
-    private void setCrewAttributes(Crew crew, Map<String,String> attributes, Entity entity) {
+    private void setCrewAttributes(final GameOptions options, final Entity entity, final Crew crew,
+                                   final Map<String,String> attributes) {
         // init bonus
         int initBVal = 0;
         if ((attributes.containsKey(INITB)) && !attributes.get(INITB).isBlank()) {
@@ -979,7 +998,9 @@ public class MULParser {
 
         crew.setInitBonus(initBVal);
         crew.setCommandBonus(commandBVal);
-        if (attributes.containsKey(ADVS) && !attributes.get(ADVS).trim().isBlank()) {
+
+        if (options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
+                && attributes.containsKey(ADVS) && !attributes.get(ADVS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ADVS), "::");
             while (st.hasMoreTokens()) {
                 String adv = st.nextToken();
@@ -994,7 +1015,9 @@ public class MULParser {
             }
 
         }
-        if (attributes.containsKey(EDGE) && (attributes.get(EDGE).trim().length() > 0)) {
+
+        if (options.booleanOption(OptionsConstants.EDGE) && attributes.containsKey(EDGE)
+                && !attributes.get(EDGE).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(EDGE), "::");
             while (st.hasMoreTokens()) {
                 String edg = st.nextToken();
@@ -1008,7 +1031,9 @@ public class MULParser {
                 }
             }
         }
-        if (attributes.containsKey(IMPLANTS) && (attributes.get(IMPLANTS).trim().length() > 0)) {
+
+        if (options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
+                && attributes.containsKey(IMPLANTS) && !attributes.get(IMPLANTS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(IMPLANTS), "::");
             while (st.hasMoreTokens()) {
                 String implant = st.nextToken();
@@ -1023,7 +1048,7 @@ public class MULParser {
             }
         }
 
-        if (attributes.containsKey(EJECTED) && attributes.get(EJECTED).length() > 0) {
+        if (attributes.containsKey(EJECTED) && !attributes.get(EJECTED).isBlank()) {
             crew.setEjected(Boolean.parseBoolean(attributes.get(EJECTED)));
         }
 
@@ -1054,14 +1079,15 @@ public class MULParser {
     }
 
     /**
-     *      * Helper method that parses attributes common to both single/collective crews and individual
+     * Helper method that parses attributes common to both single/collective crews and individual
      * slots of a unit with a multi-crew cockpit.
      *
      * @param crew The crew object for set values for
      * @param slot The slot of the crew object that corresponds to these attributes.
      * @param attributes A map of attribute values keyed to the attribute names.
      */
-    private void setPilotAttributes(Crew crew, int slot, Map<String, String> attributes) {
+    private void setPilotAttributes(final GameOptions options, final Crew crew, final int slot,
+                                    final Map<String, String> attributes) {
         final boolean hasGun = attributes.containsKey(GUNNERY) && !attributes.get(GUNNERY).isBlank();
         final boolean hasRpgGun = attributes.containsKey(GUNNERYL) && !attributes.get(GUNNERYL).isBlank()
                 && attributes.containsKey(GUNNERYM) && !attributes.get(GUNNERYM).isBlank()
@@ -1107,6 +1133,7 @@ public class MULParser {
                         return;
                     }
                 }
+
                 if ((attributes.containsKey(GUNNERYM)) && !attributes.get(GUNNERYM).isBlank()) {
                     try {
                         gunneryMVal = Integer.parseInt(attributes.get(GUNNERYM));
@@ -1120,6 +1147,7 @@ public class MULParser {
                         return;
                     }
                 }
+
                 if ((attributes.containsKey(GUNNERYB)) && !attributes.get(GUNNERYB).isBlank()) {
                     try {
                         gunneryBVal = Integer.parseInt(attributes.get(GUNNERYB));
@@ -1136,7 +1164,7 @@ public class MULParser {
             }
 
             if (!hasGun) {
-                gunVal = (gunneryLVal + gunneryMVal + gunneryBVal) / 3;
+                gunVal = (int) Math.floor((gunneryLVal + gunneryMVal + gunneryBVal) / 3.0);
             } else if (!hasRpgGun) {
                 gunneryLVal = gunVal;
                 gunneryMVal = gunVal;
@@ -1159,7 +1187,8 @@ public class MULParser {
 
             // toughness
             int toughVal = 0;
-            if ((attributes.containsKey(TOUGH)) && !attributes.get(TOUGH).isBlank()) {
+            if (options.booleanOption(OptionsConstants.RPG_TOUGHNESS)
+                    && (attributes.containsKey(TOUGH)) && !attributes.get(TOUGH).isBlank()) {
                 try {
                     toughVal = Integer.parseInt(attributes.get(TOUGH));
                 } catch (NumberFormatException ignored) {
@@ -1168,7 +1197,8 @@ public class MULParser {
             }
 
             int artVal = gunVal;
-            if ((attributes.containsKey(ARTILLERY)) && !attributes.get(ARTILLERY).isBlank()) {
+            if (options.booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)
+                    && (attributes.containsKey(ARTILLERY)) && !attributes.get(ARTILLERY).isBlank()) {
                 try {
                     artVal = Integer.parseInt(attributes.get(ARTILLERY));
                 } catch (NumberFormatException ignored) {
@@ -1231,7 +1261,7 @@ public class MULParser {
                     crew.setHits(hitVal, slot);
                 }
 
-            } // End have-hits
+            }
 
             if ((attributes.containsKey(EXT_ID)) && !attributes.get(EXT_ID).isBlank()) {
                 crew.setExternalIdAsString(attributes.get(EXT_ID), slot);

@@ -2042,7 +2042,6 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
     
-    
     /** Removes the given terrain type(s) from the board. */
     private void boardRemoveTerrain(int type, int... types) {
         for (int x = 0; x < board.getWidth(); x++) {
@@ -2081,6 +2080,10 @@ public class BoardEditor extends JPanel
         endCurrentUndoSet();
     }
     
+    /** 
+     * "Pushes" the current set of undoable hexes as a package to the stack, meaning that a
+     * paint or other action is finished.
+     */
     private void endCurrentUndoSet() {
         if ((currentUndoSet != null) && !currentUndoSet.isEmpty()) {
             undoStack.push(currentUndoSet);
@@ -2142,6 +2145,14 @@ public class BoardEditor extends JPanel
                     int presentDepth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
                     if (dlg.getRemoveTerrain()) {
                         newHex.removeAllTerrains();
+                        // Restore bridges if they're above the water
+                        if (hex.containsTerrain(BRIDGE) 
+                                && (hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() >= surface)) {
+                            newHex.addTerrain(hex.getTerrain(BRIDGE)); 
+                            newHex.addTerrain(TF.createTerrain(BRIDGE_ELEV, 
+                                    hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() - surface));
+                            newHex.addTerrain(hex.getTerrain(BRIDGE_CF));
+                        }
                     }
                     int addedWater = surface - hex.getLevel();
                     newHex.addTerrain(TF.createTerrain(Terrains.WATER, addedWater + presentDepth));
@@ -2170,6 +2181,7 @@ public class BoardEditor extends JPanel
         selectTerrain(terrains[0]);
     }
     
+    /** Selects the given terrain in the terrain list, if possible. All but terrain type is ignored. */
     private void selectTerrain(ITerrain terrain) {
         for (int i = 0; i < lisTerrain.getModel().getSize(); i++) {
             ITerrain listEntry = lisTerrain.getModel().getElementAt(i).getTerrain();
@@ -2180,6 +2192,10 @@ public class BoardEditor extends JPanel
         }
     }
     
+    /** 
+     * Sets the "Use Exits" checkbox to newState and adapts the coloring of the textfield accordingly.
+     * Use this instead of setting the checkbox state directly. 
+     */  
     private void setExitsState(boolean newState) {
         cheTerrExitSpecified.setSelected(newState);
         if (cheTerrExitSpecified.isSelected()) {

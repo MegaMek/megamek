@@ -17,7 +17,6 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.force.Force;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -1500,25 +1498,5 @@ public class EntityListFile {
 
         return retVal;
 
-    }
-
-    /**
-     * Load a list of <code>Entity</code>s from the given file.
-     *
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to a
-     * particular game is ignored.
-     *
-     * @param file the <code>File</code> to load from.
-     * @return A <code>Vector</code> containing <code>Entity</code>s loaded from
-     *         the file. This vector may be empty, but it will not be
-     *         <code>null</code>.
-     */
-    public static Vector<Entity> loadFrom(File file, final GameOptions options) {
-        final MULParser parser = new MULParser(file, options);
-        if (parser.hasWarningMessage()) {
-            MegaMek.getLogger().error(parser.getWarningMessage());
-        }
-        return parser.getEntities();
     }
 }

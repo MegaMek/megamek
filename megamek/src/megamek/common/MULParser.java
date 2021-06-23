@@ -15,6 +15,21 @@
 
 package megamek.common;
 
+import megamek.MegaMek;
+import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.Gender;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.utils.MegaMekXmlUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,32 +41,13 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-
-import megamek.MegaMek;
-import megamek.client.generator.RandomNameGenerator;
-import megamek.common.annotations.Nullable;
-import megamek.common.enums.Gender;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.infantry.InfantryWeapon;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import megamek.common.loaders.EntityLoadingException;
-import megamek.utils.MegaMekXmlUtil;
-
 /**
  * Class for reading in and parsing MUL XML files.  The MUL xsl is defined in
  * the docs directory.
  *
  * @author arlith
- *
  */
 public class MULParser {
-
     public static final String VERSION = "version";
 
     /**
@@ -278,8 +274,7 @@ public class MULParser {
     StringBuffer warning;
 
     //region Constructors
-    @Deprecated // required for deprecated MekHQ-usage
-    public MULParser() {
+    private MULParser() {
         warning = new StringBuffer();
         entities = new Vector<>();
         survivors = new Vector<>();
@@ -291,71 +286,58 @@ public class MULParser {
         pilots = new Vector<>();
     }
 
-    public MULParser(final File file, final GameOptions options) {
+    public MULParser(final File file, final @Nullable GameOptions options) throws Exception {
         this();
 
         try (InputStream is = new FileInputStream(file)) {
             parse(is, options);
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
         }
+    }
+
+    public MULParser(final Element element, final @Nullable GameOptions options) {
+        this();
+        parse(element, options);
     }
     //endregion Constructors
 
-    private void parse(final InputStream fin, final GameOptions options) {
-        // Reset the warning message.
-        warning = new StringBuffer();
-
-        // Clear the entities.
-        entities.removeAllElements();
-        survivors.removeAllElements();
-        allies.removeAllElements();
-        salvage.removeAllElements();
-        retreated.removeAllElements();
-        devastated.removeAllElements();
-        pilots.removeAllElements();
-        kills.clear();
-
+    private void parse(final InputStream fin, final @Nullable GameOptions options) throws Exception {
         Document xmlDoc;
 
         try {
-            // Using factory get an instance of document builder
-            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
-
-            // Parse using builder to get DOM representation of the XML file
+            final DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fin);
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
             warning.append("Error parsing MUL file!\n");
-            return;
+            throw e;
         }
 
-        Element element = xmlDoc.getDocumentElement();
-
-        // Get rid of empty text nodes and adjacent text nodes...
-        // Stupid weird parsing of XML. At least this cleans it up.
+        final Element element = xmlDoc.getDocumentElement();
         element.normalize();
-
         parse(element, options);
     }
 
-    public void parse(final Element element, final GameOptions options) {
-        String version = element.getAttribute(VERSION);
+    private void parse(final Element element, final @Nullable GameOptions options) {
+        // Version Check
+        final String version = element.getAttribute(VERSION);
         if (version.equals("")) {
             warning.append("Warning: No version specified, correct parsing ")
                     .append("not guaranteed!\n");
         }
 
-        String nodeName = element.getNodeName();
-        if (nodeName.equalsIgnoreCase(RECORD)) {
+        // Then parse the element
+        if (element.getNodeName().equalsIgnoreCase(RECORD)) {
             parseRecord(element, options);
-        } else if (nodeName.equalsIgnoreCase(UNIT)) {
+        } else if (element.getNodeName().equalsIgnoreCase(UNIT)) {
             parseUnit(element, options, entities);
-        } else if (nodeName.equalsIgnoreCase(ENTITY)) {
+        } else if (element.getNodeName().equalsIgnoreCase(ENTITY)) {
             parseEntity(element, options, entities);
         } else {
-            warning.append("Error: root element isn't a Record, Unit, or Entity tag! ")
-                    .append("Nothing to parse!\n");
+            warning.append("Error: root element isn't a Record, Unit, or Entity tag! Nothing to parse!\n");
+        }
+
+        // Finally, output the warning if there is any
+        if (hasWarningMessage()) {
+            MegaMek.getLogger().error(getWarningMessage());
         }
     }
 
@@ -363,7 +345,7 @@ public class MULParser {
      * Parse a Unit tag. Unit tags will contain a list of Entity tags.
      * @param unitNode the node containing the unit tag
      */
-    private void parseRecord(final Element unitNode, final GameOptions options) {
+    private void parseRecord(final Element unitNode, final @Nullable GameOptions options) {
         NodeList nl = unitNode.getChildNodes();
 
         // Iterate through the children, looking for Entity tags
@@ -407,7 +389,7 @@ public class MULParser {
      * @param options the game options to parse using
      * @param list the list to add found entities to
      */
-    private void parseUnit(final Element unitNode, final GameOptions options,
+    private void parseUnit(final Element unitNode, final @Nullable GameOptions options,
                            final Vector<Entity> list) {
         NodeList nl = unitNode.getChildNodes();
 
@@ -469,7 +451,7 @@ public class MULParser {
      * @param options the game options to parse using
      * @param list the list to add found entities to
      */
-    private void parseEntity(final Element entityNode, final GameOptions options,
+    private void parseEntity(final Element entityNode, final @Nullable GameOptions options,
                              final Vector<Entity> list) {
         Entity entity;
 
@@ -808,7 +790,7 @@ public class MULParser {
      * @param node The Pilot tag to create a <code>Crew</code> from
      * @param options The options to parse the crew based on
      */
-    private void parsePilot(final Element node, final GameOptions options) {
+    private void parsePilot(final Element node, final @Nullable GameOptions options) {
         parsePilot(node, options, null);
     }
 
@@ -822,7 +804,8 @@ public class MULParser {
      * @param entity    If non-null, the new <code>Crew</code> will be set as
      *                  the crew of this <code>Entity</code>
      */
-    private void parsePilot(final Element pilotNode, final GameOptions options, final Entity entity) {
+    private void parsePilot(final Element pilotNode, final @Nullable GameOptions options,
+                            final Entity entity) {
         Map<String,String> attributes = new HashMap<>();
         for (int i = 0; i < pilotNode.getAttributes().getLength(); i++) {
             final Node node = pilotNode.getAttributes().item(i);
@@ -866,7 +849,7 @@ public class MULParser {
      * @param node The crew tag to create a <code>Crew</code> from
      * @param options The game options to create the crew with
      */
-    private void parseCrew(final Element node, final GameOptions options) {
+    private void parseCrew(final Element node, final @Nullable GameOptions options) {
         parseCrew(node, options, null);
     }
 
@@ -880,7 +863,7 @@ public class MULParser {
      * @param crewNode The crew tag to create a <code>Crew</code> from
      * @param entity   If non-null, the new <code>Crew</code> will be set as the crew of this Entity
      */
-    private void parseCrew(final Element crewNode, final GameOptions options,
+    private void parseCrew(final Element crewNode, final @Nullable GameOptions options,
                            final @Nullable Entity entity) {
         final Map<String, String> crewAttr = new HashMap<>();
         for (int i = 0; i < crewNode.getAttributes().getLength(); i++) {
@@ -945,8 +928,8 @@ public class MULParser {
      * @param attributes Attribute values of the <code>pilot</code> or <code>crew</code>
      *                   element mapped to the attribute name.
      */
-    private void setCrewAttributes(final GameOptions options, final Entity entity, final Crew crew,
-                                   final Map<String,String> attributes) {
+    private void setCrewAttributes(final @Nullable GameOptions options, final Entity entity,
+                                   final Crew crew, final Map<String,String> attributes) {
         // init bonus
         int initBVal = 0;
         if ((attributes.containsKey(INITB)) && !attributes.get(INITB).isBlank()) {
@@ -999,7 +982,7 @@ public class MULParser {
         crew.setInitBonus(initBVal);
         crew.setCommandBonus(commandBVal);
 
-        if (options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
+        if ((options != null) && options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
                 && attributes.containsKey(ADVS) && !attributes.get(ADVS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ADVS), "::");
             while (st.hasMoreTokens()) {
@@ -1016,8 +999,8 @@ public class MULParser {
 
         }
 
-        if (options.booleanOption(OptionsConstants.EDGE) && attributes.containsKey(EDGE)
-                && !attributes.get(EDGE).isBlank()) {
+        if ((options != null) && options.booleanOption(OptionsConstants.EDGE)
+                && attributes.containsKey(EDGE) && !attributes.get(EDGE).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(EDGE), "::");
             while (st.hasMoreTokens()) {
                 String edg = st.nextToken();
@@ -1032,7 +1015,7 @@ public class MULParser {
             }
         }
 
-        if (options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
+        if ((options != null) && options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
                 && attributes.containsKey(IMPLANTS) && !attributes.get(IMPLANTS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(IMPLANTS), "::");
             while (st.hasMoreTokens()) {
@@ -1086,8 +1069,8 @@ public class MULParser {
      * @param slot The slot of the crew object that corresponds to these attributes.
      * @param attributes A map of attribute values keyed to the attribute names.
      */
-    private void setPilotAttributes(final GameOptions options, final Crew crew, final int slot,
-                                    final Map<String, String> attributes) {
+    private void setPilotAttributes(final @Nullable GameOptions options, final Crew crew,
+                                    final int slot, final Map<String, String> attributes) {
         final boolean hasGun = attributes.containsKey(GUNNERY) && !attributes.get(GUNNERY).isBlank();
         final boolean hasRpgGun = attributes.containsKey(GUNNERYL) && !attributes.get(GUNNERYL).isBlank()
                 && attributes.containsKey(GUNNERYM) && !attributes.get(GUNNERYM).isBlank()
@@ -1187,7 +1170,7 @@ public class MULParser {
 
             // toughness
             int toughVal = 0;
-            if (options.booleanOption(OptionsConstants.RPG_TOUGHNESS)
+            if ((options != null) && options.booleanOption(OptionsConstants.RPG_TOUGHNESS)
                     && (attributes.containsKey(TOUGH)) && !attributes.get(TOUGH).isBlank()) {
                 try {
                     toughVal = Integer.parseInt(attributes.get(TOUGH));
@@ -1197,7 +1180,7 @@ public class MULParser {
             }
 
             int artVal = gunVal;
-            if (options.booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)
+            if ((options != null) && options.booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)
                     && (attributes.containsKey(ARTILLERY)) && !attributes.get(ARTILLERY).isBlank()) {
                 try {
                     artVal = Integer.parseInt(attributes.get(ARTILLERY));

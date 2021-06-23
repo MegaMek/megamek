@@ -1517,30 +1517,32 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (unitFile != null) {
             try {
                 // Read the units from the file.
-                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile, getClient().getGame().getOptions());
+                final Vector<Entity> loadedUnits = new MULParser(unitFile,
+                        getClient().getGame().getOptions()).getEntities();
 
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
                     if (reinforce) {
-                        entity.setDeployRound(client.getGame().getRoundCount()+1);
+                        entity.setDeployRound(client.getGame().getRoundCount() + 1);
                         entity.setGame(client.getGame());
                         // Set these to true, otherwise units reinforced in
                         // the movement turn are considered selectable
                         entity.setDone(true);
                         entity.setUnloaded(true);
                         if (entity instanceof IBomber) {
-                            ((IBomber)entity).applyBombs();
+                            ((IBomber) entity).applyBombs();
                         }
                     }
                 }
-                if (loadedUnits.size() > 0){
+
+                if (!loadedUnits.isEmpty()) {
                     client.sendAddEntity(loadedUnits);
                     addedUnits = true;
                 }
-            } catch (IOException excep) {
-                excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
+            } catch (Exception e) {
+                MegaMek.getLogger().error(e);
+                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), e.getMessage());
             }
         }
 

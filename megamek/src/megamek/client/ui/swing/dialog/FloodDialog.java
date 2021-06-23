@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.dialog;
 
 import java.awt.Container;
@@ -13,8 +31,6 @@ import static megamek.client.ui.Messages.*;
 public final class FloodDialog extends AbstractButtonDialog {
 
     private BoardEditor.EditorTextField txtLevelChange = new BoardEditor.EditorTextField("0", 5, -5, 15);
-    private JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.info")), SwingConstants.CENTER);
-    private JLabel labRemoveInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.removeInfo")), SwingConstants.CENTER);
     private MMToggleButton butRemove = new MMToggleButton(scaleStringForGUI(getString("FloodDialog.removeButton")));
 
     /** Constructs a modal LevelChangeDialog with frame as parent. */
@@ -35,7 +51,11 @@ public final class FloodDialog extends AbstractButtonDialog {
         JPanel toggleButtonPanel = new FixedYPanel();
         toggleButtonPanel.add(butRemove);
         
+        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.info")), 
+                SwingConstants.CENTER);
         labInfo.setAlignmentX(CENTER_ALIGNMENT);
+        JLabel labRemoveInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.removeInfo")), 
+                SwingConstants.CENTER);
         labRemoveInfo.setAlignmentX(CENTER_ALIGNMENT);
         
         result.add(Box.createVerticalGlue());

@@ -2099,7 +2099,7 @@ public class BoardEditor extends JPanel
             if (savedUndoStackSize > undoStack.size()) {
                 canReturnToSaved = false;
             }
-            hasChanges = !canReturnToSaved | (undoStack.size() != savedUndoStackSize);
+            hasChanges = !canReturnToSaved || (undoStack.size() != savedUndoStackSize);
         }
     }
     
@@ -2107,7 +2107,7 @@ public class BoardEditor extends JPanel
     private void boardChangeLevel() {
         var dlg = new LevelChangeDialog(frame);
         dlg.setVisible(true);
-        if ((dlg.getResult() != DialogResult.CONFIRMED) || (dlg.getLevelChange() == 0)) {
+        if (!dlg.getResult().isConfirmed() || (dlg.getLevelChange() == 0)) {
             return;
         }
         
@@ -2129,7 +2129,7 @@ public class BoardEditor extends JPanel
     private void boardFlood() {
         var dlg = new FloodDialog(frame);
         dlg.setVisible(true);
-        if (dlg.getResult() != DialogResult.CONFIRMED) {
+        if (!dlg.getResult().isConfirmed()) {
             return;
         }
         

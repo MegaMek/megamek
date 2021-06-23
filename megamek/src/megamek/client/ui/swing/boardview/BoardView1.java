@@ -154,6 +154,7 @@ import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.event.GameBoardChangeEvent;
@@ -6722,7 +6723,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
-    public String changeTheme() {
+    public @Nullable String changeTheme() {
         if (game == null) {
             return null;
         }

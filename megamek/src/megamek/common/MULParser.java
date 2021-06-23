@@ -313,17 +313,16 @@ public class MULParser {
 
         final Element element = xmlDoc.getDocumentElement();
         element.normalize();
-        parse(element, options);
-    }
 
-    private void parse(final Element element, final @Nullable GameOptions options) {
-        // Version Check
         final String version = element.getAttribute(VERSION);
         if (version.equals("")) {
             warning.append("Warning: No version specified, correct parsing ")
                     .append("not guaranteed!\n");
         }
+        parse(element, options);
+    }
 
+    private void parse(final Element element, final @Nullable GameOptions options) {
         // Then parse the element
         if (element.getNodeName().equalsIgnoreCase(RECORD)) {
             parseRecord(element, options);
@@ -337,7 +336,7 @@ public class MULParser {
 
         // Finally, output the warning if there is any
         if (hasWarningMessage()) {
-            MegaMek.getLogger().error(getWarningMessage());
+            MegaMek.getLogger().warning(getWarningMessage());
         }
     }
 

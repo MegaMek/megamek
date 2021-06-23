@@ -104,6 +104,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem boardChangeTheme;
     private JMenuItem boardRaise;
     private JMenuItem boardClear;
+    private JMenuItem boardFlatten;
     private JMenuItem boardFlood;
     private JMenu boardRemove;
     private JMenuItem boardRemoveForests;
@@ -198,6 +199,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         boardChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
         boardRaise = createMenuItem(menu, getString("CommonMenuBar.boardRaise"), BOARD_RAISE);
         boardClear = createMenuItem(menu, getString("CommonMenuBar.boardClear"), BOARD_CLEAR);
+        boardFlatten = createMenuItem(menu, getString("CommonMenuBar.boardFlatten"), BOARD_FLATTEN);
         boardFlood = createMenuItem(menu, getString("CommonMenuBar.boardFlood"), BOARD_FLOOD);
         boardRemove = new JMenu(getString("CommonMenuBar.boardRemove"));
         menu.add(boardRemove);
@@ -609,6 +611,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             boardRemoveWater.setEnabled(false);
             boardRemoveRoads.setEnabled(false);
             boardRemoveForests.setEnabled(false);
+            boardFlatten.setEnabled(false);
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);
@@ -648,6 +651,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             boardRemoveWater.setEnabled(true);
             boardRemoveRoads.setEnabled(true);
             boardRemoveForests.setEnabled(true);
+            boardFlatten.setEnabled(true);
         }
         
         // We're in-game.

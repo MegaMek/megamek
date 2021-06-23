@@ -64,6 +64,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import static megamek.common.Terrains.*;
 
 // TODO: center map
 // TODO: background on the whole screen
@@ -2010,17 +2011,37 @@ public class BoardEditor extends JPanel
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLOOD)) {
             boardFlood();
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_WATER)) {
-            boardRemoveTerrain(Terrains.WATER);
+            boardRemoveTerrain(WATER, WATER_FLUFF);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_ROADS)) {
-            boardRemoveTerrain(Terrains.ROAD, Terrains.ROAD_FLUFF);
+            boardRemoveTerrain(ROAD, ROAD_FLUFF, BRIDGE, BRIDGE_CF, BRIDGE_ELEV);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_FORESTS)) {
-            boardRemoveTerrain(Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV);
+            boardRemoveTerrain(WOODS, JUNGLE, FOLIAGE_ELEV);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_REMOVE_BUILDINGS)) {
-            boardRemoveTerrain(Terrains.BUILDING, Terrains.BLDG_ARMOR, Terrains.BLDG_CF, Terrains.BLDG_CLASS,
-                    Terrains.BLDG_FLUFF, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE, Terrains.BLDG_ELEV,
-                    Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN);
+            boardRemoveTerrain(BUILDING, BLDG_ARMOR, BLDG_CF, BLDG_CLASS,
+                    BLDG_FLUFF, BLDG_BASE_COLLAPSED, BLDG_BASEMENT_TYPE, BLDG_ELEV,
+                    FUEL_TANK, FUEL_TANK_CF, FUEL_TANK_ELEV, FUEL_TANK_MAGN);
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
+            boardFlatten();
         }
     }
+    
+    /** Flattens the board, setting all hexes to level 0. */
+    private void boardFlatten() {
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                if (board.getHex(c).getLevel() != 0) {
+                    saveToUndo(c);
+                    IHex newHex = board.getHex(c).duplicate();
+                    newHex.setLevel(0);
+                    board.setHex(c, newHex);
+                }
+            }
+        }
+        correctExits();
+        endCurrentUndoSet();
+    }
+    
     
     /** Removes the given terrain type(s) from the board. */
     private void boardRemoveTerrain(int type, int... types) {

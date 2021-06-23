@@ -123,6 +123,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String BOARD_REMOVE_ROADS = "boardRemoveRoads";
     public static final String BOARD_REMOVE_WATER = "boardRemoveWater";
     public static final String BOARD_REMOVE_BUILDINGS = "boardRemoveBuildings";
+    public static final String BOARD_FLATTEN = "boardFlatten";
     
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";

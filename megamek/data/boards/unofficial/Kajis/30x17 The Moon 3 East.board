@@ -1,4 +1,8 @@
 size 30 17
+tag "Rough (Auto)"
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
 hex 0101 -7 "" "lunar"
 hex 0201 -7 "" "lunar"
 hex 0301 -7 "" "lunar"

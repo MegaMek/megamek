@@ -1,4 +1,9 @@
 size 30 17
+tag "Rough (Auto)"
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 0 "" ""
 hex 0201 0 "" ""
 hex 0301 0 "" ""

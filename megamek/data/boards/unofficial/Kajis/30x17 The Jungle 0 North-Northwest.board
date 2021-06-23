@@ -1,4 +1,9 @@
 size 30 17
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "MediumForest (Auto)"
+tag "Jungle (Auto)"
 hex 0101 1 "jungle:2;foliage_elev:2" "grass"
 hex 0201 1 "water:0" "grass"
 hex 0301 1 "water:0" "grass"

@@ -1,4 +1,9 @@
 size 115 90
+tag "Rough (Auto)"
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "IceTerrain (Auto)"
+tag "HighHills (Auto)"
 hex 0101 3 "" "Lunar"
 hex 0201 3 "" "Lunar"
 hex 0301 3 "" "Lunar"

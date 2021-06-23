@@ -1445,6 +1445,7 @@ public class BoardEditor extends JPanel
         try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
             // tell the board to load!
             board.load(is, null, true);
+            Set<String> boardTags = board.getTags();
             // Board generation in a game always calls BoardUtilities.combine
             // This serves no purpose here, but is necessary to create 
             // flipBGVert/flipBGHoriz lists for the board, which is necessary 
@@ -1452,6 +1453,10 @@ public class BoardEditor extends JPanel
             board = BoardUtilities.combine(board.getWidth(), board.getHeight(), 1, 1, 
                     new IBoard[]{board}, Collections.singletonList(false), MapSettings.MEDIUM_GROUND);
             game.setBoard(board);
+            // BoardUtilities.combine does not preserve tags, so add them back
+            for (String tag : boardTags) {
+                board.addTag(tag);
+            }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
             

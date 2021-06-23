@@ -1,4 +1,6 @@
 size 16 17
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
 hex 0101 1 "" ""
 hex 0201 1 "" ""
 hex 0301 1 "" ""

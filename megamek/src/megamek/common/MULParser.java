@@ -1387,7 +1387,7 @@ public class MULParser {
 
             // Assign the points to the correct location.
             // Sanity check the armor value before setting it.
-            if (type.isBlank()  || type.equals(FRONT)) {
+            if (type.isBlank() || type.equals(FRONT)) {
                 if (entity.getOArmor(loc) < pointsVal) {
                     warning.append("The entity, ")
                             .append(entity.getShortName())

@@ -102,27 +102,43 @@ public class UnitTable {
      */
     public static synchronized UnitTable findTable(final Parameters params) {
         Objects.requireNonNull(params);
-        UnitTable retVal = cache.get(params);
-        if (retVal == null) {
-            retVal = new UnitTable(params);
-            if (retVal.hasUnits()) {
+
+        UnitTable unitTable = cache.get(params);
+        if (unitTable == null) {
+            unitTable = new UnitTable(params);
+            if (unitTable.hasUnits()) {
                 // Use a copy of the params for the cache key to prevent changing it.
-                cache.put(params.copy(), retVal);
+                cache.put(params.copy(), unitTable);
             } else {
                 // Parent Factions Fallback, maximum at 10
-                for (int i = 0; (i < 10) && !params.getFaction().getParentFactions().isEmpty(); i++) {
-                    for (final String factionCode : params.getFaction().getParentFactions()) {
+                List<String> factions = params.getFaction().getParentFactions();
+                for (int i = 0; (i < 10) && !factions.isEmpty(); i++) {
+                    final List<String> parentFactions = new ArrayList<>();
+                    for (final String factionCode : factions) {
+                        // Use the Parent Faction
                         params.setFaction(RATGenerator.getInstance().getFaction(factionCode));
-                        retVal = new UnitTable(params);
-                        if (retVal.hasUnits()) {
-                            cache.put(params.copy(), retVal);
-                            return retVal;
+
+                        // Check the Cache
+                        unitTable = cache.get(params);
+                        if (unitTable != null) {
+                            return unitTable;
                         }
+
+                        // Create the unit table
+                        unitTable = new UnitTable(params);
+                        if (unitTable.hasUnits()) {
+                            cache.put(params.copy(), unitTable);
+                            return unitTable;
+                        }
+
+                        // Save the Potential Parent Factions
+                        parentFactions.addAll(params.getFaction().getParentFactions());
                     }
+                    factions = new ArrayList<>(parentFactions);
                 }
             }
         }
-        return retVal;
+        return unitTable;
     }
 
     private Parameters key;

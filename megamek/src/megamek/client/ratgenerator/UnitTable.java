@@ -1,15 +1,15 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * MegaMek - Copyright (C) 2016-2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
@@ -43,14 +43,13 @@ public class UnitTable {
 
     private static LinkedHashMap<Parameters,UnitTable> cache =
             new LinkedHashMap<>(CACHE_SIZE, 0.75f, true) {
+        private static final long serialVersionUID = -8016095510116134800L;
 
-                private static final long serialVersionUID = -8016095510116134800L;
-
-                @Override
-                protected boolean removeEldestEntry(Map.Entry<Parameters, UnitTable> entry) {
-                    return size() >= CACHE_SIZE;
-                }
-            };
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Parameters, UnitTable> entry) {
+            return size() >= CACHE_SIZE;
+        }
+    };
 
     /**
      * Checks the cache for a previously generated table meeting the criteria. If none is

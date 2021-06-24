@@ -43,15 +43,15 @@ public class UnitTable {
     private static final int CACHE_SIZE = 32;
 
     private static LinkedHashMap<Parameters,UnitTable> cache =
-            new LinkedHashMap<Parameters, UnitTable>(CACHE_SIZE, 0.75f, true) {
+            new LinkedHashMap<>(CACHE_SIZE, 0.75f, true) {
 
-        private static final long serialVersionUID = -8016095510116134800L;
+                private static final long serialVersionUID = -8016095510116134800L;
 
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Parameters, UnitTable> entry) {
-            return size() >= CACHE_SIZE;
-        }
-    };
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Parameters, UnitTable> entry) {
+                    return size() >= CACHE_SIZE;
+                }
+            };
 
     /**
      * Checks the cache for a previously generated table meeting the criteria. If none is
@@ -109,15 +109,16 @@ public class UnitTable {
             retVal = new UnitTable(params);
             if (retVal.hasUnits()) {
                 //Use a copy of the params for the cache key to prevent changing it.
-                cache.put((Parameters)params.copy(), retVal);
+                cache.put(params.copy(), retVal);
             }
+            // TODO : I'm probably a good place to check parent faction?
         }
         return retVal;
     }
 
     private Parameters key;
-    private List<TableEntry> salvageTable = new ArrayList<TableEntry>();
-    private List<TableEntry> unitTable = new ArrayList<TableEntry>();
+    private List<TableEntry> salvageTable = new ArrayList<>();
+    private List<TableEntry> unitTable = new ArrayList<>();
 
     int salvageTotal;
     int unitTotal;
@@ -132,7 +133,7 @@ public class UnitTable {
      */
     protected UnitTable(Parameters key) {
         this.key = key;
-        /**
+        /*
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
@@ -167,7 +168,7 @@ public class UnitTable {
     }
 
     /**
-     * @param index
+     * @param index the indicated index
      * @return - the entry at the indicated index
      */
     private TableEntry getEntry(int index) {
@@ -178,7 +179,7 @@ public class UnitTable {
     }
 
     /**
-     * @param index
+     * @param index the indicated index
      * @return - the weight value for the entry at the indicated index
      */
     public int getEntryWeight(int index) {
@@ -186,7 +187,7 @@ public class UnitTable {
     }
 
     /**
-     * @param index
+     * @param index the indicated index
      * @return - a string representing the entry at the indicated index for use in the table
      */
     public String getEntryText(int index) {
@@ -202,7 +203,7 @@ public class UnitTable {
     }
 
     /**
-     * @param index
+     * @param index the indicated index
      * @return - the MechSummary entry for the indicated index, or null if this is a salvage entry
      */
     public MechSummary getMechSummary(int index) {
@@ -213,7 +214,7 @@ public class UnitTable {
     }
 
     /**
-     * @param index
+     * @param index the indicated index
      * @return - the BV of the unit at the indicated index, or 0 if this is a salvage entry
      */
     public int getBV(int index) {
@@ -324,6 +325,7 @@ public class UnitTable {
                 }
                 roll -= te.weight;
             }
+
             if (salvageEntry != null) {
                 UnitTable salvage = UnitTable.findTable(salvageEntry.getSalvageFaction(),
                         key.getUnitType(), key.getYear() - 5, key.getRating(),
@@ -341,8 +343,10 @@ public class UnitTable {
         return null;
     }
 
-    /* A tuple that contains either a salvage or a faction entry along with its relative weight.
-     * in the table. */
+    /**
+     * A tuple that contains either a salvage or a faction entry along with its relative weight
+     * in the table.
+     */
     public static class TableEntry implements Comparable<TableEntry> {
         int weight;
         Object entry;
@@ -353,11 +357,11 @@ public class UnitTable {
         }
 
         public MechSummary getUnitEntry() {
-            return (MechSummary)entry;
+            return (MechSummary) entry;
         }
 
         public FactionRecord getSalvageFaction() {
-            return (FactionRecord)entry;
+            return (FactionRecord) entry;
         }
 
         public boolean isUnit() {
@@ -366,28 +370,24 @@ public class UnitTable {
 
         @Override
         public int compareTo(TableEntry other) {
-            if (entry instanceof MechSummary && other.entry instanceof FactionRecord) {
+            if ((entry instanceof MechSummary) && (other.entry instanceof FactionRecord)) {
                 return 1;
-            }
-            if (entry instanceof FactionRecord && other.entry instanceof MechSummary) {
+            } else if ((entry instanceof FactionRecord) && (other.entry instanceof MechSummary)) {
                 return -1;
+            } else {
+                return toString().compareTo(other.toString());
             }
-            return toString().compareTo(other.toString());
         }
 
         @Override
         public String toString() {
-            if (entry instanceof MechSummary) {
-                return ((MechSummary)entry).getName();
-            }
-            return entry.toString();
+            return (entry instanceof  MechSummary) ? ((MechSummary) entry).getName() : entry.toString();
         }
     }
 
-    /*
+    /**
      * A class that holds all the parameters used to generate a table and is used as the
      * key for the cache.
-     *
      */
     public static final class Parameters implements Cloneable {
         private FactionRecord faction;
@@ -426,8 +426,7 @@ public class UnitTable {
             int result = 1;
             result = prime
                     * result
-                    + ((deployingFaction == null) ? 0 : deployingFaction
-                            .hashCode());
+                    + ((deployingFaction == null) ? 0 : deployingFaction.hashCode());
             result = prime * result
                     + ((faction == null) ? 0 : faction.hashCode());
             result = prime * result
@@ -448,14 +447,13 @@ public class UnitTable {
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
-            }
-            if (obj == null) {
+            } else if (obj == null) {
+                return false;
+            } else if (!(obj instanceof Parameters)) {
                 return false;
             }
-            if (!(obj instanceof Parameters)) {
-                return false;
-            }
-            Parameters other = (Parameters) obj;
+
+            final Parameters other = (Parameters) obj;
             if (deployingFaction == null) {
                 if (other.deployingFaction != null) {
                     return false;
@@ -463,6 +461,7 @@ public class UnitTable {
             } else if (!deployingFaction.equals(other.deployingFaction)) {
                 return false;
             }
+
             if (faction == null) {
                 if (other.faction != null) {
                     return false;
@@ -470,6 +469,7 @@ public class UnitTable {
             } else if (!faction.equals(other.faction)) {
                 return false;
             }
+
             if (movementModes == null) {
                 if (other.movementModes != null) {
                     return false;
@@ -477,40 +477,38 @@ public class UnitTable {
             } else if (!movementModes.equals(other.movementModes)) {
                 return false;
             }
+
             if (networkMask != other.networkMask) {
                 return false;
-            }
-            if (rating == null) {
+            } else if (rating == null) {
                 if (other.rating != null) {
                     return false;
                 }
             } else if (!rating.equals(other.rating)) {
                 return false;
             }
+
             if (roleStrictness != other.roleStrictness) {
                 return false;
-            }
-            if (roles == null) {
+            } else if (roles == null) {
                 if (other.roles != null) {
                     return false;
                 }
             } else if (!roles.equals(other.roles)) {
                 return false;
             }
+
             if (unitType != other.unitType) {
                 return false;
-            }
-            if (weightClasses == null) {
+            } else if (weightClasses == null) {
                 if (other.weightClasses != null) {
                     return false;
                 }
             } else if (!weightClasses.equals(other.weightClasses)) {
                 return false;
             }
-            if (year != other.year) {
-                return false;
-            }
-            return true;
+
+            return year == other.year;
         }
 
         public FactionRecord getFaction() {
@@ -598,6 +596,5 @@ public class UnitTable {
                 rating, weightClasses, networkMask, movementModes,
                 roles, roleStrictness, deployingFaction);
         }
-        
     }
 }

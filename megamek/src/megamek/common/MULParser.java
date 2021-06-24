@@ -274,6 +274,9 @@ public class MULParser {
     StringBuffer warning;
 
     //region Constructors
+    /**
+     * This initializes all of the variables utilised by the MUL parser.
+     */
     private MULParser() {
         warning = new StringBuffer();
         entities = new Vector<>();
@@ -286,14 +289,39 @@ public class MULParser {
         pilots = new Vector<>();
     }
 
-    public MULParser(final File file, final @Nullable GameOptions options) throws Exception {
+    /**
+     * This is the standard MULParser constructor for a file. It initializes the values to parse
+     * with, then parses the file using the provided options. The options may be null in cases
+     * when the crew is not to be loaded as part of the MUL.
+     *
+     * @param file the file to parse, or null if there isn't anything to parse
+     * @param options the game options to parse the MUL with, which may be null (only to be used
+     *                when the crew is not to be loaded, as no saved optional Crew-based values are
+     *                loaded).
+     * @throws Exception if there is an issue with parsing the file
+     */
+    public MULParser(final @Nullable File file, final @Nullable GameOptions options) throws Exception {
         this();
+
+        if (file == null) {
+            return;
+        }
 
         try (InputStream is = new FileInputStream(file)) {
             parse(is, options);
         }
     }
 
+    /**
+     * This is the standard MULParser constructor for a single element. It initializes the values to
+     * parse with, then parses the element using the provided options. The options may be null in
+     * cases when the crew is not to be loaded as part of the MUL.
+     *
+     * @param element the element to parse
+     * @param options the game options to parse the MUL with, which may be null (only to be used
+     *                when the crew is not to be loaded, as no saved optional Crew-based values are
+     *                loaded).
+     */
     public MULParser(final Element element, final @Nullable GameOptions options) {
         this();
         parse(element, options);
@@ -2403,7 +2431,7 @@ public class MULParser {
         int meaMountLoc = Integer.parseInt(meaMountLocString);
         boolean foundMea = false;
         for (Mounted m : entity.getEquipment()) {
-            if ((m.getBaMountLoc() != meaMountLoc) && m.getType().hasFlag(MiscType.F_BA_MEA)) {
+            if ((m.getBaMountLoc() == meaMountLoc) && m.getType().hasFlag(MiscType.F_BA_MEA)) {
                 foundMea = true;
                 break;
             }

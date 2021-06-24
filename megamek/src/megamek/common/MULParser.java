@@ -313,6 +313,19 @@ public class MULParser {
     }
 
     /**
+     * This is provided for unit testing only, and should not be part of general parsing.
+     *
+     * @param is the input stream to parse from
+     * @param options the game options to parse the MUL with, which may be null (only to be used
+     *                when the crew is not to be loaded, as no saved optional Crew-based values are
+     *                loaded).
+     */
+    public MULParser(final InputStream is, final @Nullable GameOptions options) throws Exception {
+        this();
+        parse(is, options);
+    }
+
+    /**
      * This is the standard MULParser constructor for a single element. It initializes the values to
      * parse with, then parses the element using the provided options. The options may be null in
      * cases when the crew is not to be loaded as part of the MUL.

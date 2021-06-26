@@ -241,7 +241,7 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_ROADS, roads > 10);
         matchingTags.put(Tags.TAG_ROUGH, roughs > normSide / 2);
         matchingTags.put(Tags.TAG_FOLIAGE, foliage > 5);
-        matchingTags.put(Tags.TAG_LAVA, lavas > 5);
+        matchingTags.put(Tags.TAG_LAVA, lavas > 5000);
         matchingTags.put(Tags.TAG_CLIFFS, (cliffsTO > 5) || (highCliffs > 20));
         matchingTags.put(Tags.TAG_FIELDS, fields > normSide * 5);
         matchingTags.put(Tags.TAG_SWAMP, swamps > normSide);
@@ -280,7 +280,7 @@ public class BoardsTagger {
             if (toRemove.equals(toAdd)) {
                 System.out.println("No changes");
             } else {
-                matchingTags.keySet().stream().forEach(System.out::println);
+                toAdd.stream().forEach(System.out::println);
             }
         }
         

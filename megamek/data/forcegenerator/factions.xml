@@ -1192,7 +1192,7 @@
 	<faction key='MOC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
 		<years>2530-</years>
 		<ratingLevels>F</ratingLevels>
-		<parentFaction>MO</parentFaction>
+		<parentFaction>MOC</parentFaction>
 	</faction>
 	<faction key='TC.PL' name='Pleiades Lancers' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>

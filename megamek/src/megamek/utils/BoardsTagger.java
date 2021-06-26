@@ -287,7 +287,7 @@ public class BoardsTagger {
         // Now, if there are actual changes in the autotags, remove the former ones, add the new ones and save
         if (!toRemove.equals(toAdd)) {
             toRemove.forEach(board::removeTag);
-            toAdd.stream().forEach(board::addTag);
+            toAdd.forEach(board::addTag);
 
             // Re-save the board
             try (OutputStream os = new FileOutputStream(boardFile)) {

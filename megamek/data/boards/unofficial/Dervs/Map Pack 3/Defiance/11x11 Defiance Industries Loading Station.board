@@ -1,4 +1,6 @@
 size 11 11
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""
 hex 0301 4 "pavement:1" ""

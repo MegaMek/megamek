@@ -3,37 +3,37 @@ Lao Hu
 LHU-2B
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3062
-Rules Level:2
+techbase:Inner Sphere
+era:3062
 source:TRO 3067
+rules level:2
 
-Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:75
+engine:375 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:23
-RA Armor:23
-LT Armor:24
-RT Armor:24
-CT Armor:33
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:23
+RA armor:23
+LT armor:24
+RT armor:24
+CT armor:33
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:3
-1 ISERLargeLaser, Left Arm
-1 ISLBXAC20, Right Arm, Ammo:15
-1 ISLRM15, Left Torso, Ammo:16
+ER Large Laser, Left Arm
+LB 20-X AC, Right Torso
+LRM 15, Left Torso
 
 Left Arm:
 Shoulder
@@ -52,44 +52,44 @@ ISERLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15
-ISLRM15
-ISLRM15
-ISLRM15 Ammo
-ISLRM15 Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLBXAC20 (Split)
-ISLBXAC20 CL Ammo
-ISLBXAC20 Ammo
-ISLBXAC20 CL Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISLBXAC20
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+IS LB 20-X Cluster Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -109,7 +109,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +138,26 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:Designed by a student at the Victoria Academy of Arms and Technology, the Lao Hu ("Tiger") is based on the Thunder BattleMech and is designed to correct perceived flaws in the Thunder by using new technologies available to the Capellan Confederation.
+
+capabilities:The Lao Hu is built on a lightweight Chariot Type II Endo Steel that carries a GM 375 XL Engine which gives the 'Mech a top speed of 86.4 km/h while sacrificing some survivability for more free weight and a heavier weapons payload. The Lao Hu is protected by an impressive thirteen and a half tons of armor, making it capable of weathering hits from all but the heaviest weapons.
+
+deployment:The Lao Hu is capable of engaging an enemy at most any range. For long-range combat, the Lao Hu has a Martell ER Large Laser and a Zeus LRM-15 launcher, giving the 'Mech a powerful long range punch. For close combat, the Lao Hu has a devastating Shengli LB-X Autocannon/20 which is capable of firing both solid rounds for armor penetration and cluster rounds allowing it to find holes in already damaged armor and for anti-aircraft use.
+
+manufacturer:Shengli Arms
+primaryfactory:Victoria
+systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
+systemmanufacturer:ENGINE:GM 375 XL
+systemmanufacturer:ARMOR:Star Shell Standard
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, Standard
+systemmanufacturer:TARGETING:O/P 911 Targeting and Tracking System
 

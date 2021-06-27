@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>30</BOARDWIDTH>
+    <BOARDHEIGHT>17</BOARDHEIGHT>
+    <MAPWIDTH>2</MAPWIDTH>
+    <MAPHEIGHT>3</MAPHEIGHT>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 0 Northwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 1 Northeast</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 2 West</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 3 East</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 4 Southwest</BOARDS>
+    <BOARDS>\unofficial\Kajis\30x17 The Moon 5 Southeast</BOARDS>
+</MAPSETUP>

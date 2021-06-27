@@ -151,4 +151,20 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Legacy was produced as a testbed for new technologies, including the Ultra AC/10 and C3i Computer.
+
+capabilities:They upgraded its targeting system and included the C3i, which allows six units to coordinate fire. Its thick armor protection, standard fusion engine, and CASE give the Legacy remarkable staying power on the battlefield. One of the weaknesses of the 'Mech is its slow speed compared to other 'Mechs of similar size, but the inclusion of jump jets sought to counter that with superior maneuverability.
+
+deployment:This upgrade of the Legacy utilizes a Light Fusion Engine to increase the 'Mech's top speed to 64 km/h, though its jumping capacity does not increase commensurately. All of the 'Mech's backup weapons remain the same, but the autocannons are replaced with a pair of Heavy PPCs. The 'Mech's heat dissipation capability has also not kept up, utilizing only fourteen double heat sinks.
+
+history:At the request of Word of Blake Precentor Martial Cameron St. Jamais. The designers used a failed Star League 'Mech called the Rising Star as the base for the Legacy.
+
+manufacturer:Skobel MechWorks
+primaryfactory:Russia, Terra
+systemmanufacturer:CHASSIS:Skobel Template 8 Endo Steel
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Aldis Plate with CASE
+systemmanufacturer:JUMPJET:CurtissJet 80
+systemmanufacturer:COMMUNICATIONS:Skobel Wave VII Comm with C3i Computer
+systemmanufacturer:TARGETING:Falcon 15 Watcher
 

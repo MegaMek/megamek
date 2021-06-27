@@ -3,38 +3,38 @@ Bandersnatch
 BNDR-01B
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3065
-Source:TRO 3055 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3065
+source:TRO 3055 - Civil War
+rules level:2
 
-Mass:75
-Engine:300 Light Engine
-Structure:Standard
-Myomer:Standard
+mass:75
+engine:300 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:24
-RT Armor:24
-CT Armor:35
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:35
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:9
 Ultra AC/10, Left Arm
 Medium Laser, Left Arm
 Medium Laser, Left Arm
-Particle Cannon, Right Arm
+PPC, Right Arm
 Medium Laser, Right Arm
 Medium Laser, Right Arm
 LRM 5, Left Torso
@@ -59,9 +59,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
 Medium Laser
 Medium Laser
 -Empty-
@@ -73,10 +73,10 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 LRM 5
+IS Ammo LRM-5
 IS Ultra AC/10 Ammo
 IS Ultra AC/10 Ammo
 IS Streak SRM 2 Ammo
-IS Ammo LRM-5
 ISCASE
 -Empty-
 -Empty-
@@ -153,4 +153,17 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Bandersnatch, who receives his name from the monster mentioned in Lewis Carroll's "Wonderland" series, is the brainchild of Felifious Bander and is built around the concept of an affordable and effective BattleMech for sale to mercenary units. 
+
+capabilities:The Bandersnatch is built using some common components with the Marauder in an attempt to make the 'Mech cheaper and easier to repair. The 'Mech has a top speed of 64.8 kph which is average for a 'Mech of its weight. The Bandersnatch also uses double heat sinks for their superior heat dissipation capabilities, allowing a heavy weapons payload to be used by the 'Mech. Finally, the Bandersnatch carries a respectable eleven tons of armor. While not the maximum amount of armor that the chassis can handle, the 'Mech is still well protected.
+
+deployment:A complete upgrade of the original design, the 01B variant replaces the XL engine with a Light Fusion Engine. To make up for the weight lost to the engine, the entire weapons arsenal has been re-evaluated and the 'Mech carries a new weapons compliment. The primary long-range weapons are a pair of LRM-5 launchers. For intermediate ranges, the 01B model carries an Ultra Autocannon/10 and a PPC providing it with a powerful punch. Finally, for close range combat, the 'Mech has four Medium Lasers and a Streak SRM-2 launcher.
+
+manufacturer:Bander BattleMechs, Kressly WarWorks
+primaryfactory:Terra Firma (Bander BattleMechs), Epsilon Eridani (Kressly WarWorks)
+systemmanufacturer:CHASSIS:Bander Custom 1
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Valiant Chainmail
+systemmanufacturer:COMMUNICATIONS:Winston Mega Boozee Mark IX
+systemmanufacturer:TARGETING:Winston Sidewinder
 

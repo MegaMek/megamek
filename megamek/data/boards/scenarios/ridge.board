@@ -1,4 +1,6 @@
 size 16 17
+tag "GrassTheme (Auto)"
+tag "LowHills (Auto)"
 hex 0101 0 "" ""
 hex 0201 1 "" ""
 hex 0301 1 "" ""

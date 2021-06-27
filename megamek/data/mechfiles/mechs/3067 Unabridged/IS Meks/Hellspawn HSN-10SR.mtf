@@ -132,3 +132,17 @@ Lower Leg Actuator
 Foot Actuator
 ISImprovedJump Jet
 ISImprovedJump Jet
+
+overview:The flagship design of GM's Talcott production facility, the Hellspawn was designed in response to a call from the Armed Forces of the Federated Commonwealth for a modern, highly mobile, fire-support BattleMech to compete with the older Dervish.
+
+capabilities:The Hellspawn is built on a GM Fury-M Endo Steel chassis that weighs half as much as a standard chassis. The Hellspawn carries a GM 270 XL engine that gives it a top speed of 97.2 km/h and also weighs half as much as a standard engine while making the 'Mech susceptible to a combat kill from a side torso loss. For protection from enemy electronic warfare equipment such as C3 or Artemis IV, the Hellspawn is equipped with a Guardian ECM Suite. To enhance the 'Mech's mobility it has six Rawlings 80 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. Finally, the Hellspawn has six and a half tons of armor that is barely adequate when compared to other medium 'Mechs.
+
+deployment:This 3081 variant carries a Light PPC and ER Medium Laser in each arm. It's also equipped with a Guardian ECM Suite, Beagle Active Probe, and TAG. The Hellspawn-10SR also carries eight Improved Jump Jets, allowing for 240 meter jumps.
+
+manufacturer:General Motors
+primaryfactory:Talcott
+systemmanufacturer:CHASSIS:GM Fury-M Endo
+systemmanufacturer:ENGINE:GM 270 XL
+systemmanufacturer:ARMOR:StarGuard III
+systemmanufacturer:COMMUNICATIONS:Dalban SuperMicronics with Guardian ECM
+systemmanufacturer:TARGETING:GME HiTrak-3

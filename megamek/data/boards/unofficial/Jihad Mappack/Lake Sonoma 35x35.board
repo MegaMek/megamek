@@ -1,5 +1,10 @@
 size 35 35
 option exit_roads_to_pavement false
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 9 "" ""
 hex 0201 9 "woods:1:35;foliage_elev:2" ""
 hex 0301 9 "woods:2;foliage_elev:2" ""

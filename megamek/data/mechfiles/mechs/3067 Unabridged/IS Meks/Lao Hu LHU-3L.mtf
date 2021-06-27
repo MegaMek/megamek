@@ -128,3 +128,17 @@ Lower Leg Actuator
 Foot Actuator
 Endo-Steel
 Endo-Steel
+
+overview:Designed by a student at the Victoria Academy of Arms and Technology, the Lao Hu ("Tiger") is based on the Thunder BattleMech and is designed to correct perceived flaws in the Thunder by using new technologies available to the Capellan Confederation.
+
+capabilities:The Lao Hu is built on a lightweight Chariot Type II Endo Steel that carries a GM 375 XL Engine which gives the 'Mech a top speed of 86.4 km/h while sacrificing some survivability for more free weight and a heavier weapons payload. The Lao Hu is protected by an impressive thirteen and a half tons of armor, making it capable of weathering hits from all but the heaviest weapons.
+
+deployment:Introduced in the Jihad, this version of the Lao Hu turns the enemy's equipment against him. It carries a Rotary AC/5 in the right arm, while the left carries a Plasma Rifle. An advanced Targeting Computer ties into these weapons, making them more accurate. The LRM-10 has been enhanced with an Artemis IV fire control system.
+
+manufacturer:Shengli Arms
+primaryfactory:Victoria
+systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
+systemmanufacturer:ENGINE:GM 375 XL
+systemmanufacturer:ARMOR:Star Shell Standard
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, Standard
+systemmanufacturer:TARGETING:O/P 911 Targeting and Tracking System

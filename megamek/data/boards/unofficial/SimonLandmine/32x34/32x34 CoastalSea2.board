@@ -1,4 +1,7 @@
 size 32 34
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Ocean (Auto)"
 hex 0101 -1 "water:3" ""
 hex 0201 -1 "water:3" ""
 hex 0301 -1 "water:3" ""

@@ -3,35 +3,35 @@ Seraph
 C-SRP-O Invictus
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3075
+rules level:2
 
-Mass:85
-Engine:255 Light Engine(IS)
-Structure:IS Standard
-Myomer:Triple-Strength
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:85
+engine:255 Light Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:12 Double
-Base Chassis Heat Sinks:10
-Walk MP:3
-Jump MP:0
+heat sinks:12 IS Double
+base chassis heat sinks:10
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:27
-RA Armor:27
-LT Armor:26
-RT Armor:26
-CT Armor:40
-HD Armor:9
-LL Armor:35
-RL Armor:35
-RTL Armor:9
-RTR Armor:9
-RTC Armor:13
+armor:Standard(Inner Sphere)
+LA armor:27
+RA armor:27
+LT armor:26
+RT armor:26
+CT armor:40
+HD armor:9
+LL armor:35
+RL armor:35
+RTL armor:9
+RTR armor:9
+RTC armor:13
 
 Weapons:5
 Ultra AC/10, Right Arm
@@ -45,56 +45,56 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-TSM
-TSM
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Triple Strength Myomer
+Triple Strength Myomer
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
-ISUltraAC10 (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
+ISUltraAC10 (OMNIPOD)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISMML5 (omnipod)
-ISMML5 (omnipod)
-ISMML5 (omnipod)
-ISStreakSRM6 (omnipod)
-ISStreakSRM6 (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISStreakSRM6 (OMNIPOD)
+ISStreakSRM6 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
 ISC3iUnit
 ISC3iUnit
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMML5 (omnipod)
-ISMML5 (omnipod)
-ISMML5 (omnipod)
-IS Ultra AC/10 Ammo (omnipod)
-IS Ultra AC/10 Ammo (omnipod)
-IS Ultra AC/10 Ammo (omnipod)
-IS Ammo MML-5 LRM (omnipod)
-IS Ammo MML-5 SRM (omnipod)
-IS Streak SRM 6 Ammo (omnipod)
-ISCASE (omnipod)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+ISMML5 (OMNIPOD)
+IS Ammo MML-5 LRM (OMNIPOD)
+IS Ammo MML-5 SRM (OMNIPOD)
+IS Ultra AC/10 Ammo (OMNIPOD)
+IS Ultra AC/10 Ammo (OMNIPOD)
+IS Ultra AC/10 Ammo (OMNIPOD)
+IS Streak SRM 6 Ammo (OMNIPOD)
+ISCASE (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -115,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISSNPPC (omnipod)
-ISSNPPC (omnipod)
+ISSNPPC (OMNIPOD)
+ISSNPPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -152,4 +152,17 @@ TSM
 -Empty-
 -Empty-
 
+overview:The light assault 'Mech of the Celestial series of OmniMechs, the Seraph is somewhat slow for its weight, but it attempts to make up for that with the inclusion of Triple-Strength Myomer that enables the 'Mech to speed up to 64 kph when it runs hot.
+
+capabilities:Like the other Celestials, the Seraph makes use of a light fusion engine and a small cockpit, though other newer technologies are present only in its weaponry. As with the other Celestials, a C3i Computer is included. The main criticism of the Seraph Invictus is that it does not make very good use of its Triple-Strength Myomer. The design does not build enough heat to activate the musculature, a problem the Streak missile system only exacerbates.
+
+deployment:The Seraph features an array of weapons that is useful at long to medium ranges, but becomes very strong at close range. The largest gun on the 'Mech is the Ultra AC/10 that is capable of a sustained high rate of fire thanks to the inclusion of three tons of ammunition. The paired MML-5s can fire both SRM and LRM rounds, giving it great flexibility, while the Streak SRM-6 can be fired as often as possible since it does not fire unless it acquires a target lock. The Snub-Nose PPC is capable of the same amount of damage as its heavier counterpart at short range. With this wide array of weaponry, the Seraph makes use of its C3i Computer, whether it is sniping with its missiles or closing to short range and unloading on opponents while feeding its targeting telemetry back to other members of its Level II. Of course, the Retractable Blade gives it an accurate physical weapon.
+
+manufacturer:Gibson Federated BattleMechs, Martinson Armaments
+primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
+systemmanufacturer:CHASSIS:Celestial Series SP1
+systemmanufacturer:ENGINE:GM 255 Light Fusion with Triple-Strength Myomer
+systemmanufacturer:ARMOR:Durallex Divine Guardian
+systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha
+systemmanufacturer:TARGETING:Master’s Sight 1-Omega
 

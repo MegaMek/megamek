@@ -1,0 +1,169 @@
+Version:1.1
+Thunderbolt IIC
+2
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3088
+source:Ice Wind Metals - Early Republic
+rules level:4
+
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Heavy Duty Gyro
+
+heat sinks:15 Clan Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Clan)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:10
+
+Weapons:6
+Improved Heavy Large Laser, Right Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+ER Large Pulse Laser, Right Arm
+Small Pulse Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSmallPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Thunderbolt IIC is a second-line heavy BattleMech that was originally developed for Clan Jade Falcon in 3085. 
+
+capabilities:The Thunderbolt IIC is a blend of standard and Advanced Clan technology. Due to the then-experimental nature of its weaponry, its MechWarriors were required to keep detailed logs noting the equipment's performance.
+
+deployment:Introduced in 3088, this advanced variant of the Thunderbolt IIC is built with durability in mind. This variant's engine is downgraded to a less fragile 280 Standard Fusion, however its lost speed is compensated with the mobility of four Jump Jets. These jump Jets did cost the 'Mech two of its Double Heatsinks. Further durability is provided with the incorporation of a Heavy-Duty Gyro. Its hull is protected by 11 tons of Ferro Fibrous Armor, and an ECM Suite is included. The Thunderbolt IIC 2 is armed with an Extended Range Large Pulse Laser in its right arm, a standard Heavy Large Laser in place of the Standard's missile launcher, a trio of Medium Pulse Lasers that replaces the extended range trio, and a single Small Pulse Laser in its left arm.
+
+history:The design came into existence due to that Clan's need to re-purpose surplus components being produced for their Loki and Thor OmniMech designs. Using one of Olivetti Weaponry's previous Inner Sphere designs, the classic Thunderbolt, they reworked it as a replacement for second-line 'Mechs lost during the Jihad.
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+systemmanufacturer:CHASSIS:Olivetti TDR-II
+systemmanufacturer:ARMOR:Forging Omni H24
+systemmanufacturer:COMMUNICATIONS:Model J-D 067
+systemmanufacturer:TARGETING:Hawkeye 58
+

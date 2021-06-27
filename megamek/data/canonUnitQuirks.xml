@@ -2597,6 +2597,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>gas_hog</quirk>
 		<quirk>illegal_design</quirk>
 		<quirk>no_twist</quirk>
+	</unit>	
+
+	<unit>
+		<chassis>Carrion Crow</chassis>
+		<unitType>Mech</unitType>
+		<quirk>imp_target_short</quirk>
+		<quirk>unbalanced</quirk>
 	</unit>
 
 	<unit>
@@ -5114,6 +5121,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>FS9-M4</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_life_support</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestorm</chassis>
+		<unitType>Mech</unitType>
+		<quirk>low_profile</quirk>
 	</unit>
 
 	<unit>
@@ -7761,6 +7774,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<slot>4</slot>
 			<weaponName>ISLightGaussRifle</weaponName>
 		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Lightning</chassis>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
 	</unit>
 
 	<unit>
@@ -11426,6 +11445,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>imp_sensors</quirk>
 		<quirk>no_arms</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Rawhide</chassis>
+		<unitType>Mech</unitType>
+		<quirk>reinforced_legs</quirk>
+		<quirk>rugged_1</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Razorback</chassis>
@@ -13482,7 +13508,16 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>CLImprovedHeavyLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
-
+	
+	<unit>
+		<chassis>Thunderbolt IIC</chassis>
+		<model>2</model>
+		<unitType>Mech</unitType>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	
 	<unit>
 		<chassis>Thunder Fox</chassis>
 		<unitType>Mech</unitType>
@@ -14481,6 +14516,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<slot>3</slot>
 			<weaponName>ISMediumPulseLaser</weaponName>
 		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>White Raven</chassis>
+		<unitType>Mech</unitType>
+		<quirk>imp_target_short</quirk>
 	</unit>
 
 	<unit>

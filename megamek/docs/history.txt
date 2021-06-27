@@ -1,6 +1,12 @@
 VERSION HISTORY:
 ----------------
-0.49.2-SNAPSHOT
+0.49.3-SNAPSHOT
++ PR #2955: Board Tagging
++ Issues #1628, #1857, #2181, #2264, #2290, #2390, #2944: Board Editor and Menu Enhancements and Fixes
++ Issue #2960: Fixing non-basic letters in the new camouflage setup
++ PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
+
+0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling
 + PR #2852: Board Hex Fluff Transitions
 + PR #2877: Report Messages Cleanup
@@ -36,6 +42,8 @@ VERSION HISTORY:
 + PR #2937: CommonMenuBar and MovementDisplay Menu entry corrections
 + PR #2941: Prevent rendering failures in lobby when using LAMs in fighter mode
 + PR #2934: Complete Anti-TSM "Green Smoke" warhead implementation
++ Issue #2762: Improve the Minimap and fix empty summary screenshots
++ Data: New Sprites, Rec Guide 14 (also renaming folder to match MUL), more units with Fluff text.
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

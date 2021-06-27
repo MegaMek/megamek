@@ -1,5 +1,6 @@
 size 15 14
 option exit_roads_to_pavement false
+tag "GrassTheme (Auto)"
 hex 0101 9 "pavement:1;impassable:1" ""
 hex 0201 9 "pavement:1;impassable:1" ""
 hex 0301 9 "pavement:1;impassable:1" ""

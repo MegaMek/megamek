@@ -3,36 +3,36 @@ Stealth
 STH-1D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3054
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3054
+source:TRO 3055 - Clan Invasion
+rules level:2
 
-Mass:45
-Engine:315 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:45
+engine:315 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:7
+heat sinks:10 IS Double
+walk mp:7
+jump mp:7
 
-Armor:Standard(Inner Sphere)
-LA Armor:12
-RA Armor:12
-LT Armor:17
-RT Armor:17
-CT Armor:21
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:17
+RT armor:17
+CT armor:21
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
-SRM 6, Left Torso
 Medium Laser, Left Torso
+SRM 6, Left Torso
 Medium Laser, Right Torso
 Streak SRM 2, Right Torso
 
@@ -41,10 +41,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -71,9 +71,9 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
+SRM 6
+SRM 6
 Medium Laser
-SRM 6
-SRM 6
 IS Ammo SRM-6
 ISMASC
 ISMASC
@@ -90,7 +90,7 @@ ISStreakSRM2
 IS Streak SRM 2 Ammo
 BeagleActiveProbe
 BeagleActiveProbe
-Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -104,7 +104,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +148,18 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Stealth is a heavy scout 'Mech that is in use by the Federated Suns and the Lyran Alliance.
+
+capabilities:The 'Mech has a GM 315 XL Engine that allows the Stealth to move at speeds of 118.8 kph and the MASC system on board can push the 'Mech to 151.2 kph in short bursts. This amazing mobility is augmented by jump jets which the Stealth can use to jump up to two hundred and ten meters. The Stealth is also outfitted with a Cyclops-Beagle Sensory Active Probe that the Stealth can use to find hidden enemy units.
+
+deployment:The Stealth is armed with an eclectic short range weapons arsenal. The primary weapons in this arsenal are a pair of Diplan M3 Medium Lasers which are backed up by a Shannon SH-60 SRM-6 and a Federated SuperStreak Streak SRM-2 which both allow the 'Mech to find weak spots in an enemy 'Mech's armor.
+
+manufacturer:General Motors
+primaryfactory:Kathil
+systemmanufacturer:CHASSIS:GM Stealth Endo Steel
+systemmanufacturer:ENGINE:GM 315 XL
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:100AFVTA
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban HiRez with Active Probe
 

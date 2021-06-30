@@ -294,6 +294,7 @@ public class BoardsTagger {
                 board.save(os);
             } catch (IOException e) {
                 System.out.println("Error: Could not save board: " + boardFile);
+                e.printStackTrace();
             }
 
         }

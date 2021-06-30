@@ -774,8 +774,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clear();
         
         updateButtons();
-        // Update the menu bar.
-        clientgui.getMenuBar().setEntity(ce);
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);

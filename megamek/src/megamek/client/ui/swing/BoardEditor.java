@@ -217,7 +217,7 @@ public class BoardEditor extends JPanel
     public static final int [] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
-    private CommonMenuBar menuBar = new CommonMenuBar();
+    private CommonMenuBar menuBar = new CommonMenuBar(this);
     private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
@@ -487,9 +487,8 @@ public class BoardEditor extends JPanel
      */
     private void setupFrame() {
         setFrameTitle();
-        frame.getContentPane().add(bvc, BorderLayout.CENTER);
-        frame.getContentPane().add(this, BorderLayout.EAST);
-        
+        frame.add(bvc, BorderLayout.CENTER);
+        frame.add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -1716,7 +1715,6 @@ public class BoardEditor extends JPanel
         // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curBoardFile != null);
         // Adjust the UI
-        menuBar.setBoard(true);
         bvc.doLayout();
         setFrameTitle();
     }
@@ -2027,6 +2025,10 @@ public class BoardEditor extends JPanel
                     FUEL_TANK, FUEL_TANK_CF, FUEL_TANK_ELEV, FUEL_TANK_MAGN);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
+            bv.toggleKeybindsOverlay();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {
+            minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
         }
     }
     

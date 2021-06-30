@@ -85,7 +85,6 @@ public enum KeyCommandBind {
     PREV_MODE("prevMode", false, KeyEvent.VK_TAB, InputEvent.CTRL_DOWN_MASK),
     NEXT_MODE("nextMode", false, KeyEvent.VK_TAB),
     TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y),
-    TOGGLE_KEYBIND_DISPLAY("toggleKeyBindDisplay", false, KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK),
     TOGGLE_HEX_COORDS("toggleHexCoords", false, KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK);
 
     /** The command associated with this binding. */

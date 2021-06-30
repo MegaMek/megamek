@@ -251,9 +251,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
-
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity(ce());
         } else {
             disableButtons();
             setNextEnabled(true);

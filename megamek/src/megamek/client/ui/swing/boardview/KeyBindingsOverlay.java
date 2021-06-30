@@ -200,11 +200,11 @@ public class KeyBindingsOverlay implements IDisplayable {
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
         
-        KeyCommandBind kcb = KeyCommandBind.TOGGLE_KEYBIND_DISPLAY;
-        String mod = KeyEvent.getModifiersExText(kcb.modifiers);
-        String key = KeyEvent.getKeyText(kcb.key);
-        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
-        result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
+//        KeyCommandBind kcb = KeyCommandBind.TOGGLE_KEYBIND_DISPLAY;
+//        String mod = KeyEvent.getModifiersExText(kcb.modifiers);
+//        String key = KeyEvent.getKeyText(kcb.key);
+//        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
+        result.add(Messages.getString("KeyBindingsDisplay.heading", "Ctrl + K"));
         
         if (clientGui != null) {
             // In a game, not the Board Editor

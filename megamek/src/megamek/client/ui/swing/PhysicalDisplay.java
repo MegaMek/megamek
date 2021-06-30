@@ -264,9 +264,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         clientgui.bv.centerOnHex(entity.getPosition());
 
-        // Update the menu bar.
-        clientgui.getMenuBar().setEntity(ce());
-
         // does it have a club?
         String clubLabel = null;
         for (Mounted club : entity.getClubs()) {

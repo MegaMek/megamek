@@ -1183,9 +1183,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
             }
         }
-
-        // Enable the "Save Unit List..." button if the local player has units.
-        clientgui.getMenuBar().setUnitList(localUnits);
     }
     
     /** Adjusts the mektable to compact/normal mode. */

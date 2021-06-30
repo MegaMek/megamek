@@ -997,21 +997,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 });
         
-        // Register the action for TOGGLE_KEYBIND_DISPLAY
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_KEYBIND_DISPLAY.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        toggleKeybindsOverlay();
-                    }
-                });
-        
         // Register the action for TOGGLE_HEX_COORDS
         controller.registerCommandAction(KeyCommandBind.TOGGLE_HEX_COORDS.cmd,
                 new CommandAction() {

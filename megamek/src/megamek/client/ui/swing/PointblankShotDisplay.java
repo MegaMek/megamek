@@ -458,9 +458,6 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
             clientgui.bv.centerOnHex(ce().getPosition());
 
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity(ce());
-
             // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
                             && ce().getCrew().isActive());
@@ -669,9 +666,6 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         // clear queue
         attacks.removeAllElements();
-
-        // Clear the menu bar.
-        clientgui.getMenuBar().setEntity(null);
 
         // close aimed shot display, if any
         ash.closeDialog();

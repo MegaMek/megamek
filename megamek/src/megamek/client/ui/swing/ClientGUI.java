@@ -349,7 +349,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title"));
-        menuBar.setGame(client.getGame());
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = getVirtualBounds();
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {

@@ -572,9 +572,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity(ce());
-
             // 2003-12-29, nemchenk -- only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
                             && ce().getCrew().isActive());
@@ -799,8 +796,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // clear queue
         attacks.removeAllElements();
 
-        // Clear the menu bar.
-        clientgui.getMenuBar().setEntity(null);
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }

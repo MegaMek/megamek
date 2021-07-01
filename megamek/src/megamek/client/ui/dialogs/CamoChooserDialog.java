@@ -23,7 +23,6 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -63,10 +62,11 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     //region Initialization
     @Override
     protected JPanel createButtonPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        final JPanel panel = new JPanel(new GridLayout(1, 3));
+        panel.setName("buttonPanel");
 
-        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText", this::okButtonActionPerformed));
+        panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText",
+                this::okButtonActionPerformed));
         if (getChooser().canHaveIndividualCamouflage()) {
             panel.add(new MMButton("btnParent", resources, "btnParent.text",
                     "btnParent.toolTipText", evt -> {
@@ -74,9 +74,10 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
                 okButtonActionPerformed(evt);
             }));
         }
-        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText", this::cancelActionPerformed));
-        panel.add(new MMButton("btnRefresh",resources, "refreshDirectory.text", "refreshDirectory.toolTipText",
-                evt -> getChooser().refreshDirectory()));
+        panel.add(new MMButton("btnCancel", resources, "Cancel.text", "Cancel.toolTipText",
+                this::cancelActionPerformed));
+        panel.add(new MMButton("btnRefresh", resources, "RefreshDirectory.text",
+                "RefreshDirectory.toolTipText", evt -> getChooser().refreshDirectory()));
 
         return panel;
     }

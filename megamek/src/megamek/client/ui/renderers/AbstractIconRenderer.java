@@ -87,7 +87,7 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
      * currently displays.
      */
     private void setImage(final AbstractIcon icon) {
-        getLblImage().setIcon(icon.getImageIcon());
+        getLblImage().setIcon(icon.getImageIcon(80));
         setToolTip(String.format("<html><BODY>%s<br>%s</html>", icon.getCategory(), icon.getFilename()));
     }
 

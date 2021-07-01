@@ -30,7 +30,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -113,8 +112,8 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
-        final JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        final JPanel panel = new JPanel(new GridLayout(1, 3));
+        panel.setName("buttonPanel");
 
         panel.add(new MMButton("btnOk", resources, "Ok.text", "Ok.toolTipText",
                 this::okButtonActionPerformed));
@@ -128,6 +127,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
 
     @Override
     protected void setCustomPreferences(final PreferencesNode preferences) {
+        super.setCustomPreferences(preferences);
         preferences.manage(new JSplitPanePreference(getChooser().getSplitPane()));
     }
     //endregion Initialization

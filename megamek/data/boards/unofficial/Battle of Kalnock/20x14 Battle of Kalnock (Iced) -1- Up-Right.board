@@ -1,4 +1,6 @@
 size 20 14
+tag "Water (Auto)"
+tag "SnowTheme (Auto)"
 hex 0101 -2 "pavement:1" "snow"
 hex 0201 -1 "pavement:1" "snow"
 hex 0301 -1 "pavement:1" "snow"

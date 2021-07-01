@@ -1,4 +1,5 @@
 size 11 11
+tag "GrassTheme (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""
 hex 0301 0 "bldg_elev:5;pavement:1;building:4:8;bldg_cf:125" ""

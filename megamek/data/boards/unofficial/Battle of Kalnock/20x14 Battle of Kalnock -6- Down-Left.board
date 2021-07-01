@@ -1,4 +1,5 @@
 size 20 14
+tag "SnowTheme (Auto)"
 hex 0101 -2 "" "snow"
 hex 0201 -2 "water:5" "snow"
 hex 0301 -1 "" "snow"

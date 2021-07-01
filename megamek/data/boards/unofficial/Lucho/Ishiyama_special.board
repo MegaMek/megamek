@@ -1,4 +1,8 @@
 size 10 10
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
 hex 0101 20 "impassable:20" ""
 hex 0201 20 "impassable:20" ""
 hex 0301 20 "impassable:20" ""

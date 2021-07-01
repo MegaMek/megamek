@@ -66,12 +66,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     /** True when there is a board that can be accessed. */
     private boolean hasBoard;
     // The Board submenu
-    private JMenuItem fileBoardNew;
-    private JMenuItem fileBoardOpen;
-    private JMenuItem fileBoardSave;
-    private JMenuItem fileBoardSaveAs;
-    private JMenuItem fileBoardSaveAsImage;
-    private JMenuItem fileBoardSaveAsImageUnits;
+    private JMenuItem boardNew;
+    private JMenuItem boardOpen;
+    private JMenuItem boardSave;
+    private JMenuItem boardSaveAs;
+    private JMenuItem boardSaveAsImage;
+    private JMenuItem boardSaveAsImageUnits;
+    private JMenuItem boardUndo;
+    private JMenuItem boardRedo;
 
     // The Units submenu
     private JMenuItem fileUnitsReinforce;
@@ -99,7 +101,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JCheckBoxMenuItem toggleFiringSolutions;
     private JCheckBoxMenuItem viewMovementEnvelope;
     private JMenuItem viewMovModEnvelope;
-    private JMenuItem viewChangeTheme;
+    private JMenuItem boardChangeTheme;
+    private JMenuItem boardRaise;
+    private JMenuItem boardClear;
+    private JMenuItem boardFlatten;
+    private JMenuItem boardFlood;
+    private JMenu boardRemove;
+    private JMenuItem boardRemoveForests;
+    private JMenuItem boardRemoveWater;
+    private JMenuItem boardRemoveRoads;
+    private JMenuItem boardRemoveBuildings;
     private JMenuItem viewLOSSetting;
     private JCheckBoxMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -159,18 +170,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileGameConnect = createMenuItem(submenu, getString("CommonMenuBar.fileGameConnect"), FILE_GAME_CONNECT);
         replacePlayer = createMenuItem(submenu, getString("CommonMenuBar.replacePlayer"), FILE_GAME_REPLACE_PLAYER);
 
-        // Create the Board sub-menu.
-        submenu = new JMenu(getString("CommonMenuBar.BoardMenu")); 
-        menu.add(submenu);
-        fileBoardNew = createMenuItem(submenu, getString("CommonMenuBar.fileBoardNew"), FILE_BOARD_NEW);
-        fileBoardOpen = createMenuItem(submenu, getString("CommonMenuBar.fileBoardOpen"), FILE_BOARD_OPEN);
-        fileBoardSave = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSave"), FILE_BOARD_SAVE);
-        fileBoardSaveAs = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAs"), FILE_BOARD_SAVE_AS);
-        fileBoardSaveAsImage = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAsImage"), FILE_BOARD_SAVE_AS_IMAGE);
-        fileBoardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
-        fileBoardSaveAsImageUnits = createMenuItem(submenu, getString("CommonMenuBar.fileBoardSaveAsImageUnits"), FILE_BOARD_SAVE_AS_IMAGE_UNITS);
-        fileBoardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip")); 
-
         // Create the Unit List sub-menu.
         submenu = new JMenu(getString("CommonMenuBar.UnitListMenu")); 
         menu.add(submenu);
@@ -180,6 +179,35 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         fileUnitsPaste = createMenuItem(submenu, getString("CommonMenuBar.fileUnitsPaste"), FILE_UNITS_PASTE);
         fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 
+        // Create the Board sub-menu.
+        menu = new JMenu(getString("CommonMenuBar.BoardMenu")); 
+        add(menu);
+        boardNew = createMenuItem(menu, getString("CommonMenuBar.fileBoardNew"), BOARD_NEW);
+        boardOpen = createMenuItem(menu, getString("CommonMenuBar.fileBoardOpen"), BOARD_OPEN);
+        boardSave = createMenuItem(menu, getString("CommonMenuBar.fileBoardSave"), BOARD_SAVE);
+        boardSaveAs = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAs"), BOARD_SAVE_AS);
+        menu.addSeparator();
+        boardSaveAsImage = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImage"), BOARD_SAVE_AS_IMAGE);
+        boardSaveAsImage.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
+        boardSaveAsImageUnits = createMenuItem(menu, getString("CommonMenuBar.fileBoardSaveAsImageUnits"), BOARD_SAVE_AS_IMAGE_UNITS);
+        boardSaveAsImageUnits.setToolTipText(getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip"));
+        menu.addSeparator();
+        boardUndo = createMenuItem(menu, getString("CommonMenuBar.boardUndo"), BOARD_UNDO); 
+        boardUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+        boardRedo = createMenuItem(menu, getString("CommonMenuBar.boardRedo"), BOARD_REDO);
+        menu.addSeparator();
+        boardChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
+        boardRaise = createMenuItem(menu, getString("CommonMenuBar.boardRaise"), BOARD_RAISE);
+        boardClear = createMenuItem(menu, getString("CommonMenuBar.boardClear"), BOARD_CLEAR);
+        boardFlatten = createMenuItem(menu, getString("CommonMenuBar.boardFlatten"), BOARD_FLATTEN);
+        boardFlood = createMenuItem(menu, getString("CommonMenuBar.boardFlood"), BOARD_FLOOD);
+        boardRemove = new JMenu(getString("CommonMenuBar.boardRemove"));
+        menu.add(boardRemove);
+        boardRemoveForests = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveForests"), BOARD_REMOVE_FORESTS);
+        boardRemoveWater = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveWater"), BOARD_REMOVE_WATER);
+        boardRemoveRoads = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveRoads"), BOARD_REMOVE_ROADS);
+        boardRemoveBuildings = createMenuItem(boardRemove, getString("CommonMenuBar.boardRemoveBuildings"), BOARD_REMOVE_BUILDINGS);
+        
         // Create the view menu.
         menu = new JMenu(getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(KeyEvent.VK_V);
@@ -218,7 +246,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMovementEnvelope = createCbxMenuItem(menu, getString("CommonMenuBar.movementEnvelope"), VIEW_MOVE_ENV, KeyEvent.VK_Q);
         viewMovementEnvelope.setState(GUIPreferences.getInstance().getMoveEnvelope());
         viewMovModEnvelope = createMenuItem(menu, getString("CommonMenuBar.movementModEnvelope"), VIEW_MOVE_MOD_ENV, KeyEvent.VK_W);
-        viewChangeTheme = createMenuItem(menu, getString("CommonMenuBar.viewChangeTheme"), VIEW_CHANGE_THEME);
         menu.addSeparator();
         viewRoundReport = createMenuItem(menu, getString("CommonMenuBar.viewRoundReport"), VIEW_ROUND_REPORT, KeyEvent.VK_R);
         menu.addSeparator();
@@ -540,28 +567,28 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
         // the Client doesn't have any board actions
         if (client != null) {
-            fileBoardNew.setEnabled(false);
-            fileBoardOpen.setEnabled(false);
-            fileBoardSave.setEnabled(false);
-            fileBoardSaveAs.setEnabled(false);
-            fileBoardSaveAsImage.setEnabled(false);
-            fileBoardSaveAsImageUnits.setEnabled(false);
+            boardNew.setEnabled(false);
+            boardOpen.setEnabled(false);
+            boardSave.setEnabled(false);
+            boardSaveAs.setEnabled(false);
+            boardSaveAsImage.setEnabled(false);
+            boardSaveAsImageUnits.setEnabled(false);
             // but the main window and map editor do
         } else {
-            fileBoardNew.setEnabled(true);
-            fileBoardOpen.setEnabled(true);
-            fileBoardSave.setEnabled(false);
-            fileBoardSaveAs.setEnabled(false);
-            fileBoardSaveAsImage.setEnabled(false);
+            boardNew.setEnabled(true);
+            boardOpen.setEnabled(true);
+            boardSave.setEnabled(false);
+            boardSaveAs.setEnabled(false);
+            boardSaveAsImage.setEnabled(false);
         }
 
         // If we have a board, we can perform board actions and view the mini
         // map.
         if (hasBoard) {
-            fileBoardSave.setEnabled(true);
-            fileBoardSaveAs.setEnabled(true);
-            fileBoardSaveAsImage.setEnabled(true);
-            fileBoardSaveAsImageUnits.setEnabled(true);
+            boardSave.setEnabled(true);
+            boardSaveAs.setEnabled(true);
+            boardSaveAsImage.setEnabled(true);
+            boardSaveAsImageUnits.setEnabled(true);
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
             viewZoomOut.setEnabled(true);
@@ -569,10 +596,22 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         }
         // If we don't have a board we can't view the mini map.
         else {
-            fileBoardSave.setEnabled(false);
-            fileBoardSaveAs.setEnabled(false);
-            fileBoardSaveAsImage.setEnabled(false);
-            fileBoardSaveAsImageUnits.setEnabled(false);
+            boardSave.setEnabled(false);
+            boardSaveAs.setEnabled(false);
+            boardSaveAsImage.setEnabled(false);
+            boardSaveAsImageUnits.setEnabled(false);
+            boardChangeTheme.setEnabled(false);
+            boardUndo.setEnabled(false);
+            boardRedo.setEnabled(false);
+            boardRaise.setEnabled(false);
+            boardClear.setEnabled(false);
+            boardFlood.setEnabled(false);
+            boardRemove.setEnabled(false);
+            boardRemoveBuildings.setEnabled(false);
+            boardRemoveWater.setEnabled(false);
+            boardRemoveRoads.setEnabled(false);
+            boardRemoveForests.setEnabled(false);
+            boardFlatten.setEnabled(false);
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);
@@ -601,7 +640,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewLOSSetting.setEnabled(false);
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
-            viewChangeTheme.setEnabled(true);
+            boardChangeTheme.setEnabled(true);
+            boardUndo.setEnabled(true);
+            boardRedo.setEnabled(true);
+            boardRaise.setEnabled(true);
+            boardClear.setEnabled(true);
+            boardFlood.setEnabled(true);
+            boardRemove.setEnabled(true);
+            boardRemoveBuildings.setEnabled(true);
+            boardRemoveWater.setEnabled(true);
+            boardRemoveRoads.setEnabled(true);
+            boardRemoveForests.setEnabled(true);
+            boardFlatten.setEnabled(true);
         }
         
         // We're in-game.
@@ -619,7 +669,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(true);
             viewUnitOverview.setEnabled(true);
             viewPlayerList.setEnabled(true);
-            viewChangeTheme.setEnabled(false);
+            boardChangeTheme.setEnabled(false);
             toggleIsometric.setEnabled(true);
             toggleFieldOfFire.setEnabled(true);
             toggleFovHighlight.setEnabled(true);
@@ -636,7 +686,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             viewZoomOut.setEnabled(false);
             viewUnitOverview.setEnabled(false);
             viewPlayerList.setEnabled(false);
-            viewChangeTheme.setEnabled(false);
+            boardChangeTheme.setEnabled(false);
             toggleIsometric.setEnabled(false);
             toggleFieldOfFire.setEnabled(false);
             toggleFovHighlight.setEnabled(false);

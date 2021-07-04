@@ -4880,6 +4880,7 @@ public class Server implements Runnable {
         // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled
         // hex takes damage.
         if ((md.getHexesMoved() == 0)
+                && game.getBoard().contains(md.getFinalCoords())
                 && (game.getBoard().getHex(md.getFinalCoords()).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
                 && entity.antiTSMVulnerable()) {
             addReport(doGreenSmokeDamage(entity));

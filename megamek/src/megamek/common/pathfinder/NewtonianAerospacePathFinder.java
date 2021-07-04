@@ -211,7 +211,7 @@ public class NewtonianAerospacePathFinder {
         
         // terminator conditions:
         // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
-        if (visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < path.getMpUsed()) {
+        if (visitedCoords.containsKey(pathDestination) && (visitedCoords.get(pathDestination).intValue() < path.getMpUsed())) {
             return true;
         }
         

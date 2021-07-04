@@ -521,7 +521,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     @Override
     protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
-                               double fallTolerance, int distanceHome,
+                               double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");

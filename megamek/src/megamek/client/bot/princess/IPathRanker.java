@@ -12,7 +12,7 @@ import megamek.common.Targetable;
 public interface IPathRanker {
 
     ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange, double fallTolerance,
-            int startingHomeDistance, List<Entity> enemies, List<Entity> friends);
+            List<Entity> enemies, List<Entity> friends);
 
     /**
      * Performs initialization to help speed later calls of rankPath for this

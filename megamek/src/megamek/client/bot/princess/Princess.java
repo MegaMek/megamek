@@ -1340,16 +1340,11 @@ public class Princess extends BotClient {
             getPathRanker(entity).initUnitTurn(entity, getGame());
             final double fallTolerance =
                     getBehaviorSettings().getFallShameIndex() / 10d;
-            final int startingHomeDistance = getPathRanker(entity).distanceToHomeEdge(
-                    entity.getPosition(),
-                    getBehaviorSettings().getDestinationEdge(),
-                    getGame());
                        
             final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
                                                     getGame(),
                                                     getMaxWeaponRange(entity),
                                                     fallTolerance,
-                                                    startingHomeDistance,
                                                     getEnemyEntities(),
                                                     getFriendEntities());
             

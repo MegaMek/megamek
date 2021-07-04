@@ -68,20 +68,19 @@ public abstract class PathRanker implements IPathRanker {
     RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
         Coords allyCenter = calcAllyCenter(me.getId(), friends, game);
 
-        return rankPath(path, game, maxWeaponRange, fallTolerance, homeDistance, enemies, allyCenter);
+        return rankPath(path, game, maxWeaponRange, fallTolerance, enemies, allyCenter);
     }
 
-    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
+    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords);
 
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                    double fallTolerance, int startingHomeDistance,
+                                    double fallTolerance,
                                     List<Entity> enemies, List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
@@ -92,7 +91,7 @@ public abstract class PathRanker implements IPathRanker {
         getPathRankerState().getPathSuccessProbabilities().clear();
         
         // Let's try to whittle down this list.
-        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
+        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
                 movePaths.size() + " possible paths.");
 
@@ -108,7 +107,7 @@ public abstract class PathRanker implements IPathRanker {
         for (MovePath path : validPaths) {
             count = count.add(BigDecimal.ONE);
             
-            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies,
                     allyCenter);
             
             returnPaths.add(rankedPath);
@@ -134,14 +133,13 @@ public abstract class PathRanker implements IPathRanker {
             
             behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
             return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
-                    startingHomeDistance, enemies, friends);
+                    enemies, friends);
         }
         
         return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
-                                         double fallTolerance, int startingHomeDistance) {
+    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange, double fallTolerance) {
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {

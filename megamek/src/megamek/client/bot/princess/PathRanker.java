@@ -356,34 +356,43 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
+    /**
+     * Returns distance to the unit's home edge.
+     * Gives the distance to the closest edge
+     *
+     * @param position Final coordinates of the proposed move.
+     * @param homeEdge Unit's home edge.
+     * @param game     The {@link IGame} currently in play.
+     * @return The distance to the unit's home edge.
+     */
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        Coords edgeCoords;
-        int boardHeight = game.getBoard().getHeight();
-        int boardWidth = game.getBoard().getWidth();
-        StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-        if (CardinalEdge.NORTH.equals(homeEdge)) {
-            msg.append("North");
-            edgeCoords = new Coords(position.getX(), 0);
-        } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
-            msg.append("South");
-            edgeCoords = new Coords(position.getX(), boardHeight);
-        } else if (CardinalEdge.WEST.equals(homeEdge)) {
-            msg.append("West");
-            edgeCoords = new Coords(0, position.getY());
-        } else if (CardinalEdge.EAST.equals(homeEdge)) {
-            msg.append("East");
-            edgeCoords = new Coords(boardWidth, position.getY());
-        } else {
-            msg.append("Default");
-            getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
-            edgeCoords = new Coords(boardWidth / 2, 0);
+        int width = game.getBoard().getWidth();
+        int height = game.getBoard().getHeight();
+
+        int distance;
+        switch (homeEdge) {
+            case NORTH: {
+                distance = position.getY();
+                break;
+            }
+            case SOUTH: {
+                distance = height - position.getY() - 1;
+                break;
+            }
+            case WEST: {
+                distance = position.getX();
+                break;
+            }
+            case EAST: {
+                distance = width - position.getX() - 1;
+                break;
+            }
+            default: {
+                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
+                distance = position.getY();
+            }
         }
-        msg.append(edgeCoords.toFriendlyString());
 
-        int distance = edgeCoords.distance(position);
-        msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
-
-        getOwner().getLogger().debug(msg.toString());
         return distance;
     }
 

@@ -1846,7 +1846,11 @@ public class Princess extends BotClient {
     protected void processChat(final GamePlayerChatEvent ge) {
         chatProcessor.processChat(ge, this);
     }
-
+    
+    /**
+     * Given an entity and the current behavior settings, get the "home" edge to which the entity should attempt to retreat
+     * Guaranteed to return a cardinal edge or NONE.
+     */
     CardinalEdge getHomeEdge(Entity entity) {
         // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge        
         if(entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
@@ -1858,7 +1862,11 @@ public class Princess extends BotClient {
         }
         
         // otherwise, return the destination edge
-        return getBehaviorSettings().getDestinationEdge();
+        if (getBehaviorSettings().getDestinationEdge() == CardinalEdge.NEAREST) {
+            return BoardUtilities.getClosestEdge(entity);                
+        } else {
+            return getBehaviorSettings().getDestinationEdge();
+        }
     }
 
     public int calculateAdjustment(final String ticks) {

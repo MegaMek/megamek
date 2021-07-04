@@ -5,6 +5,7 @@ VERSION HISTORY:
 + Issues #1628, #1857, #2181, #2264, #2290, #2390, #2944: Board Editor and Menu Enhancements and Fixes
 + Issue #2960: Fixing non-basic letters in the new camouflage setup
 + PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
++ PR #2987: Remove unwanted water terrain exits from boards
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

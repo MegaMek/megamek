@@ -2777,6 +2777,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         if (!ce.isAirborne()
                 && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && game.getBoard().contains(pos)
                 && !Compute.getMountableUnits(ce, pos,
                     elev + game.getBoard().getHex(pos).surface(), game).isEmpty()) {
             setMountEnabled(true);

@@ -94,7 +94,7 @@ public class MegaMek {
                 }
             }
 
-//            configureLogging(logFileName);
+            configureLogging(logFileName);
 
             MegaMek.showInfo();
 

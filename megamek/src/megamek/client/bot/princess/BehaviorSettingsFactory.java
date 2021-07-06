@@ -120,6 +120,16 @@ public class BehaviorSettingsFactory {
             behaviorMap.put(behaviorSettings.getDescription().trim(), behaviorSettings);
         }
     }
+    
+    /**
+     * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was 
+     * removed (or null if there was no such BehaviorSettings). 
+     */
+    public BehaviorSettings removeBehavior(String settingName) {
+        synchronized (behaviorMap) {
+            return behaviorMap.remove(settingName);
+        }
+    }
 
     /**
      * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.

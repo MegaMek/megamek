@@ -19,13 +19,14 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.CardLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.*;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -36,27 +37,24 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.util.UIUtil.Content;
-import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
-import megamek.client.ui.swing.util.UIUtil.OptionPanel;
-import megamek.client.ui.swing.util.UIUtil.TipCombo;
-import megamek.client.ui.swing.util.UIUtil.TipTextField;
+import megamek.client.ui.swing.util.UIUtil.*;
+import megamek.common.Configuration;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 /** A dialog box to configure (Princess) bot properties. */
 public class BotConfigDialog2 extends AbstractButtonDialog implements ActionListener, ListSelectionListener {
 
-    private static final String PRINCESS_PANEL = "princess_config";
-    private static final String TESTBOT_PANEL = "testbot_config";
     private static final String UNIT_TARGET = Messages.getString("BotConfigDialog.targetUnit");
     private static final String BUILDING_TARGET = Messages.getString("BotConfigDialog.targetBuilding");
     private static final int TOOLTIP_WIDTH = 300;
@@ -65,27 +63,36 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     private JList<String> playersToReplace;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
-    protected BehaviorSettings princessBehavior;
+    private BehaviorSettings princessBehavior;
 
     // Items for princess config here
-    protected JComboBox<String> verbosityCombo;
+    private JComboBox<String> verbosityCombo;
     private JTextField targetId;
     private JComboBox<String> targetTypeCombo;
     private JButton addTargetButton;
+    private JButton addUnitButton;
     private JButton removeTargetButton;
     private JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.princessHelpButtonCaption"));
+    private JButton savePreset = new JButton("Save as Preset...");
     private JList<String> targetsList;
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
-    protected MMToggleButton forcedWithdrawalCheck;
-    protected MMToggleButton autoFleeCheck;
-    protected JComboBox<CardinalEdge> homeEdgeCombo; // The board edge to to which the bot will attempt to move.
-    protected JComboBox<CardinalEdge> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
-    protected JSlider aggressionSlidebar;
-    protected JSlider fallShameSlidebar;
-    protected JSlider herdingSlidebar;
-    protected JSlider selfPreservationSlidebar;
-    protected JSlider braverySlidebar;
+    private MMToggleButton forcedWithdrawalCheck;
+    private MMToggleButton autoFleeCheck;
+    private JComboBox<CardinalEdge> homeEdgeCombo; // The board edge to to which the bot will attempt to move.
+    private JComboBox<CardinalEdge> retreatEdgeCombo; // The board edge to be used in a forced withdrawal.
+    private TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipCombo<String> princessBehaviorNames;
+    private JPanel presetsPanel;
+    
+    /** A copy of the current presets. Modifications will only be saved when accepted. */
+    private List<String> presets = new ArrayList<String>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
+            
+    private PresetsModel presetsModel = new PresetsModel();
+    private JList<String> presetsList = new JList<>(presetsModel);
 
     protected TipTextField nameField;
     public boolean dialogAborted = true; // did user not click Ok button?
@@ -95,9 +102,11 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     private final boolean replacePlayer;
     private final boolean replaceSinglePlayer;
 
-    protected final JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-
-    private JPanel botSpecificCardsPanel;
+    private final JButton butOK = new JButton(Messages.getString("Okay"));
+    private final JButton butCancel = new JButton(Messages.getString("Cancel"));
+    
+    /** True when the player has added/removed to any of the presets. */
+    private boolean presetsChanged = false;
 
     public BotConfigDialog2(JFrame parent) {
         this(parent, new HashSet<>());
@@ -146,116 +155,196 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
 
     @Override
     protected Container createCenterPane() {
-        botSpecificCardsPanel = new JPanel(new CardLayout());
-        botSpecificCardsPanel.add(new JPanel(), TESTBOT_PANEL);
-        var princessScroll = new JScrollPane(princessPanel());
-        princessScroll.getVerticalScrollBar().setUnitIncrement(16);
-        botSpecificCardsPanel.add(princessScroll, PRINCESS_PANEL);
-        CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
-        cardlayout.show(botSpecificCardsPanel, PRINCESS_PANEL);
-        return botSpecificCardsPanel;
+        JPanel result = new JPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        result.add(headerSection());
+        result.add(nameSection());
+        result.add(settingSection());
+        return result;
     }
     
     private JPanel princessPanel() {
         JPanel result = new JPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
-        result.add(headerSection());
         result.add(behaviorSection());
-        result.add(targetsSection());
         result.add(retreatSection());
-        result.add(devSection());
+        result.add(targetsSection());
+        return result;
+    }
+    
+    private JPanel settingSection() {
+        var princessScroll = new JScrollPane(princessPanel());
+        princessScroll.getVerticalScrollBar().setUnitIncrement(16);
+        presetsPanel = presetsPanel();
+        
+        var result = new JPanel(new BorderLayout(0, 0));
+        result.setAlignmentX(LEFT_ALIGNMENT);
+        result.add(princessScroll, BorderLayout.CENTER);
+        result.add(presetsPanel, BorderLayout.LINE_START);
+        return result;
+    }
+    
+    private JPanel nameSection() {
+        JPanel result = new OptionPanel("BotConfigDialog.nameSection");
+        Content panContent = new Content();
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
+        result.add(panContent);
+
+        
+        var namePanel = new JPanel();
+        nameField = new TipTextField("Princess", 12, this);
+        nameField.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.namefield.tooltip")));
+        if (!replacePlayer && !replaceSinglePlayer) {
+            nameField.setText("Princess");
+        } else if (replaceSinglePlayer) {
+            nameField.setText(ghostPlayers.stream().findFirst().get().getName());
+            nameField.setEnabled(false);
+        }
+        namePanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
+        namePanel.add(nameField);
+
+        var verbosityPanel = new JPanel();
+
+        verbosityCombo = new TipCombo<String>(LogLevel.getLogLevelNames());
+        verbosityCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.verbosityToolTip")));
+        verbosityCombo.setSelectedIndex(0);
+        verbosityPanel.add(new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT));
+        verbosityPanel.add(verbosityCombo);
+        
+        panContent.add(namePanel);
+        panContent.add(verbosityPanel);
+        return result;
+    }
+    
+    private JPanel presetsPanel() {
+        var result = new JPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        result.setBorder(new EmptyBorder(0, 10, 0, 20));
+        
+        princessBehaviorNames = new TipCombo<>(behaviorSettingsFactory.getBehaviorNames());
+//        princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
+//        princessBehaviorNames.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.behaviorToolTip")));
+//        princessBehaviorNames.addActionListener(this);
+//        princessBehaviorNames.setMaximumRowCount(30);
+//        princessBehaviorNames.setEditable(true);
+        
+        JLabel behaviorNameLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
+//        choosePanel.add(behaviorNameLabel);
+//        choosePanel.add(princessBehaviorNames);
+//        panContent.add(choosePanel);
+        
+        var chooseLabel = new JLabel("Choose Preset:");
+        chooseLabel.setAlignmentX(CENTER_ALIGNMENT);
+        
+        presetsList.addListSelectionListener(this);
+        presetsList.setCellRenderer(new PresetsRenderer());
+        presetsList.addMouseListener(presetsMouseListener);
+        result.add(chooseLabel);
+        result.add(Box.createVerticalStrut(10));
+        result.add(presetsList);
+        
         return result;
     }
     
     private JPanel behaviorSection() {
         JPanel result = new OptionPanel("BotConfigDialog.behaviorSection");
-        Content panContent = new Content(new GridLayout(6, 1, 0, 5));
+        Content panContent = new Content();
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
         
         var choosePanel = new JPanel();
-        princessBehaviorNames = new TipCombo<>(behaviorSettingsFactory.getBehaviorNames(), this);
+        princessBehaviorNames = new TipCombo<>(behaviorSettingsFactory.getBehaviorNames());
         princessBehaviorNames.setSelectedItem(BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION);
         princessBehaviorNames.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.behaviorToolTip")));
         princessBehaviorNames.addActionListener(this);
+        princessBehaviorNames.setMaximumRowCount(400);
 //        princessBehaviorNames.setEditable(true);
         
         JLabel behaviorNameLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
         choosePanel.add(behaviorNameLabel);
         choosePanel.add(princessBehaviorNames);
-        panContent.add(choosePanel);
+//        panContent.add(choosePanel);
+        
+        panContent.add(buildSlider(braverySlidebar, Messages.getString("BotConfigDialog.braverySliderMin"),
+                Messages.getString("BotConfigDialog.braverySliderMax"),
+                Messages.getString("BotConfigDialog.braveryTooltip"),
+                Messages.getString("BotConfigDialog.braverySliderTitle")));
+        panContent.add(Box.createVerticalStrut(7));
+        
+        panContent.add(buildSlider(selfPreservationSlidebar, Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
+                Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
+                Messages.getString("BotConfigDialog.selfPreservationTooltip"),
+                Messages.getString("BotConfigDialog.selfPreservationSliderTitle")));
+        panContent.add(Box.createVerticalStrut(7));
+        
+        panContent.add(buildSlider(aggressionSlidebar, Messages.getString("BotConfigDialog.aggressionSliderMin"),
+                Messages.getString("BotConfigDialog.aggressionSliderMax"),
+                Messages.getString("BotConfigDialog.aggressionTooltip"),
+                Messages.getString("BotConfigDialog.aggressionSliderTitle")));
+        panContent.add(Box.createVerticalStrut(7));
+        
+        panContent.add(buildSlider(herdingSlidebar, Messages.getString("BotConfigDialog.herdingSliderMin"),
+                Messages.getString("BotConfigDialog.herdingSliderMax"),
+                Messages.getString("BotConfigDialog.herdingToolTip"),
+                Messages.getString("BotConfigDialog.herdingSliderTitle")));
+        panContent.add(Box.createVerticalStrut(7));
+        
+        panContent.add(buildSlider(fallShameSlidebar, Messages.getString("BotConfigDialog.fallShameSliderMin"),
+              Messages.getString("BotConfigDialog.fallShameSliderMax"),
+              Messages.getString("BotConfigDialog.fallShameToolTip"),
+              Messages.getString("BotConfigDialog.fallShameSliderTitle")));
 
-        braverySlidebar = buildSlider(Messages.getString("BotConfigDialog.braverySliderMin"),
-                                      Messages.getString("BotConfigDialog.braverySliderMax"),
-                                      Messages.getString("BotConfigDialog.braveryTooltip"),
-                                      Messages.getString("BotConfigDialog.braverySliderTitle"));
-        panContent.add(braverySlidebar);
-
-        selfPreservationSlidebar = buildSlider(Messages.getString("BotConfigDialog.selfPreservationSliderMin"),
-                                               Messages.getString("BotConfigDialog.selfPreservationSliderMax"),
-                                               Messages.getString("BotConfigDialog.selfPreservationTooltip"),
-                                               Messages.getString("BotConfigDialog.selfPreservationSliderTitle"));
-        panContent.add(selfPreservationSlidebar);
-
-        aggressionSlidebar = buildSlider(Messages.getString("BotConfigDialog.aggressionSliderMin"),
-                                         Messages.getString("BotConfigDialog.aggressionSliderMax"),
-                                         Messages.getString("BotConfigDialog.aggressionTooltip"),
-                                         Messages.getString("BotConfigDialog.aggressionSliderTitle"));
-        panContent.add(aggressionSlidebar);
-
-        herdingSlidebar = buildSlider(Messages.getString("BotConfigDialog.herdingSliderMin"),
-                                      Messages.getString("BotConfigDialog.herdingSliderMax"),
-                                      Messages.getString("BotConfigDialog.herdingToolTip"),
-                                      Messages.getString("BotConfigDialog.herdingSliderTitle"));
-        panContent.add(herdingSlidebar);
-
-        fallShameSlidebar = buildSlider(Messages.getString("BotConfigDialog.fallShameSliderMin"),
-                                        Messages.getString("BotConfigDialog.fallShameSliderMax"),
-                                        Messages.getString("BotConfigDialog.fallShameToolTip"),
-                                        Messages.getString("BotConfigDialog.fallShameSliderTitle"));
-        panContent.add(fallShameSlidebar);
         return result;
     }
     
     private JPanel targetsSection() {
         JPanel result = new OptionPanel("BotConfigDialog.targetsSection");
         Content panContent = new Content();
-        panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
+        panContent.setLayout(new BoxLayout(panContent, BoxLayout.LINE_AXIS));
         result.add(panContent);
 
-        JPanel typePanel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panContent.add(typePanel);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
         
         targetTypeCombo = new JComboBox<>(new String[] { BUILDING_TARGET, UNIT_TARGET });
         targetTypeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.targetTypeTooltip")));
         targetTypeCombo.setSelectedIndex(0);
-        typePanel.add(targetTypeCombo);
+        buttonPanel.add(targetTypeCombo);
 
         targetId = new JTextField();
         targetId.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessTargetIdToolTip")));
         targetId.setColumns(4);
-        typePanel.add(targetId);
+        buttonPanel.add(targetId);
         
-        addTargetButton = new JButton(Messages.getString("BotConfigDialog.princessAddTargetButtonCaption"));
+//        addTargetButton = new JButton(Messages.getString("BotConfigDialog.princessAddTargetButtonCaption"));
+        addTargetButton = new TipButton("+H");
         addTargetButton.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessAddTargetButtonToolTip")));
         addTargetButton.addActionListener(this);
-        typePanel.add(addTargetButton);
-
-        JPanel listPanel = new JPanel(new GridLayout(1, 3, 20, 0));
-        panContent.add(listPanel);
+        buttonPanel.add(addTargetButton);
         
+        addUnitButton = new TipButton("+U");
+        addUnitButton.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessAddTargetButtonToolTip")));
+        addUnitButton.addActionListener(this);
+        buttonPanel.add(addUnitButton);
+
         targetsList = new JList<>(targetsListModel);
         targetsList.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessStrategicTargetsToolTip")));
-        targetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        targetsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         targetsList.getSelectionModel().addListSelectionListener(this);
         targetsList.setLayoutOrientation(JList.VERTICAL);
+        targetsList.setCellRenderer(new TargetsRenderer());
         JScrollPane targetScroller = new JScrollPane(targetsList);
-        listPanel.add(targetScroller);
+        panContent.add(targetScroller);
         
-        removeTargetButton = new JButton(Messages.getString("BotConfigDialog.princessRemoveTargetButtonCaption"));
+//        removeTargetButton = prepareButton("buttonRemT", "Delete Terrain");
+        removeTargetButton = new JButton("\u274C");
+        removeTargetButton.setFont(UIUtil.getScaledFont());
+        removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColor());
         removeTargetButton.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.princessRemoveTargetButtonToolTip")));
         removeTargetButton.addActionListener(this);
-        listPanel.add(removeTargetButton);
+        buttonPanel.add(removeTargetButton);
         
+        panContent.add(buttonPanel);
         return result;
     }
     
@@ -265,56 +354,43 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
 
-        autoFleeCheck = new MMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
+        autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
         autoFleeCheck.setToolTipText(formatTooltip(formatTooltip(Messages.getString("BotConfigDialog.autoFleeTooltip"))));
         autoFleeCheck.addActionListener(this);
-        autoFleeCheck.setEnabled(false);
         
         var homeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
 
-        homeEdgeCombo = new JComboBox<>(CardinalEdge.values());
+        homeEdgeCombo = new TipCombo<>(CardinalEdge.values());
+        homeEdgeCombo.removeItem(CardinalEdge.NONE);
         homeEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.homeEdgeTooltip")));
         homeEdgeCombo.setSelectedIndex(0);
         homeEdgeCombo.addActionListener(this);
 
-        forcedWithdrawalCheck = new MMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
+        forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
         forcedWithdrawalCheck.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip")));
+        forcedWithdrawalCheck.addActionListener(this);
 
         var retreatEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
         
-        retreatEdgeCombo = new JComboBox<>(CardinalEdge.values());
+        retreatEdgeCombo = new TipCombo<>(CardinalEdge.values());
+        retreatEdgeCombo.removeItem(CardinalEdge.NONE);
         retreatEdgeCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.retreatEdgeTooltip")));
         retreatEdgeCombo.setSelectedIndex(0);
 
         var firstLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
         var secondLine = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        firstLine.add(autoFleeCheck);
+        firstLine.add(forcedWithdrawalCheck);
         firstLine.add(Box.createHorizontalStrut(20));
-        firstLine.add(homeEdgeLabel);
-        firstLine.add(homeEdgeCombo);
-        secondLine.add(forcedWithdrawalCheck);
+        firstLine.add(retreatEdgeLabel);
+        firstLine.add(retreatEdgeCombo);
+        secondLine.add(autoFleeCheck);
         secondLine.add(Box.createHorizontalStrut(20));
-        secondLine.add(retreatEdgeLabel);
-        secondLine.add(retreatEdgeCombo);
+        secondLine.add(homeEdgeLabel);
+        secondLine.add(homeEdgeCombo);
         panContent.add(firstLine);
         panContent.add(Box.createVerticalStrut(5));
         panContent.add(secondLine);
         
-        return result;
-    }
-    
-    private JPanel devSection() {
-        JPanel result = new OptionPanel("BotConfigDialog.debugSection");
-        Content panContent = new Content(new FlowLayout(FlowLayout.LEFT));
-        result.add(panContent);
-
-        var verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT);
-        panContent.add(verbosityLabel);
-
-        verbosityCombo = new JComboBox<>(LogLevel.getLogLevelNames());
-        verbosityCombo.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.verbosityToolTip")));
-        verbosityCombo.setSelectedIndex(0);
-        panContent.add(verbosityCombo);
         return result;
     }
     
@@ -364,7 +440,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     }
 
     private boolean getPresetPrincessBehavior() {
-        princessBehavior = behaviorSettingsFactory.getBehavior((String) princessBehaviorNames.getSelectedItem());
+        princessBehavior = behaviorSettingsFactory.getBehavior(presetsList.getSelectedValue());
         if (princessBehavior == null) {
             princessBehavior = new BehaviorSettings();
             return false;
@@ -384,7 +460,9 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         homeEdgeCombo.setSelectedItem(princessBehavior.getDestinationEdge());
+        homeEdgeCombo.setEnabled(autoFleeCheck.isSelected());
         retreatEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
+        retreatEdgeCombo.setEnabled(forcedWithdrawalCheck.isSelected());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         targetsListModel.clear();
@@ -397,52 +475,41 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         }
     }
 
-    private JLabel buildSliderLabel(String caption) {
-        JLabel label = new JLabel(caption);
-        label.setFont(UIUtil.getScaledFont());
-        return label;
-    }
-
-    private JSlider buildSlider(String minMsgProperty, String maxMsgProperty, String toolTip, String title) {
-        JSlider thisSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
-        Hashtable<Integer, JLabel> sliderLabels = new Hashtable<Integer, JLabel>(3);
-        sliderLabels.put(0, buildSliderLabel("0 - " + minMsgProperty));
-        sliderLabels.put(10, buildSliderLabel("10 - " + maxMsgProperty));
-        sliderLabels.put(5, buildSliderLabel("5"));
+    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip, String title) {
+        var result = new TipPanel();
+        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        result.setToolTipText(formatTooltip(toolTip));
         thisSlider.setToolTipText(formatTooltip(toolTip));
-        thisSlider.setLabelTable(sliderLabels);
-        thisSlider.setPaintLabels(true);
-        thisSlider.setMinorTickSpacing(1);
-        thisSlider.setMajorTickSpacing(2);
+        thisSlider.setPaintLabels(false);
         thisSlider.setSnapToTicks(true);
-        var border = new TitledBorder(new LineBorder(Color.black), title);
-        border.setTitleFont(UIUtil.getScaledFont());
-        thisSlider.setBorder(border);
-        return thisSlider;
+        
+        var panLabels = new JPanel();
+        panLabels.setLayout(new BoxLayout(panLabels, BoxLayout.LINE_AXIS));
+        panLabels.add(new JLabel(minMsgProperty, SwingConstants.LEFT));
+        panLabels.add(Box.createHorizontalGlue());
+        panLabels.add(new JLabel(maxMsgProperty, SwingConstants.RIGHT));
+        
+        result.add(panLabels);
+        result.add(thisSlider);
+        return result;
     }
 
     @Override
     protected JPanel createButtonPanel() {
-        JPanel result = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
-
-        var namepanel = new JPanel();
-        namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
-        nameField = new TipTextField("Princess", 12, this);
-        nameField.setToolTipText(formatTooltip(Messages.getString("BotConfigDialog.namefield.tooltip")));
-        namepanel.add(nameField);
-        result.add(namepanel);
-        if (!replacePlayer && !replaceSinglePlayer) {
-            nameField.setText("Princess");
-        } else if (replaceSinglePlayer) {
-            nameField.setText(ghostPlayers.stream().findFirst().get().getName());
-            nameField.setEnabled(false);
-        }
+        JPanel result = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 2));
 
         butOK.addActionListener(this);
         result.add(butOK);
         
+        butCancel.addActionListener(this);
+        result.add(butCancel);
+        
         princessHelpButton.addActionListener(this);
         result.add(princessHelpButton);
+        
+        var savePreset = new JButton("Save as Preset...");
+        savePreset.addActionListener(this);
+        result.add(savePreset);
 
         return result;
     }
@@ -467,33 +534,39 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (butOK.equals(e.getSource())) {
+        if (e.getSource() == butOK) {
             dialogAborted = false;
             savePrincessProperties();
             setVisible(false);
 
-        } else if (addTargetButton.equals(e.getSource())) {
+        } else if (e.getSource() == butCancel) {
+            if (presetsChanged) {
+                JOptionPane.showOptionDialog(this, "Keep changes to the presets?", 
+                        "Presets changed", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                        null, new Object[] {"Keep","Discard"}, "Discard");
+            }
+            dialogAborted = true;
+            setVisible(false);
+
+        } else if (e.getSource() == addTargetButton) {
             String data = targetTypeCombo.getSelectedItem() + ": " + targetId.getText();
             targetsListModel.addElement(data);
 
-        } else if (removeTargetButton.equals(e.getSource())) {
+        } else if (e.getSource() == removeTargetButton) {
             targetsListModel.removeElementAt(targetsList.getSelectedIndex());
 
-        } else if (princessBehaviorNames.equals(e.getSource())) {
-            getPresetPrincessBehavior();
-            setPrincessFields();
+        } else if (e.getSource() == autoFleeCheck) {
+            homeEdgeCombo.setEnabled(autoFleeCheck.isSelected());
             
-        } else if (homeEdgeCombo.equals(e.getSource())) {
-            if (homeEdgeCombo.getSelectedItem() == CardinalEdge.NONE) {
-                autoFleeCheck.setSelected(false);
-                autoFleeCheck.setEnabled(false);
-            } else {
-                autoFleeCheck.setEnabled(true);
-                autoFleeCheck.setSelected(true);
-            }
+        } else if (e.getSource() == forcedWithdrawalCheck) {
+            retreatEdgeCombo.setEnabled(forcedWithdrawalCheck.isSelected());
             
-        } else if (princessHelpButton.equals(e.getSource())) {
+        } else if (e.getSource() == princessHelpButton) {
             showPrincessHelp();
+            
+        } else if (e.getSource() == savePreset) {
+            addBehaviorPreset();
+            
         }
     }
 
@@ -586,9 +659,132 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
             return;
         }
         
-        if (event.getSource().equals(targetsList.getSelectionModel())) {
+        if (event.getSource() == targetsList.getSelectionModel()) {
             removeTargetButton.setEnabled(!targetsList.isSelectionEmpty());
+            
+        } else if (event.getSource() == presetsList) {
+            getPresetPrincessBehavior();
+            setPrincessFields();
         }
     }
+
+    /** Returns a 84x72 icon with the text "No Camo". */
+//    private Icon noCamoIcon() {
+//        var result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
+//        Graphics2D graphics = result.createGraphics();
+//        GUIPreferences.AntiAliasifSet(graphics);
+//        graphics.setFont(new Font("Dialog", Font.PLAIN, 18));
+//        BoardView1.drawCenteredText(graphics, "No", 42, 23, new Color(180, 180, 200, 120), true);
+//        BoardView1.drawCenteredText(graphics, "Camo", 42, 44, new Color(180, 180, 200, 120), true);
+//        return new ImageIcon(result);
+//    }
+    
+    /**
+     * Sets up Scaling Icon Buttons
+     */
+    private JButton prepareButton(String iconName, String buttonName) {
+        // Get the normal icon
+        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
+        Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        if (imageButton == null) {
+            imageButton = ImageUtil.failStandardImage();
+        }
+        JButton button = new JButton(new ImageIcon(imageButton));
+
+        // Get the hover icon
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
+        imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        button.setRolloverIcon(new ImageIcon(imageButton));
+        
+        // Get the disabled icon, if any
+        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile();
+        imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
+        button.setDisabledIcon(new ImageIcon(imageButton));
+
+        String tt = Messages.getString("BoardEditor."+iconName+"TT");
+        if (tt.length() != 0) {
+            button.setToolTipText(tt);
+        }
+        button.setMargin(new Insets(0,0,0,0));
+        button.addActionListener(this);
+        return button;
+    }
+    
+    /** Shows a popup menu for a behavior preset, allowing to delete it. */
+    private MouseListener presetsMouseListener = new MouseAdapter() {
+        
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            int row = presetsList.locationToIndex(e.getPoint());
+            if (e.isPopupTrigger() && (row != -1)) {
+                ScalingPopup popup = new ScalingPopup();
+                String behavior = presetsList.getModel().getElementAt(row);
+                var deleteItem = new JMenuItem("Delete " + behavior);
+                deleteItem.addActionListener(event -> removeBehaviorPreset(behavior));
+                popup.add(deleteItem);
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        };
+    };
+
+    private void removeBehaviorPreset(String name) {
+        if (presets.remove(name)) {
+            presetsChanged = true;
+            updatePresets();
+        }
+    }
+    
+    private void addBehaviorPreset() {
+//        savePrincessProperties();
+        updatePresets();
+        presetsChanged = true;
+    }
+
+    private void updatePresets() {
+         ((PresetsModel)presetsList.getModel()).fireUpdate();
+    }
+    
+    private class PresetsModel extends DefaultListModel<String> {
+        
+        @Override
+        public int getSize() {
+            return presets.size();
+        }
+
+        @Override
+        public String getElementAt(int index) {
+            return presets.get(index);
+        }
+        
+        /** Call when elements of the list change. */
+        private void fireUpdate() {
+            fireContentsChanged(this, 0, getSize() - 1);
+        }
+    }
+
+    /** A renderer for the behavior presets list adapting the font size to the gui scaling. */
+    private class PresetsRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            comp.setFont(UIUtil.getScaledFont());
+            return comp;
+        }
+    }
+    
+    /** A renderer for the strategic targets list. */
+    private class TargetsRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            comp.setFont(UIUtil.getScaledFont());
+            return comp;
+        }
+    }
+    
 }
 

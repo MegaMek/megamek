@@ -146,7 +146,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     private JLabel labMethod = new JLabel(getString(PSD + "labMethod"), SwingConstants.RIGHT); 
     private JLabel labPilot = new JLabel(getString(PSD + "labPilot"), SwingConstants.RIGHT); 
     private JLabel labXP = new JLabel(getString(PSD + "labXP"), SwingConstants.RIGHT);
-    private TipCombo<String> cmbMethod = new TipCombo<String>(this);
+    private TipCombo<String> cmbMethod = new TipCombo<String>();
     private JComboBox<String> cmbPilot = new JComboBox<String>();
     private JComboBox<String> cmbXP = new JComboBox<String>();
     private MMToggleButton butForceGP = new MMToggleButton(getString(PSD + "butForceGP"));
@@ -287,7 +287,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
         for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new TipButton("", this);
+            butStartPos[i] = new TipButton("");
             butStartPos[i].addActionListener(listener);
         }
         panStartButtons.setLayout(new GridLayout(4, 3));

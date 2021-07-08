@@ -27050,13 +27050,13 @@ public class Server implements Runnable {
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
+                return vDesc;
             } else if ((!advancedCrit && (roll >= 8) && (roll <= 9))
                     || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-                return vDesc;
             } else if ((!advancedCrit && (roll >= 10) && (roll <= 11))
                     || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;

@@ -13,6 +13,7 @@ VERSION HISTORY:
 	- prevent ejected aerospace pilots from crashing the server when drifting off-board on space map
 	- prevent attempts to use searchlights on non-existent buildings
 	- "Nearest" destination zone is now respected properly by the bot
++ Issue #2995: Critical Hits not being applied
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

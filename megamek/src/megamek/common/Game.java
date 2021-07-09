@@ -523,7 +523,7 @@ public class Game implements Serializable, IGame {
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player)) {
+            if ((entity != null) && player.equals(entity.getOwner())) {
                 count++;
             }
         }

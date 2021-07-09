@@ -75,7 +75,7 @@ public class InfantryMapSet implements DisplayMapSet {
         Infantry inf = (Infantry) e;
         int men;
         if (inf instanceof EjectedCrew) {
-            men = Math.min(inf.getInternal(0),EjectedCrew.EJ_CREW_MAX_MEN);
+            men = Math.max(0, Math.min(inf.getInternal(0),EjectedCrew.EJ_CREW_MAX_MEN));
             for (int i = 0; i < men; i++) {
                 areas[i].setVisible(true);
             }
@@ -83,7 +83,7 @@ public class InfantryMapSet implements DisplayMapSet {
                 areas[i].setVisible(false);
             }
         } else {
-            men = Math.min(inf.getInternal(0),Infantry.INF_PLT_MAX_MEN);
+            men = Math.max(0, Math.min(inf.getInternal(0),Infantry.INF_PLT_MAX_MEN));
             for (int i = 0; i < men; i++) {
                 areas[i].setVisible(true);
             }

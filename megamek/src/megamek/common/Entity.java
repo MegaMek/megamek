@@ -2622,7 +2622,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (transporter == null) {
                 transporter = game.getOutOfGameEntity(conveyance);
             }
-            return transporter.getFacing();
+            
+            if (transporter != null) {
+                return transporter.getFacing();
+            }
         }
         return facing;
     }

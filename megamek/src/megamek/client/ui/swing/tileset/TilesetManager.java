@@ -583,9 +583,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         IPlayer player = entity.getOwner();
 
-        Camouflage camouflage = player != null ?
-                entity.getCamouflageOrElse(player.getCamouflage()) :
-                new Camouflage();
+        Camouflage camouflage = (player == null) ? new Camouflage()
+                : entity.getCamouflageOrElse(player.getCamouflage());
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded

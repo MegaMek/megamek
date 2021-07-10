@@ -193,7 +193,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * Returns the selected AbstractIcon
      */
     public @Nullable AbstractIcon getSelectedItem() {
-        return imageList.getSelectedValue();
+        return getImageList().getSelectedValue();
     }
 
     /**

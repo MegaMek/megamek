@@ -15,6 +15,15 @@
 */
 package megamek.common;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.common.enums.Gender;
+import megamek.common.icons.Portrait;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import megamek.common.util.CrewSkillSummaryUtil;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -23,23 +32,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
-import megamek.client.generator.RandomGenderGenerator;
-import megamek.common.enums.Gender;
-import megamek.common.icons.AbstractIcon;
-import megamek.common.icons.Portrait;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
-import megamek.common.util.CrewSkillSummaryUtil;
-
 /**
- *  Health status, skills, and miscellanea for an Entity crew.
+ * Health status, skills, and miscellanea for an Entity crew.
  *
- *  While vehicle and vessel crews are treated as a single collective, with one set of skills,
- *  some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
- *  and skills of each crew member independently. These are referred to as "slots" and the slot
- *  number corresponds to an array index for the appropriate field.
+ * While vehicle and vessel crews are treated as a single collective, with one set of skills,
+ * some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
+ * and skills of each crew member independently. These are referred to as "slots" and the slot
+ * number corresponds to an array index for the appropriate field.
  */
 public class Crew implements Serializable {
     //region Variable Declarations
@@ -54,7 +53,7 @@ public class Crew implements Serializable {
     private final String[] names;
     private final String[] nicknames;
     private final Gender[] genders;
-    private final AbstractIcon[] portraits;
+    private final Portrait[] portraits;
 
     private final int[] gunnery;
     private final int[] piloting;
@@ -287,7 +286,7 @@ public class Crew implements Serializable {
         genders = new Gender[slots];
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
-        portraits = new AbstractIcon[slots];
+        portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
             setPortrait(new Portrait(), i);
         }
@@ -389,15 +388,15 @@ public class Crew implements Serializable {
         getGenders()[pos] = gender;
     }
 
-    public AbstractIcon[] getPortraits() {
+    public Portrait[] getPortraits() {
         return portraits;
     }
 
-    public AbstractIcon getPortrait(final int pos) {
+    public Portrait getPortrait(final int pos) {
         return getPortraits()[pos];
     }
 
-    public void setPortrait(final AbstractIcon portrait, final int pos) {
+    public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
     }
 

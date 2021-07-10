@@ -30,9 +30,16 @@ import java.util.Enumeration;
 public abstract class AbstractIconChooserTree extends JTree {
     //region Constructors
     protected AbstractIconChooserTree() {
+        this(TreeSelectionModel.SINGLE_TREE_SELECTION, true);
+    }
+
+    protected AbstractIconChooserTree(final int selectionModel, final boolean initialize) {
         super();
-        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        setModel(createTreeModel());
+        getSelectionModel().setSelectionMode(selectionModel);
+
+        if (initialize) {
+            setModel(createTreeModel());
+        }
     }
     //endregion Constructors
 
@@ -40,7 +47,7 @@ public abstract class AbstractIconChooserTree extends JTree {
     protected abstract DefaultTreeModel createTreeModel();
 
     /**
-     * This recursive method is a hack: DirectoryItems flattens the directory
+     * This recursive method is a hack: AbstractDirectory flattens the directory
      * structure, but it provides useful functionality, so this method will
      * reconstruct the directory structure for the JTree.
      *

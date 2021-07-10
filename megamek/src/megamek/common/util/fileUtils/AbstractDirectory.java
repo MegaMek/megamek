@@ -18,6 +18,7 @@
  */
 package megamek.common.util.fileUtils;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
 import java.io.File;
@@ -28,7 +29,7 @@ import java.util.TreeMap;
 /**
  * AbstractDirectory is a class that is used to
  */
-public abstract class AbstractDirectory implements Categorized {
+public abstract class AbstractDirectory {
     //region Variable Declarations
     private String rootName; // The root category name
 
@@ -36,7 +37,7 @@ public abstract class AbstractDirectory implements Categorized {
      * A map of the category names to the sub-categories. Please note that this
      * map includes the root category, if the root category contains any items.
      */
-    protected TreeMap<String, Categorized> categories = new TreeMap<>(StringUtil.stringComparator());
+    protected TreeMap<String, AbstractDirectory> categories = new TreeMap<>(StringUtil.stringComparator());
 
     /**
      * A map of item names to the <code>ItemFile</code>s in the root
@@ -70,13 +71,20 @@ public abstract class AbstractDirectory implements Categorized {
         this.rootName = rootName;
     }
 
+    public TreeMap<String, AbstractDirectory> getCategories() {
+        return categories;
+    }
+
+    public @Nullable AbstractDirectory getCategory(final String categoryName) {
+        return getCategories().get(categoryName);
+    }
+
     /**
      * Get the names of all the categories.
      *
      * @return an <code>Enumeration</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
-    @Override
     public Iterator<String> getCategoryNames() {
         return categories.keySet().iterator();
     }
@@ -94,7 +102,9 @@ public abstract class AbstractDirectory implements Categorized {
         }
     }
 
-    @Override
+    /**
+     * @return a TreeMap of all the Objects within the Directory
+     */
     public TreeMap<String, Object> getItems(){
         return items;
     }
@@ -107,10 +117,9 @@ public abstract class AbstractDirectory implements Categorized {
      * @return an <code>Iterator</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
-    @Override
     public Iterator<String> getItemNames(String categoryName) {
         // Get the category with the given name.
-        Categorized category = categories.get(categoryName);
+        AbstractDirectory category = categories.get(categoryName);
 
         if (category == null) { // ensure the category exists first
             // Return an empty Iterator if we couldn't find the category
@@ -135,10 +144,9 @@ public abstract class AbstractDirectory implements Categorized {
      *          name. This value may be <code>null</code>.
      * @throws Exception if there's any error getting the item.
      */
-    @Override
     public Object getItem(String categoryName, String itemName) throws Exception {
         // Get the category with the given name.
-        Categorized category = categories.get(categoryName);
+        AbstractDirectory category = categories.get(categoryName);
 
         if (category == null) { // ensure the category exists first
             return null; // return null if that is the case

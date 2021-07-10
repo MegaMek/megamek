@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.tileset;
 
 import megamek.MegaMek;
+import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
@@ -28,8 +29,8 @@ import megamek.common.util.fileUtils.DirectoryItems;
 public class MMStaticDirectoryManager {
     //region Variable Declarations
     // Directories
-    private static DirectoryItems portraitDirectory;
-    private static DirectoryItems camouflageDirectory;
+    private static AbstractDirectory portraitDirectory;
+    private static AbstractDirectory camouflageDirectory;
     private static MechTileset mechTileset;
 
     // Re-parsing Prevention Variables: The are True at startup and when the specified directory
@@ -114,23 +115,23 @@ public class MMStaticDirectoryManager {
 
     //region Getters
     /**
-     * Returns a DirectoryItems object containing all portrait image filenames
+     * Returns an AbstractDirectory object containing all portrait image filenames
      * found in MM's portrait images folder.
-     * @return a DirectoryItems object with the portrait folders and filenames.
+     * @return an AbstractDirectory object with the portrait folders and filenames.
      * May be null if the directory cannot be parsed.
      */
-    public static @Nullable DirectoryItems getPortraits() {
+    public static @Nullable AbstractDirectory getPortraits() {
         initializePortraits();
         return portraitDirectory;
     }
 
     /**
-     * Returns a DirectoryItems object containing all camo image filenames
+     * Returns an AbstractDirectory object containing all camo image filenames
      * found in MM's camo images folder.
-     * @return a DirectoryItems object with the camo folders and filenames.
+     * @return an AbstractDirectory object with the camo folders and filenames.
      * May be null if the directory cannot be parsed.
      */
-    public static @Nullable DirectoryItems getCamouflage() {
+    public static @Nullable AbstractDirectory getCamouflage() {
         initializeCamouflage();
         return camouflageDirectory;
     }
@@ -147,26 +148,26 @@ public class MMStaticDirectoryManager {
     //region Refreshers
     /**
      * Re-reads MM's camo images folder and returns the updated
-     * DirectoryItems object. This will update the DirectoryItems object
+     * AbstractDirectory object. This will update the AbstractDirectory object
      * with changes to the camos (like added image files and folders)
      * while MM is running.
      *
      * @see #getCamouflage()
      */
-    public static DirectoryItems refreshCamouflageDirectory() {
+    public static AbstractDirectory refreshCamouflageDirectory() {
         parseCamouflageDirectory = true;
         return getCamouflage();
     }
 
     /**
      * Re-reads MM's portrait images folder and returns the updated
-     * DirectoryItems object. This will update the DirectoryItems object
+     * AbstractDirectory object. This will update the AbstractDirectory object
      * with changes to the portraits (like added image files and folders)
      * while MM is running.
      *
      * @see #getPortraits()
      */
-    public static DirectoryItems refreshPortraitDirectory() {
+    public static AbstractDirectory refreshPortraitDirectory() {
         parsePortraitDirectory = true;
         return getPortraits();
     }

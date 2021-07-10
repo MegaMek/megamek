@@ -24,7 +24,7 @@ import megamek.client.ui.trees.CamoChooserTree;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,7 +53,7 @@ public class CamoChooser extends AbstractIconChooser {
     //endregion Getters/Setters
 
     @Override
-    protected DirectoryItems getDirectory() {
+    protected @Nullable AbstractDirectory getDirectory() {
         return MMStaticDirectoryManager.getCamouflage();
     }
 

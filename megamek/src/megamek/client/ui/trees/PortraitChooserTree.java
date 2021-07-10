@@ -21,6 +21,7 @@ package megamek.client.ui.trees;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -37,8 +38,9 @@ public class PortraitChooserTree extends AbstractIconChooserTree {
     @Override
     protected DefaultTreeModel createTreeModel() {
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        if (MMStaticDirectoryManager.getPortraits() != null) {
-            final Iterator<String> categoryNames = MMStaticDirectoryManager.getPortraits().getCategoryNames();
+        final AbstractDirectory directory = MMStaticDirectoryManager.getPortraits();
+        if (directory != null) {
+            final Iterator<String> categoryNames = directory.getCategoryNames();
             while (categoryNames.hasNext()) {
                 final String categoryName = categoryNames.next();
                 if (!StringUtil.isNullOrEmpty(categoryName)) {

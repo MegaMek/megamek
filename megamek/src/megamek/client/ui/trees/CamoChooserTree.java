@@ -23,6 +23,7 @@ import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 public class CamoChooserTree extends AbstractIconChooserTree {
     //region Constructors
@@ -35,9 +36,10 @@ public class CamoChooserTree extends AbstractIconChooserTree {
     @Override
     protected DefaultTreeModel createTreeModel() {
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        if (MMStaticDirectoryManager.getCamouflage() != null) {
+        final AbstractDirectory directory = MMStaticDirectoryManager.getCamouflage();
+        if (directory != null) {
             root.add(new DefaultMutableTreeNode(Camouflage.COLOUR_CAMOUFLAGE));
-            final Iterator<String> categoryNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
+            final Iterator<String> categoryNames = directory.getCategoryNames();
             while (categoryNames.hasNext()) {
                 final String categoryName = categoryNames.next();
                 if (!StringUtil.isNullOrEmpty(categoryName)) {

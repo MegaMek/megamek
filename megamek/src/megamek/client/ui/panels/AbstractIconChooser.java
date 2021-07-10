@@ -22,7 +22,7 @@ import megamek.client.ui.lists.ImageList;
 import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -60,10 +60,17 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(final JTree tree, final @Nullable AbstractIcon icon) {
-        initialize(tree);
+    public AbstractIconChooser(final @Nullable JTree tree, final @Nullable AbstractIcon icon) {
+        this(tree, icon, true);
+    }
+
+    public AbstractIconChooser(final @Nullable JTree tree, final @Nullable AbstractIcon icon,
+                               final boolean initialize) {
         setOriginalIcon(icon);
-        setSelection(icon);
+        if (initialize) {
+            initialize(tree);
+            setSelection(icon);
+        }
     }
     //endregion Constructors
 
@@ -98,7 +105,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Getters/Setters
 
     //region Initialization
-    private void initialize(final @Nullable JTree tree) {
+    protected void initialize(final @Nullable JTree tree) {
         // Set up the image list (right panel)
         setImageList(new ImageList(new AbstractIconRenderer()));
         JScrollPane scrpImages = new JScrollPane(getImageList());
@@ -162,7 +169,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     }
     //endregion Initialization
 
-    protected abstract DirectoryItems getDirectory();
+    protected abstract @Nullable AbstractDirectory getDirectory();
 
     protected abstract AbstractIcon createIcon(final String category, final String filename);
 

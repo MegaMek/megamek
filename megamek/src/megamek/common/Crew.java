@@ -25,12 +25,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.util.CrewSkillSummaryUtil;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Health status, skills, and miscellanea for an Entity crew.

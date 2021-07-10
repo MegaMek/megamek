@@ -504,34 +504,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     }
                 });
 
-        // Register the action for MOVE_ENVELOPE
-        controller.registerCommandAction(KeyCommandBind.MOVE_ENVELOPE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (clientgui.bv.getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        GUIPreferences.getInstance().setMoveEnvelope(
-                                !GUIPreferences.getInstance().getMoveEnvelope());
-                        if (GUIPreferences.getInstance().getMoveEnvelope()) {
-                            computeMovementEnvelope(clientgui.mechD
-                                    .getCurrentEntity());
-                        } else {
-                            clientgui.bv.clearMovementEnvelope();
-                        }
-                    }
-                });
-
         // Register the action for CLEAR
         controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
                 new CommandAction() {
@@ -1013,7 +985,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (numButtonGroups > 1)
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
         //check if there should be a turn timer running
@@ -1041,7 +1013,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (null != next)
                 && (null != ce)
                 && (next.getOwnerId() != ce.getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
@@ -5441,7 +5413,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn() && (ce != null)) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.bv.centerOnHex(ce.getPosition());
         }
     }
@@ -5462,7 +5434,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 selectEntity(e.getId());
             }
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());

@@ -23,66 +23,22 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.KeyBindParser;
+import megamek.common.*;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -288,17 +244,17 @@ public class CommonSettingsDialog extends ClientDialog implements
     private Map<String, JTextField> cmdModifierMap;
 
     /**
+     * A Map that maps command strings to a JTextField for updating the key
+     * for the command.
+     */
+    private Map<String, JTextField> cmdKeyMap;
+    
+    /**
      * A Map that maps command strings to a Integer for updating the key
      * for the command.
      */
-    private Map<String, Integer> cmdKeyMap;
+    private Map<String, Integer> cmdKeyCodeMap; 
 
-    /**
-     * A Map that maps command strings to a JCheckBox for updating the
-     * isRepeatable flag.
-     */
-    private Map<String, JCheckBox> cmdRepeatableMap;
-    
     private ClientGUI clientgui = null;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
@@ -1119,48 +1075,17 @@ public class CommonSettingsDialog extends ClientDialog implements
             ToolTipManager.sharedInstance().setDismissDelay(gs.getTooltipDismissDelay());
         }
 
-        // Lets iterate through all of the KeyCommandBinds and see if they've
-        //  changed
+        // Check if any keybinds have changed and, if so, save them
         boolean bindsChanged = false;
-        for (KeyCommandBind kcb : KeyCommandBind.values()){
-            JTextField txtModifiers = cmdModifierMap.get(kcb.cmd);
-            JCheckBox repeatable = cmdRepeatableMap.get(kcb.cmd);
-            Integer keyCode = cmdKeyMap.get(kcb.cmd);
-            // This shouldn't happen, but just to be safe...
-            if (txtModifiers == null || keyCode == null || repeatable == null){
-                continue;
-            }
-            int modifiers = 0;
-            if (txtModifiers.getText().contains(
-                    KeyEvent.getModifiersExText(KeyEvent.SHIFT_DOWN_MASK))){
-                modifiers |= KeyEvent.SHIFT_DOWN_MASK;
-            }
-            if (txtModifiers.getText().contains(
-                    KeyEvent.getModifiersExText(KeyEvent.ALT_DOWN_MASK))){
-                modifiers |= KeyEvent.ALT_DOWN_MASK;
-            }
-            if (txtModifiers.getText().contains(
-                    KeyEvent.getModifiersExText(KeyEvent.CTRL_DOWN_MASK))){
-                modifiers |= KeyEvent.CTRL_DOWN_MASK;
-            }
-
-            if (kcb.modifiers != modifiers){
-                bindsChanged = true;
-                kcb.modifiers = modifiers;
-            }
-
-            if (kcb.key != keyCode){
-                bindsChanged = true;
-                kcb.key = keyCode;
-            }
-
-            if (kcb.isRepeatable != repeatable.isSelected()){
-                bindsChanged = true;
-                kcb.isRepeatable = repeatable.isSelected();
-            }
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            int modifiers = modifierCode(kcb);
+            int keyCode = keyCode(kcb);
+            bindsChanged |= (kcb.modifiers != modifiers) || (kcb.key != keyCode); 
+            kcb.modifiers = modifiers;
+            kcb.key = keyCode;
         }
 
-        if (bindsChanged){
+        if (bindsChanged) {
             KeyBindParser.writeKeyBindings();
         }
         
@@ -1705,18 +1630,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         headers = new JLabel("Key");
         headers.setToolTipText("The key");
         keyBinds.add(headers, gbc);
-        gbc.gridx++;
-        headers = new JLabel("Repeatable?");
-        headers.setToolTipText("Should this action repeat rapidly " +
-                "when the key is held down?");
-        keyBinds.add(headers, gbc);
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 4;
         
         gbc.fill = GridBagConstraints.BOTH;
-        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
-        keyBinds.add(sep,gbc);
+        keyBinds.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
         
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy++;
@@ -1725,16 +1644,14 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // Create maps to retrieve the text fields for saving
         int numBinds = KeyCommandBind.values().length;
-        cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
-        cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
-        cmdRepeatableMap = new HashMap<String,JCheckBox>((int)(numBinds*1.26));
+        cmdModifierMap = new HashMap<String, JTextField>((int)(numBinds*1.26));
+        cmdKeyMap = new HashMap<String, JTextField>((int)(numBinds*1.26));
+        cmdKeyCodeMap = new HashMap<String, Integer>((int)(numBinds*1.26));
 
         // For each keyCommandBind, create a label and two text fields
-        for (KeyCommandBind kcb : KeyCommandBind.values()){
-            JLabel name = new JLabel(
-                    Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
-            name.setToolTipText(
-                    Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            JLabel name = new JLabel(Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
+            name.setToolTipText(Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
             gbc.anchor = GridBagConstraints.EAST;
             keyBinds.add(name, gbc);
             gbc.gridx++;
@@ -1742,16 +1659,16 @@ public class CommonSettingsDialog extends ClientDialog implements
 
             final JTextField modifiers = new JTextField(10);
             modifiers.setText(KeyEvent.getModifiersExText(kcb.modifiers));
-            for (KeyListener kl : modifiers.getKeyListeners()){
+            for (KeyListener kl : modifiers.getKeyListeners()) {
                 modifiers.removeKeyListener(kl);
             }
             // Update how typing in the text field works
-            modifiers.addKeyListener(new KeyListener(){
+            modifiers.addKeyListener(new KeyListener() {
 
                 @Override
                 public void keyPressed(KeyEvent evt) {
-                    modifiers.setText(
-                            KeyEvent.getModifiersExText(evt.getModifiersEx()));
+                    modifiers.setText(KeyEvent.getModifiersExText(evt.getModifiersEx()));
+                    markDuplicateBinds();
                     evt.consume();
                 }
 
@@ -1762,10 +1679,10 @@ public class CommonSettingsDialog extends ClientDialog implements
                 @Override
                 public void keyTyped(KeyEvent evt) {
                     // This might be a bit hackish, but we want to deal with
-                    //  the key code, so the code to update the text is in
-                    //  keyPressed.  We've already done what we want with the
-                    //  typed key, and we don't want anything else acting upon
-                    //  the key typed event, so we consume it here.
+                    // the key code, so the code to update the text is in
+                    // keyPressed.  We've already done what we want with the
+                    // typed key, and we don't want anything else acting upon
+                    // the key typed event, so we consume it here.
                     evt.consume();
                 }
 
@@ -1773,18 +1690,25 @@ public class CommonSettingsDialog extends ClientDialog implements
             keyBinds.add(modifiers, gbc);
             gbc.gridx++;
             cmdModifierMap.put(kcb.cmd, modifiers);
-            final JTextField key  = new JTextField(10);
+            final JTextField key = new JTextField(10);
             key.setName(kcb.cmd);
             key.setText(KeyEvent.getKeyText(kcb.key));
             // Update how typing in the text field works
             final String cmd = kcb.cmd;
-            cmdKeyMap.put(cmd, kcb.key);
-            key.addKeyListener(new KeyListener(){
+            cmdKeyMap.put(cmd, key);
+            cmdKeyCodeMap.put(cmd, kcb.key);
+            key.addKeyListener(new KeyListener() {
 
                 @Override
                 public void keyPressed(KeyEvent evt) {
+                    // Don't react to modifiers here
+                    if ((evt.getKeyCode() == KeyEvent.VK_CONTROL) || (evt.getKeyCode() == KeyEvent.VK_SHIFT)
+                            || (evt.getKeyCode() == KeyEvent.VK_ALT)) {
+                        return;
+                    }
                     key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
-                    cmdKeyMap.put(cmd, evt.getKeyCode());
+                    cmdKeyCodeMap.put(kcb.cmd, evt.getKeyCode());
+                    markDuplicateBinds();
                     evt.consume();
                 }
 
@@ -1795,10 +1719,10 @@ public class CommonSettingsDialog extends ClientDialog implements
                 @Override
                 public void keyTyped(KeyEvent evt) {
                     // This might be a bit hackish, but we want to deal with
-                    //  the key code, so the code to update the text is in
-                    //  keyPressed.  We've already done what we want with the
-                    //  typed key, and we don't want anything else acting upon
-                    //  the key typed event, so we consume it here.
+                    // the key code, so the code to update the text is in
+                    // keyPressed.  We've already done what we want with the
+                    // typed key, and we don't want anything else acting upon
+                    // the key typed event, so we consume it here.
                     evt.consume();
                 }
 
@@ -1806,19 +1730,89 @@ public class CommonSettingsDialog extends ClientDialog implements
             keyBinds.add(key, gbc);
             gbc.gridx++;
 
-            JCheckBox repeatable = new JCheckBox("Repeatable?");
-            repeatable.setSelected(kcb.isRepeatable);
-            cmdRepeatableMap.put(kcb.cmd,repeatable);
-            keyBinds.add(repeatable, gbc);
             gbc.gridx = 0;
             gbc.gridy++;
             
             // deactivate TABbing through fields here so TAB can be caught as a keybind
             modifiers.setFocusTraversalKeysEnabled(false);
             key.setFocusTraversalKeysEnabled(false);
-            repeatable.setFocusTraversalKeysEnabled(false);
         }
+        markDuplicateBinds();
         return outer;
+    }
+
+    /** 
+     * Marks the text fields when duplicate keybinds occur. Menu Bar items and exclusive KeyCommandBinds 
+     * are checked as for these duplicate binds don't work. Two commands may share a keybind if none
+     * of them is a Menubar keybind (although that only works well if they're used in different
+     * phases such as turn and twist). 
+     * Also checks for Ctrl-C and Ctrl-V. These are coded into JTables and JTrees and making them
+     * configurable would be unproportional effort to the gain. 
+     */
+    private void markDuplicateBinds() {
+        Map<KeyStroke, KeyCommandBind> duplicates = new HashMap<>();
+        Set<KeyStroke> allKeys = new HashSet<>();
+        // Assemble all keybinds that are used twice into the duplicates map
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode(kcb), modifierCode(kcb));
+            if (!allKeys.add(keyStroke)) {
+                duplicates.put(keyStroke, kcb);
+            }
+        }
+                    
+        // Now traverse the commands again. When a duplicate keybind is found and this KeyCommandBind is exclusive or Menubar
+        // or the other one (the first one found with the same keybind) is exclusive or Menubar, both are marked.
+        // Also, Ctrl-C and Ctrl-V are marked as these are hard-mapped to Copy/Paste and cannot be used otherwise.
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            boolean isCorrect = true;
+            KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode(kcb), modifierCode(kcb));
+            if (duplicates.containsKey(keyStroke) && 
+                    (kcb.isMenuBar || kcb.isExclusive || duplicates.get(keyStroke).isExclusive || duplicates.get(keyStroke).isMenuBar)) {
+                // Mark the current kcb and the one that was already in the keyMap as duplicate
+                markTextfield(cmdModifierMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
+                markTextfield(cmdKeyMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
+                markTextfield(cmdModifierMap.get(duplicates.get(keyStroke).cmd), "This keybind is a duplicate and will not work correctly.");
+                markTextfield(cmdKeyMap.get(duplicates.get(keyStroke).cmd), "This keybind is a duplicate and will not work correctly.");
+                isCorrect = false;
+            }
+            // Check for standard copy/paste keys
+            if (keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK))
+                    || keyStroke.equals(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK))) {
+                markTextfield(cmdModifierMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
+                markTextfield(cmdKeyMap.get(kcb.cmd), "Ctrl-C / Ctrl-V cannot be used");
+                isCorrect = false;
+            }
+            if (isCorrect) {
+                markTextfield(cmdModifierMap.get(kcb.cmd), null);
+                markTextfield(cmdKeyMap.get(kcb.cmd), null);
+            }
+        }
+    }
+    
+    private void markTextfield(JTextField field, String errorMsg) {
+        field.setForeground(errorMsg != null ? GUIPreferences.getInstance().getWarningColor() : null);
+        field.setToolTipText(errorMsg);
+    }
+    
+    /** Returns the keycode for the character part of a user-entered keybind (The "V" in CTRL-V). */
+    private int keyCode(KeyCommandBind kcb) {
+        return cmdKeyCodeMap.get(kcb.cmd);
+    }
+    
+    /** Returns the keycode for the modifier part of a user-entered keybind (The "CTRL" in CTRL-V). */
+    private int modifierCode(KeyCommandBind kcb) {
+        int modifiers = 0;
+        String modText = cmdModifierMap.get(kcb.cmd).getText();
+        if (modText.contains(KeyEvent.getModifiersExText(KeyEvent.SHIFT_DOWN_MASK))) {
+            modifiers |= KeyEvent.SHIFT_DOWN_MASK;
+        }
+        if (modText.contains(KeyEvent.getModifiersExText(KeyEvent.ALT_DOWN_MASK))) {
+            modifiers |= KeyEvent.ALT_DOWN_MASK;
+        }
+        if (modText.contains(KeyEvent.getModifiersExText(KeyEvent.CTRL_DOWN_MASK))) {
+            modifiers |= KeyEvent.CTRL_DOWN_MASK;
+        }
+        return modifiers;
     }
     
     /**

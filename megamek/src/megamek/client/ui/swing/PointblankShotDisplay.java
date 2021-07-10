@@ -476,7 +476,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
      * Does turn start stuff
      */
     public void beginMyTurn() {
-        clientgui.setDisplayVisible(true);
+        clientgui.maybeShowUnitDisplay();
         clientgui.bv.clearFieldofF();
 
         butDone.setEnabled(true);
@@ -498,7 +498,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         if ((game.getPhase() == IGame.Phase.PHASE_FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         target(null);
@@ -1079,7 +1079,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         }
 
         if (clientgui.isProcessingPointblankShot() && (ce() != null)) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.bv.centerOnHex(ce().getPosition());
         }
     }
@@ -1095,7 +1095,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         if (clientgui.getPointblankEID() == e.getId()) {
             selectEntity(e.getId());
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());

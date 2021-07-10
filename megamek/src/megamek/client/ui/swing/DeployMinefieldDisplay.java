@@ -483,7 +483,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 "DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), 
                 new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
-        clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
@@ -491,7 +490,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 "DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), 
                 new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
-        clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
@@ -499,7 +497,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 "DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), 
                 new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
-        clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     private void setActiveEnabled(int nbr) {
@@ -507,7 +504,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 "DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), 
                 new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
-        clientgui.getMenuBar().setDeployActiveEnabled(nbr);
     }
 
     private void setInfernoEnabled(int nbr) {
@@ -515,12 +511,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 "DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), 
                 new Object[] { Integer.valueOf(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
-        clientgui.getMenuBar().setDeployInfernoEnabled(nbr);
     }
 
     private void setRemoveMineEnabled(boolean enable) {
         buttons.get(Command.REMOVE_MINES).setEnabled(enable);
-        // clientgui.getMenuBar().setRemoveMineEnabled(enable);
     }
 
     /**

@@ -96,7 +96,7 @@ public class MegaMekController implements KeyEventDispatcher {
         // If there's no action associated with this key bind, or the
         // current action is invalid, do not consume this event.
         boolean consumed = false;
-
+        
         for (var kcb : KeyCommandBind.getBindByKey(keyCode, modifiers)) {
             // Do nothing when there is no bind for this key or no action for the bind
             if (!keyCmdSet.contains(kcb) || (cmdActionMap.get(kcb.cmd) == null)) {

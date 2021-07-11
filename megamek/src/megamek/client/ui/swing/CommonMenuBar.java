@@ -334,16 +334,15 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 GUIP.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            // Here the actual user preference is changed. The listeners should
-            // just adjust the visibility of the map dialog based on guip.getMinimapEnabled()
             GUIP.setMinimapEnabled(!GUIP.getMinimapEnabled());
             
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_UNIT_DISPLAY)) {
-            // Here the actual user preference is changed. The listeners should
-            // just adjust the visibility of the unit display based on th GUIP setting
             GUIP.toggleUnitDisplay();
             
-        }else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
+        } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
+            GUIP.toggleKeybindsOverlay();
+            
+        } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
             boolean coordsShown = GUIP.getBoolean(GUIPreferences.SHOW_COORDS);
             GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
             
@@ -351,7 +350,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             boolean drawLabels = GUIP.getBoolean(GUIPreferences.DRAW_ENTITY_LABEL);
             GUIP.setValue(GUIPreferences.DRAW_ENTITY_LABEL, !drawLabels);
         }
-        
         
         // Pass the action on to each of our listeners.
         actionListeners.forEach(l -> l.actionPerformed(event));
@@ -484,8 +482,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
             viewMiniMap.setSelected(GUIP.getMinimapEnabled());
-        } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
-            viewKeybindsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
             toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {

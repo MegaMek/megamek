@@ -1575,6 +1575,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void toggleUnitDisplay() {
         store.setValue(SHOW_UNIT_DISPLAY, !getBoolean(SHOW_UNIT_DISPLAY));
     }
+    
+    /** Toggles the state of the user preference for the Keybinds overlay. */
+    public void toggleKeybindsOverlay() {
+        store.setValue(SHOW_KEYBINDS_OVERLAY, !getBoolean(SHOW_KEYBINDS_OVERLAY));
+    }
+
 
     public Color getColor(String name) {
         final String text = store.getString(name);

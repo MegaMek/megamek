@@ -800,9 +800,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
                 break;
-            case VIEW_KEYBINDS_OVERLAY:
-                bv.toggleKeybindsOverlay();
-                break;
             case VIEW_UNIT_OVERVIEW:
                 toggleUnitOverview();
                 break;

@@ -124,6 +124,7 @@ import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
+import megamek.common.KeyBindParser;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -731,6 +732,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -997,6 +999,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
             getTilesetManager().reloadUnitIcons();
             
+        } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
+            keybindOverlay.setVisible((boolean)e.getNewValue());
+            repaint();
+            
         } else if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
                 || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
@@ -1017,6 +1023,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             game.getBoard().initializeAllAutomaticTerrain();
             clearHexImageCache();
             repaint();
+            
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            repaint();
+            
         }
     }
 
@@ -6402,6 +6412,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();
+        KeyBindParser.removePreferenceChangeListener(this);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
     }
 
     /**
@@ -6746,8 +6759,4 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return displayablesRect;
     }
     
-    public void toggleKeybindsOverlay() {
-        keybindOverlay.setVisible(!keybindOverlay.isVisible());
-        repaint();
-    }
 }

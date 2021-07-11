@@ -1742,9 +1742,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     /** 
-     * Marks the text fields when duplicate keybinds occur. Menu Bar items and exclusive KeyCommandBinds 
-     * are checked as for these duplicate binds don't work. Two commands may share a keybind if none
-     * of them is a Menubar keybind (although that only works well if they're used in different
+     * Marks the text fields when duplicate keybinds occur. Two commands may share a keybind if none
+     * of them is a Menubar or exclusive keybind (although that only works well if they're used in different
      * phases such as turn and twist). 
      * Also checks for Ctrl-C and Ctrl-V. These are coded into JTables and JTrees and making them
      * configurable would be unproportional effort to the gain. 

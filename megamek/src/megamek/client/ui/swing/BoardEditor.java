@@ -2025,8 +2025,6 @@ public class BoardEditor extends JPanel
                     FUEL_TANK, FUEL_TANK_CF, FUEL_TANK_ELEV, FUEL_TANK_MAGN);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
-        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
-            bv.toggleKeybindsOverlay();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {
             minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
         }

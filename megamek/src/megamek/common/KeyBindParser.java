@@ -22,11 +22,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
+import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
@@ -55,12 +57,18 @@ public class KeyBindParser {
     public static String KEY_MODIFIER = "modifier";
     public static String COMMAND = "command";
     public static String IS_REPEATABLE = "isRepeatable";
+    
+    // Keybinds change event 
+    private static ArrayList<IPreferenceChangeListener> listeners = new ArrayList<>();
+    public static final String KEYBINDS_CHANGED = "keyBindsChanged";
 
     public static void parseKeyBindings(MegaMekController controller){
+        // Always register the hard-coded defaults first so that new binds get their keys
+        registerDefaultKeyBinds(controller);
+        
         // Get the path to the default bindings file.
         File file = new MegaMekFile(Configuration.configDir(), DEFAULT_BINDINGS_FILE).getFile();
         if (!file.exists() || !file.isFile()) {
-            registerDefaultKeyBinds(controller);
             return;
         }
 
@@ -145,7 +153,7 @@ public class KeyBindParser {
     }
 
     /**
-     * Each KeyCommand has a built-in default; if now key binding file can be
+     * Each KeyCommand has a built-in default; if no key binding file can be
      * found, we should register those defaults.
      *
      * @param controller
@@ -189,12 +197,40 @@ public class KeyBindParser {
 
             output.write("</KeyBindings>");
             output.close();
+            fireKeyBindsChangeEvent();
         } catch (IOException e) {
             System.err.println("Error writing keybindings file!");
             e.printStackTrace(System.err);
         }
 
 
+    }
+    
+    /**
+     * Register an object that wishes to be alerted when the key binds (may) have changed.
+     * When the keybinds change, a PreferenceChange with the name KeyBindParser.KEYBINDS_CHANGED
+     * is fired.
+     *
+     * @param listener - the PreferenceListener</code> that wants to register itself.
+     */    
+    public synchronized static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+        if (!listeners.contains((listener))) {
+            listeners.add(listener);
+        }
+    }
+
+    /**
+     * De-register an object from being alerted when the key binds (may) have changed.
+     *
+     * @param listener - the PreferenceListener</code> that wants to remove itself.
+     */
+    public synchronized static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    private synchronized static void fireKeyBindsChangeEvent() {
+        final PreferenceChangeEvent pe = new PreferenceChangeEvent(KeyBindParser.class, KEYBINDS_CHANGED, null, null);
+        listeners.stream().forEach(l -> l.preferenceChange(pe));
     }
 
 }

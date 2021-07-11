@@ -304,13 +304,6 @@
     </KeyBind>
 
     <KeyBind>
-        <command>toggleKeyBindDisplay</command> <!-- Ctrl-K -->
-        <keyCode>75</keyCode>
-        <modifier>128</modifier>
-        <isRepeatable>false</isRepeatable>
-    </KeyBind>
-
-    <KeyBind>
         <command>toggleHexCoords</command> <!-- Ctrl-G -->
         <keyCode>71</keyCode>
         <modifier>128</modifier>

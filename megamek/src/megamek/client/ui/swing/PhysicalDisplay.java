@@ -264,9 +264,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         clientgui.bv.centerOnHex(entity.getPosition());
 
-        // Update the menu bar.
-        clientgui.getMenuBar().setEntity(ce());
-
         // does it have a club?
         String clubLabel = null;
         for (Mounted club : entity.getClubs()) {
@@ -298,7 +295,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        clientgui.setDisplayVisible(true);
+        clientgui.maybeShowUnitDisplay();
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof GameTurn.CounterGrappleTurn) {
@@ -329,7 +326,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             && (null != next)
             && (null != ce())
             && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         target(null);
@@ -1734,7 +1731,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 selectEntity(e.getId());
             }
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());

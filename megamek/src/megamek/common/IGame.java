@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import megamek.common.IGame.Phase;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -96,6 +97,14 @@ public interface IGame {
          */
         public boolean isBefore(Phase otherPhase) {
             return compareTo(otherPhase) < 0;
+        }
+        
+        /** Returns true when this phase shows the game map (boardview). */
+        public boolean isOnMap() {
+            return (this == PHASE_SET_ARTYAUTOHITHEXES) || (this == PHASE_DEPLOY_MINEFIELDS)
+                    || (this == PHASE_MOVEMENT) || (this == PHASE_FIRING)
+                    || (this == PHASE_PHYSICAL) || (this == PHASE_OFFBOARD)
+                    || (this == PHASE_TARGETING) || (this == PHASE_DEPLOYMENT);
         }
 
         /**

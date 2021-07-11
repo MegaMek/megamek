@@ -323,7 +323,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         panSecondary.removeAll();
         mainNames.clear();
         secondaryNames.clear();
-        menuBar = new CommonMenuBar(null);
+        menuBar = new CommonMenuBar();
         initializeFrame();
         try {
             // Create the board viewer.

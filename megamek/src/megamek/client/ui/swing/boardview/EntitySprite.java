@@ -516,7 +516,7 @@ class EntitySprite extends Sprite {
             graph.scale(1/bv.scale, 1/bv.scale);
             
             // Label background
-            if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+            if (guip.getBoolean(GUIPreferences.DRAW_ENTITY_LABEL)) {
                 if (criticalStatus) {
                     graph.setColor(LABEL_CRITICAL_BACK);
                 } else {

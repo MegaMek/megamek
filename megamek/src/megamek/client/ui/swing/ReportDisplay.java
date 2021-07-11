@@ -314,7 +314,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 Entity ent = clientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     clientgui.mechD.displayEntity(ent);
-                    clientgui.setDisplayVisible(true);
+                    clientgui.setUnitDisplayVisible(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

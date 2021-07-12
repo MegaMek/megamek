@@ -84,12 +84,12 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int get0SI() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero)ent).get0SI()).min().orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).get0SI()).min().orElse(0);
     }
 
     @Override
     public int getSI() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero)ent).getSI()).min().orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getSI()).min().orElse(0);
     }
 
     @Override

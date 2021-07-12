@@ -2677,8 +2677,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // To place roads under the shadow map, some supers 
         // have to be drawn before the shadow map, otherwise the supers are
-        // drawn after.  Unfortunately I dont think the supers images
-        // themselves can be checked for roads.
+        // drawn after. Unfortunately the supers images
+        // themselves can't be checked for roads.
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
         if (hex.containsTerrain(Terrains.ROAD) 

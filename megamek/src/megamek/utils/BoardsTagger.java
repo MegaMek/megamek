@@ -137,7 +137,12 @@ public class BoardsTagger {
         Board board = new Board();
         try (InputStream is = new FileInputStream(boardFile)) {
             // Apply tags only to boards that are valid and fully functional
-            board.load(is, null, false);
+            StringBuffer errors = new StringBuffer();
+            board.load(is, errors, true);
+            if (errors.length() > 0) {
+                System.out.println("Board has errors: " + boardFile);
+                return;
+            }
         } catch (Exception e) {
             System.out.println("Could not load board: " + boardFile);
             return;

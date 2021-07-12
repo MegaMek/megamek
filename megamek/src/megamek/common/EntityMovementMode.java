@@ -77,7 +77,7 @@ public enum EntityMovementMode {
     {
         return t.name();
     }
-    
+
     /**
      * Whether this movement mode is capable of detonating minefields.
      */
@@ -93,5 +93,9 @@ public enum EntityMovementMode {
                 (this == INF_JUMP) ||
                 (this == RAIL) ||
                 (this == MAGLEV);
+    }
+
+    public boolean isMarine() {
+        return (this == NAVAL) || (this == HYDROFOIL) || (this == SUBMARINE);
     }
 }

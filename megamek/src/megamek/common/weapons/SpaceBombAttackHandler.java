@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.Collections;
 import java.util.List;
 
 import megamek.common.Aero;
@@ -100,7 +99,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
             //  The salvo consists of one bomb from each fighter equipped with
             //  a bomb of the proper type.  
             for (int type = 0; type < payload.length; type++) {
-                List<Entity> activeFighters = ae.getActiveSubEntities().orElse(Collections.emptyList());
+                List<Entity> activeFighters = ae.getActiveSubEntities();
                 if(activeFighters.isEmpty()) {
                     break;
                 }

@@ -1430,7 +1430,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        int numFighters = ce().getActiveSubEntities().orElse(Collections.emptyList()).size();
+        int numFighters = ce().getActiveSubEntities().size();
         BombPayloadDialog bombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("FiringDisplay.BombNumberDialog" + ".title"), //$NON-NLS-1$

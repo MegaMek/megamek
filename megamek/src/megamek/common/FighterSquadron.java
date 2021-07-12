@@ -144,12 +144,12 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int getFuel() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero)ent).getFuel()).min().orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getFuel()).min().orElse(0);
     }
     
     @Override
     public int getCurrentFuel() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero)ent).getCurrentFuel()).min().orElse(0);
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getCurrentFuel()).min().orElse(0);
     }
 
     /*
@@ -241,8 +241,8 @@ public class FighterSquadron extends Aero {
     @Override
     public int getClusterMods() {
         return getActiveSubEntities().stream()
-                .filter(ent -> (((IAero)ent).getFCSHits() <= 2))
-                .mapToInt(ent -> ((IAero)ent).getClusterMods()).sum();
+                .filter(ent -> (((IAero) ent).getFCSHits() <= 2))
+                .mapToInt(ent -> ((IAero) ent).getClusterMods()).sum();
     }
 
     @Override
@@ -276,7 +276,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int getHeatSinks() {
-        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero)ent).getHeatSinks()).sum();
+        return getActiveSubEntities().stream().mapToInt(ent -> ((IAero) ent).getHeatSinks()).sum();
     }
     
     @Override
@@ -323,7 +323,7 @@ public class FighterSquadron extends Aero {
         List<Entity> activeFighters = getActiveSubEntities();
         
         // If this squadron is doomed or is of size 1 then just return the first one
-        if (isDoomed() || activeFighters.size() <= 1) {
+        if (isDoomed() || (activeFighters.size() <= 1)) {
             return new HitData(0);
         }
 

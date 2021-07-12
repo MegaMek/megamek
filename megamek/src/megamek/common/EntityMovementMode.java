@@ -230,14 +230,14 @@ public enum EntityMovementMode {
      */
     public static EntityMovementMode parseFromString(final String text) {
         try {
-            valueOf(text);
+            return valueOf(text);
         } catch (Exception ignored) {
 
         }
 
         // Splitting this off the baseline as it is a legacy call, the text should be saved uppercase
         try {
-            valueOf(text.toUpperCase());
+            return valueOf(text.toUpperCase());
         } catch (Exception ignored) {
 
         }

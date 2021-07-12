@@ -318,7 +318,7 @@ public class LobbyActions {
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    entity.getSubEntities().ifPresent(ents -> ents.forEach(client::sendUpdateEntity));
+                    entity.getSubEntities().forEach(client::sendUpdateEntity);
                 }
             }
         }
@@ -398,7 +398,7 @@ public class LobbyActions {
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    entity.getSubEntities().ifPresent(ents -> updateCandidates.addAll(ents));
+                    updateCandidates.addAll(entity.getSubEntities());
                 }
 
                 // Do we need to update the members of our C3 network?

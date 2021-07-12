@@ -25,7 +25,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -4208,7 +4207,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
-        int numFighters = ce().getActiveSubEntities().orElse(Collections.emptyList()).size();
+        int numFighters = ce().getActiveSubEntities().size();
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$

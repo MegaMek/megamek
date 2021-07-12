@@ -35,6 +35,7 @@ import megamek.common.IGame.Phase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import static megamek.client.ui.swing.ClientGUI.*;
+import static java.awt.event.KeyEvent.*;
 
 
 /**
@@ -80,6 +81,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
     private JMenuItem boardSaveAsImageUnits = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImageUnits"));
+    private JMenuItem boardResize = new JMenuItem(getString("CommonMenuBar.boardResize"));
+    private JMenuItem boardValidate = new JMenuItem(getString("CommonMenuBar.boardValidate"));
+    private JMenuItem boardSourceFile = new JMenuItem(getString("CommonMenuBar.boardSourceFile"));
     private JMenuItem boardUndo = new JMenuItem(getString("CommonMenuBar.boardUndo"));
     private JMenuItem boardRedo = new JMenuItem(getString("CommonMenuBar.boardRedo"));
     private JMenuItem boardChangeTheme = new JMenuItem(getString("CommonMenuBar.viewChangeTheme"));
@@ -155,10 +159,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public CommonMenuBar() {
         // Create the Game menu
         JMenu menu = new JMenu(getString("CommonMenuBar.GameMenu"));
-        menu.setMnemonic(KeyEvent.VK_G);
+        menu.setMnemonic(VK_G);
         add(menu);
-        initMenuItem(gameLoad, menu, FILE_GAME_LOAD);
-        initMenuItem(gameSave, menu, FILE_GAME_SAVE);
+        initMenuItem(gameLoad, menu, FILE_GAME_LOAD, VK_L);
+        initMenuItem(gameSave, menu, FILE_GAME_SAVE, VK_S);
         initMenuItem(gameQSave, menu, FILE_GAME_QSAVE);
         initMenuItem(gameQLoad, menu, FILE_GAME_QLOAD);
         initMenuItem(gameSaveServer, menu, FILE_GAME_SAVE_SERVER);
@@ -167,21 +171,21 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
         menu.addSeparator();
         
-        initMenuItem(gameReplacePlayer, menu, FILE_GAME_REPLACE_PLAYER);
+        initMenuItem(gameReplacePlayer, menu, FILE_GAME_REPLACE_PLAYER, VK_R);
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
         menu.addSeparator();
         
-        initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS);
+        initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
         initMenuItem(gamePlayerSettings, menu, VIEW_PLAYER_SETTINGS);
 
         // Create the Unit List sub-menu.
         menu = new JMenu(getString("CommonMenuBar.UnitListMenu")); 
-        menu.setMnemonic(KeyEvent.VK_U);
+        menu.setMnemonic(VK_U);
         add(menu);
         initMenuItem(fileUnitsCopy, menu, FILE_UNITS_COPY);
-        fileUnitsCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK));
+        fileUnitsCopy.setAccelerator(KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsPaste, menu, FILE_UNITS_PASTE);
-        fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK));
+        fileUnitsPaste.setAccelerator(KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsReinforce, menu, FILE_UNITS_REINFORCE);
         initMenuItem(fileUnitsReinforceRAT, menu, FILE_UNITS_REINFORCE_RAT);
         menu.addSeparator();
@@ -193,12 +197,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         // Create the Board sub-menu.
         menu = new JMenu(getString("CommonMenuBar.BoardMenu")); 
-        menu.setMnemonic(KeyEvent.VK_B);
+        menu.setMnemonic(VK_B);
         add(menu);
         initMenuItem(boardNew, menu, BOARD_NEW);
-        initMenuItem(boardOpen, menu, BOARD_OPEN);
+        initMenuItem(boardOpen, menu, BOARD_OPEN, VK_O);
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
+        initMenuItem(boardValidate, menu, BOARD_VALIDATE);
+        initMenuItem(boardSourceFile, menu, BOARD_SOURCEFILE);
         menu.addSeparator();
         
         initMenuItem(boardSaveAsImage, menu, BOARD_SAVE_AS_IMAGE);
@@ -211,6 +217,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(boardRedo, menu, BOARD_REDO);
         menu.addSeparator();
         
+        initMenuItem(boardResize, menu, BOARD_RESIZE);
         initMenuItem(boardChangeTheme, menu, VIEW_CHANGE_THEME);
         initMenuItem(boardRaise, menu, BOARD_RAISE);
         initMenuItem(boardClear, menu, BOARD_CLEAR);
@@ -225,15 +232,15 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         // Create the view menu.
         menu = new JMenu(getString("CommonMenuBar.ViewMenu"));
-        menu.setMnemonic(KeyEvent.VK_V);
+        menu.setMnemonic(VK_V);
         add(menu);
-        initMenuItem(viewClientSettings, menu, VIEW_CLIENT_SETTINGS);
+        initMenuItem(viewClientSettings, menu, VIEW_CLIENT_SETTINGS, VK_S);
         initMenuItem(viewIncGUIScale, menu, VIEW_INCGUISCALE);
         initMenuItem(viewDecGUIScale, menu, VIEW_DECGUISCALE);
         menu.addSeparator();
         
         initMenuItem(viewResetWindowPositions, menu, VIEW_RESET_WINDOW_POSITIONS);
-        initMenuItem(viewAccessibilityWindow, menu, VIEW_ACCESSIBILITY_WINDOW);
+        initMenuItem(viewAccessibilityWindow, menu, VIEW_ACCESSIBILITY_WINDOW, VK_A);
         viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         menu.addSeparator();
         
@@ -243,15 +250,15 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
-        initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC);
+        initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T);
         toggleIsometric.setSelected(GUIP.getIsometricEnabled());
-        initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS);
+        initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G);
         initMenuItem(viewLabels, menu, VIEW_LABELS);
         menu.addSeparator();
         
-        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY);
+        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
         viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
-        initMenuItem(viewMiniMap, menu, VIEW_MINI_MAP);
+        initMenuItem(viewMiniMap, menu, VIEW_MINI_MAP, VK_M);
         viewMiniMap.setSelected(GUIP.getMinimapEnabled());
         menu.addSeparator();
         
@@ -277,7 +284,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         // Create the Help menu
         menu = new JMenu(getString("CommonMenuBar.HelpMenu")); 
-        menu.setMnemonic(KeyEvent.VK_H);
+        menu.setMnemonic(VK_H);
         add(menu);
         initMenuItem(helpContents, menu, HELP_CONTENTS);
         initMenuItem(helpSkinning, menu, HELP_SKINNING);
@@ -403,6 +410,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardRemoveRoads.setEnabled(isBoardEditor);
         boardRemoveForests.setEnabled(isBoardEditor);
         boardFlatten.setEnabled(isBoardEditor);
+        boardValidate.setEnabled(isBoardEditor);
+        boardResize.setEnabled(isBoardEditor);
+        boardSourceFile.setEnabled(isBoardEditor);
         gameQLoad.setEnabled(isMainMenu);
         gameLoad.setEnabled(isMainMenu);
         
@@ -507,6 +517,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         item.setActionCommand(command);
         itemMap.put(command, item);
         menu.add(item);
+    }
+    
+    private void initMenuItem(JMenuItem item, JMenu menu, String command, int mnemonic) {
+        initMenuItem(item, menu, command);
+        item.setMnemonic(mnemonic);
     }
     
     

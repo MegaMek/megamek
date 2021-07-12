@@ -119,6 +119,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
     public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_RESIZE = "boardResize";
+    public static final String BOARD_VALIDATE = "boardValidate";
+    public static final String BOARD_SOURCEFILE = "boardSourcefile";
     public static final String BOARD_UNDO = "boardUndo";
     public static final String BOARD_REDO = "boardRedo";
     public static final String BOARD_RAISE = "boardRaise";

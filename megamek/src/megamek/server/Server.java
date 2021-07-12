@@ -21799,7 +21799,7 @@ public class Server implements Runnable {
         if (te instanceof FighterSquadron) {
             List<Entity> fighters = te.getActiveSubEntities();
             
-            if(fighters.isEmpty()) {
+            if (fighters.isEmpty()) {
                 return vDesc;
             }
             Entity fighter = fighters.get(hit.getLocation());

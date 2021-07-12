@@ -13,7 +13,7 @@
 	 Juliez
 
   Data Lead
-	 Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Dave Nawton 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -127,6 +127,9 @@
 	 arekP64
 	 Ask
 	 Keyl Seuhy
+	 Norman "Flynn" Zinner
+	 Kaji
+	 UlyssesSockdrawer
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -246,7 +249,10 @@
 	 Greekfire.
 	 Bloodwolf
 	 SLDF_gunslinger
-
+	 
+  Mech Data:
+  	Drawn from Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
+  	
   Translations
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>

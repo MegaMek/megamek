@@ -25,6 +25,7 @@ public interface ITerrain {
 
     public static final int LEVEL_NONE = Integer.MIN_VALUE;
     public static final int WILDCARD = Integer.MAX_VALUE;
+    public static final int ATLEAST = Integer.MAX_VALUE - 1000;
 
     /**
      * @return terrain type

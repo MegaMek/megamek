@@ -303,12 +303,8 @@ public class BehaviorSettingsTest {
         expectedUnits.add(BehaviorSettingsTestConstants.PRORITY_TARGET);
         behaviorSettings = new BehaviorSettings();
         behaviorSettings.setLogger(new FakeLogger());
-        try {
-            behaviorSettings.fromXml(testBehaviorElement);
-            Assert.fail("Should have thrown an error!");
-        } catch (PrincessException e) {
-            Assert.assertTrue(true);
-        }
+        behaviorSettings.fromXml(testBehaviorElement);
+        Assert.assertTrue(behaviorSettings.getRetreatEdge() == CardinalEdge.NONE);
 
         // Test loading behavior settings w/ a NULL forced withdrawal.
         reader = new CharArrayReader(BehaviorSettingsTestConstants.BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL.toCharArray());

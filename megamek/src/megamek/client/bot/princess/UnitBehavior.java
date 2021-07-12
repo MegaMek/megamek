@@ -2,11 +2,8 @@ package megamek.client.bot.princess;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
 
 public class UnitBehavior {
     public enum BehaviorType {
@@ -40,7 +37,7 @@ public class UnitBehavior {
             }
             
             return BehaviorType.ForcedWithdrawal;
-        } else if (botSettings.getDestinationEdge() != CardinalEdge.NEAREST_OR_NONE) {
+        } else if (botSettings.getDestinationEdge() != CardinalEdge.NONE) {
             if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }

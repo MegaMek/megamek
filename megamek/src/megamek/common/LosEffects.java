@@ -1232,13 +1232,17 @@ public class LosEffects {
                 }
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
-                    if ((smokeLevel == SmokeCloud.SMOKE_LIGHT)
-                            || (smokeLevel == SmokeCloud.SMOKE_LI_LIGHT)
-                            || (smokeLevel == SmokeCloud.SMOKE_LI_HEAVY)
-                            || (smokeLevel == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
-                        los.lightSmoke++;
-                    } else if ((smokeLevel == SmokeCloud.SMOKE_HEAVY)) {
-                        los.heavySmoke++;
+                    switch (hex.terrainLevel(Terrains.SMOKE)) {
+                        case SmokeCloud.SMOKE_LIGHT:
+                        case SmokeCloud.SMOKE_LI_LIGHT:
+                        case SmokeCloud.SMOKE_LI_HEAVY:
+                        case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                        case SmokeCloud.SMOKE_GREEN:
+                            los.lightSmoke++;
+                            break;
+                        case SmokeCloud.SMOKE_HEAVY:
+                            los.heavySmoke++;
+                            break;
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {

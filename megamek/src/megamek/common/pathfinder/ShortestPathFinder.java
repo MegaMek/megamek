@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
+import megamek.MegaMek;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
@@ -373,12 +374,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board, boolean ignore) {
         // Ignore level differences if we're not on the ground
-        if (ignore || (mp.getFinalElevation() != 0)) {
+        if (ignore || !board.onGround() || (mp.getFinalElevation() != 0)) {
             return 0;
         }
         IHex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
-            System.out.println("getLevelDiff: currHex was null!" +
+            MegaMek.getLogger().debug("getLevelDiff: currHex was null!" +
                                "\nStart: " + mp.getStartCoords() +
                                "\ncurrHex:  " + mp.getFinalCoords() +
                                "\nPath: " + mp.toString());
@@ -386,7 +387,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         IHex destHex = board.getHex(dest);
         if (destHex == null) {
-            System.out.println("getLevelDiff: destHex was null!" +
+            MegaMek.getLogger().debug("getLevelDiff: destHex was null!" +
                                "\nStart: " + mp.getStartCoords() +
                                "\ndestHex: " + dest +
                                "\nPath: " + mp.toString());

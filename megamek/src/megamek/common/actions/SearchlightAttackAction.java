@@ -54,17 +54,25 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     public static boolean isPossible(IGame game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-        if ((attacker == null) || !attacker.isUsingSpotlight() || (target == null)) {
+        
+        // can't light up if either you or the target don't exist, or you don't have your light on
+        if ((attacker == null) || !attacker.isUsingSearchlight() || (target == null)) {
             return false;
         }
+        
+        // can't light up if you're stunned
         if ((attacker instanceof Tank) && (((Tank)attacker).getStunnedTurns() > 0)) {
             return false;
         }
+        
+        // can't searchlight if target is outside of the front firing arc
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target,
                 attacker.getForwardArc())) {
             return false;
         }
+        
+        // can't light up more than once per round
         for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements();) {
             EntityAction action = actions.nextElement();
@@ -80,6 +88,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                 }
             }
         }
+        
+        // per TacOps, integrated searchlights have max range of 30 hexes
+        // hand-held ones have a max range of 10 hexes, but are not implemented
+        if (attacker.getPosition().distance(target.getPosition()) > 30) {
+            return false;
+        }
+        
+        // can't light up if out of LOS. Most expensive calculation, so keep it last        
         LosEffects los = LosEffects.calculateLos(game, attackerId, target);
         return los.canSee();
     }

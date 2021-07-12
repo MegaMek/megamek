@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
@@ -71,6 +70,18 @@ public class MovePath implements Cloneable, Serializable {
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
         CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT;
+        
+        /**
+         * Whether this move step type will result in the unit entering a new hex
+         */
+        public boolean entersNewHex() {
+            return this == FORWARDS || 
+                    this == BACKWARDS ||
+                    this == LATERAL_LEFT ||
+                    this == LATERAL_RIGHT ||
+                    this == LATERAL_LEFT_BACKWARDS ||
+                    this == LATERAL_RIGHT_BACKWARDS;
+        }
     }
 
     public static class Key {

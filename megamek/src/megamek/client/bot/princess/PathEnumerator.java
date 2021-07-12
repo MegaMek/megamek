@@ -42,6 +42,7 @@ import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
@@ -49,6 +50,7 @@ import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.InfantryPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.NewtonianAerospacePathFinder;
+import megamek.common.pathfinder.PronePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.pathfinder.SpheroidPathFinder;
 
@@ -268,28 +270,38 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
                                 MoveStepType.FORWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(game, mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
+                // add all moves that involve the entity remaining prone 
+                PronePathFinder ppf = new PronePathFinder();
+                ppf.run(new MovePath(getGame(), mover));
+                paths.addAll(ppf.getPronePaths());
+                
                 //add jumping moves
                 if (mover.getJumpMP() > 0) {
                     ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
                                     MoveStepType.FORWARDS, getGame());
+                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run((new MovePath(game, mover))
                             .addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
-                for(MovePath path : paths) {
-                    this.owner.getLogger().debug(path.toString());
-                }
+                // calling .debug is expensive even if we don't actually log anything
+                // so let's not do this unless we're debugging
+                /* for(MovePath path : paths) {
+	                    getOwner().getLogger().debug(path.toString());
+                }*/
                 
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);
@@ -423,7 +435,6 @@ public class PathEnumerator {
     }
 
 //    public void debugPrintContents() {
-//        final String METHOD_NAME = "debugPrintContents()";
 //        getOwner().getLogger().methodBegin();
 //        try {
 //            for (Integer id : getUnitPaths().keySet()) {
@@ -432,7 +443,7 @@ public class PathEnumerator {
 //                int pathsSize = paths.size();
 //                String msg = "Unit " + entity.getDisplayName() + " has " + pathsSize + " paths and " +
 //                             getUnitPotentialLocations().get(id).size() + " ending locations.";
-//                getOwner().log(getClass(), METHOD_NAME, msg);
+//                getOwner().log(msg);
 //            }
 //        } finally {
 //            getOwner().getLogger().methodEnd();

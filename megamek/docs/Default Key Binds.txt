@@ -5,7 +5,7 @@ VIEW->CLIENT SETTINGS->KEY BINDS
 Toggle in-game keyboard shortcuts helper----- Ctrl-K
 
 GENERAL COMMANDS
-Toggle Chat----- Enter
+Toggle Chat----- ` (Backquote/Grave)
 Toggle Chat Command ----- /
 Undo----- Backspace
 Cancel----- Escape

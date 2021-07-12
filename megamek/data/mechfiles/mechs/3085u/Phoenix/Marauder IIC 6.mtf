@@ -3,32 +3,32 @@ Marauder IIC
 6
 
 Config:Biped
-TechBase:Clan
-Era:3077
-Source:Jihad
-Rules Level:2
+techbase:Clan
+era:3077
+source:Jihad
+rules level:2
 
-Mass:85
-Engine:340 XL (Clan) Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:85
+engine:340 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:4
-Jump MP:6
+heat sinks:12 Double
+walk mp:4
+jump mp:6
 
-Armor:Standard(Clan)
-LA Armor:22
-RA Armor:22
-LT Armor:23
-RT Armor:23
-CT Armor:33
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Clan)
+LA armor:22
+RA armor:22
+LT armor:23
+RT armor:23
+CT armor:33
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:5
 LB 10-X AC, Left Arm
@@ -68,12 +68,12 @@ Clan Gauss Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Endo Steel
-Endo Steel
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -82,15 +82,15 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 CLHeavyLargeLaser
 CLHeavyLargeLaser
 CLHeavyLargeLaser
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -150,3 +150,4 @@ Clan Improved Jump Jet
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\3085 Marauder IIC .jpg
+

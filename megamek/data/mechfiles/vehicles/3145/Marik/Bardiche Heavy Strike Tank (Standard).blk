@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Bardiche Heavy Strike Tank
 3101
 </year>
 
+<originalBuildYear>
+3101
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -31,6 +35,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -62,11 +69,12 @@ ISiNarc Pods
 ISiNarc Pods
 ISiNarc Pods
 ISiNarc Pods
-IS Ammo MML-7 LRM
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
 ISMagshotGR Ammo
-ISSponsonTurret
+ISMagshotGR Ammo
+SponsonTurret
+IS Ammo MML-7 LRM Narc-capable
+IS Ammo MML-7 LRM Narc-capable
+IS Ammo MML-7 SRM Narc-capable
 </Body Equipment>
 
 <Front Equipment>
@@ -74,13 +82,13 @@ ISMML7
 </Front Equipment>
 
 <Right Equipment>
-ISMagshotGR (ST)
-ISMagshotGR (ST)
+ISMagshotGR(ST)
+ISMagshotGR(ST)
 </Right Equipment>
 
 <Left Equipment>
-ISMagshotGR (ST)
-ISMagshotGR (ST)
+ISMagshotGR(ST)
+ISMagshotGR(ST)
 </Left Equipment>
 
 <Rear Equipment>
@@ -101,3 +109,4 @@ TRO 3145 Free Worlds League - Late Republic
 <tonnage>
 70.0
 </tonnage>
+

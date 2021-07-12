@@ -242,7 +242,9 @@ public class Terrain implements ITerrain, Serializable {
         }
         // Check to see if we've got a type that can have exits
         boolean exitableTerrainType = Terrains.exitableTerrain(type);
-        return (type == other.getType()) && exitableTerrainType && (level == other.getLevel());
+        // Buildings shouldn't connect across different types (= level)
+        // but all others should
+        return (type == other.getType()) && exitableTerrainType && (type != Terrains.BUILDING || level == other.getLevel());
     }
 
     @Override
@@ -640,6 +642,12 @@ public class Terrain implements ITerrain, Serializable {
         } else if ((type == Terrains.BLDG_ELEV) && (level < 1)) {
             rv = false;
         } else if ((type == Terrains.BRIDGE_ELEV) && (level < 0)) {
+            rv = false;
+        } else if ((type == Terrains.BLDG_CF) && (level < 1)) {
+            rv = false;
+        } else if ((type == Terrains.BRIDGE_CF) && (level < 1)) {
+            rv = false;
+        } else if ((type == Terrains.FUEL_TANK_CF) && (level < 1)) {
             rv = false;
         }
 

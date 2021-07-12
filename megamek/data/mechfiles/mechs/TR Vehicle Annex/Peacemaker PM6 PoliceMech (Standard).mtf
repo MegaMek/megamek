@@ -1,38 +1,38 @@
 Version:1.0
-Peacemaker PM6 PoliceMech
+Peacemaker PM-6 PoliceMech
 (Standard)
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3070
-Source:TRO: Vehicle Annex
-Rules Level:4
+techbase:Inner Sphere
+era:3067
+source:TRO: Vehicle Annex
+rules level:4
 
-Mass:35
-Engine:140 Fusion Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
+mass:35
+engine:140 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:10
-RT Armor:10
-CT Armor:18
-HD Armor:8
-LL Armor:10
-RL Armor:10
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:18
+HD armor:8
+LL armor:10
+RL armor:10
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:3
 Machine Gun, Left Arm
-Mech Taser, Right Arm
+BattleMech Taser, Right Arm
 SRM 2, Right Torso
 
 Left Arm:

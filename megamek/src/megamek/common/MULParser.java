@@ -97,6 +97,8 @@ public class MULParser {
     private static final String ORIG_MEN = "ONumberOfMen";
     private static final String CONVEYANCE = "Conveyance";
     private static final String GAME = "Game";
+    private static final String FORCE = "Force";
+    private static final String FORCEATT = "force";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -146,7 +148,7 @@ public class MULParser {
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
-    private static final String ALTITUDE = "altitude";
+    public static final String ALTITUDE = "altitude";
     private static final String AUTOEJECT = "autoeject";
     private static final String CONDEJECTAMMO = "condejectammo";
     private static final String CONDEJECTENGINE = "condejectengine";
@@ -536,6 +538,8 @@ public class MULParser {
                     parseConveyance(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(GAME)) {
                     parseId(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(FORCE)) {
+                    parseForce(currEle, entity);
                 }
             }
         }
@@ -698,9 +702,8 @@ public class MULParser {
         }
 
         // Camo
-        // Must be a null, and not an empty string, if it isn't being used. - Dylan 2014-04-04
-        entity.setCamoCategory(entityTag.getAttribute(CAMO_CATEGORY).equals("") ? null : entityTag.getAttribute(CAMO_CATEGORY));
-        entity.setCamoFileName(entityTag.getAttribute(CAMO_FILENAME).equals("") ? null : entityTag.getAttribute(CAMO_FILENAME));
+        entity.getCamouflage().setCategory(entityTag.getAttribute(CAMO_CATEGORY));
+        entity.getCamouflage().setFilename(entityTag.getAttribute(CAMO_FILENAME));
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);
@@ -710,7 +713,7 @@ public class MULParser {
         entity.setExternalIdAsString(extId);
 
         // external id
-        if(entity instanceof MechWarrior) {
+        if (entity instanceof MechWarrior) {
             String pickUpId = entityTag.getAttribute(PICKUP_ID);
             if ((null == pickUpId) || (pickUpId.length() == 0)) {
                 pickUpId = "-1";
@@ -749,8 +752,7 @@ public class MULParser {
         }
 
         // Load some values for conventional infantry
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
             if (armorDiv.length() > 0) {
@@ -780,7 +782,7 @@ public class MULParser {
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if(infSquadNum.length() > 0) {
+            if (infSquadNum.length() > 0) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
@@ -1757,7 +1759,6 @@ public class MULParser {
                     }
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
-                    int clipSize = ((InfantryWeapon) mounted.getType()).getShots();
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                         if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
                             if (!inferno.isEmpty()) {
@@ -2363,6 +2364,13 @@ public class MULParser {
         } catch (Exception e) {
             warning.append("Invalid id in conveyance tag.\n");
         }
+    }
+    
+    /**
+     * Parse a force tag for the given <code>Entity</code>. 
+     */
+    private void parseForce(Element forceTag, Entity entity){
+        entity.setForceString(forceTag.getAttribute(FORCEATT));
     }
 
     /**

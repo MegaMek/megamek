@@ -1,4 +1,5 @@
 size 16 17
+tag "DesertTheme (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

@@ -1,0 +1,12 @@
+Terran Hegemony Light Aerospace Fighters - Terran Hegemony Royal
+Trident TRN-3Tb,2
+Swift SWF-606,3
+Zero ZRO-116b,4
+Tomahawk THK-63b,5
+Spad SPD-502,6
+Sabre SB-27b,7
+Trident TRN-3Tb,6
+Cheetah F-10,5
+Rogue RGU-133Eb,4
+Zero ZRO-116b,3
+Sabre SB-27b,2

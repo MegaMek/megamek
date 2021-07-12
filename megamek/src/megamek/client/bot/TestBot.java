@@ -24,7 +24,6 @@ import java.util.Vector;
 
 import megamek.client.bot.MoveOption.DamageInfo;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -32,7 +31,6 @@ import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
 import megamek.common.IHex;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -524,13 +522,8 @@ public class TestBot extends BotClient {
                                     toHit = DfaAttackAction.toHit(game, option
                                             .getEntity().getId(), target
                                                                           .getEntity(), option);
-                                    damage = 2 * DfaAttackAction
-                                            .getDamageFor(
-                                                    option.getEntity(),
-                                                    (target.getEntity() instanceof Infantry)
-                                                    && !(target
-                                                            .getEntity() instanceof BattleArmor)
-                                                         );
+                                    damage = 2 * DfaAttackAction.getDamageFor(option.getEntity(),
+                                            target.getEntity().isConventionalInfantry());
                                     self_threat = (option
                                                            .getCEntity()
                                                            .getThreatUtility(
@@ -1184,7 +1177,7 @@ public class TestBot extends BotClient {
                 }
 
                 // For good measure, infantry cannot attack multiple targets
-                if ((en instanceof Infantry) && !(en instanceof BattleArmor)) {
+                if (en.isConventionalInfantry()) {
                     starg_mod = 13;
                 }
 

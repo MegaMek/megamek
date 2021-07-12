@@ -8,5 +8,5 @@ Carbine CON-9M ConstructionMech MOD, 6
 Carbine CON-9M-B ConstructionMech MOD, 5
 Dig King RCL-1 MiningMech MOD, 4
 CattleMaster CTL-3R3 SecurityMech, 3
-Crosscut ED-X5M-B LoggerMech MOD, 2
-Peacemaker PM6 PoliceMech (Standard), 1
+Crosscut ED-X5M-B DemolitionMech MOD, 2
+Peacemaker PM6 PoliceMech, 1

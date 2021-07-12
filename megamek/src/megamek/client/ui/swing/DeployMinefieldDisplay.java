@@ -15,7 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -140,9 +140,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
         setRemoveMineEnabled(true);
-        if (!p.hasMinefields()) {
-            butDone.setEnabled(true);
-        }
+        butDone.setEnabled(true);
     }
 
     /**
@@ -192,7 +190,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
                 if (mf.getPlayerId() == clientgui.getClient().getLocalPlayer().getId()) {
-                    butDone.setEnabled(false);
                     mfRemoved.add(mf);
                     deployedMinefields.removeElement(mf);
                     if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
@@ -310,12 +307,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.refreshDisplayables();            
         }
 
-        if ((p.getNbrMFConventional() == 0) && (p.getNbrMFCommand() == 0)
-                && (p.getNbrMFVibra() == 0) && (p.getNbrMFActive() == 0)
-                && (p.getNbrMFInferno() == 0)) {
-            butDone.setEnabled(true);
-        }
-
         setConventionalEnabled(p.getNbrMFConventional());
         setCommandEnabled(p.getNbrMFCommand());
         setVibrabombEnabled(p.getNbrMFVibra());
@@ -362,7 +353,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+                || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
 

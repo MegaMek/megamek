@@ -39,6 +39,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 
 
@@ -316,5 +317,14 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         } else if (e.getSource().equals(butCancel)) {
             setVisible(false);
         }   
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b) {
+            UIUtil.adjustDialog(getContentPane());
+            pack();
+        }
+        super.setVisible(b);
     }
 }

@@ -1,4 +1,7 @@
 size 25 25
+tag "MarsTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
 hex 0101 2 "pavement:1" "mars"
 hex 0201 2 "pavement:1" "mars"
 hex 0301 2 "pavement:1" "mars"

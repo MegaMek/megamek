@@ -131,3 +131,20 @@ Lower Leg Actuator
 Foot Actuator
 ISImprovedJump Jet
 ISImprovedJump Jet
+
+overview:The Sagittaire is built to fight in the confines of an urban battlefield.
+
+capabilities:Weighing in at a massive ninety-five tons, the Sagittaire started production in mid 3063 and began to trickle out to units clamoring for close combat 'Mechs in the midst of the FedCom Civil War. As a power source, the 'Mech has a Pitban 285 XL engine. The XL engine saves weight at the cost of survivability and gives the 'Mech a top speed of 54.0 km/h while its mobility is enhanced with three HildCo LFT 9-X jump jets, allowing the 'Mech to jump up to ninety meters. The Sagittaire has seventeen double heat sinks to handle its massive heat load, and is protected by eighteen tons of Starshield Special Heavy armor, allowing the 'Mech to stand up to a great deal of punishment in spite of its engine.
+
+deployment:This variant uses a Light Fusion Engine to increase survivability. All the weapons have been removed and replaced with four Medium Variable Speed Pulse Lasers and two Light PPCs. Five Improved Jump Jets allow the massive Sagittaire to cover 150 meters, and eighteen double heat sinks keep the pilot cool.
+
+history:Production of the Sagittaire was halted due to the damage inflicted on Robinson Standard BattleWorks during the Jihad.
+manufacturer:Robinson Standard BattleWorks
+
+primaryfactory:Robinson
+systemmanufacturer:CHASSIS:Skuel Heavy TRQ
+systemmanufacturer:ENGINE:Pitban 285 XL
+systemmanufacturer:ARMOR:Starshield Special Heavy
+systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:COMMUNICATIONS:Sony MSF-31
+systemmanufacturer:TARGETING:Federated Stalker with Targeting Module

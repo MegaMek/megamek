@@ -93,9 +93,9 @@ IS Improved Jump Jet (omnipod)
 IS Improved Jump Jet (omnipod)
 IS Improved Jump Jet (omnipod)
 IS Improved Jump Jet (omnipod)
-Light PPC (omnipod)
-Light PPC (omnipod)
 ISMediumPulseLaser (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
 Small Laser (omnipod)
 -Empty-
 -Empty-
@@ -156,4 +156,16 @@ TSM
 -Empty-
 -Empty-
 
+overview:The light assault 'Mech of the Celestial series of OmniMechs, the Seraph is somewhat slow for its weight, but it attempts to make up for that with the inclusion of Triple-Strength Myomer that enables the 'Mech to speed up to 64 kph when it runs hot.
 
+capabilities:Like the other Celestials, the Seraph makes use of a light fusion engine and a small cockpit, though other newer technologies are present only in its weaponry. As with the other Celestials, a C3i Computer is included. The main criticism of the Seraph Invictus is that it does not make very good use of its Triple-Strength Myomer. The design does not build enough heat to activate the musculature, a problem the Streak missile system only exacerbates.
+
+deployment:The Seraph D is best at medium to long range, as it carries two Heavy PPCs and one Light PPC. Like the Dominus variant, the Luminos can jump up to 150 meters using improved jump jets that enable it to get into a good sniping position. Three Medium Pulse Lasers and a Small Laser are used defensively in the event an enemy units gets inside the minimum range of the PPCs. A Flamer provides effective anti-infantry defense.
+
+manufacturer:Gibson Federated BattleMechs, Martinson Armaments
+primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
+systemmanufacturer:CHASSIS:Celestial Series SP1
+systemmanufacturer:ENGINE:GM 255 Light Fusion with Triple-Strength Myomer
+systemmanufacturer:ARMOR:Durallex Divine Guardian
+systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha
+systemmanufacturer:TARGETING:Master’s Sight 1-Omega

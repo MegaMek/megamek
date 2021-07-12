@@ -22,10 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
@@ -452,7 +449,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 break;
             case -1:
             default:
-                desc = new StringBuffer(type.getDesc(getSize()));
+                desc = new StringBuffer(getType().getDesc(getSize()));
         }
         if (isWeaponGroup()) {
             desc.append(" (").append(getNWeapons()).append(")");
@@ -1066,6 +1063,38 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         this.rearMounted = rearMounted;
     }
 
+    /**
+     * Fetches all locations that contain this equipment. This is primarily for
+     * spreadable equipment, can be placed in locations other than the primary or secondary,
+     * but will also work for non-spreadable equipment.
+     *
+     * @return A list of indices for all locations that contain this equipment.
+     * @see #getLocation()
+     * @see #getSecondLocation()
+     */
+    public List<Integer> allLocations() {
+        List<Integer> locations = new ArrayList<>();
+        if (getType().isSpreadable()) {
+            for (int loc = 0; loc < getEntity().locations(); loc++) {
+                for (int slot = 0; slot < getEntity().getNumberOfCriticals(loc); slot++) {
+                    final CriticalSlot crit = getEntity().getCritical(loc, slot);
+                    if ((crit != null) && ((crit.getMount() == this) || (crit.getMount2() == this))) {
+                        locations.add(loc);
+                        break;
+                    }
+                }
+            }
+        } else {
+            if (getLocation() >= 0) {
+                locations.add(getLocation());
+            }
+            if (getSecondLocation() >= 0) {
+                locations.add(getSecondLocation());
+            }
+        }
+        return locations;
+    }
+
     public Mounted getLinked() {
         return linked;
     }
@@ -1261,8 +1290,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return 0;
         }
         // um, otherwise, I'm not sure
-        System.err.println("mounted: unable to determine explosion damage for "
-                + getName());
+        MegaMek.getLogger().error("mounted: unable to determine explosion damage for " + typeName);
         return 0;
     }
 
@@ -1509,6 +1537,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             base--;
         }
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
+            base--;
+        }
+        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, location)) {
             base--;
         }
 

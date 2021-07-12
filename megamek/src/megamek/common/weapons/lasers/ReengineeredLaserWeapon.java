@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek -
  * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
  *
@@ -21,25 +21,12 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ReengineeredLaserWeaponHandler;
 import megamek.server.Server;
 
-public class ReengineeredLaserWeapon extends LaserWeapon {
+public abstract class ReengineeredLaserWeapon extends PulseLaserWeapon {
 
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 2113437667446946251L;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-
         return new ReengineeredLaserWeaponHandler(toHit, waa, game, server);
     }
     

@@ -31,10 +31,12 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Transitions/Transitions.tileinc"
 include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
+include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
 
 
@@ -657,3 +659,4 @@ super * "water_fluff:*" "" "saxarba/misc/blank.png"
 super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
 
 super * "bldg_class:0" "" "saxarba/misc/blank.png"
+super * "fluff:1000:1000" "grass" "saxarba/misc/blank.png"

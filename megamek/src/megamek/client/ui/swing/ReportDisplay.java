@@ -18,16 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
@@ -36,14 +27,18 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Report;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
-        ActionListener, HyperlinkListener {
+        ActionListener, HyperlinkListener, IPreferenceChangeListener {
     /**
      *
      */
@@ -102,7 +97,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     /**
@@ -231,10 +226,11 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
         Font font = UIManager.getFont("Label.font");
+        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-               "pre { font-family: " + font.getFamily() + "; font-size: 12pt; font-style:normal;}");
+                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
     }
-
+    
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
@@ -296,14 +292,19 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+    }
+
+    private JComponent activePane() {
+        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
     }
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent evt) {
+        String evtDesc = evt.getDescription();
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            String evtDesc = evt.getDescription();
-            if (evtDesc.startsWith("#entity")) {
-                String idString = evtDesc.substring(evtDesc.indexOf(":") + 1);
+            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
+                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
                 int id;
                 try {
                     id = Integer.parseInt(idString);
@@ -315,8 +316,37 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                     clientgui.mechD.displayEntity(ent);
                     clientgui.setDisplayVisible(true);
                 }
+            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
+                        JOptionPane.PLAIN_MESSAGE);
             }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                activePane().setToolTipText(desc);
+            }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+            activePane().setToolTipText(null);
         }
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            for (int i = 0; i < tabs.getTabCount(); i++) {
+                Component cp = tabs.getComponentAt(i);
+                if (cp instanceof JScrollPane) {
+                    Component pane = ((JScrollPane) cp).getViewport().getView();
+                    if (pane instanceof JTextPane) {
+                        JTextPane tp = (JTextPane) pane;
+                        setupStylesheet(tp);
+                        tp.setText(tp.getText());
+                    }
+                }
+            }
+        } 
     }
 
 }

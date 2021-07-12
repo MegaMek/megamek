@@ -202,6 +202,8 @@ public interface IHex extends Cloneable {
      * @param type
      *            terrain to check
      * @see IHex#containsTerrain(int, int)
+     * @see IHex#containsAllTerrainsOf(int...)
+     * @see IHex#containsAnyTerrainOf(int...)
      */
     public abstract boolean containsTerrain(int type);
 
@@ -213,8 +215,32 @@ public interface IHex extends Cloneable {
      * @return <code>true</code> if the specified terrain is represented in the
      *         hex at given level.
      * @see IHex#containsTerrain(int)
+     * @see IHex#containsAllTerrainsOf(int...)
+     * @see IHex#containsAnyTerrainOf(int...)
      */
     public abstract boolean containsTerrain(int type, int level);
+    
+    /**
+     * @return <code>true</code> if at least one of the specified terrains are represented in the
+     *         hex at any level.
+     * @param types
+     *            terrains to check
+     * @see IHex#containsTerrain(int, int)
+     * @see IHex#containsTerrain(int)
+     * @see IHex#containsAllTerrainsOf(int...)
+     */
+    public abstract boolean containsAnyTerrainOf(int... types);
+    
+    /**
+     * @return <code>true</code> if all of the specified terrains are represented in the
+     *         hex at any level.
+     * @param types
+     *            terrains to check
+     * @see IHex#containsTerrain(int, int)
+     * @see IHex#containsAllTerrainsOf(int...)
+     * @see IHex#containsAnyTerrainOf(int...)
+     */
+    public abstract boolean containsAllTerrainsOf(int... types);
 
     /**
      * @return the level of the terrain specified, or ITerrain.LEVEL_NONE if the
@@ -228,6 +254,18 @@ public interface IHex extends Cloneable {
      *         terrain is not present in the hex
      */
     public abstract ITerrain getTerrain(int type);
+
+    /**
+     * Returns the Terrain for one of the given types of terrain if at least one of 
+     * them is present in the hex. If multiple are present, the returned terrain
+     * can be any of the given types. 
+     * 
+     * @return One of the Terrains of the types that is present in the hex or null if none are 
+     * present in the hex.
+     * @param types the terrain types to check
+     * @see IHex#containsAnyTerrainsOf(int...)
+     */
+    public abstract ITerrain getAnyTerrainOf(int type, int... types);
 
     /**
      * Returns a collection of terrain ids for all terrains present in this hex.

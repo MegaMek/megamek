@@ -4,8 +4,8 @@ A
 
 Config:Quad Omnimech
 techbase:Clan
-era:3120
-source:Dark Age
+era:3111
+source:OTP: Hanseatic Crusade - Dark Age
 rules level:2
 
 mass:20
@@ -71,9 +71,9 @@ CLDoubleHeatSink
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM5
-CLFlamer
-CLFlamer
+CLLRM5 (OMNIPOD)
+CLFlamer (OMNIPOD)
+CLFlamer (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -85,9 +85,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM5
-CLFlamer
-CLFlamer
+CLLRM5 (OMNIPOD)
+CLFlamer (OMNIPOD)
+CLFlamer (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Ammo LRM-5
+Clan Ammo LRM-5 (OMNIPOD)
 CLMASC
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLLRM5
+CLLRM5 (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -152,4 +152,5 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
-
+manufacturer:Unknown
+primaryfactory:Unknown

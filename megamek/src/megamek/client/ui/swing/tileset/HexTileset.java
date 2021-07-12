@@ -279,7 +279,13 @@ public class HexTileset implements BoardListener {
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
                 } else {
-                    elevation = ITerrain.WILDCARD;
+                    if (st.ttype == 62) {  // ">"
+                        if (st.nextToken() == StreamTokenizer.TT_NUMBER) { // e.g. ">4"
+                            elevation = (int) (ITerrain.ATLEAST + st.nval);
+                        }
+                    } else {
+                        elevation = ITerrain.WILDCARD;
+                    }
                 }
                 st.nextToken();
                 terrain = st.sval;
@@ -384,8 +390,15 @@ public class HexTileset implements BoardListener {
      * EXCEPTION: a themed original matches any unthemed comparison.
      */
     private double orthoMatch(IHex org, IHex com) {
-        // check elevation
-        if ((com.getLevel() != ITerrain.WILDCARD) && (org.getLevel() != com.getLevel())) {
+        // exact elevation
+        if ((com.getLevel() != ITerrain.WILDCARD) && (com.getLevel() < ITerrain.ATLEAST) 
+                && (org.getLevel() != com.getLevel())) {
+            return 0;
+        }
+        
+        // greater than elevation (e.g. >4), the "-100" to allow >-3 
+        if ((com.getLevel() != ITerrain.WILDCARD) && (com.getLevel() >= ITerrain.ATLEAST - 100) 
+                && (org.getLevel() < com.getLevel() - ITerrain.ATLEAST)) {
             return 0;
         }
 
@@ -424,8 +437,15 @@ public class HexTileset implements BoardListener {
      * EXCEPTION: a themed original matches any unthemed comparason.
      */
     private double superMatch(IHex org, IHex com) {
-        // check elevation
-        if ((com.getLevel() != ITerrain.WILDCARD) && (org.getLevel() != com.getLevel())) {
+        // exact elevation
+        if ((com.getLevel() != ITerrain.WILDCARD) && (com.getLevel() < ITerrain.ATLEAST) 
+                && (org.getLevel() != com.getLevel())) {
+            return 0;
+        }
+        
+        // greater than elevation (e.g. >4), the "-100" to allow >-3 
+        if ((com.getLevel() != ITerrain.WILDCARD) && (com.getLevel() >= ITerrain.ATLEAST - 100) 
+                && (org.getLevel() < com.getLevel() - ITerrain.ATLEAST)) {
             return 0;
         }
 
@@ -470,6 +490,12 @@ public class HexTileset implements BoardListener {
         // check elevation
         if (com.getLevel() == ITerrain.WILDCARD) {
             elevation = 1.0;
+        } else if (com.getLevel() >= ITerrain.ATLEAST - 100) {
+            if (org.getLevel() >= com.getLevel() - ITerrain.ATLEAST) {
+                elevation = 1.0;    
+            } else {
+                elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel() - ITerrain.ATLEAST) + 1.01);
+            }
         } else {
             elevation = 1.01 / (Math.abs(org.getLevel() - com.getLevel()) + 1.01);
         }
@@ -492,6 +518,12 @@ public class HexTileset implements BoardListener {
 
             if (cTerr.getLevel() == ITerrain.WILDCARD) {
                 thisMatch = 1.0;
+            } else if (cTerr.getLevel() >= ITerrain.ATLEAST - 100) {
+                if (oTerr.getLevel() >= com.getLevel() - ITerrain.ATLEAST) {
+                    thisMatch = 1.0;    
+                } else {
+                    thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel() - ITerrain.ATLEAST) + 1.0);
+                }
             } else {
                 thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
             }

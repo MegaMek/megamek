@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -129,7 +128,7 @@ public class SquadronMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
+        List<Entity> fighters = e.getSubEntities();
         for(int i = 0; i < max_size; ++ i) {
             if(i < fighters.size()) {
                 final Entity fighter = fighters.get(i);

@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
@@ -22,6 +22,7 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Report;
@@ -35,7 +36,6 @@ import megamek.server.Server.DamageType;
  * @author Jason Tighe
  */
 public class SRMTandemChargeHandler extends SRMHandler {
-
     private static final long serialVersionUID = 6292692766500970690L;
 
     /**
@@ -98,43 +98,20 @@ public class SRMTandemChargeHandler extends SRMHandler {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
 
-
-        // A building may be damaged, even if the squad is not.
-        if (bldgAbsorbs > 0) {
-            int toBldg = Math.min(bldgAbsorbs, nDamage);
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        // Units on same level, report building absorbs no damage
-        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
-            Report.addNewline(vPhaseReport);
-            Report r = new Report(9976);
-            r.subject = ae.getId();
-            r.indent(2);
-            vPhaseReport.add(r);
-        // Cases where absorbed damage doesn't reduce incoming damage
-        } else if (bldgAbsorbs < 0) {
-            int toBldg = -bldgAbsorbs;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
+        // if the target was in partial cover, then we already handled
+        // damage absorption by the partial cover, if it would have happened
+        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
+                
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+                vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
         // some buildings scale remaining damage that is not absorbed
         // TODO: this isn't quite right for castles brian
-        if (null != bldg) {
+        if ((null != bldg) && !targetStickingOutOfBuilding) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 
@@ -156,8 +133,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
             
-            if (bDirect
-                    && (!(target instanceof Infantry) || (target instanceof BattleArmor))) {
+            if (bDirect && !target.isConventionalInfantry()) {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 

@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -27,6 +29,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.BombType;
+import megamek.common.Building;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
@@ -53,7 +56,6 @@ import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
-import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
@@ -325,13 +327,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-        
-        final WeaponType wtype = (WeaponType) weapon.getType();
-        
-        // This is ok to keep here. No need to process anything further if we're not using a weapon somehow
-        if (!(wtype instanceof WeaponType)) {
+
+        final EquipmentType type = weapon.getType();
+
+        // No need to process anything further if we're not using a weapon somehow
+        if (!(type instanceof WeaponType)) {
+            MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
+        
+        if (target == null) {
+            MegaMek.getLogger().error(attackerId + "Attempting to attack null target");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
+
+        final WeaponType wtype = (WeaponType) type;
 
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
@@ -345,6 +355,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             target = originalTarget;
             originalTarget = tempTarget;
         }
+
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
@@ -745,6 +756,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         weapon, weaponId, atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused,
                         isWeaponFieldGuns, usesAmmo);
             }
+        }
+        
+        // "hack" to cover the situation where the target is standing in a short
+        // building which provides it partial cover. Unlike other partial cover situations,
+        // this occurs regardless of other LOS consideration.
+        if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
+            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
+
+            LosEffects shortBuildingLos = new LosEffects();
+            shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);
+            shortBuildingLos.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+            shortBuildingLos.setCoverBuildingPrimary(currentBuilding);
+            shortBuildingLos.setCoverLocPrimary(target.getPosition());
+            
+            los.add(shortBuildingLos);
+            toHit.append(shortBuildingLos.losModifiers(game));
         }
         
         // Collect the modifiers for the target's condition/actions 
@@ -1752,7 +1779,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                     return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                                 }
                             }
-                        } else if (wtype.getAmmoType() != AmmoType.T_ARROW_IV) {
+                        } else if ((wtype.getAmmoType() != AmmoType.T_ARROW_IV) &&
+                                (wtype.getAmmoType() != AmmoType.T_ARROW_IV_BOMB)) {
                             //For Fighters, LAMs, Small Craft and VTOLs
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }
@@ -2868,7 +2896,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Electro-Magnetic Interference
-        if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+        if (game.getPlanetaryConditions().hasEMI() && !ae.isConventionalInfantry()) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.EMI"));
         }
         return toHit;
@@ -3914,7 +3942,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
-        if ((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+        if (ae.isConventionalInfantry()) {
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
@@ -4155,7 +4183,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET) && !isIndirect
                 && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
-            if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            if ((ghostTargetMod > -1) && !ae.isConventionalInfantry()) {
                 int bapMod = 0;
                 if (ae.hasBAP()) {
                     bapMod = 1;
@@ -4264,17 +4292,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Battle Armor targets are hard for Meks and Tanks to hit.
-        if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
+        if (!isAttackerInfantry && (te instanceof BattleArmor)) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
         // infantry squads are also hard to hit
-        if (te != null && (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry) te).isSquad()) {
+        if ((te != null) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
         }
 
         // Ejected MechWarriors are harder to hit
-        if ((te != null) && (te instanceof MechWarrior)) {
+        if (te instanceof MechWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
         
@@ -4538,6 +4566,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         return toHit;
+    }
+    
+    /**
+     * Quick routine to determine if the target should be treated as being in a short building.
+     */
+    public static boolean targetInShortCoverBuilding(Targetable target) {
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return false;
+        }
+        
+        IHex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        if (targetHex == null) {
+            return false;
+        }
+        
+        return targetHex.containsTerrain(Terrains.BUILDING) &&
+                (((Entity) target).getHeight() > 0) &&
+                (((Entity) target).relHeight() == targetHex.ceiling());
     }
     
     /**
@@ -4983,5 +5029,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         //If we get here, this isn't an artillery attack
         return toHit;
+    }
+
+    @Override
+    public String toDisplayableString(Client client) {
+        return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
 }

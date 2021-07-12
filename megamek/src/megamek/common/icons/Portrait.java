@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -21,14 +21,17 @@ package megamek.common.icons;
 import megamek.MegaMek;
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.annotations.Nullable;
+import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintWriter;
 
 public class Portrait extends AbstractIcon {
     //region Variable Declarations
     private static final long serialVersionUID = -7562297705213174435L;
     public static final String DEFAULT_PORTRAIT_FILENAME = "default.gif";
+    public static final String XML_TAG = "portrait";
     //endregion Variable Declarations
 
     //region Constructors
@@ -36,14 +39,14 @@ public class Portrait extends AbstractIcon {
         super();
     }
 
-    public Portrait(String category, String filename) {
+    public Portrait(final @Nullable String category, final @Nullable String filename) {
         super(category, filename);
     }
     //endregion Constructors
 
     //region Getters/Setters
     @Override
-    public void setFilename(@Nullable String filename) {
+    public void setFilename(final @Nullable String filename) {
         this.filename = (filename == null) ? DEFAULT_PORTRAIT_FILENAME : filename;
     }
     //endregion Getters/Setters
@@ -72,8 +75,8 @@ public class Portrait extends AbstractIcon {
             return null;
         }
 
-        String category = hasDefaultCategory() ? "" : getCategory();
-        String filename = hasDefaultFilename() ? DEFAULT_PORTRAIT_FILENAME : getFilename();
+        final String category = hasDefaultCategory() ? "" : getCategory();
+        final String filename = hasDefaultFilename() ? DEFAULT_PORTRAIT_FILENAME : getFilename();
 
         // Try to get the player's portrait file.
         Image portrait = null;
@@ -89,4 +92,22 @@ public class Portrait extends AbstractIcon {
 
         return portrait;
     }
+
+    //region File I/O
+    @Override
+    public void writeToXML(final PrintWriter pw, final int indent) {
+        writeToXML(pw, indent, XML_TAG);
+    }
+
+    public static Portrait parseFromXML(final Node wn) {
+        final Portrait icon = new Portrait();
+        try {
+            icon.parseNodes(wn.getChildNodes());
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
+            return new Portrait();
+        }
+        return icon;
+    }
+    //endregion File I/O
 }

@@ -1453,7 +1453,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public String getShortName() {
-        if (shortName.trim().isEmpty()) {
+        if (shortName.isBlank()) {
             return getName();
         }
         return shortName;

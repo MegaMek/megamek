@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import megamek.client.bot.princess.BotGeometry.HexLine;
+import megamek.common.annotations.Nullable;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
@@ -253,17 +254,20 @@ public class Coords implements Serializable {
     }
 
     /**
-     * Returns the degree direction of another Coords.
-     * 
      * @param d the destination coordinate.
+     * @return the degree direction of another Coords
      */
     public int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }
 
-    /** Returns the distance to the given Coords c. */
-    public int distance(Coords c) {
-        return distance(c.getX(), c.getY());
+    /**
+     * @param coordinates the coordinates to get the distance to, or null
+     * @return the distance from these coordinates to the provided coordinates, or Integer.MAX_VALUE
+     * if the provided coordinates are null
+     */
+    public int distance(final @Nullable Coords coordinates) {
+        return (coordinates == null) ? Integer.MAX_VALUE : distance(coordinates.getX(), coordinates.getY());
     }
 
     /** Returns the distance to the coordinate given as distx, disty. */

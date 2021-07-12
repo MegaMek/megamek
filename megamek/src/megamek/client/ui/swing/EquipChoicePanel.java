@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.GridBagConstraints;
@@ -55,7 +54,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @since 2012-05-20
  */
 public class EquipChoicePanel extends JPanel {
-    static final long serialVersionUID = 672299770230285567L;
+    private static final long serialVersionUID = 672299770230285567L;
 
     private final Entity entity;
 
@@ -296,17 +295,16 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // set up infantry armor
-        if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             panInfArmor.initialize();
-            add(panInfArmor,
-                    GBC.eop().anchor(GridBagConstraints.CENTER));
+            add(panInfArmor, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
         // Set up searchlight
         if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
-            chSearchlight.setSelected(entity.hasSpotlight()
+            chSearchlight.setSelected(entity.hasSearchlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             chSearchlight.setEnabled(!entity
                     .hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
@@ -397,14 +395,13 @@ public class EquipChoicePanel extends JPanel {
         if (null != m_bombs) {
             m_bombs.applyChoice();
         }
-        if ((entity instanceof Infantry)
-                && !(entity instanceof BattleArmor)) {
+        if (entity.isConventionalInfantry()) {
             panInfArmor.applyChoice();
         }
 
         // update searchlight setting
-        entity.setExternalSpotlight(chSearchlight.isSelected());
-        entity.setSpotlightState(chSearchlight.isSelected());
+        entity.setExternalSearchlight(chSearchlight.isSelected());
+        entity.setSearchlightState(chSearchlight.isSelected());
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3

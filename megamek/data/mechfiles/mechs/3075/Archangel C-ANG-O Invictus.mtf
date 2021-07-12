@@ -3,35 +3,35 @@ Archangel
 C-ANG-O Invictus
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3075
+rules level:2
 
-Mass:100
-Engine:300 Compact Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Compact Gyro
+mass:100
+engine:300 Compact Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Compact Gyro
 
-Heat Sinks:13 Double
-Base Chassis Heat Sinks:12
-Walk MP:3
-Jump MP:3
+heat sinks:13 IS Double
+base chassis heat sinks:12
+walk mp:3
+jump mp:3
 
-Armor:Standard(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:47
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:2
 Heavy PPC, Right Arm
@@ -42,22 +42,22 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
-Retractable Blade (omnipod)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
+Retractable Blade (OMNIPOD)
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
-Heavy PPC (omnipod)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
+Heavy PPC (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -66,11 +66,11 @@ Heavy PPC (omnipod)
 -Empty-
 
 Left Torso:
-Jump Jet (omnipod)
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
-ISTargeting Computer (omnipod)
+Jump Jet (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
+ISTargeting Computer (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -80,10 +80,10 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Jump Jet (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -99,21 +99,21 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-Jump Jet (omnipod)
-ISC3iUnit
-ISC3iUnit
-ISGuardianECMSuite (omnipod)
-ISGuardianECMSuite (omnipod)
-ISPlasmaRifleAmmo (omnipod)
-ISPlasmaRifleAmmo (omnipod)
+Jump Jet (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISC3iUnit (OMNIPOD)
+ISC3iUnit (OMNIPOD)
+ISGuardianECMSuite (OMNIPOD)
+ISGuardianECMSuite (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISPlasmaRifle (omnipod)
-ISPlasmaRifle (omnipod)
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifle (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -149,4 +149,17 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:Debuting in 3069, the Celestial series of OmniMechs are engineered to be used by the elite Word of Blake Manei Domini troops.
+ 
+capabilities:The Archangel is the largest of these. Designed to be an "anchor" for Word formations, the 'Mech is known as a "zombie" because of its ability to take extreme amounts of damage and continue operating. The Archangel features a compact fusion engine, compact gyro, a small cockpit, and nineteen and a half tons of standard armor, which frees up a large amount of internal space, while an Endo Steel frame opens up free tonnage, making heavier components possible. A C3i Computer helps direct and coordinate fire.
+
+history:The Invictus, or primary, version of the Archangel carries a Guardian ECM Suite to allow the 'Mech to disrupt enemy electronics and targeting systems. For ranged combat, the Archangel Invictus carries a Plasma Rifle and Heavy PPC, both of which are slaved to an advanced targeting computer. The Invictus also includes jump jets, allowing the 100-tonner to hop 90 meters. Finally, a Retractable Blade gives the design added defense in close combat situations.
+
+manufacturer:Gibson Federated BattleMechs, Martinson Armaments
+primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
+systemmanufacturer:CHASSIS:Celestial Series AA1E
+systemmanufacturer:ENGINE:Immortus 300 Compact Fusion
+systemmanufacturer:ARMOR:Durallex Heavy Gold
+systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha
+systemmanufacturer:TARGETING:Master’s Sight 1-Omega
 

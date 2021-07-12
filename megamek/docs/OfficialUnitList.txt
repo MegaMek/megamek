@@ -101,9 +101,13 @@ Kopis Assault Battle Armor 'The Dark Alley'|
 Ravager Assault Battle Armor (Level I)|
 Ravager Assault Battle Armor (MH)|
 Ravager Assault Battle Armor (Standard)|
+Thunderbird Battle Armor (DCMS)[AP Gauss]|
+Thunderbird Battle Armor (DCMS) [ER Laser]|
+Thunderbird Battle Armor (DCMS)(Pulse Laser)|
 Thunderbird Battle Armor [AP Gauss]|
 Thunderbird Battle Armor [ER Laser]|
 Thunderbird Battle Armor [Pulse Laser]|
+Thunderbird II Battle Armor (RotS)|
 Warg Assault Battle Armor (Standard)|
 Afreet Medium Battle Armor (Interdictor)|
 Trinity Medium Battle Armor (Asterion Upgrade)[MRR]|
@@ -126,10 +130,10 @@ Longinus Battle Armor (Magnetic) (WOB)|
 Longinus Battle Armor (Magnetic)|
 Nighthawk PA(L) Mk. XXX (Bounty Hunter)|
 Nighthawk PA(L) Mk. XXX|
-Purifier Adaptive Battle Armor [Laser] (RAF)|
-Purifier Adaptive Battle Armor [Narc] (RAF)|
-Purifier Adaptive Battle Armor [PPC] (RAF)|
-Purifier Adaptive Battle Armor [TAG] (RAF)|
+Purifier Adaptive Battle Armor (RAF)[Laser]|
+Purifier Adaptive Battle Armor (RAF)[Narc]|
+Purifier Adaptive Battle Armor (RAF)[PPC]|
+Purifier Adaptive Battle Armor (RAF)[TAG]|
 Raiden Battle Armor (Anti-Infantry)|
 Rottweiler Battle Armor (Firedrake)|
 Sloth Battle Armor (Interdictor)|
@@ -158,6 +162,9 @@ Oni Battle Armor [Narc]|
 Oni Battle Armor [Bearhunter]|
 Oni Battle Armor [MRR]|
 Oni Battle Armor [PPC]|
+Thunderbird Battle Armor (DCMS)(Upgrade)[LBX]|
+Thunderbird Battle Armor (DCMS)[Upgrade](ER Laser)|
+Thunderbird Battle Armor (DCMS)[Upgrade](Pulse Laser)|
 Zou Heavy Battle Armor (C3)|
 Zou Heavy Battle Armor (Standard)|
 Amazon Battle Armor [MRR]|
@@ -224,6 +231,8 @@ GD Infiltrator Suit (Sensors)|
 GD Infiltrator Suit (TAG)|
 GD Infiltrator Suit (Mines)|
 GD Infiltrator Suit (Remote Sensors)|
+Rhino Battle Armor|
+Water Elemental Mining Suit|
 Machina Domini Interface Armor (Standard)|
 TinStar BattleArmor (Standard)|
 Elemental II Battle Armor (Standard)|
@@ -270,10 +279,10 @@ Fenrir Battle Armor [SL]|
 Fenrir Battle Armor [SPL]|
 Fenrir Battle Armor [SRM]|
 Fenrir Battle Armor [VSP]|
+Gnome Battle Armor (Standard)|
+Gnome Battle Armor (Upgrade) [Bearhunter]|
 Gnome Battle Armor (Upgrade) [MRR]|
 Gnome Battle Armor (Upgrade) [Pulse Laser]|
-Gnome Battle Armor (Upgrade) [Bearhunter]|
-Gnome Battle Armor (Standard)|
 Gray Death Scout Suit (Standard)|
 Gray Death Standard Suit [Flamer]|
 Gray Death Standard Suit [Laser]|
@@ -327,8 +336,8 @@ Salamander Battle Armor (Anti-Infantry)|
 Salamander Battle Armor (Laser)|
 Salamander Battle Armor (Standard)|
 Sloth Battle Armor (Standard)|
-Sylph Battle Armor (Upgrade)|
 Sylph Battle Armor (Standard)|
+Sylph Battle Armor (Upgrade)|
 Undine Battle Armor (Upgrade)|
 Undine Battle Armor (Standard)|
 Ailette Zero-G Engineering Exoskeleton (Standard)|
@@ -465,6 +474,82 @@ Mustang Fighter (Standard)|
 Colt Medium Fighter (LRM)|
 Colt Medium Fighter (SRM)|
 Tsuru VIP Aircraft (Standard)|
+Burrower DTM-1 MiningMech|
+Burrower DTM-1M MiningMech MOD|
+Buster BC XXI-M HaulerMech MOD|
+Carbine CON-9M Karenna|
+Carbine CON-9M-J ConstructionMech MOD|
+Carbine CON-9M-JB ConstructionMech MOD|
+Centurion CN9-H2 MilitiaMech|
+Centurion CN9-H2H MilitiaMech|
+Centurion CN9-H3 MilitiaMech|
+Crosscut ED-X4M-A LoggerMech MOD|
+Crosscut ED-X4M-E LoggerMech MOD|
+Crosscut ED-X4M-L LoggerMech MOD|
+Deep Lord MilitiaMech RCL-Z1M-B|
+Demeter WLD-1 AgroMech|
+Demeter WLD-1-M AgroMech MOD|
+DemolitionMech WI-DMM MOD|
+Dig Lord RCL-4M MiningMech MOD|
+Dig Lord RCL-4M-B MiningMech MOD|
+Euras SolahmaMech 2|
+Euras SolahmaMech|
+Exo HaulerMech HMX-1|
+Exo HaulerMech HMX-2|
+Exo HaulerMech HMX-3|
+Exo HaulerMech HMX-3M|
+Firebee WI-WAM MilitiaMech|
+Ground Pounder DVM-2 MiningMech|
+Ground Pounder DVM-2M MiningMech MOD|
+Guard SecurityMech GS-107X|
+Guard SecurityMech GS-54|
+Gulon SolahmaMech C|
+Gulon MiningMech GLN-1A|
+Gulon SecurityMech GLN-1B|
+Harvester HVR-199 AgroMech|
+Harvester HVR-199M AgroMech MOD|
+Harvester HVR-199M-A AgroMech MOD|
+Harvester HVR-199M-B AgroMech MOD|
+Harvester HVR-199M-M AgroMech MOD|
+Heavy Forester HFL-1 LoggerMech|
+Heavy Forester HFL-1M LoggerMech MOD|
+Heavy Lifter HCL-1 CargoMech|
+Heavy Lifter HCL-1M CargoMech MOD|
+Heavy Lifter HCL-1MM MilitiaMech|
+Inquisitor ITW-80 SecurityMech|
+Inquisitor ITW-85 SecurityMech|
+MuckRaker GMMM-2 MiningMech|
+MuckRaker GMMM-2M MiningMech MOD|
+MuckRaker GMMM-2M-B MiningMech MOD|
+Opossum SalvageMech OPO-2|
+Opossum SalvageMech OPO-3 MOD|
+Pacifier SecurityMech CCU-36|
+Pacifier SecurityMech CCU-40|
+Pompier PoliceMech GM-4P|
+St. Florian FLN-366 FireMech|
+St. Florian FLN-366-M FireMech MOD|
+StrongArm SC CV ConstructionMech|
+StrongArm SC CV-M ConstructionMech MOD|
+StrongArm SC CVI ConstructionMech|
+Hoverbike (Laser)|
+Hoverbike (MG)|
+Hoverbike|
+Minigun Cycle (SRM)|
+Minigun Cycle|
+Monocycle|
+Scout ATV|
+TrackBike|
+Trike|
+Prime Mover (Original)|
+Prime Mover (Succession Wars)|
+Prime Mover|
+Sturmvogel Gunship WiGE|
+Sturmvogel Maritime Patrol WiGE (LB-10X)|
+Sturmvogel Maritime Patrol WiGE (LB-2X)|
+Sturmvogel Maritime Patrol WiGE|
+Wheeled Scout (Camera)|
+Wheeled Scout (Sensors)|
+Wheeled Scout|
 Gaajian System Patrol Boat (2485)|
 Gaajian System Patrol Boat (3060)|
 Hoshiryokou (Standard)|
@@ -821,10 +906,37 @@ Sternensturm STM-O|
 Sternensturm STM-OA|
 Sternensturm STM-OB|
 Firebird FR-1|
-Chippewa IIC (Standard)|
 Star Dagger S-2B|
 Thrush TR-5|
 Transit TR-9|
+Chippewa IIC 2|
+Chippewa IIC (Standard)|
+Goth A|
+Goth B|
+Goth C|
+Goth D|
+Goth Prime|
+Ironsides IRN-SD1b-EC|
+Issedone A|
+Issedone B|
+Issedone C|
+Issedone D|
+Issedone Prime|
+Kublai E|
+Kublai F|
+Kublai G|
+Ogotai A|
+Ogotai B|
+Ogotai Prime|
+Pella|
+Qasar A|
+Qasar B|
+Qasar C|
+Qasar D|
+Qasar Prime|
+Rapier RPR-100b-EC|
+Sabre SB-27b-EC|
+Tomahawk THK-63-EC|
 DragonFly MM-1|
 Blackwasp Mk. 30|
 Aeshna Heavy Drone Fighter (Standard)|
@@ -840,15 +952,6 @@ Stuka STU-K5b|
 Stuka STU-K5b2|
 Thunderbird TRB-D36b|
 Zero ZRO-116b|
-Goth A|
-Goth B|
-Goth Prime|
-Issedone A|
-Issedone B|
-Issedone Prime|
-Ogotai A|
-Ogotai B|
-Ogotai Prime|
 Cheetah OF-17A-R|
 Corax C|
 Corsair CSR-12D|
@@ -1146,88 +1249,127 @@ Arrow IV Artillery Turret (Quad)|
 Arrow IV Artillery Turret (Triple)|
 Arrow IV Artillery Turret (Single)|
 Long Tom Artillery Cannon Turret (Dual)|
+Long Tom Artillery Cannon Turret (Quad)|
 Long Tom Artillery Cannon Turret (Triple)|
 Long Tom Artillery Cannon Turret (Single)|
 Long Tom Artillery Turret (Dual)|
+Long Tom Artillery Turret (Quad)|
 Long Tom Artillery Turret (Triple)|
 Long Tom Artillery Turret (Single)|
 'Mech Mortar/1 Battery (Dual)|
+'Mech Mortar/1 Battery (Quad)|
 'Mech Mortar/1 Battery (Single)|
 'Mech Mortar/1 Battery (Triple)|
-'Mech Mortar/1 Battery (Dual)|
-'Mech Mortar/1 Battery (Single)|
+'Mech Mortar/2 Battery (Dual)|
+'Mech Mortar/2 Battery (Quad)|
+'Mech Mortar/2 Battery (Single)|
 'Mech Mortar/2 Battery (Triple)|
 'Mech Mortar/4 Battery (Dual)|
+'Mech Mortar/4 Battery (Quad)|
 'Mech Mortar/4 Battery (Triple)|
 'Mech Mortar/4 Battery (Single)|
 'Mech Mortar/8 Battery (Dual)|
+'Mech Mortar/8 Battery (Quad)|
 'Mech Mortar/8 Battery (Triple)|
 'Mech Mortar/8 Battery (Single)|
 Sniper Artillery Cannon Turret (Dual)|
+Sniper Artillery Cannon Turret (Quad)|
 Sniper Artillery Cannon Turret (Triple)|
 Sniper Artillery Cannon Turret (Single)|
 Sniper Artillery Turret (Dual)|
+Sniper Artillery Turret (Quad)|
 Sniper Artillery Turret (Triple)|
 Sniper Artillery Turret (Single)|
 Thumper Artillery Cannon Turret (Dual)|
+Thumper Artillery Cannon Turret (Quad)|
 Thumper Artillery Cannon Turret (Triple)|
 Thumper Artillery Cannon Turret (Single)|
 Thumper Artillery Turret (Dual)|
+Thumper Artillery Turret (Quad)|
 Thumper Artillery Turret (Triple)|
 Thumper Artillery Turret (Single)|
 ATM/12 Turret (Dual)|
+ATM/12 Turret (Quad)|
 ATM/12 Turret (Triple)|
 ATM/12 Turret (Single)|
 ATM/3 Turret (Dual)|
+ATM/3 Turret (Quad)|
 ATM/3 Turret (Triple)|
 ATM/3 Turret (Single)|
 ATM/6 Turret (Dual)|
+ATM/6 Turret (Quad)|
 ATM/6 Turret (Triple)|
 ATM/6 Turret (Single)|
 ATM/9 Turret (Dual)|
+ATM/9 Turret (Quad)|
 ATM/9 Turret (Triple)|
 ATM/9 Turret (Single)|
+Improved ATM/12 Turret (Dual)|
+Improved ATM/12 Turret (Quad)|
+Improved ATM/12 Turret (Triple)|
+Improved ATM/12 Turret (Single)|
+Improved ATM/3 Turret (Dual)|
+Improved ATM/3 Turret (Quad)|
+Improved ATM/3 Turret (Triple)|
+Improved ATM/3 Turret (Single)|
+Improved ATM/6 Turret (Dual)|
+Improved ATM/6 Turret (Quad)|
+Improved ATM/6 Turret (Triple)|
+Improved ATM/6 Turret (Single)|
+Improved ATM/9 Turret (Dual)|
+Improved ATM/9 Turret (Quad)|
+Improved ATM/9 Turret (Triple)|
+Improved ATM/9 Turret (Single)|
 LB-10-X Turret (Dual)|
+LB-10-X Turret (Quad)|
 LB-10-X Turret (Single)|
 LB-10-X Turret (Triple)|
 LB-20-X Turret (Dual)|
+LB-20-X Turret (Quad)|
 LB-20-X Turret (Single)|
 LB-20-X Turret (Triple)|
 LB-2-X Turret (Dual)|
+LB-2-X Turret (Quad)|
 LB-2-X Turret (Single)|
 LB-2-X Turret (Triple)|
 LB-5-X Turret (Dual)|
-LB-5-X Turret (Dual)|
+LB-5-X Turret (Quad)|
 LB-5-X Turret (Single)|
 LB-5-X Turret (Triple)|
 ProtoMech AC/2 Turret (Dual)|
-ProtoMech AC/2 Turret (Triple)|
+ProtoMech AC/2 Turret (Quad)|
 ProtoMech AC/2 Turret (Single)|
 ProtoMech AC/2 Turret (Triple)|
 ProtoMech AC/4 Turret (Dual)|
-ProtoMech AC/4 Turret (Triple)|
+ProtoMech AC/4 Turret (Quad)|
 ProtoMech AC/4 Turret (Single)|
 ProtoMech AC/4 Turret (Triple)|
 ProtoMech AC/8 Turret (Dual)|
-ProtoMech AC/8 Turret (Triple)|
+ProtoMech AC/8 Turret (Quad)|
 ProtoMech AC/8 Turret (Single)|
 ProtoMech AC/8 Turret (Triple)|
 RAC/2 Turret (Dual)|
+RAC/2 Turret (Quad)|
 RAC/2 Turret (Single)|
 RAC/2 Turret (Triple)|
 RAC/5 Turret (Dual)|
+RAC/5 Turret (Quad)|
 RAC/5 Turret (Single)|
 RAC/5 Turret (Triple)|
 UAC/10 Turret (Dual)|
+UAC/10 Turret (Quad)|
 UAC/10 Turret (Single)|
 UAC/10 Turret (Triple)|
 UAC/2 Turret (Dual)|
+UAC/2 Turret (Quad)|
 UAC/2 Turret (Single)|
 UAC/2 Turret (Triple)|
 UAC/20 Turret (Dual)|
+UAC/20 Turret (Quad)|
 UAC/20 Turret (Single)|
 UAC/20 Turret (Triple)|
 UAC/5 Turret (Dual)|
+UAC/5 Turret (Quad)|
 UAC/5 Turret (Single)|
 UAC/5 Turret (Triple)|
 ER Flamer Turret (Dual)|
@@ -1251,20 +1393,29 @@ Gauss Turret (Quad)|
 Gauss Turret (Triple)|
 Gauss Turret (Single)|
 HAG/20 Turret (Dual)|
+HAG/20 Turret (Quad)|
 HAG/20 Turret (Triple)|
 HAG/20 Turret (Single)|
 HAG/30 Turret (Dual)|
+HAG/30 Turret (Quad)|
 HAG/30 Turret (Triple)|
 HAG/30 Turret (Single)|
 HAG/40 Turret (Dual)|
+HAG/40 Turret (Quad)|
 HAG/40 Turret (Triple)|
 HAG/40 Turret (Single)|
 Large Chemical Laser Turret (Dual)|
+Large Chemical Laser Turret (Quad)|
 Large Chemical Laser Turret (Single)|
+Large Chemical Laser Turret (Triple)|
 Medium Chemical Laser Turret (Dual)|
+Medium Chemical Laser Turret (Quad)|
 Medium Chemical Laser Turret (Single)|
+Medium Chemical Laser Turret (Triple)|
 Small Chemical Laser Turret (Dual)|
+Small Chemical Laser Turret (Quad)|
 Small Chemical Laser Turret (Single)|
+Small Chemical Laser Turret (Triple)|
 ER Large Laser Turret (Dual)|
 ER Large Laser Turret (Quad)|
 ER Large Laser Turret (Single)|
@@ -1337,10 +1488,10 @@ Large Pulse Laser Turret (Dual)|
 Large Pulse Laser Turret (Quad)|
 Large Pulse Laser Turret (Single)|
 Large Pulse Laser Turret (Triple)|
-Small Pulse Laser Turret (Dual)|
-Small Pulse Laser Turret (Quad)|
-Small Pulse Laser Turret (Single)|
-Small Pulse Laser Turret (Triple)|
+Micro Pulse Laser Turret (Dual)|
+Micro Pulse Laser Turret (Quad)|
+Micro Pulse Laser Turret (Single)|
+Micro Pulse Laser Turret (Triple)|
 Medium Pulse Laser Turret (Dual)|
 Medium Pulse Laser Turret (Quad)|
 Medium Pulse Laser Turret (Single)|
@@ -1435,16 +1586,20 @@ MG Turret w/ Array (Quad)|
 MG Turret w/ Array (Triple)|
 MG Turret (Single)|
 Enhanced PPC Turret (Dual)|
+Enhanced PPC Turret (Quad)|
 Enhanced PPC Turret (Single)|
 Enhanced PPC Turret (Triple)|
 ER PPC Turret (Dual)|
+ER PPC Turret (Quad)|
 ER PPC Turret (Single)|
 ER PPC Turret (Triple)|
 ER PPC w Capacitor Turret (Single)|
+ER PPC w Capacitor Turret (Quad)|
 ER PPC w Capacitor Turret (Triple)|
 ER PPC w Capacitor Turret (Dual)|
 Plasma Cannon Turret (Triple)|
 Plasma Cannon Turret (Dual)|
+Plasma Cannon Turret (Quad)|
 Plasma Cannon Turret (Single)|
 Active Probe Bunker|
 AMS Turret (Dual)|
@@ -1516,111 +1671,147 @@ Arrow IV Artillery Turret (Quad)|
 Arrow IV Artillery Turret (Triple)|
 Arrow IV Artillery Turret (Single)|
 Cruise Missile/120 Launcher (Dual)|
+Cruise Missile/120 Launcher (Quad)|
 Cruise Missile/120 Launcher (Triple)|
 Cruise Missile/120 Launcher (Single)|
 Cruise Missile/50 Launcher (Dual)|
+Cruise Missile/50 Launcher (Quad)|
 Cruise Missile/50 Launcher (Triple)|
 Cruise Missile/50 Launcher (Single)|
 Cruise Missile/70 Launcher (Dual)|
+Cruise Missile/70 Launcher (Quad)|
 Cruise Missile/70 Launcher (Triple)|
 Cruise Missile/70 Launcher (Single)|
 Cruise Missile/90 Launcher (Dual)|
+Cruise Missile/90 Launcher (Quad)|
 Cruise Missile/90 Launcher (Triple)|
 Cruise Missile/90 Launcher (Single)|
 Long Tom Artillery Cannon Turret (Dual)|
 Long Tom Artillery Cannon Turret (Triple)|
+Long Tom Artillery Cannon Turret (Triple)|
 Long Tom Artillery Cannon Turret (Single)|
 Long Tom Artillery Turret (Dual)|
+Long Tom Artillery Turret (Quad)|
 Long Tom Artillery Turret (Triple)|
 Long Tom Artillery Turret (Single)|
 'Mech Mortar/1 Battery (Dual)|
+'Mech Mortar/1 Battery (Quad)|
 'Mech Mortar/1 Battery (Triple)|
 'Mech Mortar/1 Battery (Single)|
 'Mech Mortar/2 Battery (Dual)|
+'Mech Mortar/2 Battery (Quad)|
 'Mech Mortar/2 Battery (Triple)|
 'Mech Mortar/2 Battery (Single)|
 'Mech Mortar/4 Battery (Dual)|
+'Mech Mortar/4 Battery (Quad)|
 'Mech Mortar/4 Battery (Triple)|
 'Mech Mortar/4 Battery (Single)|
 'Mech Mortar/8 Battery (Dual)|
+'Mech Mortar/8 Battery (Quad)|
 'Mech Mortar/8 Battery (Triple)|
 'Mech Mortar/8 Battery (Single)|
 Sniper Artillery Cannon Turret (Dual)|
+Sniper Artillery Cannon Turret (Quad)|
 Sniper Artillery Cannon Turret (Triple)|
 Sniper Artillery Cannon Turret (Single)|
 Sniper Artillery Turret (Dual)|
+Sniper Artillery Turret (Quad)|
 Sniper Artillery Turret (Triple)|
 Sniper Artillery Turret (Single)|
 Thumper Artillery Cannon Turret (Dual)|
+Thumper Artillery Cannon Turret (Quad)|
 Thumper Artillery Cannon Turret (Triple)|
 Thumper Artillery Cannon Turret (Single)|
 Thumper Artillery Turret (Dual)|
+Thumper Artillery Turret (Quad)|
 Thumper Artillery Turret (Triple)|
 Thumper Artillery Turret (Single)|
 HV Autocannon/10 Turret (Dual)|
+HV Autocannon/10 Turret (Quad)|
 HV Autocannon/10 Turret (Single)|
 HV Autocannon/10 Turret (Triple)|
 HV Autocannon/2 Turret (Dual)|
+HV Autocannon/2 Turret (Quad)|
 HV Autocannon/2 Turret (Single)|
 HV Autocannon/2 Turret (Triple)|
 HV Autocannon/5 Turret (Dual)|
+HV Autocannon/5 Turret (Quad)|
 HV Autocannon/5 Turret (Single)|
 HV Autocannon/5 Turret (Triple)|
 LB-10-X Turret (Dual)|
+LB-10-X Turret (Quad)|
 LB-10-X Turret (Single)|
 LB-10-X Turret (Triple)|
 LB-20-X Turret (Dual)|
+LB-20-X Turret (Quad)|
 LB-20-X Turret (Single)|
 LB-20-X Turret (Triple)|
 LB-2-X Turret (Dual)|
+LB-2-X Turret (Quad)|
 LB-2-X Turret (Single)|
 LB-2-X Turret (Triple)|
 LB-5-X Turret (Dual)|
+LB-5-X Turret (Quad)|
 LB-5-X Turret (Single)|
 LB-5-X Turret (Triple)|
 Light AC/2 Turret (Dual)|
+Light AC/2 Turret (Quad)|
 Light AC/2 Turret (Single)|
 Light AC/2 Turret (Triple)|
 Light AC/5 Turret (Dual)|
+Light AC/5 Turret (Quad)|
 Light AC/5 Turret (Single)|
 Light AC/5 Turret (Triple)|
 RAC/2 Turret (Dual)|
+RAC/2 Turret (Quad)|
 RAC/2 Turret (Single)|
 RAC/2 Turret (Triple)|
 RAC/5 Turret (Dual)|
+RAC/5 Turret (Quad)|
 RAC/5 Turret (Single)|
 RAC/5 Turret (Triple)|
 Heavy Rifle Turret (Dual)|
+Heavy Rifle Turret (Quad)|
 Heavy Rifle Turret (Single)|
 Heavy Rifle Turret (Triple)|
 Light Rifle Turret (Dual)|
+Light Rifle Turret (Quad)|
 Light Rifle Turret (Single)|
 Light Rifle Turret (Triple)|
 Medium Rifle Turret (Dual)|
+Medium Rifle Turret (Quad)|
 Medium Rifle Turret (Single)|
 Medium Rifle Turret (Triple)|
 AC/10 Turret (Dual)|
+AC/10 Turret (Quad)|
 AC/10 Turret (Single)|
 AC/10 Turret (Triple)|
 AC/2 Turret (Dual)|
+AC/2 Turret (Quad)|
 AC/2 Turret (Single)|
 AC/2 Turret (Triple)|
 AC/20 Turret (Dual)|
+AC/20 Turret (Quad)|
 AC/20 Turret (Single)|
 AC/20 Turret (Triple)|
 AC/5 Turret (Dual)|
+AC/5 Turret (Quad)|
 AC/5 Turret (Single)|
 AC/5 Turret (Triple)|
 UAC/10 Turret (Dual)|
+UAC/10 Turret (Quad)|
 UAC/10 Turret (Single)|
 UAC/10 Turret (Triple)|
 UAC/2 Turret (Dual)|
+UAC/2 Turret (Quad)|
 UAC/2 Turret (Single)|
 UAC/2 Turret (Triple)|
 UAC/20 Turret (Dual)|
+UAC/20 Turret (Quad)|
 UAC/20 Turret (Single)|
 UAC/20 Turret (Triple)|
 UAC/5 Turret (Dual)|
+UAC/5 Turret (Quad)|
 UAC/5 Turret (Single)|
 UAC/5 Turret (Triple)|
 ER Flamer Turret (Dual)|
@@ -1640,9 +1831,11 @@ Gauss Turret (Quad)|
 Gauss Turret (Triple)|
 Gauss Turret (Single)|
 Heavy Gauss Turret (Dual)|
+Heavy Gauss Turret (Quad)|
 Heavy Gauss Turret (Triple)|
 Heavy Gauss Turret (Single)|
 Imp.Heavy Gauss Turret (Dual)|
+Imp.Heavy Gauss Turret (Quad)|
 Imp.Heavy Gauss Turret (Triple)|
 Imp.Heavy Gauss Turret (Single)|
 Light Gauss Turret (Dual)|
@@ -1654,12 +1847,17 @@ Magshot Gauss Turret (Quad)|
 Magshot Gauss Turret (Triple)|
 Magshot Gauss Turret (Single)|
 Silver Bullet Gauss Turret (Dual)|
+Silver Bullet Gauss Turret (Quad)|
 Silver Bullet Gauss Turret (Triple)|
 Silver Bullet Gauss Turret (Single)|
 Blazer Cannon Turret (Dual)|
+Blazer Cannon Turret (Quad)|
 Blazer Cannon Turret (Single)|
+Blazer Cannon Turret (Triple)|
 Bombast Laser Turret (Dual)|
+Bombast Laser Turret (Quad)|
 Bombast Laser Turret (Single)|
+Bombast Laser Turret (Triple)|
 ER Large Laser Turret (Dual)|
 ER Large Laser Turret (Quad)|
 ER Large Laser Turret (Single)|
@@ -1819,73 +2017,112 @@ MG Turret w/ Array (Dual)|
 MG Turret w/ Array (Quad)|
 MG Turret w/ Array (Triple)|
 MG Turret (Single)|
+MML/3 Turret (w/ Artemis IV) (Dual)|
 MML/3 Turret (Dual)|
+MML/3 Turret (w/ Artemis IV) (Quad)|
+MML/3 Turret (Quad)|
+MML/3 Turret (w/ Artemis IV) (Triple)|
 MML/3 Turret (Triple)|
+MML/3 Turret (w/ Artemis IV) (Single)|
 MML/3 Turret (Single)|
+MML/5 Turret (w/ Artemis IV) (Dual)|
 MML/5 Turret (Dual)|
+MML/5 Turret (w/ Artemis IV) (Quad)|
+MML/5 Turret (Quad)|
+MML/5 Turret (w/ Artemis IV) (Triple)|
 MML/5 Turret (Triple)|
+MML/5 Turret (w/ Artemis IV) (Single)|
 MML/5 Turret (Single)|
+MML/7 Turret (w/ Artemis IV) (Dual)|
 MML/7 Turret (Dual)|
+MML/7 Turret (w/ Artemis IV) (Quad)|
+MML/7 Turret (Quad)|
+MML/7 Turret (w/ Artemis IV) (Triple)|
 MML/7 Turret (Triple)|
+MML/7 Turret (w/ Artemis IV) (Single)|
 MML/7 Turret (Single)|
+MML/9 Turret (w/ Artemis IV) (Dual)|
 MML/9 Turret (Dual)|
+MML/9 Turret (w/ Artemis IV) (Quad)|
+MML/9 Turret (Quad)|
+MML/9 Turret (w/ Artemis IV) (Triple)|
 MML/9 Turret (Triple)|
+MML/9 Turret (w/ Artemis IV) (Single)|
 MML/9 Turret (Single)|
 MRM 10 Turret (Dual)|
+MRM 10 Turret (Quad)|
 MRM 10 Turret (Triple)|
 MRM 10 Turret w/ Apollo FCS (Dual)|
+MRM 10 Turret w/ Apollo FCS (Quad)|
 MRM 10 Turret w/ Apollo FCS (Triple)|
 MRM 10 Turret w/ Apollo FCS (Single)|
 MRM 10 Turret (Single)|
 MRM 20 Turret (Dual)|
+MRM 20 Turret (Quad)|
 MRM 20 Turret (Triple)|
 MRM 20 Turret w/ Apollo FCS (Dual)|
+MRM 20 Turret w/ Apollo FCS (Quad)|
 MRM 20 Turret w/ Apollo FCS (Triple)|
 MRM 20 Turret w/ Apollo FCS (Single)|
 MRM 20 Turret (Single)|
 MRM 30 Turret (Dual)|
+MRM 30 Turret (Quad)|
 MRM 30 Turret (Triple)|
 MRM 30 Turret w/ Apollo FCS (Dual)|
+MRM 30 Turret w/ Apollo FCS (Quad)|
 MRM 30 Turret w/ Apollo FCS (Triple)|
 MRM 30 Turret w/ Apollo FCS (Single)|
 MRM 30 Turret (Single)|
 MRM 40 Turret (Dual)|
+MRM 40 Turret (Quad)|
 MRM 40 Turret (Triple)|
 MRM 40 Turret w/ Apollo FCS (Dual)|
+MRM 40 Turret w/ Apollo FCS (Quad)|
 MRM 40 Turret w/ Apollo FCS (Triple)|
 MRM 40 Turret w/ Apollo FCS (Single)|
 MRM 40 Turret (Single)|
 ER PPC Turret (Dual)|
+ER PPC Turret (Quad)|
 ER PPC Turret (Single)|
 ER PPC Turret (Triple)|
+ER PPC w Capacitor Turret (Quad)|
 ER PPC w Capacitor Turret (Single)|
 ER PPC w Capacitor Turret (Triple)|
 ER PPC w Capacitor Turret (Dual)|
 Heavy PPC Turret (Dual)|
+Heavy PPC Turret (Quad)|
 Heavy PPC Turret (Single)|
 Heavy PPC Turret (Triple)|
 Heavy PPC w Capacitor Turret (Single)|
+Heavy PPC w Capacitor Turret (Quad)|
 Heavy PPC w Capacitor Turret (Triple)|
 Heavy PPC w Capacitor Turret (Dual)|
 Light PPC Turret (Dual)|
+Light PPC Turret (Quad)|
 Light PPC Turret (Single)|
 Light PPC Turret (Triple)|
+Light PPC w Capacitor Turret (Quad)|
 Light PPC w Capacitor Turret (Single)|
 Light PPC w Capacitor Turret (Dual)|
 Light PPC w Capacitor Turret (Triple)|
 Plasma Rifle Turret (Triple)|
+Plasma Rifle Turret (Quad)|
 Plasma Rifle Turret (Dual)|
 Plasma Rifle Turret (Single)|
 PPC Turret (Dual)|
+PPC Turret (Quad)|
 PPC Turret (Single)|
 PPC Turret (Triple)|
 PPC w Capacitor Turret (Dual)|
+PPC w Capacitor Turret (Quad)|
 PPC w Capacitor Turret (Single)|
 PPC w Capacitor Turret (Triple)|
 Snub-Nosed PPC (Dual)|
+Snub-Nosed PPC (Quad)|
 Snub-Nosed PPC (Single)|
 Snub-Nosed PPC (Triple)|
 Snub-Nosed PPC w Capacitor Turret (Dual)|
+Snub-Nosed PPC w Capacitor Turret (Quad)|
 Snub-Nosed PPC w Capacitor Turret (Single)|
 Snub-Nosed PPC w Capacitor Turret (Triple)|
 Rocket Launcher/1 Turret (Single)|
@@ -1980,16 +2217,16 @@ Clan Anti-Infantry Clan Jade Falcon Police|
 Clan Heavy Foot Infantry Ebon Keshik Point|
 Clan Space Marine Clan Snow Raven Space Marines|
 Motorized Infantry Dark Caste Bandits|
-Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
+Bridge-builder Engineers Take the Time III-chi; Forty-eighth Division|
 Motorized XCT Infantry Explorer Corps Hostile Environment|
 Space Marine Com Guards Warship Fleet Marine|
 Heavy Support Infantry Irian Technologies SWAT Team|
 Hover Assault Infantry Johnston Industries Rapid Response Force|
 Jump Support Infantry Star Corps Jump Assault Infantry|
 VTOL Infantry Hachiman Taro Enterprise Extraction Force|
-Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|
+Firefighter Twenty-fourth Hellfire Firefighting Battalion; 84th Avalon LI; 17th Avalon Hussars|
 Frogmen Blue Water Marine Response Teams (Frogmen)|
-Mountaineer 45th Cerulean Mountain Infantry, 3rd Davion Guards|
+Mountaineer 45th Cerulean Mountain Infantry; 3rd Davion Guards|
 SpecOps Paratrooper MI6 Extraction Team|
 Anti-'Mech Jump Infantry Third Ueda Infantry|
 Clan Assault Infantry Ghost Bear Heavy Solahma Infantry|
@@ -2002,7 +2239,7 @@ Fast Recon Cavalry Point|
 Ceremonial Guard Otomo Guard|
 Heavy Jump Infantry DEST Heavy Response Platoon|
 Mechanized Field Artillery 71st Mechanized|
-Recon Infantry Recon Battalion, 201st Pesht Assault Team, 3rd Proserpina Hussars|
+Recon Infantry Recon Battalion; 201st Pesht Assault Team; 3rd Proserpina Hussars|
 Commando Battlefield Infiltration Units|
 Missile Artillery Infantry Kommando Special Forces|
 Sniper House Dai Da Chi Snipers|
@@ -2016,21 +2253,20 @@ TAG Spotter Infantry Stalwart Support - Spotter Infantry|
 Assault Commando Ebon Magistrate Shock Troops|
 Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
-Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
-Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers|
 Skaret Assassins JàrnFòlk|
-Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|
+Ceremonial Guard Caesar's Royal Guard; Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
 Foot Ballistic Rifle Hastati V|
 Jump Laser Infantry Principes III 103rd Jump Battalion|
 Motorized MG Galatean Support Wheels|
 Special Forces Stone's Trackers|
 Anti-Infantry Unit Second Lyran Armored Infantry|
-Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|
+Combat Engineer Royal Engineers; 1st Lyran Royal Guards RCT|
 HALO Paratrooper Lyran Paratrooper Corps|
 Heavy Infantry Heavy Urban Response Platoon|
 Field Gun Infantry (Motorized Batteries)|
-Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|
+Minesweepers Thirty-fifth Cluster Support Force; Red Chasseurs|
 SRM Foot Infantry Taurian Citizens' Militia|
 XCT Marine Special Asteroid Support Forces|
 Mechanized Assault XCT Word of Blake Militia NBC|
@@ -2090,18 +2326,24 @@ Clan Foot Point (Anti-'Mech) (LRM)|
 Clan Foot Point (Anti-'Mech) (MG)|
 Clan Foot Point (Anti-'Mech) (Rifle)|
 Clan Foot Point (Anti-'Mech) (SRM)|
+Clan Foot Squad (Anti-'Mech) (Flamer)|
+Clan Foot Squad (Anti-'Mech) (Laser)|
+Clan Foot Squad (Anti-'Mech) (LRM)|
+Clan Foot Squad (Anti-'Mech) (MG)|
+Clan Foot Squad (Anti-'Mech) (Rifle)|
+Clan Foot Squad (Anti-'Mech) (SRM)|
 Foot Platoon (Anti-'Mech) (Flamer)|
 Foot Platoon (Anti-'Mech) (Laser)|
 Foot Platoon (Anti-'Mech) (LRM)|
 Foot Platoon (Anti-'Mech) (MG)|
 Foot Platoon (Anti-'Mech) (Rifle)|
 Foot Platoon (Anti-'Mech) (SRM)|
-Foot Squad (Flamer)|
-Foot Squad (Laser)|
-Foot Squad (LRM)|
-Foot Squad (MG)|
-Foot Squad (Rifle)|
-Foot Squad (SRM)|
+Foot Squad (Anti-'Mech) (Flamer)|
+Foot Squad (Anti-'Mech) (Laser)|
+Foot Squad (Anti-'Mech) (LRM)|
+Foot Squad (Anti-'Mech) (MG)|
+Foot Squad (Anti-'Mech) (Rifle)|
+Foot Squad (Anti-'Mech) (SRM)|
 Clan Foot Point (Flamer)|
 Clan Foot Point (Laser)|
 Clan Foot Point (LRM)|
@@ -2138,7 +2380,74 @@ Clan Motorized Point (LRM)|
 Clan Motorized Point (MG)|
 Clan Motorized Point (Rifle)|
 Clan Motorized Point (SRM)|
-Foot Platoon (LRM)|
+Clan Foot Squad (Flamer)|
+Clan Foot Squad (Laser)|
+Clan Foot Squad (LRM)|
+Clan Foot Squad (MG)|
+Clan Foot Squad (Rifle)|
+Clan Foot Squad (SRM)|
+Clan Jump Squad (Flamer)|
+Clan Jump Squad (Laser)|
+Clan Jump Squad (LRM)|
+Clan Jump Squad (MG)|
+Clan Jump Squad (Rifle)|
+Clan Jump Squad (SRM)|
+Clan Mechanized Hover Squad (Flamer)|
+Clan Mechanized Hover Squad (Laser)|
+Clan Mechanized Hover Squad (LRM)|
+Clan Mechanized Hover Squad (MG)|
+Clan Mechanized Hover Squad (Rifle)|
+Clan Mechanized Hover Squad (SRM)|
+Clan Mechanized Tracked Squad (Flamer)|
+Clan Mechanized Tracked Squad (Laser)|
+Clan Mechanized Tracked Squad (LRM)|
+Clan Mechanized Tracked Squad (MG)|
+Clan Mechanized Tracked Squad (Rifle)|
+Clan Mechanized Tracked Squad (SRM)|
+Clan Mechanized Wheeled Squad (Flamer)|
+Clan Mechanized Wheeled Squad (Laser)|
+Clan Mechanized Wheeled Squad (LRM)|
+Clan Mechanized Wheeled Squad (MG)|
+Clan Mechanized Wheeled Squad (Rifle)|
+Clan Mechanized Wheeled Squad (SRM)|
+Clan Motorized Squad (Flamer)|
+Clan Motorized Squad (Laser)|
+Clan Motorized Squad (LRM)|
+Clan Motorized Squad (MG)|
+Clan Motorized Squad (Rifle)|
+Clan Motorized Squad (SRM)|
+Bandit Motorized Point (Rifle)|
+Ceremonial Platoon (Close Combat)|
+Ceremonial Platoon (MG Heavy)|
+Foot Platoon (Laser Heavy XCT)|
+Foot Platoon (Laser Marine)|
+Foot Platoon (Laser TAG)|
+Foot Platoon (Laser XCT)|
+Foot Platoon (Light Scout)|
+Foot Platoon (LRM Heavy)|
+Foot Platoon (Rifle Light)|
+Foot Platoon (Rifle Mountain)|
+Foot Platoon (Rifle Paratrooper)|
+Foot Squad (Medic)|
+Foot Stealth Platoon (Rifle Paratrooper)|
+Foot Stealth Squad (Sniper Paratrooper)|
+Jump Platoon (Anti-Mech) (Laser)|
+Jump Platoon (Grenade Launcher)|
+Jump Platoon (Laser Heavy)|
+Jump Stealth Platoon (Laser)|
+Jump Stealth Platoon (Needler Demolition)|
+Mechanized Hover Platoon (Demolition)|
+Mechanized Sub Platoon (SRM SCUBA)|
+Mechanized Tracked Platoon (Bridging)|
+Mechanized Wheeled Platoon (Laser XCT)|
+Motorized Platoon (Fieldworks)|
+Motorized Platoon (Firefighters)|
+Motorized Platoon (Gauss Heavy)|
+Motorized Platoon (Laser XCT)|
+Motorized Platoon (Needler Heavy)|
+Motorized Platoon (Nonlethal)|
+Motorized Platoon (Plasma Heavy)|
+Motorized Sub Platoon (Laser SCUBA)|
 Foot Platoon (Flamer)|
 Foot Platoon (Laser)|
 Foot Platoon (LRM)|
@@ -2189,19 +2498,16 @@ Jump Squad (Rifle)|
 Jump Squad (SRM)|
 Mechanized Hover Squad (Flamer)|
 Mechanized Hover Squad (Laser)|
-Mechanized Hover Squad (LRM)|
 Mechanized Hover Squad (MG)|
 Mechanized Hover Squad (Rifle)|
 Mechanized Hover Squad (SRM)|
 Mechanized Tracked Squad (Flamer)|
 Mechanized Tracked Squad (Laser)|
-Mechanized Tracked Squad (LRM)|
 Mechanized Tracked Squad (MG)|
 Mechanized Tracked Squad (Rifle)|
 Mechanized Tracked Squad (SRM)|
 Mechanized Wheeled Squad (Flamer)|
 Mechanized Wheeled Squad (Laser)|
-Mechanized Wheeled Squad (LRM)|
 Mechanized Wheeled Squad (MG)|
 Mechanized Wheeled Squad (Rifle)|
 Mechanized Wheeled Squad (SRM)|
@@ -2211,11 +2517,6 @@ Motorized Squad (LRM)|
 Motorized Squad (MG)|
 Motorized Squad (Rifle)|
 Motorized Squad (SRM)|
-Jump Platoon (LRM)|
-Mechanized Hover Platoon (LRM)|
-Mechanized Tracked Platoon (LRM)|
-Mechanized Wheeled Platoon (LRM)|
-Motorized Platoon (LRM)|
 Comitatus JumpShip (2995)|
 Hunter Jumpship (2832)|
 Hunter Jumpship (2948) (LF)|
@@ -2517,7 +2818,6 @@ Black Hawk (Nova) S|
 Black Knight BL-12-KNT|
 Black Knight BL-6-KNT|
 Black Knight BL-6-RR|
-Black Knight BL-9-KNT|
 Black Knight BL-6b-KNT|
 Blackjack BJ-2|
 Blackjack BJ-3|
@@ -2596,13 +2896,13 @@ Cyclops CP-11-C|
 Cyclops CP-11-G|
 Cyclops CP-11-H|
 Cyclops CP-12-K|
-Daishi (Dire Wolf) Prime|
 Daishi (Dire Wolf) A|
 Daishi (Dire Wolf) B|
 Daishi (Dire Wolf) C|
 Daishi (Dire Wolf) D|
 Daishi (Dire Wolf) H|
 Daishi (Dire Wolf) (Hohiro)|
+Daishi (Dire Wolf) Prime|
 Daishi (Dire Wolf) 'Prometheus'|
 Daishi (Dire Wolf) S|
 Daishi (Dire Wolf) W|
@@ -2869,7 +3169,6 @@ Panther PNT-14S|
 Panther PNT-16K|
 Panther PNT-C|
 Panther PNT-CA|
-Puma (Adder) Prime|
 Puma (Adder) A|
 Puma (Adder) B|
 Puma (Adder) C|
@@ -2877,6 +3176,7 @@ Puma (Adder) D|
 Puma (Adder) E|
 Puma (Adder) H|
 Puma (Adder) J|
+Puma (Adder) Prime|
 Quickdraw QKD-5K|
 Quickdraw QKD-5K2|
 Quickdraw QKD-5M|
@@ -2897,7 +3197,6 @@ Ryoken (Stormcrow) E|
 Ryoken (Stormcrow) F|
 Ryoken (Stormcrow) G|
 Ryoken (Stormcrow) H|
-Ryoken (Stormcrow) I|
 Ryoken (Stormcrow) Prime|
 Sentinel STN-3L|
 Sentinel STN-3M|
@@ -2931,7 +3230,6 @@ Thor (Summoner) H|
 Thor (Summoner) HH|
 Thor (Summoner) M|
 Thor (Summoner) Prime|
-Thor (Summoner) Q|
 Thorn THE-N|
 Thorn THE-N1|
 Thorn THE-N2|
@@ -2950,7 +3248,6 @@ Uller (Kit Fox) C|
 Uller (Kit Fox) D|
 Uller (Kit Fox) E|
 Uller (Kit Fox) F|
-Uller (Kit Fox) G|
 Uller (Kit Fox) H|
 Uller (Kit Fox) Prime|
 Uller (Kit Fox) S|
@@ -3082,10 +3379,8 @@ Gallowglas GAL-2GLS|
 Gallowglas GAL-3GLS|
 Gallowglas GAL-4GLS|
 Gallowglas WD|
-Goshawk (Vapor Eagle) 2|
 Goshawk (Vapor Eagle) 3|
 Goshawk (Vapor Eagle) 4|
-Goshawk (Vapor Eagle) (Standard)|
 Grand Crusader GRN-D-01|
 Grand Crusader GRN-D-02|
 Grand Crusader II GRN-D-03|
@@ -3111,7 +3406,6 @@ Hellhound (Conjurer) 2|
 Hellhound (Conjurer) 3|
 Hellhound (Conjurer) 4|
 Hellhound (Conjurer) 5|
-Hellhound (Conjurer) (Standard)|
 Hercules HRC-LS-9000|
 Hercules HRC-LS-9001|
 Hitman HM-1|
@@ -3150,7 +3444,6 @@ Linebacker B|
 Linebacker C|
 Linebacker D|
 Linebacker E|
-Linebacker F|
 Linebacker H|
 Linebacker Prime|
 Longshot LNG-1B|
@@ -3196,11 +3489,8 @@ Penetrator PTR-4F|
 Penetrator PTR-6M|
 Penetrator PTR-6S|
 Penetrator PTR-6T|
-Peregrine (Horned Owl) 2|
-Peregrine (Horned Owl) 3|
 Peregrine (Horned Owl) 4|
 Peregrine (Horned Owl) 5|
-Peregrine (Horned Owl) (Standard)|
 Phantom A|
 Phantom B|
 Phantom C|
@@ -3269,12 +3559,8 @@ Venom SDR-9K|
 Venom SDR-9KA|
 Venom SDR-9KB|
 Venom SDR-9KC|
-Viper (Black Python) 2|
 Viper (Black Python) 3|
 Viper (Black Python) 4|
-Viper (Black Python) (Standard)|
-Vixen (Incubus) 2|
-Vixen (Incubus) 3|
 Vixen (Incubus) 4|
 Vixen (Incubus) 5|
 Vixen (Incubus) (Standard)|
@@ -3478,7 +3764,6 @@ Nobori-nin (Huntsman) A|
 Nobori-nin (Huntsman) B|
 Nobori-nin (Huntsman) C|
 Nobori-nin (Huntsman) D|
-Nobori-nin (Huntsman) E|
 Nobori-nin (Huntsman) H|
 Nobori-nin (Huntsman) N|
 Nobori-nin (Huntsman) Prime|
@@ -3514,7 +3799,6 @@ Shadow Cat A|
 Shadow Cat B|
 Shadow Cat C|
 Shadow Cat H|
-Shadow Cat J|
 Shadow Cat Prime|
 Shootist ST-8A|
 Shootist ST-8C|
@@ -4341,10 +4625,6 @@ Vindicator VND-3Lr|
 Vulcan VT-5Sr|
 Vulture (Mad Dog) U|
 Warlord BLR-2Dr|
-Archer ARC-4M|
-Archer ARC-5R|
-Archer ARC-5S|
-Archer ARC-5W|
 Archer ARC-6S|
 Archer ARC-6W|
 Archer ARC-7L|
@@ -4353,8 +4633,6 @@ Archer ARC-8M|
 Archer ARC-9K|
 Archer ARC-9M|
 Archer ARC-9W|
-Archer C|
-Archer (Wolf)|
 BattleMaster BLR-10S|
 BattleMaster BLR-10S2|
 BattleMaster BLR-2C|
@@ -4434,31 +4712,21 @@ Longbow LGB-13NAIS|
 Longbow LGB-14C|
 Marauder (Bounty Hunter-3015)|
 Marauder (Bounty Hunter-3044)|
-Marauder C|
 Marauder II (Bounty Hunter)|
 Marauder II C|
 Marauder II MAD-4H|
 Marauder II MAD-4K|
 Marauder II MAD-4S|
-Marauder II MAD-5A|
-Marauder II MAD-5B|
-Marauder II MAD-5C|
 Marauder II MAD-5W|
 Marauder II MAD-6D|
 Marauder II MAD-6M|
 Marauder IIC 2|
 Marauder IIC 3|
 Marauder IIC 4|
-Marauder IIC 5|
-Marauder IIC 6|
 Marauder IIC 7|
-Marauder IIC 8|
-Marauder IIC (Standard)|
-Marauder MAD-5D|
 Marauder MAD-5L|
 Marauder MAD-5M|
 Marauder MAD-5R|
-Marauder MAD-5S|
 Marauder MAD-5T|
 Marauder MAD-6L|
 Marauder MAD-7D|
@@ -4495,12 +4763,8 @@ Phoenix Hawk IIC 7|
 Phoenix Hawk IIC 8|
 Phoenix Hawk IIC (Standard)|
 Phoenix Hawk PXH-2|
-Phoenix Hawk PXH-3D|
-Phoenix Hawk PXH-3K|
 Phoenix Hawk PXH-3M (Masters)|
-Phoenix Hawk PXH-3M|
 Phoenix Hawk PXH-3PL|
-Phoenix Hawk PXH-3S|
 Phoenix Hawk PXH-4L|
 Phoenix Hawk PXH-4W|
 Phoenix Hawk PXH-5L|
@@ -4510,7 +4774,6 @@ Phoenix Hawk PXH-7K|
 Phoenix Hawk PXH-7S|
 Phoenix Hawk PXH-8CS|
 Rifleman C 2|
-Rifleman C|
 Rifleman IIC 2|
 Rifleman IIC 3|
 Rifleman IIC 4|
@@ -4520,8 +4783,6 @@ Rifleman IIC 7|
 Rifleman IIC 8|
 Rifleman IIC (Standard)|
 Rifleman RFL-3Cr|
-Rifleman RFL-5D|
-Rifleman RFL-5M|
 Rifleman RFL-6D|
 Rifleman RFL-6X|
 Rifleman RFL-7M|
@@ -4535,7 +4796,6 @@ Scorpion SCP-12K|
 Scorpion SCP-12S|
 Scorpion SCP-1O|
 Scorpion SCP-1TB|
-Shadow Hawk C|
 Shadow Hawk IIC 2|
 Shadow Hawk IIC 3|
 Shadow Hawk IIC 4|
@@ -4546,10 +4806,8 @@ Shadow Hawk IIC 8|
 Shadow Hawk IIC (Standard)|
 Shadow Hawk SHD-11CS|
 Shadow Hawk SHD-12C|
-Shadow Hawk SHD-2D2|
 Shadow Hawk SHD-3K|
 Shadow Hawk SHD-5D|
-Shadow Hawk SHD-5M|
 Shadow Hawk SHD-7CS|
 Shadow Hawk SHD-7M|
 Shadow Hawk SHD-8L|
@@ -4576,7 +4834,6 @@ Thunderbolt TDR-9Nr|
 Thunderbolt TDR-9S|
 Thunderbolt TDR-9SE|
 Thunderbolt TDR-9T|
-Valkyrie VLK-QD|
 Valkyrie VLK-QD1|
 Valkyrie VLK-QD2|
 Valkyrie VLK-QD3|
@@ -4584,8 +4841,6 @@ Valkyrie VLK-QD4|
 Valkyrie VLK-QS5|
 Valkyrie VLK-QT2|
 Valkyrie VLK-QW5|
-Warhammer C|
-Warhammer IIC 2|
 Warhammer IIC 3|
 Warhammer IIC 4|
 Warhammer IIC 5|
@@ -4593,25 +4848,18 @@ Warhammer IIC 6|
 Warhammer IIC 7|
 Warhammer IIC 8|
 Warhammer IIC 9|
-Warhammer IIC (Standard)|
 Warhammer WHM-10T|
 Warhammer WHM-11T|
 Warhammer WHM-4L|
 Warhammer WHM-5L|
-Warhammer WHM-7K|
-Warhammer WHM-7M|
-Warhammer WHM-7S|
 Warhammer WHM-8D|
 Warhammer WHM-8K|
 Warhammer WHM-8M|
 Warhammer WHM-9D|
 Warhammer WHM-9S|
-Wasp WSP-1S|
 Wasp WSP-3A|
 Wasp WSP-3L|
-Wasp WSP-3M|
 Wasp WSP-3S|
-Wasp WSP-3W|
 Wasp WSP-7MAF|
 Wasp WSP-8T|
 Wolverine WVR-7D|
@@ -4798,7 +5046,7 @@ Balius E|
 Banshee BNC-9S2|
 Berserker BRZ-D4|
 Black Hawk (Nova) I|
-Black Hawk (Nova) T|
+Black Hawk (Nova) X|
 Black Hawk-KU BHKU-OG|
 Blackjack BJ-2r|
 Blackjack BJ2-OG|
@@ -4813,7 +5061,6 @@ Cuirass CDR-2BC|
 Cuirass CDR-2X|
 Cygnus 4|
 Daishi (Dire Wolf) E|
-Dasher (Fire Moth) G|
 Dasher II 3|
 Dasher II 4|
 Deimos D|
@@ -4827,9 +5074,6 @@ Flamberge D|
 Gallant GLT-10-0|
 Ghost GST-50|
 Ghost GST-90|
-Gladiator (Executioner) F|
-Gladiator (Executioner) G|
-Gladiator (Executioner) I|
 Grand Dragon DRG-10K|
 Grand Titan T-IT-N13M|
 Griffin GRF-6S2|
@@ -4844,7 +5088,6 @@ Karhu G|
 Koschei KSC-6L|
 Kuma 4|
 Legionnaire LGN-2K|
-Linebacker G|
 Locust LCT-5M2|
 Locust LCT-5M3|
 Loki (Hellbringer) G|
@@ -4856,7 +5099,7 @@ Mad Cat Mk II 4|
 Mad Cat Mk II 5|
 Mad Cat Mk II 6|
 Maelstrom MTR-7K|
-Man O' War (Gargoyle) T|
+Man O' War (Gargoyle) X|
 Mangonel MNL-4S|
 Marauder II MAD-4L|
 Marauder MAD-9D|
@@ -4881,7 +5124,6 @@ Quickdraw QKD-9M|
 Raptor II RPT-2X2|
 Sagittaire SGT-14D|
 Salamander PPR-7T|
-Shadow Cat E|
 Shadow Cat F|
 Shadow Cat II 3|
 Shadow Cat II 4|
@@ -4901,8 +5143,7 @@ Sunder SD1-OG|
 Tarantula ZPH-5A|
 Targe TRG-3M|
 Templar TLR1-OR|
-Thor (Summoner) AA|
-Thunder Fox TFT-F11|
+Thunder Fox TDF-F11|
 Thunderbolt TDR-10S|
 Ti Ts'ang TSG-10L|
 Titan TI-1Aj|
@@ -4911,9 +5152,7 @@ Trebaruna TR-XH|
 Trebuchet TBT-9R|
 Tundra Wolf 5|
 Uller (Kit Fox) I|
-Uller (Kit Fox) R|
 Valkyrie VLK-QD8|
-Vulture (Mad Dog) G|
 Warhammer IIC 10|
 Warhammer IIC 11|
 Warhammer IIC 12|
@@ -4999,7 +5238,7 @@ Atlas AS7-K2 (Jedra)|
 Black Hawk 2|
 Black Hawk (Standard)|
 Legionnaire LGN-2D (Raul)|
-Mad Cat III 3 (Eve)|
+Mad Cat III (Eve)|
 Mad Cat III 2|
 Mad Cat III (Dark Age RS)|
 Pack Hunter II (Isis)|
@@ -5037,13 +5276,60 @@ Hector HOR-1C|
 Cave Lion (Standard)|
 Raider JL-1|
 Raider Mk II JL-2|
+Cestus CTS-6Y-EC|
 Coyotl A|
+Coyotl B|
+Coyotl C|
+Coyotl D|
 Coyotl Prime|
+Devastator DVS-2-EC|
+Drift Shag|
+Emperor EMP-6A-EC|
+Enfield END-6J-EC|
+Excalibur EXC-B2b-EC|
+Exterminator EXT-4Db-EC|
+Fox CS-1|
+Fox|
+Lancelot C 2|
+Lancelot C|
 Lupus A|
 Lupus B|
+Lupus C|
+Lupus D|
 Lupus Prime|
+Lynx C|
+Masauwu|
+Minsk 2|
+Minsk MNK-101|
+Minsk|
+Mongoose C 2|
+Mongoose C|
+Naja KTO-19b-EC|
+Naja|
+Night Hawk NTK-2Q-EC|
+Omni-Corvis A|
+Omni-Corvis B|
+Omni-Corvis Prime|
+Phoenix Hawk PXH-1-EC|
+Pulverizer PUL-3R|
+Pulverizer|
+Redback|
+Spartan C|
+Starslayer STY-2C-EC|
+Storm Giant 2|
+Storm Giant|
+Sun Bear A|
+Sun Bear B|
+Sun Bear Prime|
+Talon TLN-5W-EC|
+Vision Quest 2|
+Vision Quest VQ-1NC|
+Vision Quest|
 Wakazashi (Standard)|
 Woodsman A|
+Woodsman B|
+Woodsman C|
+Woodsman D|
 Woodsman Prime|
 Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum'|
 Rock Hound ProspectorMech AM-PRM-RH7|
@@ -5059,10 +5345,287 @@ Alfar AL-A1|
 Alfar AL-D1 'Dokkalfar'|
 Talos TLS-1B|
 Bakeneko BKN-1K|
-Pendragon PDG-3R|
+Commando COM-9S|
+Dominator 2|
+Dominator (Standard)|
+Goliath C|
+Grasshopper GHR-8K|
+Griffin C|
+Griffin GRF-3N|
+Loki (Hellbringer) J|
+Loki (Hellbringer) T|
+Pack Hunter 5|
+Archer (Wolf)|
+Archer ARC-2Rb|
+Archer ARC-4M|
+Archer ARC-4M2|
+Archer ARC-5R|
+Archer ARC-5S|
+Archer ARC-5W|
+Archer ARC-7C|
+Archer ARC-9R|
+Archer C|
+Centurion CN10-D|
+Crucible (Standard)|
+Crucible 2|
+Crucible 3|
+Hermit Crab HMC-13|
+Hermit Crab HMC-14|
+Hermit Crab HMC-15|
+Highlander HGN-740|
+Mongoose MON-96|
+Vulture (Mad Dog) DD|
+Vulture (Mad Dog) G|
+Vulture (Mad Dog) I|
+Vulture (Mad Dog) T|
+Vulture (Mad Dog) V|
+Butcherbird (Ion Sparrow) A|
+Butcherbird (Ion Sparrow) B|
+Butcherbird (Ion Sparrow) C|
+Butcherbird (Ion Sparrow) D|
+Butcherbird (Ion Sparrow) Prime|
+Man O' War (Gargoyle) F|
+Man O' War (Gargoyle) I|
+Man O' War (Gargoyle) J|
+Man O' War (Gargoyle) K|
+Man O' War (Gargoyle) P|
+Man O' War (Gargoyle) T|
+Peregrine (Horned Owl) 2|
+Peregrine (Horned Owl) 3|
+Peregrine (Horned Owl) 6|
+Peregrine (Horned Owl) 7|
+Peregrine (Horned Owl) (Standard)|
+Phoenix Hawk C 2|
+Phoenix Hawk C|
+Phoenix Hawk PXH-2K|
+Phoenix Hawk PXH-3D|
+Phoenix Hawk PXH-3K|
+Phoenix Hawk PXH-3M|
+Phoenix Hawk PXH-3S|
+Phoenix Hawk PXH-4M|
+Phoenix Hawk PXH-9|
+Uller (Kit Fox) G|
+Uller (Kit Fox) J|
+Uller (Kit Fox) K|
+Uller (Kit Fox) R|
+Uller (Kit Fox) T|
+Uller (Kit Fox) V|
+Axman AXM-5N|
+Black Knight BL-18-KNT|
+Carrion Crow A|
+Carrion Crow B|
+Carrion Crow C|
+Carrion Crow D|
+Carrion Crow Prime|
+Hatchetman HCT-8S|
+Nobori-nin (Huntsman) E|
+Nobori-nin (Huntsman) G|
+Nobori-nin (Huntsman) I|
+Nobori-nin (Huntsman) T|
+Shadow Hawk C|
+Shadow Hawk SHD-2D2|
+Shadow Hawk SHD-2Hb|
+Shadow Hawk SHD-4H|
+Shadow Hawk SHD-5M|
+Shadow Hawk SHD-5R|
+Shadow Hawk SHD-5S|
+Shadow Hawk SHD-6D|
+Shadow Hawk SHD-7H|
+Viper (Black Python) (Standard)|
+Viper (Black Python) 2|
+Viper (Black Python) 5|
+White Raven 2|
+White Raven (Standard)|
+Behemoth (Stone Rhino) 7|
+Behemoth (Stone Rhino) 8|
+Bushwacker BSW-X4|
+Grendel (Mongrel) G|
+Grendel (Mongrel) I|
+Grendel (Mongrel) J|
+Grendel (Mongrel) M|
+Grendel (Mongrel) T|
+Ostscout OTT-12R|
+Ostscout OTT-8J|
+Sojourner A|
+Sojourner B|
+Sojourner C|
+Sojourner D|
+Sojourner Prime|
+UrbanMech UM-R96|
+Zeus ZEU-11S|
+BattleMaster BLR-3M-DC|
+BattleMaster BLR-6C|
+BattleMaster BLR-6G|
+BattleMaster C 3|
+Hierofalcon A|
+Hierofalcon B|
+Hierofalcon C|
+Hierofalcon D|
+Hierofalcon Prime|
+Puma (Adder) I|
+Puma (Adder) K|
+Puma (Adder) L|
+Puma (Adder) S|
+Puma (Adder) T|
 Shadow Cat III A|
 Shadow Cat III B|
+Shadow Cat III C|
 Shadow Cat III Prime|
+Thor (Summoner) AA|
+Thor (Summoner) J|
+Thor (Summoner) Q|
+Thor (Summoner) T|
+Awesome AWS-11H|
+Blackjack BJ-5|
+Fenris (Ice Ferret) F|
+Fenris (Ice Ferret) G|
+Fenris (Ice Ferret) I|
+Fenris (Ice Ferret) J|
+Fenris (Ice Ferret) K|
+Fenris (Ice Ferret) T|
+Thresher Mk II (Standard)|
+Trebuchet TBT-9N|
+Warhammer IIC (Standard)|
+Warhammer IIC 13|
+Warhammer IIC 2|
+Wasp C|
+Wasp WSP-1S|
+Wasp WSP-3M|
+Wasp WSP-3W|
+Wasp WSP-4W|
+Wasp WSP-5A|
+Catapult CPLT-6K|
+Catapult CPLT-K6|
+Crab CRB-54|
+Hammerhead (Standard)|
+Hellhound (Conjurer) 7|
+Hellhound (Conjurer) 8|
+Hellhound (Conjurer) (Standard)|
+King Crab KGC-011|
+Mad Cat (Timber Wolf) M|
+Mad Cat (Timber Wolf) N|
+Mad Cat (Timber Wolf) T|
+Mad Cat (Timber Wolf) W|
+Marauder II MAD-10D|
+Marauder II MAD-5A|
+Marauder II MAD-5B|
+Marauder II MAD-5C|
+Marauder II MAD-6A|
+Marauder II MAD-6C|
+Marauder II MAD-8K|
+Cataphract CTF-5L|
+Cricket RWN-01|
+Linebacker F|
+Linebacker G|
+Linebacker I|
+Linebacker T|
+Marauder (Red Hunter-3146)|
+Marauder Bounty Hunter 3015|
+Marauder Bounty Hunter 3044|
+Marauder Bounty Hunter 3138|
+Marauder C|
+Marauder IIC 10|
+Marauder IIC 5|
+Marauder IIC 6|
+Marauder IIC 8|
+Marauder IIC 9|
+Marauder IIC (Standard)|
+Marauder MAD-11D|
+Marauder MAD-2T|
+Marauder MAD-5D-DC|
+Marauder MAD-5D|
+Marauder MAD-5S|
+Marauder MAD-7C|
+Marauder MAD-7M|
+Marauder MAD-7R|
+Marauder MAD-7S|
+Marauder Red Hunter 3146|
+Marauder Red Hunter|
+Nightstar NSR-10D|
+Raven RVN-5L|
+Koshi (Mist Lynx) I|
+Koshi (Mist Lynx) J|
+Koshi (Mist Lynx) K|
+Koshi (Mist Lynx) L|
+Koshi (Mist Lynx) M|
+Koshi (Mist Lynx) N|
+Koshi (Mist Lynx) T|
+Ryoken (Stormcrow) I|
+Ryoken (Stormcrow) J|
+Ryoken (Stormcrow) K|
+Ryoken (Stormcrow) P|
+Ryoken (Stormcrow) T|
+Vixen (Incubus) 2|
+Vixen (Incubus) 3|
+Vixen (Incubus) 7|
+Vixen (Incubus) 8|
+Vixen (Incubus) 9|
+War Crow A|
+War Crow B|
+War Crow C|
+War Crow Prime|
+Warhammer C 2|
+Warhammer C 3|
+Warhammer C|
+Warhammer WHM-10K|
+Warhammer WHM-7A|
+Warhammer WHM-7K|
+Warhammer WHM-7M-DC|
+Warhammer WHM-7M|
+Warhammer WHM-7S|
+Warhammer WHM-8R|
+Warhammer WHM-9K|
+Baboon (Howler) 4|
+Baboon (Howler) 5|
+Baboon (Howler) 6|
+Dasher (Fire Moth) G|
+Dasher (Fire Moth) I|
+Dasher (Fire Moth) J|
+Dasher (Fire Moth) M|
+Dasher (Fire Moth) P|
+Dasher (Fire Moth) R|
+Dasher (Fire Moth) T|
+Devil (Standard)|
+Dragonfly (Viper) J|
+Dragonfly (Viper) K|
+Dragonfly (Viper) L|
+Dragonfly (Viper) M|
+Dragonfly (Viper) R|
+Dragonfly (Viper) T|
+Rifleman C 3|
+Rifleman C|
+Rifleman RFL-5D|
+Rifleman RFL-5M|
+Rifleman RFL-7G|
+Rifleman RFL-7N|
+Rifleman RFL-7N2|
+Gladiator (Executioner) F|
+Gladiator (Executioner) G|
+Gladiator (Executioner) I|
+Gladiator (Executioner) J|
+Gladiator (Executioner) L|
+Gladiator (Executioner) T|
+Goshawk (Vapor Eagle) 2|
+Goshawk (Vapor Eagle) 5|
+Goshawk (Vapor Eagle) 6|
+Goshawk (Vapor Eagle) 7|
+Goshawk (Vapor Eagle) (Standard)|
+Inferno INF-NO|
+Inferno INF-NOA|
+Inferno INF-NOB|
+Inferno INF-NOC|
+Inferno INF-NOR|
+Shadow Cat D|
+Shadow Cat E|
+Shadow Cat I|
+Shadow Cat J|
+Shadow Cat M|
+Shadow Cat T|
+Valkyrie C|
+Valkyrie VLK-QD|
+Valkyrie VLK-QD6|
+Valkyrie VLK-QDD|
+Pendragon PDG-3R|
 Mad Cat (Timber Wolf) (Bounty Hunter)|
 Rampage RMP-2G|
 Rampage RMP-4G|
@@ -5126,7 +5689,6 @@ Annihilator ANH-1G|
 Annihilator ANH-1X|
 Annihilator C 'Gausszilla'|
 Annihilator C 2|
-Archer ARC-2Rb|
 Carbine CON-1 ConstructionMech (RL)|
 Carbine CON-1 ConstructionMech (Standard)|
 Champion CHP-1Nb|
@@ -5163,7 +5725,6 @@ Marco MR-8D|
 Marco MR-8E|
 Powerman XI LoaderMech (Standard)|
 Sentinel STN-3Lb|
-Shadow Hawk SHD-2Hb|
 Shogun SHG-2H|
 Sling SL-1G|
 Sling SL-1H|
@@ -5171,7 +5732,6 @@ Stalker STK-3Fb|
 Stinger STG-3Gb|
 Thorn THE-Nb|
 Thunderbolt TDR-5Sb|
-Warhammer WHM-7A|
 Apollo APL-4M|
 Axman AXM-6T|
 Barghest BGS-4T|
@@ -5218,6 +5778,7 @@ Notos C|
 Notos D|
 Notos Prime|
 Atlas AS7-D(C)|
+Deimos H|
 Atlas AS7-A|
 Javelin JVN-10A|
 Thunderbolt TDR-5D|
@@ -5239,6 +5800,8 @@ Stealth STH-1D (Anna)|
 Thanatos TNS-4S (Felix)|
 Wolf Trap (Tora) WFT-1 (Daitama)|
 Templar III TLR2-J 'Arthur'|
+Centurion CN10-J|
+Centurion CN10-W|
 Nightstar NSR-9J (Holt)|
 Avatar AV1-OBLO|
 Doloire DLR-OBLO|
@@ -5263,6 +5826,14 @@ Hatamoto-Chi HTM-27T (Daniel II)|
 Hatchetman HCT-5S (Austin)|
 Hunchback HBK-4G (Hohiro)|
 Jenner JR7-K (Grace II)|
+Commando COM-1AK|
+Copper SecurityMech CPK-65KM|
+Crosscut ED-X4K LoggerMech|
+Phoenix PX-1KC|
+Phoenix PX-1KL|
+Phoenix PX-1KR|
+Phoenix PX-1KT|
+Reconquista|
 Buster BC XV HaulerMech (Standard)|
 Buster BC XV-M HaulerMech MOD|
 Buster BC XV-M-B HaulerMech MOD|
@@ -5325,6 +5896,22 @@ Uni ATAE-70 MilitiaMech (Standard)|
 Uni ATAE-70T CargoMech (Standard)|
 Vampyr SC-V-1 SalvageMech (Standard)|
 Flea FLE-16|
+Archer ARC-5CS|
+Black Knight BL-9-KNT|
+Gladiator (Executioner) TC|
+Locust C|
+Loki (Hellbringer) M|
+Mad Cat (Timber Wolf) TC|
+Marauder MAD-5CS|
+Phoenix Hawk PXH-1bC|
+Puma (Adder) TC|
+Rifleman RFL-5CS|
+Ryoken (Stormcrow) Attwater|
+Ryoken (Stormcrow) TC|
+Shadow Cat TC|
+Shadow Hawk SHD-2Ht|
+Vulture (Mad Dog) S|
+Warhammer WHM-7CS|
 Dig Lord RCL-4M MiningMech MOD|
 Annihilator ANH-1E|
 Victor VTR-9B (Li)|
@@ -5369,18 +5956,15 @@ Nightstar NSR-9J (Brubaker)|
 Marauder MAD-7D (Von Staskov)|
 Marshal MHL-6FR|
 Phoenix Hawk PXH-3D (Jiemin)|
+Cazador|
+Rhino|
+Snow Fox (Omni) A|
+Snow Fox (Omni) B|
+Snow Fox (Omni) Prime|
+Surtur STR-6H|
+Tolva|
 BattleMaster BLR-1G (Red Corsair)|
 Man O' War (Gargoyle) (Conal)|
-Coyotl B|
-Fox CS-1|
-Lancelot C 2|
-Lancelot C|
-Minsk MNK-101|
-Mongoose C 2|
-Mongoose C|
-Omni-Corvis A|
-Omni-Corvis B|
-Omni-Corvis Prime|
 Atlas II AS7-D-H (Kerensky)|
 Highlander HGN-732 (Jorgensson)|
 Vanquisher VQR-2A (Pravuil)|
@@ -5396,7 +5980,6 @@ Archangel C-ANG-O (Berith)|
 BattleMaster BLR-4S (Calvin II)|
 BattleMaster BLR-4S (Calvin)|
 Deva C-DVA-O (Achilleus)|
-Firefly FFL-4DA|
 Gallowglas GAL-4GLSA|
 Griffin GRF-6S (Francine II)|
 Griffin GRF-6S (Francine)|
@@ -5442,6 +6025,7 @@ Ryoken (Stormcrow) Z|
 Savage Coyote Z|
 Thor (Summoner) Z|
 Turkina Z|
+Talon TLN-5VNO|
 Merlin MLN-SX|
 Spindrift Aquatic SecurityMech SDT-1|
 Whitworth WTH-5S|
@@ -5735,6 +6319,7 @@ Snowden Mining Station (MK I)|
 Snowden Mining Station (Standard)|
 M9 SDS Battle Station 'Pavise'|
 Drake SDS Control Station (Standard)|
+Wheeler (2556)|
 Alliance Space Station (2713)|
 Alliance Space Station (3061)|
 Bastion System Defense Station (2584)|
@@ -5868,7 +6453,7 @@ Mobile Headquarters (ICE)|
 Mobile Headquarters (LL)|
 Mobile Headquarters (LRM)|
 Mobile Headquarters (Standard)|
-Mobile Long Tom Artillery Ammunition Carriage LT-MOB-25|
+Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|
 Mobile Long Tom Artillery Support Carriage LT-MOB-25|
 Mobile Long Tom Artillery LT-MOB-25|
 Monitor Naval Vessel (Standard)|
@@ -5895,7 +6480,6 @@ Pike Support Vehicle (Missile)|
 Pike Support Vehicle (Standard)|
 Rommel Tank (Standard)|
 Saladin Assault Hover Tank (Armor)|
-Saladin Assault Hover Tank (Standard)|
 Saladin Assault Hover Tank (Standard)|
 Saracen Medium Hover Tank (Standard)|
 Savannah Master Hovercraft (SL)|
@@ -5971,7 +6555,6 @@ Nightshade ECM VTOL (Armor)|
 Nightshade ECM VTOL (LAC)|
 Nightshade ECM VTOL (Light PPC)|
 Nightshade ECM VTOL (Standard)|
-Partisan Heavy Tank (C3)|
 Puma Assault Tank PAT-005|
 Puma Assault Tank PAT-007|
 Puma Assault Tank PAT-008|
@@ -6605,8 +7188,8 @@ Scimitar Mk II HCV (Standard)|
 Sekhmet Assault Vehicle (Standard)|
 Shillelagh Missile Tank (Original)|
 Shillelagh Missile Tank (Standard)|
-SM2 Heavy Artilley Vehicle (LTC)|
-SM2 Heavy Artilley Vehicle (Standard)|
+SM2 Heavy Artillery Vehicle (LTC)|
+SM2 Heavy Artillery Vehicle (Standard)|
 Arrow IV Assault Vehicle (Standard)|
 Behemoth II Heavy Tank (Standard)|
 Behemoth II Heavy Tank (Support)|
@@ -6720,13 +7303,15 @@ Schildkrote Line Tank (Standard)|
 Swallow Attack WIGE (Original)|
 Swallow Attack WIGE (Standard)|
 Winterhawk APC (Standard)|
-Boreas Cavalry Hovercraft (A)|
-Boreas Cavalry Hovercraft (B)|
+Boreas Cavalry Hovercraft A|
+Boreas Cavalry Hovercraft B|
 Boreas Cavalry Hovercraft (Prime)|
 Hoodling Sensor HoverJeep (Standard)|
 HoverPod (Standard)|
 JI-002 HoverBike (Standard)|
 Harpoon ParaSub (Standard)|
+Small Steamer (Standard)|
+HTE Micro-Copter (Standard)|
 Assuan Armored Bike (Standard)|
 Beast Riot Car (Standard)|
 Death Trike (Standard)|
@@ -6740,6 +7325,11 @@ Estevez MBT (Standard)|
 Marsden I|
 Praetorian Mobile Strategic Command HQ (Standard)|
 Tribune Mobile Tactical Command HQ (Standard)|
+Kokou Defense Tank (XL)|
+Kokou Defense Tank|
+Manticore Heavy Tank EC|
+Rhino Fire Support Tank EC|
+Zephyr Hovertank EC|
 Apocalypse World Rover (Standard)|
 Generic Expandable Services Vehicle (Command Post)|
 Generic Expandable Services Vehicle (Field Kitchen)|
@@ -6774,10 +7364,10 @@ Gallant Urban Assault Tank (Standard)|
 Hipparch Cavalry Tank (Standard)|
 Tiger Medium Tank T-12|
 Wayland Mobile Base (Standard)|
-Sleipnir APC SRM|
-Sleipnir APC (Standard)|
-Vargr APC LRM|
-Vargr APC (Standard)|
+Sleipnir APC Tank (SRM)|
+Sleipnir APC Tank (Standard)|
+Vargr APC Tank (LRM)|
+Vargr APC Tank (Standard)|
 Brunel Dump Truck (AC)|
 Brunel Dump Truck (LRM)|
 Burke Defense Tank (Royal)|
@@ -6794,7 +7384,6 @@ Von Luckner Heavy Tank (Royal)|
 Von Luckner Heavy Tank (Star League)|
 Aithon Assault Transport (Standard)|
 Bandit Hovercraft Mk 2|
-Bullet Suicide Drone (Standard)|
 Cavalry Attack Helicopter (Infiltrator)|
 Challenger MBT Mk. XV|
 Enyo Strike Tank (ER Pulse)|
@@ -6826,7 +7415,8 @@ Vedette Medium Tank V7|
 Vidar Heavy Defense Tank (Standard)|
 Warrior Stealth Helicopter S-9|
 Packrat LRPV PKR-T5 (TOC)|
-Desert Scorpion (Standard)|
+Desert Scorpion Light Tank (Standard)|
+Outrider (Standard)|
 Bayamo Hoverbike (Standard)|
 BFFL 'Buffalo' (Standard)|
 Champion Hoversports Crimson Streak Hover Racer (Standard)|
@@ -6913,10 +7503,8 @@ Neptune Submarine (Hunter-Killer)|
 Heavy Weapons Carrier (PPC)|
 Tokugawa Heavy Tank SD2|
 Sturmfeur Heavy Tank (WoB)|
-Kokou Defense Tank (XL)|
-Kokou Defense Tank (Standard)|
 Pollux II ADA Heavy Tank (Standard)|
-Flatbed Railcar|
+Flatbed Railcar (Standard)|
 Goblin Medium Tank X|
 Heavy LRM Carrier (EN Variant)|
 Jagdpanzer II (Standard)|
@@ -7116,7 +7704,6 @@ Samarkand Carrier Block I|
 Samarkand Carrier Block II|
 Tharkad Battlecruiser (2690)|
 Tharkad Battlecruiser (WoB)|
-Newgrange III Yardship 'Eyrines'|
 Newgrange III Yardship (2700)|
 Quicksilver Mongoose Battleship (Standard)|
 Black Lion I Battlecruiser|
@@ -7133,6 +7720,9 @@ Essex I Destroyer (2351)|
 Riga II Destroyer/Carrier (2747)|
 Commonwealth Light Cruiser (Block I)|
 Commonwealth Light Cruiser (Block II)|
+Corone Destroyer (2915)|
+Molniya Corvette (2951)|
+Peregrine Corvette (2969)|
 M5 Capital Drone (Caspar)|
 M5C Capital Drone (Caspar)|
 Stefan Amaris Battleship (Standard)|
@@ -7144,5 +7734,7 @@ Faslane Yardship (Standard)|
 Newgrange Yardship (Standard)|
 Newgrange III Yardship 'Eyrines'|
 Naga Destroyer (Caspar II Control Ship)|
+Conestoga Transport Jumpship|
+Mingo|
 Kimagure Pursuit Cruiser (Surprise)|
 Leviathan III Battleship (Standard)|

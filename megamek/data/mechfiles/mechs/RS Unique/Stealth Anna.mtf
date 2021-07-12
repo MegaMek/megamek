@@ -131,3 +131,18 @@ Lower Leg Actuator
 Foot Actuator
 Endo-Steel
 Endo-Steel
+
+overview:The Stealth is a heavy scout 'Mech that is in use by the Federated Suns and the Lyran Alliance.
+
+capabilities:The 'Mech has a GM 315 XL Engine that allows the Stealth to move at speeds of 118.8 kph and the MASC system on board can push the 'Mech to 151.2 kph in short bursts. This amazing mobility is augmented by jump jets which the Stealth can use to jump up to two hundred and ten meters. The Stealth is also outfitted with a Cyclops-Beagle Sensory Active Probe that the Stealth can use to find hidden enemy units.
+
+deployment:A customized 1D model variant created for Captain Anna Ramirez during the FedCom Civil War. Ramirez collected several Medium Pulse Lasers and additional Medium Lasers and had techs fit them in place of her SRM 6 launcher. She also had a half ton of armor added to the thin hulled design.
+
+manufacturer:General Motors
+primaryfactory:Kathil
+systemmanufacturer:CHASSIS:GM Stealth Endo Steel
+systemmanufacturer:ENGINE:GM 315 XL
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:100AFVTA
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban HiRez with Active Probe

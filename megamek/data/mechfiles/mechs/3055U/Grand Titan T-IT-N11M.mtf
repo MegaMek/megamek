@@ -3,32 +3,32 @@ Grand Titan
 T-IT-N11M
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3058
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:TRO 3055 - Clan Invasion
+rules level:2
 
-Mass:100
-Engine:400 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:100
+engine:400 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:0
+heat sinks:16 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:29
-RA Armor:29
-LT Armor:31
-RT Armor:31
-CT Armor:42
-HD Armor:9
-LL Armor:38
-RL Armor:38
-RTL Armor:11
-RTR Armor:11
-RTC Armor:19
+armor:Standard(Inner Sphere)
+LA armor:29
+RA armor:29
+LT armor:31
+RT armor:31
+CT armor:42
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:11
+RTR armor:11
+RTC armor:19
 
 Weapons:9
 Light Gauss Rifle, Left Arm
@@ -51,9 +51,9 @@ ISLightGaussRifle
 ISLightGaussRifle
 ISLightGaussRifle
 ISLightGaussRifle
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -63,23 +63,23 @@ Hand Actuator
 ISERPPC
 ISERPPC
 ISERPPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
 ISStreakSRM4
+ISMediumPulseLaser
+ISMediumPulseLaser
 IS Streak SRM 4 Ammo
 IS Light Gauss Ammo
 ISCASE
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -87,15 +87,15 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
 ISStreakSRM4
+ISMediumPulseLaser
+ISMediumPulseLaser
 ISGuardianECMSuite
 ISGuardianECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -153,4 +153,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Grand Titan was designed by Vining Engineering and Salvage Team to take on the best 'Mechs that the Inner Sphere or the Clans had to offer. 
+
+capabilities:The 'Mech is built on an Endo Steel chassis and with a LTV 400 XL Engine, which propels the Grand Titan to a top speed of 64.8 kph, to save as much weight as possible. The Grand Titan also carries eighteen tons of armor.
+
+deployment:The N11M model of the Grand Titan is a major modification of the design. The 'Mech carries as its primary long-range weapons a Light Gauss Rifle and an ER PPC which gives the 'Mech powerful long-range reach. The 'Mech has for short-range combat four Medium Pulse Lasers and two Streak SRM-4 launchers. It is also protected by a Guardian ECM Suite. This upgrade brings the Grand Titan to modern standards and makes it as powerful on the battlefield now as it was when it was first released.
+
+history:The design of the Grand Titan was sold to Earthwerks Incorporated in the Free Worlds League and has become a 'Mech commonly seen in the FWLM and the Word of Blake militia.
+
+manufacturer:Earthwerks Ltd.
+primaryfactory:Keystone Plant #3
+systemmanufacturer:CHASSIS:Corean Model 101BLP Endo Steel
+systemmanufacturer:ENGINE:LTV 400 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Hartford JEA-1
+systemmanufacturer:TARGETING:O/P FiberFeed 201 with Artemis IV FCS Interface
 

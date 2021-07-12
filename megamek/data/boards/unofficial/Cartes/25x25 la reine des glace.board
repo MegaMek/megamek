@@ -1,4 +1,7 @@
 size 25 25
+tag "Water (Auto)"
+tag "IceTerrain (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 0 "impassable:1" "Plaine 4"
 hex 0201 0 "impassable:1" "Plaine 4"
 hex 0301 0 "impassable:1" "Plaine 4"

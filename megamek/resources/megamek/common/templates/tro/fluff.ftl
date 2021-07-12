@@ -9,8 +9,12 @@ Movement Type: ${moveType}
 Frame: ${frameDesc}
 </#if>
 Power Plant: ${engineDesc}
+<#if cruisingSpeed??>
 Cruising Speed: ${cruisingSpeed} kph
+</#if>
+<#if maxSpeed??>
 Maximum Speed: ${maxSpeed} kph
+</#if>
 <#if jumpMP?? && jjDesc??>
 Jump Jets: ${jjDesc}
      Jump Capacity: ${jumpCapacity} meters

@@ -285,6 +285,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOMECH_MELEE = BigInteger.valueOf(1).shiftLeft(222);
     public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(223);
     public static final BigInteger F_RAM_PLATE = BigInteger.valueOf(1).shiftLeft(224);
+    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1502,6 +1503,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISMASC());
         EquipmentType.addType(MiscType.createCLMASC());
         EquipmentType.addType(MiscType.createTSM());
+        EquipmentType.addType(MiscType.createPrototypeTSM());
         EquipmentType.addType(MiscType.createC3S());
         EquipmentType.addType(MiscType.createC3SBS());
         EquipmentType.addType(MiscType.createC3I());
@@ -8184,14 +8186,14 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        misc.omniFixedOnly = true;
+        misc.omniFixedOnly = false;
         misc.bv = 0;
         misc.rulesRefs = "288,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 3115, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
-                .setClanAdvancement(3059, 3115, DATE_PS, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3059, 3115, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false).setPrototypeFactions(F_CSF, F_LC)
                 .setProductionFactions(F_CSF).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);;
         return misc;
@@ -9062,6 +9064,28 @@ public class MiscType extends EquipmentType {
                 .setISAdvancement(3035, 3045, 3055, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS);
+        return misc;
+    }
+
+    public static MiscType createPrototypeTSM() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Prototype Triple Strength Myomer";
+        misc.setInternalName(EquipmentTypeLookup.P_TSM);
+        misc.shortName = "Prototype TSM";
+        misc.tonnage = 0;
+        misc.criticals = 6;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_TSM).or(F_PROTOTYPE).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
+        misc.bv = 0;
+        misc.rulesRefs = "103,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+                .setISAdvancement(3028, DATE_NONE, DATE_NONE, 3050)
+                .setISApproximate(true, false, false, false)
+                .setPrototypeFactions(F_CC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
 

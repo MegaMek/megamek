@@ -47,8 +47,8 @@ Chat Commands
 Chat commands can only be given to an allied Princess player (on the same team).  If you are playing solo and will want to change settings on the fly you can open a separate instance of MM and join the game (making sure to set the team to the bot's side).  With this you can issue Behavior changing commands to the bot.
 
 Flee
-princessName: flee
-Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced Withdrawal setting.
+princessName: flee : 0-4 [0=north, 1=south, 2=west, 3=east, 4=nearest edge]
+Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced Withdrawal setting, in the specified direction.
 
 Verbose
 princessName: verbose : <error/warning/info/debug>
@@ -87,7 +87,7 @@ princessName: prioritize : unitId
 Adds the specified unit to princess's Priority Targets list.
 
 Show Behavior
-princessName: listCommands
+princessName: showBehavior
 Princess will state the name of her current behavior.
 
 List Commands

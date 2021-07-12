@@ -3,32 +3,32 @@ Galahad
 GLH-2D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2594
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2594
+source:TRO 3075
+rules level:2
 
-Mass:60
-Engine:180 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:60
+engine:180 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:3
-Jump MP:0
+heat sinks:10 Single
+walk mp:3
+jump mp:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:2
 Gauss Rifle, Left Arm
@@ -45,8 +45,8 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -59,36 +59,36 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -102,13 +102,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Heat Sink
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -124,7 +124,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +138,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -146,4 +146,18 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:Born from the Terran Hegemony's attempts to create a medium fire-support platform that would be more advanced than the RLN-1N Rifleman.
+capabilities:The Galahad utilizes special building materials in the form of eleven tons of Ferro-Fibrous armor and Endo Steel internals. To fit the massive weapons on the Galahad, the engine was dropped to a GM 180, giving it a maximum speed of only 54 km/h, making it difficult for the 'Mech to keep up with its companions in most cases.
+
+deployment:The GLH-2D carries two massive M-7 Gauss Rifles, with two tons of ammo for each rifle. It was a showing of the powerful new weapons at the time and earned it the nickname of "Gausszilla". One problem with the two massive rifles was the recoil, the Galahad's shoulder-rotation rings being originally designed for the GLH-1D's all energy load-out. During the Reunification War, multiple reports of catastrophic failure of the shoulder couplings came in from the front lines with Mitchell completely redesigned GLH-2D's shoulder couplings in response. Even with the additional bracing, the recoil of the Gauss Rifles contributed the fact the Galahad spent an average of fifteen percent more time in the repair bay undergoing preventative maintenance compared to other designs of similar weight.
+
+history:Mitchell Vehicles unveiled the GLH-1D Galahad in 2570. Though it outgunned the earlier design and found significant acceptance within the Hegemony Armed Forces, the Galahad suffered from the same heat issues as the BattleMech it was meant to replace. With the development of the new Gauss Rifle, Mitchell Vehicles decided in 2594 to redesign the Galahad around these new weapons, changing it into a heavy design in the process. Production of the 2D Galahad continued for almost two centuries, only stopping when the Graham IV manufacturing center was destroyed during the First Succession War. While the older GLH-1D did spread to the Member State militaries, because the GLH-2D possessed so much advanced technology, the Galahad was mainly (but not exclusively) reserved for SLDF Royal Units. Most functioning GLH-2D Galahads departed the Inner Sphere during Kerensky's Exodus. Though sizable numbers of the less advanced GLH-1D remained behind, the technological decline of the Succession Wars era soon made it impossible for the Inner Sphere to maintain either variant. Outside the secret stockpiles of ComStar and patchwork examples in the Periphery or other backwaters, the Galahad was one of many designs that disappeared from the battlefield. During the Word of Blake Jihad, the Blakists put the Galahad back in production for the first time in centuries at the massive Defiance Industries plant on Hesperus II. After the factory was retaken by the Lyran Alliance and its allies, production of the 'Mech would continue for the Lyrans as of 3079.
+
+manufacturer:Mitchell Vehicles, Defiance Industries
+primaryfactory:Graham IV (destroyed 2775), Hesperus II
+systemmanufacturer:CHASSIS:Star League VI
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:Grumman-3 Ferro Fibrous
+systemmanufacturer:COMMUNICATIONS:HartfordCo COM 3000
+systemmanufacturer:TARGETING:HartfordCo XHW 7
 

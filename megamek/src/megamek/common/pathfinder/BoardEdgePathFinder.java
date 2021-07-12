@@ -30,7 +30,6 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.IHex;
-import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.Terrains;

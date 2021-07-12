@@ -19,6 +19,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,39 +41,17 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GameTurn;
-import megamek.common.IPlayer;
+import megamek.common.*;
+import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.HexTarget;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.IGame.Phase;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.TriggerAPPodAction;
-import megamek.common.actions.TriggerBPodAction;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -109,7 +88,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         FIRE_MODE("fireMode"),
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
-        FIRE_CANCEL("fireCancel");
+        FIRE_CANCEL("fireCancel"),
+        FIRE_DISENGAGE("fireDisengage");
 
         String cmd;
 
@@ -527,6 +507,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             if (cmd == TargetingCommand.FIRE_CANCEL) {
                 continue;
             }
+            if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((ce() == null) || !ce().isOffBoard())) {
+                continue;
+            }
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -664,6 +647,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
+        setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -734,6 +718,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
+        setDisengageEnabled(false);
     }
 
     /**
@@ -841,7 +826,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.minimap.drawMap();
 
         // refresh weapon panel, as bth will have changed
         updateTarget();
@@ -917,7 +901,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(waa);
-        clientgui.minimap.drawMap();
 
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -935,6 +918,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
+        setDisengageEnabled(false);
     }
 
     /**
@@ -1007,7 +991,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-
+        setDisengageEnabled(ce().isOffBoard() && ce().canFlee());
     }
 
     /**
@@ -1030,10 +1014,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 attacks.removeElement(o);
+                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
                 clientgui.mechD.wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.bv.refreshAttacks();
-                clientgui.minimap.drawMap();
             }
         }
     }    
@@ -1310,18 +1294,18 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-            || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
+            || ((b.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_MASK) != 0)
-            || ((b.getModifiers() & InputEvent.ALT_MASK) != 0)) {
+        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+            || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -1351,8 +1335,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase == IGame.Phase.PHASE_TARGETING) {
-                target(new HexTarget(b.getCoords(), ce().getGame().getBoard(),
-                        Targetable.TYPE_HEX_ARTILLERY));
+                target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
             }
@@ -1404,8 +1387,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     .getBoard(), Targetable.TYPE_BLDG_TAG));
         }
 
-        targets.add(new HexTarget(pos, clientgui.getClient().getGame()
-                .getBoard(), Targetable.TYPE_HEX_TAG));
+        targets.add(new HexTarget(pos, Targetable.TYPE_HEX_TAG));
 
         // Do we have a single choice?
         if (targets.size() == 1) {
@@ -1531,6 +1513,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clear();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_DISENGAGE.getCmd())
+                && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
+                        Messages.getString("MovementDisplay.EscapeDialog.message"))) {
+            clear();
+            attacks.add(new DisengageAction(cen));
+            ready();
         }
     }
 
@@ -1553,7 +1541,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
-                && ce().isUsingSpotlight()
+                && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
                         .getGame(), cen, target, null));
@@ -1561,42 +1549,48 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     private void setFireEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FIRE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFireEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
     }
 
     private void setTwistEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_TWIST).setEnabled(enabled);
-        clientgui.getMenuBar().setFireTwistEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_SKIP).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSkipEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SKIP.getCmd(), enabled);
     }
 
     private void setFlipArmsEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
-        clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FLIP_ARMS.getCmd(), enabled);
     }
 
     private void setNextEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT).setEnabled(enabled);
-        clientgui.getMenuBar().setFireNextEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
-        clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_SEARCHLIGHT.getCmd(), enabled);
     }
 
     private void setFireModeEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_MODE).setEnabled(enabled);
-        clientgui.getMenuBar().setFireModeEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_MODE.getCmd(), enabled);
     }
 
     private void setNextTargetEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_NEXT_TARG).setEnabled(enabled);
-        clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT_TARG.getCmd(), enabled);
+    }
+
+    private void setDisengageEnabled(boolean enabled) {
+        if (buttons.containsKey(TargetingCommand.FIRE_DISENGAGE)) {
+            buttons.get(TargetingCommand.FIRE_DISENGAGE).setEnabled(enabled);
+        }
     }
 
     @Override

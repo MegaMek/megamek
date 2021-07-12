@@ -27,7 +27,6 @@ import megamek.common.ITechManager;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
@@ -342,8 +341,6 @@ public class TestProtomech extends TestEntity {
     public StringBuffer printMiscEquip(StringBuffer buff, int posLoc,
             int posWeight) {
         for (Mounted m : getEntity().getMisc()) {
-            MiscType mt = (MiscType) m.getType();
-
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),
@@ -357,8 +354,6 @@ public class TestProtomech extends TestEntity {
     @Override
     public StringBuffer printWeapon(StringBuffer buff, int posLoc, int posWeight) {
         for (Mounted m : getEntity().getWeaponList()) {
-            WeaponType mt = (WeaponType) m.getType();
-
             buff.append(StringUtil.makeLength(m.getName(), 20));
             buff.append(
                     StringUtil.makeLength(getLocationAbbr(m.getLocation()),

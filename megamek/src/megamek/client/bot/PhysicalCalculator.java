@@ -27,6 +27,7 @@ import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MechWarrior;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -281,17 +282,28 @@ public final class PhysicalCalculator {
         }
 
         for (Entity target : game.getEntitiesVector()) {
-
+            // don't consider myself
             if (target.equals(entity)) {
                 continue;
             }
+            
+            // don't consider friendly targets
             if (!target.isEnemyOf(entity)) {
                 continue;
             }
+            
+            // don't consider targets not on the board
             if (target.getPosition() == null) {
                 continue;
             }
+            
+            // don't consider targets beyond melee range
             if (Compute.effectiveDistance(game, entity, target) > 1) {
+                continue;
+            }
+            
+            // don't bother stomping mechwarriors
+            if (target instanceof MechWarrior) {
                 continue;
             }
 
@@ -333,7 +345,7 @@ public final class PhysicalCalculator {
             return null;
         }
 
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             targetConvInfantry = true;
         }
 
@@ -559,7 +571,7 @@ public final class PhysicalCalculator {
         }
 
         // Conventional infantry in the open suffer double damage.
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             IHex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
@@ -609,7 +621,7 @@ public final class PhysicalCalculator {
             return 0.0;
         }
 
-        if ((to instanceof Infantry) && !(to instanceof BattleArmor)) {
+        if (to.isConventionalInfantry()) {
             targetConvInfantry = true;
         }
 
@@ -799,7 +811,7 @@ public final class PhysicalCalculator {
             }
         }
         // If the target is conventional infantry
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (target.isConventionalInfantry()) {
             // Create a single element vector with total number of troopers
             max_index = 0;
             armor_values[0] = ((Infantry) target).getShootingStrength();

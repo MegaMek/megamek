@@ -14,13 +14,11 @@
 
 package megamek.common.actions;
 
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -67,8 +65,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
             toReturn += Math.ceil(entity.getWeight() / 5.0);
         }
-        if (((Protomech) entity).isEDPCharged() && (target instanceof Infantry)
-                && !(target instanceof BattleArmor)) {
+        if (((Protomech) entity).isEDPCharged() && target.isConventionalInfantry()) {
             toReturn++;
             // TODO: add another +1 to damage if target is cybernetically
             // enhanced

@@ -3,33 +3,33 @@ Cauldron-Born (Ebon Jaguar)
 Prime
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3049
-Source:TRO 3058 - Clan Invasion
-Rules Level:2
+techbase:Clan
+era:3049
+source:TRO Clan Invasion - Clan Invasion
+rules level:2
 
-Mass:65
-Engine:325 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:65
+engine:325 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:13 Double
-Base Chassis Heat Sinks:13
-Walk MP:5
-Jump MP:0
+heat sinks:13 Clan Double
+base chassis heat sinks:13
+walk mp:5
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:17
-RA Armor:17
-LT Armor:22
-RT Armor:22
-CT Armor:32
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Ferro-Fibrous(Clan)
+LA armor:17
+RA armor:17
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:5
 LB 5-X AC, Left Arm
@@ -41,12 +41,12 @@ SRM 2, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC5 (omnipod)
-CLLBXAC5 (omnipod)
-CLLBXAC5 (omnipod)
-CLLBXAC5 (omnipod)
-Clan LB 5-X AC Ammo (omnipod)
-Clan LB 5-X Cluster Ammo (omnipod)
+CLLBXAC5 (OMNIPOD)
+CLLBXAC5 (OMNIPOD)
+CLLBXAC5 (OMNIPOD)
+CLLBXAC5 (OMNIPOD)
+Clan LB 5-X AC Ammo (OMNIPOD)
+Clan LB 5-X Cluster Ammo (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -55,12 +55,12 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -69,10 +69,10 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10 (omnipod)
-CLERMediumLaser (omnipod)
-Clan Ammo LRM-10 (omnipod)
-Clan Ammo LRM-10 (omnipod)
+CLLRM10 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+Clan Ammo LRM-10 (OMNIPOD)
+Clan Ammo LRM-10 (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -83,10 +83,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLSRM2 (omnipod)
-Clan Ammo SRM-2 (omnipod)
-Clan Gauss Ammo (omnipod)
-Clan Gauss Ammo (omnipod)
+CLSRM2 (OMNIPOD)
+Clan Ammo SRM-2 (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 Clan Endo Steel
 -Empty-
 -Empty-
@@ -149,3 +149,18 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien. 
+
+capabilities:The primary configuration of the Ebon Jaguar was made to attack from long range. With a mammoth Gauss Rifle occupying the entire right arm, a 75mm LB 5-X AC in the left arm, and an LRM-10 jutting above the birdlike shoulder, it can act as a speedy support 'Mech with a variety of ways to deal damage. An SRM-2 and an ER Medium Laser provide backup for short range work. The thirteen integral double heat sinks are more than enough to keep the OmniMech cool, while its nine and a half tons of Ferro-Fibrous armor keep the design safe.
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7
+

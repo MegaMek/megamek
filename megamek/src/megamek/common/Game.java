@@ -29,12 +29,14 @@ import java.util.UUID;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import megamek.MegaMek;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -49,11 +51,13 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -173,6 +177,12 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
+
+    /**
+     * The forces present in the game. The top level force holds all forces and force-less
+     * entities and should therefore not be shown.
+     */
+    private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 
@@ -336,13 +346,15 @@ public class Game implements Serializable, IGame {
         return vibrabombs.contains(mf);
     }
 
+    @Override
     public GameOptions getOptions() {
         return options;
     }
 
-    public void setOptions(GameOptions options) {
-        if (null == options) {
-            System.err.println("Can't set the game options to null!");
+    @Override
+    public void setOptions(final @Nullable GameOptions options) {
+        if (options == null) {
+            MegaMek.getLogger().error("Can't set the game options to null!");
         } else {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -511,7 +523,7 @@ public class Game implements Serializable, IGame {
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player)) {
+            if ((entity != null) && player.equals(entity.getOwner())) {
                 count++;
             }
         }
@@ -1014,7 +1026,7 @@ public class Game implements Serializable, IGame {
         Vector<Entity> members = new Vector<Entity>();
         //WOR
         // Does the unit have a C3 computer?
-        if ((entity != null) && (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS() || entity.hasNavalC3())) {
+        if ((entity != null) && entity.hasAnyC3System()) {
 
             // Walk throught the entities in the game, and add all
             // members of the C3 network to the output Vector.
@@ -1200,7 +1212,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    public Targetable getTarget(int nType, int nID) {
+    @Override
+    public @Nullable Targetable getTarget(int nType, int nID) {
         try {
             switch (nType) {
                 case Targetable.TYPE_ENTITY:
@@ -1215,24 +1228,26 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_HEX_SCREEN:
                 case Targetable.TYPE_HEX_AERO_BOMB:
                 case Targetable.TYPE_HEX_TAG:
-                    return new HexTarget(HexTarget.idToCoords(nID), board,
-                                         nType);
+                    return new HexTarget(HexTarget.idToCoords(nID), nType);
                 case Targetable.TYPE_FUEL_TANK:
                 case Targetable.TYPE_FUEL_TANK_IGNITE:
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID),
-                                              board, nType);
+                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
+                        return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    } else {
+                        return null;
+                    }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
-                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID),
-                                               board);
+                    return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
                 case Targetable.TYPE_INARC_POD:
                     return INarcPod.idToInstance(nID);
                 default:
                     return null;
             }
-        } catch (IllegalArgumentException t) {
+        } catch (Exception e) {
+            MegaMek.getLogger().error(e);
             return null;
         }
     }
@@ -1240,9 +1255,9 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the entity with the given id number, if any.
      */
-
-    public Entity getEntity(int id) {
-        return entityIds.get(Integer.valueOf(id));
+    @Override
+    public @Nullable Entity getEntity(final int id) {
+        return entityIds.get(id);
     }
 
     /**
@@ -1392,18 +1407,16 @@ public class Game implements Serializable, IGame {
      * (probably due to double-blind) ignore it.
      */
     public synchronized void removeEntity(int id, int condition) {
+        // always attempt to remove the entity with this ID from the entities collection
+        // as it may have gotten stuck there.
+        entities.removeIf(ent -> (ent.getId() == id));
+        
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
-            // This next statement has been cluttering up double-blind
-            // logs for quite a while now. I'm assuming it's no longer
-            // useful.
-            // System.err.println("Game#removeEntity: could not find entity to
-            // remove");
             return;
         }
 
-        entities.remove(toRemove);
-        entityIds.remove(Integer.valueOf(id));
+        entityIds.remove(id);
         removeEntityPositionLookup(toRemove);
 
         toRemove.setRemovalCondition(condition);
@@ -1596,14 +1609,14 @@ public class Game implements Serializable, IGame {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);
-        List<Entity> vector = new ArrayList<Entity>();
+        List<Entity> vector = new ArrayList<>();
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
                 
                 // if the entity with the given ID doesn't exist, we will update the lookup table
                 // and move on
-                if(e == null) {
+                if (e == null) {
                     posEntities.remove(eId);
                     continue;
                 }
@@ -1614,8 +1627,7 @@ public class Game implements Serializable, IGame {
                     // Sanity check
                     HashSet<Coords> positions = e.getOccupiedCoords();
                     if (!positions.contains(c)) {
-                        System.out.println("Game.getEntitiesVector(1) Error! "
-                                + e.getDisplayName() + " is not in " + c + "!");
+                        MegaMek.getLogger().error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }
             }
@@ -3246,9 +3258,10 @@ public class Game implements Serializable, IGame {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    public void setIlluminatedPositions(HashSet<Coords> ip) {
+    @Override
+    public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) {
         if (ip == null) {
-            new RuntimeException("Illuminated Positions is null.").printStackTrace();
+            throw MegaMek.getLogger().error(new RuntimeException("Illuminated Positions is null."));
         }
         illuminatedPositions = ip;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -3380,8 +3393,13 @@ public class Game implements Serializable, IGame {
         victory = new Victory(getOptions());
     }
 
+    @Deprecated
     public Victory getVictory() {
         return victory;
+    }
+
+    public VictoryResult getVictoryResult() {
+        return victory.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is
@@ -3490,26 +3508,21 @@ public class Game implements Serializable, IGame {
         return false;
     }
 
+    @Override
     public boolean checkForValidSmallCraft(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof SmallCraft)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
+        return getPlayerEntities(getPlayer(playerId), false).stream().anyMatch(e ->
+                (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
+    @Override
     public PlanetaryConditions getPlanetaryConditions() {
         return planetaryConditions;
     }
 
-    public void setPlanetaryConditions(PlanetaryConditions conditions) {
-        if (null == conditions) {
-            System.err.println("Can't set the planetary conditions to null!");
+    @Override
+    public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
+        if (conditions == null) {
+            MegaMek.getLogger().error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
@@ -3620,23 +3633,22 @@ public class Game implements Serializable, IGame {
                 && (getPhase() != Phase.PHASE_LOUNGE)
                 && (getPhase() != Phase.PHASE_INITIATIVE_REPORT)
                 && (getPhase() != Phase.PHASE_INITIATIVE)) {
-            System.out.println("Entities vector has " + entities.size()
-                    + " but pos lookup cache has " + entitiesInCache.size()
-                    + " entities!");
-            List<Integer> missingIds = new ArrayList<Integer>();
+            MegaMek.getLogger().warning("Entities vector has " + entities.size()
+                    + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
+            List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
                 if (!entitiesInCache.contains(id)) {
                     missingIds.add(id);
                 }
             }
-            System.out.println("Missing ids: " + missingIds);
+            MegaMek.getLogger().info("Missing ids: " + missingIds);
         }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
                 if ((ents != null) && !ents.contains(e.getId())) {
-                    System.out.println("Entity " + e.getId() + " is in "
+                    MegaMek.getLogger().warning("Entity " + e.getId() + " is in "
                             + e.getPosition() + " however the position cache "
                             + "does not have it in that position!");
                 }
@@ -3650,10 +3662,8 @@ public class Game implements Serializable, IGame {
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    System.out.println("Entity Position Cache thinks Entity "
-                            + eId + "is in " + c
-                            + " but the Entity thinks it's in "
-                            + e.getPosition());
+                    MegaMek.getLogger().warning("Entity Position Cache thinks Entity " + eId
+                            + "is in " + c + " but the Entity thinks it's in " + e.getPosition());
                 }
             }
         }
@@ -3670,6 +3680,31 @@ public class Game implements Serializable, IGame {
         }
         return uuid.toString();
 
+    }
+
+    @Override
+    public synchronized Forces getForces() {
+        return forces;
+    }
+
+    @Override
+    public Stream<Entity> getEntitiesStream() {
+        return getEntitiesVector().stream();
+    }
+
+    @Override
+    public synchronized void setForces(Forces fs) {
+        forces = fs;
+        forces.setGame(this);
+    }
+
+    /**
+     * cancel victory from the server.java moved here
+     */
+    public void cancelVictory(){
+        setForceVictory(false);
+        setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        setVictoryTeam(IPlayer.TEAM_NONE);
     }
 
 }

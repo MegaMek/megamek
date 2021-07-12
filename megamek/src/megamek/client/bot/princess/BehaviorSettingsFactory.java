@@ -266,8 +266,8 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings berserkBehavior = new BehaviorSettings();
             berserkBehavior.setDescription(BERSERK_BEHAVIOR_DESCRIPTION);
-            berserkBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
-            berserkBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
+            berserkBehavior.setDestinationEdge(CardinalEdge.NONE);
+            berserkBehavior.setRetreatEdge(CardinalEdge.NONE);
             berserkBehavior.setForcedWithdrawal(false);
             berserkBehavior.setAutoFlee(false);
             berserkBehavior.setFallShameIndex(2);
@@ -302,8 +302,8 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings cowardlyBehavior = new BehaviorSettings();
             cowardlyBehavior.setDescription(COWARDLY_BEHAVIOR_DESCRIPTION);
-            cowardlyBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
-            cowardlyBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
+            cowardlyBehavior.setDestinationEdge(CardinalEdge.NONE);
+            cowardlyBehavior.setRetreatEdge(CardinalEdge.NEAREST);
             cowardlyBehavior.setForcedWithdrawal(true);
             cowardlyBehavior.setAutoFlee(false);
             cowardlyBehavior.setFallShameIndex(8);
@@ -341,8 +341,8 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings escapeBehavior = new BehaviorSettings();
             escapeBehavior.setDescription(ESCAPE_BEHAVIOR_DESCRIPTION);
-            escapeBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
-            escapeBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
+            escapeBehavior.setDestinationEdge(CardinalEdge.NONE);
+            escapeBehavior.setRetreatEdge(CardinalEdge.NEAREST);
             escapeBehavior.setForcedWithdrawal(true);
             escapeBehavior.setAutoFlee(true);
             escapeBehavior.setFallShameIndex(7);
@@ -377,8 +377,8 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings defaultBehavior = new BehaviorSettings();
             defaultBehavior.setDescription(DEFAULT_BEHAVIOR_DESCRIPTION);
-            defaultBehavior.setDestinationEdge(CardinalEdge.NEAREST_OR_NONE);
-            defaultBehavior.setRetreatEdge(CardinalEdge.NEAREST_OR_NONE);
+            defaultBehavior.setDestinationEdge(CardinalEdge.NONE);
+            defaultBehavior.setRetreatEdge(CardinalEdge.NEAREST);
             defaultBehavior.setForcedWithdrawal(true);
             defaultBehavior.setAutoFlee(false);
             defaultBehavior.setFallShameIndex(5);

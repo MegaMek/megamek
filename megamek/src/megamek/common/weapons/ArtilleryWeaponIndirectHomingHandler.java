@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -149,7 +148,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(toHit.getValue());
+            r.add(toHit);
             vPhaseReport.addElement(r);
         }
 
@@ -428,7 +427,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     protected boolean checkPDConditions() {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
-        if ((target == null) || !advancedPD) {
+        if ((target == null) || !advancedPD || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
             return false;
         }
         return true;

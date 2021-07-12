@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.generator;
 
 import java.io.Serializable;
@@ -40,9 +39,6 @@ import megamek.common.Tank;
  */
 public class RandomSkillsGenerator implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6993878542250768464L;
 
     //Method
@@ -100,7 +96,7 @@ public class RandomSkillsGenerator implements Serializable {
 
     public RandomSkillsGenerator() {
 
-        method = M_CONSTANT;
+        method = M_TW;
         level = L_REG;
         type = T_IS;
         close = false;
@@ -185,8 +181,7 @@ public class RandomSkillsGenerator implements Serializable {
             //Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
 
            //infantry anti-mech skill should be one higher unless foot
-            if(((e instanceof Infantry) && !(e instanceof BattleArmor))
-                    & (e.getMovementMode() != EntityMovementMode.INF_LEG)) {
+            if (e.isConventionalInfantry() && (e.getMovementMode() != EntityMovementMode.INF_LEG)) {
                 skills[1]++;
             }
 
@@ -208,8 +203,7 @@ public class RandomSkillsGenerator implements Serializable {
                     skills[1]++;
                 }
                 //gunnery is worse for infantry, conv fighters and small craft
-                if(((e instanceof Infantry) && !(e instanceof BattleArmor))
-                        || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
+                if (e.isConventionalInfantry() || (e instanceof ConvFighter) || (e instanceof SmallCraft)) {
                     skills[0]++;
                 }
             }

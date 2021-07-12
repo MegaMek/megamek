@@ -21,6 +21,7 @@ package megamek.common.verifier;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
@@ -1329,6 +1330,10 @@ public abstract class TestEntity implements TestEntityOption {
         int robotics = 0;
         boolean hasExternalFuelTank = false;
         int liftHoists = 0;
+        int artemisIV = 0;
+        int artemisV = 0;
+        int artemisP = 0;
+        int apollo = 0;
         Map<Integer, Integer> bridgeLayersByLocation = new HashMap<>();
         Map<Integer, List<EquipmentType>> physicalWeaponsByLocation = new HashMap<>();
 
@@ -1390,6 +1395,16 @@ public abstract class TestEntity implements TestEntityOption {
                     || m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                     || m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
                 bridgeLayersByLocation.merge(m.getLocation(), 1, Integer::sum);
+            }
+
+            if (m.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                artemisIV++;
+            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                artemisV++;
+            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                artemisP++;
+            } else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
+                apollo++;
             }
         }
         if ((networks > 0) && !countedC3) {
@@ -1503,7 +1518,51 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal |= !isValidLocation(getEntity(), mounted.getType(), mounted.getLocation(), buff);
             }
         }
+
+        if (artemisIV + artemisV + artemisP > 0) {
+            if (((artemisIV > 0) && (artemisV + artemisP > 0))
+                    || ((artemisV > 0) && (artemisP > 0))) {
+                buff.append("All Artemis systems must be of the same type.\n");
+                illegal = true;
+            }
+            illegal |= checkIllegalArtemisApolloLinks(buff, artemisIV + artemisV + artemisP,
+                    "Artemis", w -> w.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE));
+        }
+        if (apollo > 0) {
+            illegal |= checkIllegalArtemisApolloLinks(buff, apollo, "Apollo",
+                    w -> w.getAmmoType() == AmmoType.T_MRM);
+        }
+
         return illegal;
+    }
+
+    private boolean checkIllegalArtemisApolloLinks(StringBuffer buffer, int expected,
+                                                   String testingEquipment,
+                                                   Predicate<WeaponType> compatibility) {
+        int linkedCount = 0;
+        /*
+         * Besides tracking the number required we also want to check that they are all linked.
+         * This will find situations where the number matches but they're not in the same
+         * locations as the launcher.
+         */
+        boolean hasUnlinked = false;
+        for (Mounted mount : getEntity().getTotalWeaponList()) {
+            if (!mount.isWeaponGroup() && 
+                    compatibility.test((WeaponType) mount.getType())) {
+                linkedCount++;
+                if (mount.getLinkedBy() == null) {
+                    hasUnlinked = true;
+                }
+            }
+        }
+        if (linkedCount != expected) {
+            buffer.append("There must be one ").append(testingEquipment).append(" for each compatible weapon.\n");
+            return true;
+        } else if (hasUnlinked) {
+            buffer.append(testingEquipment).append(" must be in the same location as the weapon.\n");
+            return true;
+        }
+        return false;
     }
 
     /**

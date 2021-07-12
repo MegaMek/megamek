@@ -4,8 +4,8 @@ B
 
 Config:Quad Omnimech
 techbase:Clan
-era:3120
-source:Dark Age
+era:3111
+source:OTP: Hanseatic Crusade - Dark Age
 rules level:2
 
 mass:20
@@ -102,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
+CLMediumPulseLaser (OMNIPOD)
 CLMASC
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser
+CLERLargeLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -147,4 +147,5 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
-
+manufacturer:Unknown
+primaryfactory:Unknown

@@ -153,4 +153,18 @@ IS Ammo MML-9 LRM
 -Empty-
 -Empty-
 
+overview:The Titan II is a BattleMech produced by Kressly WarWorks on Epsilon Eridani for the Word of Blake's Protectorate Militia.
 
+capabilities:Like the original, the Titan II has a top speed of 54 km/h and nineteen tons of standard armor. Since the 'Mech is produced for the Blakists' garrison forces, it makes no use of expensive, weight-saving technologies. It also lacks the advanced electronics that have become the hallmark of Word military forces.
+
+deployment:While the Titan II is effective at all ranges, it is still reminiscent of its antecedent's role as a brawler. Its main long-range fire comes from a Blankenburg "Divine Wrath" Heavy PPC. This is supplemented by a pair of Helga MML-9s, though they are more effective up close. In addition to those missiles, when it closes with an enemy, the Titan II can cut loose with a ZT Triple Fire Streak SRM-6, four Diplan M3-XR ER Medium Lasers and a single Kressly Premiere Optics ER Small Laser. Eighteen double heat sinks are usually up to the task of keeping the 'Mech cool.
+
+history:First identified by the Successor States in 3071, the Titan II owes its existence to the Titan, a prototype that dates to 2765. That design was unearthed by the Federated Suns in 3023 and led to the Grand Titan. That design deviated significantly from the original, while the Titan II is more of an upgrade using new weaponry.
+
+manufacturer:Kressly WarWorks
+primaryfactory:Epsilon Eridani
+systemmanufacturer:CHASSIS:Kressly TIA-Infused
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Kressly Stoneskin 50
+systemmanufacturer:COMMUNICATIONS:Kressly-Lantern Allet C500
+systemmanufacturer:TARGETING:Kressly-Lantern Allet T101

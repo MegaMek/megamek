@@ -24,7 +24,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -113,10 +112,10 @@ public class MechView {
     public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
         this(entity, showDetail, useAlternateCost, true);
     }
-    
+
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
-     * 
+     *
      * @param entity           The entity to summarize
      * @param showDetail       If true, shows individual weapons that make up weapon bays.
      * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
@@ -124,7 +123,25 @@ public class MechView {
      * @param html             If true, produces output formatted as html. If false, formats output
      *                         as plain text.
      */
-    public MechView(Entity entity, boolean showDetail, boolean useAlternateCost, boolean html) {
+    public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
+                    final boolean html) {
+        this(entity, showDetail, useAlternateCost, (entity.getCrew() == null), html);
+    }
+
+    /**
+     * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
+     * 
+     * @param entity           The entity to summarize
+     * @param showDetail       If true, shows individual weapons that make up weapon bays.
+     * @param useAlternateCost If true, uses alternate cost calculation. This primarily provides an
+     *                         equipment-only cost for conventional infantry for MekHQ.
+     * @param ignorePilotBV    If true then the BV calculation is done without including the pilot
+     *                         BV modifiers
+     * @param html             If true, produces output formatted as html. If false, formats output
+     *                         as plain text.
+     */
+    public MechView(final Entity entity, final boolean showDetail, final boolean useAlternateCost,
+                    final boolean ignorePilotBV, final boolean html) {
         this.entity = entity;
         this.html = html;
         isMech = entity instanceof Mech;
@@ -235,9 +252,8 @@ public class MechView {
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
         DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols); //$NON-NLS-1$
-        sHead.add(new LabeledElement(Messages.getString("MechView.BV"), //$NON-NLS-1$
-                dFormatter.format(entity.calculateBattleValue(false,
-                        null == entity.getCrew()))));
+        sHead.add(new LabeledElement(Messages.getString("MechView.BV"),
+                dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV))));
         double cost = entity.getCost(false);
         if(useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();
@@ -728,7 +744,7 @@ public class MechView {
                 String.valueOf(fs.getTotalArmor())));
 
         retVal.add(new LabeledElement(Messages.getString("MechView.ActiveFighters"), //$NON-NLS-1$
-                String.valueOf(fs.getActiveSubEntities().orElse(Collections.emptyList()).size())));
+                String.valueOf(fs.getActiveSubEntities().size())));
 
         return retVal;
     }
@@ -760,8 +776,7 @@ public class MechView {
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT);
         for (Mounted mounted : entity.getWeaponList()) {
-            String[] row = new String[] { mounted.getDesc(),
-                    entity.getLocationAbbr(mounted.getLocation()), "", "" };
+            String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (entity.isClan()
@@ -778,11 +793,6 @@ public class MechView {
              * //$NON-NLS-1$ .append(mounted.getLinked().getDesc()).append("]");
              * //$NON-NLS-1$ }
              */
-
-            if (mounted.isSplit()) {
-                row[1] += "/" + entity.getLocationAbbr(mounted // $NON-NLS-1$
-                                .getSecondLocation());
-            }
 
             int heat = wtype.getHeat();
             int bWeapDamaged = 0;
@@ -895,7 +905,7 @@ public class MechView {
             if (mounted.getLocation() == Entity.LOC_NONE) {
                 continue;
             }
-            
+
             String[] row = { mounted.getName(), entity.getLocationAbbr(mounted.getLocation()),
                     String.valueOf(mounted.getBaseShotsLeft()), "" };
             if (entity.isOmni()) {
@@ -980,7 +990,7 @@ public class MechView {
             }
             nEquip++;
             
-            String[] row = { mounted.getDesc(), entity.getLocationAbbr(mounted.getLocation()), "" };
+            String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 row[0] += Messages.getString("MechView.IS"); //$NON-NLS-1$

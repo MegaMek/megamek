@@ -13,42 +13,14 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.PilotingRollData;
-import megamek.common.Tank;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.LogLevel;
-
-import megamek.common.logging.MMLogger;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import megamek.common.IGame;
+import megamek.common.options.GameOptions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -58,11 +30,15 @@ import java.util.Set;
 @RunWith(JUnit4.class)
 public class NewtonAerospacePathRankerTest {
 
+    @SuppressWarnings("unused")
     private Princess mockPrincess;
+    @SuppressWarnings("unused")
     private NewtonianAerospacePathRanker mockPathRanker;
+    @SuppressWarnings("unused")
     private IGame mockGame;
+    @SuppressWarnings("unused")
     private GameOptions mockGameOptions;
-
+ 
     @Before
     public void setUp() {
         /*mockPathRanker = Mockito.mock(NewtonianAerospacePathRanker.class);
@@ -85,6 +61,7 @@ public class NewtonAerospacePathRankerTest {
         Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)).thenReturn(true);*/
     }
 
+    @Ignore
     @Test
     public void testCalculateSensorShadowMod() {
         /*final MovePath mockPath = Mockito.mock(MovePath.class);

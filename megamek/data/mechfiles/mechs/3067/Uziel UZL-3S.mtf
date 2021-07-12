@@ -3,40 +3,40 @@ Uziel
 UZL-3S
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3065
-Rules Level:2
+techbase:Inner Sphere
+era:3065
 source:TRO 3067
+rules level:2
 
-Mass:50
-Engine:300 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:6
-Jump MP:6
+heat sinks:11 IS Double
+walk mp:6
+jump mp:6
 
-Armor:Standard Armor
-LA Armor:12
-RA Armor:12
-LT Armor:14
-RT Armor:14
-CT Armor:17
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:14
+RT armor:14
+CT armor:17
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:6
-1 ISLBXAC2, Right Arm, Ammo:45
-1 ISERMediumLaser, Right Arm
-1 ISLargePulseLaser, Left Arm
-1 ISERSmallLaser, Right Torso
-1 ISERSmallLaser, Left Torso
-1 ISSRM6, Center Torso, Ammo:15
+Large Pulse Laser, Left Arm
+LB 2-X AC, Right Arm
+ER Medium Laser, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+SRM 6, Center Torso
 
 Left Arm:
 Shoulder
@@ -44,8 +44,8 @@ Upper Arm Actuator
 Lower Arm Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +56,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
 ISERMediumLaser
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
 -Empty-
 -Empty-
 -Empty-
@@ -74,11 +74,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 ISERSmallLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -88,11 +88,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 ISERSmallLaser
-ISSRM6 Ammo
-ISLBXAC2 CL Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Ammo SRM-6
+IS LB 2-X AC Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSRM6
-ISSRM6
+SRM 6
+SRM 6
 
 Head:
 Life Support
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,12 +141,27 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:Built at Defiance Industries' Furillo plant, the Uziel is an effective medium 'Mech that is looked down upon by the LAAF simply because it is produced on Furillo and not at the prestigious Hesperus facility. A varied weapons mix makes the Uziel an excellent trooper 'Mech.
+
+capabilities:The Uziel is built on a Foundation E50 Endo Steel chassis that has a GM 300 XL engine that provides the 'Mech with a top speed of 97.2 km/h. The 'Mech's mobility is enhanced with six Rawlings 50 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. The Uziel is armored with eight tons of Maximillian 100 armor that gives the Uziel adequate protection from enemy fire. To dissipate the heat produced by the 'Mech's weapons, it carries eleven double heat sinks.
+
+deployment:The Uziel has a wide variety of weapons for a medium 'Mech. For long range combat, the Uziel has a Defiance Shredder LB-X Autocannon/2 that can strike a target at extreme ranges. The rest of the Uziels arsenal is based around shorter range combat with a Thunderbolt-12 Large Pulse Laser and a Defiance Model XII ER Medium Laser for medium range combat. It also has two Diverse Optics Type ER Small Lasers and a Harvester 20K SRM-6 for close combat.
+
+manufacturer:Defiance Industries
+primaryfactory:Furillo
+systemmanufacturer:CHASSIS:Foundation E50 Endo Steel
+systemmanufacturer:ENGINE:GM 300 XL
+systemmanufacturer:ARMOR:Maximillian 100
+systemmanufacturer:JUMPJET:Rawlings 50
+systemmanufacturer:COMMUNICATIONS:Neil 6000-g
+systemmanufacturer:TARGETING:RCA Instatrac Mark XXII
 

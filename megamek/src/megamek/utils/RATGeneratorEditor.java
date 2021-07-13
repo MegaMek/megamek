@@ -620,7 +620,7 @@ public class RATGeneratorEditor extends JFrame {
                     return false;
                 }
                 if (cbMovementType.getSelectedIndex() > 0 &&
-                        (rec.getMovementMode() != EntityMovementMode.getMode((String) cbMovementType.getSelectedItem()))) {
+                        (rec.getMovementMode() != EntityMovementMode.parseFromString((String) cbMovementType.getSelectedItem()))) {
                     return false;
                 }
                 if (txtSearch.getText().length() > 0) {
@@ -633,10 +633,6 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private static class MasterUnitListTableModel extends DefaultTableModel {
-
-        /**
-         * 
-         */
         private static final long serialVersionUID = 2792332961159226169L;
 
         public static final int COL_CHASSIS = 0;

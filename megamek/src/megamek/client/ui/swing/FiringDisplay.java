@@ -182,8 +182,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 "FiringDisplay.Done") + "</b></html>"); //$NON-NLS-1$ //$NON-NLS-2$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
 
         clientgui.bv.addKeyListener(this);
@@ -2184,10 +2182,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     public void actionPerformed(ActionEvent ev) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

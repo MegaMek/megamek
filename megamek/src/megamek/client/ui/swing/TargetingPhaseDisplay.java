@@ -179,8 +179,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
         
         MegaMekController controller = clientgui.controller;
@@ -1484,10 +1482,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

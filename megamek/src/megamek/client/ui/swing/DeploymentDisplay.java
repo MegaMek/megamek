@@ -116,7 +116,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         butDone.setText("<html><b>" + Messages.getString("DeploymentDisplay.Deploy") + "</b></html>");
         butDone.setEnabled(false);
-        layoutScreen();
         setupButtonPanel();        
     }
     
@@ -621,9 +620,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final String actionCmd = ev.getActionCommand();
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-        if (statusBarActionPerformed(ev, client)) {
             return;
         }
         if (!client.isMyTurn()) {

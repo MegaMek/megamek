@@ -349,7 +349,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
         setupButtonPanel();
 
         gear = MovementDisplay.GEAR_LAND;
@@ -4531,9 +4530,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
         if (!clientgui.getClient().isMyTurn()) {

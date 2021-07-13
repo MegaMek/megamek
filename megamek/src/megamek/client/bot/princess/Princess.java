@@ -1626,10 +1626,12 @@ public class Princess extends BotClient {
         }
     }
     
-    /** Update the various state trackers for a specific entity.
-     * Useful to call when receiving an entity update packet */
-    public void updateEntityState(Entity entity) {
-        if(entity.getOwner().isEnemyOf(getLocalPlayer())) {
+    /**
+     * Update the various state trackers for a specific entity.
+     * Useful to call when receiving an entity update packet
+     */
+    public void updateEntityState(final @Nullable Entity entity) {
+        if ((entity != null) && entity.getOwner().isEnemyOf(getLocalPlayer())) {
             // currently just the honor util, and only update it for hostile units
             getHonorUtil().checkEnemyBroken(entity, getForcedWithdrawal());
         }
@@ -2181,9 +2183,8 @@ public class Princess extends BotClient {
      * Updates internal state in addition to base client functionality
      */
     @Override    
-    public void receiveEntityUpdate(Packet c) {
-        super.receiveEntityUpdate(c);
-        Entity entity = (Entity) c.getObject(1);
-        updateEntityState(entity);
+    public void receiveEntityUpdate(final Packet packet) {
+        super.receiveEntityUpdate(packet);
+        updateEntityState((Entity) packet.getObject(1));
     }
 }

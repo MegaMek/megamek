@@ -589,7 +589,7 @@ public interface IBoard {
     public void setTheme(String newTheme);
     
     /** Rebuilds automatic terrains for the whole board. */
-    public void initializeAllAutomaticTerrain();
+    public void initializeAllAutomaticTerrain(boolean useInclines);
     
     /** Returns true when the given Coord c is on the edge of the board. */
     public boolean isOnBoardEdge(Coords c);

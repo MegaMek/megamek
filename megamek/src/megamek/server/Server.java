@@ -13490,7 +13490,7 @@ public class Server implements Runnable {
                         ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
                         
                         if ((oaaa.getEntityId() == aaa.getEntityId())
-                            && !Targetable.atSamePosition(oaaa.getTarget(game), attackTarget)) {
+                                && !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
                             firingAtNewHex = true;
                         }
                     }

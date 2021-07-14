@@ -334,8 +334,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         Entity attacker = game.getEntityFromAllSources(getAttackerId());
         
         // get only TagInfo on the same side
-        for (TagInfo ti : v) {
-            // let's don't allow 
+        for (TagInfo ti : v) { 
             Entity tagger = game.getEntityFromAllSources(ti.attackerId);
             if (attacker.getOwner().isEnemyOf(tagger.getOwner())) {
                 continue;

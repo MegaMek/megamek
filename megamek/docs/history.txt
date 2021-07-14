@@ -6,7 +6,7 @@ VERSION HISTORY:
 + Issue #2960: Fixing non-basic letters in the new camouflage setup
 + PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
 + PR #2987: Remove unwanted water terrain exits from boards
-+ PR #2990, 2993: Fix errors discovered while play-testing on potato-grade compute:
++ PR #2990, 2993: Fix errors discovered while play-testing on potato-grade computer:
 	- prevent tooltip errors when mousing over non-unit spotting target
 	- prevent player camo color related force rendering error in lobby due to slow MekHQ->MegaMek data transfer
 	- improved bot ability to avoid flying off-board on space maps in newtonian flight model

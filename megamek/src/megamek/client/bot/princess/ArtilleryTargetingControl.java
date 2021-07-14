@@ -249,16 +249,6 @@ public class ArtilleryTargetingControl {
     public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, IGame game, Princess owner) {
         FiringPlan bestPlan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
         
-        // simply loop through all possible facings and see if any of those is better than the no-turning plan
-        if (!shooter.isOffBoard()) {
-            for (int facingChange : FireControl.getValidFacingChanges(shooter)) {
-                FiringPlan twistPlan = calculateIndirectArtilleryPlan(shooter, game, owner, facingChange);
-                if (twistPlan.getUtility() > bestPlan.getUtility()) {
-                    bestPlan = twistPlan;
-                }
-            }
-        }
-        
         return bestPlan;
     }
     

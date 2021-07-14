@@ -130,8 +130,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
         
         registerKeyCommands();
@@ -306,10 +304,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

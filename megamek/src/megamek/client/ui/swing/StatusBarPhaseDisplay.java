@@ -1,103 +1,52 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.awt.event.*;
+import java.util.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
-import megamek.client.Client;
-import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.preference.*;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
- * has a panel of control buttons along with a done button.  Each button
+ * has a panel of control buttons along with a Done button. Each button
  * correspondes to a command that can be carried out in the current phase.  
- * This class formats the button panel, the done button, and a status display 
- * area. 
- * 
+ * This class formats the button panel, the done button, and a status display area. 
  * Control buttons are grouped and the groups can be cycled through.
- *
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
     
-    private static final long serialVersionUID = 639696875125581395L;
-    
-    protected static final int TRANSPARENT = 0xFFFF00FF;
-    
-    protected static final Dimension minButtonSize = new Dimension(32,32);
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final int BUTTON_ROWS = 2;
 
     /**
      * Interface that defines what a command for a phase is.
-     * 
      * @author arlith
-     *
      */
     public interface PhaseCommand {
         public String getCmd();
@@ -108,93 +57,67 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     /**
      * Comparator for comparing the priority of two commands, used to determine
      * button order.
-     * 
      * @author arlith
-     *
      */
-    public  static class CommandComparator implements Comparator<PhaseCommand>
+    public static class CommandComparator implements Comparator<PhaseCommand>
     {
-        public int compare(PhaseCommand c1, PhaseCommand c2)
-        {
+        public int compare(PhaseCommand c1, PhaseCommand c2) {
             return c1.getPriority() - c2.getPriority();            
         }
     }
     
-    // displays
     private JLabel labStatus;
-    protected JPanel panStatus;
-    protected JPanel panButtons;  
+    protected JPanel panStatus = new JPanel();
+    protected JPanel panButtons = new JPanel();  
     
-    // Variables that determine the layout of the button panel
-    // Keeps track of which group of buttons we are displaying
+    /** The button group that is currently displayed */
     protected int currentButtonGroup = 0;
-    // How many different button groups there are, needs to be computed in a 
-    //   child class
+    
+    /** The number of button groups there are, needs to be computed in a child class. */
     protected int numButtonGroups;
-    // How any buttons are in each group
-    protected int buttonsPerRow = GUIPreferences.getInstance().getInt(
-            GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
-    protected int buttonsPerGroup = 2 * buttonsPerRow;
+    
+    protected int buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+    protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
     
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
-
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clearButton");
         getActionMap().put("clearButton", new AbstractAction() {
-            private static final long serialVersionUID = -7781405756822535409L;
-
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.bv.getChatterBoxActive()){
+                if (clientgui.bv.getChatterBoxActive()) {
                     clientgui.bv.setChatterBoxActive(false);
                     clientgui.cb2.clearMessage();
-                // Users can draw movement envelope during the movement phase 
-                // even if it's not their turn, so we always want to be able
-                // to clear.  MovementDisplay.clear() can handle this case
-                } else if (clientgui.getClient().isMyTurn() 
-                        || (e.getSource() instanceof MovementDisplay)) {
+                } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
+                    // Users can draw movement envelope during the movement phase 
+                    // even if it's not their turn, so we always want to be able
+                    // to clear. MovementDisplay.clear() can handle this case
                     clear();
                 }
             }
         });
         
-        panButtons = new JPanel();      
+        panButtons.setLayout(new BoxLayout(panButtons, BoxLayout.LINE_AXIS));
         panButtons.setOpaque(false);        
-        panButtons.setLayout(new GridBagLayout());
+        panButtons.addKeyListener(this);
+        panStatus.setOpaque(false);
+        panStatus.addKeyListener(this);
         
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        add(panButtons);
+        add(panStatus);
+        
+        GUIP.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
-    /**
-     * This method will return the list of buttons that should be displayed.
-     * @return
-     */
+    /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
 
-    /**
-     * Adds the buttons and status bar to the panel.    
-     */
-    protected void layoutScreen(){
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        
-        c.gridy = 0;
-        addBag(panButtons, gridbag, c);
-        c.gridy = 1;
-        addBag(panStatus, gridbag, c);    
-    }
-    
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
      * with the <code>getButtonList()<code> method.  The number of buttons to
@@ -203,114 +126,60 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     public void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridBagLayout());
         
-        int numRows = buttonsPerGroup/buttonsPerRow;
+        var buttonsPanel = new JPanel();
+        buttonsPanel.setOpaque(false);
+        buttonsPanel.setLayout(new GridLayout(BUTTON_ROWS, buttonsPerRow));
+        List<MegamekButton> buttonList = getButtonList();
         
-        JPanel subPanel = new JPanel();
-        subPanel.setOpaque(false);
-        subPanel.setLayout(new GridLayout(numRows,buttonsPerRow));
-        ArrayList<MegamekButton> buttonList = getButtonList();
-                
-        // We may skip the current button group if all of its buttons are 
-        //  disabled
-        boolean ok = false;
-        while (!ok && (currentButtonGroup != 0)) {
-            for (int i = currentButtonGroup * buttonsPerGroup; 
-            (i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                    && (i < buttonList.size()); i++) {
-                if (buttonList.get(i) != null && buttonList.get(i).isEnabled()){
-                    ok = true;
+        // Unless it's the first group of buttons, skip any button group if all of its buttons are disabled
+        if (currentButtonGroup > 0) {
+            int index = currentButtonGroup * buttonsPerGroup;
+            while (index < buttonList.size()) {
+                if (buttonList.get(index) != null && buttonList.get(index).isEnabled()) {
+                    currentButtonGroup = index / buttonsPerGroup;
                     break;
                 }
+                index++;
             }
-            if (!ok) {
-                // skip as nothing was enabled
-                currentButtonGroup++;
-                if ((currentButtonGroup * buttonsPerGroup) >= buttonList.size()) {
-                    currentButtonGroup = 0;
-                }
+            if (index >= buttonList.size()) {
+                // Reached the end of the button list without finding an enabled button: Show the first button group
+                currentButtonGroup = 0;
             }
         }
-        int i = 0;
-        for (i = currentButtonGroup * buttonsPerGroup; 
-                (i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                    && (i < buttonList.size()); i++) {
-            if (buttonList.get(i) != null) {
-                MegamekButton button = buttonList.get(i);
-                button.setMinimumSize(minButtonSize);
-                button.setPreferredSize(minButtonSize);
-                subPanel.add(button);
+        
+        int startIndex = currentButtonGroup * buttonsPerGroup;
+        int endIndex = startIndex + buttonsPerGroup - 1;
+        for (int index = startIndex; index <= endIndex; index++) {
+            if ((index < buttonList.size()) && buttonList.get(index) != null) {
+                MegamekButton button = buttonList.get(index);
+                button.setPreferredSize(MIN_BUTTON_SIZE);
+                buttonsPanel.add(button);
                 ToolTipManager.sharedInstance().registerComponent(button);
             } else {
-                subPanel.add(Box.createHorizontalGlue());
+                buttonsPanel.add(Box.createHorizontalGlue());
             }
         }         
-        while ( i < ((currentButtonGroup + 1) * buttonsPerGroup)){
-        subPanel.add(Box.createHorizontalGlue());
-        i++;
-        }
            
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.WEST;
-        
-        c.gridx = c.gridy = 0;
-        c.weightx = 1;        
-        panButtons.add(subPanel,c);
-        
-        c.anchor = GridBagConstraints.EAST;
-        c.gridx = 1;
-        c.weightx = 0;
-        c.gridx = 1;
-        panButtons.add(butDone,c);        
-        butDone.setSize(DONE_BUTTON_WIDTH,butDone.getHeight());
-        butDone.setPreferredSize(butDone.getSize());
-        butDone.setMinimumSize(butDone.getSize());
-    
+        var donePanel = new UIUtil.FixedXPanel();
+        donePanel.setOpaque(false);
+        donePanel.add(butDone);
+        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+                
+        panButtons.add(buttonsPanel);
+        panButtons.add(donePanel);
         panButtons.validate();
-        panButtons.repaint();   
+        panButtons.repaint();
     }
     
-    protected void addBag(JComponent comp, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        gridbag.setConstraints(comp, c);
-        add(comp);
-        comp.addKeyListener(this);
-    }
-
-    
-    /**
-     * clears the actions of this phase
-     */
+    /** Clears the actions of this phase. */
     public abstract void clear();
-
     
-    /**
-     * Sets up the status bar with toggle buttons for the mek display and map.
-     */
-    protected void setupStatusBar(String defStatus) {
-        SkinSpecification pdSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
-        
-        panStatus = new JPanel();
-        panStatus.setOpaque(false);
-        labStatus = new JLabel(defStatus, SwingConstants.CENTER);
+    /** Sets up the status bar. It usually displays info on the current phase and if it's the local player's turn. */
+    protected void setupStatusBar(String statusInfo) {
+        SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
+        labStatus = new JLabel(statusInfo, SwingConstants.CENTER);
         labStatus.setForeground(pdSkinSpec.fontColors.get(0));
-        labStatus.setOpaque(false);
-
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panStatus.setLayout(gridbag);
-
-        c.insets = new Insets(0, 1, 0, 1);
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labStatus, c);
         panStatus.add(labStatus);
     }
 
@@ -318,33 +187,38 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
     
-    protected String getStatusBarText() {
-        return labStatus.getText();
-    }
-
-    protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
-        return false;
-    }
-    
-    @Override
-    public void keyPressed(KeyEvent evt) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent evt) {
-    }
-
-    @Override
-    public void keyTyped(KeyEvent evt) {
-    }
-
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
-            buttonsPerRow = GUIPreferences.getInstance().getInt(
-                    GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+            buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
         }
     }
 
+    @Override
+    public void keyPressed(KeyEvent evt) { }
+
+    @Override
+    public void keyReleased(KeyEvent evt) { }
+
+    @Override
+    public void keyTyped(KeyEvent evt) { }
+
+    @Override
+    public void actionPerformed(ActionEvent e) { }
+
+    @Override
+    public void mouseClicked(MouseEvent e) { }
+
+    @Override
+    public void mousePressed(MouseEvent e) { }
+
+    @Override
+    public void mouseReleased(MouseEvent e) { }
+
+    @Override
+    public void mouseEntered(MouseEvent e) { }
+
+    @Override
+    public void mouseExited(MouseEvent e) { }
 }

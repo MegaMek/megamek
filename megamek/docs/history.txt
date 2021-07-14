@@ -19,6 +19,7 @@ VERSION HISTORY:
 + Issue #2988, 2989: Multiple fixes to errors encountered when using fighter squadrons
 + PR #3009: Fixing Princess Null Entity Packet state update
 + Issue #3002: Disallow torso-twisting and vehicle turret rotation during TAG phase per recent errata
++ PR #3010: StatusBarPhaseDisplay Code cleanup
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

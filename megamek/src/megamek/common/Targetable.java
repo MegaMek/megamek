@@ -151,4 +151,17 @@ public interface Targetable extends Serializable {
     
     @Override
     int hashCode();
+    
+    /**
+     * Utility function used to safely tell whether two Targetables are in the same hex.
+     * Does not throw exceptions in case of nulls.
+     */
+    public static boolean atSamePosition(Targetable first, Targetable second) {
+        if ((first == null) || (second == null) ||
+                (first.getPosition() == null) || (second.getPosition() == null)) {
+            return false;
+        }
+        
+        return first.getPosition().equals(second.getPosition());
+    }
 }

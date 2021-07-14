@@ -400,7 +400,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         
         // the attack's target may have been destroyed or fled since the attack was generated
         // so we need to carry out offboard/null checks against the "current" version of the target.
-        if((updatedTarget != null) && updatedTarget.isOffBoard()) {
+        if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
             int actualDamage = df.damage - (df.falloff * targetPos.distance(target.getPosition()));
             Coords effectiveTargetPos = aaa.getCoords();

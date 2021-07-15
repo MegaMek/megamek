@@ -20,6 +20,7 @@ package megamek.client.ui.panels;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.trees.PortraitChooserTree;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -30,7 +31,7 @@ import java.util.List;
 
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
-    public PortraitChooser(AbstractIcon icon) {
+    public PortraitChooser(final AbstractIcon icon) {
         super(new PortraitChooserTree(), icon);
     }
     //endregion Constructors
@@ -41,8 +42,13 @@ public class PortraitChooser extends AbstractIconChooser {
     }
 
     @Override
-    protected AbstractIcon createIcon(String category, String filename) {
+    protected Portrait createIcon(String category, String filename) {
         return new Portrait(category, filename);
+    }
+
+    @Override
+    public @Nullable Portrait getSelectedItem() {
+        return (Portrait) getImageList().getSelectedValue();
     }
 
     @Override

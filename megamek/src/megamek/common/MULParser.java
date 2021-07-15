@@ -1257,11 +1257,11 @@ public class MULParser {
             }
 
             if ((attributes.containsKey(CAT_PORTRAIT)) && !attributes.get(CAT_PORTRAIT).isBlank()) {
-                crew.setPortraitCategory(attributes.get(CAT_PORTRAIT), slot);
+                crew.getPortrait(slot).setCategory(attributes.get(CAT_PORTRAIT));
             }
 
             if ((attributes.containsKey(FILE_PORTRAIT)) && !attributes.get(FILE_PORTRAIT).isBlank()) {
-                crew.setPortraitFileName(attributes.get(FILE_PORTRAIT), slot);
+                crew.getPortrait(slot).setFilename(attributes.get(FILE_PORTRAIT));
             }
 
             // Was the crew wounded?

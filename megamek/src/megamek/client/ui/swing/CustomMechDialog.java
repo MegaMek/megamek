@@ -1,102 +1,35 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
-/*
- * CustomMechDialog.java
- *
  * Created on March 18, 2002, 2:56 PM
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Board;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LAMPilot;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.OffBoardDirection;
-import megamek.common.Protomech;
-import megamek.common.QuadVee;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.enums.Gender;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PartialRepairs;
-import megamek.common.options.PilotOptions;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestInfantry;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestSupportVehicle;
-import megamek.common.verifier.TestTank;
+import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -108,15 +41,11 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
  */
 public class CustomMechDialog extends ClientDialog implements ActionListener,
         DialogOptionListener, ItemListener {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -6809436986445582731L;
 
-    public static int DONE = 0;
-    public static int NEXT = 1;
-    public static int PREV = 2;
+    public static final int DONE = 0;
+    public static final int NEXT = 1;
+    public static final int PREV = 2;
 
     private CustomPilotView[] panCrewMember;
     private JPanel panDeploy;
@@ -1231,8 +1160,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setGender(gender, i);
-                entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory(), i);
-                entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename(), i);
+                entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {
                         entity.getCrew().setBackupPilotPos(backup);

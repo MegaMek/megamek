@@ -6174,7 +6174,7 @@ public class Compute {
      */
     public static Coords getFinalPosition(Coords curpos, int[] v) {
 
-        if ((v == null) || (v.length != 6)) {
+        if ((v == null) || (v.length != 6) || (curpos == null)) {
             return curpos;
         }
 

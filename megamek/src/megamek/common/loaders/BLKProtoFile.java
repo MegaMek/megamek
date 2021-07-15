@@ -72,7 +72,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         t.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }

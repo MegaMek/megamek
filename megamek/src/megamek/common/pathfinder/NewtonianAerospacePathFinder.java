@@ -204,15 +204,14 @@ public class NewtonianAerospacePathFinder {
         boolean maxMPExceeded = path.getMpUsed() > path.getEntity().getRunMP();
         
         // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
-        // unless it is illegal or exceeds max MP, in which case we discard it
-        // (max mp is maybe redundant)?
-        if(!path.isMoveLegal() || maxMPExceeded) {
+        // unless it exceeds max MP, in which case we discard it
+        if (maxMPExceeded) {
             return true;
         }
         
         // terminator conditions:
         // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
-        if(visitedCoords.containsKey(pathDestination) && visitedCoords.get(pathDestination).intValue() < path.getMpUsed()) {
+        if (visitedCoords.containsKey(pathDestination) && (visitedCoords.get(pathDestination).intValue() < path.getMpUsed())) {
             return true;
         }
         

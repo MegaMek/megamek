@@ -29,6 +29,7 @@ import java.util.List;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Crew;
@@ -722,11 +723,15 @@ class LobbyMekCellFormatter {
             result.append(" [").append(force.getId()).append("]</FONT>");
         }
         
-        // Owner
-        if (game.getForces().getOwnerId(force) != client.getLocalPlayerNumber()) {
+        // Display force owner
+        if ((ownerId != client.getLocalPlayerNumber()) && (owner != null)) {
             result.append(guiScaledFontHTML(size));
             result.append(DOT_SPACER).append("</FONT>");
-            result.append(guiScaledFontHTML(owner.getColour().getColour(), size));
+            
+            PlayerColour ownerColour = (owner.getColour() == null) ?
+
+                    PlayerColour.FIRE_BRICK : owner.getColour();
+            result.append(guiScaledFontHTML(ownerColour.getColour(), size));
             result.append("\u2691 ");
             result.append(owner.getName()).append("</FONT>");
         }

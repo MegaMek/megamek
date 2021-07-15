@@ -15,17 +15,8 @@
 */
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Vector;
-
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.common.enums.Gender;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -33,15 +24,19 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.CrewSkillSummaryUtil;
 
+import java.io.Serializable;
+import java.util.*;
+
 /**
- *  Health status, skills, and miscellanea for an Entity crew.
+ * Health status, skills, and miscellanea for an Entity crew.
  *
- *  While vehicle and vessel crews are treated as a single collective, with one set of skills,
- *  some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
- *  and skills of each crew member independently. These are referred to as "slots" and the slot
- *  number corresponds to an array index for the appropriate field.
+ * While vehicle and vessel crews are treated as a single collective, with one set of skills,
+ * some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
+ * and skills of each crew member independently. These are referred to as "slots" and the slot
+ * number corresponds to an array index for the appropriate field.
  */
 public class Crew implements Serializable {
+    //region Variable Declarations
     private static final long serialVersionUID = -141169182388269619L;
 
     private Map<Integer, Map<String, String>> extraData;
@@ -50,14 +45,14 @@ public class Crew implements Serializable {
     private int size;
     private int currentSize;
 
-    private final String[] name;
-    private final Gender[] gender;
+    private final String[] names;
+    private final String[] nicknames;
+    private final Gender[] genders;
+    private final Portrait[] portraits;
 
     private final int[] gunnery;
     private final int[] piloting;
     private final int[] hits; // hits taken
-
-    private final String[] nickname;
 
     private final String[] externalId;
 
@@ -75,9 +70,7 @@ public class Crew implements Serializable {
     //also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
 
-    /**
-     * Additional RPG Skills **
-     */
+    //region RPG Skills
     // MW3e uses 3 different gunnery skills
     private final int[] gunneryL;
     private final int[] gunneryM;
@@ -98,33 +91,26 @@ public class Crew implements Serializable {
     private int pilotPos;
     private int gunnerPos;
 
-    //Designate the slot index of the crew member that will fill in if the pilot or gunner is incapacitated.
-    //This is only relevant for superheavy tripods, as other types have at most a single other option.
+    // Designate the slot index of the crew member that will fill in if the pilot or gunner is incapacitated.
+    // This is only relevant for superheavy tripods, as other types have at most a single other option.
     private int backupPilot;
     private int backupGunner;
 
-    //For cockpit command console, we need to track which crew members have acted as the pilot, making them
-    //ineligible to provide command bonus the next round.
+    // For cockpit command console, we need to track which crew members have acted as the pilot,
+    // making them ineligible to provide command bonus the next round.
     private final boolean[] actedThisTurn;
-    //The crew slots in a command console can swap roles in the end phase of any turn.
+    // The crew slots in a command console can swap roles in the end phase of any turn.
     private boolean swapConsoleRoles;
-
-    /**
-     * End RPG Skills **
-     */
+    //endregion RPG Skills
 
     // these are only used on the server:
     private final boolean[] koThisRound; // did I go KO this game round?
 
-    //TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
+    // TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
     //and which work for the entire unit.
     private PilotOptions options = new PilotOptions();
 
-    // pathway to pilot portrait
-    private final String[] portraitCategory;
-    private final String[] portraitFileName;
-
-    //SPA RangeMaster range bands
+    // SPA RangeMaster range bands
     public static final String RANGEMASTER_NONE = "None";
     public static final String RANGEMASTER_MEDIUM = "Medium";
     public static final String RANGEMASTER_LONG = "Long";
@@ -142,7 +128,7 @@ public class Crew implements Serializable {
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 
-    private static double[][] bvMod = new double[][]{
+    private static final double[][] bvMod = new double[][]{
             {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
             {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
             {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
@@ -153,7 +139,8 @@ public class Crew implements Serializable {
             {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
             {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
     };
-    private static double[][] alternateBvMod = new double[][]{
+
+    private static final double[][] alternateBvMod = new double[][]{
             {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
             {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
             {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
@@ -174,13 +161,15 @@ public class Crew implements Serializable {
     /**
      * The number of hits that a pilot can take before he dies.
      */
-    static public final int DEATH = 6;
+    public static final int DEATH = 6;
 
     /**
      * Defines the maximum value a Crew can have in any skill
      */
-    static public final int MAX_SKILL = 8;
+    public static final int MAX_SKILL = 8;
+    //endregion Variable Declarations
 
+    //region Constructors
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
@@ -285,13 +274,17 @@ public class Crew implements Serializable {
         this.extraData = extraData;
 
         int slots = crewType.getCrewSlots();
-        this.name = new String[slots];
-        Arrays.fill(this.name, name);
-        this.nickname = new String[slots];
-        Arrays.fill(this.nickname, "");
-        this.gender = new Gender[slots];
-        Arrays.fill(this.gender, Gender.RANDOMIZE);
-        this.gender[0] = gender;
+        names = new String[slots];
+        Arrays.fill(getNames(), name);
+        nicknames = new String[slots];
+        Arrays.fill(getNicknames(), "");
+        genders = new Gender[slots];
+        Arrays.fill(getGenders(), Gender.RANDOMIZE);
+        setGender(gender, 0);
+        portraits = new Portrait[slots];
+        for (int i = 0; i < slots; i++) {
+            setPortrait(new Portrait(), i);
+        }
 
         int avGunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunnery = new int[slots];
@@ -316,10 +309,6 @@ public class Crew implements Serializable {
         koThisRound = new boolean[slots];
         fatigue = 0;
         toughness = new int[slots];
-        portraitCategory = new String[slots];
-        Arrays.fill(portraitCategory, AbstractIcon.ROOT_CATEGORY);
-        portraitFileName = new String[slots];
-        Arrays.fill(portraitFileName, AbstractIcon.DEFAULT_ICON_FILENAME);
 
         options.initialize();
 
@@ -342,35 +331,68 @@ public class Crew implements Serializable {
             externalId[i] = UUID.randomUUID().toString();
         }
     }
+    //endregion Constructors
 
-    public String getName() {
-        return name[0];
+    public String[] getNames() {
+        return names;
     }
 
-    public String getName(int pos) {
-        return name[pos];
+    public String getName() {
+        return getNames()[0];
+    }
+
+    public String getName(final int pos) {
+        return getNames()[pos];
+    }
+
+    public void setName(final String name, final int pos) {
+        getNames()[pos] = name;
+    }
+
+    public String[] getNicknames() {
+        return nicknames;
     }
 
     public String getNickname() {
-        return nickname[0];
+        return getNicknames()[0];
     }
 
-    public String getNickname(int pos) {
-        return nickname[pos];
+    public String getNickname(final int pos) {
+        return getNicknames()[pos];
+    }
+
+    public void setNickname(final String nickname, final int pos) {
+        getNicknames()[pos] = nickname;
+    }
+
+    public Gender[] getGenders() {
+        return genders;
     }
 
     public Gender getGender() {
-        return gender[0];
+        return getGenders()[0];
     }
 
-    public Gender getGender(int pos) {
+    public Gender getGender(final int pos) {
         // The randomize return value is used in MekHQ to create new personnel following a battle,
         // and should not be changed without ensuring it doesn't break on that side
-        if (pos < gender.length) {
-            return gender[pos];
-        } else {
-            return Gender.RANDOMIZE;
-        }
+        return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
+    }
+
+    public void setGender(final Gender gender, final int pos) {
+        getGenders()[pos] = gender;
+    }
+
+    public Portrait[] getPortraits() {
+        return portraits;
+    }
+
+    public Portrait getPortrait(final int pos) {
+        return getPortraits()[pos];
+    }
+
+    public void setPortrait(final Portrait portrait, final int pos) {
+        getPortraits()[pos] = portrait;
     }
 
     /**
@@ -579,18 +601,6 @@ public class Crew implements Serializable {
 
     public int getCommandBonus() {
         return commandBonus;
-    }
-
-    public void setName(String name, int pos) {
-        this.name[pos] = name;
-    }
-
-    public void setNickname(String nickname, int pos) {
-        this.nickname[pos] = nickname;
-    }
-
-    public void setGender(Gender gender, int pos) {
-        this.gender[pos] = gender;
     }
 
     /**
@@ -904,7 +914,7 @@ public class Crew implements Serializable {
         if (isMissing(pos)) {
             return "[missing]";
         }
-        String s = name[pos];
+        String s = getName(pos);
         if (hits[pos] > 0) {
             s += " (" + hits[pos] + " hit(s)";
             if (isUnconscious(pos)) {
@@ -936,7 +946,7 @@ public class Crew implements Serializable {
             }
             r = new Report();
             r.type = Report.PUBLIC;
-            r.add(name[i]);
+            r.add(getName(i));
             if (getSlotCount() > 1) {
                 r.add(" (" + crewType.getRoleName(i) + ")");
             }
@@ -1177,30 +1187,6 @@ public class Crew implements Serializable {
 
     public int getExternalId(int pos) {
         return Integer.parseInt(externalId[pos]);
-    }
-
-    public AbstractIcon getPortrait(int pos) {
-        return new Portrait(getPortraitCategory(pos), getPortraitFileName(pos));
-    }
-
-    public void setPortraitCategory(String name, int pos) {
-        portraitCategory[pos] = name;
-    }
-
-    public String getPortraitCategory(int pos) {
-        return portraitCategory[pos];
-    }
-
-    public void setPortraitFileName(String name, int pos) {
-        portraitFileName[pos] = name;
-    }
-
-    public String getPortraitFileName(int pos) {
-        if (portraitFileName.length > pos) {
-            return portraitFileName[pos];
-        } else {
-            return AbstractIcon.DEFAULT_ICON_FILENAME;
-        }
     }
 
     public int getToughness(int pos) {

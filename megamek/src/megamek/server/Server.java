@@ -4880,6 +4880,7 @@ public class Server implements Runnable {
         // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled
         // hex takes damage.
         if ((md.getHexesMoved() == 0)
+                && game.getBoard().contains(md.getFinalCoords())
                 && (game.getBoard().getHex(md.getFinalCoords()).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
                 && entity.antiTSMVulnerable()) {
             addReport(doGreenSmokeDamage(entity));
@@ -21796,10 +21797,11 @@ public class Server implements Runnable {
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
-            if(te.getActiveSubEntities().orElse(Collections.emptyList()).isEmpty()) {
+            List<Entity> fighters = te.getActiveSubEntities();
+            
+            if (fighters.isEmpty()) {
                 return vDesc;
             }
-            List<Entity> fighters = te.getSubEntities().orElse(Collections.emptyList());
             Entity fighter = fighters.get(hit.getLocation());
             HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             new_hit.setBoxCars(hit.rolledBoxCars());
@@ -27049,13 +27051,13 @@ public class Server implements Runnable {
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
+                return vDesc;
             } else if ((!advancedCrit && (roll >= 8) && (roll <= 9))
                     || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-                return vDesc;
             } else if ((!advancedCrit && (roll >= 10) && (roll <= 11))
                     || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;
@@ -27799,12 +27801,9 @@ public class Server implements Runnable {
                 // if this is the last fighter in a fighter squadron then remove
                 // the squadron
                 if ((transport instanceof FighterSquadron)
-                        && transport.getSubEntities().orElse(Collections.emptyList()).isEmpty()) {
+                        && transport.getSubEntities().isEmpty()) {
                     transport.setDestroyed(true);
-                    // Can't remove this here, otherwise later attacks will fail
-                    //game.moveToGraveyard(transport.getId());
-                    //entityUpdate(transport.getId());
-                    //send(createRemoveEntityPacket(transport.getId(), condition));
+                    
                     r = new Report(6365);
                     r.subject = transport.getId();
                     r.addDesc(transport);

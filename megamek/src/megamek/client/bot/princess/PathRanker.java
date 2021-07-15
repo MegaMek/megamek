@@ -68,20 +68,19 @@ public abstract class PathRanker implements IPathRanker {
     RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(me), game);
         int maxWeaponRange = me.getMaxWeaponRange();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
         Coords allyCenter = calcAllyCenter(me.getId(), friends, game);
 
-        return rankPath(path, game, maxWeaponRange, fallTolerance, homeDistance, enemies, allyCenter);
+        return rankPath(path, game, maxWeaponRange, fallTolerance, enemies, allyCenter);
     }
 
-    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
+    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords);
 
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                    double fallTolerance, int startingHomeDistance,
+                                    double fallTolerance,
                                     List<Entity> enemies, List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
@@ -92,7 +91,7 @@ public abstract class PathRanker implements IPathRanker {
         getPathRankerState().getPathSuccessProbabilities().clear();
         
         // Let's try to whittle down this list.
-        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance, startingHomeDistance);
+        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         getOwner().getLogger().debug("Validated " + validPaths.size() + " out of " +
                 movePaths.size() + " possible paths.");
 
@@ -108,7 +107,7 @@ public abstract class PathRanker implements IPathRanker {
         for (MovePath path : validPaths) {
             count = count.add(BigDecimal.ONE);
             
-            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, startingHomeDistance, enemies,
+            RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies,
                     allyCenter);
             
             returnPaths.add(rankedPath);
@@ -134,14 +133,13 @@ public abstract class PathRanker implements IPathRanker {
             
             behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
             return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true), game, maxRange, fallTolerance, 
-                    startingHomeDistance, enemies, friends);
+                    enemies, friends);
         }
         
         return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange,
-                                         double fallTolerance, int startingHomeDistance) {
+    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange, double fallTolerance) {
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -358,34 +356,43 @@ public abstract class PathRanker implements IPathRanker {
         return SharedUtility.getPSRList(path);
     }
 
+    /**
+     * Returns distance to the unit's home edge.
+     * Gives the distance to the closest edge
+     *
+     * @param position Final coordinates of the proposed move.
+     * @param homeEdge Unit's home edge.
+     * @param game     The {@link IGame} currently in play.
+     * @return The distance to the unit's home edge.
+     */
     public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        Coords edgeCoords;
-        int boardHeight = game.getBoard().getHeight();
-        int boardWidth = game.getBoard().getWidth();
-        StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
-        if (CardinalEdge.NORTH.equals(homeEdge)) {
-            msg.append("North");
-            edgeCoords = new Coords(position.getX(), 0);
-        } else if (CardinalEdge.SOUTH.equals(homeEdge)) {
-            msg.append("South");
-            edgeCoords = new Coords(position.getX(), boardHeight);
-        } else if (CardinalEdge.WEST.equals(homeEdge)) {
-            msg.append("West");
-            edgeCoords = new Coords(0, position.getY());
-        } else if (CardinalEdge.EAST.equals(homeEdge)) {
-            msg.append("East");
-            edgeCoords = new Coords(boardWidth, position.getY());
-        } else {
-            msg.append("Default");
-            getOwner().getLogger().warning("Invalid home edge. Defaulting to NORTH.");
-            edgeCoords = new Coords(boardWidth / 2, 0);
+        int width = game.getBoard().getWidth();
+        int height = game.getBoard().getHeight();
+
+        int distance;
+        switch (homeEdge) {
+            case NORTH: {
+                distance = position.getY();
+                break;
+            }
+            case SOUTH: {
+                distance = height - position.getY() - 1;
+                break;
+            }
+            case WEST: {
+                distance = position.getX();
+                break;
+            }
+            case EAST: {
+                distance = width - position.getX() - 1;
+                break;
+            }
+            default: {
+                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
+                distance = position.getY();
+            }
         }
-        msg.append(edgeCoords.toFriendlyString());
 
-        int distance = edgeCoords.distance(position);
-        msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
-
-        getOwner().getLogger().debug(msg.toString());
         return distance;
     }
 

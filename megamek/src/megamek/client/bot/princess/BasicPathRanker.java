@@ -521,7 +521,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     @Override
     protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
-                               double fallTolerance, int distanceHome,
+                               double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
@@ -781,47 +781,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             minimum = height - position.getY();
         }
         return minimum;
-    }
-
-    /**
-     * Returns distance to the unit's home edge.
-     * Gives the distance to the closest edge
-     *
-     * @param position Final coordinates of the proposed move.
-     * @param homeEdge Unit's home edge.
-     * @param game     The {@link IGame} currently in play.
-     * @return The distance to the unit's home edge.
-     */
-    @Override
-    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        int width = game.getBoard().getWidth();
-        int height = game.getBoard().getHeight();
-
-        int distance;
-        switch (homeEdge) {
-            case NORTH: {
-                distance = position.getY();
-                break;
-            }
-            case SOUTH: {
-                distance = height - position.getY() - 1;
-                break;
-            }
-            case WEST: {
-                distance = position.getX();
-                break;
-            }
-            case EAST: {
-                distance = width - position.getX() - 1;
-                break;
-            }
-            default: {
-                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
-                distance = position.getY();
-            }
-        }
-
-        return distance;
     }
 
     double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {

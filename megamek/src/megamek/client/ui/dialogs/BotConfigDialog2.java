@@ -73,7 +73,8 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     private JButton addUnitButton;
     private JButton removeTargetButton;
     private JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.princessHelpButtonCaption"));
-    private JButton savePreset = new JButton("Save as Preset...");
+    private JButton savePreset = new JButton("Save");
+    private JButton saveNewPreset = new JButton("Save as New Preset...");
     private JList<String> targetsList;
     private DefaultListModel<String> targetsListModel = new DefaultListModel<>();
     private MMToggleButton forcedWithdrawalCheck;
@@ -293,6 +294,16 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
               Messages.getString("BotConfigDialog.fallShameSliderMax"),
               Messages.getString("BotConfigDialog.fallShameToolTip"),
               Messages.getString("BotConfigDialog.fallShameSliderTitle")));
+        
+//        var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        buttonPanel.setAlignmentX(SwingConstants.CENTER);
+        result.add(buttonPanel);
+        
+        savePreset.addActionListener(this);
+        buttonPanel.add(savePreset);
+        savePreset.addActionListener(this);
+        buttonPanel.add(saveNewPreset);
 
         return result;
     }
@@ -454,25 +465,25 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
 
     protected void setPrincessFields() {
         verbosityCombo.setSelectedIndex(0);
-        forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
-        autoFleeCheck.setSelected(princessBehavior.shouldAutoFlee());
         selfPreservationSlidebar.setValue(princessBehavior.getSelfPreservationIndex());
         aggressionSlidebar.setValue(princessBehavior.getHyperAggressionIndex());
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
-        homeEdgeCombo.setSelectedItem(princessBehavior.getDestinationEdge());
-        homeEdgeCombo.setEnabled(autoFleeCheck.isSelected());
-        retreatEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
-        retreatEdgeCombo.setEnabled(forcedWithdrawalCheck.isSelected());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
-        targetsListModel.clear();
-        for (String t : princessBehavior.getStrategicBuildingTargets()) {
-            //noinspection unchecked
-            targetsListModel.addElement(BUILDING_TARGET + ": " + t);            
-        }
-        for (int id : princessBehavior.getPriorityUnitTargets()) {
-            targetsListModel.addElement(UNIT_TARGET + ": " + id);
-        }
+//        forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
+//        autoFleeCheck.setSelected(princessBehavior.shouldAutoFlee());
+//        homeEdgeCombo.setSelectedItem(princessBehavior.getDestinationEdge());
+//        homeEdgeCombo.setEnabled(autoFleeCheck.isSelected());
+//        retreatEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
+//        retreatEdgeCombo.setEnabled(forcedWithdrawalCheck.isSelected());
+//        targetsListModel.clear();
+//        for (String t : princessBehavior.getStrategicBuildingTargets()) {
+//            //noinspection unchecked
+//            targetsListModel.addElement(BUILDING_TARGET + ": " + t);            
+//        }
+//        for (int id : princessBehavior.getPriorityUnitTargets()) {
+//            targetsListModel.addElement(UNIT_TARGET + ": " + id);
+//        }
     }
 
     private JPanel buildSlider(JSlider thisSlider, String minMsgProperty, String maxMsgProperty, String toolTip, String title) {
@@ -506,10 +517,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         
         princessHelpButton.addActionListener(this);
         result.add(princessHelpButton);
-        
-        var savePreset = new JButton("Save as Preset...");
-        savePreset.addActionListener(this);
-        result.add(savePreset);
+
 
         return result;
     }
@@ -579,20 +587,19 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
         BehaviorSettings tempBehavior = new BehaviorSettings();
 
         try {
-            tempBehavior.setDescription((String) princessBehaviorNames.getSelectedItem());
+            tempBehavior.setDescription(presetsList.getSelectedValue());
         } catch (PrincessException e) {
             handleError(e);
         }
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
-        tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
-        tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setDestinationEdge((CardinalEdge) homeEdgeCombo.getSelectedItem());
-        tempBehavior.setRetreatEdge((CardinalEdge) retreatEdgeCombo.getSelectedItem());
+//        tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
+//        tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
+//        tempBehavior.setDestinationEdge((CardinalEdge) homeEdgeCombo.getSelectedItem());
+//        tempBehavior.setRetreatEdge((CardinalEdge) retreatEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
-        tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             String[] target = targetsListModel.get(i).split(":");
             if (BUILDING_TARGET.equalsIgnoreCase(target[0].trim())) {
@@ -663,8 +670,13 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
             removeTargetButton.setEnabled(!targetsList.isSelectionEmpty());
             
         } else if (event.getSource() == presetsList) {
-            getPresetPrincessBehavior();
-            setPrincessFields();
+            if (presetsList.isSelectionEmpty()) { // OR selectedBehavior == chosenBehavior
+                savePreset.setEnabled(false);
+            } else {
+                savePreset.setEnabled(true);
+                getPresetPrincessBehavior();
+                setPrincessFields();
+            }
         }
     }
 
@@ -735,7 +747,7 @@ public class BotConfigDialog2 extends AbstractButtonDialog implements ActionList
     }
     
     private void addBehaviorPreset() {
-//        savePrincessProperties();
+        savePrincessProperties();
         updatePresets();
         presetsChanged = true;
     }

@@ -77,9 +77,6 @@ public final class Configuration {
     /** The default board backgrounds directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
 
-    /** The default random names directory (under the data directory). */
-    private static final String DEFAULT_DIR_NAME_NAMES = "names";
-
     /** The default unit files directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_UNITS = "mechfiles";
 
@@ -476,35 +473,6 @@ public final class Configuration {
      */
     public static File portraitImagesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_PORTRAIT_IMAGES);
-    }
-
-    /**
-     * Return the configured names directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
-     *
-     * @return {@link File} containing the path to the names directory.
-     */
-    public static File namesDir() {
-        lock.readLock().lock();
-        try {
-            return (names_dir != null) ? names_dir : new File(dataDir(),
-                    DEFAULT_DIR_NAME_NAMES);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Set the names directory to an arbitrary location (<b>not</b> relative to
-     * the data directory).
-     *
-     * @param names_dir_path
-     *            The path to the names directory.
-     */
-    public static void setNamesDir(final File names_dir_path) {
-        lock.writeLock().lock();
-        names_dir = names_dir_path;
-        lock.writeLock().unlock();
     }
 
     /**

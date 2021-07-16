@@ -20,7 +20,18 @@ package megamek.client.ui.swing.boardview;
 
 /** The style of unit label display (full, shortened, show the nickname, etc.) */
 public enum LabelDisplayStyle { 
-    FULL, ABBREV, NICKNAME, CHASSIS, ONLY_NICKNAME, ONLY_STATUS;
+    FULL("Chassis and model"), 
+    ABBREV("Abbreviated chassis and model / Meks only model"), 
+    NICKNAME("Pilot or unit nickname  / chassis"), 
+    CHASSIS("Chassis only"), 
+    ONLY_NICKNAME("Only pilot or unit nickname"), 
+    ONLY_STATUS("No labels");
+    
+    LabelDisplayStyle(String d) {
+        description = d;
+    }
+    
+    public final String description;
     
     public LabelDisplayStyle next() { 
         switch (this) {

@@ -396,7 +396,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
-        if(aaa.getTarget(game).isOffBoard()) {
+        Targetable updatedTarget = aaa.getTarget(game);
+        
+        // the attack's target may have been destroyed or fled since the attack was generated
+        // so we need to carry out offboard/null checks against the "current" version of the target.
+        if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
             int actualDamage = df.damage - (df.falloff * targetPos.distance(target.getPosition()));
             Coords effectiveTargetPos = aaa.getCoords();
@@ -406,7 +410,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             
             if(actualDamage > 0) {
-                AreaEffectHelper.artilleryDamageEntity((Entity) aaa.getTarget(game), actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
+                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
                     effectiveTargetPos, atype, targetPos, false, ae, null, altitude, vPhaseReport, server);
             }
         } else {

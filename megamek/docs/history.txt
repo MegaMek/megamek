@@ -22,6 +22,8 @@ VERSION HISTORY:
 + PR #3010: StatusBarPhaseDisplay Code cleanup
 + PR #3011: Fixes for multiple game-freezing issues relating to counter-battery fire against previously destroyed units
 + PR #2968: Prevent TAG from attempting to designate targets for hostile incoming homing ordnance
++ PR #3023: Allow UUID Serialization
++ PR #3022: Preventing three Compute::getTargetTotalNP NPEs
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

@@ -20,13 +20,13 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import megamek.client.ui.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -359,31 +359,41 @@ public class LosEffects {
      * terrain between the attacker and target. Checks to see if the attacker
      * and target are at an angle where the LOS line will pass between two
      * hexes. If so, calls losDivided, otherwise calls losStraight.
+     *
+     * @param game the game to calculate using
+     * @param attacker the attacker, which may be null. If it is, the view is blocked.
+     * @param target the target, which may be null. If it is, the view is blocked.
+     * @param spotting if the person is spotting
+     * @return the found LOS Effects
      */
     public static LosEffects calculateLOS(final IGame game, final @Nullable Entity attacker,
                                           final @Nullable Targetable target, final boolean spotting) {
-        // we need an extra step here, because units with secondary position can calculate LoS
-        // from hexes other than that returned from getPosition()
-        // create a vector of attacker position and a vector of target positions - double loop
-        // through them both and select the best one
-        Vector<Coords> attackerPositions = new Vector<>();
-        attackerPositions.add(attacker.getPosition());
+        if ((attacker == null) || (target == null)) {
+            return calculateLOS(game, attacker, target,
+                    (attacker == null) ? null : attacker.getPosition(),
+                    (target == null) ? null : target.getPosition(), spotting);
+        }
+
+        // We need to create Attacker and Target position lists because they might have secondary
+        // positions that would be better
+        final List<Coords> attackerPositions = new ArrayList<>();
         // if a grounded DropShip is the attacker, then it gets to choose the best secondary position for LoS
         if ((attacker instanceof Dropship) && !attacker.getSecondaryPositions().isEmpty()) {
-            attackerPositions = new Vector<>();
             for (final int key : attacker.getSecondaryPositions().keySet()) {
                 attackerPositions.add(attacker.getSecondaryPositions().get(key));
             }
+        } else {
+            attackerPositions.add(attacker.getPosition());
         }
 
-        Vector<Coords> targetPositions = new Vector<>();
-        targetPositions.add(target.getPosition());
+        final List<Coords> targetPositions = new ArrayList<>();
         // if a grounded DropShip is the target, then the attacker chooses the best secondary position
         if ((target instanceof Dropship) && !target.getSecondaryPositions().isEmpty()) {
-            targetPositions = new Vector<>();
             for (final int key : target.getSecondaryPositions().keySet()) {
                 targetPositions.add(target.getSecondaryPositions().get(key));
             }
+        } else {
+            targetPositions.add(target.getPosition());
         }
 
         LosEffects bestLOS = null;
@@ -397,6 +407,11 @@ public class LosEffects {
                 }
             }
         }
+
+        if (bestLOS == null) {
+            bestLOS = calculateLOS(game, attacker, target, attacker.getPosition(), target.getPosition(), spotting);
+        }
+
         bestLOS.targetLoc = target.getPosition();
         return bestLOS;
     }

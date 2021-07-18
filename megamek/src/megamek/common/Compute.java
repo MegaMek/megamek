@@ -2873,42 +2873,34 @@ public class Compute {
         int targetId = target.getTargetId();
         Coords position = target.getPosition();
 
-        //First, handle buildings versus entities, since they are handled differently.
-        if(targetType == Targetable.TYPE_BUILDING) {
-            //Buildings are a simple sum of their current CF and armor values.
+        // First, handle buildings versus entities, since they are handled differently.
+        if (targetType == Targetable.TYPE_BUILDING) {
+            // Buildings are a simple sum of their current CF and armor values.
             Building parentBuilding = game.getBoard().getBuildingAt(position); //the building the targeted hex belongs to. We have to get this and then get values for the specific hex internally to it.
             int targetCF = parentBuilding.getCurrentCF(position);
             int targetArmor = parentBuilding.getArmor(position);
             return targetCF + targetArmor;
         } else if (targetType == Targetable.TYPE_ENTITY) {
-            //I don't *think* we have to handle infantry differently here- I think these methods should return the total number of men remaining as internal structure.
+            //I don't *think* we have to handle infantry differently here - I think these methods should return the total number of men remaining as internal structure.
             Entity targetEntity = game.getEntity(targetId);
 
-            if (targetEntity instanceof GunEmplacement) { //If this is a gun emplacement, handle it as the building hex it is in.
-                Building parentBuilding = game.getBoard().getBuildingAt(position);
-                int targetCF = parentBuilding.getCurrentCF(position);
-                int targetArmor = parentBuilding.getArmor(position);
-                return targetCF + targetArmor;
+            if (targetEntity == null) {
+                return 0;
+            } else if (targetEntity instanceof GunEmplacement) {
+                // If this is a gun emplacement, handle it as the building hex it is in.
+                final Building parentBuilding = game.getBoard().getBuildingAt(position);
+                return (parentBuilding == null) ? 0
+                        : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
+            } else {
+                return targetEntity.getTotalArmor() + targetEntity.getTotalInternal();
             }
-            int targetArmor = targetEntity.getTotalArmor();
-            int targetStructure = targetEntity.getTotalInternal();
-            return targetArmor + targetStructure;
         } else if (targetType == Targetable.TYPE_HEX_CLEAR) {
             // clearing a hex - the "HP" is the terrain factor of destroyable terrain on this hex
             IHex mhex = game.getBoard().getHex(position);
-            int terrainTypes[] = mhex.getTerrainTypes();
             int totalTF = 0;
-            
-            for (int i = 0; i < terrainTypes.length; i++) {
-                int tf = 0;
-                int terType = terrainTypes[i];
-                if (mhex.containsTerrain(terType)) {
-                    tf = mhex.getTerrain(terType).getTerrainFactor();
-                }
-                
-                totalTF += tf;
+            for (final int terrainType : mhex.getTerrainTypes()) {
+                totalTF += mhex.containsTerrain(terrainType) ? mhex.getTerrain(terrainType).getTerrainFactor() : 0;
             }
-            
             return totalTF;
         } else { //something else, e.g. terrain. We probably don't need to handle it for now.
             return 0;

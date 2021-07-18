@@ -355,10 +355,9 @@ public class LosEffects {
     }
 
     /**
-     * Returns a LosEffects object representing the LOS effects of intervening
-     * terrain between the attacker and target. Checks to see if the attacker
-     * and target are at an angle where the LOS line will pass between two
-     * hexes. If so, calls losDivided, otherwise calls losStraight.
+     * Returns a LosEffects object representing the LOS effects of intervening terrain between the
+     * attacker and target. Checks to see if the attacker and target are at an angle where the LOS
+     * line will pass between two hexes. If so, calls losDivided, otherwise calls losStraight.
      *
      * @param game the game to calculate using
      * @param attacker the attacker, which may be null. If it is, the view is blocked.
@@ -377,8 +376,8 @@ public class LosEffects {
         // We need to create Attacker and Target position lists because they might have secondary
         // positions that would be better
         final List<Coords> attackerPositions = new ArrayList<>();
-        // if a grounded DropShip is the attacker, then it gets to choose the best secondary position for LoS
-        if ((attacker instanceof Dropship) && !attacker.getSecondaryPositions().isEmpty()) {
+        // if a multi-hex entity is the attacker, then it gets to choose the best secondary position for LoS
+        if (!attacker.getSecondaryPositions().isEmpty()) {
             for (final int key : attacker.getSecondaryPositions().keySet()) {
                 attackerPositions.add(attacker.getSecondaryPositions().get(key));
             }
@@ -387,8 +386,8 @@ public class LosEffects {
         }
 
         final List<Coords> targetPositions = new ArrayList<>();
-        // if a grounded DropShip is the target, then the attacker chooses the best secondary position
-        if ((target instanceof Dropship) && !target.getSecondaryPositions().isEmpty()) {
+        // if a multi-hex entity is the target, then the attacker chooses the best secondary position
+        if (!target.getSecondaryPositions().isEmpty()) {
             for (final int key : target.getSecondaryPositions().keySet()) {
                 targetPositions.add(target.getSecondaryPositions().get(key));
             }

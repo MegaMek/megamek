@@ -24,6 +24,7 @@ VERSION HISTORY:
 + PR #2968: Prevent TAG from attempting to designate targets for hostile incoming homing ordnance
 + PR #3023: Allow UUID Serialization
 + PR #3022: Preventing three Compute::getTargetTotalNP NPEs
++ PR #3021: Fixing Calculate LOS NPEs
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

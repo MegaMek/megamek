@@ -635,24 +635,22 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link LosEffects#calculateLos(IGame, int, Targetable, Coords, Coords, boolean)}.
+     * Returns the value of {@link LosEffects#calculateLOS(IGame, Entity, Targetable, Coords, Coords, boolean)}.
      *
      * @param game            The {@link IGame} being played.
-     * @param shooterId       The id of the shooting unit.
+     * @param shooter         The shooting unit.
      * @param target          The unit being shot at as a {@link Targetable} object.
      * @param shooterPosition The current {@link Coords} of the shooter.
      * @param targetPosition  The current {@link Coords} of the target.
-     * @param spotting        Set TRUE if the shooter is simply spotting for indrect fire.
+     * @param spotting        Set TRUE if the shooter is simply spotting for indirect fire.
      * @return The resulting {@link LosEffects}.
      */
     @StaticWrapper
-    LosEffects getLosEffects(final IGame game,
-                             final int shooterId,
-                             final Targetable target,
-                             final Coords shooterPosition,
-                             final Coords targetPosition,
-                             final boolean spotting) {
-        return LosEffects.calculateLos(game, shooterId, target, shooterPosition, targetPosition, spotting);
+    LosEffects getLosEffects(final IGame game, final @Nullable Entity shooter,
+                             final @Nullable Targetable target,
+                             final @Nullable Coords shooterPosition,
+                             final @Nullable Coords targetPosition, final boolean spotting) {
+        return LosEffects.calculateLOS(game, shooter, target, shooterPosition, targetPosition, spotting);
     }
 
     /**
@@ -860,8 +858,8 @@ public class FireControl {
 
         // There is kindly already a class that will calculate line of sight for me
         // todo take into account spotting for indirect fire.
-        final LosEffects losEffects = getLosEffects(game, shooter.getId(), target, shooterState.getPosition(),
-                                                    targetState.getPosition(), false);
+        final LosEffects losEffects = getLosEffects(game, shooter, target, shooterState.getPosition(),
+                targetState.getPosition(), false);
 
         // water is a separate los effect
         final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
@@ -2312,7 +2310,7 @@ public class FireControl {
     	// loop through all enemy targets, pick a random one out of the closest.
     	// future revision: pick one that's the least evasive
     	for(Targetable target : enemyTargets) {
-    		LosEffects effects = LosEffects.calculateLos(spotter.getGame(), spotter.getId(), target);
+    		LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS
     		if (effects.canSee()) {
@@ -2356,9 +2354,7 @@ public class FireControl {
 
             // If they are my enemy and we can either see them or have IDF capability
             if (entity.isTargetable()) {
-
-                final LosEffects effects =
-                        LosEffects.calculateLos(game, shooter.getId(), entity);
+                final LosEffects effects = LosEffects.calculateLOS(game, shooter, entity);
                 
                 // if we're in LOS or we have IDF capability
                 if (effects.canSee() || shooterHasIDF) {

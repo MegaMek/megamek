@@ -954,8 +954,7 @@ public class Compute {
                     .getTargetId())) || (taggedBy == other.getId()))
                 && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLos(game, other.getId(),
-                        target, true);
+                LosEffects los = LosEffects.calculateLOS(game, other, target, true);
                 ToHitData mods = los.losModifiers(game);
                 // If the target isn't spotted, can't target
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -1357,7 +1356,7 @@ public class Compute {
         if (isIndirect
             && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
             && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-            && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+            && LosEffects.calculateLOS(game, ae, target).canSee()
             && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
             && !(wtype instanceof MekMortarWeapon)) {
@@ -1875,7 +1874,7 @@ public class Compute {
             }
 
             // Must have LoS, Compute.canSee considers sensors and visual range
-            if (!LosEffects.calculateLos(game, friend.getId(), target).canSee()) {
+            if (!LosEffects.calculateLOS(game, friend, target).canSee()) {
                 continue;
             }
 
@@ -4214,7 +4213,7 @@ public class Compute {
 
         // check visual range based on planetary conditions
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
         int visualRange = getVisualRange(game, ae, los, teIlluminated);
 
@@ -4780,10 +4779,9 @@ public class Compute {
         }
 
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
-        boolean isVisible = los.canSee()
-                            && Compute.inVisualRange(game, los, ae, target);
+        boolean isVisible = los.canSee() && Compute.inVisualRange(game, los, ae, target);
         if (useSensors) {
             isVisible = isVisible
                     || Compute.inSensorRange(game, los, ae, target, allECMInfo);
@@ -4870,7 +4868,7 @@ public class Compute {
     public static int getSensorRangeByBracket(IGame game, Entity ae, @Nullable Targetable target,
                                               @Nullable LosEffects los) {
         if (los == null) {
-            los = LosEffects.calculateLos(game, ae.getId(), target);
+            los = LosEffects.calculateLOS(game, ae, target);
         }
 
         Sensor sensor = ae.getActiveSensor();

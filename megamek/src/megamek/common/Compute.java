@@ -2865,7 +2865,7 @@ public class Compute {
     }
 
     /**
-     * Calculates the current theoretical damage absorbable(armor+structure, etc) by the given target.
+     * Calculates the current theoretical damage absorbable (armor+structure, etc) by the given target.
      * Used as a measure of the potential durability of the target under fire.
      */
     public static int getTargetTotalHP(IGame game, Targetable target) {
@@ -2876,10 +2876,10 @@ public class Compute {
         // First, handle buildings versus entities, since they are handled differently.
         if (targetType == Targetable.TYPE_BUILDING) {
             // Buildings are a simple sum of their current CF and armor values.
-            Building parentBuilding = game.getBoard().getBuildingAt(position); //the building the targeted hex belongs to. We have to get this and then get values for the specific hex internally to it.
-            int targetCF = parentBuilding.getCurrentCF(position);
-            int targetArmor = parentBuilding.getArmor(position);
-            return targetCF + targetArmor;
+            // the building the targeted hex belongs to. We have to get this and then get values for the specific hex internally to it.
+            final Building parentBuilding = game.getBoard().getBuildingAt(position);
+            return (parentBuilding == null) ? 0
+                    : parentBuilding.getCurrentCF(position) + parentBuilding.getArmor(position);
         } else if (targetType == Targetable.TYPE_ENTITY) {
             //I don't *think* we have to handle infantry differently here - I think these methods should return the total number of men remaining as internal structure.
             Entity targetEntity = game.getEntity(targetId);
@@ -2902,7 +2902,7 @@ public class Compute {
                 totalTF += mhex.containsTerrain(terrainType) ? mhex.getTerrain(terrainType).getTerrainFactor() : 0;
             }
             return totalTF;
-        } else { //something else, e.g. terrain. We probably don't need to handle it for now.
+        } else { // something else, e.g. terrain. We probably don't need to handle it for now.
             return 0;
         }
     }

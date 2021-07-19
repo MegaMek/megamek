@@ -982,17 +982,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     @Override
                     public void performAction() {
                         GUIPreferences guip = GUIPreferences.getInstance();
-                        boolean drawLabels = guip.getBoolean(
-                                GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL);
-                        guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
-                                !drawLabels);
+                        LabelDisplayStyle style = guip.getUnitLabelStyle().next();
+                        guip.setUnitLabelStyle(style);
+                        clientgui.systemMessage("Changed unit label display style to: " + style.description);
                         updateEntityLabels();
-                        for (Sprite s: wreckSprites) {
-                            s.prepare();
-                        }
-                        for (Sprite s: isometricWreckSprites) {
-                            s.prepare();
-                        }
                     }
 
                 });

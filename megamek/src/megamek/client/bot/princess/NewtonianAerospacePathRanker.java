@@ -79,8 +79,8 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         }
 
         // If I don't have LoS, I can't do damage. We're on a space map so this probably is unnecessary.
-        LosEffects losEffects =
-        LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
+        LosEffects losEffects = LosEffects.calculateLOS(game, me, enemy, path.getFinalCoords(),
+                enemy.getPosition(), false);
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -221,7 +221,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         OffBoardDirection offBoardDirection = calculateOffBoardDirection(path.getEntity(), path.getFinalCoords(), path.getFinalVectors());
 
         // if we want to flee the board from the edge in question, we're ok
-        if(getOwner().isFallingBack(path.getEntity()) &&
+        if (getOwner().isFallingBack(path.getEntity()) &&
                 (getOwner().getHomeEdge(path.getEntity()) == CardinalEdge.getCardinalEdge(offBoardDirection.getValue()))) {
             return 0.0;
         }

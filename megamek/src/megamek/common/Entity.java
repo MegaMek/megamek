@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
@@ -2622,7 +2621,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (transporter == null) {
                 transporter = game.getOutOfGameEntity(conveyance);
             }
-            return transporter.getFacing();
+            
+            if (transporter != null) {
+                return transporter.getFacing();
+            }
         }
         return facing;
     }
@@ -15497,21 +15499,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return an optional collection of sub-entities, if this entity is considered a grouping of them.
      */
-    public Optional<List<Entity>> getSubEntities() {
-        return Optional.empty();
+    public List<Entity> getSubEntities() {
+        return Collections.emptyList();
     }
 
     /**
-     * The default implementation calls getSubEntities(), then filters them. This might not be
-     * the optimal code for many applications, so feel free to override both if needed.
+     * A list of all active sub-entities. In most cases, this is simply an empty list.
      *
      * @return an optional collection of sub-entities, if this entity is considered a grouping of them,
      *         pre-filtered to only contain active (non-destroyed and non-doomed) entities.
      */
-    public Optional<List<Entity>> getActiveSubEntities() {
-        return getSubEntities().map(
-            ents -> ents.stream().filter(
-                ent -> !(ent.isDestroyed() || ent.isDoomed())).collect(Collectors.toList()));
+    public List<Entity> getActiveSubEntities() {
+        return Collections.emptyList();
     }
 
     /**

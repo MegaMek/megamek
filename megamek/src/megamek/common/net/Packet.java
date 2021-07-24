@@ -14,6 +14,8 @@
 
 package megamek.common.net;
 
+import megamek.common.annotations.Nullable;
+
 /**
  * Application layer data packet used to exchange information between client and
  * server.
@@ -199,11 +201,8 @@ public class Packet {
      * @param index the index of the desired object
      * @return the object at the specified index
      */
-    public Object getObject(int index) {
-        if (index >= data.length) {
-            return null;
-        }
-        return data[index];
+    public @Nullable Object getObject(final int index) {
+        return (index < data.length) ? data[index] : null;
     }
 
     /**
@@ -213,7 +212,7 @@ public class Packet {
      * @return the <code>int</code> value of the object at the specified index
      */
     public int getIntValue(int index) {
-        return ((Integer) getObject(index)).intValue();
+        return (Integer) getObject(index);
     }
 
     /**

@@ -1236,9 +1236,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** Updates the team choice combobox to show the selected player's team. */
     private void refreshTeams() {
-        comboTeam.removeActionListener(lobbyListener);
-        comboTeam.setSelectedIndex(localPlayer().getTeam());
-        comboTeam.addActionListener(lobbyListener);
+        if (localPlayer() != null) {
+            comboTeam.removeActionListener(lobbyListener);
+            comboTeam.setSelectedIndex(localPlayer().getTeam());
+            comboTeam.addActionListener(lobbyListener);
+        }
     }
 
     /**

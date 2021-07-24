@@ -116,8 +116,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
         
-        layoutScreen();
-        
         setupButtonPanel();
     }
 
@@ -416,10 +414,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

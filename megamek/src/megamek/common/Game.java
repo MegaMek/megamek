@@ -523,7 +523,7 @@ public class Game implements Serializable, IGame {
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player)) {
+            if ((entity != null) && player.equals(entity.getOwner())) {
                 count++;
             }
         }
@@ -1234,7 +1234,11 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
+                        return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    } else {
+                        return null;
+                    }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
                     return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
                 case Targetable.TYPE_INARC_POD:

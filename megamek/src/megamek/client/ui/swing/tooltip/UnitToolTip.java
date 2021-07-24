@@ -652,7 +652,7 @@ public final class UnitToolTip {
         }
 
         // Spotting
-        if (entity.isSpotting()) {
+        if (entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
             result.append(addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName()));
         }
 

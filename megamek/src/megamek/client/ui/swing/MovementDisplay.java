@@ -25,7 +25,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -349,7 +348,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         + Messages.getString("MovementDisplay.butDone") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
         setupButtonPanel();
 
         gear = MovementDisplay.GEAR_LAND;
@@ -2777,6 +2775,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         if (!ce.isAirborne()
                 && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && game.getBoard().contains(pos)
                 && !Compute.getMountableUnits(ce, pos,
                     elev + game.getBoard().getHex(pos).surface(), game).isEmpty()) {
             setMountEnabled(true);
@@ -4207,7 +4206,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
-        int numFighters = ce().getActiveSubEntities().orElse(Collections.emptyList()).size();
+        int numFighters = ce().getActiveSubEntities().size();
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
@@ -4530,9 +4529,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
         if (!clientgui.getClient().isMyTurn()) {

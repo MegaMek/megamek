@@ -81,7 +81,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public static enum TargetingCommand implements PhaseCommand {
         FIRE_NEXT("fireNext"),
-        FIRE_TWIST("fireTwist"),
         FIRE_FIRE("fireFire"),
         FIRE_SKIP("fireSkip"),
         FIRE_NEXT_TARG("fireNextTarg"),
@@ -133,8 +132,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     private boolean shiftheld;
 
-    private boolean twisting;
-
     private final IGame.Phase phase;
 
     private Entity[] visibleTargets;
@@ -179,8 +176,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
         
         MegaMekController controller = clientgui.controller;
@@ -206,51 +201,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         removeLastFiring();
                     }
                 });
-        // Register the action for TWIST_LEFT
-        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
-                new CommandAction() {
 
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(0);
-                    }
-                });
-
-        // Register the action for TWIST_RIGHT
-        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
-                                || !display.isVisible()
-                                || display.isIgnoringEvents()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
-                    @Override
-                    public void performAction() {
-                        updateFlipArms(false);
-                        torsoTwist(1);
-                    }
-                });
      // Register the action for FIRE
         controller.registerCommandAction(KeyCommandBind.FIRE.cmd,
                 new CommandAction() {
@@ -575,10 +526,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             // Update the menu bar.
             clientgui.getMenuBar().setEntity(ce());
 
-            // 2003-12-29, nemchenk -- only twist if crew conscious
-            setTwistEnabled(ce().canChangeSecondaryFacing()
-                            && ce().getCrew().isActive());
-            setFlipArmsEnabled(ce().canFlipArms());
+            setFlipArmsEnabled(ce().canFlipArms() && ce().getCrew().isActive());
             updateSearchlight();
 
             setFireModeEnabled(true);
@@ -712,7 +660,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void disableButtons() {
         setFireEnabled(false);
         setSkipEnabled(false);
-        setTwistEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
         setFlipArmsEnabled(false);
@@ -1120,49 +1067,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     /**
-     * Torso twist in the proper direction.
-     */
-    void torsoTwist(Coords cTarget) {
-        int direction = ce().getFacing();
-
-        if (null != cTarget) {
-            direction = ce().clipSecondaryFacing(
-                    ce().getPosition().direction(cTarget));
-        }
-
-        if (direction != ce().getSecondaryFacing()) {
-            clearAttacks();
-            attacks.addElement(new TorsoTwistAction(cen, direction));
-            ce().setSecondaryFacing(direction);
-            refreshAll();
-        }
-    }
-
-    /**
-     * Torso twist to the left or right
-     *
-     * @param twistDirection An <code>int</code> specifying wether we're twisting left or
-     *                       right, 0 if we're twisting to the left, 1 if to the right.
-     */
-
-    void torsoTwist(int twistDirection) {
-        int direction = ce().getSecondaryFacing();
-        if (twistDirection == 0) {
-            clearAttacks();
-            direction = ce().clipSecondaryFacing((direction + 5) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
-            ce().setSecondaryFacing(direction);
-            refreshAll();
-        } else if (twistDirection == 1) {
-            clearAttacks();
-            direction = ce().clipSecondaryFacing((direction + 7) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
-            ce().setSecondaryFacing(direction);
-            refreshAll();
-        }
-    }
-
-    /**
      * Cache the list of visible targets. This is used for the 'next target'
      * button.
      * <p/>
@@ -1309,13 +1213,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld || twisting) {
+            if (shiftheld) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
             }
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-            twisting = false;
             clientgui.getBoardView().select(b.getCoords());
         }
     }
@@ -1333,7 +1235,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
             } else if (phase == IGame.Phase.PHASE_TARGETING) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
@@ -1487,10 +1388,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
-            return;
-        }
-
         if (!clientgui.getClient().isMyTurn()) {
             return;
         }
@@ -1499,8 +1396,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             fire();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
-        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_TWIST.getCmd())) {
-            twisting = true;
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT_TARG.getCmd())) {
@@ -1527,10 +1422,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        twisting = false;
-
-        torsoTwist(null);
-
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
         attacks.addElement(new FlipArmsAction(cen, armsFlipped));
@@ -1550,11 +1441,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void setFireEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
-    }
-
-    private void setTwistEnabled(boolean enabled) {
-        buttons.get(TargetingCommand.FIRE_TWIST).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {

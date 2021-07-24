@@ -110,4 +110,9 @@ public class Portrait extends AbstractIcon {
         return icon;
     }
     //endregion File I/O
+
+    @Override
+    public Portrait clone() {
+        return new Portrait(getCategory(), getFilename());
+    }
 }

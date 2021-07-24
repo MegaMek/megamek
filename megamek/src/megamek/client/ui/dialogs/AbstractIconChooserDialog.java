@@ -23,6 +23,7 @@ import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
 import megamek.client.ui.preferences.JSplitPanePreference;
+import megamek.client.ui.preferences.JToggleButtonPreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -132,6 +133,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     protected void setCustomPreferences(final PreferencesNode preferences) {
         super.setCustomPreferences(preferences);
         preferences.manage(new JSplitPanePreference(getChooser().getSplitPane()));
+        preferences.manage(new JToggleButtonPreference(getChooser().getChkIncludeSubdirectories()));
     }
     //endregion Initialization
 

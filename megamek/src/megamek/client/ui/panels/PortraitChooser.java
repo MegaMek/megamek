@@ -25,10 +25,6 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.AbstractDirectory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
     public PortraitChooser(final AbstractIcon icon) {
@@ -42,33 +38,13 @@ public class PortraitChooser extends AbstractIconChooser {
     }
 
     @Override
-    protected Portrait createIcon(String category, String filename) {
+    protected Portrait createIcon(String category, final String filename) {
         return new Portrait(category, filename);
     }
 
     @Override
     public @Nullable Portrait getSelectedItem() {
         return (Portrait) getImageList().getSelectedValue();
-    }
-
-    @Override
-    protected List<AbstractIcon> getItems(String category) {
-        List<AbstractIcon> result = new ArrayList<>();
-
-        // The portraits of the selected category are presented.
-        // When the includeSubDirs flag is true, all categories
-        // below the selected one are also presented.
-        if (includeSubDirs) {
-            for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-                String tcat = catNames.next();
-                if (tcat.startsWith(category)) {
-                    addCategoryItems(tcat, result);
-                }
-            }
-        } else {
-            addCategoryItems(category, result);
-        }
-        return result;
     }
 
     @Override

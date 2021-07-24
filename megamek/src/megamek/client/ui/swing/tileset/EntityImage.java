@@ -90,7 +90,7 @@ public class EntityImage {
 
     static {
         try {
-            DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
+            DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());// TODO : Remove inline file path
         } catch (Exception e) {
             DecalImages = null;
             MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());

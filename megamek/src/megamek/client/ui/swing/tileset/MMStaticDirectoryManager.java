@@ -68,7 +68,7 @@ public class MMStaticDirectoryManager {
             parsePortraitDirectory = false;
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
-                        "", new ImageFileFactory());
+                        new ImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the portraits directory!", e);
             }
@@ -86,7 +86,7 @@ public class MMStaticDirectoryManager {
             // Set parseCamouflageDirectory to false to avoid parsing repeatedly when something fails
             parseCamouflageDirectory = false;
             try {
-                camouflageDirectory = new DirectoryItems(Configuration.camoDir(), "",
+                camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                         new ScaledImageFileFactory());
             } catch (Exception e) {
                 MegaMek.getLogger().error("Could not parse the camo directory!", e);
@@ -105,7 +105,7 @@ public class MMStaticDirectoryManager {
             parseMechTileset = false;
             mechTileset = new MechTileset(Configuration.unitImagesDir());
             try {
-                mechTileset.loadFromFile("mechset.txt");
+                mechTileset.loadFromFile("mechset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
                 MegaMek.getLogger().error("Unable to load mech tileset", e);
             }

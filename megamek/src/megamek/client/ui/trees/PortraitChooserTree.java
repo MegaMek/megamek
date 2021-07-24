@@ -20,12 +20,9 @@ package megamek.client.ui.trees;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.util.StringUtil;
-import megamek.common.util.fileUtils.AbstractDirectory;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import java.util.Iterator;
 
 public class PortraitChooserTree extends AbstractIconChooserTree {
     //region Constructors
@@ -37,18 +34,8 @@ public class PortraitChooserTree extends AbstractIconChooserTree {
     //region Initialization
     @Override
     protected DefaultTreeModel createTreeModel() {
-        final DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        final AbstractDirectory directory = MMStaticDirectoryManager.getPortraits();
-        if (directory != null) {
-            final Iterator<String> categoryNames = directory.getCategoryNames();
-            while (categoryNames.hasNext()) {
-                final String categoryName = categoryNames.next();
-                if (!StringUtil.isNullOrEmpty(categoryName)) {
-                    addCategoryToTree(root, categoryName.split("/"));
-                }
-            }
-        }
-        return new DefaultTreeModel(root);
+        return createTreeModel(new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY),
+                MMStaticDirectoryManager.getPortraits());
     }
     //endregion Initialization
 }

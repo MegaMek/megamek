@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2021 - The Megamek Team. All Rights Reserved.
  *
- * This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
- * MekHQ is free software: you can redistribute it and/or modify
+ * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MekHQ is distributed in the hope that it will be useful,
+ * MegaMek is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.utils;
 
@@ -35,42 +35,41 @@ import megamek.utils.BoardsTagger.Tags;
  * This class scans the boards directory and allows the selection of a random 
  * board based on given size criteria.
  * @author NickAragua
- *
  */
 public class BoardClassifier {
     private static BoardClassifier instance;    
     
     // boards, grouped by tag
-    private Map<Tags, ArrayList<String>> boardsByTag = new HashMap<>();
+    private Map<Tags, List<String>> boardsByTag = new HashMap<>();
     // boards, grouped by height
-    private Map<Integer, ArrayList<String>> boardsByHeight = new HashMap<>();
+    private Map<Integer, List<String>> boardsByHeight = new HashMap<>();
     // boards, grouped by width
-    private Map<Integer, ArrayList<String>> boardsByWidth = new HashMap<>();
+    private Map<Integer, List<String>> boardsByWidth = new HashMap<>();
     
     // function that maps full board paths to partial board paths
     private Map<String, String> boardPaths = new HashMap<>();
     
-    public Map<Tags, ArrayList<String>> getBoardsByTag() {
+    public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
     }
 
-    public void setBoardsByTag(Map<Tags, ArrayList<String>> boardsByTag) {
+    public void setBoardsByTag(Map<Tags, List<String>> boardsByTag) {
         this.boardsByTag = boardsByTag;
     }
 
-    public Map<Integer, ArrayList<String>> getBoardsByHeight() {
+    public Map<Integer, List<String>> getBoardsByHeight() {
         return boardsByHeight;
     }
 
-    public void setBoardsByHeight(Map<Integer, ArrayList<String>> boardsByHeight) {
+    public void setBoardsByHeight(Map<Integer, List<String>> boardsByHeight) {
         this.boardsByHeight = boardsByHeight;
     }
 
-    public Map<Integer, ArrayList<String>> getBoardsByWidth() {
+    public Map<Integer, List<String>> getBoardsByWidth() {
         return boardsByWidth;
     }
 
-    public void setBoardsByWidth(Map<Integer, ArrayList<String>> boardsByWidth) {
+    public void setBoardsByWidth(Map<Integer, List<String>> boardsByWidth) {
         this.boardsByWidth = boardsByWidth;
     }
 
@@ -100,7 +99,7 @@ public class BoardClassifier {
      * operation, so use very sparingly.
      */
     private void scanForBoards() {
-        // Scan the Megamek boards directory
+        // Scan the MegaMek boards directory
         File boardDir = Configuration.boardsDir();
         scanForBoardsInDir(boardDir, "");
         

@@ -91,6 +91,10 @@ public class BoardsTagger {
         public String getName() {
             return tagName;
         }
+        
+        public static Tags parse(String tag) {
+            return Tags.valueOf(tag.replace(AUTO_SUFFIX, ""));
+        }
     }
 
 

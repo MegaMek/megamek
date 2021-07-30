@@ -37,7 +37,7 @@ Weapons:3
 1 Spikes, Left Torso
 1 ISDroneOperatingSystem, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -45,7 +45,7 @@ Foot Actuator
 IS Impact-Resistant
 IS Impact-Resistant
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -103,7 +103,7 @@ Sensors
 -Empty-
 -Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -111,7 +111,7 @@ Foot Actuator
 IS Impact-Resistant
 IS Impact-Resistant
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator

@@ -315,7 +315,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
                             JOptionPane.QUESTION_MESSAGE, null, SharedUtility
                                     .getDisplayArray(eligibleTargets), null);
             choice = SharedUtility.getTargetPicked(eligibleTargets, input);
-        } else if (eligibleTargets.size() == 1) {
+        } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
             choice = eligibleTargets.get(0);
         } else {
             return;

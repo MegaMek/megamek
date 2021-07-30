@@ -4857,7 +4857,7 @@ public class Server implements Runnable {
             Entity tm = game.getEntity(missileId);
             if ((null != tm) && !tm.isDestroyed()
                 && (tm instanceof TeleMissile)) {
-                if (LosEffects.calculateLos(game, entity.getId(), tm).canSee()) {
+                if (LosEffects.calculateLOS(game, entity, tm).canSee()) {
                     ((TeleMissile) tm).setOutContact(false);
                 } else {
                     ((TeleMissile) tm).setOutContact(true);
@@ -10676,7 +10676,7 @@ public class Server implements Runnable {
                 if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
-                    LosEffects le = LosEffects.calculateLos(game, attId, t);
+                    LosEffects le = LosEffects.calculateLOS(game, ae, t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<>();
                     int heatDamage = 0;
@@ -11640,12 +11640,12 @@ public class Server implements Runnable {
                     if (!team.equals(game.getTeamForPlayer(en.getOwner()))) {
                         continue;
                     }
-                    if (LosEffects.calculateLos(game, en.getId(),
+                    if (LosEffects.calculateLOS(game, en,
                             new HexTarget(mf.getCoords(), Targetable.TYPE_HEX_CLEAR)).canSee()) {
                         target = 0;
                         break;
                     }
-                    LosEffects los = LosEffects.calculateLos(game, en.getId(), layer);
+                    LosEffects los = LosEffects.calculateLOS(game, en, layer);
                     if (los.canSee()) {
                         // TODO : need to add mods
                         ToHitData current = new ToHitData(4, "base");
@@ -13481,14 +13481,16 @@ public class Server implements Runnable {
                 boolean firingAtNewHex = false;
                 final ArtilleryAttackAction aaa = (ArtilleryAttackAction) ea;
                 final Entity firingEntity = game.getEntity(aaa.getEntityId());
+                Targetable attackTarget = aaa.getTarget(game);
+                
                 for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
                         && j.hasMoreElements(); ) {
                     WeaponHandler wh = (WeaponHandler) j.nextElement();
                     if (wh.waa instanceof ArtilleryAttackAction) {
                         ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
+                        
                         if ((oaaa.getEntityId() == aaa.getEntityId())
-                            && !oaaa.getTarget(game).getPosition()
-                                .equals(aaa.getTarget(game).getPosition())) {
+                                && !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
                             firingAtNewHex = true;
                         }
                     }
@@ -13501,7 +13503,7 @@ public class Server implements Runnable {
                             public Targetable target = aaa.getTarget(game);
 
                             public boolean accept(Entity entity) {
-                                LosEffects los = LosEffects.calculateLos(game, entity.getId(), target);
+                                LosEffects los = LosEffects.calculateLOS(game, entity, target);
                                 return ((player == entity.getOwnerId()) && !(los.isBlocked())
                                         && entity.isActive());
                             }
@@ -14149,8 +14151,7 @@ public class Server implements Runnable {
                     }
                 }
 
-                LosEffects los = LosEffects.calculateLos(game,
-                        detector.getId(), detected);
+                LosEffects los = LosEffects.calculateLOS(game, detector, detected);
                 if (los.canSee() || dist <= 1) {
                     detected.setHidden(false);
                     entityUpdate(detected.getId());
@@ -29260,7 +29261,7 @@ public class Server implements Runnable {
             EntityTargetPair etp = new EntityTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
-                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                los = LosEffects.calculateLOS(game, spotter, entity);
                 losCache.put(etp, los);
             }
             if (Compute.canSee(game, spotter, entity, useSensors, los,
@@ -29314,7 +29315,7 @@ public class Server implements Runnable {
             EntityTargetPair etp = new EntityTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
-                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                los = LosEffects.calculateLOS(game, spotter, entity);
                 losCache.put(etp, los);
             }
             if (Compute.inSensorRange(game, los, spotter, entity, allECMInfo)) {
@@ -29447,7 +29448,7 @@ public class Server implements Runnable {
                 EntityTargetPair etp = new EntityTargetPair(spotter, e);
                 LosEffects los = losCache.get(etp);
                 if (los == null) {
-                    los = LosEffects.calculateLos(game, spotter.getId(), e);
+                    los = LosEffects.calculateLOS(game, spotter, e);
                     losCache.put(etp, los);
                 }
                 // Otherwise, if they can see the entity in question

@@ -1514,17 +1514,17 @@ public class Princess extends BotClient {
                 BulldozerMovePath prunedPath = movePath.clone();
                 prunedPath.clipToPossible();
                 
-                if(levelingTarget != null) {
-                    LosEffects los = LosEffects.calculateLos(game, mover.getId(), levelingTarget, 
+                if (levelingTarget != null) {
+                    LosEffects los = LosEffects.calculateLOS(game, mover, levelingTarget,
                             prunedPath.getFinalCoords(), levelingTarget.getPosition(), false);
                     
                     // break out of this loop, we can get to the thing we're trying to level this turn, so let's
                     // use normal movement routines to move into optimal position to blow it up
                     // Also set the behavior to "engaged"
                     // so it doesn't hump walls due to "self preservation mods"
-                    if(los.canSee()) {
+                    if (los.canSee()) {
                         // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
-                        if(!forceMoveToContact) {
+                        if (!forceMoveToContact) {
                             getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
                         }
                         
@@ -1539,7 +1539,7 @@ public class Princess extends BotClient {
                 
                 // also return some paths that go a little slower than max speed
                 // in case the faster path would force an unwanted PSR or MASC check 
-                for(MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
+                for (MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
                     prunedPaths.add(childBMP);
                 }
             }

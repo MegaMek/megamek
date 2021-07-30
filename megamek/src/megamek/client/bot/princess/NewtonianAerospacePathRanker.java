@@ -79,8 +79,8 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         }
 
         // If I don't have LoS, I can't do damage. We're on a space map so this probably is unnecessary.
-        LosEffects losEffects =
-        LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
+        LosEffects losEffects = LosEffects.calculateLOS(game, me, enemy, path.getFinalCoords(),
+                enemy.getPosition(), false);
         if (!losEffects.canSee()) {
             return 0;
         }

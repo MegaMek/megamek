@@ -1642,7 +1642,7 @@ public class FireControlTest {
         final LosEffects spyLosEffects = Mockito.spy(new LosEffects());
         Mockito.doReturn(spyLosEffects)
                .when(testFireControl)
-               .getLosEffects(Mockito.any(IGame.class), Mockito.anyInt(), Mockito.any(Targetable.class),
+               .getLosEffects(Mockito.any(IGame.class), Mockito.any(Entity.class), Mockito.any(Targetable.class),
                               Mockito.any(Coords.class), Mockito.any(Coords.class), Mockito.anyBoolean());
         Mockito.doReturn(new ToHitData()).when(spyLosEffects).losModifiers(Mockito.eq(mockGame));
 

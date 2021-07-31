@@ -251,7 +251,7 @@
 	 SLDF_gunslinger
 	 
   Mech Data:
-  	Drawn from Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
+  	From Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
   	
   Translations
      Jörg Harder <joergharder@t-online.de>

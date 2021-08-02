@@ -1369,6 +1369,11 @@ public class Board implements Serializable, IBoard {
     public Enumeration<Building> getBuildings() {
         return buildings.elements();
     }
+    
+    @Override
+    public List<Building> getBuildingsList() {
+        return Collections.unmodifiableList(buildings);
+    }
 
     /**
      * Get the building at the given coordinates.

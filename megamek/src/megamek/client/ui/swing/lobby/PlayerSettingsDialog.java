@@ -30,9 +30,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotConfigDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.UIUtil;
@@ -130,7 +133,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     
     // Initiative Section
     private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
-    private TipTextField fldInit = new TipTextField(3, this);
+    private TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
     private JLabel labConventional = new JLabel(getString(PSD + "labConventional"), SwingConstants.RIGHT); 
@@ -372,10 +375,11 @@ public class PlayerSettingsDialog extends ClientDialog {
             }
 
             // Bot settings button
-            if (butBotSettings.equals(e.getSource())) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, (BotClient) client, false);
+            if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
+                BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
+                var bcd = new BotConfigDialog(clientgui.frame, client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
-                if (!bcd.dialogAborted && client instanceof Princess) {
+                if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             }

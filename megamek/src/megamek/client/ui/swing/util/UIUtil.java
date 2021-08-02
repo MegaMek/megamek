@@ -25,6 +25,8 @@ import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -36,6 +38,9 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.IPlayer;
 
 public final class UIUtil {
+
+    /** The width for a tooltip displayed to the side of a dialog uising one of TipXX classes. */
+    private static final int TOOLTIP_WIDTH = 300;
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
@@ -46,6 +51,8 @@ public final class UIUtil {
     public final static String WARNING_SIGN = " \u26A0 ";
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
+    public static final String BOT_MARKER = " \u259A ";
+    
     
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();
@@ -339,8 +346,13 @@ public final class UIUtil {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
+    /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
+    public static void adjustDialog(JDialog dialog) {
+        adjustDialog(dialog.getContentPane());
+    }
+    
     /** 
-     * Applies the current gui scale to a given dialog or whatever Container is given.
+     * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
      * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
      * gui scale.
@@ -568,29 +580,105 @@ public final class UIUtil {
     }
     
     /** 
-     * A JTextField with a specialized tooltip display. Displays the tooltip to the right side
+     * A JList with a specialized tooltip display. Displays the tooltip to the right side
      * of the parent dialog, not following the mouse. 
+     */
+    public static class TipList<E> extends JList<E> {
+        
+        public TipList() {
+            super();
+        }
+        
+        public TipList(ListModel<E> dataModel) {
+            super(dataModel);
+        }
+        
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A JTextField with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. Can also display a hint text 
+     * such as "..., ..." when empty.
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipTextField extends JTextField {
         private static final long serialVersionUID = -2226586551388519966L;
         
-        private JDialog parentDialog;
-
-        public TipTextField(int n, JDialog parent) {
+        String hintText;
+        
+        public TipTextField(int n) {
             super(n);
-            parentDialog = parent;
         }
         
-        public TipTextField(String text, int n, JDialog parent) {
+        public TipTextField(String text, int n) {
             super(text, n);
-            parentDialog = parent;
         }
+        
+        public TipTextField(int n, String hint) {
+            this(n);
+            prepareForHint(hint);
+            
+        }
+        
+        public TipTextField(String text, int n, String hint) {
+            this(text, n);
+            prepareForHint(hint);
+        }
+        
+        private void prepareForHint(String hint) {
+            hintText = hint;
+            addFocusListener(l);
+            updateHint();
+        }
+        
+        private void updateHint() {
+            if (getText().isEmpty()) {
+                setText(hintText);
+                setForeground(uiGray());
+                setCaretPosition(0);
+            }
+        }
+        
+        @Override
+        public void setText(String t) {
+            if ((t != null) && !t.isBlank()) {
+                setForeground(null);
+            }
+            super.setText(t);
+        }
+        
+        FocusListener l = new FocusListener() {
+            public void focusLost(FocusEvent e) {
+                updateHint();
+            };
+            
+            public void focusGained(FocusEvent e) {
+                if (getText().equals(hintText)) {
+                    setText("");
+                }
+                setForeground(null);
+            };
+        };
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
-            return new Point(parentDialog.getWidth() - p.x, 0);
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
         }
         
         @Override
@@ -683,6 +771,15 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+    }
+    
+    /** 
+     * Completes the tooltip for a dialog using one of the TipXXX clasess, setting 
+     * its width and adding HTML tags. 
+     */
+    public static String formatSideTooltip(String text) {
+        String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return UIUtil.scaleStringForGUI(result);
     }
     
     /**

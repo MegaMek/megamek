@@ -1,39 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <princessBehaviors>
   <behavior>
-    <name>Skirmisher (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>4</fallShameIndex>
-    <hyperAggressionIndex>6</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>6</herdMentalityIndex>
-    <braveryIndex>6</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
     <name>Sniper (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>5</fallShameIndex>
+    <fallShameIndex>1</fallShameIndex>
     <hyperAggressionIndex>1</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>2</herdMentalityIndex>
+    <selfPreservationIndex>2</selfPreservationIndex>
+    <herdMentalityIndex>1</herdMentalityIndex>
     <braveryIndex>6</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
     <name>Scout (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -46,9 +31,24 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
+    <name>Civilians</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>Nearest</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>3</fallShameIndex>
+    <hyperAggressionIndex>9</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>7</herdMentalityIndex>
+    <braveryIndex>8</braveryIndex>
+    <verbosity>OFF</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
     <name>Missile Boat (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -61,24 +61,9 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
-    <name>Striker (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>3</fallShameIndex>
-    <hyperAggressionIndex>9</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>7</herdMentalityIndex>
-    <braveryIndex>8</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
     <name>Juggernaut (pPT)</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -91,11 +76,86 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
+    <name>Standard</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>8</fallShameIndex>
+    <hyperAggressionIndex>3</hyperAggressionIndex>
+    <selfPreservationIndex>4</selfPreservationIndex>
+    <herdMentalityIndex>8</herdMentalityIndex>
+    <braveryIndex>6</braveryIndex>
+    <verbosity>OFF</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>ESCAPE</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>true</autoFlee>
+    <fallShameIndex>7</fallShameIndex>
+    <hyperAggressionIndex>3</hyperAggressionIndex>
+    <selfPreservationIndex>10</selfPreservationIndex>
+    <herdMentalityIndex>5</herdMentalityIndex>
+    <braveryIndex>2</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>DEFAULT_TEST</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>5</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>5</herdMentalityIndex>
+    <braveryIndex>5</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>Skirmisher (pPT)</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>10</fallShameIndex>
+    <hyperAggressionIndex>6</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>6</herdMentalityIndex>
+    <braveryIndex>6</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>Striker (pPT)</name>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>3</fallShameIndex>
+    <hyperAggressionIndex>9</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>7</herdMentalityIndex>
+    <braveryIndex>8</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
     <name>BERSERK</name>
-    <destinationEdge>NEAREST</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>false</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>2</fallShameIndex>
     <hyperAggressionIndex>10</hyperAggressionIndex>
@@ -107,10 +167,10 @@
   </behavior>
   <behavior>
     <name>Brawler (pPT)</name>
-    <destinationEdge>NEAREST</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>4</hyperAggressionIndex>
@@ -121,62 +181,32 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
-    <name>ESCAPE</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>7</fallShameIndex>
-    <hyperAggressionIndex>1</hyperAggressionIndex>
-    <selfPreservationIndex>10</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>2</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
     <name>DEFAULT</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>5</fallShameIndex>
+    <fallShameIndex>0</fallShameIndex>
     <hyperAggressionIndex>5</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>5</braveryIndex>
+    <selfPreservationIndex>0</selfPreservationIndex>
+    <herdMentalityIndex>0</herdMentalityIndex>
+    <braveryIndex>0</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
     <name>COWARDLY</name>
-    <destinationEdge>NEAREST</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
+    <destinationEdge>None</destinationEdge>
+    <retreatEdge>None</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>true</goHome>
+    <goHome>false</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>8</fallShameIndex>
     <hyperAggressionIndex>1</hyperAggressionIndex>
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
-    <verbosity>WARNING</verbosity>
-    <strategicBuildingTargets/>
-  </behavior>
-  <behavior>
-    <name>DEFAULT_TEST</name>
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NORTH</retreatEdge>
-    <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
-    <autoFlee>false</autoFlee>
-    <fallShameIndex>5</fallShameIndex>
-    <hyperAggressionIndex>5</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

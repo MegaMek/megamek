@@ -18,6 +18,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -425,6 +426,11 @@ public class Building implements Serializable {
     public Enumeration<Coords> getCoords() {
         return coordinates.elements();
     }
+    
+    /** Returns a list of this Building's coords. The list is unmodifiable. */
+    public List<Coords> getCoordsList() {
+        return Collections.unmodifiableList(coordinates);
+    }
 
     /**
      * Get the construction type of the building. This value will be one of the
@@ -682,56 +688,43 @@ public class Building implements Serializable {
     public int hashCode() {
         return id;
     }
+    
+    /** Returns a string representation of the given building type, e.g. "Hardened". */
+    public static String typeName(int type) {
+        switch (type) {
+            case Building.LIGHT:
+                return "Light";
+            case Building.MEDIUM:
+                return "Medium";
+            case Building.HEAVY:
+                return "Heavy";
+            case Building.HARDENED:
+                return "Hardened";
+            default:
+                return "Unknown";
+        }
+    }
+    
+    /** Returns a string representation of the given building class, e.g. "Hangar". */
+    public static String className(int bldgClass) {
+        switch (bldgClass) {
+            case Building.HANGAR:
+                return "Hangar";
+            case Building.FORTRESS:
+                return "Fortress";
+            case Building.GUN_EMPLACEMENT:
+                return "Gun Emplacement";
+            default:
+                return "Building";
+        }
+    }
 
-    /**
-     * Get a String for this building.
-     */
     @Override
     public String toString() {
-
-        // Assemble the string in pieces.
         StringBuffer buf = new StringBuffer();
-
-        // Add the building type to the buffer.
-        switch (getType()) {
-            case Building.LIGHT:
-                buf.append("Light ");
-                break;
-            case Building.MEDIUM:
-                buf.append("Medium ");
-                break;
-            case Building.HEAVY:
-                buf.append("Heavy ");
-                break;
-            case Building.HARDENED:
-                buf.append("Hardened ");
-                break;
-            case Building.WALL:
-                buf.append("");
-                break;
-        }
-
-        switch (getBldgClass()) {
-            case Building.HANGAR:
-                buf.append("Hangar ");
-                break;
-            case Building.FORTRESS:
-                buf.append("Fortress ");
-                break;
-            case Building.GUN_EMPLACEMENT:
-                buf.append("Gun Emplacement");
-                break;
-            // case Building.CASTLE_BRIAN:
-            // buf.append("Castle Brian ");
-            // break;
-            default:
-                buf.append("Standard ");
-        }
-
-        // Add the building's name.
+        buf.append(typeName(getType())).append(" ");
+        buf.append(className(getBldgClass())).append(" ");
         buf.append(name);
-
-        // Return the string.
         return buf.toString();
     }
 

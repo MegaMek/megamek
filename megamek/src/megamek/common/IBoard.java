@@ -589,4 +589,10 @@ public interface IBoard {
     
     /** Returns true when the given Coord c is on the edge of the board. */
     public boolean isOnBoardEdge(Coords c);
+    
+    /** 
+     * Returns a list of Buildings of the Board. The list is an unmodifiable view (not a copy)
+     * of the Boards' Buildings list. 
+     */
+    public List<Building> getBuildingsList();
 }

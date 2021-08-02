@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import java.util.Set;
  * @lastModifiedBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 8/17/13 10:47 PM
  */
-public class BehaviorSettings {
+public class BehaviorSettings implements Serializable {
 
     static final double[] SELF_PRESERVATION_VALUES = {
             2.5,
@@ -110,7 +111,7 @@ public class BehaviorSettings {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-    private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
+    private LogLevel verbosity = LogLevel.OFF; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
 
     private MMLogger logger = null;
 
@@ -202,6 +203,7 @@ public class BehaviorSettings {
 
     /**
      * Sets the name for this type of behavior.  Must be unique in order to save.
+     * Throws a PrincessException when the description is empty.
      *
      * @param description The name to be used.
      */

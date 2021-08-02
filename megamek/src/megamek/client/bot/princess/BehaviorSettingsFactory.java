@@ -249,6 +249,17 @@ public class BehaviorSettingsFactory {
         Collections.sort(names);
         return names.toArray(new String[names.size()]);
     }
+    
+    /** 
+     * Returns a list of the names of all the available 
+     * {@link megamek.client.bot.princess.BehaviorSettings BehaviorSettings}.
+     */
+    public List<String> getBehaviorNameList() {
+        init(false);
+        synchronized (behaviorMap) {
+            return new ArrayList<>(behaviorMap.keySet());
+        }
+    }
 
     //******************
     // DEFAULT BEHAVIORS

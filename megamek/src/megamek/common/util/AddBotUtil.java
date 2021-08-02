@@ -21,6 +21,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 
 import java.util.ArrayList;
@@ -28,8 +29,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.sun.istack.Nullable;
 
 /**
  * Created with IntelliJ IDEA.

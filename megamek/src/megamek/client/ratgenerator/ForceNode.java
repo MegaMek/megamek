@@ -112,7 +112,7 @@ public class ForceNode extends RulesetNode {
                         String content = n.getContent();
                         if (content.startsWith("-")) {
                             for (String p : content.replaceFirst("\\-", "").split(",")) {
-                                fd.getMovementModes().remove(EntityMovementMode.getMode(p));
+                                fd.getMovementModes().remove(EntityMovementMode.parseFromString(p));
                             }
                             break;
                         }
@@ -122,7 +122,7 @@ public class ForceNode extends RulesetNode {
                             fd.getMovementModes().clear();
                         }
                         for (String p : content.split(",")) {
-                            fd.getMovementModes().add(EntityMovementMode.getMode(p));
+                            fd.getMovementModes().add(EntityMovementMode.parseFromString(p));
                         }
                         break;
                     case "formation":

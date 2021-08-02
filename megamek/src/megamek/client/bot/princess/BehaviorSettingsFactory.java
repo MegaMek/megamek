@@ -323,7 +323,7 @@ public class BehaviorSettingsFactory {
         try {
             BehaviorSettings cowardlyBehavior = new BehaviorSettings();
             cowardlyBehavior.setDescription(COWARDLY_BEHAVIOR_DESCRIPTION);
-            cowardlyBehavior.setDestinationEdge(CardinalEdge.NEAREST);
+            cowardlyBehavior.setDestinationEdge(CardinalEdge.NONE);
             cowardlyBehavior.setRetreatEdge(CardinalEdge.NEAREST);
             cowardlyBehavior.setForcedWithdrawal(true);
             cowardlyBehavior.setAutoFlee(false);

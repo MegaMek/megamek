@@ -1464,13 +1464,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     *
-     * @param entityTarget
-     * @param vPhaseReport
-     * @param bldg
-     * @param hits
-     * @param nCluster
-     * @param bldgAbsorbs
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -1480,16 +1473,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         initHit(entityTarget);
         
-        boolean isIndirect = wtype.hasModes()
-                && weapon.curMode().equals("Indirect");
+        boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
+        
         IHex targetHex = game.getBoard().getHex(target.getPosition());
+        boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
+        
+        // a very specific situation where a mech is standing in a height 1 building
+        // or its upper torso is otherwise somehow poking out of said building 
+        boolean targetInShortBuilding = WeaponAttackAction.targetInShortCoverBuilding(target);
+        boolean legHit = entityTarget.locationIsLeg(hit.getLocation());
+        boolean shortBuildingBlocksLegHit = targetInShortBuilding && legHit;
+        
+        boolean partialCoverForIndirectFire = 
+                isIndirect && (mechPokingOutOfShallowWater || shortBuildingBlocksLegHit);
 
         //For indirect fire, remove leg hits only if target is in water partial cover
         //Per TW errata for indirect fire
-        if ((!isIndirect 
-                || (isIndirect 
-                        && targetHex.containsTerrain(Terrains.WATER) 
-                        && entityTarget.relHeight() <= targetHex.surface()))
+        if ((!isIndirect || partialCoverForIndirectFire) 
                 && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(), Compute.targetSideTable(ae, entityTarget,
                         weapon.getCalledShot().getCall()))) {
@@ -1517,7 +1517,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             Report.addNewline(vPhaseReport);
         }
 
-        // for non-salvo shots, report that the aimed shot was successfull
+        // for non-salvo shots, report that the aimed shot was successful
         // before applying damage
         if (hit.hitAimedLocation() && !bSalvo) {
             Report r = new Report(3410);
@@ -1536,43 +1536,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (calcDmgPerHitReport.size() > 0) {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
-    
-        // A building may be damaged, even if the squad is not.
-        if (bldgAbsorbs > 0) {
-            int toBldg = Math.min(bldgAbsorbs, nDamage);
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        // Units on same level, report building absorbs no damage
-        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
-            Report.addNewline(vPhaseReport);
-            Report r = new Report(9976);
-            r.subject = ae.getId();
-            r.indent(2);
-            vPhaseReport.add(r);
-        // Cases where absorbed damage doesn't reduce incoming damage
-        } else if (bldgAbsorbs < 0) {
-            int toBldg = -bldgAbsorbs;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                    entityTarget.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
+        
+        // if the target was in partial cover, then we already handled
+        // damage absorption by the partial cover, if it would have happened
+        boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
+                
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+                vPhaseReport, bldg, targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
         // some buildings scale remaining damage that is not absorbed
         // TODO: this isn't quite right for castles brian
-        if (null != bldg) {
+        if ((null != bldg) && !targetStickingOutOfBuilding) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 
@@ -1599,6 +1576,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,
                             underWater, nukeS2S));
+            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech) && entityTarget.antiTSMVulnerable()) {
+                vPhaseReport.addAll(server.doGreenSmokeDamage(entityTarget));
+            }
             // for salvo shots, report that the aimed location was hit after
             // applying damage, because the location is first reported when
             // dealing the damage
@@ -1614,6 +1594,70 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((ae instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
+    }
+    
+    /**
+     * Worker function - does the entity gain partial cover from shallow water?
+     */
+    protected boolean unitGainsPartialCoverFromWater(IHex targetHex, Entity entityTarget) {
+        return (targetHex != null) && 
+                targetHex.containsTerrain(Terrains.WATER) &&
+                (entityTarget.relHeight() == targetHex.surface());
+    }
+    
+    /**
+     * Worker function - is a part of this unit inside the hex's terrain features, 
+     * but part sticking out?
+     */
+    protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+        // target needs to be on the board,
+        // be tall enough for it to make a difference,
+        // target "feet" are below the "ceiling"
+        // target "head" is above the "ceiling"
+        return (targetHex != null) &&
+                (entityTarget.getHeight() > 0) &&
+                (entityTarget.getElevation() < targetHex.ceiling()) &&
+                (entityTarget.relHeight() >= targetHex.ceiling());
+    }
+    
+    /**
+     * Worker function to (maybe) have a building absorb damage meant for the entity
+     */
+    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs, 
+            Vector<Report> vPhaseReport, Building bldg, boolean targetStickingOutOfBuilding) {
+
+        // if the building will absorb some damage and the target is actually
+        // entirely inside the building:
+        if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {            
+            int toBldg = Math.min(bldgAbsorbs, nDamage);
+            nDamage -= toBldg;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        // Units on same level, report building absorbs no damage
+        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(9976);
+            r.subject = ae.getId();
+            r.indent(2);
+            vPhaseReport.add(r);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if ((bldgAbsorbs < 0) && !targetStickingOutOfBuilding) {
+            int toBldg = -bldgAbsorbs;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        }
+        
+        return nDamage;
     }
 
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,

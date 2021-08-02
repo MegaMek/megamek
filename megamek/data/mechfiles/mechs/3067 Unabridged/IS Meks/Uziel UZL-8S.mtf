@@ -131,3 +131,18 @@ Lower Leg Actuator
 Foot Actuator
 ISImprovedJump Jet
 ISImprovedJump Jet
+
+overview:Built at Defiance Industries' Furillo plant, the Uziel is an effective medium 'Mech that is looked down upon by the LAAF simply because it is produced on Furillo and not at the prestigious Hesperus facility. A varied weapons mix makes the Uziel an excellent trooper 'Mech.
+
+capabilities:The Uziel is built on a Foundation E50 Endo Steel chassis that has a GM 300 XL engine that provides the 'Mech with a top speed of 97.2 km/h. The 'Mech's mobility is enhanced with six Rawlings 50 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. The Uziel is armored with eight tons of Maximillian 100 armor that gives the Uziel adequate protection from enemy fire. To dissipate the heat produced by the 'Mech's weapons, it carries eleven double heat sinks.
+
+deployment:This variant introduced in 3075 trades all the weaponry of the 3S for a Streak SRM-6, Guardian ECM Suite, and a pair of Medium Pulse Lasers in each arm. The engine has been replaced with a smaller model, which reduces the 8S top speed to 86km/h. However, eight Improved Jump Jets provide more mobility.
+
+manufacturer:Defiance Industries
+primaryfactory:Furillo
+systemmanufacturer:CHASSIS:Foundation E50 Endo Steel
+systemmanufacturer:ENGINE:GM 300 XL
+systemmanufacturer:ARMOR:Maximillian 100
+systemmanufacturer:JUMPJET:Rawlings 50
+systemmanufacturer:COMMUNICATIONS:Neil 6000-g
+systemmanufacturer:TARGETING:RCA Instatrac Mark XXII

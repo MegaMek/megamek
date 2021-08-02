@@ -1,4 +1,5 @@
 size 11 11
+tag "GrassTheme (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""
 hex 0301 0 "fuel_tank_cf:20;fuel_tank_elev:2;fuel_tank_magn:50;pavement:1;fuel_tank:1:0" ""

@@ -184,8 +184,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 "PhysicalDisplay.Done") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
 
     }
@@ -581,7 +579,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.minimap.drawMap();
 
         // and prevent duplicates
         setSearchlightEnabled(false);
@@ -1664,10 +1661,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

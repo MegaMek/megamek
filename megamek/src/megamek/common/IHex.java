@@ -256,6 +256,18 @@ public interface IHex extends Cloneable {
     public abstract ITerrain getTerrain(int type);
 
     /**
+     * Returns the Terrain for one of the given types of terrain if at least one of 
+     * them is present in the hex. If multiple are present, the returned terrain
+     * can be any of the given types. 
+     * 
+     * @return One of the Terrains of the types that is present in the hex or null if none are 
+     * present in the hex.
+     * @param types the terrain types to check
+     * @see IHex#containsAnyTerrainsOf(int...)
+     */
+    public abstract ITerrain getAnyTerrainOf(int type, int... types);
+
+    /**
      * Returns a collection of terrain ids for all terrains present in this hex.
      * 
      * @return A set that contains an id for each terrain present in this hex.

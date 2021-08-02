@@ -116,8 +116,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
         
-        layoutScreen();
-        
         setupButtonPanel();
     }
 
@@ -140,9 +138,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setActiveEnabled(p.getNbrMFActive());
         setInfernoEnabled(p.getNbrMFInferno());
         setRemoveMineEnabled(true);
-        if (!p.hasMinefields()) {
-            butDone.setEnabled(true);
-        }
+        butDone.setEnabled(true);
     }
 
     /**
@@ -192,7 +188,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             while (mfs.hasMoreElements()) {
                 Minefield mf = (Minefield) mfs.nextElement();
                 if (mf.getPlayerId() == clientgui.getClient().getLocalPlayer().getId()) {
-                    butDone.setEnabled(false);
                     mfRemoved.add(mf);
                     deployedMinefields.removeElement(mf);
                     if (mf.getType() == Minefield.TYPE_CONVENTIONAL) {
@@ -310,12 +305,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.refreshDisplayables();            
         }
 
-        if ((p.getNbrMFConventional() == 0) && (p.getNbrMFCommand() == 0)
-                && (p.getNbrMFVibra() == 0) && (p.getNbrMFActive() == 0)
-                && (p.getNbrMFInferno() == 0)) {
-            butDone.setEnabled(true);
-        }
-
         setConventionalEnabled(p.getNbrMFConventional());
         setCommandEnabled(p.getNbrMFCommand());
         setVibrabombEnabled(p.getNbrMFVibra());
@@ -425,10 +414,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

@@ -449,7 +449,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 break;
             case -1:
             default:
-                desc = new StringBuffer(type.getDesc(getSize()));
+                desc = new StringBuffer(getType().getDesc(getSize()));
         }
         if (isWeaponGroup()) {
             desc.append(" (").append(getNWeapons()).append(")");

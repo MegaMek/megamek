@@ -148,4 +148,17 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Stealth is a heavy scout 'Mech that is in use by the Federated Suns and the Lyran Alliance.
 
+capabilities:The 'Mech has a GM 315 XL Engine that allows the Stealth to move at speeds of 118.8 kph and the MASC system on board can push the 'Mech to 151.2 kph in short bursts. This amazing mobility is augmented by jump jets which the Stealth can use to jump up to two hundred and ten meters. The Stealth is also outfitted with a Cyclops-Beagle Sensory Active Probe that the Stealth can use to find hidden enemy units.
+
+deployment:Another modification of the 2D model, the 2D2 removes an ER Medium Laser from the 2D model and replaces it with a TAG target designator, allowing it to spot for Arrow IV artillery bombardments.
+
+manufacturer:General Motors
+primaryfactory:Kathil
+systemmanufacturer:CHASSIS:GM Stealth Endo Steel
+systemmanufacturer:ENGINE:GM 315 XL
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:100AFVTA
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban HiRez with Active Probe

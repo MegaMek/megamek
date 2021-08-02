@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Map;
 
+import megamek.common.annotations.Nullable;
+
 public interface Targetable extends Serializable {
     public static final int TYPE_ENTITY = 0;
     public static final int TYPE_HEX_CLEAR = 1;
@@ -151,4 +153,17 @@ public interface Targetable extends Serializable {
     
     @Override
     int hashCode();
+    
+    /**
+     * Utility function used to safely tell whether two Targetables are in the same hex.
+     * Does not throw exceptions in case of nulls.
+     */
+    public static boolean areAtSamePosition(@Nullable Targetable first, @Nullable Targetable second) {
+        if ((first == null) || (second == null) ||
+                (first.getPosition() == null) || (second.getPosition() == null)) {
+            return false;
+        }
+        
+        return first.getPosition().equals(second.getPosition());
+    }
 }

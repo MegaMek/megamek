@@ -1,4 +1,6 @@
 size 16 17
+tag "Flat (Auto)"
+tag "Lava (Auto)"
 hex 0101 0 "magma:2" "volcano"
 hex 0201 0 "magma:2" "volcano"
 hex 0301 0 "magma:1" "volcano"

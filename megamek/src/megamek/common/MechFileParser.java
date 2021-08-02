@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.Predicate;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.BLKAeroFile;
@@ -278,33 +279,42 @@ public class MechFileParser {
         for (Mounted m : ent.getMisc()) {
 
             // link laser insulators
-            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR))) {
-                // get the mount directly before the insulator, this is the
-                // weapon
-                Mounted weapon = ent.getEquipment().get(
-                        ent.getEquipment().indexOf(m) - 1);
-                // already linked?
-                if (weapon.getLinkedBy() != null) {
-                    continue;
+            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
+                    || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+
+                // We can link to a laser in the same location that isn't already linked.
+                Predicate<Mounted> linkable = mount ->
+                        (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
+                            && (mount.getType() instanceof WeaponType)
+                            && mount.getType().hasFlag(WeaponType.F_LASER);
+                // The laser pulse module is also restricted to non-pulse lasers, IS only
+                if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
+                            && !mount.getType().isClan());
                 }
-                if (!(weapon.getType() instanceof WeaponType)
-                        && !(weapon.getType().hasFlag(WeaponType.F_LASER))) {
-                    continue;
-                }
-                // check location
-                if (weapon.getLocation() == m.getLocation()) {
-                    m.setLinked(weapon);
-                    continue;
+
+                /*
+                 * First check the immediate predecessor in the equipment list, which allows
+                 * pairing the insulator or pulse module with a specific weapon by placing them
+                 * in a specific order. If that doesn't work, fall back to finding the first eligible
+                 * weapon in the location.
+                 */
+                int eqNum = ent.getEquipment().indexOf(m);
+                if ((eqNum > 0) && linkable.test(ent.getEquipment().get(eqNum - 1))) {
+                    m.setLinked(ent.getEquipment().get(eqNum - 1));
+                } else {
+                    for (Mounted weapon : ent.totalWeaponList) {
+                        if (linkable.test(weapon)) {
+                            m.setLinked(weapon);
+                            break;
+                        }
+                    }
                 }
                 if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match laser insulator to laser for "+ent.getShortName());
+                    throw new EntityLoadingException("Unable to match " + m.getName() + " to laser for "
+                            + ent.getShortName());
                 }
-            }
-
-            // link DWPs to their weapons
-            if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+            } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     if (!mWeapon.isDWPMounted()) {
                         continue;
@@ -322,14 +332,9 @@ public class MechFileParser {
                 }
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match DWP to weapon for "
-                                    + ent.getShortName());
+                    throw new EntityLoadingException("Unable to match DWP to weapon for " + ent.getShortName());
                 }
-            }
-
-            // Link AP weapons to their AP Mount, when applicable
-            if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
+            } else if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     // Can only link APM mounted weapons that aren't linked
                     if (!mWeapon.isAPMMounted()
@@ -343,28 +348,15 @@ public class MechFileParser {
                         break;
                     }
                 }
-            }
-
-            // Link Artemis IV fire-control systems to their missle racks.
-            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) 
+            } else if ((m.getType().hasFlag(MiscType.F_ARTEMIS)
                     || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
                     || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
-                    WeaponType wtype = (WeaponType) mWeapon.getType();
 
-                    // only srm, lrm and mml are valid for artemis
-                    if ((wtype.getAmmoType() != AmmoType.T_LRM)
-                            && (wtype.getAmmoType() != AmmoType.T_LRM_IMP)
-                            && (wtype.getAmmoType() != AmmoType.T_MML)
-                            && (wtype.getAmmoType() != AmmoType.T_SRM)
-                            && (wtype.getAmmoType() != AmmoType.T_SRM_IMP)
-                            && (wtype.getAmmoType() != AmmoType.T_NLRM)
-                            && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO)
-                            && (wtype.getAmmoType() != AmmoType.T_SRM_TORPEDO)
-                            && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO_COMBO)) {
+                    if (!mWeapon.getType().hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE)) {
                         continue;
                     }
 
@@ -382,41 +374,9 @@ public class MechFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match Artemis to launcher for "+ent.getShortName());
+                    throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
-            } // End link-Artemis
-            // Link RISC Laser Pulse Module to their lasers
-            else if ((m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && (m.getLinked() == null))) {
-
-                // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getTotalWeaponList()) {
-                    WeaponType wtype = (WeaponType) mWeapon.getType();
-
-                    // only IS lasers that are not pulse are allows
-                    if (wtype.hasFlag(WeaponType.F_PULSE) || TechConstants.isClan(wtype.getTechLevel(ent.getYear()))) {
-                        continue;
-                    }
-
-                    // already linked?
-                    if (mWeapon.getLinkedBy() != null) {
-                        continue;
-                    }
-
-                    // check location
-                    if (mWeapon.getLocation() == m.getLocation()) {
-                        m.setLinked(mWeapon);
-                        break;
-                    }
-                }
-
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException(
-                            "Unable to match RISC Laser Pulse Model to laser for "+ent.getShortName());
-                }
-            } // End link-RISC laser pulse module
-            else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
+            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
                     .hasFlag(MiscType.F_VOIDSIG))
                     && (m.getLinked() == null)
                     && (ent instanceof Mech)) {
@@ -553,7 +513,7 @@ public class MechFileParser {
                             MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if (ent.hasTargComp()
-                        || ((Mech) ent).hasTSM()
+                        || ((Mech) ent).hasTSM(true)
                         || (((Mech) ent).hasMASC() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(

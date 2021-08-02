@@ -3,32 +3,32 @@ Initiate
 INI-02
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3058
-Source:TRO 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:TRO 3060
+rules level:2
 
-Mass:40
-Engine:160 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:40
+engine:160 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:4
-Jump MP:0
+heat sinks:11 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:12
-RA Armor:12
-LT Armor:15
-RT Armor:15
-CT Armor:17
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:15
+RT armor:15
+CT armor:17
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:8
 Medium Laser, Left Arm
@@ -36,7 +36,7 @@ Medium Laser, Left Arm
 ER Small Laser, Right Arm
 ER Small Laser, Right Arm
 ER Small Laser, Right Arm
-AMS, Left Torso
+Anti-Missile System, Left Torso
 LRM 15, Left Torso
 SRM 6, Right Torso
 
@@ -49,9 +49,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 Medium Laser
 Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
@@ -69,18 +69,18 @@ ISERSmallLaser
 -Empty-
 
 Left Torso:
+LRM 15
+LRM 15
+LRM 15
 ISAntiMissileSystem
-LRM 15
-LRM 15
-LRM 15
-IS Ammo LRM-15
 ISAMS Ammo
+IS Ammo LRM-15
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 ISDoubleHeatSink
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -152,4 +152,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Initiate is a reliable trooper 'Mech that is capable of filling a variety of roles on the modern battlefield.
+
+capabilities:It is built on a Geometric 1000 Endo Steel chassis to save weight and is powered by a LTV 160 fusion engine that gives it a top speed of 64.8 km/h. For protection from enemy fire, the Initiate carries eight and a half tons of armor that allows the 'Mech to stand up to fire from most other 'Mechs of the same weight class or lower, and enjoys increased durability because of its CASE system that protects against ammunition explosions.
+
+deployment:The Initiate has a diverse weapons mix that allows it to engage an enemy at a variety of ranges. For long-range combat, the Initiate has an Irian Weapons Works V7 LRM-15 launcher that gives the Initiate the ability to strike at an enemy at long ranges as well as giving an indirect fire capability to the 'Mech. For medium range combat, the Initiate has two Irian Weapons Works Super 6 Medium Lasers and an Irian Weapons Works 60mm SRM-6 launcher. For close ranges, the 'Mech has three Diverse Optics Type ER Small Lasers. Finally, to protect against missile attacks, the 'Mech has a McArthur Anti-Missile System.
+
+history:The Initiate started production after the Word of Blake retook Terra. This medium 'Mech has been produced in record numbers by the Word of Blake with no shortage of pilots.
+
+manufacturer:Martinson Armaments
+primaryfactory:Australia, Terra
+systemmanufacturer:CHASSIS:Geometric 1000 Endo Steel
+systemmanufacturer:ENGINE:LTV 160
+systemmanufacturer:ARMOR:Strasbourg Armaments Type 3
+systemmanufacturer:COMMUNICATIONS:Blow 55 Net
+systemmanufacturer:TARGETING:Scope 2000
 

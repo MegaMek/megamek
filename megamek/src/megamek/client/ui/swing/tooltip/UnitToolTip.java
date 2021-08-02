@@ -608,7 +608,7 @@ public final class UnitToolTip {
         // Velocity, Altitude, Elevation
         if (entity.isAero()) {
             result.append(guiScaledFontHTML(uiLightViolet()));
-            Aero aero = (Aero) entity;
+            IAero aero = (IAero) entity;
             result.append(addToTT("AeroVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude()));
             result.append("</FONT>");
         } else if (entity.getElevation() != 0) {
@@ -652,7 +652,7 @@ public final class UnitToolTip {
         }
 
         // Spotting
-        if (entity.isSpotting()) {
+        if (entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
             result.append(addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName()));
         }
 
@@ -679,6 +679,12 @@ public final class UnitToolTip {
             result.append(addToTT("Sensors", BR, entity.getSensorDesc()));
         }
 
+        if (entity.hasAnyTypeNarcPodsAttached()) {
+            result.append(guiScaledFontHTML(uiLightRed()));
+            result.append(addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", BR));
+            result.append("</FONT>");
+        }
+        
         // Towing
         if (entity.getAllTowedUnits().size() > 0) {
             String unitList = entity.getAllTowedUnits().stream()

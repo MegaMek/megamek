@@ -1,4 +1,11 @@
 size 32 17
+tag "Rough (Auto)"
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "LightForest (Auto)"
 hex 0101 0 "" "grass"
 hex 0201 0 "mud:2" "grass"
 hex 0301 0 "" "grass"

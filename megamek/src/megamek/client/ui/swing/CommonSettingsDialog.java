@@ -1305,19 +1305,10 @@ public class CommonSettingsDialog extends ClientDialog implements
             guip.setFloatingIso(floatingIso.isSelected());
         } else if (source.equals(mmSymbol)) {
             guip.setMmSymbol(mmSymbol.isSelected());
-            if ((clientgui != null) && (clientgui.minimap != null)) {
-                clientgui.minimap.drawMap();
-            }
-
         } else if (source.equals(teamColoring)) {
             guip.setTeamColoring(teamColoring.isSelected());
-            if ((clientgui != null) && (clientgui.minimap != null)) {
-                clientgui.minimap.drawMap();
-            }
-
         } else if (source.equals(entityOwnerColor)) {
             guip.setUnitLabelBorder(entityOwnerColor.isSelected());
-            
         } else if (source.equals(showDamageDecal)) {
             guip.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {

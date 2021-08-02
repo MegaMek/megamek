@@ -1,5 +1,7 @@
 size 25 25
 option exit_roads_to_pavement false
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
 hex 0101 0 "fuel_tank_cf:40;fuel_tank_elev:2;fuel_tank_magn:100;pavement:1;fuel_tank:2:0" ""
 hex 0201 0 "bldg_elev:3;bldg_class:1;pavement:1;building:4:30;bldg_cf:75" ""
 hex 0301 0 "bldg_elev:3;bldg_class:1;pavement:1;building:4:28;bldg_cf:75" ""

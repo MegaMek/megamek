@@ -1,26 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2017 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.enums.Gender;
+import megamek.common.util.CrewSkillSummaryUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
-import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
  * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes,
@@ -68,9 +67,10 @@ public class LAMPilot extends Crew {
     public static LAMPilot convertToLAMPilot(LandAirMech lam, Crew crew) {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
-        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(), crew.getGunnery(),
-                crew.getPiloting(), crew.getGender(), extraData);
+        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
+                crew.getGunnery(), crew.getPiloting(), crew.getGender(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
+        pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
         pilot.setGunneryB(crew.getGunneryB(), 0);
         pilot.setGunneryM(crew.getGunneryM(), 0);
@@ -87,8 +87,6 @@ public class LAMPilot extends Crew {
         pilot.setInitBonus(crew.getInitBonus());
         pilot.setCommandBonus(crew.getCommandBonus());
         pilot.setToughness(crew.getToughness(0), 0);
-        pilot.setPortraitCategory(crew.getPortraitCategory(0), 0);
-        pilot.setPortraitFileName(crew.getPortraitFileName(0), 0);
         pilot.setOptions(crew.getOptions());
 
         pilot.setExternalIdAsString(crew.getExternalIdAsString(0), 0);
@@ -225,6 +223,7 @@ public class LAMPilot extends Crew {
         }
     }
 
+    @Override
     public String getSkillsAsString(boolean showPiloting, boolean rpgSkills) {
         return getSkillsAsString(0, showPiloting, rpgSkills);
     }

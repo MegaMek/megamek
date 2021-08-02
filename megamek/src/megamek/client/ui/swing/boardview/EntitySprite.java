@@ -452,6 +452,10 @@ class EntitySprite extends Sprite {
                 }
             }
             
+            if (entity.hasAnyTypeNarcPodsAttached()) {
+                stStr.add(new Status(Color.RED, "N", SMALL));
+            }
+            
             // Large Craft Ejecting
             if (entity instanceof Aero) {
                 if (((Aero)entity).isEjecting()) {

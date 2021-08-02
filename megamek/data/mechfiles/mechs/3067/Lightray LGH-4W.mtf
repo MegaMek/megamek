@@ -3,47 +3,48 @@ Lightray
 LGH-4W
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3065
-Rules Level:2
+techbase:Inner Sphere
+era:3065
 source:TRO 3067
+rules level:2
 
-Mass:55
-Engine:385 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:55
+engine:385 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:7
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:7
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:18
-RA Armor:18
-LT Armor:19
-RT Armor:19
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:19
+RT armor:19
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
-Weapons:3
-1 ISLargePulseLaser, Right Arm
-2 ISERMediumLaser, Left Torso
-1 ISERSmallLaser, Center Torso
+Weapons:4
+Large Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +57,11 @@ Lower Arm Actuator
 Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -69,13 +70,13 @@ Fusion Engine
 Fusion Engine
 ISERMediumLaser
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -84,12 +85,12 @@ Fusion Engine
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,13 +104,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERSmallLaser
-Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +139,26 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Lightray was designed by Martinson Armaments to be a heavy scout 'Mech and was put into production in 3064.
+
+capabilities:The Lightray is built on a lightweight Geometric 33B Endo Steel chassis to help maximize the available weight for weapons and equipment and features a gigantic LTV 385 XL engine, the largest that can possibly be carried by a 'Mech its size. The engine allows the scout 'Mech to outpace most other medium designs with a top speed of 118 kilometers per hour, though it lacks the added maneuverability that could be provided by jump jets. The Lightray carries ten and a half tons of Strasbourg Armaments Type 4 Ferro-Fibrous armor, giving the 'Mech a great deal of protection.
+
+deployment:The main weapon of the Lightray is its Tronel XIII Large Pulse Laser. Coupled with the Targeting Computer technology stolen from House Davion, this Word of Blake design is deadly accurate, even when moving at its top speed. The pair of Diverse Optics ER Medium Lasers and the Diverse Optics ER Small Laser add to the close-range damage the 'Mech can deal.
+
+manufacturer:Martinson Armaments
+primaryfactory:Australia, Terra
+systemmanufacturer:CHASSIS:Geometric 33B Endo Steel
+systemmanufacturer:ENGINE:LTV 385 XL
+systemmanufacturer:ARMOR:Strasbourg Armaments Type 4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Blow 107 Net (Improved)
+systemmanufacturer:TARGETING:Scope 3580 with Targeting Computer
 

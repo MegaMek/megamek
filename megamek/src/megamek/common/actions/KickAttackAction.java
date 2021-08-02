@@ -97,8 +97,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
-        if (((entity.heat >= 9) && ((Mech) entity).hasTSM()) ||
-                ((Mech) entity).hasIndustrialTSM()) {
+        if (((Mech) entity).hasActiveTSM()) {
             multiplier *= 2.0f;
         }
 

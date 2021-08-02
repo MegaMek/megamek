@@ -110,7 +110,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             listLabel.setEnabled(false);
             coordsList.setEnabled(false);   
         } else {
-            board.getBuildingsList().stream().map(b -> b.getCoordsList()).forEach(coordsListModel::addAll);
+            board.getBuildingsVector().stream().map(b -> b.getCoordsList()).forEach(coordsListModel::addAll);
         }
 
         result.add(Box.createVerticalStrut(15));

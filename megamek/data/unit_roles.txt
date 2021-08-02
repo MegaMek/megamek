@@ -1244,6 +1244,7 @@ Deimos C:SNIPER
 Deimos D:SNIPER
 Deimos E:BRAWLER
 Deimos Prime:SNIPER
+Deimos H:SNIPER
 Deimos S:SNIPER
 Delphyne (Standard):BRAWLER
 Delphyne 2:BRAWLER
@@ -3489,6 +3490,7 @@ Pegasus Scout Hover Tank X:STRIKER
 Pegasus Scout Hover Tank X-Pulse:STRIKER
 Pendragon PDG-1R:MISSILE_BOAT
 Pendragon PDG-1X MUSE RED:MISSILE_BOAT
+Pendragon PDG-3R:SNIPER
 Penetrator PTR-4D:SKIRMISHER
 Penetrator PTR-4F:MISSILE_BOAT
 Penetrator PTR-6M:SKIRMISHER
@@ -4633,6 +4635,7 @@ Thor II (Grand Summoner) A:SNIPER
 Thor II (Grand Summoner) B:MISSILE_BOAT
 Thor II (Grand Summoner) C:SKIRMISHER
 Thor II (Grand Summoner) D:SNIPER
+Thor II (Grand Summoner) E:SNIPER
 Thorn THE-F:STRIKER
 Thorn THE-N:STRIKER
 Thorn THE-N1:SNIPER
@@ -4699,6 +4702,7 @@ Thunderbird TRB-D56:ATTACK_FIGHTER
 Thunderbird TRB-XTS:ATTACK_FIGHTER
 Thunderbolt C:SNIPER
 Thunderbolt IIC (Standard):BRAWLER
+Thunderbolt IIC 2:SKIRMISHER
 Thunderbolt TDR-10M:SNIPER
 Thunderbolt TDR-10M (Ilyena):SNIPER
 Thunderbolt TDR-10M (Salazar):BRAWLER
@@ -5025,6 +5029,7 @@ Vixen (Incubus) 2:STRIKER
 Vixen (Incubus) 3:STRIKER
 Vixen (Incubus) 4:STRIKER
 Vixen (Incubus) 5:STRIKER
+Vixen (Incubus) 6:BRAWLER
 Void Medium Battle Armor (DCA):SCOUT
 Void Medium Battle Armor (Minelayer):AMBUSHER
 Void Medium Battle Armor (Nova Cat):SCOUT
@@ -5422,12 +5427,6 @@ BattleMaster C 3:JUGGERNAUT
 #ilClan Rec Guide 4
 Awesome AWS-11H:SNIPER
 Blackjack BJ-5:SNIPER
-Ice Ferret (Fenris) F:SNIPER
-Ice Ferret (Fenris) G:STRIKER
-Ice Ferret (Fenris) I:SCOUT
-Ice Ferret (Fenris) J:STRIKER
-Ice Ferret (Fenris) K:STRIKER
-Ice Ferret (Fenris) T:SCOUT
 Fenris (Ice Ferret) F:SNIPER
 Fenris (Ice Ferret) G:STRIKER
 Fenris (Ice Ferret) I:SCOUT
@@ -5437,17 +5436,14 @@ Fenris (Ice Ferret) T:SCOUT
 Thresher II (Standard):SKIRMISHER
 Trebuchet TBT-9N:MISSILE_BOAT
 Warhammer IIC 13:BRAWLER
-#Warhammer WHM-8R:UNDETERMINED
-#Warhammer WHM-9K:UNDETERMINED
+Warhammer WHM-8R:BRAWLER
+Warhammer WHM-9K:BRAWLER
 Wasp C:SNIPER
 Wasp WSP-4W:SCOUT
 Wasp WSP-5A:SCOUT
 #ilClan Rec Guide 5
-#Catapult CPLT-6K:UNDETERMINED
 Catapult CPLT-K6:MISSILE_BOAT
-Conjurer (Hellhound) 7:SKIRMISHER
-Conjurer (Hellhound) 8:SKIRMISHER
-Conjurer (Hellhound):SKIRMISHER
+Hellhound (Conjurer):SKIRMISHER
 Hellhound (Conjurer) 7:SKIRMISHER
 Hellhound (Conjurer) 8:SKIRMISHER
 Crab CRB-54:SKIRMISHER
@@ -5463,10 +5459,6 @@ Mad Cat (Timber Wolf) M:BRAWLER
 Mad Cat (Timber Wolf) N:BRAWLER
 Mad Cat (Timber Wolf) T:MISSILE_BOAT
 Mad Cat (Timber Wolf) W:JUGGERNAUT
-Timber Wolf (Mad Cat) M:MISSILE_BOAT
-Timber Wolf (Mad Cat) N:MISSILE_BOAT
-Timber Wolf (Mad Cat) T:MISSILE_BOAT
-Timber Wolf (Mad Cat) W:MISSILE_BOAT
 #ilClan Rec Guide 6
 Cataphract CTF-5L:SNIPER
 Cricket RWN-01:SCOUT
@@ -5490,12 +5482,12 @@ Marauder Red Hunter:JUGGERNAUT
 Nightstar NSR-10D:SNIPER
 Raven RVN-5L:SCOUT
 #ilClan Rec Guide 7
-Incubus (Vixen) 2:STRIKER
-Incubus (Vixen) 3:STRIKER
-Incubus (Vixen) 7:STRIKER
-Incubus (Vixen) 8:STRIKER
-Incubus (Vixen) 9:STRIKER
-Incubus (Vixen):STRIKER
+Vixen (Incubus) 2:STRIKER
+Vixen (Incubus) 3:STRIKER
+Vixen (Incubus) 7:STRIKER
+Vixen (Incubus) 8:STRIKER
+Vixen (Incubus) 9:STRIKER
+Vixen (Incubus):STRIKER
 Mist Lynx (Koshi) I:STRIKER
 Mist Lynx (Koshi) J:SNIPER
 Mist Lynx (Koshi) K:SCOUT
@@ -5503,11 +5495,11 @@ Mist Lynx (Koshi) L:SCOUT
 Mist Lynx (Koshi) M:STRIKER
 Mist Lynx (Koshi) N:MISSILE_BOAT
 Mist Lynx (Koshi) T:SCOUT
-Stormcrow (Ryoken) I:SNIPER
-Stormcrow (Ryoken) J:STRIKER
-Stormcrow (Ryoken) K:STRIKER
-Stormcrow (Ryoken) P:STRIKER
-Stormcrow (Ryoken) T:STRIKER
+Ryoken (Stormcrow) I:SNIPER
+Ryoken (Stormcrow) J:STRIKER
+Ryoken (Stormcrow) K:STRIKER
+Ryoken (Stormcrow) P:STRIKER
+Ryoken (Stormcrow) T:STRIKER
 War Crow A:SKIRMISHER
 War Crow B:SKIRMISHER
 War Crow C:SNIPER
@@ -5525,27 +5517,27 @@ Warhammer WHM-8R:BRAWLER
 Warhammer WHM-9K:BRAWLER
 #ilClan Rec Guide 8
 Devil (Standard):SNIPER
-Fire Moth (Dasher) G:STRIKER
-Fire Moth (Dasher) I:SNIPER
-Fire Moth (Dasher) J:STRIKER
-Fire Moth (Dasher) M:STRIKER
-Fire Moth (Dasher) P:STRIKER
-Fire Moth (Dasher) R:SCOUT
-Fire Moth (Dasher) T:STRIKER
-Howler (Baboon) 4:SCOUT
-Howler (Baboon) 5:STRIKER
-Howler (Baboon) 6:STRIKER
-Howler (Baboon)(Standard):MISSILE_BOAT
+Dasher (Fire Moth) G:STRIKER
+Dasher (Fire Moth) I:SNIPER
+Dasher (Fire Moth) J:STRIKER
+Dasher (Fire Moth) M:STRIKER
+Dasher (Fire Moth) P:STRIKER
+Dasher (Fire Moth) R:SCOUT
+Dasher (Fire Moth) T:STRIKER
+Baboon (Howler) 4:SCOUT
+Baboon (Howler) 5:STRIKER
+Baboon (Howler) 6:STRIKER
+Baboon (Howler)(Standard):MISSILE_BOAT
 Rifleman C 3:SNIPER
 Rifleman RFL-7G:SNIPER
 Rifleman RFL-7N:SNIPER
 Rifleman RFL-7N2:SNIPER
-Viper (Dragonfly) J:STRIKER
-Viper (Dragonfly) K:SCOUT
-Viper (Dragonfly) L:SNIPER
-Viper (Dragonfly) M:STRIKER
-Viper (Dragonfly) R:SCOUT
-Viper (Dragonfly) T:SCOUT
+Dragonfly (Viper) J:STRIKER
+Dragonfly (Viper) K:SCOUT
+Dragonfly (Viper) L:SNIPER
+Dragonfly (Viper) M:STRIKER
+Dragonfly (Viper) R:SCOUT
+Dragonfly (Viper) T:SCOUT
 #ilClan Rec Guide 9
 Gladiator (Executioner) F:SNIPER
 Gladiator (Executioner) G:SKIRMISHER
@@ -5733,17 +5725,48 @@ Stormwolf A:STRIKER
 Stormwolf B:STRIKER
 Stormwolf C:STRIKER
 Stormwolf D:STRIKER
-Ebon Jaguar (Cauldron-Born) T:SNIPER
-Ebon Jaguar (Cauldron-Born) E:SKIRMISHER
-Ebon Jaguar (Cauldron-Born) F:SNIPER
-Ebon Jaguar (Cauldron-Born) G:SKIRMISHER
-Ebon Jaguar (Cauldron-Born) X:SKIRMISHER
+Cauldron-Born (Ebon Jaguar) T:SNIPER
+Cauldron-Born (Ebon Jaguar) E:SKIRMISHER
+Cauldron-Born (Ebon Jaguar) F:SNIPER
+Cauldron-Born (Ebon Jaguar) G:SKIRMISHER
+Cauldron-Born (Ebon Jaguar) X:SKIRMISHER
 Turkina T:SNIPER
 Turkina E:JUGGERNAUT
 Turkina M:SNIPER
 Turkina X:MISSILE_BOAT
-
 #ilClan Rec Guide 17
+Panther PNT-14R:BRAWLER
+Wolfhound WLF-6S:STRIKER
+Crusader CRD-3R (Crael):BRAWLER
+Crusader CRD-4BR:MISSILE_BOAT
+Crusader CRD-4D:MISSILE_BOAT
+Crusader CRD-4K:MISSILE_BOAT
+Crusader CRD-5M:SKIRMISHER
+Crusader CRD-5S:MISSILE_BOAT
+Crusader CRD-6D:SKIRMISHER
+Crusader CRD-6T:SKIRMISHER
+Crusader CRD-7D:SKIRMISHER
+Crusader CRD-7M:BRAWLER
+Crusader CRD-7M2:BRAWLER
+Crusader CRD-8R:MISSILE_BOAT
+Crusader CRD-9BR:SKIRMISHER
+Crusader CRD-9R:MISSILE_BOAT
+Crusader CRD-10S:MISSILE_BOAT
+Crossbow T:SKIRMISHER
+Crossbow E:SKIRMISHER
+Crossbow F:SKIRMISHER
+Crossbow G:SNIPER
+Crossbow J:SKIRMISHER
+Crossbow W:SNIPER
+Amarok (Standard):JUGGERNAUT
+Amarok 2:BRAWLER
+Amarok 3:JUGGERNAUT
+Bane (Kraken) (Standard):SNIPER
+Bane (Kraken) 2:SNIPER
+Bane (Kraken) 3:MISSILE_BOAT
+Bane (Kraken) 5:SNIPER
+Bane (Kraken) 6:SNIPER
+Bane (Kraken) 7:SNIPER
 #ilClan Rec Guide 18
 #ilClan Rec Guide 19
 #ilClan Rec Guide 20

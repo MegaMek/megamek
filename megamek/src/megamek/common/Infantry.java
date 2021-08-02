@@ -532,6 +532,17 @@ public class Infantry extends Entity {
         }
     }
 
+    @Override
+    public boolean antiTSMVulnerable() {
+        if (!hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            return false;
+        }
+        EquipmentType armorKit = getArmorKit();
+        return (armorKit == null)
+                || !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM
+                    | MiscType.S_TOXIC_ATMO);
+    }
+
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
      */

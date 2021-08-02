@@ -19,7 +19,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
     }
 
     @Override
-    protected RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
+    protected RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance,
             List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");

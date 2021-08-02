@@ -303,7 +303,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         botB.addActionListener(actionListener);
         editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
-        editB.setActionCommand(ClientGUI.FILE_BOARD_NEW);
+        editB.setActionCommand(ClientGUI.BOARD_NEW);
         editB.addActionListener(actionListener);
         skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
@@ -1028,13 +1028,13 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     
     private ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
-            case ClientGUI.FILE_BOARD_NEW:
+            case ClientGUI.BOARD_NEW:
                 showEditor();
                 break;
             case ClientGUI.MAIN_SKIN_NEW:
                 showSkinEditor();
                 break;
-            case ClientGUI.FILE_BOARD_OPEN:
+            case ClientGUI.BOARD_OPEN:
                 showEditorOpen();
                 break;
             case ClientGUI.FILE_GAME_NEW:

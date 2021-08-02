@@ -1,6 +1,32 @@
 VERSION HISTORY:
 ----------------
-0.49.2-SNAPSHOT
+0.49.3-SNAPSHOT
++ PR #2955: Board Tagging
++ Issues #1628, #1857, #2181, #2264, #2290, #2390, #2944: Board Editor and Menu Enhancements and Fixes
++ Issue #2960: Fixing non-basic letters in the new camouflage setup
++ PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
++ PR #2987: Remove unwanted water terrain exits from boards
++ PR #2990, 2993: Fix errors discovered while play-testing on potato-grade computer:
+	- prevent tooltip errors when mousing over non-unit spotting target
+	- prevent player camo color related force rendering error in lobby due to slow MekHQ->MegaMek data transfer
+	- improved bot ability to avoid flying off-board on space maps in newtonian flight model
+	- prevent ejected aerospace pilots from crashing the server when drifting off-board on space map
+	- prevent attempts to use searchlights on non-existent buildings
+	- "Nearest" destination zone is now respected properly by the bot
+	- Fix several "stuttering"/"jumping" issues when moving around the map
++ Issue #2995: Critical Hits not being applied
++ PR #2998: Advanced Map Generator Panel: Fixing Woods Size Text
++ Issue #2988, 2989: Multiple fixes to errors encountered when using fighter squadrons
++ PR #3009: Fixing Princess Null Entity Packet state update
++ Issue #3002: Disallow torso-twisting and vehicle turret rotation during TAG phase per recent errata
++ PR #3010: StatusBarPhaseDisplay Code cleanup
++ PR #3011: Fixes for multiple game-freezing issues relating to counter-battery fire against previously destroyed units
++ PR #2968: Prevent TAG from attempting to designate targets for hostile incoming homing ordnance
++ PR #3023: Allow UUID Serialization
++ PR #3022: Preventing three Compute::getTargetTotalNP NPEs
++ PR #3021: Fixing Calculate LOS NPEs
+
+0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling
 + PR #2852: Board Hex Fluff Transitions
 + PR #2877: Report Messages Cleanup
@@ -19,7 +45,25 @@ VERSION HISTORY:
 + Issue #2883: Can once again issue flee command to allied bots, but need to specify an edge (see docs); 
 	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
 + PR #2912: Show all locations for spreadable equipment in summary view
-
++ PR #2916: CommonMenuBar maintenance (checkbox items)
++ Issue #2897: Princess will now attack with swarming BA
++ Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
++ PR #2924: Per current errata, "short" buildings now provide partial cover for tall units (e.g. mechs) rather than enclosing them completely
++ PR #2923: Prototype TSM
++ Issue #2672: Fuel Tank Magnitude Tooltip Correction
++ PR #2915: Improved unit image scaling in the lobby
++ Issue #929: Narced status on unit tooltip
++ Issue #2920: Prevent lock-up when resolving homing artillery attacks vs tagged hex
++ PR #2929: Players can now skip deploying minefields
++ Issue #2543: Board images save at current zoom, game summary at zoom 1
++ PR #2910: UnitReadoutDialog Standardization
++ Issue #2917: Fixing Structured_Water directory reference
++ Issue #2003: Fix terrain exit issue in map editor
++ PR #2937: CommonMenuBar and MovementDisplay Menu entry corrections
++ PR #2941: Prevent rendering failures in lobby when using LAMs in fighter mode
++ PR #2934: Complete Anti-TSM "Green Smoke" warhead implementation
++ Issue #2762: Improve the Minimap and fix empty summary screenshots
++ Data: New Sprites, Rec Guide 14 (also renaming folder to match MUL), more units with Fluff text.
 
 0.49.1 (2021-05-23 1630 UTC)
 + PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ

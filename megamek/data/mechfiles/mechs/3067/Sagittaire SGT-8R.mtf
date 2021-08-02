@@ -3,53 +3,53 @@ Sagittaire
 SGT-8R
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3063
-Rules Level:2
+techbase:Inner Sphere
+era:3063
 source:TRO 3067
+rules level:2
 
-Mass:95
-Engine:285 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:95
+engine:285 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Double
-Walk MP:3
-Jump MP:3
+heat sinks:17 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Standard Armor
-LA Armor:31
-RA Armor:31
-LT Armor:30
-RT Armor:30
-CT Armor:44
-HD Armor:9
-LL Armor:39
-RL Armor:39
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Inner Sphere)
+LA armor:31
+RA armor:31
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:39
+RL armor:39
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:9
-1 ISLargePulseLaser, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISSmallPulseLaser, Right Arm
-1 ISLargePulseLaser, Left Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISMediumPulseLaser, Right Torso
-1 ISERPPC, Left Torso
-1 ISMediumPulseLaser, Center Torso (R)
-1 ISMediumPulseLaser, Head (R)
+Large Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+ER PPC, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISLargePulseLaser
 ISLargePulseLaser
 ISMediumPulseLaser
@@ -58,12 +58,12 @@ ISMediumPulseLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISLargePulseLaser
 ISLargePulseLaser
 ISMediumPulseLaser
@@ -73,12 +73,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
@@ -87,15 +87,15 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
 ISMediumPulseLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
 
 Center Torso:
 Fusion Engine
@@ -152,4 +152,21 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Sagittaire is built to fight in the confines of an urban battlefield.
+
+capabilities:Weighing in at a massive ninety-five tons, the Sagittaire started production in mid 3063 and began to trickle out to units clamoring for close combat 'Mechs in the midst of the FedCom Civil War. As a power source, the 'Mech has a Pitban 285 XL engine. The XL engine saves weight at the cost of survivability and gives the 'Mech a top speed of 54.0 km/h while its mobility is enhanced with three HildCo LFT 9-X jump jets, allowing the 'Mech to jump up to ninety meters. The Sagittaire has seventeen double heat sinks to handle its massive heat load, and is protected by eighteen tons of Starshield Special Heavy armor, allowing the 'Mech to stand up to a great deal of punishment in spite of its engine.
+
+deployment:The Sagittaire has a large and varied arsenal built around energy weapons. For long-range combat, it has a single Defiance 1001 ER PPC. Once the Sagittaire gets its opponent in medium to close ranges it can bring its full fury to bear. Its primary weapons are a pair of Magna 900P Large Pulse Lasers backed up by five Magna 600P Medium Pulse Lasers, two of which are rear mounted, and finally a single Magna 200P Small Pulse Laser. All of these weapons are linked to an advanced Targeting Computer, allowing the Sagittaire to eviscerate its opponents in close combat.
+
+history:Production of the Sagittaire was halted due to the damage inflicted on Robinson Standard BattleWorks during the Jihad.
+manufacturer:Robinson Standard BattleWorks
+
+primaryfactory:Robinson
+systemmanufacturer:CHASSIS:Skuel Heavy TRQ
+systemmanufacturer:ENGINE:Pitban 285 XL
+systemmanufacturer:ARMOR:Starshield Special Heavy
+systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:COMMUNICATIONS:Sony MSF-31
+systemmanufacturer:TARGETING:Federated Stalker with Targeting Module
 

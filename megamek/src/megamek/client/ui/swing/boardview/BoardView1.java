@@ -115,6 +115,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityVisibilityUtils;
 import megamek.common.Flare;
+import megamek.common.FuelTank;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -153,6 +154,7 @@ import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.event.GameBoardChangeEvent;
@@ -2332,16 +2334,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         graph.drawString(string, x, y);
     }
 
-    /**
-     * This method creates an image the size of the entire board (all
-     * mapsheets), draws the hexes onto it, and returns that image.
-     */
-    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consist board image
 
         int oldZoom = zoomIndex;
-        zoomIndex = BASE_ZOOM_INDEX;
-        zoom();
+        if (useBaseZoom) {
+            zoomIndex = BASE_ZOOM_INDEX;
+            zoom();
+        }
 
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
@@ -2675,15 +2675,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setComposite(svComp);
         }
 
-        // To place roads under the shadow map, supers for hexes with roads
+        // To place roads under the shadow map, some supers 
         // have to be drawn before the shadow map, otherwise the supers are
-        // drawn after.  Unfortunately I dont think the supers images
-        // themselves can be checked for roads.
+        // drawn after. Unfortunately the supers images
+        // themselves can't be checked for roads.
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
         if (hex.containsTerrain(Terrains.ROAD) 
                 || hex.containsTerrain(Terrains.WATER) 
-                || hex.containsTerrain(Terrains.PAVEMENT)) {
+                || hex.containsTerrain(Terrains.PAVEMENT)
+                || hex.containsTerrain(Terrains.GROUND_FLUFF)) {
             supersUnderShadow = true;
             if (supers != null) {
                 for (Image image : supers) {
@@ -4619,13 +4620,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                                                                           .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                                                                                   c2.getBoardNum()}));
             } else {
-                le = LosEffects.calculateLos(game, ae.getId(), te);
-                message.append(Messages.getString(
-                        "BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                                                             ae.getDisplayName(), c1.getBoardNum()}));
-                message.append(Messages.getString(
-                        "BoardView1.Target", new Object[]{ //$NON-NLS-1$
-                                                           te.getDisplayName(), c2.getBoardNum()}));
+                le = LosEffects.calculateLOS(game, ae, te);
+                message.append(Messages.getString("BoardView1.Attacker", ae.getDisplayName(), c1.getBoardNum()));
+                message.append(Messages.getString("BoardView1.Target", te.getDisplayName(), c2.getBoardNum()));
             }
             // Check to see if LoS is blocked
             if (!le.canSee()) {
@@ -5336,7 +5333,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
-                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                    ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
                     MegaMek.getLogger().error(ex);
                 }
@@ -5797,12 +5794,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)
                     }));
                 } else {
-                    Building bldg = game.getBoard().getBuildingAt(mcoords);
+                    FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
                     txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.FuelTank", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                             bldg.toString(),
-                            bldg.getCurrentCF(mcoords)
+                            bldg.getCurrentCF(mcoords),
+                            bldg.getMagnitude()
                     }));
                 }
                 txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
@@ -6130,13 +6128,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return txt.toString();
     }
 
-    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(
-            Coords c) {
+    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
+        
         for (Enumeration<ArtilleryAttackAction> attacks = game
                 .getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
-            if (a.getTarget(game).getPosition().equals(c)) {
+            Targetable target = a.getTarget(game);
+
+            if ((target != null) && c.equals(target.getPosition())) {
                 v.add(a);
             }
         }
@@ -6722,10 +6722,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
-    public void changeTheme() {
-        if (game == null) return;
+    public @Nullable String changeTheme() {
+        if (game == null) {
+            return null;
+        }
         IBoard board = game.getBoard();
-        if (board.inSpace()) return;
+        if (board.inSpace()) {
+            return null;
+        }
 
         Set<String> themes = tileManager.getThemes();
         if (themes.remove("")) themes.add("(No Theme)");
@@ -6743,7 +6747,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         setShouldIgnoreKeys(false);
 
         if (selectedTheme == null) {
-            return;
+            return null;
         } else if (selectedTheme.equals("(Original Theme)")) {
             selectedTheme = null;
         } else if (selectedTheme.equals("(No Theme)")) {
@@ -6751,6 +6755,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         board.setTheme(selectedTheme);
+        return selectedTheme;
     }
 
     private Image getBoardBackgroundHexImage(Coords c, IHex hex) {

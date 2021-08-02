@@ -880,13 +880,50 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have TSM?
+     * Check for whether the mech has triple strength myomer
+     * @param includePrototype Whether to include prototype TSM in the check.
+     *                         Prototype TSM does not have a movement bonus or
+     *                         a required heat level.
+     * @return Whether the mech has TSM
      */
-    public boolean hasTSM() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_TSM)) {
+    public boolean hasTSM(boolean includePrototype) {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_TSM)
+                    && (includePrototype || !m.getType().hasFlag(MiscType.F_PROTOTYPE))) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean antiTSMVulnerable() {
+        for (Mounted m : getMisc()) {
+            if ((m.getType().hasFlag(MiscType.F_TSM) && m.getType().hasFlag(MiscType.F_PROTOTYPE))
+                    || (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM) && (getYear() <= 3050))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasActiveTSM() {
+        return hasActiveTSM(true);
+    }
+
+    /**
+     * Checks whether any type of TSM is active. Industrial and prototype
+     * are always on. Standard is on when heat level is >= 9.
+     *
+     * @param includeIndustrial Whether to include industrial TSM in the check
+     * @return Whether the mech has some form of TSM and it's active
+     */
+    public boolean hasActiveTSM(boolean includeIndustrial) {
+        for (Mounted m : getMisc()) {
+            if (includeIndustrial && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+                return true;
+            } else if (m.getType().hasFlag(MiscType.F_TSM)) {
+                return (heat >=9) || m.getType().hasFlag(MiscType.F_PROTOTYPE);
             }
         }
         return false;
@@ -3895,7 +3932,7 @@ public abstract class Mech extends Entity {
             bvWalk = Math.max(0, walkMP);
         }
         int runMP;
-        if (hasTSM()) {
+        if (hasTSM(false)) {
             bvWalk++;
         }
         if (hasMASCAndSuperCharger()) {
@@ -5107,7 +5144,7 @@ public abstract class Mech extends Entity {
             bvText.append(endRow);
         }
         // add tonnage, adjusted for TSM
-        if (hasTSM()) {
+        if (hasTSM(true)) {
             weaponBV += weight * 1.5;
             bvText.append(startRow);
             bvText.append(startColumn);
@@ -5377,7 +5414,8 @@ public abstract class Mech extends Entity {
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = weight * 2000;// sensors
-        int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : hasIndustrialTSM() ? 12000 : 2000;
+        int muscCost = hasSCM() ? 10000 : hasTSM(false) ? 16000 :
+                        hasTSM(true) ? 32000 : hasIndustrialTSM() ? 12000 : 2000;
         costs[i++] = muscCost * weight;// musculature
         double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = structureCost;
@@ -6671,8 +6709,10 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         sb.append(MtfFile.MYOMER);
-        if (hasTSM()) {
+        if (hasTSM(false)) {
             sb.append("Triple-Strength");
+        } else if (hasTSM(true)) {
+            sb.append("Prototype Triple-Strength");
         } else if (hasIndustrialTSM()) {
             sb.append("Industrial Triple-Strength");
         } else if (hasSCM()) {

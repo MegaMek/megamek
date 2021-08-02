@@ -155,4 +155,16 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Bandersnatch, who receives his name from the monster mentioned in Lewis Carroll's "Wonderland" series, is the brainchild of Felifious Bander and is built around the concept of an affordable and effective BattleMech for sale to mercenary units. 
 
+capabilities:The Bandersnatch is built using some common components with the Marauder in an attempt to make the 'Mech cheaper and easier to repair. The 'Mech has a top speed of 64.8 kph which is average for a 'Mech of its weight. The Bandersnatch also uses double heat sinks for their superior heat dissipation capabilities, allowing a heavy weapons payload to be used by the 'Mech. Finally, the Bandersnatch carries a respectable eleven tons of armor. While not the maximum amount of armor that the chassis can handle, the 'Mech is still well protected.
+
+deployment:The Bandersnatch is primarily armed for long to medium range combat. The first weapons that it would bring to bear on an enemy are a trio of Holly LRM-5 missile launchers, which can lay down a powerful barrage of missiles. The next weapons that the Bandersnatch can employ are a pair of Armstrong Class-B ClusterGuns LB-X Autocannon/10s that fire both solid and cluster rounds. These are effective against a variety of targets and make the Bandersnatch capable of anti-aircraft duties. Finally, in the event that an enemy does close to short ranges, the 'Mech carries six Magna Mk II Medium Lasers, two of which are rear mounted, giving it good close range protection.
+
+manufacturer:Bander BattleMechs, Kressly WarWorks
+primaryfactory:Terra Firma (Bander BattleMechs), Epsilon Eridani (Kressly WarWorks)
+systemmanufacturer:CHASSIS:Bander Custom 1
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Valiant Chainmail
+systemmanufacturer:COMMUNICATIONS:Winston Mega Boozee Mark IX
+systemmanufacturer:TARGETING:Winston Sidewinder

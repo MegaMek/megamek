@@ -112,12 +112,23 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
     public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
     //board submenu
-    public static final String FILE_BOARD_NEW = "fileBoardNew";
-    public static final String FILE_BOARD_OPEN = "fileBoardOpen";
-    public static final String FILE_BOARD_SAVE = "fileBoardSave";
-    public static final String FILE_BOARD_SAVE_AS = "fileBoardSaveAs";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_NEW = "fileBoardNew";
+    public static final String BOARD_OPEN = "fileBoardOpen";
+    public static final String BOARD_SAVE = "fileBoardSave";
+    public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
+    public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
+    public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_UNDO = "boardUndo";
+    public static final String BOARD_REDO = "boardRedo";
+    public static final String BOARD_RAISE = "boardRaise";
+    public static final String BOARD_CLEAR = "boardClear";
+    public static final String BOARD_FLOOD = "boardFlood";
+    public static final String BOARD_REMOVE_FORESTS = "boardRemoveForests";
+    public static final String BOARD_REMOVE_ROADS = "boardRemoveRoads";
+    public static final String BOARD_REMOVE_WATER = "boardRemoveWater";
+    public static final String BOARD_REMOVE_BUILDINGS = "boardRemoveBuildings";
+    public static final String BOARD_FLATTEN = "boardFlatten";
+    
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
@@ -183,7 +194,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public JDialog mechW;
     public UnitDisplay mechD;
     public JDialog minimapW;
-    public MiniMap minimap;
     private MapMenu popup;
     private UnitOverview uo;
     private Ruler ruler;
@@ -484,10 +494,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
              */
             @Override
             protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
+                e.setSource(ClientGUI.this);
+                menuBar.dispatchEvent(e);
                 // Make the source be the ClientGUI and not the dialog
                 // This prevents a ClassCastException in ToolTipManager
-                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);
@@ -532,45 +542,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
-        // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
-                e.setSource(ClientGUI.this);// avoid ClassCastException in TooltipManager
-                curPanel.dispatchEvent(e);
-                if (!e.isConsumed()) {
-                    super.processKeyEvent(e);
-                }
-            }
-        };
-
-        x = GUIPreferences.getInstance().getMinimapPosX();
-        y = GUIPreferences.getInstance().getMinimapPosY();
-        try {
-            minimap = new MiniMap(minimapW, this, bv);
-        } catch (IOException e) {
-            MegaMek.getLogger().fatal(e);
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message1") + e);
-            die();
-        }
-        h = minimap.getSize().height;
-        w = minimap.getSize().width;
-        if (((x + 10) >= virtualBounds.getWidth()) || ((x + w) < 10)) {
-            x = (int)virtualBounds.getWidth() - w;
-        }
-        if (((y + 10) > virtualBounds.getHeight()) || ((y + h) < 10)) {
-            y = (int)virtualBounds.getHeight() - h;
-        }
-        minimapW.setLocation(x, y);
-        minimapW.addWindowListener(this);
-        minimapW.add(minimap);
+        minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -783,22 +755,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case VIEW_ROUND_REPORT:
                 showRoundReport();
                 break;
-            case FILE_BOARD_SAVE:
+            case BOARD_SAVE:
                 ignoreHotKeys = true;
                 boardSave();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS:
+            case BOARD_SAVE_AS:
                 ignoreHotKeys = true;
                 boardSaveAs();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE:
+            case BOARD_SAVE_AS_IMAGE:
                 ignoreHotKeys = true;
                 boardSaveAsImage(true);
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE_UNITS:
+            case BOARD_SAVE_AS_IMAGE_UNITS:
                 ignoreHotKeys = true;
                 boardSaveAsImage(false);
                 ignoreHotKeys = false;
@@ -959,7 +931,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
-            GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
@@ -1086,8 +1057,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_OFFBOARD:
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
+                if (frame.isShowing()) {
+                    setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
                 }
                 break;
             case PHASE_INITIATIVE_REPORT:
@@ -1313,18 +1284,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    /** Switches the Minimap and the MechDisplay an and off together.
-     *  If the MechDisplay is active, both will be hidden, else
-     *  both will be shown.
+    /** 
+     * Switches the Minimap and the MechDisplay an and off together.
+     * If the MechDisplay is active, both will be hidden, else
+     * both will be shown.
      */
     public void toggleMMUDDisplays() {
-        if (mechW.isVisible()) {
-            setDisplayVisible(false);
-            setMapVisible(false);
-        } else {
-            setDisplayVisible(true);
-            setMapVisible(true);
-        }
+        boolean wasVisible = mechW.isVisible();
+        setDisplayVisible(!wasVisible);
+        GUIPreferences.getInstance().setMinimapEnabled(!wasVisible);
+        toggleMap();
     }
 
     /**
@@ -1377,25 +1346,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.refreshDisplayables();
     }
 
-    /**
-     * Toggles the minimap window Also, toggles the minimap enabled setting
-     */
+    /** Shows or hides the minimap based on the current menu setting. */
     private void toggleMap() {
-        minimapW.setVisible(!minimapW.isVisible());
-        GUIPreferences.getInstance().setMinimapEnabled(minimapW.isVisible());
-        if (minimapW.isVisible()) {
-            frame.requestFocus();
-        }
+        setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
     }
 
-    /**
-     * Sets the visibility of the minimap window
+    /** 
+     * Shows or hides the minimap based on the given visible. This works independently 
+     * of the current menu setting, so it should be used only when the minimap is to 
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby. 
+     * Does not change the menu bar setting. 
      */
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
-        if (visible) {
-            frame.requestFocus();
-        }
     }
 
     private boolean fillPopup(Coords coords) {
@@ -1751,9 +1714,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(minimapW)) {
-            setMapVisible(false);
-        } else if (windowEvent.getWindow().equals(mechW)) {
+        if (windowEvent.getWindow().equals(mechW)) {
             setDisplayVisible(false);
         }
     }
@@ -2311,7 +2272,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileBoardImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
             e.printStackTrace();
         }

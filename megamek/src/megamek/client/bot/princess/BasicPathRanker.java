@@ -249,10 +249,10 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return 0;
         }
 
-        //  If they don't have LoS, they can't do damage.
-        LosEffects losEffects = 
-                LosEffects.calculateLos(game, enemy.getId(), path.getEntity(), shooterState.getPosition(), targetState.getPosition(), false);
-        
+        // If they don't have LoS, they can't do damage.
+        final LosEffects losEffects = LosEffects.calculateLOS(game, enemy, path.getEntity(),
+                shooterState.getPosition(), targetState.getPosition(), false);
+
         if (!losEffects.canSee()) {
             return 0;
         }
@@ -260,7 +260,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         Targetable actualTarget = path.getEntity();
         
         // if the target is infantry protected by a building, we have to fire at the building instead. 
-        if(losEffects.infantryProtected()) {
+        if (losEffects.infantryProtected()) {
             actualTarget = new BuildingTarget(targetState.getPosition(), game.getBoard(), false);
             targetState = new EntityState(actualTarget);            
         }
@@ -277,9 +277,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
-    double calculateKickDamagePotential(Entity enemy, MovePath path,
-                                        IGame game) {
-
+    double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
         if (!(enemy instanceof Mech)) {
             return 0.0;
         }
@@ -309,16 +307,15 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         // If I don't have LoS, I can't do damage.  ToDo: Account for indirect fire.
-        LosEffects losEffects = 
-                LosEffects.calculateLos(game, me.getId(), enemy, path.getFinalCoords(), enemy.getPosition(), false);
+        LosEffects losEffects = LosEffects.calculateLOS(game, me, enemy, path.getFinalCoords(),
+                enemy.getPosition(), false);
         if (!losEffects.canSee()) {
             return 0;
         }
 
         // If I am an infantry unit that cannot both move and fire, and I am 
         // moving, I can't do damage.
-        boolean isZeroMpInfantry =
-                me instanceof Infantry && (me.getWalkMP() == 0);
+        boolean isZeroMpInfantry = me instanceof Infantry && (me.getWalkMP() == 0);
         if (isZeroMpInfantry && path.getMpUsed() > 0) {
             return 0;
         }
@@ -521,7 +518,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     @Override
     protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
-                               double fallTolerance, int distanceHome,
+                               double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
@@ -781,47 +778,6 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             minimum = height - position.getY();
         }
         return minimum;
-    }
-
-    /**
-     * Returns distance to the unit's home edge.
-     * Gives the distance to the closest edge
-     *
-     * @param position Final coordinates of the proposed move.
-     * @param homeEdge Unit's home edge.
-     * @param game     The {@link IGame} currently in play.
-     * @return The distance to the unit's home edge.
-     */
-    @Override
-    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
-        int width = game.getBoard().getWidth();
-        int height = game.getBoard().getHeight();
-
-        int distance;
-        switch (homeEdge) {
-            case NORTH: {
-                distance = position.getY();
-                break;
-            }
-            case SOUTH: {
-                distance = height - position.getY() - 1;
-                break;
-            }
-            case WEST: {
-                distance = position.getX();
-                break;
-            }
-            case EAST: {
-                distance = width - position.getX() - 1;
-                break;
-            }
-            default: {
-                getOwner().getLogger().warning("Invalid home edge.  Defaulting to NORTH.");
-                distance = position.getY();
-            }
-        }
-
-        return distance;
     }
 
     double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {

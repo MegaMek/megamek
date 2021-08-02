@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.*;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
@@ -38,6 +39,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -317,13 +319,11 @@ public class MekTableModel extends AbstractTableModel {
                 setToolTipText(null);
                 if (column == COLS.UNIT.ordinal()) {
                     if (!compact) {
-                        Image image = getToolkit().getImage(UNKNOWN_UNIT);
-                        setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+                        setIcon(getToolkit().getImage(UNKNOWN_UNIT), size);
                     }
                 } else if (column == COLS.PILOT.ordinal()) {
                     if (!compact) {
-                        Image image = getToolkit().getImage(DEF_PORTRAIT);
-                        setIcon(new ImageIcon(image.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+                        setIcon(getToolkit().getImage(DEF_PORTRAIT), size);
                     }
                 } 
             } else {
@@ -332,10 +332,10 @@ public class MekTableModel extends AbstractTableModel {
                     final Camouflage camouflage = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
                     final Image icon = clientGui.bv.getTilesetManager().loadPreviewImage(entity, camouflage, this);
                     if (!compact) {
-                        setIcon(new ImageIcon(icon.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
+                        setIcon(icon, size);
                         setIconTextGap(UIUtil.scaleForGUI(10));
                     } else {
-                        setIcon(new ImageIcon(icon.getScaledInstance(-1, size/3, Image.SCALE_SMOOTH)));
+                        setIcon(icon, size / 3);
                         setIconTextGap(UIUtil.scaleForGUI(5));
                     }
                 } else if (column == COLS.PILOT.ordinal()) {
@@ -357,7 +357,17 @@ public class MekTableModel extends AbstractTableModel {
             return this;
         }
         
+        private void setIcon(Image image, int height) {
+            if ((image.getHeight(null) > 0) && (image.getWidth(null) > 0)) {
+                int width = height * image.getWidth(null) / image.getHeight(null);
+                setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
+            } else {
+                MegaMek.getLogger().error("Trying to resize a unit icon of height or width 0!");
+                setIcon(null);
+            }
+        }
     }
+    
     
     @Override
     public int getColumnCount() {

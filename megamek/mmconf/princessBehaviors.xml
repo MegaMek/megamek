@@ -152,13 +152,8 @@
   </behavior>
   <behavior>
     <name>BERSERK</name>
-<<<<<<< HEAD
     <destinationEdge>None</destinationEdge>
     <retreatEdge>None</retreatEdge>
-=======
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
->>>>>>> refs/remotes/MM_Master/master
     <forcedWithdrawal>false</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -172,13 +167,8 @@
   </behavior>
   <behavior>
     <name>Brawler (pPT)</name>
-<<<<<<< HEAD
     <destinationEdge>None</destinationEdge>
     <retreatEdge>None</retreatEdge>
-=======
-    <destinationEdge>NONE</destinationEdge>
-    <retreatEdge>NEAREST</retreatEdge>
->>>>>>> refs/remotes/MM_Master/master
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
@@ -207,13 +197,8 @@
   </behavior>
   <behavior>
     <name>COWARDLY</name>
-<<<<<<< HEAD
-    <destinationEdge>None</destinationEdge>
-    <retreatEdge>None</retreatEdge>
-=======
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
->>>>>>> refs/remotes/MM_Master/master
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>

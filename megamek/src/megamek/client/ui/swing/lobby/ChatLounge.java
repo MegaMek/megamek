@@ -64,8 +64,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 
-import com.sun.istack.Nullable;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomNameGenerator;
@@ -91,6 +89,7 @@ import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.*;
 import megamek.common.options.*;

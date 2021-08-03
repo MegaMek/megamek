@@ -734,7 +734,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         }
         
         // Other local bot Configurations
-        if (client != null) {// && !client.bots.isEmpty()) {
+        if (client != null) {
             // Find if there actually are other bots 
             Set<String> otherBots = new HashSet<>(client.bots.keySet());
             if (fixedBotPlayerName != null) {

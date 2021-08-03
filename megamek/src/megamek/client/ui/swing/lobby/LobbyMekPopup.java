@@ -381,7 +381,7 @@ class LobbyMekPopup {
     private static JMenu prioTargetMenu(ClientGUI cg, boolean enabled, ActionListener listener,
             Collection<Entity> entities) {
 
-        JMenu menu = new JMenu("Set Prio Target for");
+        JMenu menu = new JMenu("Set Priority Target for");
         if (enabled && !cg.getBots().isEmpty()) {
             for (String bot : cg.getBots().keySet()) {
                 menu.add(menuItem(bot, LMP_PRIO_TARGET + "|" + bot + enToken(entities), enabled, listener));

@@ -111,7 +111,7 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-    private LogLevel verbosity = LogLevel.OFF; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
+    private LogLevel verbosity = LogLevel.WARNING; // Verbosity of Princess chat messages.  Separate from the verbosity of the MegaMek log.
 
     private MMLogger logger = null;
 

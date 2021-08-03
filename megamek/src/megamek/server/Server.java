@@ -80,6 +80,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.EmailService;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
@@ -150,6 +151,9 @@ public class Server implements Runnable {
     private ServerSocket serverSocket;
 
     private String motd;
+
+    private EmailService mailer;
+
 
     private static class ReceivedPacket {
         public int connId;
@@ -341,7 +345,12 @@ public class Server implements Runnable {
     private final Object serverLock = new Object();
 
     public Server(String password, int port) throws IOException {
-        this(password, port, false, "");
+        this(password, port, false, "", null);
+    }
+
+    public Server(String password, int port, boolean registerWithServerBrowser,
+                  String metaServerUrl) throws IOException {
+        this(password, port, registerWithServerBrowser, metaServerUrl, null);
     }
 
     /**
@@ -352,11 +361,14 @@ public class Server implements Runnable {
      *                                  used
      * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
      *                                  with the master server browser on megamek.info
+     * @param mailer an email service instance to use for sending round reports.
      */
     public Server(String password, int port, boolean registerWithServerBrowser,
-                  String metaServerUrl) throws IOException {
+                  String metaServerUrl, EmailService mailer) throws IOException {
         this.metaServerUrl = metaServerUrl;
         this.password = password.length() > 0 ? password : null;
+        this.mailer = mailer;
+
         // initialize server socket
         serverSocket = new ServerSocket(port);
 

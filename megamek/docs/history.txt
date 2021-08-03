@@ -26,6 +26,7 @@ VERSION HISTORY:
 + PR #3022: Preventing three Compute::getTargetTotalNP NPEs
 + PR #3021: Fixing Calculate LOS NPEs
 + Data: New Sprites, Camos
++ PR #3041: Princess config dialog improvements; much easier bot replacement upon loading a save game.
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

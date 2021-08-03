@@ -27,11 +27,12 @@ import java.util.Vector;
  * Represents a player in the game.
  */
 public final class Player extends TurnOrdered implements IPlayer {
-    private static final long serialVersionUID = 6828849559007455760L;
+    private static final long serialVersionUID = 6828849559007455761L;
 
     private transient IGame game;
 
     private String name;
+    private String email;
     private int id;
 
     private int team = TEAM_NONE;
@@ -197,6 +198,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

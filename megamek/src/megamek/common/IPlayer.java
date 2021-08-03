@@ -82,6 +82,10 @@ public interface IPlayer extends ITurnOrdered {
 
     void setName(String name);
 
+    String getEmail();
+
+    void setEmail(String email);
+
     int getId();
 
     int getTeam();

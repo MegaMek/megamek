@@ -171,8 +171,6 @@ public class AddBotUtilTest {
         actual = testAddBotUtil.addBot(args, mockGame, mockClient.getHost(), mockClient.getPort());
         TestCase.assertEquals(expected, actual);
         expectedBehavior = BehaviorSettingsFactory.getInstance().getBehavior("DEFAULT");
-        System.out.println(mockPrincess.getBehaviorSettings().toLog());
-        System.out.println(expectedBehavior.toLog());
         TestCase.assertEquals(expectedBehavior, mockPrincess.getBehaviorSettings());
 
         // Test an invalid verbosity level for Princess.

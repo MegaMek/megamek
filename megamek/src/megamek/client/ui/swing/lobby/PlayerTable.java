@@ -76,9 +76,9 @@ class PlayerTable extends JTable {
 
         result.append(guiScaledFontHTML());
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
-            result.append(" (\u259A This Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " This Bot)");
         } else if (lobby.client().bots.containsKey(player.getName())) {
-            result.append(" (\u259A Your Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " Your Bot)");
         } else if (lobby.localPlayer().equals(player)) {
             result.append(" (You)");
         }
@@ -176,7 +176,7 @@ class PlayerTable extends JTable {
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
                     || lobby.client().bots.containsKey(player.getName())) {
-                result.append("\u259A ");
+                result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());
             result.append("<BR>");

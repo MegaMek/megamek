@@ -602,4 +602,5 @@ public interface IBoard {
     
     /** Returns the board's tags list. The list is unmodifiable. Use addTag and removeTag to change it. */
     public Set<String> getTags();
+
 }

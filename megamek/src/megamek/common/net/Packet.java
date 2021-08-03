@@ -32,6 +32,7 @@ public class Packet {
     public static final int COMMAND_PLAYER_REMOVE = 50;
     public static final int COMMAND_PLAYER_UPDATE = 60;
     public static final int COMMAND_PLAYER_TEAMCHANGE = 62;
+    public static final int COMMAND_PRINCESS_SETTINGS = 64;
     public static final int COMMAND_PLAYER_READY = 70;
 
     public static final int COMMAND_CHAT = 80;

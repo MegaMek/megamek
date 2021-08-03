@@ -125,6 +125,17 @@ public class Princess extends BotClient {
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
+    
+    /** 
+     * Returns a new Princess Bot with the given behavior and name, configured for the given
+     * host and port. The new Princess Bot outputs its settings to its own logger. 
+     */
+    public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
+        Princess result = new Princess(name, host, port, behavior.getVerbosity());
+        result.setBehaviorSettings(behavior);
+        result.getLogger().debug(result.getBehaviorSettings().toLog());
+        return result;
+    }
 
     /**
      * Constructor - initializes a new instance of the Princess bot.
@@ -1949,6 +1960,11 @@ public class Princess extends BotClient {
     public void sendLoadGame(final File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
+    }
+    
+    public void sendPrincessSettings() {
+        Packet packet = new Packet(Packet.COMMAND_PRINCESS_SETTINGS, behaviorSettings);
+        send(packet);
     }
     
     protected void disconnected() {

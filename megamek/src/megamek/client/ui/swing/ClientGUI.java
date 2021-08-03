@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -47,7 +48,9 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
@@ -55,6 +58,7 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
@@ -2420,52 +2424,32 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     void replacePlayer() {
-        Set<IPlayer> ghostPlayers = new HashSet<>();
-        for (IPlayer p : client.getGame().getPlayersVector()) {
-            if (p.isGhost()) {
-                ghostPlayers.add(p);
-            }
-        }
+        Set<IPlayer> ghostPlayers = client.getGame().getPlayersVector().stream()
+                .filter(IPlayer::isGhost).collect(Collectors.toSet());
         if (ghostPlayers.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No ghost players to replace.", "No Ghosts",
-                                          JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        BotConfigDialog botConfigDialog = new BotConfigDialog(this.frame, ghostPlayers);
-        botConfigDialog.setModal(true);
-        botConfigDialog.setVisible(true);
-        if (botConfigDialog.dialogAborted) {
+        var rpd = new ReplacePlayersDialog(frame, this);
+        rpd.setVisible(true);
+        if (rpd.getResult() == DialogResult.CANCELLED) {
             return;
         }
+
         AddBotUtil util = new AddBotUtil();
-        BotClient botClient = botConfigDialog.getSelectedBot(client.getHost(), client.getPort());
-        String[] args;
-        Collection<String> playersToReplace = botConfigDialog.getPlayerToReplace();
-        Collection<String[]> replaceCommands = new HashSet<>(playersToReplace.size());
-        if (botClient instanceof Princess) {
-            for (String player : playersToReplace) {
-                args = new String[]{
-                        "/replacePlayer",
-                        "-b:Princess",
-                        "-c:" + ((Princess) botClient).getBehaviorSettings().getDescription(),
-                        "-v:" + ((Princess) botClient).getVerbosity(),
-                        "-p:" + player
-                };
-                replaceCommands.add(args);
-            }
-        } else {
-            for (String player : playersToReplace) {
-                args = new String[]{
-                        "/replacePlayer",
-                        player
-                };
-                replaceCommands.add(args);
-            }
-        }
-        botClient.die();
-        for (String[] cmd : replaceCommands) {
-            util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
+        Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        for (String player : newBotSettings.keySet()) {
+            StringBuilder message = new StringBuilder();
+            Princess princess = util.addBot(newBotSettings.get(player), player, 
+                    client.getGame(), client.getHost(), client.getPort(), message);
+            systemMessage(message.toString());
+            // Make this princess a locally owned bot if in the lobby. This way it
+            // can be configured and it will faithfully press Done when the local player does.
+            if ((princess != null) && client.getGame().getPhase() == Phase.PHASE_LOUNGE) {
+                getBots().put(player, princess);   
+            } 
         }
     }
     

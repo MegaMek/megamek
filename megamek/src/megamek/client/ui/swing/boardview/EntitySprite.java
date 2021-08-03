@@ -30,10 +30,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.Transparency;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
@@ -75,12 +72,13 @@ class EntitySprite extends Sprite {
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
     
-    private static final Set<String> removableNameStrings = new HashSet<String>( 
-            Arrays.asList("Defense", "Platoon", "Heavy", "Medium", "Light", "Artillery", "Tank", 
-                    "Wheeled", "Command", "Standard", "Hover", "Hovercraft", "Mechanized", 
-                    "(Standard)", "Platoon", "Defense", "Transport", "Vehicle", "Air", 
-                    "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
-                    "Fighting", "Fire", "Suport", "Reconnaissance", "Fast"));
+    /** Generic terms that can be removed from the end of vehicle names to create a chassis name. */
+    private static final Set<String> REMOVABLE_NAME_PARTS = Set.of(
+            "Defense", "Heavy", "Medium", "Light", "Artillery", "Tank", 
+            "Wheeled", "Command", "Standard", "Hover", "Hovercraft", "Mechanized", 
+            "(Standard)", "Platoon", "Transport", "Vehicle", "Air", 
+            "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
+            "Fighting", "Fire", "Suport", "Reconnaissance", "Fast");
     
     public EntitySprite(BoardView1 boardView1, final Entity entity,
             int secondaryPos, Image radarBlipImage) {
@@ -101,34 +99,30 @@ class EntitySprite extends Sprite {
             return Messages.getString("BoardView1.sensorReturn");
         } else {
             switch (GUIPreferences.getInstance().getUnitLabelStyle()) {
-            case FULL:
-                return standardLabelName();
-            case ABBREV:
-                if (entity instanceof Mech) {
-                    return entity.getModel();
-                } else {
-                    return abbreviateUnitName(standardLabelName());
-                }
-            case CHASSIS:
-                return reduceVehName(entity.getChassis());
-            case NICKNAME:
-                if (!pilotNick().isBlank()) {
-                    return "\"" + pilotNick().toUpperCase() + "\"";
-                } else if (!unitNick().isBlank()) {
-                    return "\'" + unitNick() + "\'";
-                } else {
-                    return reduceVehName(entity.getChassis());
-                }
-            case ONLY_NICKNAME:
-                if (!pilotNick().isBlank()) {
-                    return "\"" + pilotNick().toUpperCase() + "\"";
-                } else if (!unitNick().isBlank()) {
-                    return "\'" + unitNick() + "\'";
-                } else {
+                case FULL:
+                    return standardLabelName();
+                case ABBREV:
+                    return (entity instanceof Mech) ? entity.getModel() : abbreviateUnitName(standardLabelName());
+                case CHASSIS:
+                    return reduceVehicleName(entity.getChassis());
+                case NICKNAME:
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\"";
+                    } else if (!unitNick().isBlank()) {
+                        return "\'" + unitNick() + "\'";
+                    } else {
+                        return reduceVehicleName(entity.getChassis());
+                    }
+                case ONLY_NICKNAME:
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\"";
+                    } else if (!unitNick().isBlank()) {
+                        return "\'" + unitNick() + "\'";
+                    } else {
+                        return "";
+                    }
+                default: // ONLY_STATUS
                     return "";
-                }
-            default: // ONLY_STATUS
-                return "";
             }
         }
     }
@@ -139,11 +133,11 @@ class EntitySprite extends Sprite {
      * until something is encountered that is not contained in that list. 
      * On Mech names this will typically have no effect.
      */
-    private static String reduceVehName(String unitName) {
+    private static String reduceVehicleName(String unitName) {
         String[] tokens = unitName.split(" ");
         int i = tokens.length - 1;
         for ( ; i > 0; i--) {
-            if (!removableNameStrings.contains(tokens[i])) {
+            if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
                 break;
             }
         }

@@ -349,7 +349,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
-        store.setDefault(UNIT_LABEL_STYLE, "NICKNAME");
+        store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
         store.setDefault(FIRING_SOLUTIONS,true);

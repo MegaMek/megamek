@@ -35,12 +35,18 @@ public enum LabelDisplayStyle {
     
     public LabelDisplayStyle next() { 
         switch (this) {
-            case FULL: return ABBREV;
-            case ABBREV: return CHASSIS;
-            case CHASSIS: return NICKNAME;
-            case NICKNAME: return ONLY_NICKNAME;
-            case ONLY_NICKNAME: return ONLY_STATUS;
-            default: return FULL;
+            case FULL: 
+                return ABBREV;
+            case ABBREV: 
+                return CHASSIS;
+            case CHASSIS: 
+                return NICKNAME;
+            case NICKNAME: 
+                return ONLY_NICKNAME;
+            case ONLY_NICKNAME: 
+                return ONLY_STATUS;
+            default: 
+                return FULL;
         }
     }
 }

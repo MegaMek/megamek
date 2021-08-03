@@ -15,7 +15,9 @@
 
 package megamek.common.util;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -27,13 +29,16 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import megamek.common.IPlayer;
+import megamek.common.Report;
+
 
 public class EmailService {
 
 
     private InternetAddress from;
     private Properties mailProperties;
-    private Session session;
+    private Session mailSession;
 
 
     public EmailService(Properties mailProperties) throws Exception {
@@ -53,7 +58,35 @@ public class EmailService {
                 };
         }
 
-        this.session = Session.getInstance(mailProperties, auth);
+        mailSession = Session.getInstance(mailProperties, auth);
+    }
+
+    public Message newReportMessage(IPlayer player,
+                                    int round,
+                                    Vector<Report> reports) throws Exception {
+        var message = new MimeMessage(mailSession);
+        message.setFrom(from);
+        message.setRecipient(
+            Message.RecipientType.TO,
+            new InternetAddress(player.getEmail(), player.getName())
+        );
+
+        Report subjectReport;
+        if (round < 1) {
+            subjectReport = new Report(990);
+        } else {
+            subjectReport = new Report(991);
+            subjectReport.add(round, false);
+        }
+        message.setSubject(subjectReport.getText());
+
+        var body = new StringBuilder("<div style=\"white-space: pre\">");
+        for (var report: reports) {
+            body.append(report.getText());
+        }
+        body.append("</div>");
+        message.setText(body.toString(), "UTF-8", "html");
+        return message;
     }
 
     public void send(final Message message) throws MessagingException {

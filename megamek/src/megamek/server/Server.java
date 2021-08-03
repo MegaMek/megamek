@@ -2488,7 +2488,23 @@ public class Server implements Runnable {
                         }
                     }
                 }
-            }
+                }
+                if (mailer != null) {
+                    for (var player: game.getPlayersVector()) {
+                        if (!StringUtil.isNullOrEmpty(player.getEmail())) {
+                            try {
+                                var message = mailer.newReportMessage(
+                                    player, game.getRoundCount(), vPhaseReport
+                                );
+                                mailer.send(message);
+                            } catch (Exception ex) {
+                                MegaMek.getLogger().error(
+                                    "Error sending email to: " + player.getEmail(), ex
+                                );
+                            }
+                        }
+                    }
+                }
                 send(createFullEntitiesPacket());
                 send(createReportPacket(null));
                 send(createEndOfGamePacket());
@@ -31131,6 +31147,22 @@ public class Server implements Runnable {
      * Send the round report to all connected clients.
      */
     private void sendReport(boolean tacticalGeniusReport) {
+        if (mailer != null) {
+            for (var player: game.getPlayersVector()) {
+                if (!StringUtil.isNullOrEmpty(player.getEmail())) {
+                    try {
+                        var reports = filterReportVector(vPhaseReport, player);
+                        var message = mailer.newReportMessage(
+                            player, game.getRoundCount(), reports
+                        );
+                        mailer.send(message);
+                    } catch (Exception e) {
+                        MegaMek.getLogger().error("Error sending email to: " + player.getEmail(), e);
+                    }
+                }
+            }
+        }
+
         if (connections == null) {
             return;
         }

@@ -23,7 +23,7 @@ import megamek.common.UnitType;
  * @author Neoancient
  * 
  */
-public class AbstractUnitRecord {
+public class AbstractUnitRecord implements Comparable<AbstractUnitRecord> {
 	
 	protected String chassis = "";
 	protected boolean omni;
@@ -154,6 +154,10 @@ public class AbstractUnitRecord {
 			default:
 				return -1;
 		}
+	}
+	
+	public int compareTo(AbstractUnitRecord o2) {
+	    return this.getChassis().compareTo(o2.getChassis());
 	}
 }
 

@@ -14,7 +14,10 @@
 
 package megamek.client.ratgenerator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import megamek.MegaMek;
 
@@ -43,6 +46,13 @@ public class ChassisRecord extends AbstractUnitRecord {
     
     public HashSet<ModelRecord> getModels() {
         return models;
+    }
+    
+    public List<ModelRecord> getSortedModels() { 
+        List<ModelRecord> sortedModels = new ArrayList<>(models);
+        Collections.sort(sortedModels);
+        return sortedModels;
+        
     }
     
     public int totalModelWeight(int era, String fKey) {

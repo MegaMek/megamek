@@ -1456,6 +1456,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFVibra(psd.getVibMines());
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
+            player.setEmail(psd.getEmail());
             var rsg = c.getRandomSkillsGenerator();
             rsg.setMethod(psd.getMethod());
             rsg.setType(psd.getPilot());

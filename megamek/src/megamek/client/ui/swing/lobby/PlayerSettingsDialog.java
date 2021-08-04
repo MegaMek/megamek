@@ -119,7 +119,12 @@ public class PlayerSettingsDialog extends ClientDialog {
     public boolean getForceGP() {
         return butForceGP.isSelected();
     }
-    
+
+    /** Returns the player's email address. */
+    public String getEmail() {
+        return fldEmail.getText().trim();
+    }
+
     // PRIVATE
 
     private final Client client;
@@ -150,7 +155,11 @@ public class PlayerSettingsDialog extends ClientDialog {
     private JComboBox<String> cmbPilot = new JComboBox<String>();
     private JComboBox<String> cmbXP = new JComboBox<String>();
     private MMToggleButton butForceGP = new MMToggleButton(getString(PSD + "butForceGP"));
-    
+
+    // Email section
+    private JLabel labEmail = new JLabel(getString(PSD + "labEmail"), SwingConstants.RIGHT);
+    private JTextField fldEmail = new JTextField(20);
+
     private JPanel panStartButtons = new JPanel();
     private TipButton[] butStartPos = new TipButton[11];
     private JButton butBotSettings = new JButton(Messages.getString(PSD + "botSettings"));
@@ -179,6 +188,9 @@ public class PlayerSettingsDialog extends ClientDialog {
             mainPanel.add(mineSection());
         }
         mainPanel.add(skillsSection());
+        if (!(client instanceof BotClient)) {
+            mainPanel.add(emailSection());
+        }
         mainPanel.add(Box.createVerticalGlue());
     }
     
@@ -251,7 +263,16 @@ public class PlayerSettingsDialog extends ClientDialog {
         panContent.add(butForceGP);
         return result;
     }
-    
+
+    private JPanel emailSection() {
+        JPanel result = new OptionPanel(PSD + "header.email");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labEmail);
+        panContent.add(fldEmail);
+        return result;
+    }
+
     private JPanel buttonPanel() {
         JPanel result = new JPanel(new FlowLayout());
         butOkay.addActionListener(listener);
@@ -282,8 +303,9 @@ public class PlayerSettingsDialog extends ClientDialog {
         cmbXP.setSelectedIndex(client.getRandomSkillsGenerator().getLevel());
         butForceGP.setSelected(client.getRandomSkillsGenerator().isClose());
         cmbMethod.addItemListener(e -> adjustSkillMethodTip());
+        fldEmail.setText(player.getEmail());
     }
-    
+
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
         for (int i = 0; i < 11; i++) {

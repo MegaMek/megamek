@@ -695,6 +695,7 @@ public class Server implements Runnable {
                                + " to " + player.getConstantInitBonus() + ".");
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
+            gamePlayer.setEmail(player.getEmail());
         }
     }
 

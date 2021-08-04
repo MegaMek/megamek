@@ -11499,7 +11499,7 @@
 		</model>
 		<model name='(3072)'>
 			<roles>civilian</roles>
-			<availability>IS:3</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Omen' unitType='Mek'>

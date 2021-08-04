@@ -49,6 +49,7 @@ mainClassName = 'megamek.MegaMek'
 
 ext {
     jvmOptions = ['-Xmx1024m']
+	userdata = "userdata"
     data = "data"
     conf = "mmconf"
     log = "logs"
@@ -112,6 +113,7 @@ task copyFiles(type: Copy) {
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
     exclude "${rats}/**"
+    include "${userdata}/"
     
     into fileStagingDir
     

@@ -1133,6 +1133,10 @@ public class Server implements Runnable {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         MegaMek.getLogger().info(format.format(new Date()) + " END OF GAME");
 
+        if (mailer != null) {
+            mailer.reset();
+        }
+
         changePhase(IGame.Phase.PHASE_LOUNGE);
     }
 
@@ -2494,7 +2498,7 @@ public class Server implements Runnable {
                         if (!StringUtil.isNullOrEmpty(player.getEmail())) {
                             try {
                                 var message = mailer.newReportMessage(
-                                    player, game.getRoundCount(), vPhaseReport
+                                    game, vPhaseReport, player
                                 );
                                 mailer.send(message);
                             } catch (Exception ex) {
@@ -31153,7 +31157,7 @@ public class Server implements Runnable {
                     try {
                         var reports = filterReportVector(vPhaseReport, player);
                         var message = mailer.newReportMessage(
-                            player, game.getRoundCount(), reports
+                            game, reports, player
                         );
                         mailer.send(message);
                     } catch (Exception e) {

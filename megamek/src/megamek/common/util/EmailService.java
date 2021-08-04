@@ -16,7 +16,9 @@
 package megamek.common.util;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.mail.Authenticator;
@@ -29,6 +31,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Report;
 
@@ -36,7 +39,81 @@ import megamek.common.Report;
 public class EmailService {
 
 
+    private static class RoundReportMessage extends MimeMessage {
+
+
+        private RoundReportMessage(InternetAddress from,
+                                   IPlayer to,
+                                   IGame game,
+                                   Vector<Report> reports,
+                                   int sequenceNumber,
+                                   Session session) throws Exception {
+            super(session);
+
+            // Since MM mutates game state as it progresses, need to
+            // fully create the complete message here, so that by the
+            // time it is sent things like the current round number
+            // hasn't changed from underneath it
+
+            setFrom(from);
+            setRecipient(
+                RecipientType.TO,
+                new InternetAddress(to.getEmail(), to.getName())
+            );
+
+            setHeader(
+                "Message-ID",
+                newMessageId(from, to, game, sequenceNumber)
+            );
+            if (sequenceNumber > 0) {
+                setHeader(
+                    "In-Reply-To",
+                    newMessageId(from, to, game, sequenceNumber - 1)
+                );
+            }
+
+            Report subjectReport;
+            var round = game.getRoundCount();
+            if (round < 1) {
+                subjectReport = new Report(990);
+            } else {
+                subjectReport = new Report(991);
+                subjectReport.add(round, false);
+            }
+            setSubject(subjectReport.getText());
+
+            var body = new StringBuilder("<div style=\"white-space: pre\">");
+            for (var report: reports) {
+                body.append(report.getText());
+            }
+            body.append("</div>");
+            setText(body.toString(), "UTF-8", "html");
+        }
+
+        protected void updateMessageID() throws MessagingException {
+            // no-op, we have already set it in the ctor
+        }
+
+        private static String newMessageId(InternetAddress from,
+                                           IPlayer to,
+                                           IGame game,
+                                           int actualSequenceNumber) {
+            final var address = from.getAddress();
+            return String.format(
+                "<megamek.%s.%d.%d.%d@%s>",
+                game.getUUIDString(),
+                game.getRoundCount(),
+                to.getId(),
+                actualSequenceNumber,
+                address.substring(address.indexOf("@") + 1)
+            );
+        }
+
+    }
+
+
     private InternetAddress from;
+    private Map<IPlayer,Integer> messageSequences = new HashMap<>();
     private Properties mailProperties;
     private Session mailSession;
 
@@ -61,36 +138,28 @@ public class EmailService {
         mailSession = Session.getInstance(mailProperties, auth);
     }
 
-    public Message newReportMessage(IPlayer player,
-                                    int round,
-                                    Vector<Report> reports) throws Exception {
-        var message = new MimeMessage(mailSession);
-        message.setFrom(from);
-        message.setRecipient(
-            Message.RecipientType.TO,
-            new InternetAddress(player.getEmail(), player.getName())
+    public Message newReportMessage(IGame game,
+                                    Vector<Report> reports,
+                                    IPlayer player) throws Exception {
+        int nextSequence = 0;
+        synchronized (messageSequences) {
+            var messageSequence = messageSequences.get(player);
+            if (messageSequence != null) {
+                nextSequence = messageSequence + 1;
+            }
+            messageSequences.put(player, nextSequence);
+        }
+        return new RoundReportMessage(
+            from, player, game, reports, nextSequence, mailSession
         );
-
-        Report subjectReport;
-        if (round < 1) {
-            subjectReport = new Report(990);
-        } else {
-            subjectReport = new Report(991);
-            subjectReport.add(round, false);
-        }
-        message.setSubject(subjectReport.getText());
-
-        var body = new StringBuilder("<div style=\"white-space: pre\">");
-        for (var report: reports) {
-            body.append(report.getText());
-        }
-        body.append("</div>");
-        message.setText(body.toString(), "UTF-8", "html");
-        return message;
     }
 
     public void send(final Message message) throws MessagingException {
         Transport.send(message);
+    }
+
+    public void reset() {
+        messageSequences.clear();
     }
 
 }

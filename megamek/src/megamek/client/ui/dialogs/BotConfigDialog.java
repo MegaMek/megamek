@@ -647,6 +647,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         return nameField.getText();
     }
     
+    public void setBotName(String value) {
+        nameField.setText(value);
+    }
+    
     /** Completes the tooltip for this dialog, setting its width and adding HTML tags. */
     private String formatTooltip(String text) {
         String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;

@@ -125,6 +125,17 @@ public class Princess extends BotClient {
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
+    
+    /** 
+     * Returns a new Princess Bot with the given behavior and name, configured for the given
+     * host and port. The new Princess Bot outputs its settings to its own logger. 
+     */
+    public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
+        Princess result = new Princess(name, host, port, behavior.getVerbosity());
+        result.setBehaviorSettings(behavior);
+        result.getLogger().debug(result.getBehaviorSettings().toLog());
+        return result;
+    }
 
     /**
      * Constructor - initializes a new instance of the Princess bot.
@@ -1340,16 +1351,11 @@ public class Princess extends BotClient {
             getPathRanker(entity).initUnitTurn(entity, getGame());
             final double fallTolerance =
                     getBehaviorSettings().getFallShameIndex() / 10d;
-            final int startingHomeDistance = getPathRanker(entity).distanceToHomeEdge(
-                    entity.getPosition(),
-                    getBehaviorSettings().getDestinationEdge(),
-                    getGame());
                        
             final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
                                                     getGame(),
                                                     getMaxWeaponRange(entity),
                                                     fallTolerance,
-                                                    startingHomeDistance,
                                                     getEnemyEntities(),
                                                     getFriendEntities());
             
@@ -1519,17 +1525,17 @@ public class Princess extends BotClient {
                 BulldozerMovePath prunedPath = movePath.clone();
                 prunedPath.clipToPossible();
                 
-                if(levelingTarget != null) {
-                    LosEffects los = LosEffects.calculateLos(game, mover.getId(), levelingTarget, 
+                if (levelingTarget != null) {
+                    LosEffects los = LosEffects.calculateLOS(game, mover, levelingTarget,
                             prunedPath.getFinalCoords(), levelingTarget.getPosition(), false);
                     
                     // break out of this loop, we can get to the thing we're trying to level this turn, so let's
                     // use normal movement routines to move into optimal position to blow it up
                     // Also set the behavior to "engaged"
                     // so it doesn't hump walls due to "self preservation mods"
-                    if(los.canSee()) {
+                    if (los.canSee()) {
                         // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
-                        if(!forceMoveToContact) {
+                        if (!forceMoveToContact) {
                             getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
                         }
                         
@@ -1544,7 +1550,7 @@ public class Princess extends BotClient {
                 
                 // also return some paths that go a little slower than max speed
                 // in case the faster path would force an unwanted PSR or MASC check 
-                for(MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
+                for (MovePath childBMP : PathDecorator.decoratePath(prunedPath)) {
                     prunedPaths.add(childBMP);
                 }
             }
@@ -1631,10 +1637,12 @@ public class Princess extends BotClient {
         }
     }
     
-    /** Update the various state trackers for a specific entity.
-     * Useful to call when receiving an entity update packet */
-    public void updateEntityState(Entity entity) {
-        if(entity.getOwner().isEnemyOf(getLocalPlayer())) {
+    /**
+     * Update the various state trackers for a specific entity.
+     * Useful to call when receiving an entity update packet
+     */
+    public void updateEntityState(final @Nullable Entity entity) {
+        if ((entity != null) && entity.getOwner().isEnemyOf(getLocalPlayer())) {
             // currently just the honor util, and only update it for hostile units
             getHonorUtil().checkEnemyBroken(entity, getForcedWithdrawal());
         }
@@ -1851,7 +1859,11 @@ public class Princess extends BotClient {
     protected void processChat(final GamePlayerChatEvent ge) {
         chatProcessor.processChat(ge, this);
     }
-
+    
+    /**
+     * Given an entity and the current behavior settings, get the "home" edge to which the entity should attempt to retreat
+     * Guaranteed to return a cardinal edge or NONE.
+     */
     CardinalEdge getHomeEdge(Entity entity) {
         // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge        
         if(entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
@@ -1863,7 +1875,11 @@ public class Princess extends BotClient {
         }
         
         // otherwise, return the destination edge
-        return getBehaviorSettings().getDestinationEdge();
+        if (getBehaviorSettings().getDestinationEdge() == CardinalEdge.NEAREST) {
+            return BoardUtilities.getClosestEdge(entity);                
+        } else {
+            return getBehaviorSettings().getDestinationEdge();
+        }
     }
 
     public int calculateAdjustment(final String ticks) {
@@ -1944,6 +1960,11 @@ public class Princess extends BotClient {
     public void sendLoadGame(final File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
+    }
+    
+    public void sendPrincessSettings() {
+        Packet packet = new Packet(Packet.COMMAND_PRINCESS_SETTINGS, behaviorSettings);
+        send(packet);
     }
     
     protected void disconnected() {
@@ -2178,9 +2199,8 @@ public class Princess extends BotClient {
      * Updates internal state in addition to base client functionality
      */
     @Override    
-    public void receiveEntityUpdate(Packet c) {
-        super.receiveEntityUpdate(c);
-        Entity entity = (Entity) c.getObject(1);
-        updateEntityState(entity);
+    public void receiveEntityUpdate(final Packet packet) {
+        super.receiveEntityUpdate(packet);
+        updateEntityState((Entity) packet.getObject(1));
     }
 }

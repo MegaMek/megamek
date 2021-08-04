@@ -310,9 +310,9 @@ public class RulesetNode {
                     }
                     for (String p : property.split(",")) {
                         if (p.startsWith("-")) {
-                            fd.getMovementModes().remove(EntityMovementMode.getMode(p.replace("-", "")));
+                            fd.getMovementModes().remove(EntityMovementMode.parseFromString(p.replace("-", "")));
                         } else {
-                            fd.getMovementModes().add(EntityMovementMode.getMode(p.replace("+", "")));
+                            fd.getMovementModes().add(EntityMovementMode.parseFromString(p.replace("+", "")));
                         }
                     }
                     break;

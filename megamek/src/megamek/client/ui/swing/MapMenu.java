@@ -155,25 +155,6 @@ public class MapMenu extends JPopupMenu {
                     itemCount++;
                 }
 
-            } else if (currentPanel instanceof TargetingPhaseDisplay) {
-                
-                if (itemCount > 0) {
-                    addSeparator();
-                    itemCount++;
-                }
-                    
-                menu = createTorsoTwistMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-
-                menu = createRotateTurretMenu();
-                if (menu.getItemCount() > 0) {
-                    this.add(menu);
-                    itemCount++;
-                }
-                
             } else if ((currentPanel instanceof FiringDisplay)) {
 
                 if (itemCount > 0) {
@@ -1448,9 +1429,6 @@ public class MapMenu extends JPopupMenu {
                     int twistDir = Integer.parseInt(e.getActionCommand());
                     if (currentPanel instanceof FiringDisplay) {
                         ((FiringDisplay) currentPanel).torsoTwist(twistDir);
-                    } else if (currentPanel instanceof TargetingPhaseDisplay) {
-                        ((TargetingPhaseDisplay) currentPanel)
-                                .torsoTwist(twistDir);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -1474,9 +1452,6 @@ public class MapMenu extends JPopupMenu {
                                                                        .nextToken()), Integer.parseInt(result.nextToken()));
                     if (currentPanel instanceof FiringDisplay) {
                         ((FiringDisplay) currentPanel).torsoTwist(coord);
-                    } else if (currentPanel instanceof TargetingPhaseDisplay) {
-                        ((TargetingPhaseDisplay) currentPanel)
-                                .torsoTwist(coord);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

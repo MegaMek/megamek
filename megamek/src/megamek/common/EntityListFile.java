@@ -26,7 +26,6 @@ import java.util.*;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.common.force.Force;
-import megamek.common.icons.AbstractIcon;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -1240,24 +1239,29 @@ public class EntityListFile {
             output.write("\" artillery=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
+
         if (crew.getToughness(0) != 0) {
             output.write("\" toughness=\"");
             output.write(String.valueOf(crew.getToughness(pos)));
         }
+
         if (crew.isDead(pos) || (crew.getHits(pos) > 5)) {
             output.write("\" hits=\"Dead");
         } else if (crew.getHits(pos) > 0) {
             output.write("\" hits=\"");
             output.write(String.valueOf(crew.getHits(pos)));
         }
-        if (!AbstractIcon.ROOT_CATEGORY.equals(crew.getPortraitCategory(pos))) {
+
+        if (!crew.getPortrait(pos).hasDefaultCategory()) {
             output.write("\" portraitCat=\"");
-            output.write(crew.getPortraitCategory(pos));
+            output.write(crew.getPortrait(pos).getCategory());
         }
-        if (!AbstractIcon.DEFAULT_ICON_FILENAME.equals(crew.getPortraitFileName(pos))) {
+
+        if (!crew.getPortrait(pos).hasDefaultFilename()) {
             output.write("\" portraitFile=\"");
-            output.write(crew.getPortraitFileName(pos));
+            output.write(crew.getPortrait(pos).getFilename());
         }
+
         if (!crew.getExternalIdAsString(pos).equals("-1")) {
             output.write("\" externalId=\"");
             output.write(crew.getExternalIdAsString(pos));

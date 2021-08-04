@@ -89,7 +89,7 @@ public class ModelRecord extends AbstractUnitRecord {
 			//TODO: id quads and tripods
 			movementMode = EntityMovementMode.BIPED;
 		} else {
-			movementMode = EntityMovementMode.getMode(ms.getUnitSubType().toLowerCase());
+			movementMode = EntityMovementMode.parseFromString(ms.getUnitSubType().toLowerCase());
 		}
 
     	double totalBV = 0.0;

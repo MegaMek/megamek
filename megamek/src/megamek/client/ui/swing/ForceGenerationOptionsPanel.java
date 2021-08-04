@@ -865,7 +865,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         public List<EntityMovementMode> getMotiveTypes() {
             return subtypeChecks.stream().filter(AbstractButton::isSelected)
-                    .map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
+                    .map(chk -> EntityMovementMode.parseFromString(chk.getName())).collect(Collectors.toList());
         }
     }
     

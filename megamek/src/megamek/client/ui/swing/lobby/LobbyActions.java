@@ -26,6 +26,8 @@ import javax.swing.JOptionPane;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
 import megamek.client.generator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
@@ -318,7 +320,7 @@ public class LobbyActions {
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    entity.getSubEntities().ifPresent(ents -> ents.forEach(client::sendUpdateEntity));
+                    entity.getSubEntities().forEach(client::sendUpdateEntity);
                 }
             }
         }
@@ -398,7 +400,7 @@ public class LobbyActions {
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    entity.getSubEntities().ifPresent(ents -> updateCandidates.addAll(ents));
+                    updateCandidates.addAll(entity.getSubEntities());
                 }
 
                 // Do we need to update the members of our C3 network?
@@ -539,6 +541,16 @@ public class LobbyActions {
             }
         }
         sendUpdates(updateCandidates);
+    }
+    
+    /** Adds the given entities as strategic targets for the given local bot. */
+    void setPrioTarget(String botName, Collection<Entity> entities) {
+        Map<String, Client> bots = lobby.getClientgui().getBots();
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+            return;
+        }
+        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
     
     /**

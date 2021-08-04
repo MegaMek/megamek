@@ -1,97 +1,285 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common;
 
+import megamek.MegaMek;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.EncodeControl;
+
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
- * This interface represents the Entity Movement Types
+ * This enum represents the various Entity Movement Types
  */
 public enum EntityMovementMode {
+    //region Enum Declarations
+    NONE("EntityMovementMode.NONE.text"),
+    BIPED("EntityMovementMode.BIPED.text"),
+    TRIPOD("EntityMovementMode.TRIPOD.text"),
+    QUAD("EntityMovementMode.QUAD.text"),
+    TRACKED("EntityMovementMode.TRACKED.text"),
+    WHEELED("EntityMovementMode.WHEELED.text"),
+    HOVER("EntityMovementMode.HOVER.text"),
+    VTOL("EntityMovementMode.VTOL.text"),
+    NAVAL("EntityMovementMode.NAVAL.text"),
+    HYDROFOIL("EntityMovementMode.HYDROFOIL.text"),
+    SUBMARINE("EntityMovementMode.SUBMARINE.text"),
+    INF_LEG("EntityMovementMode.INF_LEG.text"),
+    INF_MOTORIZED("EntityMovementMode.INF_MOTORIZED.text"),
+    INF_JUMP("EntityMovementMode.INF_JUMP.text"),
+    BIPED_SWIM("EntityMovementMode.BIPED_SWIM.text"),
+    QUAD_SWIM("EntityMovementMode.QUAD_SWIM.text"),
+    WIGE("EntityMovementMode.WIGE.text"),
+    AERODYNE("EntityMovementMode.AERODYNE.text"),
+    SPHEROID("EntityMovementMode.SPHEROID.text"),
+    INF_UMU("EntityMovementMode.INF_UMU.text"),
+    AEROSPACE("EntityMovementMode.AEROSPACE.text"), // this might be a synonym for AERODYNE.
+    AIRSHIP("EntityMovementMode.AIRSHIP.text"),
+    STATION_KEEPING("EntityMovementMode.STATION_KEEPING.text"),
+    RAIL("EntityMovementMode.RAIL.text"),
+    MAGLEV("EntityMovementMode.MAGLEV.text");
+    //endregion Enum Declarations
 
-    NONE ("none", "building"), // Future expansion. Turrets?
-    BIPED ("biped"),
-    TRIPOD ("tripod"),
-    QUAD ("quad"),
-    TRACKED ("tracked"),
-    WHEELED ("wheeled"),
-    HOVER ("hover"),
-    VTOL ("vtol", "microcopter", "micro-copter", "microlite"),
-    NAVAL ("naval"),
-    HYDROFOIL ("hydrofoil"),
-    SUBMARINE ("submarine"),
-    INF_LEG ("inf_leg", "leg"),
-    INF_MOTORIZED("inf_motorized", "motorized"),
-    INF_JUMP ("inf_jump", "jump"),
-    BIPED_SWIM,
-    QUAD_SWIM,
-    WIGE ("wige", "glider"),
-    AERODYNE ("aerodyne"),
-    SPHEROID ("spheroid"),
-    INF_UMU ("umu", "scuba", "motorized scuba"),
-    AEROSPACE, // this might be a synonym for AERODYNE.
-    AIRSHIP ("airship"),
-    STATION_KEEPING ("station", "station_keeping", "satellite", "station-keeping"),
-    RAIL ("rail"),
-    MAGLEV ("maglev");
+    //region Variable Declarations
+    private final String name;
 
-    private String[] aliases;
+    private final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
+            PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
+    //endregion Variable Declarations
 
-    EntityMovementMode(String... aliases) {
-        this.aliases = aliases;
+    //region Constructors
+    EntityMovementMode(final String name) {
+        this.name = resources.getString(name);
+    }
+    //endregion Constructors
+
+    //region Boolean Comparisons
+    public boolean isNone() {
+        return this == NONE;
     }
 
-    private boolean isAlias(String str) {
-        for (String alias : aliases) {
-            if (alias.trim().equalsIgnoreCase(str)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isBiped() {
+        return this == BIPED;
     }
 
-    public static EntityMovementMode getMode(String str) {
-        for (EntityMovementMode mode: EntityMovementMode.values()) {
-            if (mode.isAlias(str)) {
-                return mode;
-            }
-        }
-        return NONE;
+    public boolean isTripod() {
+        return this == TRIPOD;
     }
 
-    public static EntityMovementMode type(String token)
-    {
-        return EntityMovementMode.valueOf(token);
+    public boolean isQuad() {
+        return this == QUAD;
     }
-    public static String token(EntityMovementMode t)
-    {
-        return t.name();
+
+    public boolean isTracked() {
+        return this == TRACKED;
     }
-    
+
+    public boolean isWheeled() {
+        return this == WHEELED;
+    }
+
+    public boolean isHover() {
+        return this == HOVER;
+    }
+
+    public boolean isVTOL() {
+        return this == VTOL;
+    }
+
+    public boolean isNaval() {
+        return this == NAVAL;
+    }
+
+    public boolean isHydrofoil() {
+        return this == HYDROFOIL;
+    }
+
+    public boolean isSubmarine() {
+        return this == SUBMARINE;
+    }
+
+    public boolean isLegInfantry() {
+        return this == INF_LEG;
+    }
+
+    public boolean isMotorizedInfantry() {
+        return this == INF_MOTORIZED;
+    }
+
+    public boolean isJumpInfantry() {
+        return this == INF_JUMP;
+    }
+
+    public boolean isBipedSwim() {
+        return this == BIPED_SWIM;
+    }
+
+    public boolean isQuadSwim() {
+        return this == QUAD_SWIM;
+    }
+
+    public boolean isWiGE() {
+        return this == WIGE;
+    }
+
+    public boolean isAerodyne() {
+        return this == AERODYNE;
+    }
+
+    public boolean isSpheroid() {
+        return this == SPHEROID;
+    }
+
+    public boolean isUMUInfantry() {
+        return this == INF_UMU;
+    }
+
+    public boolean isAerospace() {
+        return this == AEROSPACE;
+    }
+
+    public boolean isAirship() {
+        return this == AIRSHIP;
+    }
+
+    public boolean isStationKeeping() {
+        return this == STATION_KEEPING;
+    }
+
+    public boolean isRail() {
+        return this == RAIL;
+    }
+
+    public boolean isMaglev() {
+        return this == MAGLEV;
+    }
+
+    public boolean isTrackedOrWheeled() {
+        return isTracked() || isWheeled();
+    }
+
+    public boolean isTrackedWheeledOrHover() {
+        return isTrackedOrWheeled() || isHover();
+    }
+
+    public boolean isCombatVehicle() {
+        return isTrackedWheeledOrHover() || isVTOLOrWiGE() || isMarine();
+    }
+
+    public boolean isInfantryVehicle() {
+        return isTrackedOrWheeled() || isMotorizedInfantry();
+    }
+
+    public boolean isHoverOrWiGE() {
+        return isHover() || isWiGE();
+    }
+
+    public boolean isVTOLOrWiGE() {
+        return isVTOL() || isWiGE();
+    }
+
+    public boolean isMarine() {
+        return isNaval() || isHydrofoil() || isSubmarine();
+    }
+
+    public boolean isTrain() {
+        return isRail() || isMaglev();
+    }
+
     /**
      * Whether this movement mode is capable of detonating minefields.
      */
     public boolean detonatesGroundMinefields() {
-        return (this == BIPED) ||
-                (this == TRIPOD) ||
-                (this == QUAD) ||
-                (this == TRACKED) ||
-                (this == WHEELED) ||
-                (this == HOVER) || // a lot less likely, but...
-                (this == INF_LEG) ||
-                (this == INF_MOTORIZED) ||
-                (this == INF_JUMP) ||
-                (this == RAIL) ||
-                (this == MAGLEV);
+        return isBiped() || isTripod() || isQuad() || isTrackedWheeledOrHover() || isLegInfantry()
+                || isMotorizedInfantry() || isJumpInfantry() || isTrain();
+    }
+    //endregion Boolean Comparisons
+
+    public static List<EntityMovementMode> getCombatVehicleModes() {
+        return Stream.of(values()).filter(EntityMovementMode::isCombatVehicle).collect(Collectors.toList());
+    }
+
+    public static List<EntityMovementMode> getInfantryVehicleModes() {
+        return Stream.of(values()).filter(EntityMovementMode::isInfantryVehicle).collect(Collectors.toList());
+    }
+
+    //region File I/O
+    /**
+     * @param text the string to parse
+     * @return the EntityMovementMode, or NONE if there is an error in parsing
+     */
+    public static EntityMovementMode parseFromString(final String text) {
+        try {
+            return valueOf(text);
+        } catch (Exception ignored) {
+
+        }
+
+        // Splitting this off the baseline as it is a legacy call, the text should be saved uppercase
+        try {
+            return valueOf(text.toUpperCase());
+        } catch (Exception ignored) {
+
+        }
+
+        try {
+            switch (text.toLowerCase()) {
+                case "building":
+                    return NONE;
+                case "microcopter":
+                case "micro-copter":
+                case "microlite":
+                    return VTOL;
+                case "leg":
+                    return INF_LEG;
+                case "motorized":
+                    return INF_MOTORIZED;
+                case "jump":
+                    return INF_JUMP;
+                case "glider":
+                    return WIGE;
+                case "umu":
+                case "scuba":
+                case "motorized scuba":
+                    return INF_UMU;
+                case "station":
+                case "station_keeping":
+                case "satellite":
+                case "station-keeping":
+                    return STATION_KEEPING;
+            }
+        } catch (Exception ignored) {
+
+        }
+
+        MegaMek.getLogger().error("Unable to parse " + text + " into an EntityMovementMode. Returning NONE.");
+
+        return NONE;
+    }
+    //endregion File I/O
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -75,7 +75,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }

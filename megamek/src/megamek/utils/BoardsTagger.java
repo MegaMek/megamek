@@ -20,7 +20,9 @@ package megamek.utils;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static java.util.stream.Collectors.*;
 import static megamek.common.Terrains.*;
 import megamek.common.*;
@@ -82,13 +84,31 @@ public class BoardsTagger {
         TAG_SNOWTERRAIN("SnowTerrain");
 
         private String tagName;
+        private static final Map<String, Tags> internalTagMap;
 
+        static {
+            internalTagMap = new HashMap<>();
+            
+            for (Tags tag : values()) {
+                internalTagMap.put(tag.getName().replace(AUTO_SUFFIX, ""), tag);
+            }
+        }
+        
         Tags(String name) {
             tagName = name + AUTO_SUFFIX;
         }
         
         public String getName() {
             return tagName;
+        }
+        
+        public static Tags parse(String tag) {
+            String noAutoTag = tag.replace(AUTO_SUFFIX, "");
+            if (internalTagMap.containsKey(noAutoTag)) {
+                return internalTagMap.get(noAutoTag);
+            }
+            
+            return null;
         }
     }
 
@@ -136,7 +156,12 @@ public class BoardsTagger {
         Board board = new Board();
         try (InputStream is = new FileInputStream(boardFile)) {
             // Apply tags only to boards that are valid and fully functional
-            board.load(is, null, false);
+            StringBuffer errors = new StringBuffer();
+            board.load(is, errors, true);
+            if (errors.length() > 0) {
+                System.out.println("Board has errors: " + boardFile);
+                return;
+            }
         } catch (Exception e) {
             System.out.println("Could not load board: " + boardFile);
             return;
@@ -267,26 +292,36 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
 
-        // Remove any auto tags that might be present so that auto tags that no longer apply
+        // Remove (see below) any auto tags that might be present so that auto tags that no longer apply
         // are not left in the board file.
-        List<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toList());
-        toRemove.forEach(board::removeTag);
+        Set<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toSet());
 
-        // Give the board any applicable tags
-        matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).forEach(board::addTag);
+        // Find any applicable tags to give the board
+        Set<String> toAdd = matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).collect(toSet());
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);
-            matchingTags.keySet().stream().forEach(System.out::println);
+            if (toRemove.equals(toAdd)) {
+                System.out.println("No changes");
+            } else {
+                toAdd.stream().forEach(System.out::println);
+            }
         }
+        
+        // Now, if there are actual changes in the autotags, remove the former ones, add the new ones and save
+        if (!toRemove.equals(toAdd)) {
+            toRemove.forEach(board::removeTag);
+            toAdd.forEach(board::addTag);
 
-        // Re-save the board
-        try (OutputStream os = new FileOutputStream(boardFile)) {
-            board.save(os);
-        } catch (IOException e) {
-            System.out.println("Error: Could not save board: " + boardFile);
+            // Re-save the board
+            try (OutputStream os = new FileOutputStream(boardFile)) {
+                board.save(os);
+            } catch (IOException e) {
+                System.out.println("Error: Could not save board: " + boardFile);
+                e.printStackTrace();
+            }
+
         }
-
     }
 
 }

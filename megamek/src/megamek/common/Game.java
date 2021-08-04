@@ -32,6 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -185,6 +186,14 @@ public class Game implements Serializable, IGame {
     private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
+    
+    /** 
+     * Stores princess behaviors for game factions. It does not indicate that a 
+     * faction is currently played by a bot, only that the most recent bot connected
+     * as that faction used these settings. Used to add the settings to savegames
+     * and allow restoring bots to their previous settings.
+     */
+    private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
      * Constructor
@@ -523,7 +532,7 @@ public class Game implements Serializable, IGame {
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player)) {
+            if ((entity != null) && player.equals(entity.getOwner())) {
                 count++;
             }
         }
@@ -1234,7 +1243,11 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
+                        return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    } else {
+                        return null;
+                    }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
                     return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
                 case Targetable.TYPE_INARC_POD:
@@ -3692,6 +3705,16 @@ public class Game implements Serializable, IGame {
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
+    }
+    
+    @Override
+    public Map<String, BehaviorSettings> getBotSettings() {
+        return botSettings;
+    }
+    
+    @Override
+    public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
+        this.botSettings = botSettings;
     }
 
     /**

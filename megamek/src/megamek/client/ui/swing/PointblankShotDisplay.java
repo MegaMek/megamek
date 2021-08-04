@@ -982,10 +982,6 @@ public class PointblankShotDisplay extends FiringDisplay implements
             return;
         }
 
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
-            return;
-        }
-
         if (!clientgui.isProcessingPointblankShot()) {
             return;
         }

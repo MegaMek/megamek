@@ -1409,7 +1409,6 @@ public class Board implements Serializable, IBoard {
         return buildings.elements();
     }
     
-    @Override
     public Vector<Building> getBuildingsVector() {
         return buildings;
     }

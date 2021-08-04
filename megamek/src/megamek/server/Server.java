@@ -55,6 +55,7 @@ import java.util.zip.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.Building.BasementType;
@@ -932,6 +933,7 @@ public class Server implements Runnable {
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
             send(connId, createSpecialHexDisplayPacket(connId));
+            send(connId, new Packet(Packet.COMMAND_PRINCESS_SETTINGS, game.getBotSettings()));
 
         } // Found the player.
 
@@ -4857,7 +4859,7 @@ public class Server implements Runnable {
             Entity tm = game.getEntity(missileId);
             if ((null != tm) && !tm.isDestroyed()
                 && (tm instanceof TeleMissile)) {
-                if (LosEffects.calculateLos(game, entity.getId(), tm).canSee()) {
+                if (LosEffects.calculateLOS(game, entity, tm).canSee()) {
                     ((TeleMissile) tm).setOutContact(false);
                 } else {
                     ((TeleMissile) tm).setOutContact(true);
@@ -4880,6 +4882,7 @@ public class Server implements Runnable {
         // An entity that is not vulnerable to anti-TSM green smoke that has stayed in a smoke-filled
         // hex takes damage.
         if ((md.getHexesMoved() == 0)
+                && game.getBoard().contains(md.getFinalCoords())
                 && (game.getBoard().getHex(md.getFinalCoords()).terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_GREEN)
                 && entity.antiTSMVulnerable()) {
             addReport(doGreenSmokeDamage(entity));
@@ -10675,7 +10678,7 @@ public class Server implements Runnable {
                 if ((te instanceof Mech) && (!areaEffect)) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
-                    LosEffects le = LosEffects.calculateLos(game, attId, t);
+                    LosEffects le = LosEffects.calculateLOS(game, ae, t);
                     int cover = le.getTargetCover();
                     Vector<Report> coverDamageReports = new Vector<>();
                     int heatDamage = 0;
@@ -11639,12 +11642,12 @@ public class Server implements Runnable {
                     if (!team.equals(game.getTeamForPlayer(en.getOwner()))) {
                         continue;
                     }
-                    if (LosEffects.calculateLos(game, en.getId(),
+                    if (LosEffects.calculateLOS(game, en,
                             new HexTarget(mf.getCoords(), Targetable.TYPE_HEX_CLEAR)).canSee()) {
                         target = 0;
                         break;
                     }
-                    LosEffects los = LosEffects.calculateLos(game, en.getId(), layer);
+                    LosEffects los = LosEffects.calculateLOS(game, en, layer);
                     if (los.canSee()) {
                         // TODO : need to add mods
                         ToHitData current = new ToHitData(4, "base");
@@ -13480,14 +13483,16 @@ public class Server implements Runnable {
                 boolean firingAtNewHex = false;
                 final ArtilleryAttackAction aaa = (ArtilleryAttackAction) ea;
                 final Entity firingEntity = game.getEntity(aaa.getEntityId());
+                Targetable attackTarget = aaa.getTarget(game);
+                
                 for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
                         && j.hasMoreElements(); ) {
                     WeaponHandler wh = (WeaponHandler) j.nextElement();
                     if (wh.waa instanceof ArtilleryAttackAction) {
                         ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
+                        
                         if ((oaaa.getEntityId() == aaa.getEntityId())
-                            && !oaaa.getTarget(game).getPosition()
-                                .equals(aaa.getTarget(game).getPosition())) {
+                                && !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
                             firingAtNewHex = true;
                         }
                     }
@@ -13500,7 +13505,7 @@ public class Server implements Runnable {
                             public Targetable target = aaa.getTarget(game);
 
                             public boolean accept(Entity entity) {
-                                LosEffects los = LosEffects.calculateLos(game, entity.getId(), target);
+                                LosEffects los = LosEffects.calculateLOS(game, entity, target);
                                 return ((player == entity.getOwnerId()) && !(los.isBlocked())
                                         && entity.isActive());
                             }
@@ -14148,8 +14153,7 @@ public class Server implements Runnable {
                     }
                 }
 
-                LosEffects los = LosEffects.calculateLos(game,
-                        detector.getId(), detected);
+                LosEffects los = LosEffects.calculateLOS(game, detector, detected);
                 if (los.canSee() || dist <= 1) {
                     detected.setHidden(false);
                     entityUpdate(detected.getId());
@@ -21796,10 +21800,11 @@ public class Server implements Runnable {
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
-            if(te.getActiveSubEntities().orElse(Collections.emptyList()).isEmpty()) {
+            List<Entity> fighters = te.getActiveSubEntities();
+            
+            if (fighters.isEmpty()) {
                 return vDesc;
             }
-            List<Entity> fighters = te.getSubEntities().orElse(Collections.emptyList());
             Entity fighter = fighters.get(hit.getLocation());
             HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             new_hit.setBoxCars(hit.rolledBoxCars());
@@ -27049,13 +27054,13 @@ public class Server implements Runnable {
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
+                return vDesc;
             } else if ((!advancedCrit && (roll >= 8) && (roll <= 9))
                     || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-                return vDesc;
             } else if ((!advancedCrit && (roll >= 10) && (roll <= 11))
                     || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;
@@ -27799,12 +27804,9 @@ public class Server implements Runnable {
                 // if this is the last fighter in a fighter squadron then remove
                 // the squadron
                 if ((transport instanceof FighterSquadron)
-                        && transport.getSubEntities().orElse(Collections.emptyList()).isEmpty()) {
+                        && transport.getSubEntities().isEmpty()) {
                     transport.setDestroyed(true);
-                    // Can't remove this here, otherwise later attacks will fail
-                    //game.moveToGraveyard(transport.getId());
-                    //entityUpdate(transport.getId());
-                    //send(createRemoveEntityPacket(transport.getId(), condition));
+                    
                     r = new Report(6365);
                     r.subject = transport.getId();
                     r.addDesc(transport);
@@ -29261,7 +29263,7 @@ public class Server implements Runnable {
             EntityTargetPair etp = new EntityTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
-                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                los = LosEffects.calculateLOS(game, spotter, entity);
                 losCache.put(etp, los);
             }
             if (Compute.canSee(game, spotter, entity, useSensors, los,
@@ -29315,7 +29317,7 @@ public class Server implements Runnable {
             EntityTargetPair etp = new EntityTargetPair(spotter, entity);
             LosEffects los = losCache.get(etp);
             if (los == null) {
-                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                los = LosEffects.calculateLOS(game, spotter, entity);
                 losCache.put(etp, los);
             }
             if (Compute.inSensorRange(game, los, spotter, entity, allECMInfo)) {
@@ -29448,7 +29450,7 @@ public class Server implements Runnable {
                 EntityTargetPair etp = new EntityTargetPair(spotter, e);
                 LosEffects los = losCache.get(etp);
                 if (los == null) {
-                    los = LosEffects.calculateLos(game, spotter.getId(), e);
+                    los = LosEffects.calculateLOS(game, spotter, e);
                     losCache.put(etp, los);
                 }
                 // Otherwise, if they can see the entity in question
@@ -30138,7 +30140,7 @@ public class Server implements Runnable {
             sendServerChat("" + p.getName() + " has customized initiative.");
         }
     }
-
+    
     /**
      * receive and process an entity mode change packet
      *
@@ -31247,6 +31249,11 @@ public class Server implements Runnable {
                 receivePlayerDone(packet, connId);
                 send(createPlayerDonePacket(connId));
                 checkReady();
+                break;
+            case Packet.COMMAND_PRINCESS_SETTINGS:
+                if (player != null) {
+                    game.getBotSettings().put(player.getName(), (BehaviorSettings)packet.getObject(0));
+                }
                 break;
             case Packet.COMMAND_REROLL_INITIATIVE:
                 receiveInitiativeRerollRequest(packet, connId);

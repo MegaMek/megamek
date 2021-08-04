@@ -21,11 +21,14 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -59,9 +62,9 @@ public class AddBotUtil {
     }
 
     public String addBot(final String[] args,
-                         final IGame game,
-                         final String host,
-                         final int port) {
+            final IGame game,
+            final String host,
+            final int port) {
         if (2 > args.length) {
             results.add(USAGE);
             return concatResults();
@@ -105,7 +108,7 @@ public class AddBotUtil {
                 verbosity = LogLevel.getLogLevel(verbose);
                 if (null == verbosity) {
                     results.add("Invalid Verbosity: '" + verbose + "'.  " +
-                                "Defaulting to " + LogLevel.WARNING + ".");
+                            "Defaulting to " + LogLevel.WARNING + ".");
                     verbosity = LogLevel.WARNING;
                 }
                 results.add("Verbosity set to '" + verbosity + "'.");
@@ -154,7 +157,7 @@ public class AddBotUtil {
             botClient = makeNewPrincessClient(target, verbosity, host, port);
             if (!StringUtil.isNullOrEmpty(configName)) {
                 final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
-                                                                         .getBehavior(configName.toString());
+                        .getBehavior(configName.toString());
                 if (null != behavior) {
                     if (null != verbosity) {
                         behavior.setVerbosity(verbosity);
@@ -187,23 +190,53 @@ public class AddBotUtil {
         result.append(" has replaced ").append(target.getName()).append(".");
         if (botClient instanceof Princess) {
             result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription()).append
-                    (".");
+            (".");
             result.append("  Verbosity: ").append(((Princess) botClient).getVerbosity()).append(".");
         }
         results.add(result.toString());
         return concatResults();
     }
 
+    public @Nullable Princess addBot(final BehaviorSettings behavior, final String playerName,
+            final IGame game, final String host, final int port, StringBuilder message) {
+        
+        Objects.requireNonNull(behavior);
+        Objects.requireNonNull(game);
+
+        Optional<IPlayer> possible = game.getPlayersVector().stream()
+                .filter(p -> p.getName().equals(playerName)).findFirst();
+        if (possible.isEmpty()) {
+            message.append("No player with the name '" + playerName + "'.");
+            return null;
+        } else if (!possible.get().isGhost()) {
+            message.append("Player '" + playerName + "' is not a ghost.");
+            return null;
+        }
+        
+        final IPlayer target = possible.get();
+        final Princess princess = new Princess(target.getName(), host, port, behavior.getVerbosity());
+        princess.setBehaviorSettings(behavior);
+        princess.getGame().addGameListener(new BotGUI(princess));
+        try {
+            princess.connect();
+        } catch (final Exception e) {
+            message.append("Princess failed to connect.");
+        }
+        princess.setLocalPlayerNumber(target.getId());
+        message.append("Princess has replaced " + playerName + ".");
+        return princess;
+    }
+
     BotClient makeNewPrincessClient(final IPlayer target,
-                                    final LogLevel verbosity,
-                                    final String host,
-                                    final int port) {
+            final LogLevel verbosity,
+            final String host,
+            final int port) {
         return new Princess(target.getName(), host, port, (null == verbosity ? LogLevel.WARNING : verbosity));
     }
 
     BotClient makeNewTestBotClient(final IPlayer target,
-                                   final String host,
-                                   final int port) {
+            final String host,
+            final int port) {
         return new TestBot(target.getName(), host, port);
     }
 }

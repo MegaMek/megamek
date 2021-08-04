@@ -620,6 +620,10 @@ public class Server implements Runnable {
             conn.close();
         }
 
+        if (mailer != null) {
+            mailer.shutdown();
+        }
+
         connections.removeAllElements();
         connectionIds.clear();
         if (serverBrowserUpdateTimer != null) {

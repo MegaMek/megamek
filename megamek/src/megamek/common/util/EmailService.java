@@ -15,6 +15,8 @@
 
 package megamek.common.util;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Properties;
@@ -26,11 +28,11 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import megamek.MegaMek;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Report;
@@ -117,6 +119,10 @@ public class EmailService {
     private Properties mailProperties;
     private Session mailSession;
 
+    private BlockingQueue<Message> mailQueue = new LinkedBlockingQueue<>();
+    private Thread mailWorker;
+    private boolean running = true;
+
 
     public EmailService(Properties mailProperties) throws Exception {
         this.from = InternetAddress.parse(
@@ -136,6 +142,13 @@ public class EmailService {
         }
 
         mailSession = Session.getInstance(mailProperties, auth);
+
+        mailWorker = new Thread() {
+                public void run() {
+                    workerMain();
+                }
+            };
+        mailWorker.start();
     }
 
     public Message newReportMessage(IGame game,
@@ -154,12 +167,47 @@ public class EmailService {
         );
     }
 
-    public void send(final Message message) throws MessagingException {
-        Transport.send(message);
+    public void send(final Message message) {
+        mailQueue.offer(message);
     }
 
     public void reset() {
         messageSequences.clear();
+    }
+
+    public void shutdown() {
+        this.running = false;
+        this.mailWorker.interrupt();
+    }
+
+    private void workerMain() {
+        while (running) {
+            try {
+                // blocks until a message is received
+                var message = mailQueue.take();
+
+                var transport = mailSession.getTransport(message.getFrom()[0]);
+                try {
+                    transport.connect();
+                    while (message != null) {
+                        message.saveChanges();
+                        transport.sendMessage(message, message.getAllRecipients());
+
+                        // If there are any other messages in the queue,
+                        // send them immediately while the connection is
+                        // still open. This doesn't block;
+                        message = mailQueue.poll();
+                    }
+                } finally {
+                    transport.close();
+                }
+            } catch (InterruptedException ex) {
+                // All good, just shut down
+                running = false;
+            } catch (Exception ex) {
+                MegaMek.getLogger().error("Error sending email", ex);
+            }
+        }
     }
 
 }

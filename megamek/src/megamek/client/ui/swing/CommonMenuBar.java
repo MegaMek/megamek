@@ -158,15 +158,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** Creates the common MegaMek menu bar. */
     public CommonMenuBar() {
         // Create the Game menu
-        JMenu menu = new JMenu(getString("CommonMenuBar.GameMenu"));
-        menu.setMnemonic(VK_G);
+        JMenu menu = new JMenu(getString("CommonMenuBar.FileMenu"));
+        menu.setMnemonic(VK_F);
         add(menu);
         initMenuItem(gameLoad, menu, FILE_GAME_LOAD, VK_L);
         initMenuItem(gameSave, menu, FILE_GAME_SAVE, VK_S);
         initMenuItem(gameQSave, menu, FILE_GAME_QSAVE);
         initMenuItem(gameQLoad, menu, FILE_GAME_QLOAD);
         initMenuItem(gameSaveServer, menu, FILE_GAME_SAVE_SERVER);
-        menu.addSeparator();
+
+        // Create the Unit List sub-menu.
+        menu = new JMenu(getString("CommonMenuBar.GameMenu")); 
+        add(menu);
+        menu.setMnemonic(VK_G);
         
         initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
         menu.addSeparator();
@@ -177,11 +181,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
         initMenuItem(gamePlayerSettings, menu, VIEW_PLAYER_SETTINGS);
-
-        // Create the Unit List sub-menu.
-        menu = new JMenu(getString("CommonMenuBar.UnitListMenu")); 
-        menu.setMnemonic(VK_U);
-        add(menu);
+        menu.addSeparator();
         initMenuItem(fileUnitsCopy, menu, FILE_UNITS_COPY);
         fileUnitsCopy.setAccelerator(KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsPaste, menu, FILE_UNITS_PASTE);

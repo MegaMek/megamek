@@ -17,7 +17,6 @@ package megamek.client.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,8 +26,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
@@ -236,6 +233,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     
     private JComboBox<String> tileSetChoice;
     private List<File> tileSets;
+    
+    private MMToggleButton choiceToggle = new MMToggleButton("Enable tabbing through this dialog page");
 
     /**
      * A Map that maps command strings to a JTextField for updating the modifier
@@ -346,10 +345,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         buttons.setLayout(new GridLayout(1, 0, 20, 5));
         JButton update = new JButton(Messages.getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
         update.setActionCommand(UPDATE);
+        update.setMnemonic(KeyEvent.VK_U);
         update.addActionListener(this);
         buttons.add(update);
         JButton cancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
         cancel.setActionCommand(CANCEL);
+        cancel.setMnemonic(KeyEvent.VK_C);
         cancel.addActionListener(this);
         buttons.add(cancel);
 
@@ -928,6 +929,12 @@ public class CommonSettingsDialog extends ClientDialog implements
             
             advancedKeys.clearSelection();
             
+            for (KeyCommandBind kcb : KeyCommandBind.values()) {
+                cmdModifierMap.get(kcb.cmd).setText(KeyEvent.getModifiersExText(kcb.modifiers));
+                cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.key));
+            }
+            markDuplicateBinds();
+            
         }   
         super.setVisible(visible);
     }       
@@ -1186,6 +1193,9 @@ public class CommonSettingsDialog extends ClientDialog implements
             update();
         } else if (command.equals(CANCEL)) {
             cancel();
+        }
+        if (event.getSource() == choiceToggle) {
+            updateKeybindsFocusTraversal();
         }
     }
 
@@ -1604,14 +1614,25 @@ public class CommonSettingsDialog extends ClientDialog implements
      * @return
      */
     private JPanel getKeyBindPanel() {
-        // Create the panel to hold all the components
-        // We will have an N x 43 grid, the first column is for labels, the
-        //  second column will hold text fields for modifiers, the third
-        //  column holds text fields for keys, and the fourth has a checkbox for
-        //  isRepeatable.
-        JPanel outer = new JPanel();
-        outer.setLayout(new FlowLayout(FlowLayout.LEFT));
+        // The first column is for labels, the second column for modifiers, the third
+        // column for keys
         
+        JPanel outer = new JPanel();
+        outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
+        
+        var tabChoice = new JPanel();
+        tabChoice.setLayout(new BoxLayout(tabChoice, BoxLayout.PAGE_AXIS));
+        tabChoice.setBorder(new EmptyBorder(15, 15, 15, 15));
+        var buttonPanel = new JPanel();
+        var labelPanel = new JPanel();
+        choiceToggle.addActionListener(this);
+        var choiceLabel = new JLabel("<HTML><CENTER>This will enable stepping through the entry fields on this page using the TAB key.<BR> It will prevent TAB from being used as a keybind and <BR> remove any existing TAB keybinds.");
+        buttonPanel.add(choiceToggle);
+        labelPanel.add(choiceLabel);
+        tabChoice.add(buttonPanel);
+        tabChoice.add(labelPanel);
+        outer.add(tabChoice);
+
         JPanel keyBinds = new JPanel(new GridBagLayout());
         outer.add(keyBinds);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1701,9 +1722,8 @@ public class CommonSettingsDialog extends ClientDialog implements
 
                 @Override
                 public void keyPressed(KeyEvent evt) {
-                    // Don't react to modifiers here
-                    if ((evt.getKeyCode() == KeyEvent.VK_CONTROL) || (evt.getKeyCode() == KeyEvent.VK_SHIFT)
-                            || (evt.getKeyCode() == KeyEvent.VK_ALT)) {
+                    // Don't consume this event if modifiers are held (-> enable button mnemonics)
+                    if (evt.getModifiersEx() != 0) {
                         return;
                     }
                     key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
@@ -1739,6 +1759,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
         markDuplicateBinds();
         return outer;
+    }
+    
+    private void updateKeybindsFocusTraversal() {
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            cmdModifierMap.get(kcb.cmd).setFocusTraversalKeysEnabled(choiceToggle.isSelected());
+            cmdKeyMap.get(kcb.cmd).setFocusTraversalKeysEnabled(choiceToggle.isSelected());
+            if ((keyCode(kcb) == KeyEvent.VK_TAB) && choiceToggle.isEnabled()) {
+                cmdKeyMap.get(kcb.cmd).setText("");
+            }
+        }
     }
 
     /** 

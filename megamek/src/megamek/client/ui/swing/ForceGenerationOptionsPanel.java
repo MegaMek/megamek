@@ -204,8 +204,12 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weighty = 0.0;
         add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
 
+        boolean restrictUnitType = use == Use.FORMATION_BUILDER;
+
         for (int unitType : UNIT_TYPES) {
-            cbUnitType.addItem(UnitType.getTypeName(unitType));
+            if ((unitType < UnitType.JUMPSHIP) || !restrictUnitType) {
+                cbUnitType.addItem(UnitType.getTypeName(unitType));
+            }
         }
         cbUnitType.setSelectedItem(0);
         cbUnitType.addActionListener(this);

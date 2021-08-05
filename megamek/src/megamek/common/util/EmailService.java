@@ -151,6 +151,17 @@ public class EmailService {
         mailWorker.start();
     }
 
+    public Vector<IPlayer> getEmailablePlayers(IGame game) {
+        Vector<IPlayer> emailable = new Vector<>();
+        for (var player: game.getPlayersVector()) {
+            if (!StringUtil.isNullOrEmpty(player.getEmail()) &&
+                !player.isObserver()) {
+                emailable.add(player);
+            }
+        }
+        return emailable;
+    }
+
     public Message newReportMessage(IGame game,
                                     Vector<Report> reports,
                                     IPlayer player) throws Exception {

@@ -2499,18 +2499,14 @@ public class Server implements Runnable {
                 }
                 }
                 if (mailer != null) {
-                    for (var player: game.getPlayersVector()) {
-                        if (!StringUtil.isNullOrEmpty(player.getEmail())) {
-                            try {
-                                var message = mailer.newReportMessage(
-                                    game, vPhaseReport, player
-                                );
-                                mailer.send(message);
-                            } catch (Exception ex) {
-                                MegaMek.getLogger().error(
-                                    "Error sending email to: " + player.getEmail(), ex
-                                );
-                            }
+                    for (var player: mailer.getEmailablePlayers(game)) {
+                        try {
+                            var message = mailer.newReportMessage(
+                                game, vPhaseReport, player
+                            );
+                            mailer.send(message);
+                        } catch (Exception ex) {
+                            MegaMek.getLogger().error("Error sending email" + ex);
                         }
                     }
                 }
@@ -31188,17 +31184,15 @@ public class Server implements Runnable {
      */
     private void sendReport(boolean tacticalGeniusReport) {
         if (mailer != null) {
-            for (var player: game.getPlayersVector()) {
-                if (!StringUtil.isNullOrEmpty(player.getEmail())) {
-                    try {
-                        var reports = filterReportVector(vPhaseReport, player);
-                        var message = mailer.newReportMessage(
-                            game, reports, player
-                        );
-                        mailer.send(message);
-                    } catch (Exception e) {
-                        MegaMek.getLogger().error("Error sending email to: " + player.getEmail(), e);
-                    }
+            for (var player: mailer.getEmailablePlayers(game)) {
+                try {
+                    var reports = filterReportVector(vPhaseReport, player);
+                    var message = mailer.newReportMessage(
+                        game, reports, player
+                    );
+                    mailer.send(message);
+                } catch (Exception e) {
+                    MegaMek.getLogger().error("Error sending round report", e);
                 }
             }
         }

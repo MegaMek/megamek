@@ -841,7 +841,7 @@ public class Server implements Runnable {
         sendServerChat(connId, motd);
 
         // send info that the player has connected
-        send(createPlayerConnectPacket(connId));
+        transmitPlayerConnect(player);
 
         // tell them their local playerId
         send(connId, new Packet(Packet.COMMAND_LOCAL_PN, connId));
@@ -892,7 +892,7 @@ public class Server implements Runnable {
      */
     public void sendCurrentInfo(int connId) {
         // why are these two outside the player != null check below?
-        transmitAllPlayerConnects(connId);
+        transmitPlayerConnect(getClient(connId));
         send(connId, createGameSettingsPacket());
         send(connId, createPlanetaryConditionsPacket());
 
@@ -1066,7 +1066,7 @@ public class Server implements Runnable {
         } else {
             player.setGhost(true);
             player.setDone(true);
-            send(createPlayerUpdatePacket(player.getId()));
+            transmitPlayerUpdate(player);
         }
 
         // make sure the game advances
@@ -1122,7 +1122,7 @@ public class Server implements Runnable {
             } else {
                 // non-ghosts set their starting positions to any
                 p.setStartingPos(Board.START_ANY);
-                send(createPlayerUpdatePacket(p.getId()));
+                transmitPlayerUpdate(p);
             }
         }
         for (IPlayer p : ghosts) {
@@ -1957,7 +1957,7 @@ public class Server implements Runnable {
         if (playerChangingTeam != null) {
             playerChangingTeam.setTeam(requestedTeam);
             game.setupTeams();
-            send(createPlayerUpdatePacket(playerChangingTeam.getId()));
+            transmitPlayerUpdate(playerChangingTeam);
             String teamString = "Team " + requestedTeam + "!";
             if (requestedTeam == IPlayer.TEAM_UNASSIGNED) {
                 teamString = " unassigned!";
@@ -30650,43 +30650,74 @@ public class Server implements Runnable {
     /**
      * Sends out all player info to the specified connection
      */
-    private void transmitAllPlayerConnects(int connId) {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
-
-            send(connId, createPlayerConnectPacket(player.getId()));
+    private void transmitPlayerConnect(IConnection connection) {
+        for (var player: game.getPlayersVector()) {
+            var connectionId = connection.getId();
+            connection.send(
+                createPlayerConnectPacket(player, player.getId() != connectionId)
+            );
         }
     }
 
     /**
-     * Creates a packet informing that the player has connected
+     * Sends out player info to all connections
      */
-    private Packet createPlayerConnectPacket(int playerId) {
-        final Object[] data = new Object[2];
-        data[0] = playerId;
-        data[1] = getPlayer(playerId);
-        return new Packet(Packet.COMMAND_PLAYER_ADD, data);
+    private void transmitPlayerConnect(IPlayer player) {
+        for (var connection: connections) {
+            var playerId = player.getId();
+            connection.send(
+                createPlayerConnectPacket(player, playerId != connection.getId())
+            );
+        }
+    }
+
+     /**
+      * Creates a packet informing that the player has connected
+      */
+    private Packet createPlayerConnectPacket(IPlayer player, boolean isPrivate) {
+        var playerId = player.getId();
+        var destPlayer = player;
+        if (isPrivate) {
+            // Sending the player's data to another player's
+            // connection, need to redact any private data
+            destPlayer = player.copy();
+            destPlayer.redactPrivateData();
+        }
+        return new Packet(
+            Packet.COMMAND_PLAYER_ADD,
+            new Object[] { playerId, destPlayer }
+        );
     }
 
     /**
-     * Creates a packet containing the player info, for update
+     * Sends out player info updates for a player to all connections
      */
-    Packet createPlayerUpdatePacket(int playerId) {
-        final Object[] data = new Object[2];
-        data[0] = playerId;
-        data[1] = getPlayer(playerId);
-        return new Packet(Packet.COMMAND_PLAYER_UPDATE, data);
+    void transmitPlayerUpdate(IPlayer player) {
+        for (var connection: connections) {
+            var playerId = player.getId();
+            var destPlayer = player;
+
+            if (playerId != connection.getId()) {
+                // Sending the player's data to another player's
+                // connection, need to redact any private data
+                destPlayer = player.copy();
+                destPlayer.redactPrivateData();
+            }
+            connection.send(
+                new Packet(
+                    Packet.COMMAND_PLAYER_UPDATE,
+                    new Object[] { playerId, destPlayer }
+                )
+            );
+        }
     }
 
     /**
      * Sends out the player info updates for all players to all connections
      */
     private void transmitAllPlayerUpdates() {
-        for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
-            final IPlayer player = i.nextElement();
-            if (null != player) {
-                send(createPlayerUpdatePacket(player.getId()));
-            }
+        for (var player: game.getPlayersVector()) {
+            transmitPlayerUpdate(player);
         }
     }
 
@@ -31291,7 +31322,7 @@ public class Server implements Runnable {
             case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(packet, connId);
                 validatePlayerInfo(connId);
-                send(createPlayerUpdatePacket(connId));
+                transmitPlayerUpdate(getPlayer(connId));
                 break;
             case Packet.COMMAND_PLAYER_TEAMCHANGE:
                 ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, game, this);

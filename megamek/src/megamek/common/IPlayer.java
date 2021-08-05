@@ -32,6 +32,11 @@ public interface IPlayer extends ITurnOrdered {
     String[] teamNames = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
     int MAX_TEAMS = teamNames.length;
 
+    /**
+     * Constructs a shallow copy of this object.
+     */
+    IPlayer copy();
+
     Vector<Minefield> getMinefields();
 
     void addMinefield(Minefield mf);
@@ -206,4 +211,13 @@ public interface IPlayer extends ITurnOrdered {
      * @return string of playercolor
      */
     public String getColorForPlayer();
+
+    /**
+     * Un-sets any data that may be considered private.
+     *
+     * This method clears any data that should not be transmitted to
+     * other players from the server, such as email addresses.
+     */
+    public void redactPrivateData();
+
 }

@@ -117,20 +117,20 @@
 		</model>
 	</chassis>
 	<chassis name='Bastion System Defense Station' unitType='Space Station'>
-		<availability>IS:4</availability>
+		<availability>IS:4,Periphery:4</availability>
 		<model name='(2584)'>
 			<availability>IS:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Factory - Medium/Large' unitType='Space Station'>
 		<availability>IS:3,Periphery:3</availability>
-		<model name='(2750)'>
-			<roles>civilian</roles>
-			<availability>IS:3,Periphery:3</availability>
-		</model>
 		<model name='(2400)'>
 			<roles>civilian</roles>
 			<availability>IS:4,Periphery:4</availability>
+		</model>
+		<model name='(2750)'>
+			<roles>civilian</roles>
+			<availability>IS:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Factory - Small' unitType='Space Station'>
@@ -142,24 +142,24 @@
 	</chassis>
 	<chassis name='Habitat - Large' unitType='Space Station'>
 		<availability>IS:4,Periphery:4</availability>
-		<model name='(2750)'>
+		<model name='(2500)'>
 			<roles>civilian</roles>
 			<availability>IS:3,Periphery:3</availability>
 		</model>
-		<model name='(2500)'>
+		<model name='(2750)'>
 			<roles>civilian</roles>
 			<availability>IS:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Habitat - Small' unitType='Space Station'>
 		<availability>IS:4,Periphery:4</availability>
-		<model name='(2750)'>
-			<roles>civilian</roles>
-			<availability>IS:3,Periphery:3</availability>
-		</model>
 		<model name='(2400)'>
 			<roles>civilian</roles>
 			<availability>IS:1,Periphery:1</availability>
+		</model>
+		<model name='(2750)'>
+			<roles>civilian</roles>
+			<availability>IS:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Olympus Recharge Station' unitType='Space Station'>

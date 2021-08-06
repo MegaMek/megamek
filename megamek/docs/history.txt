@@ -28,6 +28,7 @@ VERSION HISTORY:
 + Data: New Sprites, Camos
 + PR #3041: Princess config dialog improvements; much easier bot replacement upon loading a save game.
 + Issue #3407: Prevent server lockup when processing swarm attacks that select an infantry unit in a building as a secondary target
++ PR #3051: RAT Generator Editor no longer shuffles model entries around randomly; space stations have been added to RAT Generator
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

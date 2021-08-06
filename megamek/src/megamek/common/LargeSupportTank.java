@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
@@ -49,6 +50,15 @@ public class LargeSupportTank extends SupportTank {
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
 
+    // maps ToHitData - SIDE_X constants to LOC_X constants here for hull down fixed side hit locations
+    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING = 
+        Map.of(ToHitData.SIDE_FRONT, LOC_FRONT,
+                ToHitData.SIDE_FRONTLEFT, LOC_FRONTLEFT,
+                ToHitData.SIDE_FRONTRIGHT, LOC_FRONTRIGHT,
+                ToHitData.SIDE_REARLEFT, LOC_REARLEFT,
+                ToHitData.SIDE_REARRIGHT, LOC_REARRIGHT,
+                ToHitData.SIDE_REAR, LOC_REAR);
+    
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;

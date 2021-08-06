@@ -100,7 +100,11 @@ public class Tank extends Entity {
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
     
     // maps ToHitData - SIDE_X constants to LOC_X constants here for hull down fixed side hit locations
-    private static final int[] SIDE_LOC_MAPPING = { 1, 4, 3, 2 };
+    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING = 
+        Map.of(ToHitData.SIDE_FRONT, LOC_FRONT,
+                ToHitData.SIDE_LEFT, LOC_LEFT,
+                ToHitData.SIDE_RIGHT, LOC_RIGHT,
+                ToHitData.SIDE_REAR, LOC_REAR);
 
     @Override
     public int getUnitType() {
@@ -960,7 +964,7 @@ public class Tank extends Entity {
                 // the opposite direction to which it entered the hex it went
                 // Hull Down in hit side they come in from
                 else {
-                    nArmorLoc = SIDE_LOC_MAPPING[side];
+                    nArmorLoc = SIDE_LOC_MAPPING.get(side);
                 }
                 // Hull Down tanks don't make hit location rolls
                 return new HitData(nArmorLoc);

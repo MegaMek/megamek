@@ -27,6 +27,7 @@ VERSION HISTORY:
 + PR #3021: Fixing Calculate LOS NPEs
 + Data: New Sprites, Camos
 + PR #3041: Princess config dialog improvements; much easier bot replacement upon loading a save game.
++ Issue #3407: Prevent server lockup when processing swarm attacks that select an infantry unit in a building as a secondary target
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

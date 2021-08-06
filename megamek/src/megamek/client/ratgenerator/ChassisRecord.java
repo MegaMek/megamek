@@ -16,6 +16,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     
     public List<ModelRecord> getSortedModels() { 
         List<ModelRecord> sortedModels = new ArrayList<>(models);
-        Collections.sort(sortedModels);
+        sortedModels.sort(Comparator.comparing(ModelRecord::getModel));
         return sortedModels;
         
     }

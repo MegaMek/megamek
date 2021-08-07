@@ -155,8 +155,8 @@ public class CachedEntityState {
                         ((backingEntity.getArmor(TripodMech.LOC_RLEG) > 0) ? 0 : 1);
             } else if (backingEntity instanceof Mech) {
                 numBreachedLegs = 
-                        ((backingEntity.getArmor(TripodMech.LOC_LLEG) > 0) ? 0 : 1) +
-                        ((backingEntity.getArmor(TripodMech.LOC_RLEG) > 0) ? 0 : 1);
+                        ((backingEntity.getArmor(Mech.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(Mech.LOC_RLEG) > 0) ? 0 : 1);
             } else {
                 numBreachedLegs = 0;
             }

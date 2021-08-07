@@ -155,6 +155,7 @@ public class EmailService {
         Vector<IPlayer> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
             if (!StringUtil.isNullOrEmpty(player.getEmail()) &&
+                !player.isBot() &&
                 !player.isObserver()) {
                 emailable.add(player);
             }

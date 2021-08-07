@@ -255,7 +255,11 @@ public class Bay implements Transporter, ITechnology {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
         for (int unit : troops) {
-            loaded.add(game.getEntity(unit));
+            Entity entity = game.getEntity(unit);
+            
+            if (entity != null) {
+                loaded.add(game.getEntity(unit));
+            }
         }
         return loaded;
     }

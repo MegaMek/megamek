@@ -367,7 +367,7 @@ public final class UIUtil {
                     || (comp instanceof JSpinner) || (comp instanceof JRadioButton)
                     || (comp instanceof JTextArea) || (comp instanceof JTextPane)
                     || (comp instanceof JToggleButton)) {
-                comp.setFont(scaledFont);
+                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane)comp).getViewport().getView() instanceof JComponent) {
@@ -390,7 +390,7 @@ public final class UIUtil {
                 adjustDialog((JPanel)comp);
             }
             if (comp instanceof JTabbedPane) {
-                comp.setFont(scaledFont);
+                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
                 JTabbedPane tpane = (JTabbedPane)comp;
                 for (int i=0; i<tpane.getTabCount();i++) {
                     Component sc = tpane.getTabComponentAt(i);

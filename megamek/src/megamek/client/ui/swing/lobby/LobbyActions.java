@@ -30,6 +30,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.*;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -1041,6 +1042,10 @@ public class LobbyActions {
             }
         }
         return entities.stream().map(e -> e.getOwner()).findAny().get();
+    }
+    
+    void showAlphaStrikeView(Collection<Entity> en) {
+        new AlphaStrikeStatsDialog(frame(), en).setVisible(true);
     }
 
     /** 

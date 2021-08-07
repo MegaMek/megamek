@@ -72,7 +72,7 @@ public class BattleForceElement {
     
     public BattleForceElement(Entity en) {
         name = en.getShortName();
-        size = en.getBattleForceSize();
+        size = determineSize(en);
         computeMovement(en);
         armor = en.getBattleForceArmorPointsRaw();
         if (en instanceof Aero) {
@@ -847,6 +847,49 @@ public class BattleForceElement {
                     return String.valueOf((int)Math.round(d));
                 }
             }).collect(Collectors.joining("/"));
+        }
+    }
+    
+    public int determineSize(Entity entity) {
+        
+//        switch ()
+//        
+//        
+//        if (en instanceof Mech) {
+//            return ((Mech)en).isIndustrial() ? IM : BM;
+//        } else if (en instanceof Protomech) {
+//            return PM;
+//        } else if (en instanceof Tank) {
+//            return en.isSupportVehicle() ? SV : CV;
+//        } else if (en instanceof BattleArmor) {
+//            return BA;
+//        } else if (en instanceof Infantry) {
+//            return CI;
+//        } else if (en instanceof SpaceStation) {
+//            return SS;
+//        } else if (en instanceof Warship) {
+//            return WS;
+//        } else if (en instanceof Jumpship) {
+//            return JS;
+//        } else if (en instanceof Dropship) {
+//            return ((Dropship)en).isSpheroid() ? DS : DA;
+//        } else if (en instanceof SmallCraft) {
+//            return SC;
+//        } else if (en instanceof FixedWingSupport) {
+//            return SV;
+//        } else if (en instanceof ConvFighter) {
+//            return CF;
+//        } else if (en instanceof Aero) {
+//            return AF;
+//        }
+        if (entity.getWeight() < 40) {
+            return 1;
+        } else if (entity.getWeight() < 60) {
+            return 2;
+        } else if (entity.getWeight() < 80) {
+            return 3;
+        } else {
+            return 4;
         }
     }
 }

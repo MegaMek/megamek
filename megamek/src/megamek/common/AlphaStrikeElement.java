@@ -36,11 +36,11 @@ public class AlphaStrikeElement extends BattleForceElement {
         
         static ASUnitType getUnitType(Entity en) {
             if (en instanceof Mech) {
-                return ((Mech)en).isIndustrial()? IM : BM;
+                return ((Mech)en).isIndustrial() ? IM : BM;
             } else if (en instanceof Protomech) {
                 return PM;
             } else if (en instanceof Tank) {
-                return en.isSupportVehicle()?SV : CV;
+                return en.isSupportVehicle() ? SV : CV;
             } else if (en instanceof BattleArmor) {
                 return BA;
             } else if (en instanceof Infantry) {
@@ -52,7 +52,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             } else if (en instanceof Jumpship) {
                 return JS;
             } else if (en instanceof Dropship) {
-                return ((Dropship)en).isSpheroid()? DS : DA;
+                return ((Dropship)en).isSpheroid() ? DS : DA;
             } else if (en instanceof SmallCraft) {
                 return SC;
             } else if (en instanceof FixedWingSupport) {

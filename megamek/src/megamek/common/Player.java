@@ -39,6 +39,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     private boolean done = false; // done with phase
     private boolean ghost = false; // disconnected player
+    private boolean bot = false;
     private boolean observer = false;
 
     private boolean seeEntireBoard = false; // Player can observe double blind games
@@ -285,6 +286,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public void setGhost(boolean ghost) {
         this.ghost = ghost;
+    }
+
+    @Override
+    public boolean isBot() {
+        return bot;
+    }
+
+    @Override
+    public void setBot(boolean bot) {
+        this.bot = bot;
     }
 
     @Override

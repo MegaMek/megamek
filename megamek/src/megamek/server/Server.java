@@ -792,6 +792,7 @@ public class Server implements Runnable {
     private void receivePlayerName(Packet packet, int connId) {
         final IConnection conn = getPendingConnection(connId);
         String name = (String) packet.getObject(0);
+        boolean isBot = (boolean) packet.getObject(1);
         boolean returning = false;
 
         // this had better be from a pending connection
@@ -827,7 +828,7 @@ public class Server implements Runnable {
 
         // add and validate the player info
         if (!returning) {
-            addNewPlayer(connId, name);
+            addNewPlayer(connId, name, isBot);
         }
 
         // if it is not the lounge phase, this player becomes an observer
@@ -968,7 +969,7 @@ public class Server implements Runnable {
     /**
      * Adds a new player to the game
      */
-    private IPlayer addNewPlayer(int connId, String name) {
+    private IPlayer addNewPlayer(int connId, String name, boolean isBot) {
         int team = IPlayer.TEAM_UNASSIGNED;
         if (game.getPhase() == Phase.PHASE_LOUNGE) {
             team = IPlayer.TEAM_NONE;
@@ -980,6 +981,7 @@ public class Server implements Runnable {
             team++;
         }
         IPlayer newPlayer = new Player(connId, name);
+        newPlayer.setBot(isBot);
         PlayerColour colour = newPlayer.getColour();
         Enumeration<IPlayer> players = game.getPlayers();
         final PlayerColour[] colours = PlayerColour.values();
@@ -1382,7 +1384,7 @@ public class Server implements Runnable {
             }
             String name = idToNameMap.get(conn.getId());
             conn.setId(newId);
-            IPlayer newPlayer = addNewPlayer(newId, name);
+            IPlayer newPlayer = addNewPlayer(newId, name, false);
             newPlayer.setObserver(true);
             connectionIds.put(newId,  conn);
             send(newId, new Packet(Packet.COMMAND_LOCAL_PN, newId));

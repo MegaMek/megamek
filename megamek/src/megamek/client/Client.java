@@ -1385,7 +1385,10 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
-            send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            send(new Packet(
+                     Packet.COMMAND_CLIENT_NAME,
+                     new Object[] { name, isBot() }
+                 ));
             Object[] versionData = new Object[2];
             versionData[0] = MegaMek.VERSION;
             versionData[1] = MegaMek.getMegaMekSHA256();
@@ -1753,6 +1756,10 @@ public class Client implements IClientCommandHandler {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isBot() {
+        return false;
     }
 
     public int getPort() {

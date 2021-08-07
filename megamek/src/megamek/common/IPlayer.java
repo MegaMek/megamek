@@ -105,6 +105,12 @@ public interface IPlayer extends ITurnOrdered {
 
     void setGhost(boolean ghost);
 
+    /** Specifies if this player connected as a bot. */
+    boolean isBot();
+
+    /** Sets whether this player connected as a bot. */
+    void setBot(boolean bot);
+
     boolean isObserver();
 
     void setSeeAll(boolean see_all);

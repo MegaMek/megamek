@@ -224,6 +224,10 @@ public abstract class BotClient extends Client {
         });
     }
 
+    public boolean isBot() {
+        return true;
+    }
+
     BotConfiguration config = new BotConfiguration();
 
     protected BoardClusterTracker boardClusterTracker;

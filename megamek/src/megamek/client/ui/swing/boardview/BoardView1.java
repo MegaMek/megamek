@@ -758,6 +758,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public void performAction() {
+                        BoardView1.this.clientgui.toggleChat();
                     }
 
                 });
@@ -773,6 +774,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public void performAction() {
+                        BoardView1.this.clientgui.toggleChat();
                     }
 
                 });

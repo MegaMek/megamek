@@ -255,6 +255,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTabs.add("Team Overview", panTeam); 
         add(panTabs, BorderLayout.CENTER);
 
+        var chat = new ChatPane(this.clientgui.getClient());
+
+        // Setting these preferred sizes is a bit of a hack, but tbh
+        // the chat should be part of the LHS panel anyway and this
+        // would just fall out fine.
+        chat.setPreferredSize(new Dimension(500, 100));
+        this.butDone.setPreferredSize(new Dimension(200, 100));
+
+        var chatPane = new JPanel(new BorderLayout());
+        chatPane.add(chat, BorderLayout.CENTER);
+        chatPane.add(this.butDone, BorderLayout.LINE_END);
+        add(chatPane, BorderLayout.SOUTH);
+
         setupSorters();
         setupTeamOverview();
         setupPlayerConfig();

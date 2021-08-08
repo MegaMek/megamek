@@ -39,6 +39,8 @@ import java.util.List;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
+import megamek.common.util.fileUtils.MegaMekFile;
+
 
 /**
  * Generic utility methods for image data
@@ -175,6 +177,10 @@ public final class ImageUtil {
             }
         }
         return failStandardImage();
+    }
+
+    public static Image loadImageFromFile(MegaMekFile file) {
+        return loadImageFromFile(file.getFile().toString());
     }
 
     private ImageUtil() {}

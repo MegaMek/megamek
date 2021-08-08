@@ -189,7 +189,11 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
 
     public MegaMekController controller;
     public BoardView1 bv;
-    private Component bvc;
+    private JLayeredPane bvc;
+
+    private ChatPane chat;
+    private ChatOverlay chatOverlay;
+
     public DetachablePane unitDetailPane;
     public UnitDisplay mechD;
     public JDialog minimapW;
@@ -329,6 +333,7 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
+        chat.addMessage("Megamek: " + message);
     }
 
     /**
@@ -424,11 +429,17 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
             bv = new BoardView1(client.getGame(), controller, this);
-            bv.setPreferredSize(getSize());
-            bvc = bv.getComponent();
-            bvc.setName("BoardView");
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
+
+            this.chat = new ChatPane(this.client);
+            this.chatOverlay = new ChatOverlay(this.chat, this.bv);
+
+            bvc = new JLayeredPane();
+            bvc.setName("BoardView");
+            bvc.setLayout(new OverlayLayout(bvc));
+            bvc.add(bv.getComponent(), JLayeredPane.DEFAULT_LAYER);
+            bvc.add(this.chatOverlay, JLayeredPane.PALETTE_LAYER);
         } catch (Exception e) {
             MegaMek.getLogger().fatal(e);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -1675,6 +1686,16 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
     }
 
     /**
+     * Toggles the chat interface.
+     *
+     * If hidden, the chat interface will be shown and focused. If
+     * visible, it will be hidden.
+     */
+    public void toggleChat() {
+        this.chatOverlay.setActive(!this.chatOverlay.isActive());
+    }
+
+    /**
      * @return the frame this client is displayed in
      */
     public JFrame getFrame() {
@@ -1748,6 +1769,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
 
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            final var newPhase = client.getGame().getPhase();
+
             // This is a really lame place for this, but I couldn't find a
             // better one without making massive changes (which didn't seem
             // worth it for one little feature).
@@ -1759,9 +1782,9 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
             }
 
             // Swap to this phase's panel.
-            switchPanel(getClient().getGame().getPhase());
+            switchPanel(newPhase);
 
-            menuBar.setPhase(getClient().getGame().getPhase());
+            menuBar.setPhase(newPhase);
             validate();
         }
 
@@ -1778,6 +1801,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
 
         @Override
         public void gameReport(GameReportEvent e) {
+            chat.addMessage(e.getReport());
+
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.
             // This update is for reports that get sent at odd times,
@@ -2327,7 +2352,8 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
                 || ((about != null) && about.isVisible())
                 || ((help != null) && help.isVisible())
                 || ((setdlg != null) && setdlg.isVisible())
-                || ((aw != null) && aw.isVisible());
+                || ((aw != null) && aw.isVisible())
+                || ((chat != null) && chat.isChatInputFocused());
     }
 
     @Override

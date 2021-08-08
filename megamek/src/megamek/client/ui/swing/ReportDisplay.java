@@ -88,14 +88,28 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
         // layout screen
         setLayout(new GridBagLayout());
+
         add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+
         JPanel panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
+        panButtons.setVisible(false);
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+
+        var chat = new ChatPane(this.clientgui.getClient());
+
+        this.butDone.setPreferredSize(new Dimension(150, 100));
+
+        var chatPane = new JPanel(new BorderLayout());
+        chatPane.add(chat, BorderLayout.CENTER);
+        chatPane.add(this.butDone, BorderLayout.LINE_END);
+        chatPane.setMinimumSize(new Dimension(500, 100));
+        add(chatPane, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
@@ -107,7 +121,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      *            be shown in this report display.
      */
     public void showRerollButton(boolean show) {
-        rerollInitiativeB.setVisible(show);
+        rerollInitiativeB.getParent().setVisible(show);
     }
 
     /**

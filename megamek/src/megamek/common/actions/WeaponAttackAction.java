@@ -4299,7 +4299,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // "grounded small craft" get a -1 per TW
-        if ((te instanceof SmallCraft) && (te.getUnitType() == UnitType.SMALL_CRAFT) && !((IAero) te).isAirborne()) {
+        if ((te instanceof SmallCraft) && (te.getUnitType() == UnitType.SMALL_CRAFT) && !te.isAirborne() && !te.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
         }
         

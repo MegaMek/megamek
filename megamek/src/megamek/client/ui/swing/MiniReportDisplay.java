@@ -27,12 +27,10 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
-import javax.swing.UIManager;
-import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * Shows reports, with an Okay JButton
@@ -92,9 +90,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         for (int round = 1; round < numRounds; round++) {
             String text =  c.receiveReport(c.getGame().getReports(round));
             JTextPane ta = new JTextPane();
-            setupStylesheet(ta);
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            ta.setEditorKit(toolKit);
+            UIUtil.setupForHtml(ta);
             ta.setText("<pre>" + text + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
@@ -103,9 +99,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         // add the new current phase tab
         JTextPane ta = new JTextPane();
-        setupStylesheet(ta);
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        ta.setEditorKit(toolKit);
+        UIUtil.setupForHtml(ta);
         ta.setText("<pre>" + c.roundReport + "</pre>");
         ta.setEditable(false);
         ta.setOpaque(false);
@@ -113,15 +107,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         JScrollPane sp = new JScrollPane(ta);
         tabs.add("Phase", sp);
         tabs.setSelectedComponent(sp);
-        
+
         getContentPane().add(BorderLayout.CENTER, tabs);
     }
-    
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily()
-                        + "; font-size: 12pt; font-style:normal;}");
-    }    
+
 }

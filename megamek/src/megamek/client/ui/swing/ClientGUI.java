@@ -64,9 +64,9 @@ import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.DetachablePane;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
@@ -1385,9 +1385,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        textArea.setEditorKit(toolKit);
+        UIUtil.setupForHtml(textArea);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,

@@ -65,7 +65,19 @@ public final class UIUtil {
         }
         return result.toString();
     }
-    
+
+    public static void setupForHtml(JTextPane pane) {
+        var toolkit = new BASE64ToolKit();
+        var font = UIManager.getFont("Label.font");
+        pane.setContentType("text/html");
+        pane.setEditorKit(toolkit);
+        toolkit.getStyleSheet().addRule(
+            "* { font-family: " + font.getFamily() + "; " +
+            "font-size: " + scaleForGUI(font.getSize()) + "pt; " +
+            "font-style: normal; }"
+        );
+    }
+
     /** 
      * Returns an HTML FONT tag setting the font face to Dialog 
      * and the font size according to GUIScale. 

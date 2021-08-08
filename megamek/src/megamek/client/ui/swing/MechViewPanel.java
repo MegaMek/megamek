@@ -30,7 +30,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.templates.TROView;
 
@@ -51,7 +51,7 @@ public class MechViewPanel extends JPanel {
     }
 
     public MechViewPanel(int width, int height, boolean noBorder) {
-        ReportDisplay.setupStylesheet(txtMek);
+        UIUtil.setupForHtml(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
         txtMek.setPreferredSize(new Dimension(width, height));
@@ -63,10 +63,10 @@ public class MechViewPanel extends JPanel {
         scrMek.setPreferredSize(new Dimension(width, height));
         scrMek.setMinimumSize(new Dimension(width, height));
 
-        var textPanel = new FixedXPanel(new GridLayout(1, 1));
+        var textPanel = new UIUtil.FixedXPanel(new GridLayout(1, 1));
         textPanel.add(scrMek);
 
-        var fluffPanel = new FixedXPanel();
+        var fluffPanel = new UIUtil.FixedXPanel();
         fluffPanel.add(lblMek);
 
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));

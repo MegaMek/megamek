@@ -952,19 +952,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     void die() {
         // Tell all the displays to remove themselves as listeners.
-        boolean reportHandled = false;
         if (bv != null) {
             //cleanup our timers first
             bv.die();
         }
         for (String s : phaseComponents.keySet()) {
             JComponent component = phaseComponents.get(s);
-            if (component instanceof ReportDisplay) {
-                if (reportHandled) {
-                    continue;
-                }
-                reportHandled = true;
-            }
             if (component instanceof Distractable) {
                 ((Distractable) component).removeAllListeners();
             }
@@ -1034,11 +1027,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
-                // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                if (rD != null) {
-                    rD.resetTabs();
-                }
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
@@ -1067,12 +1055,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+                client.sendDone(true);
+                return;
             case VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                cb.setDoneButton(rD.butDone);
-                rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-                setMapVisible(false);
-                setUnitDisplayVisible(false);
                 break;
             default:
                 break;
@@ -1116,9 +1101,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private JComponent initializePanel(GamePhase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
-        JComponent component;
+        JComponent component = null;
         String secondary = null;
-        String main;
+        String main = null;
         switch (phase) {
             case LOUNGE:
                 component = new ChatLounge(this);
@@ -1243,11 +1228,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panSecondary.add(component, secondary);
                 break;
             case INITIATIVE_REPORT:
-                component = new ReportDisplay(this);
-                main = "ReportDisplay"; //$NON-NLS-1$
-                component.setName(main);
-                panMain.add(main, component);
-                break;
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
             case OFFBOARD_REPORT:
@@ -1255,13 +1235,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                if (component == null) {
-                    // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(GamePhase.INITIATIVE_REPORT);
-                }
-                main = "ReportDisplay"; //$NON-NLS-1$
                 break;
             default:
                 component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
@@ -1271,10 +1244,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panMain.add(main, component);
                 break;
         }
-        phaseComponents.put(name, component);
-        mainNames.put(name, main);
-        if (secondary != null) {
-            secondaryNames.put(name, secondary);
+        if (component != null) {
+            phaseComponents.put(name, component);
+            mainNames.put(name, main);
+            if (secondary != null) {
+                secondaryNames.put(name, secondary);
+            }
         }
         return component;
     }
@@ -1738,13 +1713,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
-        public void gamePlayerChange(GamePlayerChangeEvent e){
+        public void gamePlayerChange(GamePlayerChangeEvent e) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
-             }
-
-             if ((curPanel instanceof ReportDisplay) && !client.getLocalPlayer().isDone()) {
-                 ((ReportDisplay) curPanel).resetReadyButton();
              }
         }
 
@@ -1789,11 +1760,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
             System.err.println("gamePlayerConnected");
             System.err.flush();
-            if (curPanel instanceof ReportDisplay) {
-                ((ReportDisplay) curPanel).resetReadyButton();
-                System.err.println("resetReadyButton");
-                System.err.flush();
-            }
         }
 
         @Override
@@ -1801,29 +1767,24 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.
             // This update is for reports that get sent at odd times,
-            // currently Tactical Genius reroll requests and when
-            // a player wishes to continue moving after a fall.
-            if (curPanel instanceof ReportDisplay) {
-                // Tactical Genius
-                ((ReportDisplay) curPanel).appendReportTab(getClient().phaseReport);
-                ((ReportDisplay) curPanel).resetReadyButton();
-                // Check if the player deserves an active reroll button
-                // (possible, if he gets one which he didn't use, and his
-                // opponent got and used one) and if so activates it.
-                if (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer())) {
-                    if (!((ReportDisplay) curPanel).hasRerolled()) {
-                        ((ReportDisplay) curPanel).resetRerollButton();
-                    }
-                }
-                // Show a popup to the players so that we know whats up!
+            switch (client.getGame().getPhase()) {
+            case INITIATIVE:
+            case INITIATIVE_REPORT:
+                // Pilots with the Tactical Geneous Special Pilot
+                // Ability an re-roll an initiative roll. See Strat
+                // Ops 1st ed or Campaign Ops 2ed ed.
+                //XXX;
                 if (!(getClient() instanceof TestBot)) {
                     doAlertDialog("Tactical Genius Report", e.getReport());
                 }
-            } else {
+                break;
+            case MOVEMENT:
+            case MOVEMENT_REPORT:
                 // Continued movement after getting up
                 if (!(getClient() instanceof TestBot)) {
                     doAlertDialog("Movement Report", e.getReport());
                 }
+                break;
             }
         }
 

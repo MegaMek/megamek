@@ -60,7 +60,6 @@ import megamek.client.ui.swing.FiringDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.PhysicalDisplay;
-import megamek.client.ui.swing.ReportDisplay;
 import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
 import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
@@ -429,7 +428,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      */
     void die() {
         // Tell all the displays to remove themselves as listeners.
-        boolean reportHandled = false;
         if (bv != null) {
             //cleanup our timers first
             bv.die();
@@ -437,12 +435,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
             JComponent component = phaseComponents.get(names.next());
-            if (component instanceof ReportDisplay) {
-                if (reportHandled) {
-                    continue;
-                }
-                reportHandled = true;
-            }
             if (component instanceof Distractable) {
                 ((Distractable) component).removeAllListeners();
             }
@@ -485,12 +477,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
-                // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(GamePhase.INITIATIVE_REPORT));
-                if (rD != null) {
-                    rD.resetTabs();
-                }
                 //ChatLounge cl = (ChatLounge) phaseComponents.get(
                 //        String.valueOf(Game.Phase.LOUNGE));
                 //cb.setDoneButton(cl.butDone);
@@ -513,11 +499,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(GamePhase.INITIATIVE_REPORT));
-                //cb.setDoneButton(rD.butDone);
-                //rD.add(cb.getComponent(), GBC.eol().fill(
-                //        GridBagConstraints.HORIZONTAL));
                 break;
             default:
                 break;
@@ -675,11 +656,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 panSecondary.add(component, secondary);
                 break;
             case INITIATIVE_REPORT:
-                component = new ReportDisplay(null);
-                main = "ReportDisplay"; //$NON-NLS-1$
-                component.setName(main);
-                panMain.add(main, component);
-                break;
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
             case OFFBOARD_REPORT:

@@ -38,7 +38,7 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.ReportDisplay;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -1181,12 +1181,12 @@ public abstract class BotClient extends Client {
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
-
+        UIUtil.setupForHtml(textArea);
         textArea.setEditable(false);
+        textArea.setText("<pre>" + message + "</pre>");
+
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText("<pre>" + message + "</pre>");
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 

@@ -68,6 +68,7 @@ import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -754,13 +755,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
-
+        UIUtil.setupForHtml(textArea);
         textArea.setEditable(false);
+        textArea.setText("<pre>" + message + "</pre>");
+
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
                 (int) (getSize().getWidth() / 1.5), (int) (getSize()
                         .getHeight() / 1.5)));

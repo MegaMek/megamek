@@ -21,12 +21,10 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -36,6 +34,7 @@ import megamek.common.Report;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.client.ui.swing.util.UIUtil;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
         ActionListener, HyperlinkListener, IPreferenceChangeListener {
@@ -193,9 +192,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
                 ta = new JTextPane();
                 ta.addHyperlinkListener(this);
-                setupStylesheet(ta);
-                BASE64ToolKit toolKit = new BASE64ToolKit();
-                ta.setEditorKit(toolKit);
+                UIUtil.setupForHtml(ta);
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
                 ta.setOpaque(false);
@@ -205,9 +202,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // add the new current phase tab
             ta = new JTextPane();
             ta.addHyperlinkListener(this);
-            setupStylesheet(ta);
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            ta.setEditorKit(toolKit);
+            UIUtil.setupForHtml(ta);
             ta.setText("<pre>" + phaseText + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
@@ -223,25 +218,15 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         }
     }
 
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
-    }
-    
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
             JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            pane.setEditorKit(toolKit);
+            UIUtil.setupForHtml(pane);
             pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
         }
         JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport().getView());
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        pane.setEditorKit(toolKit);
+        UIUtil.setupForHtml(pane);
         pane.setText(pane.getText() + "<pre>"+additionalText+"</pre>");
     }
 
@@ -341,7 +326,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                     Component pane = ((JScrollPane) cp).getViewport().getView();
                     if (pane instanceof JTextPane) {
                         JTextPane tp = (JTextPane) pane;
-                        setupStylesheet(tp);
+                        UIUtil.setupForHtml(tp);
                         tp.setText(tp.getText());
                     }
                 }

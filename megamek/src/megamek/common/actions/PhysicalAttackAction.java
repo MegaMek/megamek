@@ -31,6 +31,7 @@ import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.RangeType;
+import megamek.common.SmallCraft;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -241,8 +242,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.addModifier(-2, "target is large support tank");
             }
 
-            if (te instanceof Dropship) {
-                toHit.addModifier(-2, "target is dropship");
+            if (te instanceof SmallCraft) {
+                if (te instanceof Dropship) {
+                    toHit.addModifier(-4, "target is dropship");
+                } else {
+                    toHit.addModifier(-2, "target is small craft");
+                }
             }
 
             IHex targHex = game.getBoard().getHex(te.getPosition());

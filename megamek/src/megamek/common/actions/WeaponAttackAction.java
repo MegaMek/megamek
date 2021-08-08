@@ -53,6 +53,7 @@ import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
+import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
@@ -63,6 +64,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.QuadVee;
 import megamek.common.RangeType;
+import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.SpecialResolutionTracker;
 import megamek.common.SupportTank;
@@ -74,6 +76,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.TripodMech;
+import megamek.common.UnitType;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
@@ -4274,8 +4277,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
-            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)
-                    && ((Aero) te).isSpheroid()) {
+            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
             }
             if (immobileMod != null) {
@@ -4287,8 +4289,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unit-specific modifiers
         
         // -1 to hit a SuperHeavy mech
-        if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if ((te != null) && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+        }
+        
+        // large support tanks get a -1 per TW
+        if (te instanceof LargeSupportTank) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportTank"));
+        }
+        
+        // "grounded small craft" get a -1 per TW
+        if ((te instanceof SmallCraft) && (te.getUnitType() == UnitType.SMALL_CRAFT) && !((IAero) te).isAirborne()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
         }
         
         // Battle Armor targets are hard for Meks and Tanks to hit.

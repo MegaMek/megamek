@@ -31,6 +31,8 @@ VERSION HISTORY:
 + PR #3051: RAT Generator Editor no longer shuffles model entries around randomly; space stations have been added to RAT Generator
 + Issue #3031: Bot will no longer attempt to cross water in "long range pathfinding mode" when doing so would cause an armor breach
 + Issue #3052: Fix for server lockup when firing infantry-scale weapons off of small support vehicles; fixes for multiple errors processing non-existent passenger units.
++ Issue #3048: Hits on hull-down (non-superheavy) vehicles without turrets now land on proper location.
++ PR #3017: Additional unit label display options (toggled with the unit label display keybind) to show abbreviated and really abbreviated unit names.
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

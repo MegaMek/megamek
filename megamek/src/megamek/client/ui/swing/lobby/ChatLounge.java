@@ -254,7 +254,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTabs.add("Select Map", panMap);
         panTabs.add("Team Overview", panTeam); 
         add(panTabs, BorderLayout.CENTER);
-        
+
         setupSorters();
         setupTeamOverview();
         setupPlayerConfig();

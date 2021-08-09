@@ -90,7 +90,6 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.ChatterBox2;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
@@ -440,12 +439,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private int frameCount;
     private Font fpsFont = new Font("SansSerif", 0, 20); //$NON-NLS-1$
 
-
-    /**
-     * Keeps track of whether we have an active ChatterBox2
-     */
-    private boolean chatterBoxActive = false;
-
     /**
      * Keeps track of whether an outside source tells the BoardView that it
      * should ignore keyboard commands.
@@ -545,25 +538,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // Currently only implemented for the ChatterBox
                 for (int i = 0; i < displayables.size(); i++) {
                     IDisplayable disp = displayables.get(i);
-                    if (!(disp instanceof ChatterBox2)) {
-                        continue;
-                    }
                     double width = scrollpane.getViewport().getSize().getWidth();
                     double height = scrollpane.getViewport().getSize().getHeight();
                     Dimension drawDimension = new Dimension();
                     drawDimension.setSize(width, height);
-                    // we need to adjust the point, because it should be against
-                    // the displayable dimension
-                    if (disp.isMouseOver(dispPoint, drawDimension)) {
-                        ChatterBox2 cb2 = (ChatterBox2) disp;
-                        if (we.getWheelRotation() > 0) {
-                            cb2.scrollDown();
-                        } else {
-                            cb2.scrollUp();
-                        }
-                        refreshDisplayables();
-                        return;
-                    }
                 }
                 
                 // calculate a few things to reposition the map
@@ -780,15 +758,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public void performAction() {
-                        if (!getChatterBoxActive()) {
-                            setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
-                                if (disp instanceof ChatterBox2) {
-                                    ((ChatterBox2) disp).slideUp();
-                                }
-                            }
-                            requestFocus();
-                        }
                     }
 
                 });
@@ -804,16 +773,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public void performAction() {
-                        if (!getChatterBoxActive()) {
-                            setChatterBoxActive(true);
-                            for (IDisplayable disp : displayables) {
-                                if (disp instanceof ChatterBox2) {
-                                    ((ChatterBox2) disp).slideUp();
-                                    ((ChatterBox2) disp).setMessage("/");
-                                }
-                            }
-                            requestFocus();
-                        }
                     }
 
                 });
@@ -1025,7 +984,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     private boolean shouldIgnoreKeyCommands() {
-        return getChatterBoxActive() || !isVisible()
+        return !isVisible()
                || (game.getPhase() == Phase.PHASE_LOUNGE)
                || (game.getPhase() == Phase.PHASE_END_REPORT)
                || (game.getPhase() == Phase.PHASE_MOVEMENT_REPORT)
@@ -6490,24 +6449,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();
-    }
-
-    /**
-     * Returns true if the BoardView has an active chatter box else false.
-     *
-     * @return
-     */
-    public boolean getChatterBoxActive() {
-        return chatterBoxActive;
-    }
-
-    /**
-     * Sets whether the BoardView has an active chatter box or not.
-     *
-     * @param cba
-     */
-    public void setChatterBoxActive(boolean cba) {
-        chatterBoxActive = cba;
     }
 
     public void setShouldIgnoreKeys(boolean shouldIgnoreKeys) {

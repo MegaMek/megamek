@@ -357,7 +357,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             @Override
             public boolean shouldPerformAction() {
                 if (!clientgui.getClient().isMyTurn()
-                        || clientgui.bv.getChatterBoxActive()
                         || display.isIgnoringEvents()
                         || !display.isVisible()) {
                     return false;

@@ -208,7 +208,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -230,7 +229,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -253,7 +251,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -276,7 +273,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()
                                 || !buttons.get(FiringCommand.FIRE_FIRE)
@@ -300,7 +296,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -322,7 +317,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -344,7 +338,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -367,7 +360,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -390,7 +382,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -412,7 +403,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -434,7 +424,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -456,7 +445,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -478,7 +466,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -500,7 +487,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -522,7 +508,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -544,7 +529,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -565,7 +549,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -587,7 +570,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -608,8 +590,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (clientgui.bv.getChatterBoxActive()
-                                || !display.isVisible()
+                        if (!display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
                         } else {

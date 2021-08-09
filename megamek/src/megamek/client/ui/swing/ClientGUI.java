@@ -188,8 +188,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
     private AccessibilityWindow aw;
 
     public MegaMekController controller;
-    private ChatterBox cb;
-    public ChatterBox2 cb2;
     public BoardView1 bv;
     private Component bvc;
     public DetachablePane unitDetailPane;
@@ -331,8 +329,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        cb.systemMessage(message);
-        cb2.addChatMessage("Megamek: " + message);
     }
 
     /**
@@ -474,9 +470,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
                 }
             }
         });
-        cb2 = new ChatterBox2(this, bv, controller);
-        bv.addDisplayable(cb2);
-        bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         offBoardOverlay = new OffBoardTargetOverlay(this);
 
@@ -531,9 +524,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
         minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
-        cb = new ChatterBox(this);
-        cb.setChatterBox2(cb2);
-        cb2.setChatterBox(cb);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MechSummaryCache.getInstance().isInitialized()) {
@@ -1031,8 +1021,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
                     rD.resetTabs();
                 }
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
-                cb.setDoneButton(cl.butDone);
-                cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 this.unitDetailPane.setVisible(false);
                 setMapVisible(false);
@@ -1059,8 +1047,6 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                cb.setDoneButton(rD.butDone);
-                rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
                 setMapVisible(false);
                 this.unitDetailPane.setVisible(false);
                 break;
@@ -1771,15 +1757,12 @@ public class ClientGUI extends JPanel implements BoardViewListener, ActionListen
                 //  and the equals function of Player isn't powerful enough.
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
-            // Make sure the ChatterBox starts out deactived.
-            bv.setChatterBoxActive(false);            
 
             // Swap to this phase's panel.
             switchPanel(getClient().getGame().getPhase());
 
             menuBar.setPhase(getClient().getGame().getPhase());
             validate();
-            cb.moveToEnd();
         }
 
         @Override

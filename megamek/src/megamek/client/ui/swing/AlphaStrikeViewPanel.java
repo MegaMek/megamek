@@ -50,9 +50,33 @@ public class AlphaStrikeViewPanel extends JPanel {
             addGridElement(element.getFinalArmor() + "/" + element.getStructure(), oddRow);
             addGridElement(element.getFinalPoints()+"", oddRow);
             addGridElement("?", oddRow);
+            
+            oddRow = (row++ % 2) == 1;
+            var element2 = AlphaStrikeConverter.convertToAlphaStrike(entity);
+            addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
+            addGridElement(element2.getUnitType().toString(), oddRow);
+            addGridElement(element2.getSize() + "", oddRow);
+//            addGridElement(element2.getTargetMoveModifier()+"", oddRow);
+            addGridElement("", oddRow);
+            if (hexMovement) {
+                addGridElement(""+element2.getPrimaryMovementValue()/2, oddRow);
+            } else {
+                addGridElement(element2.getMovementAsString(), oddRow);
+            }
+            addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
+//            addGridElement(element.getDamage(0)+"/"+element.getDamage(1)+"/"+element.getDamage(2), oddRow);
+            addGridElement("", oddRow);
+            addGridElement("", oddRow);
+            addGridElement("", oddRow);
+            addGridElement("", oddRow);
+//            addGridElement(element2.getASDamageString(0), oddRow);
+//            addGridElement(element2.calcHeatCapacity(entity)+"", oddRow);
+//            addGridElement(element2.getFinalArmor() + "/" + element.getStructure(), oddRow);
+//            addGridElement(element2.getFinalPoints()+"", oddRow);
+            addGridElement("?", oddRow);
         }
 
-        SpringUtilities.makeCompactGrid(this, entities.size() + 1, COLS, 5, 5, 1, 5);
+        SpringUtilities.makeCompactGrid(this, row, COLS, 5, 5, 1, 5);
     }
     
     private void addGridElement(String text, boolean coloredBG) {

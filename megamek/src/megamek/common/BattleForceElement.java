@@ -69,7 +69,11 @@ public class BattleForceElement {
     protected int[] heat;
     protected double points;
     protected EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
-    
+
+    public BattleForceElement() {
+
+    }
+
     public BattleForceElement(Entity en) {
         name = en.getShortName();
         size = determineSize(en);

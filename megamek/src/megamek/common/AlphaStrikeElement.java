@@ -15,9 +15,11 @@ package megamek.common;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.lang.String;
 
 /**
  * Primarily concerned with calculating AlphaStrike values for an undamaged entity, and exporting
@@ -68,6 +70,10 @@ public class AlphaStrikeElement extends BattleForceElement {
 
     protected ASUnitType asUnitType;
     
+    public AlphaStrikeElement() {
+        
+    };
+    
     public AlphaStrikeElement(Entity en) {
         super(en);
         asUnitType = ASUnitType.getUnitType(en);
@@ -109,7 +115,9 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     @Override
     public String getMovementAsString() {
+        Strings.com
     	return movement.entrySet().stream()
+    	        .sorted()
     			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
     					+ "\"" + e.getKey())
     			.collect(Collectors.joining("/"));    	
@@ -267,4 +275,5 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
         return super.formatSPAString(spa);
     }
+    
 }

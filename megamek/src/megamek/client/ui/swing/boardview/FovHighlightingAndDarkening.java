@@ -174,7 +174,7 @@ class FovHighlightingAndDarkening {
                 LosEffects los = getCachedLosEffects(src, c);
                 if (null != this.boardView1.selectedEntity) {
                     if (los == null) {
-                        los = LosEffects.calculateLos(boardView1.game, boardView1.selectedEntity.getId(), null);
+                        los = LosEffects.calculateLOS(boardView1.game, boardView1.selectedEntity, null);
                     }
 
                     if (doubleBlindOn) { // Visual Range only matters in DB

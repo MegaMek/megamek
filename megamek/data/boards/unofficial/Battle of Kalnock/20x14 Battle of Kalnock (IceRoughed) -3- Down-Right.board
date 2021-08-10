@@ -1,4 +1,8 @@
 size 20 14
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Ocean (Auto)"
+tag "LowHills (Auto)"
 hex 0101 0 "" "snow"
 hex 0201 0 "" "snow"
 hex 0301 0 "" "snow"

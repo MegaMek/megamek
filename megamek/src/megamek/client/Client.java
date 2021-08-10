@@ -33,6 +33,8 @@ import javax.swing.*;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
@@ -1385,11 +1387,17 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
-            send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            send(new Packet(
+                     Packet.COMMAND_CLIENT_NAME,
+                     new Object[] { name, isBot() }
+                 ));
             Object[] versionData = new Object[2];
             versionData[0] = MegaMek.VERSION;
             versionData[1] = MegaMek.getMegaMekSHA256();
             send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
+            if (this instanceof Princess) {
+                ((Princess)this).sendPrincessSettings();
+            }
             break;
         case Packet.COMMAND_SERVER_CORRECT_NAME:
             correctName(c);
@@ -1401,7 +1409,14 @@ public class Client implements IClientCommandHandler {
             receivePlayerInfo(c);
             break;
         case Packet.COMMAND_PLAYER_READY:
-            getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+            IPlayer player = getPlayer(c.getIntValue(0));
+            
+            if (player != null) {
+                player.setDone(c.getBooleanValue(1));
+            }
+            break;
+        case Packet.COMMAND_PRINCESS_SETTINGS:
+            game.setBotSettings((Map<String, BehaviorSettings>)c.getObject(0));
             break;
         case Packet.COMMAND_PLAYER_ADD:
             receivePlayerInfo(c);
@@ -1749,6 +1764,10 @@ public class Client implements IClientCommandHandler {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isBot() {
+        return false;
     }
 
     public int getPort() {

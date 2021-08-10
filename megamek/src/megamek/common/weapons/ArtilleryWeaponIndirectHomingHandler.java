@@ -331,8 +331,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         Vector<TagInfo> v = game.getTagInfo();
         Vector<TagInfo> allowed = new Vector<TagInfo>();
+        Entity attacker = game.getEntityFromAllSources(getAttackerId());
+        
         // get only TagInfo on the same side
-        for (TagInfo ti : v) {
+        for (TagInfo ti : v) { 
+            Entity tagger = game.getEntityFromAllSources(ti.attackerId);
+            if (attacker.getOwner().isEnemyOf(tagger.getOwner())) {
+                continue;
+            }
+            
             switch (ti.targetType){
             case Targetable.TYPE_BLDG_TAG:
             case Targetable.TYPE_HEX_TAG:

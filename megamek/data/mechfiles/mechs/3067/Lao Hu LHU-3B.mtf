@@ -3,38 +3,38 @@ Lao Hu
 LHU-3B
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3063
-Rules Level:2
+techbase:Inner Sphere
+era:3063
 source:TRO 3067
+rules level:2
 
-Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:75
+engine:375 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:21
-RA Armor:21
-LT Armor:21
-RT Armor:21
-CT Armor:28
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:21
+RT armor:21
+CT armor:28
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:4
-1 ISLBXAC10, Right Arm, Ammo:30
-1 ISERLargeLaser, Left Arm
-1 ISC3MasterComputer, Right Torso
-1 ISLRM10, Left Torso, Ammo:24
+ER Large Laser, Left Arm
+LB 10-X AC, Right Arm
+LRM 10, Left Torso
+C3 Computer [Master], Right Torso
 
 Left Arm:
 Shoulder
@@ -42,9 +42,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 ISERLargeLaser
 ISERLargeLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,29 +68,29 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM10
-ISLRM10
+LRM 10
+LRM 10
 ISArtemisIV
-ISLRM10 Ammo Artemis-capable
-ISLRM10 Ammo Artemis-capable
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Ammo LRM-10 Artemis-capable
+IS Ammo LRM-10 Artemis-capable
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
-ISLBXAC10 CL Ammo
-Endo-Steel
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +139,23 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:Designed by a student at the Victoria Academy of Arms and Technology, the Lao Hu ("Tiger") is based on the Thunder BattleMech and is designed to correct perceived flaws in the Thunder by using new technologies available to the Capellan Confederation.
+capabilities:The Lao Hu is built on a lightweight Chariot Type II Endo Steel that carries a GM 375 XL Engine which gives the 'Mech a top speed of 86.4 km/h while sacrificing some survivability for more free weight and a heavier weapons payload. The Lao Hu is protected by an impressive thirteen and a half tons of armor, making it capable of weathering hits from all but the heaviest weapons.
+deployment:Modified to carry a C3 Master Computer, the 3B downgrades its autocannon to an LB 10-X AC, drops a ton of armor and replaces the LRM-15 with an LRM-10 with an Artemis IV FCS. The 3B uses its C3 computer to link together an entire C3 Lance and gives the 'Mech unparalleled accuracy when part of a C3 lance.
+manufacturer:Shengli Arms
+primaryfactory:Victoria
+systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
+systemmanufacturer:ENGINE:GM 375 XL
+systemmanufacturer:ARMOR:Star Shell Standard
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, Standard
+systemmanufacturer:TARGETING:O/P 911 Targeting and Tracking System
 

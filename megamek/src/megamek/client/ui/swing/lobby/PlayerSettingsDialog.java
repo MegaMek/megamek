@@ -30,9 +30,12 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotConfigDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.UIUtil;
@@ -119,7 +122,12 @@ public class PlayerSettingsDialog extends ClientDialog {
     public boolean getForceGP() {
         return butForceGP.isSelected();
     }
-    
+
+    /** Returns the player's email address. */
+    public String getEmail() {
+        return fldEmail.getText().trim();
+    }
+
     // PRIVATE
 
     private final Client client;
@@ -130,7 +138,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     
     // Initiative Section
     private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
-    private TipTextField fldInit = new TipTextField(3, this);
+    private TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
     private JLabel labConventional = new JLabel(getString(PSD + "labConventional"), SwingConstants.RIGHT); 
@@ -146,11 +154,15 @@ public class PlayerSettingsDialog extends ClientDialog {
     private JLabel labMethod = new JLabel(getString(PSD + "labMethod"), SwingConstants.RIGHT); 
     private JLabel labPilot = new JLabel(getString(PSD + "labPilot"), SwingConstants.RIGHT); 
     private JLabel labXP = new JLabel(getString(PSD + "labXP"), SwingConstants.RIGHT);
-    private TipCombo<String> cmbMethod = new TipCombo<String>(this);
+    private TipCombo<String> cmbMethod = new TipCombo<String>();
     private JComboBox<String> cmbPilot = new JComboBox<String>();
     private JComboBox<String> cmbXP = new JComboBox<String>();
     private MMToggleButton butForceGP = new MMToggleButton(getString(PSD + "butForceGP"));
-    
+
+    // Email section
+    private JLabel labEmail = new JLabel(getString(PSD + "labEmail"), SwingConstants.RIGHT);
+    private JTextField fldEmail = new JTextField(20);
+
     private JPanel panStartButtons = new JPanel();
     private TipButton[] butStartPos = new TipButton[11];
     private JButton butBotSettings = new JButton(Messages.getString(PSD + "botSettings"));
@@ -179,6 +191,9 @@ public class PlayerSettingsDialog extends ClientDialog {
             mainPanel.add(mineSection());
         }
         mainPanel.add(skillsSection());
+        if (!(client instanceof BotClient)) {
+            mainPanel.add(emailSection());
+        }
         mainPanel.add(Box.createVerticalGlue());
     }
     
@@ -251,7 +266,16 @@ public class PlayerSettingsDialog extends ClientDialog {
         panContent.add(butForceGP);
         return result;
     }
-    
+
+    private JPanel emailSection() {
+        JPanel result = new OptionPanel(PSD + "header.email");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
+        result.add(panContent);
+        panContent.add(labEmail);
+        panContent.add(fldEmail);
+        return result;
+    }
+
     private JPanel buttonPanel() {
         JPanel result = new JPanel(new FlowLayout());
         butOkay.addActionListener(listener);
@@ -282,12 +306,13 @@ public class PlayerSettingsDialog extends ClientDialog {
         cmbXP.setSelectedIndex(client.getRandomSkillsGenerator().getLevel());
         butForceGP.setSelected(client.getRandomSkillsGenerator().isClose());
         cmbMethod.addItemListener(e -> adjustSkillMethodTip());
+        fldEmail.setText(player.getEmail());
     }
-    
+
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
         for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new TipButton("", this);
+            butStartPos[i] = new TipButton("");
             butStartPos[i].addActionListener(listener);
         }
         panStartButtons.setLayout(new GridLayout(4, 3));
@@ -372,10 +397,11 @@ public class PlayerSettingsDialog extends ClientDialog {
             }
 
             // Bot settings button
-            if (butBotSettings.equals(e.getSource())) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, (BotClient) client, false);
+            if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
+                BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
+                var bcd = new BotConfigDialog(clientgui.frame, client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
-                if (!bcd.dialogAborted && client instanceof Princess) {
+                if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             }

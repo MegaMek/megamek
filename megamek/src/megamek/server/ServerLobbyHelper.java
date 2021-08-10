@@ -353,7 +353,7 @@ class ServerLobbyHelper {
         
         server.send(server.createFullEntitiesPacket());
         for (IPlayer player: serverPlayers) {
-            server.send(server.createPlayerUpdatePacket(player.getId()));
+            server.transmitPlayerUpdate(player);
         }
     }
 

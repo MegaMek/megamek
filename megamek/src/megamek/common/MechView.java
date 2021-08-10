@@ -24,7 +24,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -745,7 +744,7 @@ public class MechView {
                 String.valueOf(fs.getTotalArmor())));
 
         retVal.add(new LabeledElement(Messages.getString("MechView.ActiveFighters"), //$NON-NLS-1$
-                String.valueOf(fs.getActiveSubEntities().orElse(Collections.emptyList()).size())));
+                String.valueOf(fs.getActiveSubEntities().size())));
 
         return retVal;
     }

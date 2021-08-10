@@ -180,7 +180,11 @@ import megamek.common.annotations.Nullable;
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
         if (troopers != Entity.NONE) {
-            units.addElement(game.getEntity(troopers));
+            Entity entity = game.getEntity(troopers);
+            
+            if (entity != null) {
+                units.addElement(entity);
+            }
         }
         return units;
     }

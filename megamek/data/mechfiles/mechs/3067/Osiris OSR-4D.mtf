@@ -1,34 +1,34 @@
-Version:1.0
+Version:1.1
 Osiris
 OSR-4D
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Rules Level:2
+techbase:Inner Sphere
+era:3067
 source:TRO 3067
+rules level:2
 
-Mass:30
-Engine:240 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:30
+engine:240 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:8
+heat sinks:10 IS Double
+walk mp:8
+jump mp:8
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:9
-RA Armor:9
-LT Armor:10
-RT Armor:10
-CT Armor:14
-HD Armor:9
-LL Armor:13
-RL Armor:13
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:10
+RT armor:10
+CT armor:14
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:6
 ER Medium Laser, Right Arm
@@ -41,30 +41,30 @@ ER Medium Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
@@ -74,11 +74,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -88,11 +88,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 Jump Jet
-ISERMediumLaser
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+ISERMediumLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +150,17 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Osiris was essentially modeled after the Clan Dragonfly and designed by the same engineers who designed the Anubis. The Osiris was designed to be a fast, hit-and-fade style offensive platform and can perform well in that capacity with its awesome speed, although it does appear to rely too heavily on its mobility to protect it from damage.
+
+capabilities:While the limits of Inner Sphere technology forced the designers to skimp on the specifications somewhat, the Osiris does maintain the same speed as the design it is based off of with its powerful Pharaoh 240 XL. The armor and jump capacity are sadly lacking, however, as the Osiris can only jump half as far as the Dragonfly with its four Rawlings 61 jump jets and is armored with four and a half tons of StarGuard Ferro-Fibrous.
+
+deployment:A variant that was born out of the FedCom Civil War in 3067, the 4D drops the missiles and Machine Gun in favor of one Medium Pulse Laser and increased jump jet capacity, which is now 240 meters.
+
+manufacturer:Achernar BattleMechs
+primaryfactory:New Avalon
+systemmanufacturer:CHASSIS:FITES-O
+systemmanufacturer:ENGINE:Pharaoh 240 XL
+systemmanufacturer:ARMOR:StarGuard Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Achernar Electronics HID-8.7
+systemmanufacturer:TARGETING:Federated Hunter Mk. VII
 

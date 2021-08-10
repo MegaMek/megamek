@@ -387,10 +387,10 @@ public class FormationType {
                 List<UnitTable.Parameters> tempParams = params.stream().map(UnitTable.Parameters::copy)
                         .collect(Collectors.toList());
                 for (int index : undeterminedVees) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(veeMode));
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(veeMode));
                 }
                 for (int index : undeterminedInfantry) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(infMode));
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.parseFromString(infMode));
                 }
                 List<MechSummary> list = generateFormation(tempParams, numUnits, networkMask, false);
                 if (!list.isEmpty()) {

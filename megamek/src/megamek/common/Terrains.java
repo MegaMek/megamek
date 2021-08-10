@@ -274,18 +274,20 @@ public class Terrains implements ITerrainFactory {
             }
             return "Fire (unknown)";
         case (SMOKE):
-            if (level == SmokeCloud.SMOKE_LIGHT) {
-                return "Light smoke";
-            } else if (level == SmokeCloud.SMOKE_HEAVY) {
-                return "Heavy smoke";
-            } else if (level == SmokeCloud.SMOKE_LI_LIGHT) {
-                return "LASER inhibiting smoke";
-            } else if (level == SmokeCloud.SMOKE_LI_HEAVY) {
-                return "LASER inhibiting smoke";
-            } else if (level == SmokeCloud.SMOKE_CHAFF_LIGHT) {
-                return "Chaff (ECM)";
-            } else {
-                return "Smoke (unknown)";
+            switch (level) {
+                case SmokeCloud.SMOKE_LIGHT:
+                    return "Light smoke";
+                case SmokeCloud.SMOKE_HEAVY:
+                    return "Heavy smoke";
+                case SmokeCloud.SMOKE_LI_LIGHT:
+                case SmokeCloud.SMOKE_LI_HEAVY:
+                    return "LASER inhibiting smoke";
+                case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                    return "Chaff (ECM)";
+                case SmokeCloud.SMOKE_GREEN:
+                    return "Green smoke (anti-TSM)";
+                default:
+                    return "Smoke (unknown)";
             }
         case (SWAMP):
             if ((level == 2) || (level == 3)) {

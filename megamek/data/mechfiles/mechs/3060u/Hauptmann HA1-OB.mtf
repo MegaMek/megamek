@@ -151,4 +151,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The first OmniMech both designed and built by the Lyran Alliance. The OmniMech is named after the rank held by officers in the LAAF.
+ 
+capabilities:The Hauptmann is built on a standard chassis and powered by a 285 fusion engine, adding to the 'Mech's durability as it cannot be killed by a side torso loss. The Hauptmann has eleven double heat sinks fixed on the chassis and can add more if needed in its various configurations. For protection, the Hauptmann carries eighteen and a half tons of armor and has CASE fixed in the right torso to protect against an ammunition explosion.
 
+deployment:Configured for both long- and short-range engagements, the B configuration of the Hauptmann has a pair of ER PPCs which give it the capability to engage an enemy at long ranges. For close combat, the 'Mech has three Medium Pulse Lasers and a devastatingly powerful Ultra Autocannon/20. To handle the 'Mech's high heat generated from its weapons, the B configuration has five additional double heat sinks.
+
+history:The inspiration for the Hauptmann is drawn from the Daishi OmniMech used by the Clans. Using information from captured Daishis and data gleaned from the construction of the Firestarter OmniMech, which was shared by the Draconis Combine, the end result is a powerful OmniMech capable of defending itself in most combat situations.
+
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Coventry HAI III
+systemmanufacturer:ENGINE:Pitban 285
+systemmanufacturer:ARMOR:Glasgow Limited with CASE
+systemmanufacturer:COMMUNICATIONS:TharHes Muse 54-58S
+systemmanufacturer:TARGETING:Cyclops 9c

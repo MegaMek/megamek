@@ -1,4 +1,6 @@
 size 16 17
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 hex 0101 5 "" ""
 hex 0201 2 "" ""
 hex 0301 1 "" ""

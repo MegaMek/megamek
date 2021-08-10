@@ -85,7 +85,10 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
         this.chooser = chooser;
     }
 
-    public AbstractIcon getSelectedItem() {
+    /**
+     * @return the selected item, which is non-nullable when the dialog is confirmed.
+     */
+    public @Nullable AbstractIcon getSelectedItem() {
         return getChooser().getSelectedItem();
     }
 

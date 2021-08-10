@@ -32,6 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -57,6 +58,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -176,14 +178,22 @@ public class Game implements Serializable, IGame {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
-    
-    /** 
+
+    /**
      * The forces present in the game. The top level force holds all forces and force-less
      * entities and should therefore not be shown.
      */
     private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
+    
+    /** 
+     * Stores princess behaviors for game factions. It does not indicate that a 
+     * faction is currently played by a bot, only that the most recent bot connected
+     * as that faction used these settings. Used to add the settings to savegames
+     * and allow restoring bots to their previous settings.
+     */
+    private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
      * Constructor
@@ -522,7 +532,7 @@ public class Game implements Serializable, IGame {
     public int getEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player)) {
+            if ((entity != null) && player.equals(entity.getOwner())) {
                 count++;
             }
         }
@@ -1233,7 +1243,11 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_BUILDING:
                 case Targetable.TYPE_BLDG_IGNITE:
                 case Targetable.TYPE_BLDG_TAG:
-                    return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    if (getBoard().getBuildingAt(BuildingTarget.idToCoords(nID)) != null) {
+                        return new BuildingTarget(BuildingTarget.idToCoords(nID), board, nType);
+                    } else {
+                        return null;
+                    }
                 case Targetable.TYPE_MINEFIELD_CLEAR:
                     return new MinefieldTarget(MinefieldTarget.idToCoords(nID), board);
                 case Targetable.TYPE_INARC_POD:
@@ -1309,7 +1323,7 @@ public class Game implements Serializable, IGame {
                 && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());
         }
-        
+
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
             // resetting a UUID that
@@ -3388,8 +3402,13 @@ public class Game implements Serializable, IGame {
         victory = new Victory(getOptions());
     }
 
+    @Deprecated
     public Victory getVictory() {
         return victory;
+    }
+
+    public VictoryResult getVictoryResult() {
+        return victory.checkForVictory(this, getVictoryContext());
     }
 
     // a shortcut function for determining whether vectored movement is
@@ -3686,6 +3705,25 @@ public class Game implements Serializable, IGame {
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
+    }
+    
+    @Override
+    public Map<String, BehaviorSettings> getBotSettings() {
+        return botSettings;
+    }
+    
+    @Override
+    public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
+        this.botSettings = botSettings;
+    }
+
+    /**
+     * cancel victory from the server.java moved here
+     */
+    public void cancelVictory(){
+        setForceVictory(false);
+        setVictoryPlayerId(IPlayer.PLAYER_NONE);
+        setVictoryTeam(IPlayer.TEAM_NONE);
     }
 
 }

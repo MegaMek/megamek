@@ -426,6 +426,19 @@ public class Hex implements IHex, Serializable {
     public ITerrain getTerrain(int type) {
         return terrains.get(type);
     }
+    
+    @Override
+    public ITerrain getAnyTerrainOf(int type, int... types) {
+        if (containsTerrain(type)) {
+            return terrains.get(type);
+        }
+        for (int moreTypes : types) {
+            if (containsTerrain(moreTypes)) {
+                return terrains.get(moreTypes);
+            }
+        }
+        return null;
+    }
 
     /*
      * (non-Javadoc)

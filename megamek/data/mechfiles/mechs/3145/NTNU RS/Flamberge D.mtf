@@ -153,4 +153,18 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
+overview:Initially a Partial Wing test-bed, the Flamberge became a prominent Clan Jade Falcon OmniMech, helping to inspire the Falcon's Dark Age era design style aesthetic.
 
+capabilities:Built on a Endo Steel chassis, powered by a 280 rated XL Engine, and clad in thirteen and a half tons of armor, while slower than other front-line OmniMechs of similar weight, the bulk of the Flamberge's variants feature Jump Jets and the design was built with them in mind. Mounting eleven double heat sinks on its base frame, the design had thirty-five tons of available pod space.
+
+deployment:This version of the Flamberge developed in 3115 carries two Plasma Rifles from Inner Sphere sources. These are supplemented by four Medium Pulse Lasers and the fixed SRM-6 launchers. To counter the heat, sixteen double heat sinks are fitted.
+
+history:Developing the experimental Partial Wing technology in the 3060s, attempts by the Falcon scientists to develop a new production design using it were unsuccessful and the project was ultimately shelved. Cut-off from the Clan Homeworlds as losses mounted in the Jihad, in 3074 then Khan Marthe Pryde tasked Merchant Daniel and the Falcon design teams to use whatever was available to rebuild her forces. After removing much of the internal components of the wings, retaining the inbuilt Pattern J7 SRM-6 launchers in the shoulders to avoid further delays, the reborn test-bed featured an imposing bird-like cosmetic appearance that helped the Flamberge secure a prominent position in the Clan Jade Falcon Touman.
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+systemmanufacturer:CHASSIS:JF 7 Light Endo Steel
+systemmanufacturer:ENGINE:280 XL Fusion
+systemmanufacturer:ARMOR:JF Standard
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:JFIX/Olivetti Pinpoint Advanced

@@ -1,4 +1,7 @@
 size 30 17
+tag "Rough (Auto)"
+tag "MarsTheme (Auto)"
+tag "Roads (Auto)"
 hex 0101 1 "" "mars"
 hex 0201 1 "" "mars"
 hex 0301 1 "" "mars"

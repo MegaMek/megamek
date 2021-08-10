@@ -30,7 +30,7 @@ public interface ITechManager {
     int getTechIntroYear();
     
     /**
-     * @return The date to use in determining the current tech level if {@link variableTechLevel()}
+     * @return The date to use in determining the current tech level if {@link #useVariableTechLevel()}
      *         is true.
      */
     int getGameYear();
@@ -64,7 +64,7 @@ public interface ITechManager {
     SimpleTechLevel getTechLevel();
     
     /**
-     * @return If true and {@link getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
+     * @return If true and {@link #getTechLevel()} is <code>UNOFFICIAL</code>, intro dates are ignored.
      */
     boolean unofficialNoYear();
     
@@ -107,7 +107,7 @@ public interface ITechManager {
             faction = ITechnology.F_TH;
         } else if (useClanTechBase() && !introducedClan
                 && tech.isAvailableIn(2787, false, ITechnology.F_TH)
-                && !extinctClan && !extinctIS
+                && !extinctClan && (tech.getExtinctionDate(false) > getGameYear())
                 && (tech.getExtinctionDate(false) != ITechnology.DATE_NONE)) {
             // Transitional period: Clans can treat IS tech as Clan if it was available to TH and
             // has an extinction date that it hasn't reached yet (using specific Clan date if given).

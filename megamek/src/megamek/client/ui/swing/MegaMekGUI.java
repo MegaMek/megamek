@@ -74,7 +74,9 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
@@ -301,7 +303,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         botB.addActionListener(actionListener);
         editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
-        editB.setActionCommand(ClientGUI.FILE_BOARD_NEW);
+        editB.setActionCommand(ClientGUI.BOARD_NEW);
         editB.addActionListener(actionListener);
         skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
@@ -889,20 +891,19 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     void connectBot() {
-        ConnectDialog cd = new ConnectDialog(frame);
+        var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-
         if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 
         // initialize game
-        BotConfigDialog bcd = new BotConfigDialog(frame);
+        var bcd = new BotConfigDialog(frame, cd.getPlayerName());
         bcd.setVisible(true);
-        if (bcd.dialogAborted) {
-            return; // user didn't click 'ok', add no bot
+        if (bcd.getResult() == DialogResult.CANCELLED) {
+            return; 
         }
-        client = bcd.getSelectedBot(cd.getServerAddress(), cd.getPort());
+        client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(), bcd.getBehaviorSettings());
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
@@ -1027,13 +1028,13 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     
     private ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
-            case ClientGUI.FILE_BOARD_NEW:
+            case ClientGUI.BOARD_NEW:
                 showEditor();
                 break;
             case ClientGUI.MAIN_SKIN_NEW:
                 showSkinEditor();
                 break;
-            case ClientGUI.FILE_BOARD_OPEN:
+            case ClientGUI.BOARD_OPEN:
                 showEditorOpen();
                 break;
             case ClientGUI.FILE_GAME_NEW:

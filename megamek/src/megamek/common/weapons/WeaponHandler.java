@@ -1540,7 +1540,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-        Compute.isInBuilding(game, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
@@ -1577,6 +1576,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,
                             underWater, nukeS2S));
+            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech) && entityTarget.antiTSMVulnerable()) {
+                vPhaseReport.addAll(server.doGreenSmokeDamage(entityTarget));
+            }
             // for salvo shots, report that the aimed location was hit after
             // applying damage, because the location is first reported when
             // dealing the damage
@@ -1608,7 +1610,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * but part sticking out?
      */
     protected boolean unitStickingOutOfBuilding(IHex targetHex, Entity entityTarget) {
+        // target needs to be on the board,
+        // be tall enough for it to make a difference,
+        // target "feet" are below the "ceiling"
+        // target "head" is above the "ceiling"
         return (targetHex != null) &&
+                (entityTarget.getHeight() > 0) &&
                 (entityTarget.getElevation() < targetHex.ceiling()) &&
                 (entityTarget.relHeight() >= targetHex.ceiling());
     }

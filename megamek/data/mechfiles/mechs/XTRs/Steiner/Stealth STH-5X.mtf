@@ -150,4 +150,17 @@ IS Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Stealth is a heavy scout 'Mech that is in use by the Federated Suns and the Lyran Alliance.
 
+capabilities:The 'Mech has a GM 315 XL Engine that allows the Stealth to move at speeds of 118.8 kph and the MASC system on board can push the 'Mech to 151.2 kph in short bursts. This amazing mobility is augmented by jump jets which the Stealth can use to jump up to two hundred and ten meters. The Stealth is also outfitted with a Cyclops-Beagle Sensory Active Probe that the Stealth can use to find hidden enemy units.
+
+deployment:This version uses an experimental Composite Structure as its skeleton. An XL Engine and MASC allow this Stealth variant to reach speeds of 140km/h. In addition, several Clan spec systems have been installed on the chassis, including an Active Probe, ECM Suite, a Streak SRM-6, and a trio of ER Medium Lasers. Two arm mounted ER Flamers provide anti-infantry capabilities. Most interesting is the use of a Chameleon Light Polarization Shield to make this Stealth live up to its name.
+
+manufacturer:General Motors
+primaryfactory:Kathil
+systemmanufacturer:CHASSIS:GM Stealth Endo Steel
+systemmanufacturer:ENGINE:GM 315 XL
+systemmanufacturer:ARMOR:Durallex Medium
+systemmanufacturer:JUMPJET:100AFVTA
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban HiRez with Active Probe

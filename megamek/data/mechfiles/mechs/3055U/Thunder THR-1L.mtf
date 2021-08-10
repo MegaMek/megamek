@@ -71,10 +71,10 @@ Fusion Engine
 Fusion Engine
 ISMediumPulseLaser
 LRM 5
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
 IS Ammo LRM-5
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
 ISCASE
 -Empty-
 -Empty-
@@ -150,11 +150,8 @@ Foot Actuator
 -Empty-
 
 overview:The Thunder is a product of the aftermath of the Fourth Succession War.
-
 capabilities:The primary weapon on the Thunder is the massive Kali Yama Big Bore Autocannon/20 which is capable of devastating most lighter 'Mechs with a single shot. This is backed up with three highly accurate Ceres Arms Model W Medium Pulse Lasers. Finally, for token long range defense capabilities, and giving the 'Mech limited indirect fire capabilities, the Thunder carries a Sian/Ceres Jaguar LRM-5 launcher.
-
 history:The 'Mech was built to make the most of new technologies that had made their way to the Capellan Confederation at the beginning of the 3050s. This was done by building the 'Mech around a Magna 350 XL Engine to maximize the available weight in the 'Mech. The Thunder also uses double heat sinks to make it capable of handling a high heat load from its weapons systems. The 'Mech is well protected with thirteen and a half tons of armor. Its weapons payload, and the design in general, uses a mix of advanced and off the shelf parts. This balanced mix makes the Thunder a valuable asset on the modern battlefield.
-
 manufacturer:Ceres Metals Industries
 primaryfactory:Sian, Capella and St. Ives
 systemmanufacturer:CHASSIS:Hollis Mk III

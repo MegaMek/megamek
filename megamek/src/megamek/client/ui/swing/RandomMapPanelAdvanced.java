@@ -704,7 +704,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         woodsMaxField.setToolTipText(Messages.getString("RandomMapDialog.woodsMaxField.toolTip"));
         panel.add(woodsMaxField);
 
-        JLabel sizesWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labSwampSize"));
+        JLabel sizesWoodsLabel = new JLabel(Messages.getString("RandomMapDialog.labForestSize"));
         panel.add(sizesWoodsLabel);
         woodsMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.woodsMinSizeField.toolTip"));
         panel.add(woodsMinSizeField);

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>16</BOARDWIDTH>
+    <BOARDHEIGHT>17</BOARDHEIGHT>
+    <MAPWIDTH>2</MAPWIDTH>
+    <MAPHEIGHT>2</MAPHEIGHT>
+    <BOARDS>\unofficial\Razorback\Volcano Northwest</BOARDS>
+    <BOARDS>\unofficial\Razorback\Volcano Northeast</BOARDS>
+    <BOARDS>\unofficial\Razorback\Volcano Southwest</BOARDS>
+    <BOARDS>\unofficial\Razorback\Volcano Southeast</BOARDS>
+</MAPSETUP>

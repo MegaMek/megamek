@@ -3,33 +3,33 @@ Hauptmann
 HA1-OA
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3060
-Source:TRO 3060
-Rules Level:2
+techbase:Inner Sphere
+era:3060
+source:TRO 3060
+rules level:2
 
-Mass:95
-Engine:285 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:95
+engine:285 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Double
-Base Chassis Heat Sinks:11
-Walk MP:3
-Jump MP:3
+heat sinks:17 IS Double
+base chassis heat sinks:11
+walk mp:3
+jump mp:3
 
-Armor:Standard(Inner Sphere)
-LA Armor:32
-RA Armor:32
-LT Armor:30
-RT Armor:30
-CT Armor:45
-HD Armor:9
-LL Armor:40
-RL Armor:40
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:45
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:7
 ER Medium Laser, Left Arm
@@ -45,55 +45,55 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISERMediumLaser (omnipod)
-ISERMediumLaser (omnipod)
-SRM 6 (omnipod)
-SRM 6 (omnipod)
-ISArtemisIV (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+SRM 6 (OMNIPOD)
+SRM 6 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISERMediumLaser (omnipod)
-ISERMediumLaser (omnipod)
-SRM 6 (omnipod)
-SRM 6 (omnipod)
-ISArtemisIV (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+SRM 6 (OMNIPOD)
+SRM 6 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
 
 Right Torso:
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-ISGaussRifle (omnipod)
-IS Gauss Ammo (omnipod)
-IS Gauss Ammo (omnipod)
-IS Ammo SRM-6 Artemis-capable (omnipod)
-IS Ammo SRM-6 Artemis-capable (omnipod)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+ISGaussRifle (OMNIPOD)
+IS Gauss Ammo (OMNIPOD)
+IS Gauss Ammo (OMNIPOD)
+IS Ammo SRM-6 Artemis-capable (OMNIPOD)
+IS Ammo SRM-6 Artemis-capable (OMNIPOD)
 ISCASE
 
 Center Torso:
@@ -107,7 +107,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
 -Empty-
 
 Head:
@@ -129,7 +129,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -143,7 +143,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
+Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -152,4 +152,15 @@ Jump Jet (omnipod)
 -Empty-
 -Empty-
 
+overview:The first OmniMech both designed and built by the Lyran Alliance. The OmniMech is named after the rank held by officers in the LAAF.
+capabilities:The Hauptmann is built on a standard chassis and powered by a 285 fusion engine, adding to the 'Mech's durability as it cannot be killed by a side torso loss. The Hauptmann has eleven double heat sinks fixed on the chassis and can add more if needed in its various configurations. For protection, the Hauptmann carries eighteen and a half tons of armor and has CASE fixed in the right torso to protect against an ammunition explosion.
+deployment:Intended for close combat, the Hauptmann A is armed with four ER Medium Lasers as its primary short-ranged weapons with a pair of SRM-6 launchers linked to an Artemis IV fire control system for increased missile accuracy. For increased mobility, the Hauptmann A has three jump jets that allow the 'Mech to jump up to ninety meters. Finally, to defend itself if it ends up in a long range firefight, the Alpha configuration mounts a Gauss Rifle. To handle the massive heat load, it carries an additional six double heat sinks.
+history:The inspiration for the Hauptmann is drawn from the Daishi OmniMech used by the Clans. Using information from captured Daishis and data gleaned from the construction of the Firestarter OmniMech, which was shared by the Draconis Combine, the end result is a powerful OmniMech capable of defending itself in most combat situations.
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Coventry HAI III
+systemmanufacturer:ENGINE:Pitban 285
+systemmanufacturer:ARMOR:Glasgow Limited with CASE
+systemmanufacturer:COMMUNICATIONS:TharHes Muse 54-58S
+systemmanufacturer:TARGETING:Cyclops 9c
 

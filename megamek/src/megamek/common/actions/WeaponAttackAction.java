@@ -627,8 +627,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
                 }
             } else {
-                //For everything else, set up a plain old LOS
-                los = LosEffects.calculateLos(game, spotter.getId(), target, true);
+                // For everything else, set up a plain old LOS
+                los = LosEffects.calculateLOS(game, spotter, target, true);
             }
 
             // do not count attacker partial cover in indirect fire
@@ -844,7 +844,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // check LOS
-        LosEffects los = LosEffects.calculateLos(game, attackerId, target);
+        LosEffects los = LosEffects.calculateLOS(game, ae, target);
 
         if (ae.hasActiveEiCockpit()) {
             if (los.getLightWoods() > 0) {
@@ -2308,7 +2308,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Can't fire Indirect LRM with direct LOS
             if (isIndirect && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                     && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-                    && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+                    && LosEffects.calculateLOS(game, ae, target).canSee()
                     && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                             || Compute.canSee(game, ae, target))
                     && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
@@ -4582,7 +4582,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         return targetHex.containsTerrain(Terrains.BUILDING) &&
-                ((Entity) target).relHeight() == targetHex.ceiling();
+                (((Entity) target).getHeight() > 0) &&
+                (((Entity) target).relHeight() == targetHex.ceiling());
     }
     
     /**
@@ -4810,11 +4811,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int targEl = swarmSecondaryTarget.relHeight();
         int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
         
-        Entity te = null;
-        if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
-        }
-
         // We might not attack the new target from the same side as the
         // old, so recalculate; the attack *direction* is still traced from
         // the original source.
@@ -4828,7 +4824,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         LosEffects swarmlos;
-        // TO makes it seem like the terrain modifers should be between the
+        // TO makes it seem like the terrain modifiers should be between the
         // attacker and the secondary target, but we have received rules
         // clarifications on the old forums indicating that this is correct
         if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
@@ -4854,7 +4850,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;
             // Depth 2 for superheavy mechs
-            if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if (target != null && (target instanceof Mech) && ((Mech) target).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER)

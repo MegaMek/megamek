@@ -153,4 +153,19 @@ IS Endo-Composite
 -Empty-
 -Empty-
 
+overview:The Sagittaire is built to fight in the confines of an urban battlefield.
 
+capabilities:Weighing in at a massive ninety-five tons, the Sagittaire started production in mid 3063 and began to trickle out to units clamoring for close combat 'Mechs in the midst of the FedCom Civil War. As a power source, the 'Mech has a Pitban 285 XL engine. The XL engine saves weight at the cost of survivability and gives the 'Mech a top speed of 54.0 km/h while its mobility is enhanced with three HildCo LFT 9-X jump jets, allowing the 'Mech to jump up to ninety meters. The Sagittaire has seventeen double heat sinks to handle its massive heat load, and is protected by eighteen tons of Starshield Special Heavy armor, allowing the 'Mech to stand up to a great deal of punishment in spite of its engine.
+
+deployment:This variant uses an Endo Composite structure and Small Cockpit. This frees enough weight to replace the weapons with two Large Re-engineered Lasers, an ER Large Laser, three Medium Variable Speed Pulse Lasers, and a Medium X-Pulse Laser. A Boosted C3 Slave is mounted in the head. Fourteen double heat sinks are boosted by a Radical Heat Sink System. This Sagittaire can also cover 90 meters in a single jump.
+
+history:Production of the Sagittaire was halted due to the damage inflicted on Robinson Standard BattleWorks during the Jihad.
+manufacturer:Robinson Standard BattleWorks
+
+primaryfactory:Robinson
+systemmanufacturer:CHASSIS:Skuel Heavy TRQ
+systemmanufacturer:ENGINE:Pitban 285 XL
+systemmanufacturer:ARMOR:Starshield Special Heavy
+systemmanufacturer:JUMPJET:HildCo LFT 9-X
+systemmanufacturer:COMMUNICATIONS:Sony MSF-31
+systemmanufacturer:TARGETING:Federated Stalker with Targeting Module

@@ -50,44 +50,47 @@ Small Pulse Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLUltraAC5 (omnipod)
 CLUltraAC5 (omnipod)
 CLUltraAC5 (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
 Clan Ultra AC/5 Ammo (omnipod)
-CLSmallPulseLaser (omnipod)
-CLSmallPulseLaser (omnipod)
-CLSmallPulseLaser (omnipod)
-CLSmallPulseLaser (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLLargePulseLaser (omnipod)
 CLLargePulseLaser (omnipod)
 CLERLargeLaser (omnipod)
 CLERLargeLaser (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLATM3 (omnipod)
 CLATM3 (omnipod)
 CLATM3 (omnipod)
 CLATM3 (omnipod)
 Clan Ammo ATM-3 (omnipod)
 Clan Ammo ATM-3 HE (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+
 
 Right Torso:
 Fusion Engine
@@ -98,10 +101,11 @@ CLATM3 (omnipod)
 CLATM3 (omnipod)
 CLATM3 (omnipod)
 CLATM3 (omnipod)
+CLSmallPulseLaser (omnipod)
 Clan Ammo ATM-3 (omnipod)
 Clan Ammo ATM-3 ER (omnipod)
 Clan Ammo ATM-3 HE (omnipod)
-CLSmallPulseLaser (omnipod)
+
 
 Center Torso:
 Fusion Engine
@@ -159,4 +163,17 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Savage Coyote OmniMech was created as a showcase OmniMech. The 'Mech was also part of Khan Koga's attempts to revitalize the fading Clan that invented the OmniMech.
 
+capabilities:This assault 'Mech uses an XL Engine to save enough weight to devote forty-five tons of space to modular equipment and fifteen tons of armor. The base chassis contains fourteen fixed double heat sinks.
+
+deployment:This variant is effective at all ranges. A pair of ER Large Lasers and a Large Pulse Laser combine with an Ultra Autocannon/5 to provide an effective long-range punch. Six Small Pulse Lasers aid at knife-fighting range and can quickly devastate conventional infantry. Two pairs of ATM 3s provide support at all ranges.
+
+history:Following the development of Advanced Tactical Missile technology. The creation of the Savage Coyote was a direct result of both the warriors of Clan Coyote clamoring for new weapons to use and the election of Khan Sullivan Koga in 3052. 
+
+manufacturer:Landen, Picuris, and Zuni ’Mech Production Complexes
+systemmanufacturer:CHASSIS:Assault Series SXG
+systemmanufacturer:ENGINE:Type 255 Extralight
+systemmanufacturer:ARMOR:Forging ZK11 Standard
+systemmanufacturer:COMMUNICATIONS:TJ6 “Bell” Integrated Communications System
+systemmanufacturer:TARGETING:TRTTS Mark II CWS

@@ -33,6 +33,9 @@ VERSION HISTORY:
 + Issue #3052: Fix for server lockup when firing infantry-scale weapons off of small support vehicles; fixes for multiple errors processing non-existent passenger units.
 + Issue #3048: Hits on hull-down (non-superheavy) vehicles without turrets now land on proper location.
 + PR #3017: Additional unit label display options (toggled with the unit label display keybind) to show abbreviated and really abbreviated unit names.
++ PR #3050: Players now have option to provide their email address to the server (which is not shared with the other players). If the server has a local SMTP server configured, round reports can be emailed to players.
++ PR #3072: Hidden Units is now Enabled by default
++ Issue #3065: Prevent units from winding up with an illegal facing as a result of a fish tail, and in general.
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

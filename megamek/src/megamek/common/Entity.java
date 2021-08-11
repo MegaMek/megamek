@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -955,6 +956,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (Mounted mounted : equipmentList) {
             mounted.restore();
         }
+        
+        // in some situations, an entity's facing winds up having an illegal value
+        // this will correct it as best as possible
+        facing = FireControl.correctFacing(getFacing());
+        
         // set game options, we derive some equipment's modes from this
         setGameOptions();
     }
@@ -2633,7 +2639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Sets the primary facing.
      */
     public void setFacing(int facing) {
-        this.facing = facing;
+        this.facing = FireControl.correctFacing(facing);
         if (game != null) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }
@@ -2655,7 +2661,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Optionally does not fire a game change event (useful for bot evaluation)
      */
     public void setSecondaryFacing(int sec_facing, boolean fireEvent) {
-        this.sec_facing = sec_facing;
+        this.sec_facing = FireControl.correctFacing(sec_facing);
         if (fireEvent && (game != null)) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
         }

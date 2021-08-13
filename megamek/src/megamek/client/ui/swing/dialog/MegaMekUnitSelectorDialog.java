@@ -36,6 +36,8 @@ import java.awt.*;
 import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
+
+    private static final long serialVersionUID = -5717009055093904636L;
     //region Variable Declarations
     private ClientGUI clientGUI;
     private JComboBox<String> comboPlayer = new JComboBox<>();
@@ -192,6 +194,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
+        // Set the cursor in the text filter and mark the content so it can be directly replaced
+        textFilter.grabFocus();
+        textFilter.select(0, textFilter.getText().length());
         updatePlayerChoice();
         super.setVisible(visible);
     }

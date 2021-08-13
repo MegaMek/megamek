@@ -1,5 +1,7 @@
 size 12 12
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "MarsTheme (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 2 "" "mars"
 hex 0301 1 "" "mars"
@@ -64,8 +66,8 @@ hex 0106 0 "" "mars"
 hex 0206 0 "" "mars"
 hex 0306 0 "" "mars"
 hex 0406 0 "" "mars"
-hex 0506 0 "rough:1;rubble:3;arms:2" "mars"
-hex 0606 0 "rough:1;rubble:1;legs:2" "mars"
+hex 0506 0 "arms:2;rough:1;rubble:3" "mars"
+hex 0606 0 "legs:2;rough:1;rubble:1" "mars"
 hex 0706 1 "" "mars"
 hex 0806 0 "" "mars"
 hex 0906 0 "" "mars"

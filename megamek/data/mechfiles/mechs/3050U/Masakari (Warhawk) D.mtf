@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Masakari (Warhawk)
 D
 
@@ -149,3 +149,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
+
+overview:Introduced by Clan Smoke Jaguar in 2999 in preparation for the anticipated return to the Inner Sphere, while the Dragoon Compromise stalled such plans, the Jaguars unleashed the powerful Warhawk on their Warden opponents to deadly effect. The Warhawk was powered by a massive 340 XL Engine that gave it a top speed of 64.8 km/h and mounted thirteen and a half tons of Ferro-Fibrous armor to protect itself from enemy fire. To dissipate the massive waste heat produced in its various configurations, it carried a staggering twenty double heat sinks. Additionally, though not truly fixed equipment on the chassis, the Warhawk managed to incorporate an advanced Targeting Computer into each of its configurations, making all of its direct fire weapons extremely accurate.
+
+capabilities:A 'Mech that could handle itself well at long range, the Warhawk D carried as its primary long range weapons a pair of ER Large Lasers which were supported by an Ultra Autocannon/10 that could fire at twice the rate as a standard autocannon. For short range the 'Mech had a single ER Small Laser and, as a sort of wild card, carried an ATM-9 launcher which could fire ammunition for long, medium, and short ranges which carry larger warhead payloads as the 'Mech closed on its target.
+
+deployment:Deployed extensively in the Jaguar frontline forces, and often seen paired with the Dire Wolf, the design truly came to prominence as originally intended, on the battlefields of the Jaguars' Invasion Corridor and earned the code name of Masakari - a Japanese battle-axe used on medieval Terra - from warriors within the DCMS who faced it.
+
+Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad.
+manufacturer:Phan Industrialplex, Abysmal Manufacturing Complex,  Kindraa Kline Primary Production Facility
+primaryfactory:Huntress, Huntress, Dagda
+systemmanufacturer:CHASSIS:Huntress WH
+systemmanufacturer:ENGINE:General Systems 340 XL
+systemmanufacturer:ARMOR:Forging X85 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Series 10 CBS MultiFreq
+systemmanufacturer:TARGETING:HawkEye J360

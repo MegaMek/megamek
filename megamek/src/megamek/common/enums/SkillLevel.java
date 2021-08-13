@@ -36,11 +36,11 @@ public enum SkillLevel {
     //region Variable Declarations
     private final String name;
 
-    private final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.enums", new EncodeControl());
     //endregion Variable Declarations
 
     //region Constructors
     SkillLevel(final String name) {
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", new EncodeControl());
         this.name = resources.getString(name);
     }
     //endregion Constructors

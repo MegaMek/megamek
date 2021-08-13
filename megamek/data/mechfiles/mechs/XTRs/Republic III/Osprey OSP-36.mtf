@@ -150,5 +150,20 @@ IS Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\Osprey 15.jpg
+overview:Originally a rare and little-known urban combat 'Mech from the Star League era, the Osprey reached new levels of prominence thanks to the Jihad.
+
+capabilities:To allow the Osprey to carry a heavy weapons load-out for its size, the 'Mech was built using a weight saving Endo Steel chassis and DAV 220 XL Fusion Engine. Clad in eleven tons of armor and equipped with ten double heat sinks, the design also carried a Beagle Active Probe to weed out hidden units in the urban environment. To make up for the Ospreys low ground speed, four Anderson Propulsion 25 jump jets were mounted in its torso and legs.
+
+deployment:Developed in 3139, the OSP-36 was the first non-prototype Advanced Point Defense System-equipped BattleMech introduced by the Republic Armed Forces. To mount a APDS system and a ton of ammo in each arm, the OSP-36 drops the Beagle probe and ER Small Laser entirely, replacing the Gauss Rifle with an ER PPC supported by a Radical Heat Sink System to free up the required weight while allowing the variant to remain combat-effective. As a bodyguard unit the OSP-36 has been an astounding success, hampered only by the move of ER Mediums to the wing-tip positions causing them to aim off-target from time to time
+
+history:Designed by Hollis Incorporated to fulfill a Star League Defense Force contract for a mobile, medium-weight fire support unit, when Blue Shot Weapons' Lynx design won the bid the Osprey was relegated to a limited contract for the SLDF's Royal units in an urban defense role. Rendered virtually extinct during the Succession Wars, the Word of Blake commissioned Skobel MechWorks to revive the design to bolster its own militia forces, resulting in massive production runs at Skobel and later Achernar BattleMechs during the Jihad. Impressed by the durability and effectiveness of the design during the brutal fighting to take Achernar and Terra, both the Republic of the Sphere and the Capellan Confederation placed a priority on restarting production for their own armed forces after the Jihad.
+
+manufacturer:Skobel MechWorks, Hollis Incorporated, Achernar BattleMechs
+primaryfactory:Terra (Skobel), Corey (Hollis), Achernar (Achernar- Destroyed)
+systemmanufacturer:CHASSIS:Hollis Mk II Endo Steel
+systemmanufacturer:ENGINE:DAV 220 XL
+systemmanufacturer:ARMOR:Durallex Heavy with CASE
+systemmanufacturer:JUMPJET:Anderson Propulsion 25
+systemmanufacturer:COMMUNICATIONS:O/P COM-211
+systemmanufacturer:TARGETING:O/P 1078 with Beagle Active Probe
 

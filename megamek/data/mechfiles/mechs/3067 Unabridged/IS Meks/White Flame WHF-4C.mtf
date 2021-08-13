@@ -3,100 +3,112 @@ White Flame
 WHF-4C
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3077
-Rules Level:2
+techbase:Inner Sphere
+era:3077
 source:3067 Unabridged
+rules level:2
 
-Mass:70
-Engine:350 Light Fusion Engine
-Structure:Endo-Steel
-Cockpit:Small Cockpit
-Myomer:Standard
+mass:70
+engine:350 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:13 Double
-Walk MP:5
-Jump MP:5
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Standard Armor
-LA Armor:30
-RA Armor:30
-LT Armor:23
-RT Armor:23
-CT Armor:33
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+FLL armor:30
+FRL armor:30
+LT armor:23
+RT armor:23
+CT armor:33
+HD armor:9
+RLL armor:30
+RRL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
-Weapons:7
-1 ISImprovedC3CPU, Left Torso
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Head
-1 ISMediumPulseLaser, Left Torso
-1 ISMediumPulseLaser, Left Torso
-1 ISSNPPC, Right Torso
-1 ISTAG, Head
+Weapons:6
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Snub-Nose PPC, Right Torso
+ER Medium Laser, Right Torso
+TAG, Head
+ER Medium Laser, Head
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser
 ISMediumPulseLaser
-ISImprovedC3CPU
-ISImprovedC3CPU
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISC3iUnit
+ISC3iUnit
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 ISSNPPC
 ISSNPPC
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
-Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -105,19 +117,39 @@ Cockpit
 Sensors
 ISTAG
 ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo-Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

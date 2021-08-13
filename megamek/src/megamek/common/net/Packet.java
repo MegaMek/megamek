@@ -14,6 +14,8 @@
 
 package megamek.common.net;
 
+import megamek.common.annotations.Nullable;
+
 /**
  * Application layer data packet used to exchange information between client and
  * server.
@@ -29,6 +31,8 @@ public class Packet {
     public static final int COMMAND_PLAYER_ADD = 40;
     public static final int COMMAND_PLAYER_REMOVE = 50;
     public static final int COMMAND_PLAYER_UPDATE = 60;
+    public static final int COMMAND_PLAYER_TEAMCHANGE = 62;
+    public static final int COMMAND_PRINCESS_SETTINGS = 64;
     public static final int COMMAND_PLAYER_READY = 70;
 
     public static final int COMMAND_CHAT = 80;
@@ -41,13 +45,23 @@ public class Packet {
     public static final int COMMAND_ENTITY_ATTACK = 130;
     public static final int COMMAND_ENTITY_GTA_HEX_SELECT = 135;
     public static final int COMMAND_ENTITY_UPDATE = 140;
+    public static final int COMMAND_ENTITY_MULTIUPDATE = 142;
     public static final int COMMAND_ENTITY_WORDER_UPDATE = 145;
+    public static final int COMMAND_ENTITY_ASSIGN = 147;
     public static final int COMMAND_ENTITY_MODECHANGE = 150;
     public static final int COMMAND_ENTITY_AMMOCHANGE = 160;
     public static final int COMMAND_ENTITY_SENSORCHANGE = 165;
     public static final int COMMAND_ENTITY_SINKSCHANGE = 166;
     public static final int COMMAND_ENTITY_ACTIVATE_HIDDEN = 167;
     public static final int COMMAND_ENTITY_SYSTEMMODECHANGE = 170;
+    
+    public static final int COMMAND_FORCE_UPDATE = 900;
+    public static final int COMMAND_FORCE_ADD = 910;
+    public static final int COMMAND_FORCE_DELETE = 920;
+    public static final int COMMAND_FORCE_PARENT = 930;
+    public static final int COMMAND_FORCE_OWNER = 940;
+    public static final int COMMAND_FORCE_ADD_ENTITY = 950;
+    public static final int COMMAND_FORCE_ASSIGN_FULL = 960;
 
     public static final int COMMAND_ENTITY_VISIBILITY_INDICATOR = 180;
     public static final int COMMAND_ADD_SMOKE_CLOUD = 185;
@@ -188,11 +202,8 @@ public class Packet {
      * @param index the index of the desired object
      * @return the object at the specified index
      */
-    public Object getObject(int index) {
-        if (index >= data.length) {
-            return null;
-        }
-        return data[index];
+    public @Nullable Object getObject(final int index) {
+        return (index < data.length) ? data[index] : null;
     }
 
     /**
@@ -202,7 +213,7 @@ public class Packet {
      * @return the <code>int</code> value of the object at the specified index
      */
     public int getIntValue(int index) {
-        return ((Integer) getObject(index)).intValue();
+        return (Integer) getObject(index);
     }
 
     /**

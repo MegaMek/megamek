@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -531,6 +530,17 @@ public class Infantry extends Entity {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean antiTSMVulnerable() {
+        if (!hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            return false;
+        }
+        EquipmentType armorKit = getArmorKit();
+        return (armorKit == null)
+                || !armorKit.hasSubType(MiscType.S_SPACE_SUIT | MiscType.S_XCT_VACUUM
+                    | MiscType.S_TOXIC_ATMO);
     }
 
     /**

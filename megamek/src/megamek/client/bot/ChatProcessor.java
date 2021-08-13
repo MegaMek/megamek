@@ -19,6 +19,7 @@ import java.util.StringTokenizer;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
@@ -299,9 +300,29 @@ public class ChatProcessor {
 
         // If instructed to, flee.
         if (command.toLowerCase().startsWith(ChatCommands.FLEE.getAbbreviation())) {
-            msg = "Received flee order!";
+            if ((arguments == null) || (arguments.length == 0)) {
+                msg = "Please specify retreat edge.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            CardinalEdge edge = null;
+            
+            try {
+                int edgeIndex = Integer.parseInt(arguments[0]);
+                edge = CardinalEdge.getCardinalEdge(edgeIndex);
+            } catch (Exception ignored) { }
+            
+            if (edge == null) {
+                msg = "Please specify valid retreat edge, a number between 0 and 4 inclusive.";
+                princess.sendChat(msg);
+                return;
+            }
+            
+            msg = "Received flee order - " + edge.toString();
             princess.getLogger().debug(msg);
-            princess.sendChat("Run Away!");
+            princess.sendChat(msg);
+            princess.getBehaviorSettings().setDestinationEdge(edge);
             princess.setFallBack(true, msg);
             return;
         }

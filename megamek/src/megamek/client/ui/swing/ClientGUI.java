@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -47,7 +48,9 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
@@ -55,39 +58,20 @@ import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.lobby.ChatLounge;
+import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.IBomber;
-import megamek.common.IGame;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IPlayer;
-import megamek.common.MechSummaryCache;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Targetable;
-import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameMapQueryEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
@@ -104,6 +88,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
+    
+    /** The smallest GUI scaling value; smaller will make text unreadable */  
+    public static final float MIN_GUISCALE = 0.7f;
+    /** The highest GUI scaling value; increase this for 16K monitors */  
+    public static final float MAX_GUISCALE = 2.4f;
 
     //region action commands
     //region main menu
@@ -116,27 +105,42 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_GAME_OPEN = "fileGameOpen";
     public static final String FILE_GAME_SAVE = "fileGameSave";
     public static final String FILE_GAME_SAVE_SERVER = "fileGameSaveServer";
+    public static final String FILE_GAME_QSAVE = "fileGameQSave";
+    public static final String FILE_GAME_QLOAD = "fileGameQLoad";
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
     public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
     //board submenu
-    public static final String FILE_BOARD_NEW = "fileBoardNew";
-    public static final String FILE_BOARD_OPEN = "fileBoardOpen";
-    public static final String FILE_BOARD_SAVE = "fileBoardSave";
-    public static final String FILE_BOARD_SAVE_AS = "fileBoardSaveAs";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
-    public static final String FILE_BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_NEW = "fileBoardNew";
+    public static final String BOARD_OPEN = "fileBoardOpen";
+    public static final String BOARD_SAVE = "fileBoardSave";
+    public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
+    public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
+    public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_UNDO = "boardUndo";
+    public static final String BOARD_REDO = "boardRedo";
+    public static final String BOARD_RAISE = "boardRaise";
+    public static final String BOARD_CLEAR = "boardClear";
+    public static final String BOARD_FLOOD = "boardFlood";
+    public static final String BOARD_REMOVE_FORESTS = "boardRemoveForests";
+    public static final String BOARD_REMOVE_ROADS = "boardRemoveRoads";
+    public static final String BOARD_REMOVE_WATER = "boardRemoveWater";
+    public static final String BOARD_REMOVE_BUILDINGS = "boardRemoveBuildings";
+    public static final String BOARD_FLATTEN = "boardFlatten";
+    
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
     public static final String FILE_REFRESH_CACHE = "fileRefreshCache";
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
-    public static final String FILE_UNITS_CLEAR = "fileUnitsClear";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
+    public static final String FILE_UNITS_PASTE = "fileUnitsPaste";
     //endregion file menu
 
     //region view menu
+    public static final String VIEW_INCGUISCALE = "viewIncGUIScale";
+    public static final String VIEW_DECGUISCALE = "viewDecGUIScale";
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -190,7 +194,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public JDialog mechW;
     public UnitDisplay mechD;
     public JDialog minimapW;
-    public MiniMap minimap;
     private MapMenu popup;
     private UnitOverview uo;
     private Ruler ruler;
@@ -201,7 +204,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     // some dialogs...
     private GameOptionsDialog gameOptionsDialog;
     private AbstractUnitSelectorDialog mechSelectorDialog;
-    private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private PlanetaryConditionsDialog conditionsDialog;
@@ -244,7 +246,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-
+    
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -439,20 +441,27 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                ignoreHotKeys = true;
-                int savePrompt = JOptionPane.showConfirmDialog(null,
-                        "Do you want to save the game before quitting MegaMek?",
-                        "Save First?",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.WARNING_MESSAGE);
-                ignoreHotKeys = false;
-                if (savePrompt == JOptionPane.YES_OPTION) {
-                    if (!saveGame()) {
-                        // When the user did not actually save the game, don't close MM
-                        return;
+                if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
+                    ignoreHotKeys = true;
+                    int savePrompt = JOptionPane.showConfirmDialog(null,
+                            "Do you want to save the game before quitting MegaMek?",
+                            "Save First?",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE);
+                    ignoreHotKeys = false;
+                    if (savePrompt == JOptionPane.YES_OPTION) {
+                        if (!saveGame()) {
+                            // When the user did not actually save the game, don't close MM
+                            return;
+                        }
                     }
-                }
-                if ((savePrompt == JOptionPane.NO_OPTION) || (savePrompt == JOptionPane.YES_OPTION)) {
+                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
+                    {
+                        frame.setVisible(false);
+                        saveSettings();
+                        die();
+                    }
+                } else {
                     frame.setVisible(false);
                     saveSettings();
                     die();
@@ -484,10 +493,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
              */
             @Override
             protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
+                e.setSource(ClientGUI.this);
+                menuBar.dispatchEvent(e);
                 // Make the source be the ClientGUI and not the dialog
                 // This prevents a ClassCastException in ToolTipManager
-                e.setSource(ClientGUI.this);
                 curPanel.dispatchEvent(e);
                 if (!e.isConsumed()) {
                     super.processKeyEvent(e);
@@ -532,45 +541,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
-        // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent e) {
-                //menuBar.dispatchEvent(e);
-                e.setSource(ClientGUI.this);// avoid ClassCastException in TooltipManager
-                curPanel.dispatchEvent(e);
-                if (!e.isConsumed()) {
-                    super.processKeyEvent(e);
-                }
-            }
-        };
-
-        x = GUIPreferences.getInstance().getMinimapPosX();
-        y = GUIPreferences.getInstance().getMinimapPosY();
-        try {
-            minimap = new MiniMap(minimapW, this, bv);
-        } catch (IOException e) {
-            MegaMek.getLogger().fatal(e);
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message1") + e);
-            die();
-        }
-        h = minimap.getSize().height;
-        w = minimap.getSize().width;
-        if (((x + 10) >= virtualBounds.getWidth()) || ((x + w) < 10)) {
-            x = (int)virtualBounds.getWidth() - w;
-        }
-        if (((y + 10) > virtualBounds.getHeight()) || ((y + h) < 10)) {
-            y = (int)virtualBounds.getHeight() - h;
-        }
-        minimapW.setLocation(x, y);
-        minimapW.addWindowListener(this);
-        minimapW.add(minimap);
+        minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -707,6 +678,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case FILE_GAME_SAVE:
                 saveGame();
                 break;
+            case FILE_GAME_QSAVE:
+                quickSaveGame();
+                break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
                 String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
@@ -729,13 +703,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 doSaveUnit();
                 ignoreHotKeys = false;
                 break;
+            case FILE_UNITS_PASTE:
+                ignoreHotKeys = true;
+                if (curPanel instanceof ChatLounge) {
+                    ((ChatLounge) curPanel).importClipboard();
+                }
+                ignoreHotKeys = false;
+                break;
             case FILE_UNITS_OPEN:
                 ignoreHotKeys = true;
                 loadListFile();
                 ignoreHotKeys = false;
-                break;
-            case FILE_UNITS_CLEAR:
-                deleteAllUnits(client);
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
@@ -775,22 +753,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case VIEW_ROUND_REPORT:
                 showRoundReport();
                 break;
-            case FILE_BOARD_SAVE:
+            case BOARD_SAVE:
                 ignoreHotKeys = true;
                 boardSave();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS:
+            case BOARD_SAVE_AS:
                 ignoreHotKeys = true;
                 boardSaveAs();
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE:
+            case BOARD_SAVE_AS_IMAGE:
                 ignoreHotKeys = true;
                 boardSaveAsImage(true);
                 ignoreHotKeys = false;
                 break;
-            case FILE_BOARD_SAVE_AS_IMAGE_UNITS:
+            case BOARD_SAVE_AS_IMAGE_UNITS:
                 ignoreHotKeys = true;
                 boardSaveAsImage(false);
                 ignoreHotKeys = false;
@@ -951,7 +929,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
-            GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
@@ -1004,12 +981,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         client.die();
 
-        // TODO Is there a better solution?
-        // This is required because the ChatLounge adds the listener to the
-        // MechSummaryCache that must be removed explicitly.
-        if (chatlounge != null) {
-            chatlounge.die();
-        }
         TimerSingleton.getInstance().killTimer();
 
         if (controller != null) {
@@ -1032,13 +1003,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public AbstractUnitSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
-    }
-
-    public StartingPositionDialog getStartingPositionDialog() {
-        if (startingPositionDialog == null) {
-            startingPositionDialog = new StartingPositionDialog(this);
-        }
-        return startingPositionDialog;
     }
 
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
@@ -1091,8 +1055,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_OFFBOARD:
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
-                if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
-                    setMapVisible(true);
+                if (frame.isShowing()) {
+                    setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
                 }
                 break;
             case PHASE_INITIATIVE_REPORT:
@@ -1318,18 +1282,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    /** Switches the Minimap and the MechDisplay an and off together.
-     *  If the MechDisplay is active, both will be hidden, else
-     *  both will be shown.
+    /** 
+     * Switches the Minimap and the MechDisplay an and off together.
+     * If the MechDisplay is active, both will be hidden, else
+     * both will be shown.
      */
     public void toggleMMUDDisplays() {
-        if (mechW.isVisible()) {
-            setDisplayVisible(false);
-            setMapVisible(false);
-        } else {
-            setDisplayVisible(true);
-            setMapVisible(true);
-        }
+        boolean wasVisible = mechW.isVisible();
+        setDisplayVisible(!wasVisible);
+        GUIPreferences.getInstance().setMinimapEnabled(!wasVisible);
+        toggleMap();
     }
 
     /**
@@ -1382,25 +1344,19 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.refreshDisplayables();
     }
 
-    /**
-     * Toggles the minimap window Also, toggles the minimap enabled setting
-     */
+    /** Shows or hides the minimap based on the current menu setting. */
     private void toggleMap() {
-        minimapW.setVisible(!minimapW.isVisible());
-        GUIPreferences.getInstance().setMinimapEnabled(minimapW.isVisible());
-        if (minimapW.isVisible()) {
-            frame.requestFocus();
-        }
+        setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
     }
 
-    /**
-     * Sets the visibility of the minimap window
+    /** 
+     * Shows or hides the minimap based on the given visible. This works independently 
+     * of the current menu setting, so it should be used only when the minimap is to 
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby. 
+     * Does not change the menu bar setting. 
      */
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
-        if (visible) {
-            frame.requestFocus();
-        }
     }
 
     private boolean fillPopup(Coords coords) {
@@ -1518,7 +1474,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * @param player
      */
-    protected void loadListFile(IPlayer player) {
+    public void loadListFile(IPlayer player) {
         loadListFile(player, false);
     }
 
@@ -1608,16 +1564,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    public void deleteAllUnits(Client c) {
-        ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
-                c.getLocalPlayer(), false);
-        ArrayList<Integer> ids = new ArrayList<>(currentUnits.size());
-        for (Entity e : currentUnits){
-            ids.add(e.getId());
-        }
-        c.sendDeleteEntities(ids);
-    }
-
     private boolean saveGame() {
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser("./savegames");
@@ -1641,6 +1587,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         return false;
     }
+    
+    /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
+    private boolean quickSaveGame() {
+        String file = "quicksave";
+        String path = "./savegames";
+        client.sendChat("/localsave " + file + " " + path);
+        return true;
+    }
 
     /**
      * Allow the player to save a list of entities to a MegaMek Unit List file.
@@ -1654,11 +1608,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *                 to a file. If this value is <code>null</code> or empty, the
      *                 "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(ArrayList<Entity> unitList) {
+    public void saveListFile(ArrayList<Entity> unitList) {
         saveListFile(unitList, client.getLocalPlayer().getName());
     }
 
-    protected void saveListFile(ArrayList<Entity> unitList, String filename) {
+    public void saveListFile(ArrayList<Entity> unitList, String filename) {
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;
@@ -1758,9 +1712,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(minimapW)) {
-            setMapVisible(false);
-        } else if (windowEvent.getWindow().equals(mechW)) {
+        if (windowEvent.getWindow().equals(mechW)) {
             setDisplayVisible(false);
         }
     }
@@ -2314,7 +2266,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileBoardImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits, false), "png", curfileBoardImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2466,52 +2418,32 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     void replacePlayer() {
-        Set<IPlayer> ghostPlayers = new HashSet<>();
-        for (IPlayer p : client.getGame().getPlayersVector()) {
-            if (p.isGhost()) {
-                ghostPlayers.add(p);
-            }
-        }
+        Set<IPlayer> ghostPlayers = client.getGame().getPlayersVector().stream()
+                .filter(IPlayer::isGhost).collect(Collectors.toSet());
         if (ghostPlayers.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No ghost players to replace.", "No Ghosts",
-                                          JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        BotConfigDialog botConfigDialog = new BotConfigDialog(this.frame, ghostPlayers);
-        botConfigDialog.setModal(true);
-        botConfigDialog.setVisible(true);
-        if (botConfigDialog.dialogAborted) {
+        var rpd = new ReplacePlayersDialog(frame, this);
+        rpd.setVisible(true);
+        if (rpd.getResult() == DialogResult.CANCELLED) {
             return;
         }
+
         AddBotUtil util = new AddBotUtil();
-        BotClient botClient = botConfigDialog.getSelectedBot(client.getHost(), client.getPort());
-        String[] args;
-        Collection<String> playersToReplace = botConfigDialog.getPlayerToReplace();
-        Collection<String[]> replaceCommands = new HashSet<>(playersToReplace.size());
-        if (botClient instanceof Princess) {
-            for (String player : playersToReplace) {
-                args = new String[]{
-                        "/replacePlayer",
-                        "-b:Princess",
-                        "-c:" + ((Princess) botClient).getBehaviorSettings().getDescription(),
-                        "-v:" + ((Princess) botClient).getVerbosity(),
-                        "-p:" + player
-                };
-                replaceCommands.add(args);
-            }
-        } else {
-            for (String player : playersToReplace) {
-                args = new String[]{
-                        "/replacePlayer",
-                        player
-                };
-                replaceCommands.add(args);
-            }
-        }
-        botClient.die();
-        for (String[] cmd : replaceCommands) {
-            util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
+        Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        for (String player : newBotSettings.keySet()) {
+            StringBuilder message = new StringBuilder();
+            Princess princess = util.addBot(newBotSettings.get(player), player, 
+                    client.getGame(), client.getHost(), client.getPort(), message);
+            systemMessage(message.toString());
+            // Make this princess a locally owned bot if in the lobby. This way it
+            // can be configured and it will faithfully press Done when the local player does.
+            if ((princess != null) && client.getGame().getPhase() == Phase.PHASE_LOUNGE) {
+                getBots().put(player, princess);   
+            } 
         }
     }
     

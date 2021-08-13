@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -332,8 +331,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
         Vector<TagInfo> v = game.getTagInfo();
         Vector<TagInfo> allowed = new Vector<TagInfo>();
+        Entity attacker = game.getEntityFromAllSources(getAttackerId());
+        
         // get only TagInfo on the same side
-        for (TagInfo ti : v) {
+        for (TagInfo ti : v) { 
+            Entity tagger = game.getEntityFromAllSources(ti.attackerId);
+            if (attacker.getOwner().isEnemyOf(tagger.getOwner())) {
+                continue;
+            }
+            
             switch (ti.targetType){
             case Targetable.TYPE_BLDG_TAG:
             case Targetable.TYPE_HEX_TAG:
@@ -428,7 +434,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     protected boolean checkPDConditions() {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
-        if ((target == null) || !advancedPD) {
+        if ((target == null) || !advancedPD || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
             return false;
         }
         return true;

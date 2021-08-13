@@ -11,10 +11,10 @@ VTOL
 </UnitType>
 <Name>
 Cavalry Attack Helicopter
+</Name>
 <Model>
 (SRM)
 </Model>
-</Name>
 <Tonnage>
 25
 </Tonnage>

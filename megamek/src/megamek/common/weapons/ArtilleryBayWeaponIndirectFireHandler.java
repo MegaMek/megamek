@@ -193,16 +193,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         public Targetable targ = target;
 
                         public boolean accept(Entity entity) {
-                            Integer id = Integer.valueOf(entity.getId());
+                            Integer id = entity.getId();
                             if ((player == entity.getOwnerId())
                                     && spottersBefore.contains(id)
-                                    && !(LosEffects.calculateLos(game,
-                                            entity.getId(), targ, true))
-                                            .isBlocked()
+                                    && !LosEffects.calculateLOS(game, entity, targ, true).isBlocked()
                                     && entity.isActive()
                                     // airborne aeros can't spot for arty
-                                    && !(entity.isAero() && entity
-                                            .isAirborne())
+                                    && !(entity.isAero() && entity.isAirborne())
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                 return true;
                             }

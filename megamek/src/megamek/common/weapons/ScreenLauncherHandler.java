@@ -98,7 +98,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         for (Entity entity :  game.getEntitiesVector(coords)) {
             // if fighter squadron all fighters are damaged
             if (entity instanceof FighterSquadron) {
-                entity.getSubEntities().ifPresent(ents -> ents.forEach(
+                entity.getSubEntities().forEach(
                     ent -> {
                         ToHitData squadronToHit = new ToHitData();
                         squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
@@ -106,7 +106,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                         hit.setCapital(false);
                         vPhaseReport.addAll(server.damageEntity(ent, hit, attackValue));
                         server.creditKill(ent, ae);
-                    }));
+                    });
             } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);

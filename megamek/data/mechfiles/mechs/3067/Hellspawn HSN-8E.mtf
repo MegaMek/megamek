@@ -3,49 +3,48 @@ Hellspawn
 HSN-8E
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3068
-Rules Level:2
+techbase:Inner Sphere
+era:3068
 source:TRO 3067
+rules level:2
 
-Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:45
+engine:270 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:6
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
 
-Armor:Standard Armor
-LA Armor:9
-RA Armor:9
-LT Armor:11
-RT Armor:11
-CT Armor:14
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:11
+RT armor:11
+CT armor:14
+HD armor:8
+LL armor:15
+RL armor:15
+RTL armor:4
+RTR armor:4
+RTC armor:4
 
-Weapons:6
-1 ISERMediumLaser, Right Arm
-1 ISLRM10, Right Arm, Ammo:24
-1 ISERMediumLaser, Left Arm
-1 ISMediumPulseLaser, Right Torso
-1 ISLRM10, Left Torso
-1 ISGuardianECM, Center Torso
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+LRM 10, Right Arm
+LRM 10, Left Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,10 +55,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERMediumLaser
-ISLRM10
-ISLRM10
+LRM 10
+LRM 10
 ISArtemisIV
+ISERMediumLaser
 -Empty-
 -Empty-
 -Empty-
@@ -73,12 +72,12 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-ISLRM10
-ISLRM10
+LRM 10
+LRM 10
 ISArtemisIV
-ISLRM10 Ammo Artemis-capable
-ISLRM10 Ammo Artemis-capable
-Endo-Steel
+IS Ammo LRM-10 Artemis-capable
+IS Ammo LRM-10 Artemis-capable
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -88,11 +87,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 ISMediumPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite
+ISGuardianECMSuite
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,12 +140,23 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:The flagship design of GM's Talcott production facility, the Hellspawn was designed in response to a call from the Armed Forces of the Federated Commonwealth for a modern, highly mobile, fire-support BattleMech to compete with the older Dervish.
+capabilities:The Hellspawn is built on a GM Fury-M Endo Steel chassis that weighs half as much as a standard chassis. The Hellspawn carries a GM 270 XL engine that gives it a top speed of 97.2 km/h and also weighs half as much as a standard engine while making the 'Mech susceptible to a combat kill from a side torso loss. For protection from enemy electronic warfare equipment such as C3 or Artemis IV, the Hellspawn is equipped with a Guardian ECM Suite. To enhance the 'Mech's mobility it has six Rawlings 80 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. Finally, the Hellspawn has six and a half tons of armor that is barely adequate when compared to other medium 'Mechs.
+deployment:The 8E developed in 3068 is a variant aimed at increasing the 'Mech's long range effectiveness. Two of the Medium Pulse Lasers have been traded for lighter ER Medium Lasers and an Artemis IV system has been added to each LRM launcher.
+manufacturer:General Motors
+primaryfactory:Talcott
+systemmanufacturer:CHASSIS:GM Fury-M Endo
+systemmanufacturer:ENGINE:GM 270 XL
+systemmanufacturer:ARMOR:StarGuard III
+systemmanufacturer:COMMUNICATIONS:Dalban SuperMicronics with Guardian ECM
+systemmanufacturer:TARGETING:GME HiTrak-3
 

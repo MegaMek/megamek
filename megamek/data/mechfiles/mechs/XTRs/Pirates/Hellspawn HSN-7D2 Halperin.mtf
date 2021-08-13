@@ -137,3 +137,17 @@ Lower Leg Actuator
 Foot Actuator
 Endo-Steel
 Endo-Steel
+
+overview:The flagship design of GM's Talcott production facility, the Hellspawn was designed in response to a call from the Armed Forces of the Federated Commonwealth for a modern, highly mobile, fire-support BattleMech to compete with the older Dervish.
+
+capabilities:The Hellspawn is built on a GM Fury-M Endo Steel chassis that weighs half as much as a standard chassis. The Hellspawn carries a GM 270 XL engine that gives it a top speed of 97.2 km/h and also weighs half as much as a standard engine while making the 'Mech susceptible to a combat kill from a side torso loss. For protection from enemy electronic warfare equipment such as C3 or Artemis IV, the Hellspawn is equipped with a Guardian ECM Suite. To enhance the 'Mech's mobility it has six Rawlings 80 jump jets that allow the 'Mech to jump up to one hundred and eighty meters. Finally, the Hellspawn has six and a half tons of armor that is barely adequate when compared to other medium 'Mechs.
+
+deployment:The personal 'Mech of Crucis March Militia deserter-turned-bandit Greta Halperin, her Hellspawn introduced in 3072 had been extensively modified with experimental technologies to turn it into a deadly first strike backstabber. Both LRM launchers are swapped for two single shot Rocket Launcher 20s and each arm mounted Pulse Laser is replaced with a pair of ER Medium Lasers. The torso mounted pulse laser is dropped entirely for two rear facing ER Small Lasers, while two additional tons of armor improve the Hellspawns weak armor. Two extra heat sinks enhanced by a trio of Coolant Pods allow Halperin to Alpha Strike repeatedly until her targets are destroyed, while switching the Guardian for an advanced Angel ECM Suite prevents any chance of her high-ranked marks calling for help.
+
+manufacturer:General Motors
+primaryfactory:Talcott
+systemmanufacturer:CHASSIS:GM Fury-M Endo
+systemmanufacturer:ENGINE:GM 270 XL
+systemmanufacturer:ARMOR:StarGuard III
+systemmanufacturer:COMMUNICATIONS:Dalban SuperMicronics with Guardian ECM
+systemmanufacturer:TARGETING:GME HiTrak-3

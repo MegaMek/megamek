@@ -5,7 +5,7 @@ Intruder (2655),3
 Gazelle (2531),4
 Leopard (2537),5
 Union (2708),6
-Trojan (Blockade Runner) (2720),5
+Trojan (Blockade Runner),5
 Triumph (2593),4
 Leopard (2537),3
 Vengeance (2682),2

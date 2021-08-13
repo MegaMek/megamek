@@ -161,9 +161,11 @@ public interface IBoardView extends MechDisplayListener {
      * mapsheets), draws the hexes onto it, and returns that image.
      *
      * @param ignoreUnits If true, no units are drawn, only the board
+     * @param useBaseZoom If true, save the image at zoom = 1, otherwise at the
+     * current board zoom.
      * @return
      */
-    public abstract BufferedImage getEntireBoardImage(boolean ignoreUnits);
+    public abstract BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom);
 
     /**
      * Sets the BoardView's currently selected entity.

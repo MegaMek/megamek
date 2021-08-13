@@ -85,7 +85,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private static final int[] UNIT_TYPES = {
         UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
         UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
-        UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP
+        UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
     private static final int LATEST_YEAR = 3150;
@@ -205,7 +205,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
 
         boolean restrictUnitType = use == Use.FORMATION_BUILDER;
-        
+
         for (int unitType : UNIT_TYPES) {
             if ((unitType < UnitType.JUMPSHIP) || !restrictUnitType) {
                 cbUnitType.addItem(UnitType.getTypeName(unitType));
@@ -865,7 +865,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
         public List<EntityMovementMode> getMotiveTypes() {
             return subtypeChecks.stream().filter(AbstractButton::isSelected)
-                    .map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
+                    .map(chk -> EntityMovementMode.parseFromString(chk.getName())).collect(Collectors.toList());
         }
     }
     

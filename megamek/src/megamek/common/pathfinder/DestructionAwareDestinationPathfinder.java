@@ -31,6 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.PlanetaryConditions;
@@ -239,6 +240,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             return;
         }
         
+        // if we have a leg armor breach and are not jumping, let's not consider it
+        if (!child.isJumping() && underwaterLegBreachCheck(child)) {
+            return;
+        }
+        
         if ((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
@@ -280,6 +286,21 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         
         friendlyFireCheckResults.put(position, false);
         return false;
+    }
+    
+    /**
+     * Simplified logic for whether a mech going into the given hex will flood 
+     * breached legs and effectively immobilize it.
+     */
+    private boolean underwaterLegBreachCheck(BulldozerMovePath path) {        
+        IHex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
+        
+        // investigate: do we want quad mechs with a single breached leg
+        // to risk this move? Currently not, but if we did, this is probably where
+        // this logic would go.
+        return path.getCachedEntityState().getNumBreachedLegs() > 0 && 
+                hex != null &&
+                hex.terrainLevel(Terrains.WATER) > 0;
     }
     
     /**

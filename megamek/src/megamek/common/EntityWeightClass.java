@@ -150,9 +150,7 @@ public class EntityWeightClass {
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return WEIGHT_SMALL_CRAFT;
-        } else if (type.equals("Conventional Fighter")) {
-            return WEIGHT_LIGHT;
-        } else if (type.equals("Aero")) {
+        } else if (type.equals("Aero") || type.equals("Conventional Fighter")) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
@@ -178,7 +176,7 @@ public class EntityWeightClass {
      */
     public static int getSupportWeightClass(double tonnage, String type) {
         double[] weightLimits;
-        switch (EntityMovementMode.getMode(type)) {
+        switch (EntityMovementMode.parseFromString(type)) {
             case WHEELED:
                 weightLimits = wheeledSupportVehicleWeightLimits;
                 break;
@@ -252,8 +250,6 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (en instanceof ConvFighter) {
-            return WEIGHT_LIGHT;
         } else if (en instanceof SmallCraft) {
             return WEIGHT_SMALL_CRAFT;
         } else if (en instanceof Aero) {

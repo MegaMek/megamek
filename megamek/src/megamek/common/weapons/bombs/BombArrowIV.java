@@ -19,7 +19,6 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**

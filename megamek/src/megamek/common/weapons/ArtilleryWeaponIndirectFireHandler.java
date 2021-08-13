@@ -37,7 +37,6 @@ import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
@@ -171,16 +170,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         public Targetable targ = target;
 
                         public boolean accept(Entity entity) {
-                            Integer id = Integer.valueOf(entity.getId());
+                            Integer id = entity.getId();
                             if ((player == entity.getOwnerId())
                                     && spottersBefore.contains(id)
-                                    && !(LosEffects.calculateLos(game,
-                                            entity.getId(), targ, true))
-                                            .isBlocked()
+                                    && !LosEffects.calculateLOS(game, entity, targ, true).isBlocked()
                                     && entity.isActive()
                                     // airborne aeros can't spot for arty
-                                    && !((entity.isAero()) && entity
-                                            .isAirborne())
+                                    && !((entity.isAero()) && entity.isAirborne())
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                 return true;
                             }
@@ -397,7 +393,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
         }
 
-        if(aaa.getTarget(game).isOffBoard()) {
+        Targetable updatedTarget = aaa.getTarget(game);
+        
+        // the attack's target may have been destroyed or fled since the attack was generated
+        // so we need to carry out offboard/null checks against the "current" version of the target.
+        if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
             int actualDamage = df.damage - (df.falloff * targetPos.distance(target.getPosition()));
             Coords effectiveTargetPos = aaa.getCoords();
@@ -407,7 +407,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             
             if(actualDamage > 0) {
-                AreaEffectHelper.artilleryDamageEntity((Entity) aaa.getTarget(game), actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
+                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null, 0, false, asfFlak, isFlak, altitude, 
                     effectiveTargetPos, atype, targetPos, false, ae, null, altitude, vPhaseReport, server);
             }
         } else {
@@ -541,7 +541,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 // as observed already by the entity's team
                 if(entity.isEnemyOf(aaa.getEntity(game)) &&
                         !aaa.getEntity(game).isOffBoardObserved(entity.getOwner().getTeam())) {
-                    boolean hasLoS = LosEffects.calculateLos(game, entity.getId(), hexTarget).canSee();
+                    boolean hasLoS = LosEffects.calculateLOS(game, entity, hexTarget).canSee();
                     
                     if(hasLoS) {
                         aaa.getEntity(game).addOffBoardObserver(entity.getOwner().getTeam());

@@ -27,6 +27,7 @@ import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 
 /**
  * This class contains functionality that takes a given path
@@ -155,6 +156,7 @@ public class PathDecorator {
         LongestPathFinder lpf = LongestPathFinder
                 .newInstanceOfLongestPath(desiredMP,
                         MoveStepType.FORWARDS, source.getGame());
+        lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
         lpf.run(source);
         turnPaths.addAll(lpf.getLongestComputedPaths());
         

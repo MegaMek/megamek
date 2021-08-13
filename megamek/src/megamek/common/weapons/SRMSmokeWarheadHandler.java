@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -94,8 +94,10 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
-            
+
             server.deliverMissileSmoke(center, smokeType, vPhaseReport);
+        } else if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+            server.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
         }
         return true;
     }

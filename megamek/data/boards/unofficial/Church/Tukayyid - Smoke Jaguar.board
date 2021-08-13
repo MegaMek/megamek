@@ -1,5 +1,10 @@
 size 32 17
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Water (Auto)"
+tag "TropicalTheme (Auto)"
+tag "Jungle (Auto)"
 hex 0101 1 "" "tropical"
 hex 0201 1 "" "tropical"
 hex 0301 1 "" "tropical"

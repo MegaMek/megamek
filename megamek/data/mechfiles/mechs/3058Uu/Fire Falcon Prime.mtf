@@ -3,33 +3,33 @@ Fire Falcon
 Prime
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3052
-Source:TRO 3058 - Clan Invasion
-Rules Level:2
+techbase:Clan
+era:3052
+source:TRO 3058 - Clan Invasion
+rules level:2
 
-Mass:25
-Engine:200 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:25
+engine:200 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:8
-Walk MP:8
-Jump MP:0
+heat sinks:10 Clan Double
+base chassis heat sinks:8
+walk mp:8
+jump mp:0
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:6
-RA Armor:6
-LT Armor:9
-RT Armor:9
-CT Armor:10
-HD Armor:9
-LL Armor:10
-RL Armor:10
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+armor:Ferro-Fibrous(Clan)
+LA armor:6
+RA armor:6
+LT armor:9
+RT armor:9
+CT armor:10
+HD armor:9
+LL armor:10
+RL armor:10
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:7
 Medium Pulse Laser, Left Arm
@@ -43,7 +43,7 @@ Streak SRM 4, Left Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -57,10 +57,10 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
-CLERSmallLaser (omnipod)
-CLERSmallLaser (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -71,9 +71,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM4 (omnipod)
-CLStreakSRM4 (omnipod)
-Clan Streak SRM 4 Ammo (omnipod)
+CLStreakSRM4 (OMNIPOD)
+CLStreakSRM4 (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -151,3 +151,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Fire Falcon was created in the early-3050s, apparently as a replacement for the Mist Lynx.
+
+capabilities:The primary configuration of the Fire Falcon is best at short to medium range. There, it can bring its twin Streak SRM-4 launchers, Medium Pulse Laser, two ER Medium Lasers, and two ER Small Lasers to bear. While this barrage is powerful for a 'Mech its size, ten double heat sinks are mostly able to keep the design cool.
+
+deployment:The Fire Falcon is faster, has more front-facing armor, and more pod space, though it lacks the Jump Jets of that earlier 'Mech. It makes use of weight-saving materials in the form of an XL Engine, an Endo Steel internal structure, and four tons of Ferro-Fibrous armor. Clan Jade Falcon first produced this OmniMech on their capital of Ironhold, but they soon began to produce it on the Occupation Zone headquarters of Sudeten.[1][5] In November of 3069, Clan Steel Viper would sack Ironhold as part that Clan's effort to expel the Jade Falcons from the Clan Homeworlds. The invasion would end up destroying the Fire Falcon's production facilities, letting the design fade from use by Homeworlds based Clans.
+
+manufacturer:Ironhold Alpha Complex, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF 3 Light Endo-Steel
+systemmanufacturer:ENGINE:JF 200 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVIII KITT
+

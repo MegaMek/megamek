@@ -21,7 +21,6 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
-import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.MiscType;
 import megamek.common.Protomech;

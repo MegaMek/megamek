@@ -150,4 +150,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The first OmniMech both designed and built by the Lyran Alliance. The OmniMech is named after the rank held by officers in the LAAF.
+ 
+capabilities:The Hauptmann is built on a standard chassis and powered by a 285 fusion engine, adding to the 'Mech's durability as it cannot be killed by a side torso loss. The Hauptmann has eleven double heat sinks fixed on the chassis and can add more if needed in its various configurations. For protection, the Hauptmann carries eighteen and a half tons of armor and has CASE fixed in the right torso to protect against an ammunition explosion.
 
+deployment:The E Configuration was, like the D configuration, developed during the Jihad. It was designed to use a large quantity of range-weaponry as its primary focus. The Hauptmann's right arm is fitted with a Gauss Rifle with 2 tons of ammunition mounted in that section. In the left arm, a Plasma Rifle has been fitted. Both arms have their lower arm actuators removed to allow for the pilot to flip arms. The Plasma Rifle's 2 tons of ammunition are stored in the left arm and in the left torso. The 'Mech's only secondary weapons are a pair of 5-Tubed Multi-Missile Launchers mounted in each side torso. The Hauptmann has been given 3 tons of CASE protected ammunition for the missile weaponry.
+
+history:The inspiration for the Hauptmann is drawn from the Daishi OmniMech used by the Clans. Using information from captured Daishis and data gleaned from the construction of the Firestarter OmniMech, which was shared by the Draconis Combine, the end result is a powerful OmniMech capable of defending itself in most combat situations.
+
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Coventry HAI III
+systemmanufacturer:ENGINE:Pitban 285
+systemmanufacturer:ARMOR:Glasgow Limited with CASE
+systemmanufacturer:COMMUNICATIONS:TharHes Muse 54-58S
+systemmanufacturer:TARGETING:Cyclops 9c

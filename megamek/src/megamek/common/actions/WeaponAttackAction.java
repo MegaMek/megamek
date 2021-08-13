@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
@@ -28,6 +29,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.BombType;
+import megamek.common.Building;
 import megamek.common.CalledShot;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
@@ -325,13 +327,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-        
-        final WeaponType wtype = (WeaponType) weapon.getType();
-        
-        // This is ok to keep here. No need to process anything further if we're not using a weapon somehow
-        if (!(wtype instanceof WeaponType)) {
+
+        final EquipmentType type = weapon.getType();
+
+        // No need to process anything further if we're not using a weapon somehow
+        if (!(type instanceof WeaponType)) {
+            MegaMek.getLogger().error("Trying to make a weapon attack with " + weapon.getName() + " which has type " + type.getName());
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("WeaponAttackAction.NotAWeapon"));
         }
+        
+        if (target == null) {
+            MegaMek.getLogger().error(attackerId + "Attempting to attack null target");
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
+
+        final WeaponType wtype = (WeaponType) type;
 
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
@@ -345,6 +355,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             target = originalTarget;
             originalTarget = tempTarget;
         }
+
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
@@ -616,8 +627,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
                 }
             } else {
-                //For everything else, set up a plain old LOS
-                los = LosEffects.calculateLos(game, spotter.getId(), target, true);
+                // For everything else, set up a plain old LOS
+                los = LosEffects.calculateLOS(game, spotter, target, true);
             }
 
             // do not count attacker partial cover in indirect fire
@@ -747,6 +758,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         
+        // "hack" to cover the situation where the target is standing in a short
+        // building which provides it partial cover. Unlike other partial cover situations,
+        // this occurs regardless of other LOS consideration.
+        if (WeaponAttackAction.targetInShortCoverBuilding(target)) {
+            Building currentBuilding = game.getBoard().getBuildingAt(target.getPosition());
+
+            LosEffects shortBuildingLos = new LosEffects();
+            shortBuildingLos.setTargetCover(LosEffects.COVER_HORIZONTAL);
+            shortBuildingLos.setDamagableCoverTypePrimary(LosEffects.DAMAGABLE_COVER_BUILDING);
+            shortBuildingLos.setCoverBuildingPrimary(currentBuilding);
+            shortBuildingLos.setCoverLocPrimary(target.getPosition());
+            
+            los.add(shortBuildingLos);
+            toHit.append(shortBuildingLos.losModifiers(game));
+        }
+        
         // Collect the modifiers for the target's condition/actions 
         toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
                     wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
@@ -817,7 +844,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         // check LOS
-        LosEffects los = LosEffects.calculateLos(game, attackerId, target);
+        LosEffects los = LosEffects.calculateLOS(game, ae, target);
 
         if (ae.hasActiveEiCockpit()) {
             if (los.getLightWoods() > 0) {
@@ -2281,7 +2308,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Can't fire Indirect LRM with direct LOS
             if (isIndirect && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                     && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-                    && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+                    && LosEffects.calculateLOS(game, ae, target).canSee()
                     && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                             || Compute.canSee(game, ae, target))
                     && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
@@ -4542,6 +4569,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     /**
+     * Quick routine to determine if the target should be treated as being in a short building.
+     */
+    public static boolean targetInShortCoverBuilding(Targetable target) {
+        if (target.getTargetType() != Targetable.TYPE_ENTITY) {
+            return false;
+        }
+        
+        IHex targetHex = ((Entity) target).getGame().getBoard().getHex(target.getPosition());
+        if (targetHex == null) {
+            return false;
+        }
+        
+        return targetHex.containsTerrain(Terrains.BUILDING) &&
+                (((Entity) target).getHeight() > 0) &&
+                (((Entity) target).relHeight() == targetHex.ceiling());
+    }
+    
+    /**
      * If you're using a weapon that does something totally special and doesn't apply mods like everything else, look here
      * 
      * @param game The current game
@@ -4766,11 +4811,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int targEl = swarmSecondaryTarget.relHeight();
         int distance = Compute.effectiveDistance(game, ae, swarmSecondaryTarget);
         
-        Entity te = null;
-        if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
-        }
-
         // We might not attack the new target from the same side as the
         // old, so recalculate; the attack *direction* is still traced from
         // the original source.
@@ -4784,7 +4824,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         LosEffects swarmlos;
-        // TO makes it seem like the terrain modifers should be between the
+        // TO makes it seem like the terrain modifiers should be between the
         // attacker and the secondary target, but we have received rules
         // clarifications on the old forums indicating that this is correct
         if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
@@ -4810,7 +4850,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;
             // Depth 2 for superheavy mechs
-            if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            if (target != null && (target instanceof Mech) && ((Mech) target).isSuperHeavy()) {
                 partialWaterLevel = 2;
             }
             if (targHex.containsTerrain(Terrains.WATER)

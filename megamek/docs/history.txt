@@ -1,6 +1,101 @@
 VERSION HISTORY:
 ----------------
-0.49.0-SNAPSHOT
+0.49.3-SNAPSHOT
++ PR #2955: Board Tagging
++ Issues #1628, #1857, #2181, #2264, #2290, #2390, #2944: Board Editor and Menu Enhancements and Fixes
++ Issue #2960: Fixing non-basic letters in the new camouflage setup
++ PR #2971: Fixing the Magistracy of Canopus Planetary Militia Force Generator Faction
++ PR #2987: Remove unwanted water terrain exits from boards
++ PR #2990, 2993: Fix errors discovered while play-testing on potato-grade computer:
+	- prevent tooltip errors when mousing over non-unit spotting target
+	- prevent player camo color related force rendering error in lobby due to slow MekHQ->MegaMek data transfer
+	- improved bot ability to avoid flying off-board on space maps in newtonian flight model
+	- prevent ejected aerospace pilots from crashing the server when drifting off-board on space map
+	- prevent attempts to use searchlights on non-existent buildings
+	- "Nearest" destination zone is now respected properly by the bot
+	- Fix several "stuttering"/"jumping" issues when moving around the map
++ Issue #2995: Critical Hits not being applied
++ PR #2998: Advanced Map Generator Panel: Fixing Woods Size Text
++ Issue #2988, 2989: Multiple fixes to errors encountered when using fighter squadrons
++ PR #3009: Fixing Princess Null Entity Packet state update
++ Issue #3002: Disallow torso-twisting and vehicle turret rotation during TAG phase per recent errata
++ PR #3010: StatusBarPhaseDisplay Code cleanup
++ PR #3011: Fixes for multiple game-freezing issues relating to counter-battery fire against previously destroyed units
++ PR #2968: Prevent TAG from attempting to designate targets for hostile incoming homing ordnance
++ PR #3023: Allow UUID Serialization
++ PR #3022: Preventing three Compute::getTargetTotalNP NPEs
++ PR #3021: Fixing Calculate LOS NPEs
++ Data: New Sprites, Camos
++ PR #3041: Princess config dialog improvements; much easier bot replacement upon loading a save game.
++ Issue #3407: Prevent server lockup when processing swarm attacks that select an infantry unit in a building as a secondary target
++ PR #3051: RAT Generator Editor no longer shuffles model entries around randomly; space stations have been added to RAT Generator
++ Issue #3031: Bot will no longer attempt to cross water in "long range pathfinding mode" when doing so would cause an armor breach
++ Issue #3052: Fix for server lockup when firing infantry-scale weapons off of small support vehicles; fixes for multiple errors processing non-existent passenger units.
++ Issue #3048: Hits on hull-down (non-superheavy) vehicles without turrets now land on proper location.
++ PR #3017: Additional unit label display options (toggled with the unit label display keybind) to show abbreviated and really abbreviated unit names.
++ PR #3050: Players now have option to provide their email address to the server (which is not shared with the other players). If the server has a local SMTP server configured, round reports can be emailed to players.
++ PR #3072: Hidden Units is now Enabled by default
++ Issue #3065: Prevent units from winding up with an illegal facing as a result of a fish tail, and in general.
+
+0.49.2 (2021-06-19 2330 UTC)
++ PR #2816: Board Editor Layout Scaling
++ PR #2852: Board Hex Fluff Transitions
++ PR #2877: Report Messages Cleanup
++ PR #2879: Remove unnecessary logging and bot processing of human-readable round reports
++ Issue #2704: Indicate that units may still move on facing arrow
++ Issue #2878: Princess configuration dialog no longer locks up when trying to click Ok
++ Issue #2886: Wreck sprites display correctly when zoomed; removed wreck sprite labels; indicator of what's wrecked shows up in tooltip popup
++ PR #2887: Menu bar scales with the rest of the GUI
++ PR #2885: Fix "weird" keybind defaults
++ Issue #2884: preventing Array Index Out of Bound error when adding bombs to a LAM
++ PR #2880: "De-hexed" water and pavement (partial-looking water and pavement hexes that are functionally water and pavement, but look more "realistic" like the recent physical CGL hex maps)
++ PR #2869: Camouflage: Deadborder Pack, Base Component Swapover
++ PR #2898: Princess will now do her best to avoid known minefields
++ PR #2896: Base Components: Using proper locale
++ PR #2903: Camouflage: Layered Overlay
++ Issue #2883: Can once again issue flee command to allied bots, but need to specify an edge (see docs); 
+	Can set bot destination edge to 'nearest', causing its units to move to the nearest board edge
++ PR #2912: Show all locations for spreadable equipment in summary view
++ PR #2916: CommonMenuBar maintenance (checkbox items)
++ Issue #2897: Princess will now attack with swarming BA
++ Issue #2888: Princess can no longer unjam tank weapons/turret or use searchlight when unit crew is unconscious
++ PR #2924: Per current errata, "short" buildings now provide partial cover for tall units (e.g. mechs) rather than enclosing them completely
++ PR #2923: Prototype TSM
++ Issue #2672: Fuel Tank Magnitude Tooltip Correction
++ PR #2915: Improved unit image scaling in the lobby
++ Issue #929: Narced status on unit tooltip
++ Issue #2920: Prevent lock-up when resolving homing artillery attacks vs tagged hex
++ PR #2929: Players can now skip deploying minefields
++ Issue #2543: Board images save at current zoom, game summary at zoom 1
++ PR #2910: UnitReadoutDialog Standardization
++ Issue #2917: Fixing Structured_Water directory reference
++ Issue #2003: Fix terrain exit issue in map editor
++ PR #2937: CommonMenuBar and MovementDisplay Menu entry corrections
++ PR #2941: Prevent rendering failures in lobby when using LAMs in fighter mode
++ PR #2934: Complete Anti-TSM "Green Smoke" warhead implementation
++ Issue #2762: Improve the Minimap and fix empty summary screenshots
++ Data: New Sprites, Rec Guide 14 (also renaming folder to match MUL), more units with Fluff text.
+
+0.49.1 (2021-05-23 1630 UTC)
++ PR #2823: Fix for issue preventing saving battle results to MUL and scenario resolution in MekHQ
++ PR #2825: Fixing Mek Tree Sorter NPEs
++ PR #2829: Fixing Mek Table Model Potential NPEs
++ Issue #2818: Placeholder Image on Destroyed Condor
++ Issue #2819: Fixing Left Click Targetting Issues
++ PR #2831: FovHighlightingAndDarkening Null Handling Improvements
++ PR #2835: ReadMe Java recommendation update and accessibility improvements
++ Issue #2820: Improved initial sizing of game options popup
++ PR #2850: Fixing LobbyMekCellFormatter NPE
++ PR #2849: Fixing Abstract Wreck Sprite NPE
++ Issue #2826 Traitor Context menu correction (no traitoring to teamless)
++ Issue #2856: Fixed Board Editor Level Up/Dn and left click dragging
++ PR #2862: Adding null target safety check for WeaponAttackAction.toHit() method
++ Issue #2963: Armor tooltip matches reality better
++ Issue #2776: Fix for frequent inability to start MegaMek scenarios with bots from MMS files
++ Issue #2727: Restore respect for client-side language settings (some things still aren't translated though)
++ Data: New sprites and unit file updates, updating Flynn Map pack, adding UlyssesSockdrawer Maps
+
+0.49.0 (2021-05-01 2130 UTC)
 + Issue #2614: Improved Building Validation
 + Issue #2592: Random Army Creation Tech Level Max Index Comparison Issue
 + Issue #2272: Fixing Alt-Click on Building and Mouse Wheel Over Building/Bridge/Fuel Tank Not Clearing Tile
@@ -35,7 +130,23 @@ VERSION HISTORY:
 + PR #2773: Launch Fighters (bot version)
 + Issue #1219: Adding Defensive Code for RATGenerator Era
 + Issues #1785/#2138: Fixing and Improving Round Report Player Stats
-
++ Issues #2787: Protomech AC gun and ammo are different tech levels
++ PR #2786: Units set for a delayed assault drop no longer disappear on the first turn of the game.
++ Issue #2438: Adding More Detail to Fire Damage Reporting
++ Data: New Sprites, IrTech addition, numerous other data fixes. Fixes for #2696
++ Issue #2794: Switching back and forth from TestBot in bot config dialog no longer causes an NPE because the TestBot option has been removed.
++ Issue #2709: Equipment improperly tagged as fixed on recent omni designs
++ Issues: Lobby Rewrite addressing #448, #765, #1996, #2277, #2306, #2322, #2327, #2340, #2374, #2384, #2385, #2428, #2560, #2657
++ Issue #2133: MegaMek Scenario Additions (Planetary Conditions inclusion and Dialog skips)
++ PR #2797: Re-enable doubleclicking in the IconChooser
++ PR #2802: Weapon Attack Action Class Cast Exception Fix
++ Issue #2281: Creating a standard BV Display Dialog
++ PR #2803: Fixing a few Reports that are Missing Subjects
++ Issue #2801 Omnimech Pods Incorrect Labels
++ Data: Adding Mech write ups to selected units.
++ New Sprites and Issue #2798 Wolfhounds Missing Full-Head Ejection Systems
++ Data: Issue #2774 - Kaji Maps Update.
++ Data: Updated 1st SW RATs, and some general unit data fixes.
 
 0.48.0 (Stable) - (2021-03-05 1530 UTC)
 + PR #2638, #2640: Turret data fixes

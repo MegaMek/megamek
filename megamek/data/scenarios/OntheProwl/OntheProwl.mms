@@ -28,5 +28,5 @@ Unit_Genyosha_2_AutoEject=false
 Unit_Genyosha_3_AutoEject=false
 Unit_Genyosha_4_AutoEject=true
 
-Camo_Mistweaver=Clans/Smoke Jaguar,Beta Galaxy.jpg
-Camo_Genyosha=Kurita/Genyosha,1st Genyosha.jpg
+Camo_Mistweaver=Clans/Smoke Jaguar/,Beta Galaxy.jpg
+Camo_Genyosha=Kurita/Genyosha/,1st Genyosha.jpg

@@ -23,19 +23,24 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Stream;
 
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
+import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryResult;
 
 /**
  * This interface is the root of all data about the game in progress. Both the
@@ -562,6 +567,8 @@ public interface IGame {
      * Returns the actual vector for the entities
      */
     abstract List<Entity> getEntitiesVector();
+
+    abstract Stream<Entity> getEntitiesStream();
 
     abstract void setEntitiesVector(List<Entity> entities);
 
@@ -1471,7 +1478,10 @@ public interface IGame {
      */
     abstract void createVictoryConditions();
 
+    @Deprecated
     abstract Victory getVictory();
+
+    abstract VictoryResult getVictoryResult();
 
     abstract boolean useVectorMove();
 
@@ -1546,4 +1556,21 @@ public interface IGame {
             HashSet<Coords> oldPositions);
 
     public abstract String getUUIDString();
+
+    /**
+     * Cancels the victory
+     */
+    public abstract void cancelVictory();
+
+    abstract Forces getForces();
+
+    /**
+     * Overwrites the current forces object with the provided object.
+     * Called from server messages when loading a game.
+     */
+    abstract void setForces(Forces forces);
+    
+    public abstract Map<String, BehaviorSettings> getBotSettings();
+    
+    public abstract void setBotSettings(Map<String, BehaviorSettings> bs);
 }

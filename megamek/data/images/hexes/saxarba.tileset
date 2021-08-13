@@ -31,11 +31,14 @@
 
 #####SUPER TERRAINS#####
 
+include "saxarba/Transitions/Transitions.tileinc"
 include "Incline/Inclines2.tileinc"
 include "High_Incline/High_Inclines.tileinc"
 include "Cliff/Cliffs.tileinc"
 
+include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
+
 
 
 #GRAY SAND
@@ -97,7 +100,7 @@ super * "water:0" "volcano" "saxarba/theme_volcano/water_volcano_0.png"
 #WATER
 # Garden Lakes use water:0 so they must be included now
 include "saxarba/SMV_Fluff/GardenLakes.tileinc"
-super * "water:0" "" "saxarba/water/water_0.png"
+#super * "water:0" "" "saxarba/water/water_0.png"
 
 #ELEVATOR
 super * "elevator:10" "" "saxarba/misc/elevator_10.png"
@@ -258,7 +261,8 @@ super * "water:1" "lunar" "saxarba/theme_lunar/water_lunar_1.png"
 super * "water:1" "volcano" "saxarba/theme_volcano/water_volcano_1.png"
 
 #WATER
-super * "water:1" "" "saxarba/water/water_1.png"
+#super * "water:1" "" "saxarba/water/water_1.png"
+include "Structured_Water/Structured_Water - Saxarba.tileinc"
 
 #ROADS
 include "saxarba/Includes/BasicRoads.tileinc"
@@ -464,6 +468,8 @@ super * "smoke:*" "" "saxarba/misc/light_smoke.png"
 #SCREEN
 super * "screen:*" "" "saxarba/misc/light_smoke.png"
 
+
+
 #####BASE TERRAINS#####
 
 #SPACE
@@ -652,7 +658,6 @@ base 9 "" "lunar" "saxarba/theme_lunar/base_lunar_9.png;saxarba/theme_lunar/base
 base 10 "" "lunar" "saxarba/theme_lunar/base_lunar_10.png;saxarba/theme_lunar/base_lunar_10b.png;saxarba/theme_lunar/base_lunar_10c.png;saxarba/theme_lunar/base_lunar_10d.png;saxarba/theme_lunar/base_lunar_10e.png;saxarba/theme_lunar/base_lunar_10f.png"
 
 
-
 # To avoid errors
 super * "fluff:*" "" "saxarba/misc/blank.png"
 super * "road_fluff:*" "" "saxarba/misc/blank.png"
@@ -661,3 +666,5 @@ super * "water_fluff:*" "" "saxarba/misc/blank.png"
 super * "bldg_fluff:*" "" "saxarba/misc/blank.png"
 
 super * "bldg_class:0" "" "saxarba/misc/blank.png"
+
+super * "fluff:1000:1000" "grass" "saxarba/misc/blank.png"

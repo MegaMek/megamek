@@ -368,7 +368,7 @@ public class MoveOption extends MovePath {
         }
 
         // calc & add attacker los mods
-        LosEffects los = LosEffects.calculateLos(getGame(), ae.getId(), te);
+        LosEffects los = LosEffects.calculateLOS(getGame(), ae, te);
         toHita.append(los.losModifiers(getGame()));
         // save variables
         pc = los.isTargetCover();

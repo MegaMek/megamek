@@ -61,28 +61,28 @@
     <KeyBind>
         <command>turnLeft</command> <!-- Shift-A -->
         <keyCode>65</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>turnRight</command> <!-- Shift-D -->
         <keyCode>68</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>twistLeft</command> <!-- Shift-A -->
         <keyCode>65</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>twistRight</command> <!-- Shift-D -->
         <keyCode>68</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -110,14 +110,14 @@
     <KeyBind>
         <command>nextUnit</command> <!-- Ctrl-N -->
         <keyCode>78</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>prevUnit</command> <!-- Shift-Q -->
         <keyCode>81</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -138,42 +138,42 @@
     <KeyBind>
         <command>nextTargetValid</command> <!-- Shift-C -->
         <keyCode>67</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>prevTargetValid</command> <!-- Shift-Z -->
         <keyCode>90</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>nextTargetNoAllies</command> <!-- Ctrl-C -->
         <keyCode>67</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>prevTargetNoAllies</command> <!-- Ctrl-Z -->
         <keyCode>90</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift-C -->
         <keyCode>67</keyCode>
-        <modifier>3</modifier>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift-Z -->
         <keyCode>90</keyCode>
-        <modifier>3</modifier>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -187,7 +187,7 @@
     <KeyBind>
         <command>movementEnvelope</command> <!-- Ctrl-Q -->
         <keyCode>81</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -201,7 +201,7 @@
     <KeyBind>
         <command>autoArtyDeployZone</command> <!-- Shift-Space -->
         <keyCode>32</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -222,7 +222,7 @@
     <KeyBind>
         <command>done</command> <!-- Ctrl-Enter -->
         <keyCode>10</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -285,7 +285,7 @@
     <KeyBind>
         <command>prevMode</command> <!-- Shift-Tab -->
         <keyCode>9</keyCode>
-        <modifier>1</modifier>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -299,21 +299,21 @@
     <KeyBind>
         <command>toggleDrawLabels</command> <!-- Ctrl-Y -->
         <keyCode>89</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>toggleKeyBindDisplay</command> <!-- Ctrl-K -->
         <keyCode>75</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
         <command>toggleHexCoords</command> <!-- Ctrl-G -->
         <keyCode>71</keyCode>
-        <modifier>2</modifier>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 public class AccessibilityWindow extends JDialog implements KeyListener {
@@ -78,8 +79,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                systemEvent("Turn changed it is now " + e.getPlayer().getName() + "'s turn.");
-                //systemEvent(cleanHtml(client.roundReport));
+                if (e.getPlayer() != null) {
+                    systemEvent("Turn changed, it is now " + e.getPlayer().getName() + "'s turn.");
+                }
             }
 
             @Override
@@ -178,9 +180,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                     Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
-            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_MASK);
+            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
             // Click.
-            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_MASK);
+            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
         }
     }
 

@@ -41,8 +41,8 @@ build/
 /megamek/mmconf/*.preferences
 
 # UserData
-/megamek/userdata/
-!/megamek/userdata/userDataReadMe.txt
+megamek/userdata/**
+!/megamek/userdata/README.md
 
 # Save Games
 /megamek/savegames
@@ -66,7 +66,8 @@ build/
 /megamek/data/images/*_atlas.png
 /megamek/data/images/imgFileAtlasMap.xml
 #Portraits
-/megamek/data/images/Portraits/
+/megamek/data/images/portraits/
+/megamek/data/images/temp/
 !/megamek/data/images/portraits/default.gif
 
 

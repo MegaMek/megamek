@@ -3,118 +3,150 @@ Blue Flame
 BLF-40
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3073
-Rules Level:3
+techbase:Inner Sphere
+era:3073
+rules level:3
 
-Mass:45
-Engine:225 Light Fusion Engine
-Structure:Endo-Steel
-Cockpit:Small Cockpit
-Myomer:Standard
+mass:45
+engine:225 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:22
-RA Armor:22
-LT Armor:15
-RT Armor:15
-CT Armor:20
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:7
-RTR Armor:7
-RTC Armor:7
+armor:Standard(Inner Sphere)
+FLL armor:22
+FRL armor:22
+LT armor:15
+RT armor:15
+CT armor:20
+HD armor:9
+RLL armor:22
+RRL armor:22
+RTL armor:7
+RTR armor:7
+RTC armor:7
 
-Weapons:5
-1 ISImprovedC3CPU, Head
-1 ISLightPPC, Left Torso
-1 ISLightPPC, Center Torso
-1 ISMediumVSPLaser, Right Torso (R)
-1 ISLightPPC, Right Torso
+Weapons:4
+Light PPC, Left Torso
+Light PPC, Right Torso
+Medium VSP Laser, Right Torso
+Light PPC, Center Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-Engine
-Engine
-ISLightPPC
-ISLightPPC
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLightPPC
-ISLightPPC
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
 ISMediumVSPLaser (R)
 ISMediumVSPLaser (R)
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISLightPPC
-ISLightPPC
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

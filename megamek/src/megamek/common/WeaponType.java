@@ -607,7 +607,9 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_DOUBLE_ONESHOT = BigInteger.valueOf(1).shiftLeft(68);
     // ER flamers do half damage in heat mode
     public static final BigInteger F_ER_FLAMER = BigInteger.valueOf(1).shiftLeft(69);
-    
+    /** Missile weapon that can be linked to an Artemis fire control system */
+    public static final BigInteger F_ARTEMIS_COMPATIBLE = BigInteger.valueOf(1).shiftLeft(70);
+
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;

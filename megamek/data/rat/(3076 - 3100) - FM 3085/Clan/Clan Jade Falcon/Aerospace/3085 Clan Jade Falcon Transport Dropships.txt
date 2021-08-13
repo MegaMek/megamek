@@ -6,7 +6,7 @@ Sassanid (2875),4
 Union C (2829),5
 Union C (2829),6
 Overlord C (2818),5
-Danais (2720),4
+Danais (Standard),4
 Miraborg (3053),3
 Broadsword (2979),2
 Achilles (2582),1

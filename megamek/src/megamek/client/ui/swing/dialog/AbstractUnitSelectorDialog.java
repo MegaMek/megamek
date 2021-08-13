@@ -14,71 +14,29 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import megamek.MegaMek;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.panes.EntityViewPane;
+import megamek.client.ui.swing.*;
+import megamek.common.*;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.*;
+import megamek.common.util.sorter.NaturalOrderComparator;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.*;
+import javax.swing.table.*;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultRowSorter;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SortOrder;
-import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
-
-import megamek.MegaMek;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.*;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.MechFileParser;
-import megamek.common.MechSearchFilter;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechView;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.templates.TROView;
-import megamek.common.util.sorter.NaturalOrderComparator;
 
 /**
  * This is a heavily reworked version of the original MechSelectorDialog which
@@ -118,8 +76,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
-    private MechViewPanel panelMechView;
-    private MechViewPanel panelTROView;
+    protected EntityViewPane panePreview;
+    private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
     private long lastSearch = 0;
@@ -165,7 +123,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     private void setUserPreferences() {
         GUIPreferences guiPreferences = GUIPreferences.getInstance();
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
 
         comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
 
@@ -187,7 +144,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-        pack();
+        splitPane.setDividerLocation(guiPreferences.getMechSelectorSplitPos());
+        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
+        setLocation(guiPreferences.getMechSelectorPosX(), guiPreferences.getMechSelectorPosY());
     }
 
     protected void initialize() {
@@ -208,15 +167,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         getContentPane().setLayout(new GridBagLayout());
 
         //region Unit Preview Pane
-        JTabbedPane panePreview = new JTabbedPane();
-
-        panelMechView = new MechViewPanel();
-        panelMechView.setMinimumSize(new Dimension(300, 500));
-        panelMechView.setPreferredSize(new Dimension(300, 600));
-        panePreview.addTab("Summary", panelMechView);
-
-        panelTROView = new MechViewPanel();
-        panePreview.addTab("TRO", panelTROView);
+        panePreview = new EntityViewPane(frame, null);
         //endregion Unit Preview Pane
 
         //region Selection Panel
@@ -406,7 +357,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JPanel panelButtons = createButtonsPanel();
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panePreview);
         splitPane.setResizeWeight(0);
         gridBagConstraints = new GridBagConstraints();
@@ -607,34 +558,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
-        boolean populateTextFields = true;
-
         Entity selectedEntity = getSelectedEntity();
-        // null entity, so load a default unit.
+        panePreview.updateDisplayedEntity(selectedEntity);
+        // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
-            panelMechView.reset();
             labelImage.setIcon(null);
-            return null;
         }
-
-        MechView mechView = null;
-        TROView troView = null;
-        try {
-            mechView = new MechView(selectedEntity, false);
-            troView = TROView.createView(selectedEntity, true);
-        } catch (Exception e) {
-            MegaMek.getLogger().error(e);
-            // error: unit didn't load right. this is bad news.
-            populateTextFields = false;
-        }
-        if (populateTextFields) {
-            panelMechView.setMech(selectedEntity, mechView);
-            panelTROView.setMech(selectedEntity, troView);
-        } else {
-            panelMechView.reset();
-            panelTROView.reset();
-        }
-
         return selectedEntity;
     }
 
@@ -708,6 +637,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             guiPreferences.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
             guiPreferences.setMechSelectorSizeHeight(getSize().height);
             guiPreferences.setMechSelectorSizeWidth(getSize().width);
+            guiPreferences.setMechSelectorPosX(getLocation().x);
+            guiPreferences.setMechSelectorPosY(getLocation().y);
+            guiPreferences.setMechSelectorSplitPos(splitPane.getDividerLocation());
         }
     }
 
@@ -759,6 +691,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles the primary action events (any that can come from buttons in this class)
      * @param ev the event containing the performed action
      */
+    @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(comboWeight) || ev.getSource().equals(comboUnitType)) {
             filterUnits();
@@ -769,23 +702,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         } else if (ev.getSource().equals(buttonClose)) {
             close();
         } else if (ev.getSource().equals(buttonShowBV)) {
-            JEditorPane tEditorPane = new JEditorPane();
-            tEditorPane.setContentType("text/html");
-            tEditorPane.setEditable(false);
-            Entity e = getSelectedEntity();
-            if (null == e) {
-                return;
+            final Entity entity = getSelectedEntity();
+            if (entity != null) {
+                entity.calculateBattleValue();
+                new BVDisplayDialog(frame, true, entity).setVisible(true);
             }
-            e.calculateBattleValue();
-            tEditorPane.setText(e.getBVText());
-            tEditorPane.setCaretPosition(0);
-            JScrollPane tScroll = new JScrollPane(tEditorPane,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            Dimension size = new Dimension(550, 300);
-            tScroll.setPreferredSize(size);
-            JOptionPane.showMessageDialog(null, tScroll, "BV",
-                    JOptionPane.INFORMATION_MESSAGE, null);
         } else if (ev.getSource().equals(buttonAdvancedSearch)) {
             searchFilter = asd.showDialog();
             buttonResetSearch.setEnabled((searchFilter != null) && !searchFilter.isDisabled);

@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
@@ -74,14 +75,11 @@ public interface IBoard {
      * Determines if this Board contains the (x, y) Coords, and if so, returns
      * the Hex at that position.
      *
-     * @param x
-     *            the x Coords.
-     * @param y
-     *            the y Coords.
-     * @return the <code>Hex</code>, if this Board contains the (x, y) location;
-     *         <code>null</code> otherwise.
+     * @param x the x Coords.
+     * @param y the y Coords.
+     * @return the Hex, if this Board contains the (x, y) location; null otherwise.
      */
-    public abstract IHex getHex(int x, int y);
+    @Nullable IHex getHex(int x, int y);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -143,12 +141,10 @@ public interface IBoard {
     public abstract boolean contains(Coords c);
 
     /**
-     * Returns the Hex at the specified Coords.
-     *
-     * @param c
-     *            the Coords.
+     * @param c the Coords, which may be null
+     * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public abstract IHex getHex(Coords c);
+    @Nullable IHex getHex(final @Nullable Coords c);
 
     /**
      * Determines if this Board contains the (x, y) Coords, and if so, sets the
@@ -326,6 +322,9 @@ public interface IBoard {
      * @return an <code>Enumeration</code> of <code>Building</code>s.
      */
     public abstract Enumeration<Building> getBuildings();
+    
+    /** Returns the Vector of all the board's buildings. */
+    public abstract Vector<Building> getBuildingsVector();
 
     /**
      * Get the building at the given coordinates.
@@ -594,4 +593,14 @@ public interface IBoard {
     
     /** Returns true when the given Coord c is on the edge of the board. */
     public boolean isOnBoardEdge(Coords c);
+    
+    /** Add the given tag string to the board's tags list. */
+    public void addTag(String newTag);
+    
+    /** Removes the given tag string from the board's tags list. */
+    public void removeTag(String tag);
+    
+    /** Returns the board's tags list. The list is unmodifiable. Use addTag and removeTag to change it. */
+    public Set<String> getTags();
+
 }

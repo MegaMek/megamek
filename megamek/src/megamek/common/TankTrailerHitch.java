@@ -154,7 +154,11 @@ public class TankTrailerHitch implements Transporter {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
         if (towed != Entity.NONE) {
-            units.addElement(game.getEntity(towed));
+            Entity entity = game.getEntity(towed);
+            
+            if (entity != null) {
+                units.addElement(entity);
+            }
         }
         return units;
     }

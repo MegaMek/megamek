@@ -116,6 +116,8 @@ public class EquipmentTypeLookup {
     @EquipmentName
     public static final String ITSM = "Industrial Triple Strength Myomer";
     @EquipmentName
+    public static final String P_TSM = "Prototype TSM";
+    @EquipmentName
     public static final String IS_MASC = "ISMASC";
     @EquipmentName
     public static final String CLAN_MASC = "CLMASC";

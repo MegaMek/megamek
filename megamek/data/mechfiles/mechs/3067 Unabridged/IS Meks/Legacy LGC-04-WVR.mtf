@@ -148,4 +148,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Legacy was produced as a testbed for new technologies, including the Ultra AC/10 and C3i Computer.
 
+capabilities:They upgraded its targeting system and included the C3i, which allows six units to coordinate fire. Its thick armor protection, standard fusion engine, and CASE give the Legacy remarkable staying power on the battlefield. One of the weaknesses of the 'Mech is its slow speed compared to other 'Mechs of similar size, but the inclusion of jump jets sought to counter that with superior maneuverability.
+
+deployment:This Legacy uses the same frame and engine as the 03 model but uses a Compact Gyro to provide enough room to add MASC. This means it can reach a speed of 86km/h. The weaponry has been replaced with a pair of Snub-Nose PPCs, and the hand actuators have been replaced by Claws. The standard armor is replaced by Light Ferro-Fibrous.
+
+history:At the request of Word of Blake Precentor Martial Cameron St. Jamais. The designers used a failed Star League 'Mech called the Rising Star as the base for the Legacy.
+
+manufacturer:Skobel MechWorks
+primaryfactory:Russia, Terra
+systemmanufacturer:CHASSIS:Skobel Template 8 Endo Steel
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Aldis Plate with CASE
+systemmanufacturer:JUMPJET:CurtissJet 80
+systemmanufacturer:COMMUNICATIONS:Skobel Wave VII Comm with C3i Computer
+systemmanufacturer:TARGETING:Falcon 15 Watcher

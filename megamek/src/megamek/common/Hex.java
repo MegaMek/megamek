@@ -181,6 +181,13 @@ public class Hex implements IHex, Serializable {
             }
 
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
+            
+            // Water gets a special treatment: Water at the board edge
+            // (hex == null) should usually look like ocean and 
+            // therefore always gets connection to outside the board 
+            if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
+            	cTerr.setExit(direction, true);
+            }
 
             // Roads exit into pavement, too.
             if ((other != null) && roadsAutoExit && (cTerr.getType() == Terrains.ROAD)
@@ -418,6 +425,19 @@ public class Hex implements IHex, Serializable {
      */
     public ITerrain getTerrain(int type) {
         return terrains.get(type);
+    }
+    
+    @Override
+    public ITerrain getAnyTerrainOf(int type, int... types) {
+        if (containsTerrain(type)) {
+            return terrains.get(type);
+        }
+        for (int moreTypes : types) {
+            if (containsTerrain(moreTypes)) {
+                return terrains.get(moreTypes);
+            }
+        }
+        return null;
     }
 
     /*

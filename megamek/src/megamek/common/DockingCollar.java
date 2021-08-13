@@ -175,7 +175,11 @@ public class DockingCollar implements Transporter {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
         for (int id : troops) {
-            loaded.add(game.getEntity(id));
+            Entity entity = game.getEntity(id);
+            
+            if (entity != null) {
+                loaded.add(game.getEntity(id));
+            }
         }
         return loaded;
     }

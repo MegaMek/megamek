@@ -37,12 +37,12 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.LogLevel;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
+import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.pathfinder.AeroLowAltitudePathFinder;
 import megamek.common.pathfinder.AeroSpacePathFinder;
@@ -270,12 +270,14 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
                                 MoveStepType.FORWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(game, mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
@@ -286,9 +288,10 @@ public class PathEnumerator {
                 
                 //add jumping moves
                 if (mover.getJumpMP() > 0) {
-                	ShortestPathFinder spf = ShortestPathFinder
+                    ShortestPathFinder spf = ShortestPathFinder
                             .newInstanceOfOneToAll(mover.getJumpMP(),
                                     MoveStepType.FORWARDS, getGame());
+                    spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run((new MovePath(game, mover))
                             .addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
@@ -432,7 +435,6 @@ public class PathEnumerator {
     }
 
 //    public void debugPrintContents() {
-//        final String METHOD_NAME = "debugPrintContents()";
 //        getOwner().getLogger().methodBegin();
 //        try {
 //            for (Integer id : getUnitPaths().keySet()) {
@@ -441,7 +443,7 @@ public class PathEnumerator {
 //                int pathsSize = paths.size();
 //                String msg = "Unit " + entity.getDisplayName() + " has " + pathsSize + " paths and " +
 //                             getUnitPotentialLocations().get(id).size() + " ending locations.";
-//                getOwner().log(getClass(), METHOD_NAME, msg);
+//                getOwner().log(msg);
 //            }
 //        } finally {
 //            getOwner().getLogger().methodEnd();

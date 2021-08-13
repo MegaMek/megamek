@@ -84,7 +84,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
-        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }

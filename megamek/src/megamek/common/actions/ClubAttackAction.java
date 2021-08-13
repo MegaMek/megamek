@@ -166,7 +166,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // TSM doesn't apply to some weapons, including Saws.
-        if (entity instanceof Mech && ((((entity.heat >= 9) && ((Mech) entity).hasTSM()) || ((Mech) entity).hasIndustrialTSM())
+        if ((entity instanceof Mech) && ((Mech) entity).hasActiveTSM()
             && !(mType.hasSubType(MiscType.S_DUAL_SAW)
                  || mType.hasSubType(MiscType.S_CHAINSAW)
                  || mType.hasSubType(MiscType.S_PILE_DRIVER)
@@ -181,7 +181,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                  || mType.hasSubType(MiscType.S_SPOT_WELDER)
                  || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
                 .hasSubType(MiscType.S_COMBINE))
-            )) {
+            ) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();

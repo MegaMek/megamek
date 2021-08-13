@@ -1,54 +1,29 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
 /*
- * GameOptionsDialog.java
+ * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * Created on April 26, 2002, 2:14 PM
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
@@ -57,19 +32,14 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.options.GameOptions;
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
+import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.common.*;
+import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.utils.MegaMekXmlUtil;
+import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.client.ui.Messages.*;
 
 /**
  * Responsible for displaying the current game options and allowing the user to
@@ -79,11 +49,9 @@ import megamek.utils.MegaMekXmlUtil;
  */
 public class GameOptionsDialog extends JDialog implements ActionListener, DialogOptionListener {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6072295678938594119L;
-    private ClientGUI client;
+    private ClientGUI clientGui;
+    private JFrame frame;
     private GameOptions options;
 
     private boolean editable = true;
@@ -109,20 +77,22 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     /**
      * Panel that holds all of the options found via search
      */
-    private JPanel panSearchOptions;
+    private JPanel panSearchOptions = new JPanel();
     /**
      * Text field that contains text to search on
      */
-    private JTextField txtSearch;
-    private JPanel panPassword = new JPanel();
-    private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); //$NON-NLS-1$
+    private JTextField txtSearch = new JTextField("");
+    private WrappingButtonPanel panPassword = new WrappingButtonPanel();
+    private JLabel labPass = new JLabel(Messages.getString("GameOptionsDialog.Password")); 
     private JTextField texPass = new JTextField(15);
-    private JPanel panButtons = new JPanel();
-    private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); //$NON-NLS-1$
-    private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); //$NON-NLS-1$
-    private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); //$NON-NLS-1$
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private WrappingButtonPanel panButtons = new WrappingButtonPanel();
+    private JButton butSave = new JButton(Messages.getString("GameOptionsDialog.Save")); 
+    private JButton butLoad = new JButton(Messages.getString("GameOptionsDialog.Load")); 
+    private JButton butDefaults = new JButton(Messages.getString("GameOptionsDialog.Defaults")); 
+    private JButton butOkay = new JButton(Messages.getString("Okay")); 
+    private JButton butCancel = new JButton(Messages.getString("Cancel")); 
+    private MMToggleButton butUnofficial = new MMToggleButton("Unofficial Opts");
+    private MMToggleButton butLegacy = new MMToggleButton("Legacy Opts");
 
     /**
      * When the OK button is pressed, the options can be saved to a file; this
@@ -130,6 +100,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      * options should not be saved, such as when loading a scenario.
      */
     private boolean performSave = true;
+    
+    private final static String UNOFFICIAL = "Unofficial";
+    private final static String LEGACY = "Legacy";
 
     /**
      * Initialize this dialog.
@@ -141,24 +114,18 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
      */
     private void init(JFrame frame, GameOptions options) {
         this.options = options;
-
+        
         setupButtons();
         setupPassword();
-        JPanel mainPanel = new JPanel(new GridBagLayout());
 
-        // layout
-        mainPanel.add(panOptions, GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
-        mainPanel.add(panPassword, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
-        mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
-
-        getContentPane().add(mainPanel);
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                setVisible(false);
-            }
-        });
+        var mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+        mainPanel.add(panOptions);
+        mainPanel.add(Box.createVerticalStrut(5));
+        mainPanel.add(panPassword);
+        mainPanel.add(Box.createVerticalStrut(5));
+        mainPanel.add(panButtons);
+        add(mainPanel);
 
         pack();
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -167,29 +134,25 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         setSize(width, height);
         setResizable(true);
         setLocationRelativeTo(frame);
-        Dimension size = new Dimension((getSize().width * 40) / 100, (getSize().height * 59) / 100);
-        panOptions.setPreferredSize(size);
-        panOptions.setMinimumSize(size);
-        panOptions.setMaximumSize(size);
-
     }
 
     /**
      * Creates new <code>GameOptionsDialog</code> for a <code>Client</code>
      *
-     * @param client
-     *            - the <code>Client</code> parent of this dialog.
+     * @param cg
+     *            - the <code>ClientGUI</code> parent of this dialog.
      */
-    public GameOptionsDialog(ClientGUI client) {
-        super(client.frame, Messages.getString("GameOptionsDialog.title"), true); //$NON-NLS-1$
-        this.client = client;
-        init(client.frame, client.getClient().getGame().getOptions());
+    public GameOptionsDialog(ClientGUI cg) {
+        super(cg.frame, Messages.getString("GameOptionsDialog.title"), true); 
+        clientGui = cg;
+        frame = cg.getFrame();
+        init(frame, cg.getClient().getGame().getOptions());
     }
 
-    public GameOptionsDialog(JFrame frame, GameOptions options, boolean shouldSave) {
-        super(frame, Messages.getString("GameOptionsDialog.title"), true);
-        // $NON-NLS-1$
+    public GameOptionsDialog(JFrame jf, GameOptions options, boolean shouldSave) {
+        super(jf, Messages.getString("GameOptionsDialog.title"), true);
         performSave = shouldSave;
+        frame = jf;
         init(frame, options);
         butOkay.setEnabled(false);
     }
@@ -197,6 +160,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void update(GameOptions options) {
         this.options = options;
         refreshOptions();
+        butUnofficial.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL));
+        butLegacy.setSelected(GUIPreferences.getInstance().getBoolean(GUIPreferences.OPTIONS_SHOW_LEGACY));
+        toggleOptions(butUnofficial.isSelected(), "Unofficial");
+        toggleOptions(butLegacy.isSelected(), "Legacy");
     }
 
     private void send() {
@@ -214,8 +181,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
 
-        if ((client != null) && (changed.size() > 0)) {
-            client.getClient().sendGameOptions(texPass.getText(), changed);
+        if ((clientGui != null) && (changed.size() > 0)) {
+            clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
 
@@ -263,12 +230,36 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         }
 
         addSearchPanel();
-
-        // Make the width accomadate the longest game option label
-        // without needing to scroll horizontally.
-        setSize(Math.max(getSize().width, maxOptionWidth + 30), Math.max(getSize().height, 400));
-
         validate();
+    }
+    
+    /** 
+     * When show is true, options that contain the given String str are shown.
+     * When show is false, these options are hidden and deselected. 
+     * Used to show/hide unofficial and legcy options.
+     */
+    private void toggleOptions(boolean show, String str) {
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            // Each option in the list should have the same value, so picking the first is fine
+            if (comps.size() > 0) {
+                DialogOptionComponent comp = comps.get(0);
+                if (comp.getOption().getDisplayableName().contains(str)) {
+                    comp.setVisible(show);
+                    // Disable hidden options
+                    if (!show && comp.getOption().getType() == IOption.BOOLEAN) {
+                        comp.setSelected(false);
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean shouldShow(DialogOptionComponent comp) {
+        boolean hiddenUnofficial = !butUnofficial.isSelected() 
+                && comp.getOption().getDisplayableName().contains(UNOFFICIAL);
+        boolean hiddenLegacy = !butLegacy.isSelected() 
+                && comp.getOption().getDisplayableName().contains(LEGACY);
+        return !hiddenLegacy && !hiddenUnofficial;
     }
 
     private void refreshSearchPanel() {
@@ -284,25 +275,27 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
-        ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
-        for (List<DialogOptionComponent> comps : optionComps.values()) {
-            ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
-            for (DialogOptionComponent comp : comps) {
-                String optName = comp.option.getDisplayableName().toLowerCase();
-                String optDesc = comp.option.getDescription().toLowerCase();
-                if ((optName.contains(searchText) || optDesc.contains(searchText)) && !searchText.equals("")) {
-                    DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
-                    newComp.setEditable(comp.getEditable());
-                    searchComps.add(newComp);
-                    newComps.add(newComp);
+        if (!searchText.equals("")) {
+            ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
+            for (List<DialogOptionComponent> comps : optionComps.values()) {
+                ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
+                for (DialogOptionComponent comp : comps) {
+                    String optName = comp.option.getDisplayableName().toLowerCase();
+                    String optDesc = comp.option.getDescription().toLowerCase();
+                    if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
+                        DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
+                        newComp.setEditable(comp.getEditable());
+                        searchComps.add(newComp);
+                        newComps.add(newComp);
+                    }
                 }
+                comps.addAll(newComps);
+                allNewComps.addAll(newComps);
             }
-            comps.addAll(newComps);
-            allNewComps.addAll(newComps);
-        }
-        Collections.sort(allNewComps);
-        for (DialogOptionComponent comp : allNewComps) {
-            panSearchOptions.add(comp);
+            Collections.sort(allNewComps);
+            for (DialogOptionComponent comp : allNewComps) {
+                panSearchOptions.add(comp);
+            }
         }
         // panSearchOptions.validate();
         panOptions.repaint();
@@ -311,6 +304,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private JPanel addGroup(IOptionGroup group) {
         JPanel groupPanel = new JPanel();
         JScrollPane scrOptions = new JScrollPane(groupPanel);
+        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
         groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
         scrOptions.setAutoscrolls(true);
         scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -323,15 +317,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     private void addSearchPanel() {
         JPanel panSearch = new JPanel();
         JScrollPane scrOptions = new JScrollPane(panSearch);
+        scrOptions.getVerticalScrollBar().setUnitIncrement(16);
+        panSearch.setLayout(new BoxLayout(panSearch, BoxLayout.PAGE_AXIS));
         scrOptions.setAutoscrolls(true);
         scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Panel for holding the label and text field for searching
-        JPanel panText = new JPanel();
+        var panSearchBar = new FixedYPanel();
         JLabel lblSearch = new JLabel(Messages.getString("GameOptionsDialog.Search") + ":");
-        txtSearch = new JTextField("");
-	lblSearch.setLabelFor(txtSearch);
+        lblSearch.setLabelFor(txtSearch);
         lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -348,34 +343,11 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         });
 
-        panText.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.insets = new Insets(10, 5, 15, 5);
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.NONE;
-        panText.add(lblSearch, gbc);
-        gbc.gridx++;
-        gbc.weightx = 0.7;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panText.add(txtSearch, gbc);
-
-        panSearchOptions = new JPanel();
-        panSearchOptions.setLayout(new BoxLayout(panSearchOptions, BoxLayout.Y_AXIS));
-
-        panSearch.setLayout(new GridBagLayout());
-        gbc.gridx = gbc.gridy = 0;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 0.7;
-        panSearch.add(panText, gbc);
-        gbc.gridy++;
-        gbc.weighty = 0.7;
-
-        gbc.fill = GridBagConstraints.BOTH;
-        panSearch.add(panSearchOptions, gbc);
-
+        panSearchOptions.setLayout(new BoxLayout(panSearchOptions, BoxLayout.PAGE_AXIS));
+        panSearchBar.add(lblSearch);
+        panSearchBar.add(txtSearch);
+        panSearch.add(panSearchBar);
+        panSearch.add(panSearchOptions);
         panOptions.addTab(Messages.getString("GameOptionsDialog.Search"), scrOptions);
     }
 
@@ -388,77 +360,77 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         groupPanel.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth, optionComp.getPreferredSize().width);
 
-        if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_DEPLOY_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || !(options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_INF_MOVE_MULTI)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || !(options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() // $NON-NLS-1$
-                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() // $NON-NLS-1$
+        } else if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { 
+            if ((options.getOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)).booleanValue() 
+                    || (options.getOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) { // $NON-NLS-1$
-            if (!(options.getOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) { 
+            if (!(options.getOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)) { 
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)) { // $NON-NLS-1$
-            if (!options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)) { 
+            if (!options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)) { // $NON-NLS-1$
-            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)).booleanValue() // $NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)) { 
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)).booleanValue() 
                     || !editable) {
                 optionComp.setEditable(false);
             }
@@ -553,113 +525,113 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
 
-        if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_EVEN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-        }
-        if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_MULTI.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_INF_MOVE_LATER.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+        }
+        if (OptionsConstants.INIT_PROTOS_MOVE_EVEN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-        }
-        if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(!state);
-            }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
-        if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+        if (OptionsConstants.INIT_PROTOS_MOVE_MULTI.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+        }
+        if (OptionsConstants.INIT_PROTOS_MOVE_LATER.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
             }
         }
         if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(false);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_DEPLOY_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(false);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_EVEN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_MULTI); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.INIT_INF_MOVE_LATER); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
@@ -683,22 +655,22 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setSelected(false);
             }
         }
-        if ("vacuum".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("fire"); //$NON-NLS-1$
+        if ("vacuum".equals(option.getName())) { 
+            comps = optionComps.get("fire"); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED); // $NON-NLS-1$
+        if (OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS1); // $NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS1); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
@@ -711,49 +683,49 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.ADVCOMBAT_TACOPS_LOS1.equals(option.getName())) { // $NON-NLS-1$
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES); // $NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_LOS1.equals(option.getName())) { 
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.resetToDefault();
             }
         }
         if (option.getName().equals(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
-            comps = optionComps.get(OptionsConstants.RPG_BEGIN_SHUTDOWN); //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.RPG_BEGIN_SHUTDOWN); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
-            comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED); // $NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED); 
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
         if (option.getName().equals(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
-            if (client != null) {
-                for (Entity ent : client.getClient().getGame().getEntitiesVector()) {
+            if (clientGui != null) {
+                for (Entity ent : clientGui.getClient().getGame().getEntitiesVector()) {
                     if (ent instanceof Mech) {
                         ((Mech) ent).setBAGrabBars();
                     }
@@ -771,7 +743,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         butDefaults.addActionListener(this);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
-
+        butUnofficial.addActionListener(this);
+        butLegacy.addActionListener(this);
+        
+        panButtons.add(butUnofficial);
+        panButtons.add(butLegacy);
+        panButtons.add(Box.createHorizontalStrut(30));
         panButtons.add(butOkay);
         panButtons.add(butCancel);
         panButtons.add(butDefaults);
@@ -780,16 +757,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
 
     private void setupPassword() {
-        panPassword.setLayout(new BorderLayout());
-	labPass.setLabelFor(texPass);
-        panPassword.add(labPass, BorderLayout.WEST);
-        panPassword.add(texPass, BorderLayout.CENTER);
+        labPass.setLabelFor(texPass);
+        panPassword.add(labPass);
+        panPassword.add(texPass);
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             cancelled = false;
-            if (client != null) {
+            if (clientGui != null) {
                 send();
             }
             if (performSave) {
@@ -833,15 +809,41 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             return;
         } else if (e.getSource().equals(butCancel)) {
             cancelled = true;
+        } else if (e.getSource().equals(butUnofficial)) {
+            if (!butUnofficial.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning")); 
+                if (!okay) {
+                    butUnofficial.removeActionListener(this);
+                    butUnofficial.setSelected(true);
+                    butUnofficial.addActionListener(this);
+                    return;
+                }
+            }
+            toggleOptions(butUnofficial.isSelected(), "Unofficial");
+            refreshSearchPanel();
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_UNOFFICIAL, butUnofficial.isSelected());
+            return;
+        } else if (e.getSource().equals(butLegacy)) {
+            if (!butLegacy.isSelected()) {
+                boolean okay = MMConfirmDialog.confirm(frame, "Warning", getString("GameOptionsDialog.HideWarning"));
+                if (!okay) {
+                    butLegacy.removeActionListener(this);
+                    butLegacy.setSelected(true);
+                    butLegacy.addActionListener(this);
+                    return;
+                }
+            }
+            toggleOptions(butLegacy.isSelected(), "Legacy");
+            refreshSearchPanel();
+            GUIPreferences.getInstance().setValue(GUIPreferences.OPTIONS_SHOW_LEGACY, butLegacy.isSelected());
+            return;
         }
         setVisible(false);
     }
 
     private File selectGameOptionsFile(boolean saveDialog) {
-        JFileChooser fc = new JFileChooser("mmconf"); //$NON-NLS-1$
+        JFileChooser fc = new JFileChooser("mmconf"); 
         fc.setLocation(getLocation().x + 150, getLocation().y + 100);
-        // fc.setDialogTitle(Messages.getString(
-        // "GameOptionsDialog.FileChooser.title")); //$NON-NLS-1$
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
@@ -852,11 +854,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                         DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
-                        if (listOfComponents.getLength() > 0) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return listOfComponents.getLength() > 0;
                     } catch (Exception e) {
                         return false;
                     }
@@ -867,15 +865,11 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
             @Override
             public String getDescription() {
-                return "GameOptions"; //$NON-NLS-1$
+                return "GameOptions"; 
             }
         });
         int returnVal;
-        if (saveDialog) {
-            returnVal = fc.showSaveDialog(this);
-        } else {
-            returnVal = fc.showOpenDialog(this);
-        }
+        returnVal = saveDialog ? fc.showSaveDialog(this) : fc.showOpenDialog(this);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             return null;
         }
@@ -906,6 +900,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
         texPass.setEnabled(editable);
         butOkay.setEnabled(editable);
         butDefaults.setEnabled(editable);
+        butUnofficial.setEnabled(editable);
+        butLegacy.setEnabled(editable);
 
         // Update our data element.
         this.editable = editable;

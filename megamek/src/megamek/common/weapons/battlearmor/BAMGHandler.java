@@ -19,7 +19,6 @@ package megamek.common.weapons.battlearmor;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;

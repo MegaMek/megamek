@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
@@ -200,7 +201,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent by a teammate.
         GamePlayerChatEvent mockChatEvent = Mockito.mock(GamePlayerChatEvent.class);
         String chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": " +
-                             ChatCommands.FLEE.getAbbreviation();
+                             ChatCommands.FLEE.getAbbreviation() + ": " + CardinalEdge.NORTH.getIndex();
         Mockito.when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         Mockito.when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         Princess mockPrincess = Mockito.spy(new Princess(mockBotPlayerVGer.getName(), "test", 1, LOG_LEVEL));

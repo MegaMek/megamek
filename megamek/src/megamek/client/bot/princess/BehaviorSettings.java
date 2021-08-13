@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import java.util.Set;
  * @lastModifiedBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 8/17/13 10:47 PM
  */
-public class BehaviorSettings {
+public class BehaviorSettings implements Serializable {
 
     static final double[] SELF_PRESERVATION_VALUES = {
             2.5,
@@ -103,8 +104,8 @@ public class BehaviorSettings {
     private int selfPreservationIndex = 5; // How worried about enemy damage am I?
     private int fallShameIndex = 5; // How much do I want to avoid failed Piloting Rolls?
     private int hyperAggressionIndex = 5; // How close to I want to get to my enemies?
-    private CardinalEdge destinationEdge = CardinalEdge.NEAREST_OR_NONE; // Which edge am I trying to reach?
-    private CardinalEdge retreatEdge = CardinalEdge.NEAREST_OR_NONE; // To which edge will my units flee when crippled?
+    private CardinalEdge destinationEdge = CardinalEdge.NONE; // Which edge am I trying to reach?
+    private CardinalEdge retreatEdge = CardinalEdge.NEAREST; // To which edge will my units flee when crippled?
     private final Set<String> strategicBuildingTargets = new HashSet<>(); // What (besides enemy units) do I want to
     // blow up?
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
@@ -172,7 +173,7 @@ public class BehaviorSettings {
      * @return TRUE if I should immediately proceed to my home board edge.
      */
     public boolean shouldGoHome() {
-        return destinationEdge != CardinalEdge.NEAREST_OR_NONE;
+        return destinationEdge != CardinalEdge.NONE;
     }
 
 
@@ -202,6 +203,7 @@ public class BehaviorSettings {
 
     /**
      * Sets the name for this type of behavior.  Must be unique in order to save.
+     * Throws a PrincessException when the description is empty.
      *
      * @param description The name to be used.
      */
@@ -683,9 +685,9 @@ public class BehaviorSettings {
             } else if ("selfPreservationIndex".equalsIgnoreCase(child.getNodeName())) {
                 setSelfPreservationIndex(child.getTextContent());
             } else if ("destinationEdge".equalsIgnoreCase(child.getNodeName())) {
-                setDestinationEdge(child.getTextContent());
+                setDestinationEdge(CardinalEdge.parseFromString(child.getTextContent()));
             } else if ("retreatEdge".equalsIgnoreCase(child.getNodeName())) {
-                setRetreatEdge(child.getTextContent());
+                setRetreatEdge(CardinalEdge.parseFromString(child.getTextContent()));
             } else if ("herdMentalityIndex".equalsIgnoreCase(child.getNodeName())) {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
@@ -722,8 +724,6 @@ public class BehaviorSettings {
      */
     Element toXml(final Document doc,
                   final boolean includeTargets) {
-        final String METHOD_NAME = "toXml(Document, boolean)";
-        
         try {
             final Element behavior = doc.createElement("behavior");
 
@@ -732,11 +732,11 @@ public class BehaviorSettings {
             behavior.appendChild(nameNode);
 
             final Element destinationEdgeNode = doc.createElement("destinationEdge");
-            destinationEdgeNode.setTextContent("" + getDestinationEdge().getIndex());
+            destinationEdgeNode.setTextContent(getDestinationEdge().toString());
             behavior.appendChild(destinationEdgeNode);
             
             final Element retreatEdgeNode = doc.createElement("retreatEdge");
-            retreatEdgeNode.setTextContent("" + getRetreatEdge().getIndex());
+            retreatEdgeNode.setTextContent(getRetreatEdge().toString());
             behavior.appendChild(retreatEdgeNode);
 
             final Element forcedWithdrawalNode = doc.createElement("forcedWithdrawal");

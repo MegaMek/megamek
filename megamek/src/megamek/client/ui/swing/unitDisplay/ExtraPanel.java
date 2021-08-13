@@ -558,8 +558,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
 
         // Show searchlight
-        if (en.hasSpotlight()) {
-            if (en.isUsingSpotlight()) {
+        if (en.hasSearchlight()) {
+            if (en.isUsingSearchlight()) {
                 carrysR.append(Messages.getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
             } else {
                 carrysR.append(Messages.getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
@@ -588,7 +588,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             boolean hasTSM = false;
             boolean mtHeat = false;
-            if (((Mech) en).hasTSM()) {
+            if (((Mech) en).hasTSM(false)) {
                 hasTSM = true;
             }
 

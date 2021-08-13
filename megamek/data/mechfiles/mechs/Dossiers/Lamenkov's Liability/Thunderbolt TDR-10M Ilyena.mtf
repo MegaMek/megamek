@@ -131,3 +131,16 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+
+manufacturer:Earthwerks Incorporated
+primaryfactory:Keystone,
+systemmanufacturer:CHASSIS:Earthwerks
+systemmode:CHASSIS:TDR
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260
+systemmanufacturer:ARMOR:Ryerson
+systemmode:ARMOR:150
+systemmanufacturer:COMMUNICATIONS:Neil
+systemmode:COMMUNICATIONS:8000
+systemmanufacturer:TARGETING:RCA
+systemmode:TARGETING:Instatrac Mark X

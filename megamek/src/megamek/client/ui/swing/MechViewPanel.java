@@ -1,181 +1,121 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MCopyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
-/*
- * MechViewPanel.java
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Created on November 2, 2009 by Jay Lawson
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.ui.swing;
 
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Insets;
+import java.awt.event.*;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
-import megamek.common.Entity;
-import megamek.common.MechView;
+import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
+import megamek.common.*;
 import megamek.common.templates.TROView;
 
-
+/* Created on November 2, 2009 by Jay Lawson */
 public class MechViewPanel extends JPanel {
-    
-    /**
-     * 
-     */
+
     private static final long serialVersionUID = 2438490306644271135L;
-    
-    private JTextPane txtMek;
-    private JLabel lblMek;
+
+    private JTextPane txtMek = new JTextPane();
+    private JLabel lblMek = new JLabel();
     private JScrollPane scrMek;
-    private Icon icon;
-    
-    public static final int DEFAULT_WIDTH = 350;
+
+    public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
-    
+
     public MechViewPanel() {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, true);
     }
-    
-    public MechViewPanel(int width, int height) {
-        this(width,height,true);
-    }
-    
+
     public MechViewPanel(int width, int height, boolean noBorder) {
- 
-        icon = null;
-        
-        txtMek = new JTextPane();
         ReportDisplay.setupStylesheet(txtMek);
-        txtMek.setText("");
         txtMek.setEditable(false);
-        txtMek.setBorder(null);
+        txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
         txtMek.setPreferredSize(new Dimension(width, height));
-        lblMek = new JLabel();
-        lblMek.setText("");
-        lblMek.setVerticalAlignment(SwingConstants.TOP);
         scrMek = new JScrollPane(txtMek);
-        if (noBorder){
+        if (noBorder) {
             scrMek.setBorder(null);
         }
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         scrMek.setPreferredSize(new Dimension(width, height));
         scrMek.setMinimumSize(new Dimension(width, height));
-        GridBagConstraints c;
-        GridBagLayout gridbag = new GridBagLayout();
-        setLayout(gridbag);
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(scrMek, c);
-        add(scrMek);
 
-        c.insets = new Insets(0,0,0,0);
-        c.gridx = 1;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(lblMek, c);
-        add(lblMek);
+        var textPanel = new FixedXPanel(new GridLayout(1, 1));
+        textPanel.add(scrMek);
+
+        var fluffPanel = new FixedXPanel();
+        fluffPanel.add(lblMek);
+
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        add(textPanel);
+        add(fluffPanel);
+        add(Box.createHorizontalGlue());
+        addMouseWheelListener(wheelForwarder);
     }
-    
-    public void setMech(Entity entity, MechView mechView){
-        reset();        
+
+    public void setMech(Entity entity, MechView mechView) {
         txtMek.setText(mechView.getMechReadout());
         txtMek.setCaretPosition(0);
-        Image image = FluffImageHelper.getFluffImage(entity);
-        icon = null;
-        if(null != image) {
-            // We don't want this window to be too big, so scale large images
-            if (image.getWidth(this) > DEFAULT_WIDTH)
-            {
-                double aspect_ratio = (float)image.getWidth(this) / image.getHeight(this);
-                image = image.getScaledInstance(DEFAULT_WIDTH, 
-                        (int)(DEFAULT_WIDTH/aspect_ratio), Image.SCALE_FAST);
-            }            
-            icon = new ImageIcon(image);
-            lblMek.setIcon(icon);
-        }  
+        setFluffImage(entity);
     }
-    
-    public void setMech(Entity entity, TROView troView){
-        reset();
+
+    public void setMech(Entity entity, TROView troView) {
         txtMek.setText(troView.processTemplate());
         txtMek.setCaretPosition(0);
-        Image image = FluffImageHelper.getFluffImage(entity);
-        icon = null;
-        if (null != image) {
-            // We don't want this window to be too big, so scale large images
-            if (image.getWidth(this) > DEFAULT_WIDTH)
-            {
-                double aspect_ratio = (float)image.getWidth(this) / image.getHeight(this);
-                image = image.getScaledInstance(DEFAULT_WIDTH, 
-                        (int)(DEFAULT_WIDTH/aspect_ratio), Image.SCALE_FAST);
-            }            
-            icon = new ImageIcon(image);
-            lblMek.setIcon(icon);
-        }  
+        setFluffImage(entity);
     }
-    
-    public void setMech(Entity entity) {
-        MechView mechView = new MechView(entity, false);
-        setMech(entity,mechView);
-    }
-    
+
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
         setMech(entity,mechView);
     }
-    
+
+    private void setFluffImage(Entity entity) {
+        Image image = FluffImageHelper.getFluffImage(entity);
+        // Scale down to the default width if the image is wider than that
+        if (null != image) {
+            if (image.getWidth(this) > DEFAULT_WIDTH) {
+                image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
+            }          
+            lblMek.setIcon(new ImageIcon(image));
+        } else {
+            lblMek.setIcon(null);
+        }
+    }
+
     public void reset() {
         txtMek.setText("");
         lblMek.setIcon(null);
     }
-    
-    public int getBestWidth() {
-        int width = DEFAULT_WIDTH;
-        if(null != icon) {
-            width += icon.getIconWidth() + 20;
+
+    /** Forwards a mouse wheel scroll on the fluff image or free space to the TRO entry. */ 
+    MouseWheelListener wheelForwarder = e -> {
+        MouseWheelEvent converted = (MouseWheelEvent) SwingUtilities.convertMouseEvent(MechViewPanel.this, e, scrMek);
+        for (MouseWheelListener listener : scrMek.getMouseWheelListeners()) {
+            listener.mouseWheelMoved(converted);
         }
-        return width;
-    }
-    
-    public int getBestHeight() {
-        int height = DEFAULT_HEIGHT;
-        if(null != icon) {
-            height = Math.max(height, icon.getIconHeight());
-        }
-        return height;
-    }
-    
+    };
 }

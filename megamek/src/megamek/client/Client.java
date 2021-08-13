@@ -15,28 +15,14 @@
  */
 package megamek.client;
 
-import java.awt.*;
-import java.awt.image.RenderedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import com.thoughtworks.xstream.XStream;
-
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
-import megamek.client.generator.skillGenerators.ModifiedConstantSkillGenerator;
+import megamek.client.generator.skillGenerators.TotalWarfareSkillGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -54,6 +40,18 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 /**
  * This class is instantiated for each client and for each bot running on that
@@ -203,7 +201,7 @@ public class Client implements IClientCommandHandler {
             commandsHash.put(direction.toLowerCase(), tileCommand);
         }
 
-        setSkillGenerator(new ModifiedConstantSkillGenerator());
+        setSkillGenerator(new TotalWarfareSkillGenerator());
     }
 
     public int getLocalPlayerNumber() {

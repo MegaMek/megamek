@@ -21,7 +21,10 @@ package megamek.common.enums;
 import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum SkillLevel {
     //region Enum Declarations
@@ -40,7 +43,7 @@ public enum SkillLevel {
 
     //region Constructors
     SkillLevel(final String name, final String toolTipText) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages", new EncodeControl());
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", new EncodeControl());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }
@@ -100,6 +103,13 @@ public enum SkillLevel {
             default:
                 return new int[]{ 4, 5 };
         }
+    }
+
+    /**
+     * @return a list of all skill levels that can be selected for random generation
+     */
+    public static List<SkillLevel> getGeneratableValues() {
+        return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
     }
 
     @Override

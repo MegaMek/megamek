@@ -127,7 +127,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
-    private JButton m_bRandomSkills = new JButton(Messages.getString("RandomSkillDialog.title"));
+    private JButton m_bRandomSkills = new JButton(Messages.getString("SkillGenerationDialog.title"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
@@ -784,7 +784,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
-            new RandomSkillDialog(m_clientgui.getFrame(), m_clientgui).showDialog();
+            new SkillGenerationDialog(m_clientgui.getFrame(), m_clientgui).showDialog();
         }
     }
 

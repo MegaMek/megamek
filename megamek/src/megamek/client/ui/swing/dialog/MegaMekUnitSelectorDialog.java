@@ -118,7 +118,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
-                int[] skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
+                int[] skills = clientGUI.getClient().getSkillGenerator().generateRandomSkills(e, true);
 
                 int gunnery = skills[0];
                 int piloting = skills[1];
@@ -132,7 +132,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 }
 
                 if (e.getCrew() instanceof LAMPilot) {
-                    skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
+                    skills = clientGUI.getClient().getSkillGenerator().generateRandomSkills(e, true);
                     ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
                     ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }

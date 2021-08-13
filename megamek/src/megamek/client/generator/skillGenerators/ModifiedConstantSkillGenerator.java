@@ -19,15 +19,7 @@
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
-import megamek.common.BattleArmor;
-import megamek.common.ConvFighter;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.Mech;
-import megamek.common.SmallCraft;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.enums.SkillLevel;
 
 public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {

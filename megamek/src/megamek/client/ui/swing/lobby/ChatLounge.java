@@ -1474,12 +1474,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
             player.setEmail(psd.getEmail());
-            var rsg = c.getRandomSkillsGenerator();
-            rsg.setMethod(psd.getMethod());
-            rsg.setType(psd.getPilot());
-            rsg.setLevel(psd.getXP());
-            rsg.setClose(psd.getForceGP());
-            
+
+            if (psd.getSkillGenerationOptionsPanel().getMethod() != c.getSkillGenerator().getMethod()) {
+                c.setSkillGenerator(psd.getSkillGenerationOptionsPanel().getMethod().getGenerator());
+            }
+            c.getSkillGenerator().setType(psd.getSkillGenerationOptionsPanel().getType());
+            c.getSkillGenerator().setLevel(psd.getSkillGenerationOptionsPanel().getSkillLevel());
+            c.getSkillGenerator().setForceClose(psd.getSkillGenerationOptionsPanel().isForceClose());
+
             // The deployment position
             int startPos = psd.getStartPos();
             final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
@@ -1564,7 +1566,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
+
     }
 
     public void loadRandomNames() {
@@ -1655,10 +1657,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     
     private ActionListener lobbyListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent ev) {
-
             // Are we ignoring events?
             if (isIgnoringEvents()) {
                 return;
@@ -1666,28 +1666,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             
             if (ev.getSource().equals(butAdd)) {
                 addUnit();
-                
             } else if (ev.getSource().equals(butArmy)) {
                 createArmy();
-                
             } else if (ev.getSource().equals(butSkills)) {
-                loadRandomSkills();
-                
+                new SkillGenerationDialog(clientgui.getFrame(), clientgui).showDialog();
             } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
-                
             } else if (ev.getSource().equals(tablePlayers)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(comboTeam)) {
                 lobbyActions.changeTeam(getselectedPlayers(), comboTeam.getSelectedIndex());
-                
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
-                
             } else if (ev.getSource().equals(butOptions)) {
                 // Make sure the game options dialog is editable.
                 if (!clientgui.getGameOptionsDialog().isEditable()) {

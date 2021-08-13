@@ -431,11 +431,11 @@ public class LobbyActions {
         for (Entity e: entities) {
             Client c = lobby.getLocalClient(e);
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                int[] skills = c.getSkillGenerator().generateRandomSkills(e, true);
                 e.getCrew().setGunnery(skills[0], i);
                 e.getCrew().setPiloting(skills[1], i);
                 if (e.getCrew() instanceof LAMPilot) {
-                    skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    skills = c.getSkillGenerator().generateRandomSkills(e, true);
                     ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
                     ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
                 }

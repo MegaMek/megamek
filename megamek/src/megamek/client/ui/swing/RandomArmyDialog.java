@@ -784,7 +784,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
-            new SkillGenerationDialog(m_clientgui.getFrame(), m_clientgui).showDialog();
+            new SkillGenerationDialog(m_clientgui.getFrame(), m_clientgui, new ArrayList<>()).showDialog();
         }
     }
 

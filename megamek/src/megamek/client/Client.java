@@ -1478,8 +1478,8 @@ public class Client implements IClientCommandHandler {
             game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
             break;
         case Packet.COMMAND_CHANGE_HEXES:
-            List<Coords> coords = new ArrayList<Coords>((Set<Coords>) c.getObject(0));
-            List<IHex> hexes = new ArrayList<IHex>((Set<IHex>) c.getObject(1));
+            List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
+            List<IHex> hexes = new ArrayList<>((Set<IHex>) c.getObject(1));
             game.getBoard().setHexes(coords, hexes);
             break;
         case Packet.COMMAND_BLDG_UPDATE:

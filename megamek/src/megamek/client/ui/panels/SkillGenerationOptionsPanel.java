@@ -18,20 +18,24 @@
  */
 package megamek.client.ui.panels;
 
+import megamek.client.Client;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
 import megamek.client.ui.baseComponents.AbstractPanel;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MMToggleButton;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class SkillGenerationOptionsPanel extends AbstractPanel {
     //region Variable Declarations
     private final ClientGUI clientGUI;
+    private Client client;
     private MMComboBox<SkillGeneratorMethod> comboMethod;
     private MMComboBox<SkillGeneratorType> comboType;
     private MMComboBox<SkillLevel> comboSkillLevel;
@@ -39,9 +43,11 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
     //endregion Variable Declarations
 
     //region Constructors
-    public SkillGenerationOptionsPanel(final JFrame frame, final ClientGUI clientGUI) {
+    public SkillGenerationOptionsPanel(final JFrame frame, final ClientGUI clientGUI,
+                                       final @Nullable Client client) {
         super(frame, "SkillGenerationOptionsPanel");
         this.clientGUI = clientGUI;
+        setClient((client == null) ? getClientGUI().getClient() : client);
         initialize();
     }
     //endregion Constructors
@@ -51,12 +57,16 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return clientGUI;
     }
 
-    public MMComboBox<SkillGeneratorMethod> getComboMethod() {
-        return comboMethod;
+    public Client getClient() {
+        return client;
     }
 
-    public SkillGeneratorMethod getMethod() {
-        return getComboMethod().getSelectedItem();
+    public void setClient(final Client client) {
+        this.client = client;
+    }
+
+    public MMComboBox<SkillGeneratorMethod> getComboMethod() {
+        return comboMethod;
     }
 
     public void setComboMethod(final MMComboBox<SkillGeneratorMethod> comboMethod) {
@@ -67,10 +77,6 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return comboType;
     }
 
-    public SkillGeneratorType getType() {
-        return getComboType().getSelectedItem();
-    }
-
     public void setComboType(final MMComboBox<SkillGeneratorType> comboType) {
         this.comboType = comboType;
     }
@@ -79,20 +85,12 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return comboSkillLevel;
     }
 
-    public SkillLevel getSkillLevel() {
-        return getComboSkillLevel().getSelectedItem();
-    }
-
     public void setComboSkillLevel(final MMComboBox<SkillLevel> comboSkillLevel) {
         this.comboSkillLevel = comboSkillLevel;
     }
 
     public MMToggleButton getTglForceClose() {
         return tglForceClose;
-    }
-
-    public boolean isForceClose() {
-        return getTglForceClose().isSelected();
     }
 
     public void setTglForceClose(final MMToggleButton tglForceClose) {
@@ -111,7 +109,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         setComboMethod(new MMComboBox<>("comboMethod", SkillGeneratorMethod.values()));
         getComboMethod().setToolTipText(resources.getString("lblMethod.toolTipText"));
         getComboMethod().setName("comboMethod");
-        getComboMethod().setSelectedItem(getClientGUI().getClient().getSkillGenerator().getMethod());
+        getComboMethod().setSelectedItem(getClient().getSkillGenerator().getMethod());
         getComboMethod().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
@@ -132,7 +130,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         setComboType(new MMComboBox<>("comboType", SkillGeneratorType.values()));
         getComboType().setToolTipText(resources.getString("lblType.toolTipText"));
         getComboType().setName("comboType");
-        getComboType().setSelectedItem(getClientGUI().getClient().getSkillGenerator().getType());
+        getComboType().setSelectedItem(getClient().getSkillGenerator().getType());
         getComboType().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
@@ -155,7 +153,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         setComboSkillLevel(new MMComboBox<>("comboSkillLevel", skillLevelModel));
         getComboSkillLevel().setToolTipText(resources.getString("lblSkillLevel.toolTipText"));
         getComboSkillLevel().setName("comboSkillLevel");
-        getComboSkillLevel().setSelectedItem(getClientGUI().getClient().getSkillGenerator().getLevel());
+        getComboSkillLevel().setSelectedItem(getClient().getSkillGenerator().getLevel());
         getComboSkillLevel().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
@@ -172,7 +170,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         setTglForceClose(new MMToggleButton(resources.getString("tglForceClose.text")));
         getTglForceClose().setToolTipText(resources.getString("tglForceClose.toolTipText"));
         getTglForceClose().setName("tglForceClose");
-        getTglForceClose().setSelected(getClientGUI().getClient().getSkillGenerator().isForceClose());
+        getTglForceClose().setSelected(getClient().getSkillGenerator().isForceClose());
 
         // Programmatically Assign Accessibility Labels
         lblMethod.setLabelFor(getComboMethod());
@@ -215,4 +213,30 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         );
     }
     //endregion Initialization
+
+    public void changeClient(final @Nullable Client client) {
+        if ((client == null) || client.getName().equalsIgnoreCase(getClient().getName())) {
+            return;
+        }
+        updateClient();
+        setClient(client);
+        setValuesFromClient();
+    }
+
+    public void updateClient() {
+        final SkillGeneratorMethod method = Objects.requireNonNull(getComboMethod().getSelectedItem());
+        if (method != getClient().getSkillGenerator().getMethod()) {
+            getClient().setSkillGenerator(method.getGenerator());
+        }
+        getClient().getSkillGenerator().setType(getComboType().getSelectedItem());
+        getClient().getSkillGenerator().setLevel(getComboSkillLevel().getSelectedItem());
+        getClient().getSkillGenerator().setForceClose(getTglForceClose().isSelected());
+    }
+
+    private void setValuesFromClient() {
+        getComboMethod().setSelectedItem(getClient().getSkillGenerator().getMethod());
+        getComboType().setSelectedItem(getClient().getSkillGenerator().getType());
+        getComboSkillLevel().setSelectedItem(getClient().getSkillGenerator().getLevel());
+        getTglForceClose().setSelected(getClient().getSkillGenerator().isForceClose());
+    }
 }

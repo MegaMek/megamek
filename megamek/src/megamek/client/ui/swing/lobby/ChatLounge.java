@@ -1473,14 +1473,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFVibra(psd.getVibMines());
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
+            psd.getSkillGenerationOptionsPanel().updateClient();
             player.setEmail(psd.getEmail());
-
-            if (psd.getSkillGenerationOptionsPanel().getMethod() != c.getSkillGenerator().getMethod()) {
-                c.setSkillGenerator(psd.getSkillGenerationOptionsPanel().getMethod().getGenerator());
-            }
-            c.getSkillGenerator().setType(psd.getSkillGenerationOptionsPanel().getType());
-            c.getSkillGenerator().setLevel(psd.getSkillGenerationOptionsPanel().getSkillLevel());
-            c.getSkillGenerator().setForceClose(psd.getSkillGenerationOptionsPanel().isForceClose());
 
             // The deployment position
             int startPos = psd.getStartPos();
@@ -1669,7 +1663,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butArmy)) {
                 createArmy();
             } else if (ev.getSource().equals(butSkills)) {
-                new SkillGenerationDialog(clientgui.getFrame(), clientgui).showDialog();
+                new SkillGenerationDialog(clientgui.getFrame(), clientgui,
+                        clientgui.getClient().getGame().getEntitiesVector()).showDialog();
             } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
             } else if (ev.getSource().equals(tablePlayers)) {
@@ -1688,10 +1683,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Display the game options dialog.
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
-                
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
-                
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current
                 // list of entities with a list from a file.

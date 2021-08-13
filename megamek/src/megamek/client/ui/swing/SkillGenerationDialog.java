@@ -18,22 +18,32 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.Client;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMButton;
+import megamek.client.ui.baseComponents.MMComboBox;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
+import megamek.common.Entity;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SkillGenerationDialog extends AbstractButtonDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
+    private final List<Entity> entities;
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
     //endregion Variable Declarations
 
     //region Constructors
-    public SkillGenerationDialog(final JFrame frame, final ClientGUI clientGUI) {
+    public SkillGenerationDialog(final JFrame frame, final ClientGUI clientGUI,
+                                 final List<Entity> entities) {
         super(frame, "SkillGenerationDialog", "SkillGenerationDialog.title");
         this.clientGUI = clientGUI;
+        this.entities = entities;
         initialize();
     }
     //endregion Constructors
@@ -41,6 +51,10 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     //region Getters/Setters
     public ClientGUI getClientGUI() {
         return clientGUI;
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
     }
 
     public SkillGenerationOptionsPanel getSkillGenerationOptionsPanel() {
@@ -55,11 +69,74 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     //region Initialization
     @Override
     protected Container createCenterPane() {
-        setSkillGenerationOptionsPanel(new SkillGenerationOptionsPanel(getFrame(), getClientGUI()));
+        setSkillGenerationOptionsPanel(new SkillGenerationOptionsPanel(getFrame(), getClientGUI(), null));
 
         final JScrollPane scrollPane = new JScrollPane(getSkillGenerationOptionsPanel());
         scrollPane.setName("skillGenerationPane");
         return scrollPane;
     }
+
+    @Override
+    protected JPanel createButtonPanel() {
+        final JPanel panel = new JPanel(new GridLayout(1, 0));
+
+        if (!getEntities().isEmpty()) {
+            panel.add(new MMButton("btnRandomize", resources.getString("Randomize.text"),
+                    resources.getString("SkillGenerationDialog.btnRandomize.toolTipText"),
+                    evt -> {
+                getSkillGenerationOptionsPanel().updateClient();
+                final Client client = getSkillGenerationOptionsPanel().getClient();
+                for (final Entity entity : getEntities()) {
+                    if (entity.getOwnerId() != client.getLocalPlayer().getId()) {
+                        continue;
+                    }
+
+                    final int[] skills = client.getSkillGenerator().generateRandomSkills(entity);
+                    for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+                        entity.getCrew().setGunnery(skills[0], i);
+                        entity.getCrew().setGunneryL(skills[0], i);
+                        entity.getCrew().setGunneryM(skills[0], i);
+                        entity.getCrew().setGunneryB(skills[0], i);
+                        entity.getCrew().setPiloting(skills[1], i);
+                    }
+                    entity.getCrew().sortRandomSkills();
+                    client.sendUpdateEntity(entity);
+                }
+                setResult(DialogResult.CONFIRMED);
+                setVisible(false);
+            }));
+        }
+
+        panel.add(new MMButton("btnSave", resources.getString("Save.text"),
+                resources.getString("SkillGenerationDialog.btnSave.toolTipText"),
+                this::okButtonActionPerformed));
+
+        panel.add(new MMButton("btnCancel", resources.getString("Cancel.text"),
+                resources.getString("Cancel.toolTipText"), this::cancelActionPerformed));
+
+        final DefaultComboBoxModel<String> clientsModel = new DefaultComboBoxModel<>();
+        clientsModel.addElement(getClientGUI().getClient().getName());
+        clientsModel.addAll(getClientGUI().getBots().values().stream().map(Client::getName)
+                .collect(Collectors.toList()));
+        final MMComboBox<String> comboClients = new MMComboBox<>("comboClients", clientsModel);
+        comboClients.setToolTipText(resources.getString("comboClients.toolTipText"));
+        comboClients.setSelectedItem(getClientGUI().getClient());
+        comboClients.setEnabled(comboClients.getItemCount() > 1);
+        comboClients.addActionListener(evt -> getSkillGenerationOptionsPanel().changeClient(
+                (comboClients.getSelectedIndex() > 0)
+                        ? getClientGUI().getBots().get(comboClients.getSelectedItem())
+                        : getClientGUI().getClient()));
+        panel.add(comboClients);
+
+        return panel;
+    }
     //endregion Initialization
+
+    //region Button Actions
+    @Override
+    protected void okAction() {
+        super.okAction();
+        getSkillGenerationOptionsPanel().updateClient();
+    }
+    //endregion Button Actions
 }

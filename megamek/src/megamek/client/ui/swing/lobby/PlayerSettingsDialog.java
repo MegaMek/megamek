@@ -239,7 +239,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         final JPanel skillsPanel = new OptionPanel(PSD + "header.skills");
         skillsPanel.setName("skillsPanel");
 
-        skillGenerationOptionsPanel = new SkillGenerationOptionsPanel(clientgui.getFrame(), clientgui);
+        skillGenerationOptionsPanel = new SkillGenerationOptionsPanel(clientgui.getFrame(), clientgui, client);
         skillGenerationOptionsPanel.setBorder(BorderFactory.createEmptyBorder(8, 25, 5, 25));
         skillGenerationOptionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         skillsPanel.add(skillGenerationOptionsPanel);

@@ -76,9 +76,8 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
         final int gunneryRoll = Compute.d6(1) + bonus;
         final int pilotingRoll = Compute.d6(1) + bonus;
 
-        int gunneryLevel;
-        int pilotingLevel;
-
+        final int gunneryLevel;
+        final int pilotingLevel;
         switch (level) {
             case REGULAR:
                 gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 2;
@@ -93,18 +92,12 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 4;
                 break;
             default:
-                gunneryLevel = (int) Math.ceil((gunneryRoll + 0.5) / 2.0);
-                pilotingLevel = (int) Math.ceil((pilotingRoll + 0.5) / 2.0);
-                if (gunneryRoll <= 0) {
-                    gunneryLevel = 0;
-                }
-                if (pilotingRoll <= 0) {
-                    pilotingLevel = 0;
-                }
+                gunneryLevel = (int) Math.max(Math.ceil((gunneryRoll + 0.5) / 2.0), 0);
+                pilotingLevel = (int) Math.max(Math.ceil((pilotingRoll + 0.5) / 2.0), 0);
                 break;
         }
 
-        int[] skills = new int[]{ SKILL_LEVELS[0][gunneryLevel], SKILL_LEVELS[1][pilotingLevel] };
+        final int[] skills = new int[]{ SKILL_LEVELS[0][gunneryLevel], SKILL_LEVELS[1][pilotingLevel] };
 
         if (isForceClose()) {
             skills[1] = skills[0] + 1;

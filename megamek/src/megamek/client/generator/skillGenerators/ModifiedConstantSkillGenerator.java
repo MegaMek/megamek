@@ -44,15 +44,15 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
     @Override
     public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
         if (getType().isManeiDomini()) {
-            //according to JHS72 pg. 121, they are always considered elite
+            // JHS72 pg. 121, they are always considered elite
             return SkillLevel.ELITE.getDefaultSkillValues();
         }
 
         final int[] skills = super.generateRandomSkills(entity, forceClan);
 
-        //Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
+        // Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
         // Infantry Anti-'Mech skill should be one higher unless foot
-        if (entity.isConventionalInfantry() && (entity.getMovementMode() != EntityMovementMode.INF_LEG)) {
+        if (entity.isConventionalInfantry() && !entity.getMovementMode().isLegInfantry()) {
             skills[1]++;
         }
 

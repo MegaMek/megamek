@@ -25,25 +25,32 @@ import java.util.ResourceBundle;
 
 public enum SkillLevel {
     //region Enum Declarations
-    NONE("SkillLevel.NONE.text"),
-    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text"),
-    GREEN("SkillLevel.GREEN.text"),
-    REGULAR("SkillLevel.REGULAR.text"),
-    VETERAN("SkillLevel.VETERAN.text"),
-    ELITE("SkillLevel.ELITE.text");
+    NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText"),
+    ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText"),
+    GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText"),
+    REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText"),
+    VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText"),
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
     private final String name;
-
+    private final String toolTipText;
     //endregion Variable Declarations
 
     //region Constructors
-    SkillLevel(final String name) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", new EncodeControl());
+    SkillLevel(final String name, final String toolTipText) {
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages", new EncodeControl());
         this.name = resources.getString(name);
+        this.toolTipText = resources.getString(toolTipText);
     }
     //endregion Constructors
+
+    //region Getters
+    public String getToolTipText() {
+        return toolTipText;
+    }
+    //endregion Getters
 
     //region Boolean Comparisons
     public boolean isNone() {

@@ -18,6 +18,11 @@
  */
 package megamek.client.generator.enums;
 
+import megamek.client.generator.skillGenerators.*;
+import megamek.common.util.EncodeControl;
+
+import java.util.ResourceBundle;
+
 public enum SkillGeneratorMethod {
     //region Enum Declarations
     TOTAL_WARFARE("SkillGeneratorMethod.TOTAL_WARFARE.text", "SkillGeneratorMethod.TOTAL_WARFARE.toolTipText"),
@@ -33,8 +38,9 @@ public enum SkillGeneratorMethod {
 
     //region Constructors
     SkillGeneratorMethod(final String name, final String toolTipText) {
-        this.name = name;
-        this.toolTipText = toolTipText;
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages", new EncodeControl());
+        this.name = resources.getString(name);
+        this.toolTipText = resources.getString(toolTipText);
     }
     //endregion Constructors
 
@@ -61,6 +67,20 @@ public enum SkillGeneratorMethod {
         return this == MODIFIED_CONSTANT;
     }
     //endregion Boolean Comparisons
+
+    public AbstractSkillGenerator getGenerator() {
+        switch (this) {
+            case TAHARQA:
+                return new TaharqaSkillGenerator();
+            case CONSTANT:
+                return new ConstantSkillGenerator();
+            case MODIFIED_CONSTANT:
+                return new ModifiedConstantSkillGenerator();
+            case TOTAL_WARFARE:
+            default:
+                return new TotalWarfareSkillGenerator();
+        }
+    }
 
     @Override
     public String toString() {

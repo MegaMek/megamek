@@ -18,6 +18,10 @@
  */
 package megamek.client.generator.enums;
 
+import megamek.common.util.EncodeControl;
+
+import java.util.ResourceBundle;
+
 public enum SkillGeneratorType {
     //region Enum Declarations
     INNER_SPHERE("SkillGeneratorType.INNER_SPHERE.text", "SkillGeneratorType.INNER_SPHERE.toolTipText"),
@@ -32,8 +36,9 @@ public enum SkillGeneratorType {
 
     //region Constructors
     SkillGeneratorType(final String name, final String toolTipText) {
-        this.name = name;
-        this.toolTipText = toolTipText;
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages", new EncodeControl());
+        this.name = resources.getString(name);
+        this.toolTipText = resources.getString(toolTipText);
     }
     //endregion Constructors
 

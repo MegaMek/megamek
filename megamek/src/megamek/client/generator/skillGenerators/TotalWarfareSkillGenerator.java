@@ -20,13 +20,7 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.enums.SkillLevel;
 
 public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {

@@ -173,7 +173,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             mainPanel.add(mineSection());
         }
-        mainPanel.add(skillSection());
+        mainPanel.add(skillsSection());
         if (!(client instanceof BotClient)) {
             mainPanel.add(emailSection());
         }
@@ -235,16 +235,16 @@ public class PlayerSettingsDialog extends ClientDialog {
         return result;
     }
 
-    private JPanel skillSection() {
-        final JPanel skillPanel = new OptionPanel(PSD + "header.skills");
-        skillPanel.setName("skillPanel");
+    private JPanel skillsSection() {
+        final JPanel skillsPanel = new OptionPanel(PSD + "header.skills");
+        skillsPanel.setName("skillsPanel");
 
         skillGenerationOptionsPanel = new SkillGenerationOptionsPanel(clientgui.getFrame(), clientgui);
         skillGenerationOptionsPanel.setBorder(BorderFactory.createEmptyBorder(8, 25, 5, 25));
         skillGenerationOptionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        skillPanel.add(skillGenerationOptionsPanel);
+        skillsPanel.add(skillGenerationOptionsPanel);
 
-        return skillPanel;
+        return skillsPanel;
     }
 
     private JPanel emailSection() {

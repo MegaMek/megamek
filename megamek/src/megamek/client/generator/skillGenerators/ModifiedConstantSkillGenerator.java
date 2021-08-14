@@ -70,6 +70,6 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
             }
         }
 
-        return skills;
+        return cleanReturn(entity, skills);
     }
 }

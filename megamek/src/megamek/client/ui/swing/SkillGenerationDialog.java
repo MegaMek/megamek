@@ -91,15 +91,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                         continue;
                     }
 
-                    final int[] skills = client.getSkillGenerator().generateRandomSkills(entity);
-                    for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
-                        entity.getCrew().setGunnery(skills[0], i);
-                        entity.getCrew().setGunneryL(skills[0], i);
-                        entity.getCrew().setGunneryM(skills[0], i);
-                        entity.getCrew().setGunneryB(skills[0], i);
-                        entity.getCrew().setPiloting(skills[1], i);
-                    }
-                    entity.getCrew().sortRandomSkills();
+                    client.getSkillGenerator().setRandomSkills(entity);
                     client.sendUpdateEntity(entity);
                 }
                 setResult(DialogResult.CONFIRMED);

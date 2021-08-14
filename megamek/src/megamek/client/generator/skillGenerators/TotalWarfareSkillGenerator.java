@@ -19,16 +19,19 @@
 package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
-import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Mech;
+import megamek.common.Tank;
 import megamek.common.enums.SkillLevel;
 
 public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     //region Variable Declarations
     private static final long serialVersionUID = 1120383901354362683L;
 
-    private static final int[][] SKILL_LEVELS = new int[][] { { 7, 6, 5, 4, 4, 3, 2, 1, 0 },
-            { 7, 7, 6, 6, 5, 4, 3, 2, 1 } };
+    protected static final int[][] SKILL_LEVELS = new int[][] {
+            { 7, 6, 5, 4, 4, 3, 2, 1, 0, 0 },
+            { 7, 7, 6, 6, 5, 4, 3, 2, 1, 0 } };
     //endregion Variable Declarations
 
     //region Constructors
@@ -48,24 +51,7 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
 
     protected int[] generateRandomSkills(final SkillLevel level, final Entity entity,
                                          final boolean forceClan) {
-        final SkillGeneratorType type = (forceClan && entity.isClan()) ? SkillGeneratorType.CLAN : getType();
-
-        // First, we determine  the bonus
-        int bonus = 0;
-        if (type.isClan()) {
-            if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
-                bonus += 2;
-            } else if ((entity instanceof Tank) || (entity instanceof Infantry)) {
-                bonus -= 2;
-            }
-        } else if (type.isManeiDomini()) {
-            bonus++;
-        }
-
-        // Demands of dual training
-        if (entity instanceof LandAirMech) {
-            bonus -= 2;
-        }
+        final int bonus = determineBonus(entity, forceClan);
 
         final int gunneryRoll = Compute.d6(1) + bonus;
         final int pilotingRoll = Compute.d6(1) + bonus;
@@ -73,6 +59,14 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
         final int gunneryLevel;
         final int pilotingLevel;
         switch (level) {
+            case ULTRA_GREEN:
+                gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0);
+                pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0);
+                break;
+            case GREEN:
+                gunneryLevel = (int) Math.ceil((gunneryRoll + 0.5) / 2.0);
+                pilotingLevel = (int) Math.ceil((pilotingRoll + 0.5) / 2.0);
+                break;
             case REGULAR:
                 gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 2;
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 2;
@@ -85,18 +79,30 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
                 gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 4;
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 4;
                 break;
+            case HEROIC:
             default:
-                gunneryLevel = (int) Math.max(Math.ceil((gunneryRoll + 0.5) / 2.0), 0);
-                pilotingLevel = (int) Math.max(Math.ceil((pilotingRoll + 0.5) / 2.0), 0);
+                gunneryLevel = (int) Math.ceil(gunneryRoll / 2.0) + 5;
+                pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 5;
                 break;
         }
 
-        final int[] skills = new int[]{ SKILL_LEVELS[0][gunneryLevel], SKILL_LEVELS[1][pilotingLevel] };
+        return cleanReturn(entity, SKILL_LEVELS[0][gunneryLevel], SKILL_LEVELS[1][pilotingLevel]);
+    }
 
-        if (isForceClose()) {
-            skills[1] = skills[0] + 1;
+    /**
+     * @param entity the entity whose crew skill is being rolled
+     * @param forceClan whether to force clan generation for a clan entity
+     * @return the bonus to use on the Random Skills Table (Expanded) roll
+     */
+    protected int determineBonus(final Entity entity, final boolean forceClan) {
+        if (getType().isClan() || (forceClan && entity.isClan())) {
+            if (entity instanceof Mech) {
+                return 2;
+            } else if (entity instanceof Tank) {
+                return -2;
+            }
         }
 
-        return skills;
+        return 0;
     }
 }

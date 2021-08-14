@@ -33,7 +33,8 @@ public enum SkillLevel {
     GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText"),
     REGULAR("SkillLevel.REGULAR.text", "SkillLevel.REGULAR.toolTipText"),
     VETERAN("SkillLevel.VETERAN.text", "SkillLevel.VETERAN.toolTipText"),
-    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText");
+    ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText"),
+    HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
@@ -79,6 +80,10 @@ public enum SkillLevel {
     public boolean isElite() {
         return this == ELITE;
     }
+
+    public boolean isHeroic() {
+        return this == HEROIC;
+    }
     //endregion Boolean Comparisons
 
     /**
@@ -99,6 +104,8 @@ public enum SkillLevel {
                 return new int[]{ 3, 4 };
             case ELITE:
                 return new int[]{ 2, 3 };
+            case HEROIC:
+                return new int[]{ 1, 2 };
             case REGULAR:
             default:
                 return new int[]{ 4, 5 };

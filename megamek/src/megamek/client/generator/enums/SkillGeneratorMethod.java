@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 public enum SkillGeneratorMethod {
     //region Enum Declarations
     TOTAL_WARFARE("SkillGeneratorMethod.TOTAL_WARFARE.text", "SkillGeneratorMethod.TOTAL_WARFARE.toolTipText"),
+    MODIFIED_TOTAL_WARFARE("SkillGeneratorMethod.MODIFIED_TOTAL_WARFARE.text", "SkillGeneratorMethod.MODIFIED_TOTAL_WARFARE.toolTipText"),
     TAHARQA("SkillGeneratorMethod.TAHARQA.text", "SkillGeneratorMethod.TAHARQA.toolTipText"),
     CONSTANT("SkillGeneratorMethod.CONSTANT.text", "SkillGeneratorMethod.CONSTANT.toolTipText"),
     MODIFIED_CONSTANT("SkillGeneratorMethod.MODIFIED_CONSTANT.text", "SkillGeneratorMethod.MODIFIED_CONSTANT.toolTipText");
@@ -55,6 +56,10 @@ public enum SkillGeneratorMethod {
         return this == TOTAL_WARFARE;
     }
 
+    public boolean isModifiedTotalWarfare() {
+        return this == MODIFIED_TOTAL_WARFARE;
+    }
+
     public boolean isTaharqa() {
         return this == TAHARQA;
     }
@@ -70,15 +75,17 @@ public enum SkillGeneratorMethod {
 
     public AbstractSkillGenerator getGenerator() {
         switch (this) {
+            case TOTAL_WARFARE:
+                return new TotalWarfareSkillGenerator();
             case TAHARQA:
                 return new TaharqaSkillGenerator();
             case CONSTANT:
                 return new ConstantSkillGenerator();
             case MODIFIED_CONSTANT:
                 return new ModifiedConstantSkillGenerator();
-            case TOTAL_WARFARE:
+            case MODIFIED_TOTAL_WARFARE:
             default:
-                return new TotalWarfareSkillGenerator();
+                return new ModifiedTotalWarfareSkillGenerator();
         }
     }
 

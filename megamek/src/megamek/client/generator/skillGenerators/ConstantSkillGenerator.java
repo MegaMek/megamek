@@ -46,6 +46,6 @@ public class ConstantSkillGenerator extends AbstractSkillGenerator {
      */
     @Override
     public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
-        return getLevel().getDefaultSkillValues();
+        return cleanReturn(entity, getLevel().getDefaultSkillValues());
     }
 }

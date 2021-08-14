@@ -22,7 +22,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
 import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
-import megamek.client.generator.skillGenerators.TotalWarfareSkillGenerator;
+import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -201,7 +201,7 @@ public class Client implements IClientCommandHandler {
             commandsHash.put(direction.toLowerCase(), tileCommand);
         }
 
-        setSkillGenerator(new TotalWarfareSkillGenerator());
+        setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
     }
 
     public int getLocalPlayerNumber() {

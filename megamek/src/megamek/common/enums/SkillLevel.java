@@ -86,7 +86,11 @@ public enum SkillLevel {
     }
 
     public boolean isVeteranOrGreater() {
-        return isVeteran() || isElite() || isHeroic();
+        return isVeteran() || isEliteOrGreater();
+    }
+
+    public boolean isEliteOrGreater() {
+        return isElite() || isHeroic();
     }
     //endregion Boolean Comparisons
 

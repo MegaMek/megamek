@@ -20,6 +20,7 @@ import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.*;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.*;
 import megamek.common.util.sorter.NaturalOrderComparator;
@@ -570,7 +571,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * @return the selected entity
      */
-    public Entity getSelectedEntity() {
+    public @Nullable Entity getSelectedEntity() {
         int view = tableUnits.getSelectedRow();
         if (view < 0) {
             // selection got filtered away
@@ -582,13 +583,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-        } catch (EntityLoadingException e) {
+        } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
                             + ": " + e.getMessage(), e);
             return null;
         }
     }
 
+    @Override
     public void run() {
         // Loading mechs can take a while, so it will have its own thread for MegaMek
         // This prevents the UI from freezing, and allows the

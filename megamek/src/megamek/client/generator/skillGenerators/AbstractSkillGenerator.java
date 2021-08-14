@@ -121,7 +121,8 @@ public abstract class AbstractSkillGenerator implements Serializable {
 
     /**
      * Generates random skills for an entity based on the current settings of the random skills
-     * generator, but does not assign those new skills to that entity
+     * generator, but does not assign those new skills to that entity. The return value MUST be
+     * cleaned with cleanReturn for this setup to work properly.
      * @param entity the Entity to generate a random skill array for
      * @param forceClan forces the type to be clan if the entity is a clan unit
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative

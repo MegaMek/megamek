@@ -84,6 +84,10 @@ public enum SkillLevel {
     public boolean isHeroic() {
         return this == HEROIC;
     }
+
+    public boolean isVeteranOrGreater() {
+        return isVeteran() || isElite() || isHeroic();
+    }
     //endregion Boolean Comparisons
 
     /**
@@ -118,6 +122,37 @@ public enum SkillLevel {
     public static List<SkillLevel> getGeneratableValues() {
         return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
     }
+
+    //region File I/O
+    public static SkillLevel parseFromString(final String text) {
+        try {
+            return valueOf(text);
+        } catch (Exception ignored) {
+
+        }
+
+        try {
+            switch (Integer.parseInt(text)) {
+                case 0:
+                    return GREEN;
+                case 1:
+                    return REGULAR;
+                case 2:
+                    return VETERAN;
+                case 3:
+                    return ELITE;
+                default:
+                    break;
+            }
+        } catch (Exception ignored) {
+
+        }
+
+        MegaMek.getLogger().error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
+
+        return REGULAR;
+    }
+    //endregion File I/O
 
     @Override
     public String toString() {

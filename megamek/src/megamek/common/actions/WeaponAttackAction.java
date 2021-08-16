@@ -41,6 +41,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
@@ -53,7 +54,6 @@ import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
-import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
@@ -4274,12 +4274,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(WeaponType.F_MEK_MORTAR) 
                 && (atype != null) && (munition == AmmoType.M_AIRBURST);
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
-            ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+            ToHitData immobileMod = null;
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
             if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
+            } else {
+                immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             }
+            
             if (immobileMod != null) {
                 toHit.append(immobileMod);
                 toSubtract += immobileMod.getValue();
@@ -4294,8 +4297,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // large support tanks get a -1 per TW
-        if (te instanceof LargeSupportTank) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportTank"));
+        if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
         }
         
         // "grounded small craft" get a -1 per TW

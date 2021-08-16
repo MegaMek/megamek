@@ -16168,5 +16168,4 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean partOfForce() {
         return forceId != Force.NO_FORCE;
     }
-
 }

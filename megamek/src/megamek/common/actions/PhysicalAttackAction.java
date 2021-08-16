@@ -16,6 +16,7 @@
 
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -27,7 +28,6 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.RangeType;
@@ -235,18 +235,18 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             // target prone
             if (te.isProne()) {
-                toHit.addModifier(-2, "target prone and adjacent");
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             }
 
-            if (te instanceof LargeSupportTank) {
-                toHit.addModifier(-2, "target is large support tank");
+            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
             }
 
             if (te instanceof SmallCraft) {
                 if (te instanceof Dropship) {
-                    toHit.addModifier(-4, "target is dropship");
+                    toHit.addModifier(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
                 } else {
-                    toHit.addModifier(-2, "target is small craft");
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
                 }
             }
 

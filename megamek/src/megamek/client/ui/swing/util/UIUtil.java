@@ -31,7 +31,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.text.html.StyleSheet;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -56,8 +58,17 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
-    
-    
+
+    private static StyleSheet UI_DEFAULTS = new StyleSheet();
+    private static StyleSheet HTML_DEFAULTS = null;
+
+    static {
+        UIManager.addPropertyChangeListener(
+            (e) -> updateHtmlDefaultStylesheet()
+        );
+        updateHtmlDefaultStylesheet();
+    }
+
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < count; i++) {
@@ -68,14 +79,8 @@ public final class UIUtil {
 
     public static void setupForHtml(JTextPane pane) {
         var toolkit = new BASE64ToolKit();
-        var font = UIManager.getFont("Label.font");
-        pane.setContentType("text/html");
+        toolkit.setStyleSheet(UI_DEFAULTS);
         pane.setEditorKit(toolkit);
-        toolkit.getStyleSheet().addRule(
-            "* { font-family: " + font.getFamily() + "; " +
-            "font-size: " + scaleForGUI(font.getSize()) + "pt; " +
-            "font-style: normal; }"
-        );
     }
 
     /** 
@@ -955,6 +960,26 @@ public final class UIUtil {
             menuItem.setFont(scaledFont);
         } 
     }
-    
+
+    private static void updateHtmlDefaultStylesheet() {
+        MegaMek.getLogger().warning("XXX updating style");
+
+        if (HTML_DEFAULTS != null) {
+            UI_DEFAULTS.removeStyleSheet(HTML_DEFAULTS);
+            HTML_DEFAULTS = null;
+        }
+
+        var font = UIManager.getFont("Label.font");
+        HTML_DEFAULTS = new StyleSheet();
+        HTML_DEFAULTS.addRule(
+            "pre {" +
+            "font-family: " + font.getFamily() + "; " +
+            "font-size: " + font.getSize() + "pt; " +
+            "font-style: normal;" +
+            "}"
+        );
+
+        UI_DEFAULTS.addStyleSheet(HTML_DEFAULTS);
+    }
 
 }

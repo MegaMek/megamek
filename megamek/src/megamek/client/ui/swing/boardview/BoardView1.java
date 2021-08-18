@@ -1103,7 +1103,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             repaint();
         }
         if (e.getName().equals(GUIPreferences.INCLINES)) {
-            game.getBoard().initializeAllAutomaticTerrain();
+            game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
             clearHexImageCache();
             repaint();
         }

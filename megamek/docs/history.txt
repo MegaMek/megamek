@@ -37,6 +37,8 @@ VERSION HISTORY:
 + PR #3072: Hidden Units is now Enabled by default
 + Issue #3065: Prevent units from winding up with an illegal facing as a result of a fish tail, and in general.
 + Issue #3042: Properly Set Anti-Mek Skill For Battle Armour and Infantry
++ PR #3082: AbstractUnitSelectorDialog: Properly Catching NPEs and other MechFileParser Exceptions in getSelectedEntity
++ PR #2980: Do not use GUIPreferences from Board
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

@@ -4274,7 +4274,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(WeaponType.F_MEK_MORTAR) 
                 && (atype != null) && (munition == AmmoType.M_AIRBURST);
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
-            ToHitData immobileMod = null;
+            ToHitData immobileMod;
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
             if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {

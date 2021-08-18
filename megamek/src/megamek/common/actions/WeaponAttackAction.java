@@ -41,6 +41,7 @@ import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
@@ -63,6 +64,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.QuadVee;
 import megamek.common.RangeType;
+import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.SpecialResolutionTracker;
 import megamek.common.SupportTank;
@@ -74,6 +76,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.TripodMech;
+import megamek.common.UnitType;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
@@ -4271,13 +4274,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(WeaponType.F_MEK_MORTAR) 
                 && (atype != null) && (munition == AmmoType.M_AIRBURST);
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
-            ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+            ToHitData immobileMod;
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
-            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)
-                    && ((Aero) te).isSpheroid()) {
+            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
+            } else {
+                immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             }
+            
             if (immobileMod != null) {
                 toHit.append(immobileMod);
                 toSubtract += immobileMod.getValue();
@@ -4287,8 +4292,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unit-specific modifiers
         
         // -1 to hit a SuperHeavy mech
-        if (te != null && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if ((te != null) && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+        }
+        
+        // large support tanks get a -1 per TW
+        if ((te != null) && (te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
+        }
+        
+        // "grounded small craft" get a -1 per TW
+        if ((te instanceof SmallCraft) && (te.getUnitType() == UnitType.SMALL_CRAFT) && !te.isAirborne() && !te.isSpaceborne()) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
         }
         
         // Battle Armor targets are hard for Meks and Tanks to hit.

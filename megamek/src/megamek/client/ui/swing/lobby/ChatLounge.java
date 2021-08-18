@@ -1559,9 +1559,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
-    public void loadRandomSkills() {
-
-    }
 
     public void loadRandomNames() {
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
@@ -1577,8 +1574,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewGameBoard();
         }
     }
-    
-    
 
     //
     // GameListener

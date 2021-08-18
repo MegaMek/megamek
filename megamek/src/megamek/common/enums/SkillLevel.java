@@ -102,8 +102,8 @@ public enum SkillLevel {
     public int[] getDefaultSkillValues() {
         switch (this) {
             case NONE:
-                MegaMek.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 10, 10 }");
-                return new int[]{ 10, 10 };
+                MegaMek.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
+                return new int[]{ 8, 8 };
             case ULTRA_GREEN:
                 return new int[]{ 6, 7 };
             case GREEN:

@@ -31332,6 +31332,10 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_PRINCESS_SETTINGS:
                 if (player != null) {
+                    if (game.getBotSettings() == null) {
+                        game.setBotSettings(new HashMap<>());
+                    }
+                    
                     game.getBotSettings().put(player.getName(), (BehaviorSettings)packet.getObject(0));
                 }
                 break;

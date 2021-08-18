@@ -120,15 +120,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             if (cs.useAverageSkills()) {
                 int[] skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
 
-                int gunnery = skills[0];
-                int piloting = skills[1];
-
-                e.getCrew().setGunnery(gunnery, i);
-                // For infantry, piloting doubles as anti-mek skill, and this is
-                // set based on whether the unit has anti-mek training, which gets
-                // set in the BLK file, so we should ignore the defaults
-                if (!(e instanceof Infantry)) {
-                    e.getCrew().setPiloting(piloting, i);
+                e.getCrew().setGunnery(skills[0], i);
+                // For conventional infantry, piloting doubles as anti-mek skill, and this is set
+                // based on  whether the unit has anti-mek training, which gets set in the BLK file.
+                // We therefore check if they are anti-mek trained before setting
+                if (!e.isConventionalInfantry() || ((Infantry) e).isAntiMekTrained()) {
+                    e.getCrew().setPiloting(skills[1], i);
                 }
 
                 if (e.getCrew() instanceof LAMPilot) {

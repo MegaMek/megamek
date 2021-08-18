@@ -101,8 +101,10 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             // Name
             gridPanel.add(new JLabel(ghost.getName()));
             
+            boolean savedSettingsExist = (savedSettings != null) && savedSettings.containsKey(ghost.getName());
+            
             // Does it have a princess config saved
-            if (savedSettings.containsKey(ghost.getName())) {
+            if (savedSettingsExist) {
                 gridPanel.add(new JLabel(Messages.getString("ReplacePlayersDialog.configAvailable")));
             } else {
                 gridPanel.add(new JLabel(""));                
@@ -111,7 +113,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             // The replacement chooser
             var chooser = new JComboBox<String>(replacements);
             playerChoosers.put(ghost, chooser);
-            if (savedSettings.containsKey(ghost.getName())) {
+            if (savedSettingsExist) {
                 chooser.setSelectedItem(PRINCESS_STRING);
                 botConfigs.put(ghost, savedSettings.get(ghost.getName()));
             }
@@ -123,7 +125,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             // The bot config button
             var button = new JButton(Messages.getString("ReplacePlayersDialog.config"));
             button.addActionListener(e -> callConfig(ghost));
-            button.setEnabled(savedSettings.containsKey(ghost.getName()));
+            button.setEnabled(savedSettingsExist);
             configButtons.put(ghost, button);
             var panel = new JPanel();
             panel.add(button);

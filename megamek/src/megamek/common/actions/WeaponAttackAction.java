@@ -4297,7 +4297,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // large support tanks get a -1 per TW
-        if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+        if ((te != null)) && (te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
         }
         

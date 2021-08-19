@@ -4013,7 +4013,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Target SPAs
         if (te != null) {
             // Shaky Stick -  Target gets a +1 bonus against Ground-to-Air attacks
-            if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
+            if (te.hasAbility(OptionsConstants.PILOT_SHAKY_STICK) 
+                    && (te.isAirborne() || te.isAirborneVTOLorWIGE()) 
                     && !ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ShakyStick"));
             }

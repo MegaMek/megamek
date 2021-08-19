@@ -14293,6 +14293,7 @@ public class Server implements Runnable {
                     ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret());
                     ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret2());
                     Report r = new Report(3033);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     addReport(r);
                 } else {

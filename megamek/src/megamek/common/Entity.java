@@ -6382,11 +6382,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;
-        if (pendingINarcPods.size() > 0) {
+
+        if (!pendingINarcPods.isEmpty()) {
             iNarcPods.addAll(pendingINarcPods);
-            pendingINarcPods = new ArrayList<INarcPod>();
+            pendingINarcPods.clear();
         }
-        if (pendingNarcPods.size() > 0) {
+
+        if (!pendingNarcPods.isEmpty()) {
             narcPods.addAll(pendingNarcPods);
             pendingNarcPods.clear();
         }
@@ -6761,12 +6763,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * has the team attached a narc pod to me?
      */
     public boolean isNarcedBy(int nTeamID) {
-        for (NarcPod p : narcPods) {
-            if (p.getTeam() == nTeamID) {
-                return true;
-            }
-        }
-        return false;
+        return narcPods.stream().anyMatch(pod -> pod.getTeam() == nTeamID);
     }
 
     /**
@@ -6794,13 +6791,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if the Entity is narced by that team.
      */
     public boolean isINarcedBy(int nTeamID) {
-        for (INarcPod pod : iNarcPods) {
-            if ((pod.getTeam() == nTeamID)
-                && (pod.getType() == INarcPod.HOMING)) {
-                return true;
-            }
-        }
-        return false;
+        return iNarcPods.stream().anyMatch(pod -> (pod.getTeam() == nTeamID) && (pod.getType() == INarcPod.HOMING));
     }
 
     /**
@@ -6810,12 +6801,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return <code>true</code> if we have.
      */
     public boolean isINarcedWith(long type) {
-        for (INarcPod pod : iNarcPods) {
-            if (pod.getType() == type) {
-                return true;
-            }
-        }
-        return false;
+        return iNarcPods.stream().anyMatch(pod -> pod.getType() == type);
     }
 
     /**
@@ -11649,32 +11635,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * those still 'stuck' to destroyed or missing locations.
      */
     public void clearDestroyedNarcPods() {
-        for (Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext(); ) {
-            if (!locationCanHoldNarcPod(i.next().getLocation())) {
-                i.remove();
-            }
-        }
-        for (Iterator<NarcPod> i = narcPods.iterator(); i.hasNext(); ) {
-            if (!locationCanHoldNarcPod(i.next().getLocation())) {
-                i.remove();
-            }
-        }
-        for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext(); ) {
-            if (!locationCanHoldNarcPod(i.next().getLocation())) {
-                i.remove();
-            }
-        }
-        for (Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext(); ) {
-            if (!locationCanHoldNarcPod(i.next().getLocation())) {
-                i.remove();
-            }
-        }
+        pendingNarcPods.removeIf(narcPod -> !locationCanHoldNarcPod(narcPod.getLocation()));
+        narcPods.removeIf(narcPod -> !locationCanHoldNarcPod(narcPod.getLocation()));
+        pendingINarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.getLocation()));
+        iNarcPods.removeIf(iNarcPod -> !locationCanHoldNarcPod(iNarcPod.getLocation()));
     }
 
-    private boolean locationCanHoldNarcPod(int location) {
+    private boolean locationCanHoldNarcPod(final int location) {
         return (getInternal(location) > 0)
                && !isLocationBlownOff(location)
                && !isLocationBlownOffThisPhase(location);
+    }
+
+    /**
+     * This clears all Narc and iNarc Pods from an Entity. It is used in MekHQ to clear this
+     * transient data.
+     */
+    public void clearNarcAndiNarcPods() {
+        pendingNarcPods.clear();
+        narcPods.clear();
+        pendingINarcPods.clear();
+        iNarcPods.clear();
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,

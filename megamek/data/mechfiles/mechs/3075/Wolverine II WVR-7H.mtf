@@ -3,32 +3,32 @@ Wolverine II
 WVR-7H
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2770
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2770
+source:TRO 3075
+rules level:2
 
-Mass:55
-Engine:275 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:55
+engine:275 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:5
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:20
-RT Armor:20
-CT Armor:20
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:20
+RT armor:20
+CT armor:20
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:3
 Ultra AC/5, Right Arm
@@ -40,14 +40,14 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -61,7 +61,7 @@ ISUltraAC5
 ISUltraAC5
 IS Ultra AC/5 Ammo
 IS Ultra AC/5 Ammo
-Endo Steel
+IS Endo Steel
 
 Left Torso:
 SRM 6
@@ -69,27 +69,27 @@ SRM 6
 ISArtemisIV
 IS Ammo SRM-6 Artemis-capable
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,7 +103,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -147,4 +147,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:Similar in many ways to the 7D, the 7H—referred to as the Wolverine II—was used by the Royal Brigades of the SLDF starting in 2770 and was also an upgrade of the 6R. It utilizes an Endo Steel structure, Ferro-Fibrous armor, and double heat sinks to increase combat capabilities. Extra armor protects the legs, while CASE protects all the ammo bins. Like the 7D, the autocannon is upgraded to an Ultra-class model and the medium laser is upgraded to a pulse version. In addition, the SRM-6 is slaved to an Artemis IV Fire Control System to improve the accuracy of the individual missiles.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Kallon Industries and SLDF Research Division
+primaryfactory:New Earth
+systemmanufacturer:CHASSIS:Crucis XL
+systemmanufacturer:ENGINE:CoreTek 275
+systemmanufacturer:ARMOR:Armorscale Ferro Fibrous with CASE
+systemmanufacturer:JUMPJET:Anderson 500
+systemmanufacturer:COMMUNICATIONS:Dalban Commline
+systemmanufacturer:TARGETING:Garret T11S
 

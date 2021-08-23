@@ -154,4 +154,20 @@ TSM
 -Empty-
 -Empty-
 
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:The 9K Wolverine introduced in 3074 uses a Light Engine for power. The resulting decrease in tonnage necessitated a complete revision of the weapon systems. Its main gun is the Snub-Nose PPC mounted in the right arm. An SRM-4 is the only other heat-building weapon mounted on the 'Mech. A trio of Light Machine Guns are also in the arm, linked to a Machine Gun Array to deter infantry. To counteract battle armor, the 9K carries a pair of B-Pods. This Wolverine variant carries a Sword in its left hand and a C3 Slave in the head to feed targeting telemetry back to lance-mates. Triple Strength Myomers make the sword more powerful and the design faster when they heat up, but a MechWarrior must disengage some of the ten double heat sinks in order to build the necessary heat. In light of the heavier engine, the inclusion of a Compact Gyro seems unhelpful at best.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Victory Industries (formerly Norse BattleMech Works)
+primaryfactory:Marduk
+systemmanufacturer:CHASSIS:Crucia-A
+systemmanufacturer:ENGINE:Nissan 275XL
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:JUMPJET:Northrup 12000
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:Cat Eyes 5
 

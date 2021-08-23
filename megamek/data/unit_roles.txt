@@ -6060,4 +6060,7 @@ Archer ARC-5CS:MISSILE_BOAT
 Warhammer WHM-7CS:BRAWLER
 Black Knight BLK-9-KNT:BRAWLER
 Marauder MAD-5CS:SNIPER
-
+#ilClan
+Jade Phoenix Prime:SNIPER
+Jade Phoenix A:SKIRMISHER
+Jade Phoenix B:SKIRMISHER

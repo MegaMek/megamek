@@ -2329,9 +2329,9 @@ public class MiscType extends EquipmentType {
         //Errata May 8/2020 - CGL requested change to TP.
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_C)
                 .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
-                .setISAdvancement(DATE_ES, 3078, 3090, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setISAdvancement(DATE_NONE, DATE_ES, 3078, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
     }
@@ -8900,8 +8900,9 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3067, 3085).setISApproximate(false, true).setPrototypeFactions(F_LC)
-                .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setISAdvancement(DATE_NONE, 3067, 3085)
+                .setISApproximate(false, false, true).setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 
@@ -8921,8 +8922,10 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "342,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setClanAdvancement(3073).setPrototypeFactions(F_CWX)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setClanAdvancement(DATE_NONE, 3073, 3085)
+                .setClanApproximate(false,false,true)
+                .setPrototypeFactions(F_CWX)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 

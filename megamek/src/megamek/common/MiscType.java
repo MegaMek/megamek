@@ -7191,7 +7191,7 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_BUZZSAW;
         misc.bv = 67;// From the Ask the Writer Forum
         // Assuming this is a variant of the Dual Saw
-        misc.rulesRefs = "243,TM";
+        misc.rulesRefs = "Unbound";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

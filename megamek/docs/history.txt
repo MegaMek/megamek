@@ -45,6 +45,7 @@ VERSION HISTORY:
 + Issue #3094: Double Blind: Fixing Unjam Turret Action Report
 + Unofficial Equipment Documentation
 + Data: Adding Rec Guides 15-18 includes Unit Roles, some Fluff, and canon quirks.
++ Data: Fixing some weapon name types and a missing princess behaviour(Ambusher) and some sprite errors.
 
 0.49.2 (2021-06-19 2330 UTC)
 + PR #2816: Board Editor Layout Scaling

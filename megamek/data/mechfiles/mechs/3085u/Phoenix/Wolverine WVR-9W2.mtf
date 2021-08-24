@@ -149,4 +149,19 @@ Improved Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Wolverine .jpg
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:Introduced in 3084 this variant has an ER medium laser and ER small laser to provide close range firepower. An Artemis IV system attached to an MML-5 and a pair of Light PPCs provide long range firepower. A C3 Slave shares targeting data, while a Guardian ECM Suite disrupts enemy electronics. Light Ferro-Fibrous armor and CASE protect the Wolverine. Seven Improved Jump Jets improve mobility.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Luthien Armor Works 
+primaryfactory:New Samarkand
+systemmanufacturer:CHASSIS:Crucis-A
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Maximillian 60
+systemmanufacturer:JUMPJET:Northrup 12000
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:Sync Tracker(39-42071)

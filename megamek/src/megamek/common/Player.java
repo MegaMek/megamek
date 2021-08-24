@@ -27,17 +27,19 @@ import java.util.Vector;
  * Represents a player in the game.
  */
 public final class Player extends TurnOrdered implements IPlayer {
-    private static final long serialVersionUID = 6828849559007455760L;
+    private static final long serialVersionUID = 6828849559007455761L;
 
     private transient IGame game;
 
     private String name;
+    private String email;
     private int id;
 
     private int team = TEAM_NONE;
 
     private boolean done = false; // done with phase
     private boolean ghost = false; // disconnected player
+    private boolean bot = false;
     private boolean observer = false;
 
     private boolean seeEntireBoard = false; // Player can observe double blind games
@@ -76,6 +78,52 @@ public final class Player extends TurnOrdered implements IPlayer {
      * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
+
+    public Player(int id, String name) {
+        this.name = name;
+        this.id = id;
+    }
+
+    @Override
+    public IPlayer copy() {
+        var copy = new Player(this.id, this.name);
+
+        copy.email = email;
+
+        copy.game = game;
+        copy.team = team;
+
+        copy.done = done;
+        copy.ghost = ghost;
+        copy.observer = observer;
+
+        copy.seeEntireBoard = seeEntireBoard;
+
+        copy.startingPos = startingPos;
+
+        copy.numMfConv = numMfConv;
+        copy.numMfCmd = numMfCmd;
+        copy.numMfVibra = numMfVibra;
+        copy.numMfActive = numMfActive;
+        copy.numMfInferno = numMfInferno;
+
+        copy.artyAutoHitHexes = new Vector<>(artyAutoHitHexes);
+
+        copy.initialEntityCount = initialEntityCount;
+        copy.initialBV = initialBV;
+
+        copy.constantInitBonus = constantInitBonus;
+        copy.streakCompensationBonus = streakCompensationBonus;
+
+        copy.camouflage = camouflage;
+        copy.colour = colour;
+
+        copy.visibleMinefields = new Vector<>(visibleMinefields);
+
+        copy.admitsDefeat = admitsDefeat;
+
+        return copy;
+    }
 
     @Override
     public Vector<Minefield> getMinefields() {
@@ -179,11 +227,6 @@ public final class Player extends TurnOrdered implements IPlayer {
         this.camouflage = camouflage;
     }
 
-    public Player(int id, String name) {
-        this.name = name;
-        this.id = id;
-    }
-
     @Override
     public void setGame(IGame game) {
         this.game = game;
@@ -197,6 +240,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -233,6 +286,16 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public void setGhost(boolean ghost) {
         this.ghost = ghost;
+    }
+
+    @Override
+    public boolean isBot() {
+        return bot;
+    }
+
+    @Override
+    public void setBot(boolean bot) {
+        this.bot = bot;
     }
 
     @Override
@@ -587,4 +650,10 @@ public final class Player extends TurnOrdered implements IPlayer {
     public String getColorForPlayer(){
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
     }
+
+    @Override
+    public void redactPrivateData() {
+        this.email = null;
+    }
+
 }

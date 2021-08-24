@@ -35,6 +35,7 @@ dependencies {
     implementation 'com.formdev:flatlaf:0.26'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.9.8'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
 
     compile 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
@@ -49,6 +50,7 @@ mainClassName = 'megamek.MegaMek'
 
 ext {
     jvmOptions = ['-Xmx1024m']
+	userdata = "userdata"
     data = "data"
     conf = "mmconf"
     log = "logs"
@@ -112,6 +114,7 @@ task copyFiles(type: Copy) {
     // No need to copy the files that are going to be zipped
     exclude { it.file.isDirectory() && (it.file in file(unitFiles).listFiles()) }
     exclude "${rats}/**"
+    include "${userdata}/"
     
     into fileStagingDir
     

@@ -1,13 +1,4 @@
 size 32 34
-tag "Rough (Auto)"
-tag "Foliage (Auto)"
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
-tag "Cliffs (Auto)"
-tag "Roads (Auto)"
-tag "Fields (Auto)"
-tag "LowHills (Auto)"
-tag "Woods (Auto)"
 hex 0101 3 "" "grass"
 hex 0201 2 "" "grass"
 hex 0301 2 "" "grass"

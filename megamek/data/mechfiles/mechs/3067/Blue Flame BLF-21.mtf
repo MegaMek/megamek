@@ -38,7 +38,7 @@ Weapons:6
 1 ISImprovedC3CPU, Center Torso
 1 ISStreakSRM2, Head
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -52,7 +52,7 @@ Endo-Steel
 -Empty-
 -Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -122,7 +122,7 @@ Life Support
 -Empty-
 -Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -136,7 +136,7 @@ Endo-Steel
 -Empty-
 -Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator

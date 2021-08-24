@@ -20,6 +20,7 @@ package megamek.utils;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.*;
@@ -83,7 +84,16 @@ public class BoardsTagger {
         TAG_SNOWTERRAIN("SnowTerrain");
 
         private String tagName;
+        private static final Map<String, Tags> internalTagMap;
 
+        static {
+            internalTagMap = new HashMap<>();
+            
+            for (Tags tag : values()) {
+                internalTagMap.put(tag.getName().replace(AUTO_SUFFIX, ""), tag);
+            }
+        }
+        
         Tags(String name) {
             tagName = name + AUTO_SUFFIX;
         }
@@ -93,7 +103,12 @@ public class BoardsTagger {
         }
         
         public static Tags parse(String tag) {
-            return Tags.valueOf(tag.replace(AUTO_SUFFIX, ""));
+            String noAutoTag = tag.replace(AUTO_SUFFIX, "");
+            if (internalTagMap.containsKey(noAutoTag)) {
+                return internalTagMap.get(noAutoTag);
+            }
+            
+            return null;
         }
     }
 

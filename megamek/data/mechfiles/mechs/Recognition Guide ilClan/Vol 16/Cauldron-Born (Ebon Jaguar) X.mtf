@@ -1,0 +1,163 @@
+Version:1.0
+Cauldron-Born (Ebon Jaguar)
+X
+
+Config:Biped Omnimech
+techbase:Clan
+era:3075
+source:Recognition Guide:ilClan #16 - Jihad
+rules level:4
+
+mass:65
+engine:325 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:16 Clan Double
+base chassis heat sinks:13
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:17
+RA armor:17
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:9
+
+Weapons:5
+ER Medium Pulse Laser, Left Arm
+Rotary AC/5, Right Arm
+ER Medium Pulse Laser, Left Torso
+ER Small Pulse Laser, Left Torso
+ER Medium Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERSmallPulseLaser (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+ISAngelECMSuite (OMNIPOD)
+ISAngelECMSuite (OMNIPOD)
+CLCASEII (OMNIPOD)
+Clan Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien.
+capabilities:The X variant is equipped with an Angel ECM Suite for protection, and a Targeting Computer linked to the weapon systems. This configuration carries a Rotary AC/5 in the right arm, three ER Medium Pulse Lasers and a single ER Small Pulse Laser.
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7
+

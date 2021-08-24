@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved
  *
  * This file is part of MegaMek.
  *
@@ -19,12 +19,16 @@
 package megamek.client.generator;
 
 import megamek.MegaMek;
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.MegaMekConstants;
 import megamek.common.util.weightedMaps.WeightedIntMap;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -32,18 +36,12 @@ import java.util.Scanner;
  * callsign, weight
  * Callsign is a String that does not include a ','
  * Weight is an integer weight that is used during generation
- *
- * Future Ideas:
- * Have it generate based on the role in question, so you could have unique
- * callsigns for MechWarriors, Aerospace Jocks, Administrators, Doctors, etc.
  */
 public class RandomCallsignGenerator implements Serializable {
     //region Variable Declarations
     private static final long serialVersionUID = 4721410214327210288L;
 
-    private static final String CALLSIGN_FILE_NAME = "callsigns.csv";
-
-    private static WeightedIntMap<String> callsigns;
+    private static WeightedIntMap<String> weightedCallsigns;
 
     private static RandomCallsignGenerator rcg;
 
@@ -55,6 +53,16 @@ public class RandomCallsignGenerator implements Serializable {
 
     }
     //endregion Constructors
+
+    //region Getters/Setters
+    public static WeightedIntMap<String> getWeightedCallsigns() {
+        return weightedCallsigns;
+    }
+
+    public static void setWeightedCallsigns(final WeightedIntMap<String> weightedCallsigns) {
+        RandomCallsignGenerator.weightedCallsigns = weightedCallsigns;
+    }
+    //endregion Getters/Setters
 
     //region Synchronization
     /**
@@ -77,7 +85,7 @@ public class RandomCallsignGenerator implements Serializable {
         String callsign = "";
 
         if (initialized) {
-            callsign = callsigns.randomItem();
+            callsign = getWeightedCallsigns().randomItem();
         } else {
             MegaMek.getLogger().warning("Attempted to generate a callsign before the list was initialized.");
         }
@@ -94,12 +102,26 @@ public class RandomCallsignGenerator implements Serializable {
     }
 
     private void populateCallsigns() {
+        setWeightedCallsigns(new WeightedIntMap<>());
+        final Map<String, Integer> callsigns = new HashMap<>();
+        loadCallsignsFromFile(new File(MegaMekConstants.CALLSIGN_FILE_PATH), callsigns);
+        loadCallsignsFromFile(new File(MegaMekConstants.USER_CALLSIGN_FILE_PATH), callsigns);
+
+        for (final Map.Entry<String, Integer> entry : callsigns.entrySet()) {
+            getWeightedCallsigns().add(entry.getValue(), entry.getKey());
+        }
+
+        initialized = true;
+    }
+
+    private void loadCallsignsFromFile(final File file, final Map<String, Integer> callsigns) {
+        if (!file.exists()) {
+            return;
+        }
+
         int lineNumber = 0;
-        callsigns = new WeightedIntMap<>();
 
-        File callsignFile = new MegaMekFile(Configuration.namesDir(), CALLSIGN_FILE_NAME).getFile();
-
-        try (InputStream is = new FileInputStream(callsignFile);
+        try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
 
             // skip the first line, as that's the header
@@ -109,17 +131,17 @@ public class RandomCallsignGenerator implements Serializable {
             while (input.hasNextLine()) {
                 lineNumber++;
                 String[] values = input.nextLine().split(",");
-                if (values.length >= 2) {
-                    callsigns.add(Integer.parseInt(values[1]), values[0]);
+                if (values.length == 2) {
+                    callsigns.put(values[0], Integer.parseInt(values[1]));
+                } else if (values.length < 2){
+                    MegaMek.getLogger().error("Not enough fields in " + file + " on " + lineNumber);
                 } else {
-                    MegaMek.getLogger().error("Not enough fields in " + callsignFile + " on " + lineNumber);
+                    MegaMek.getLogger().error("Too many fields in " + file + " on " + lineNumber);
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to populate callsigns.", e);
+            MegaMek.getLogger().error("Failed to populate callsigns from " + file, e);
         }
-
-        initialized = true;
     }
     //endregion Initialization
 }

@@ -143,7 +143,11 @@ public final class TroopSpace implements Transporter {
         Vector<Entity> loaded = new Vector<Entity>();
         for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
-            loaded.add(game.getEntity(key));
+            Entity entity = game.getEntity(key);
+            
+            if (entity != null) {
+                loaded.add(entity);
+            }
         }
 
         return loaded;

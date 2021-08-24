@@ -23,9 +23,11 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -1567,4 +1569,8 @@ public interface IGame {
      * Called from server messages when loading a game.
      */
     abstract void setForces(Forces forces);
+    
+    public abstract Map<String, BehaviorSettings> getBotSettings();
+    
+    public abstract void setBotSettings(Map<String, BehaviorSettings> bs);
 }

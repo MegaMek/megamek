@@ -125,6 +125,17 @@ public class Princess extends BotClient {
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
     private final Set<Integer> crippledUnits = new HashSet<>();
     private MMLogger logger = null;
+    
+    /** 
+     * Returns a new Princess Bot with the given behavior and name, configured for the given
+     * host and port. The new Princess Bot outputs its settings to its own logger. 
+     */
+    public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
+        Princess result = new Princess(name, host, port, behavior.getVerbosity());
+        result.setBehaviorSettings(behavior);
+        result.getLogger().debug(result.getBehaviorSettings().toLog());
+        return result;
+    }
 
     /**
      * Constructor - initializes a new instance of the Princess bot.
@@ -1147,8 +1158,8 @@ public class Princess extends BotClient {
      * @return Whether or not the entity is falling back.
      */
     boolean isFallingBack(final Entity entity) {
-        return (getBehaviorSettings().shouldGoHome()) ||
-                (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true));
+        return (getBehaviorSettings().shouldAutoFlee() ||
+                (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true)));
     }
 
     /**
@@ -1951,6 +1962,11 @@ public class Princess extends BotClient {
         super.sendLoadGame(f);
     }
     
+    public void sendPrincessSettings() {
+        Packet packet = new Packet(Packet.COMMAND_PRINCESS_SETTINGS, behaviorSettings);
+        send(packet);
+    }
+    
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();
@@ -2127,9 +2143,9 @@ public class Princess extends BotClient {
      * launchable units in some kind of bay.
      */
     private void launchFighters(MovePath path) {
-        // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
+        // if my objective is to cross the board, even though it's tempting, I won't be leaving the aerospace
         // behind. They're not that good at screening against high speed pursuit anyway.
-        if (getBehaviorSettings().shouldGoHome()) {
+        if (getBehaviorSettings().shouldAutoFlee()) {
             return;
         }
         

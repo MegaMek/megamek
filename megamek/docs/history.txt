@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.49.4-SNAPSHOT
++ PR 3079: Skill Generation Rework
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

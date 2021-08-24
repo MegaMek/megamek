@@ -43,23 +43,23 @@ public abstract class AbstractPanel extends JPanel {
 
     //region Constructors
     /**
-     * This creates an AbstractPanel using the default MHQ resource bundle.
+     * This creates an AbstractPanel using the default resource bundle.
      */
     protected AbstractPanel(final JFrame frame, final String name) {
         this(frame, name, true);
     }
 
     /**
-     * This creates an AbstractPanel using the default MHQ resource bundle and specified double
+     * This creates an AbstractPanel using the default resource bundle and specified double
      * buffered boolean.
      */
     protected AbstractPanel(final JFrame frame, final String name, final boolean isDoubleBuffered) {
-        this(frame, ResourceBundle.getBundle("mekhq.resources.GUI", new EncodeControl()),
+        this(frame, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()),
                 name, new FlowLayout(), isDoubleBuffered);
     }
 
     /**
-     * This creates an AbstractPanel using the default MHQ resource bundle and specified layout
+     * This creates an AbstractPanel using the default resource bundle and specified layout
      * manager.
      */
     protected AbstractPanel(final JFrame frame, final String name, final LayoutManager layoutManager) {
@@ -67,7 +67,7 @@ public abstract class AbstractPanel extends JPanel {
     }
 
     /**
-     * This creates an AbstractPanel using the default MHQ resource bundle and specified layout
+     * This creates an AbstractPanel using the default resource bundle and specified layout
      * manager and double buffered boolean.
      */
     protected AbstractPanel(final JFrame frame, final String name,

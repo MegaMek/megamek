@@ -1473,13 +1473,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFVibra(psd.getVibMines());
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
+            psd.getSkillGenerationOptionsPanel().updateClient();
             player.setEmail(psd.getEmail());
-            var rsg = c.getRandomSkillsGenerator();
-            rsg.setMethod(psd.getMethod());
-            rsg.setType(psd.getPilot());
-            rsg.setLevel(psd.getXP());
-            rsg.setClose(psd.getForceGP());
-            
+
             // The deployment position
             int startPos = psd.getStartPos();
             final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
@@ -1563,9 +1559,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
-    public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
-    }
 
     public void loadRandomNames() {
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
@@ -1581,8 +1574,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewGameBoard();
         }
     }
-    
-    
 
     //
     // GameListener
@@ -1655,10 +1646,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     
     private ActionListener lobbyListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent ev) {
-
             // Are we ignoring events?
             if (isIgnoringEvents()) {
                 return;
@@ -1666,28 +1655,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             
             if (ev.getSource().equals(butAdd)) {
                 addUnit();
-                
             } else if (ev.getSource().equals(butArmy)) {
                 createArmy();
-                
             } else if (ev.getSource().equals(butSkills)) {
-                loadRandomSkills();
-                
+                new SkillGenerationDialog(clientgui.getFrame(), clientgui,
+                        clientgui.getClient().getGame().getEntitiesVector()).showDialog();
             } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
-                
             } else if (ev.getSource().equals(tablePlayers)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(comboTeam)) {
                 lobbyActions.changeTeam(getselectedPlayers(), comboTeam.getSelectedIndex());
-                
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
-                
             } else if (ev.getSource().equals(butOptions)) {
                 // Make sure the game options dialog is editable.
                 if (!clientgui.getGameOptionsDialog().isEditable()) {
@@ -1696,10 +1678,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Display the game options dialog.
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
-                
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
-                
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current
                 // list of entities with a list from a file.

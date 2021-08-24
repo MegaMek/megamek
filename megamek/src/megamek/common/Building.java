@@ -239,14 +239,14 @@ public class Building implements Serializable {
      * Basement handlers
      */
     public enum BasementType {
-        UNKNOWN(0,0, Messages.getString("Building.BasementUnknown")),
-        NONE(1,0, Messages.getString("Building.BasementNone")),
-        TWO_DEEP_FEET(2,2,Messages.getString("Building.BasementTwoDeepFeet")),
-        ONE_DEEP_FEET(3,1,Messages.getString("Building.BasementOneDeepFeet")),
-        ONE_DEEP_NORMAL(4,1,Messages.getString("Building.BasementOneDeepNormal")),
-        ONE_DEEP_NORMALINFONLY(5,1,Messages.getString("Building.BasementOneDeepNormalInfOnly")),
-        ONE_DEEP_HEAD(6,1,Messages.getString("Building.BasementOneDeepHead")),
-        TWO_DEEP_HEAD(7,2,Messages.getString("Building.BasementTwoDeepHead"));
+        UNKNOWN(0, 0, "Building.BasementUnknown"),
+        NONE(1, 0, "Building.BasementNone"),
+        TWO_DEEP_FEET(2, 2, "Building.BasementTwoDeepFeet"),
+        ONE_DEEP_FEET(3, 1, "Building.BasementOneDeepFeet"),
+        ONE_DEEP_NORMAL(4, 1, "Building.BasementOneDeepNormal"),
+        ONE_DEEP_NORMALINFONLY(5, 1, "Building.BasementOneDeepNormalInfOnly"),
+        ONE_DEEP_HEAD(6, 1, "Building.BasementOneDeepHead"),
+        TWO_DEEP_HEAD(7, 2, "Building.BasementTwoDeepHead");
 
         private int value;
         private int depth;
@@ -267,7 +267,7 @@ public class Building implements Serializable {
         }
 
         public String getDesc() {
-            return desc;
+            return Messages.getString(desc);
         }
 
         public static BasementType getType(int value) {

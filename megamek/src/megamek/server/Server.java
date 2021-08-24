@@ -14245,8 +14245,7 @@ public class Server implements Runnable {
     private void resolveAllButWeaponAttacks() {
         Vector<EntityAction> triggerPodActions = new Vector<>();
         // loop through actions and handle everything we expect except attacks
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
             EntityAction ea = i.nextElement();
             Entity entity = game.getEntity(ea.getEntityId());
             if (ea instanceof TorsoTwistAction) {
@@ -14263,8 +14262,7 @@ public class Server implements Runnable {
             } else if (ea instanceof UnjamAction) {
                 resolveUnjam(entity);
             } else if (ea instanceof ClearMinefieldAction) {
-                resolveClearMinefield(entity,
-                                      ((ClearMinefieldAction) ea).getMinefield());
+                resolveClearMinefield(entity, ((ClearMinefieldAction) ea).getMinefield());
             } else if (ea instanceof TriggerAPPodAction) {
                 TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
 
@@ -14273,20 +14271,19 @@ public class Server implements Runnable {
                     triggerAPPod(entity, tapa.getPodId());
                     triggerPodActions.addElement(tapa);
                 } else {
-                    MegaMek.getLogger().error("AP Pod #" + tapa.getPodId() + " on " + entity.getDisplayName()
-                                    + " was already triggered this round!!");
+                    MegaMek.getLogger().error("AP Pod #" + tapa.getPodId() + " on "
+                            + entity.getDisplayName() + " was already triggered this round!!");
                 }
             } else if (ea instanceof TriggerBPodAction) {
                 TriggerBPodAction tba = (TriggerBPodAction) ea;
 
                 // Don't trigger the same pod twice.
                 if (!triggerPodActions.contains(tba)) {
-                    triggerBPod(entity, tba.getPodId(),
-                                game.getEntity(tba.getTargetId()));
+                    triggerBPod(entity, tba.getPodId(), game.getEntity(tba.getTargetId()));
                     triggerPodActions.addElement(tba);
                 } else {
-                    MegaMek.getLogger().error("B Pod #" + tba.getPodId() + " on " + entity.getDisplayName()
-                                    + " was already triggered this round!!");
+                    MegaMek.getLogger().error("B Pod #" + tba.getPodId() + " on "
+                            + entity.getDisplayName() + " was already triggered this round!!");
                 }
             } else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction) ea;
@@ -14294,9 +14291,9 @@ public class Server implements Runnable {
             } else if (ea instanceof UnjamTurretAction) {
                 if (entity instanceof Tank) {
                     ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret());
-                    ((Tank) entity)
-                            .unjamTurret(((Tank) entity).getLocTurret2());
+                    ((Tank) entity).unjamTurret(((Tank) entity).getLocTurret2());
                     Report r = new Report(3033);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     addReport(r);
                 } else {
@@ -14304,9 +14301,7 @@ public class Server implements Runnable {
                 }
             } else if (ea instanceof RepairWeaponMalfunctionAction) {
                 if (entity instanceof Tank) {
-                    Mounted m = entity
-                            .getEquipment(((RepairWeaponMalfunctionAction) ea)
-                                                  .getWeaponId());
+                    Mounted m = entity.getEquipment(((RepairWeaponMalfunctionAction) ea).getWeaponId());
                     m.setJammed(false);
                     ((Tank) entity).getJammedWeapons().remove(m);
                     Report r = new Report(3034);
@@ -14341,11 +14336,7 @@ public class Server implements Runnable {
                 r.indent();
                 r.add(target);
                 r.add(roll);
-                if (roll >= target) {
-                    r.choose(true);
-                } else {
-                    r.choose(false);
-                }
+                r.choose(roll >= target);
                 vDesc.add(r);
 
                 // Blow it up...
@@ -31332,6 +31323,10 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_PRINCESS_SETTINGS:
                 if (player != null) {
+                    if (game.getBotSettings() == null) {
+                        game.setBotSettings(new HashMap<>());
+                    }
+                    
                     game.getBotSettings().put(player.getName(), (BehaviorSettings)packet.getObject(0));
                 }
                 break;

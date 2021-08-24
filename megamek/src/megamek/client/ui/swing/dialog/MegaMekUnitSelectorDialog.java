@@ -116,25 +116,12 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     private void autoSetSkillsAndName(Entity e, IPlayer player) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
+
+        if (cs.useAverageSkills()) {
+            clientGUI.getClient().getSkillGenerator().setRandomSkills(e, true);
+        }
+
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if (cs.useAverageSkills()) {
-                int[] skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
-
-                e.getCrew().setGunnery(skills[0], i);
-                // For conventional infantry, piloting doubles as anti-mek skill, and this is set
-                // based on  whether the unit has anti-mek training, which gets set in the BLK file.
-                // We therefore check if they are anti-mek trained before setting
-                if (!e.isConventionalInfantry() || ((Infantry) e).isAntiMekTrained()) {
-                    e.getCrew().setPiloting(skills[1], i);
-                }
-
-                if (e.getCrew() instanceof LAMPilot) {
-                    skills = clientGUI.getClient().getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
-                }
-            }
-
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
@@ -143,7 +130,6 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                         : RandomNameGenerator.getInstance().generate(gender), i);
             }
         }
-        e.getCrew().sortRandomSkills();
     }
 
     private void updatePlayerChoice() {

@@ -111,11 +111,11 @@ public class CustomPilotView extends JPanel {
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
         button.addActionListener(e -> {
-            int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+            int[] skills = parent.clientgui.getClient().getSkillGenerator().generateRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
             if (entity.getCrew() instanceof LAMPilot) {
-                skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+                skills = parent.clientgui.getClient().getSkillGenerator().generateRandomSkills(entity);
                 fldGunneryAero.setText(Integer.toString(skills[0]));
                 fldPilotingAero.setText(Integer.toString(skills[1]));
             }

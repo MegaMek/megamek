@@ -175,7 +175,7 @@
     <hyperAggressionIndex>1</hyperAggressionIndex>
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
-    <braveryIndex>8</braveryIndex>
+    <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

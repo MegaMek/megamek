@@ -43,8 +43,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * separated in the settings dialog shields new users from unnecessary
      * complication.
      */
-    public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
-    public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
     public static final String ADVANCED_DRAW_ENTITY_LABEL = "AdvancedDrawEntityLabel";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
@@ -70,10 +68,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
     public static final String ADVANCED_ATTACK_ARROW_TRANSPARENCY = "AdvancedAttackArrowTransparency";
     public static final String ADVANCED_BUILDING_TEXT_COLOR = "AdvancedBuildingTextColor";
-    public static final String ADVANCED_CHATBOX2_FONTSIZE = "AdvancedChatbox2Fontsize";
-    public static final String ADVANCED_CHATBOX2_BACKCOLOR = "AdvancedChatbox2BackColor";
-    public static final String ADVANCED_CHATBOX2_TRANSPARANCY = "AdvancedChatbox2Transparancy";
-    public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
     public static final String ADVANCED_ECM_TRANSPARENCY = "AdvancedECMTransparency";
     public static final String ADVANCED_UNITOVERVIEW_SELECTED_COLOR = "AdvancedUnitOverviewSelectedColor";
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
@@ -264,8 +258,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     protected GUIPreferences() {
         store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
-        store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
-        store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
         store.setDefault(ADVANCED_DRAW_ENTITY_LABEL, true);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
@@ -309,11 +301,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
         setDefault(ADVANCED_BUILDING_TEXT_COLOR, Color.BLUE);
-        setDefault(ADVANCED_CHATBOX2_BACKCOLOR, new Color(255, 255, 255));
-        store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
-        store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
-        store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
-        store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);        
+        store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, false);

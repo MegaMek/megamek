@@ -29740,8 +29740,9 @@ public class Server implements Runnable {
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
 
-        for (final Entity entity : entities) {
-
+        // Need to use a new ArrayLiut to prevent a concurrent modification exception when removing
+        // illegal entities
+        for (final Entity entity : new ArrayList<>(entities)) {
             // Verify the entity's design
             if (Server.entityVerifier == null) {
                 Server.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
@@ -29784,6 +29785,7 @@ public class Server implements Runnable {
                         sendServerChat(String.format(
                                 "Player %s attempted to add an illegal unit design (%s), the unit was rejected.",
                                 cheater.getName(), entity.getShortNameRaw()));
+                        entities.remove(entity);
                         continue;
                     }
                 }
@@ -29922,9 +29924,8 @@ public class Server implements Runnable {
                 entity.setForceString("");
                 game.getForces().addEntity(entity, realId);
             }
-
         }
-        
+
         // Cycle through the entities again and update any carried units
         // and carrier units to use the correct server-given IDs.
         // Typically necessary when loading a MUL containing transported units.
@@ -29932,8 +29933,8 @@ public class Server implements Runnable {
         // First, deal with units loaded into bays. These are saved for the carrier
         // in MULs and must be restored exactly to recreate the bay loading.
         Set<Entity> transportCorrected = new HashSet<>();
-        for (final Entity carrier: entities) {
-            for (int carriedId: carrier.getBayLoadedUnitIds()) {
+        for (final Entity carrier : entities) {
+            for (int carriedId : carrier.getBayLoadedUnitIds()) {
                 // First, see if a bay loaded unit can be found and unloaded,
                 // because it might be the wrong unit
                 Entity carried = game.getEntity(carriedId);
@@ -29957,7 +29958,7 @@ public class Server implements Runnable {
 
         // Now restore the transport settings from the entities' transporter IDs
         // With anything other than bays, MULs only show the carrier, not the carried units 
-        for (final Entity entity: entities) {
+        for (final Entity entity : entities) {
             // Don't correct those that are already corrected
             if (transportCorrected.contains(entity)) {
                 continue;
@@ -29991,7 +29992,7 @@ public class Server implements Runnable {
         // When entering a game from the lobby, this list is generated again, but not when 
         // the added entities are loaded during a game. When getting loaded units from a MUL,
         // act as if they were loaded in the lobby.
-        for (final Entity entity: entities) {
+        for (final Entity entity : entities) {
             if (entity.getLoadedUnits().size() > 0) {
                 Vector<Integer> v = new Vector<>();
                 for (Entity en : entity.getLoadedUnits()) {
@@ -30001,7 +30002,7 @@ public class Server implements Runnable {
             }
         }
 
-        List<Integer> changedForces = new ArrayList<Integer>(forceMapping.values());
+        List<Integer> changedForces = new ArrayList<>(forceMapping.values());
 
         send(createAddEntityPacket(entityIds, changedForces));
     }

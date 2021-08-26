@@ -14662,8 +14662,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return camouflage;
     }
 
-    public Camouflage getCamouflageOrElse(Camouflage camouflage) {
-        return getCamouflage().hasDefaultCategory() ? camouflage : getCamouflage();
+    public Camouflage getCamouflageOrElse(final Camouflage camouflage) {
+        return getCamouflageOrElse(camouflage, true);
+    }
+
+    public Camouflage getCamouflageOrElse(final Camouflage camouflage, final boolean checkForces) {
+        final Force force = checkForces ? game.getForces().getForce(this) : null;
+        return getCamouflage().hasDefaultCategory()
+                ? ((force == null) ? camouflage : force.getCamouflageOrElse(game, camouflage)) : getCamouflage();
     }
 
     public void setCamouflage(Camouflage camouflage) {

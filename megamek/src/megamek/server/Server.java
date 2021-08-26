@@ -29781,11 +29781,10 @@ public class Server implements Runnable {
                         entity.setDesignValid(false);
                     } else {
                         IPlayer cheater = game.getPlayer(connIndex);
-                        sendServerChat("Player " + cheater.getName()
-                                       + " attempted to add an illegal unit design ("
-                                       + entity.getShortNameRaw()
-                                       + "), the unit was rejected.");
-                        return;
+                        sendServerChat(String.format(
+                                "Player %s attempted to add an illegal unit design (%s), the unit was rejected.",
+                                cheater.getName(), entity.getShortNameRaw()));
+                        continue;
                     }
                 }
             }
@@ -29793,21 +29792,20 @@ public class Server implements Runnable {
             // If we're adding a ProtoMech, calculate it's unit number.
             if (entity instanceof Protomech) {
                 // How many ProtoMechs does the player already have?
-                int numPlayerProtos = game
-                        .getSelectedEntityCount(new EntitySelector() {
-                            private final int ownerId = entity.getOwnerId();
+                int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
+                    private final int ownerId = entity.getOwnerId();
 
-                            public boolean accept(Entity entity) {
-                                return (entity instanceof Protomech)
-                                        && (ownerId == entity.getOwnerId());
-                            }
-                        });
+                    @Override
+                    public boolean accept(Entity entity) {
+                        return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
+                    }
+                });
 
                 // According to page 54 of the BMRr, ProtoMechs must be
                 // deployed in full Points of five, unless circumstances have
                 // reduced the number to less than that.
                 entity.setUnitNumber((short) (numPlayerProtos / 5));
-            } // End added-ProtoMech
+            }
 
             // Only assign an entity ID when the client hasn't.
             if (Entity.NONE == entity.getId()) {

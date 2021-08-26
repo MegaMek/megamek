@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 0.49.4-SNAPSHOT
 + PR 3079: Skill Generation Rework
++ PR #3106: Relabel "Start a Saved Game" button to "Load a Saved Game"
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

@@ -236,6 +236,7 @@ public class Princess extends BotClient {
      * Picks a tag target based on the data contained within the given GameCFREvent
      * Expects the event to have some tag targets and tag target types.
      */
+    @Override
     protected int pickTagTarget(GameCFREvent evt) {
         List<Integer> TAGTargets = evt.getTAGTargets();
         List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
@@ -852,10 +853,14 @@ public class Princess extends BotClient {
      * @param firingEntityID the ID of the entity taking the point blank shot
      * @param targetID the ID of the entity being shot at potentially
      */
+    @Override
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         Entity shooter = getGame().getEntity(firingEntityID);
-        Targetable target = getGame().getEntity(targetID); 
-        
+        Targetable target = getGame().getEntity(targetID);
+        if ((shooter == null) || (target == null)) {
+            return new Vector<>();
+        }
+
         final FiringPlanCalculationParameters fccp = 
                 new FiringPlanCalculationParameters.Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
         FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(fccp); 

@@ -17,6 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -64,19 +65,22 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range <= BattleForceElement.LONG_RANGE) {
+            return 0.1 * getRackSize();
+        } else {
+            return 0;
         }
-        return damage / 10.0;
     }
     
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
+    }
+    
+
+    @Override
+    public boolean hasIndirectFire() {
+        return false;
     }
 }

@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.BattleForceElement;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 
 /**
@@ -71,6 +72,17 @@ public class ISBALaserVSPMedium extends
         .setISApproximate(false, false, false, false, false)
         .setPrototypeFactions(F_FW,F_WB)
         .setProductionFactions(F_FW,F_WB);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 1.035;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 0.525;
+        } else {
+            return 0;
+        }
     }
 
 }

@@ -73,7 +73,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
             } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
+                clusterRoll = 11;
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());

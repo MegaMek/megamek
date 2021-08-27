@@ -8,6 +8,7 @@ import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.StringJoiner;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -94,7 +95,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
                 }
                 result.append(UnitRoleHandler.getRoleFor(entity).toString());
 //                addGridElement(element.getDamage(0)+"/"+element.getDamage(1)+"/"+element.getDamage(2));
-                result.append(element.getASDamageString(0));
+                
                 result.append(element.calcHeatCapacity(entity)+"");
                 result.append(element.getFinalArmor() + "/" + element.getStructure());
                 result.append(element.getFinalPoints()+"");

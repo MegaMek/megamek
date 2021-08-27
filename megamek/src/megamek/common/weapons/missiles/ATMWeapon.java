@@ -51,15 +51,4 @@ public abstract class ATMWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new ATMHandler(toHit, waa, game, server);
     }
-    
-    @Override
-    public double getBattleForceDamage(int range) {
-        double damage = super.getBattleForceDamage(range);
-        if (range < BattleForceElement.MEDIUM_RANGE) {
-            damage *= 3;
-        } else if (range < BattleForceElement.LONG_RANGE) {
-            damage *= 2;
-        }
-        return damage;
-    }
 }

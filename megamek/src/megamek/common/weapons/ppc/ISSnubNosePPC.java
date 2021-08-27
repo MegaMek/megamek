@@ -17,6 +17,10 @@
  */
 package megamek.common.weapons.ppc;
 
+import megamek.common.BattleForceElement;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+
 /**
  * @author Andrew Hunter
  */
@@ -82,6 +86,17 @@ public class ISSnubNosePPC extends PPCWeapon {
         }
 
         return damageLong;
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted capacitor) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 1;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 0.65;
+        } else {
+            return 0;
+        }
     }
 
 }

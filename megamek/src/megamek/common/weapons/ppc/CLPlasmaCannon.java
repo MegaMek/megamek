@@ -20,6 +20,7 @@ package megamek.common.weapons.ppc;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -90,6 +91,11 @@ public class CLPlasmaCannon extends AmmoWeapon {
         if (range <= BattleForceElement.LONG_RANGE) {
             return 7;
         }
+        return 0;
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
         return 0;
     }
 }

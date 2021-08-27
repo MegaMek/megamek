@@ -60,22 +60,26 @@ public abstract class HAGWeapon extends GaussWeapon {
 
     @Override
     public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            int clusterRoll;
-            if (range < BattleForceElement.MEDIUM_RANGE) {
-                clusterRoll = 9;
-            } else if (range < BattleForceElement.LONG_RANGE) {
-                clusterRoll = 7;
-            } else {
-                clusterRoll = 5;
+        if (rackSize == 20) {
+            if (range == BattleForceElement.SHORT_RANGE) {
+                return 1.328;
+            } else if (range <= BattleForceElement.LONG_RANGE) {
+                return 1.2;
             }
-            damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
+        } else if (rackSize == 30) {
+            if (range == BattleForceElement.SHORT_RANGE) {
+                return 1.992;
+            } else if (range <= BattleForceElement.LONG_RANGE) {
+                return 1.8;
+            }
+        } else {
+            if (range == BattleForceElement.SHORT_RANGE) {
+                return 2.656;
+            } else if (range <= BattleForceElement.LONG_RANGE) {
+                return 2.4;
             }
         }
-        return damage / 10.0;
+        return 0;
     }
     
     @Override

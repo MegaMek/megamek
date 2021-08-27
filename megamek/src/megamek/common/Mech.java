@@ -1790,15 +1790,10 @@ public abstract class Mech extends Entity {
                 capacity += 2;
             } else if (includePartialWing
                     && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
-                    && // unless
-                       // all crits
-                       // are
-                       // destroyed,
-                       // we get
-                       // the bonus
+                    && // unless all crits are destroyed, we get the bonus
                     ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                            getEquipmentNum(mounted), Mech.LOC_RT) > 0) || (getGoodCriticals(
-                            CriticalSlot.TYPE_EQUIPMENT,
+                            getEquipmentNum(mounted), Mech.LOC_RT) > 0) 
+                            || (getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
                             getEquipmentNum(mounted), Mech.LOC_LT) > 0))) {
                 capacity += getPartialWingHeatBonus();
                 includePartialWing = false; // Only count the partial wing bonus
@@ -8370,7 +8365,7 @@ public abstract class Mech extends Entity {
         } else if (!isIndustrial() && hasEngine()) {
             totalHeat += getEngine().getRunHeat(this);
         }
-
+        System.out.println(" Move Heat Sum " + totalHeat);
         for (Mounted mount : getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
@@ -8379,14 +8374,16 @@ public abstract class Mech extends Entity {
                 continue;
             }
             if (weapon.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                totalHeat += weapon.getHeat() * 6;
+                totalHeat += weapon.getAlphaStrikeHeat() * 6;
             } else if (weapon.getAmmoType() == AmmoType.T_AC_ULTRA
                     || weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
-                totalHeat += weapon.getHeat() * 2;
+                totalHeat += weapon.getAlphaStrikeHeat() * 2;
             } else {
-                totalHeat += weapon.getHeat();
+                totalHeat += weapon.getAlphaStrikeHeat();
             }
+            System.out.println(mount.getName()+": Heat Sum " + totalHeat);
         }
+        
 
         if (hasWorkingMisc(MiscType.F_STEALTH, -1)) {
             totalHeat += 10;

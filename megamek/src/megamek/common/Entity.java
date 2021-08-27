@@ -13815,8 +13815,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 specialAbilities.put(BattleForceSPA.EE, null);
             } else if (getEngine().getEngineType() == Engine.STEAM) {
                 specialAbilities.put(BattleForceSPA.FC, null);
-            } else {
-                specialAbilities.put(BattleForceSPA.EEE, null);
             }
         }
 

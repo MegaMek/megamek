@@ -13,6 +13,9 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * @author Sebastian Brocks
  */
@@ -56,4 +59,16 @@ public class CLATM3 extends ATMWeapon {
             .setPrototypeFactions(F_CCY)
             .setProductionFactions(F_CCY);
     }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        if (range <= BattleForceElement.SHORT_RANGE) {
+            return 0.6;
+        } else if (range <= BattleForceElement.MEDIUM_RANGE) {
+            return 0.4;
+        } else {
+            return 0.2;
+        }
+    }
+    
 }

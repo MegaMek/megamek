@@ -13,12 +13,16 @@
  */
 package megamek.common;
 
+import static megamek.common.BattleForceSPA.*;
+import static megamek.common.ASUnitType.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.lang.String;
 
 /**
@@ -33,42 +37,21 @@ public class AlphaStrikeElement extends BattleForceElement {
     // AP weapon mounts have a set damage value.
     static final double AP_MOUNT_DAMAGE = 0.05;
 
-    public enum ASUnitType {
-        BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
-        
-        static ASUnitType getUnitType(Entity en) {
-            if (en instanceof Mech) {
-                return ((Mech)en).isIndustrial() ? IM : BM;
-            } else if (en instanceof Protomech) {
-                return PM;
-            } else if (en instanceof Tank) {
-                return en.isSupportVehicle() ? SV : CV;
-            } else if (en instanceof BattleArmor) {
-                return BA;
-            } else if (en instanceof Infantry) {
-                return CI;
-            } else if (en instanceof SpaceStation) {
-                return SS;
-            } else if (en instanceof Warship) {
-                return WS;
-            } else if (en instanceof Jumpship) {
-                return JS;
-            } else if (en instanceof Dropship) {
-                return ((Dropship)en).isSpheroid() ? DS : DA;
-            } else if (en instanceof SmallCraft) {
-                return SC;
-            } else if (en instanceof FixedWingSupport) {
-                return SV;
-            } else if (en instanceof ConvFighter) {
-                return CF;
-            } else if (en instanceof Aero) {
-                return AF;
-            }
-            return null;
-        }
-    };
-
     protected ASUnitType asUnitType;
+    /** 
+     * NEW Version
+     * This covers all SpAs, including the damage values such as SRM2/2.
+     * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
+     * SpAs associated with a number, such as MHQ5 (but not IF2), have an Integer or Double as Object.
+     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-, 
+     * have an ASDamageVector or ASDamage as Object. 
+     * TUR has a List<List<Object>> wherein each List<Object> contains a 
+     * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
+     * This represents multiple turrets, each with a standard damage value and SpA damage values.
+     * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
+     * with standard damage at least. 
+     */
+    protected EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
     
     public AlphaStrikeElement() {
         
@@ -90,6 +73,112 @@ public class AlphaStrikeElement extends BattleForceElement {
             weaponLocations[0].addDamage(0, apDamage);
             weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, apDamage);
         }
+    }
+    
+    /** 
+     * NEW version - Adds a Special Unit Ability that is not associated with any
+     * additional information or number, e.g. RCN.
+     */
+    public void addSPA(BattleForceSPA spa) {
+        specialUnitAbilities.put(spa, null);
+    }
+
+    /** 
+     * NEW version - Adds a Special Unit Ability associated with an integer number such as C3M#. If
+     * that SPA is already present, the given number is added to the one already present. If the present
+     * number is a Double type value, that type is preserved.
+     */
+    public void addSPA(BattleForceSPA spa, int number) {
+        if (!specialUnitAbilities.containsKey(spa)) {
+            specialUnitAbilities.put(spa, number);
+        } else {
+            if (specialUnitAbilities.get(spa) instanceof Integer) {
+                specialUnitAbilities.put(spa, (int) specialUnitAbilities.get(spa) + number);
+            } else if (specialUnitAbilities.get(spa) instanceof Double) {
+                specialUnitAbilities.put(spa, (double) specialUnitAbilities.get(spa) + number);
+            }
+        }
+    }
+    
+    /** 
+     * NEW version - Adds a Special Unit Ability associated with a possibly non-integer number such 
+     * as MHQ2. If that SPA is already present, the given number is added to the one already present.
+     * if the previosly present number was an integer, it will be converted to a Double type value.
+     */
+    public void addSPA(BattleForceSPA spa, double number) {
+        if (!specialUnitAbilities.containsKey(spa)) {
+            specialUnitAbilities.put(spa, number);
+        } else {
+            if (specialUnitAbilities.get(spa) instanceof Integer) {
+                specialUnitAbilities.put(spa, (int)specialUnitAbilities.get(spa) + number);
+            } else if (specialUnitAbilities.get(spa) instanceof Double) {
+                specialUnitAbilities.put(spa, (double)specialUnitAbilities.get(spa) + number);
+            }
+        }
+    }
+    
+    /** 
+     * NEW version - Replaces the value associated with a Special Unit Ability with the given Object.
+     * The previously present associated Object, if any, is discarded. If the ability was not present, 
+     * it is added.  
+     */
+    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+        specialUnitAbilities.put(spa, newValue);
+    }
+    
+    /** 
+     * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
+     * that SPA is already present, the new damage value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+        specialUnitAbilities.put(spa, damage);
+    }
+    
+    /** 
+     * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
+     * that SPA is already present, the new damage value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+        specialUnitAbilities.put(spa, damage);
+    }
+    
+    /** 
+     * NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>.
+     */
+    public void addTurSPA(List<List<Object>> turAbility) {
+        specialUnitAbilities.put(TUR, turAbility);
+    }
+    
+    public boolean usesSML() {
+        return rangeBands == RANGEBANDS_SML;
+    }
+    
+    public boolean usesSMLE() {
+        return rangeBands == RANGEBANDS_SMLE;
+    }
+    
+    public ASDamageVector getStandardDamage() {
+        return standardDamage;
+    }
+    
+    public boolean hasSPA(BattleForceSPA spa) {
+        return specialUnitAbilities.containsKey(spa);
+    }
+    
+    public void removeSPA(BattleForceSPA spa) {
+        specialUnitAbilities.remove(spa);
+    }
+    
+    public boolean hasAnySPAOf(BattleForceSPA spa, BattleForceSPA... furtherSPAs) {
+        if (hasSPA(spa)) {
+            return true;
+        }
+        for (BattleForceSPA furtherSPA : furtherSPAs) {
+            if (hasSPA(furtherSPA)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void initWeaponLocations(Entity en) {
@@ -115,12 +204,14 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     @Override
     public String getMovementAsString() {
-        Strings.com
     	return movement.entrySet().stream()
-    	        .sorted()
-    			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+    			.map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
     					+ "\"" + e.getKey())
     			.collect(Collectors.joining("/"));    	
+    }
+    
+    public int getTMM() {
+        return tmm;
     }
     
     public int getTargetMoveModifier() {
@@ -177,6 +268,48 @@ public class AlphaStrikeElement extends BattleForceElement {
     public String getASDamageString(int loc) {
     	return getASDamageString(loc, true);
     }
+    
+    public String getSMLDamageString() {
+        if (!usesSML()) {
+            return "Error: this AlphaStrike element does not use the S/M/L damage format!";
+        }
+        if (!weaponLocations[0].hasDamage()) {
+            return "";
+        }
+        StringBuilder str = new StringBuilder(locationNames[0]);
+        str.append(weaponLocations[0].formatDamageRounded(true));
+        return str.toString();
+    }
+    
+    public int getOverheat() {
+        return overheat;
+    }
+    
+    public String getSpecialsString() {
+        return specialUnitAbilities.keySet().stream()
+                .filter(this::showSpecial)
+                .map(spa -> formatSPAString(spa))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.joining(","));
+    }
+    
+    public boolean hasIF() {
+        return weaponLocations[0].getIF() > 0; 
+    }
+    
+    public int getIF() {
+        return (int)Math.round(weaponLocations[0].getIF());
+    }
+    
+    public boolean isMinimalIF() {
+        return weaponLocations[0].getIF() < 0.5 && weaponLocations[0].getIF() > 0;
+    }
+    
+    
+    public boolean showSpecial(BattleForceSPA spa) {
+        return !(asUnitType == ASUnitType.BM && (spa == BattleForceSPA.SOA || spa == BattleForceSPA.SRCH));
+    }
+   
     
     public String getASDamageString(int loc, boolean showIfNoDamage) {
     	if (!weaponLocations[loc].hasDamage()) {
@@ -264,16 +397,95 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     protected String formatSPAString(BattleForceSPA spa) {
         /* BOMB rating for ASFs and CFs is one less than for BF */
-        if (spa.equals(BattleForceSPA.BOMB)
-                && (asUnitType.equals(ASUnitType.AF) || asUnitType.equals(ASUnitType.CF))) {
-            return spa.toString() + (specialAbilities.get(spa) - 1);
+        if (spa.equals(BOMB) && isAnyTypeOf(ASUnitType.AF, ASUnitType.CF)) {
+            return spa.toString() + ((int) getSPA(spa) - 1);
         }
-        if (spa.equals(BattleForceSPA.HT)) {
-            return spa.toString()
-                    + IntStream.range(0, rangeBands)
-                    .mapToObj(String::valueOf).collect(Collectors.joining("/"));
+        if (spa == IF) {
+            return spa.toString() + getSPA(spa);
+        } else if (spa == TUR) {
+            return turretString();
+        } else if (spa == SRM) {
+            return spa.toString() + ((ASDamageVector) getSPA(spa)).getSMString();
+        } else if ((spa == C3BSS) || (spa == C3M)
+                || (spa == C3BSM) || (spa == C3EM)) {
+            return spa.toString() + ((int) getSPA(spa) == 1 ? "" : (int) getSPA(spa));
+        } else {
+            return spa.toString() + (getSPA(spa) != null ? getSPA(spa) : "");
         }
-        return super.formatSPAString(spa);
     }
+    
+    /** 
+     * Returns the formatted TUR Special Ability string such as TUR(3/3/1,AC2/2/-). Requires TUR to
+     * be present. 
+     */ 
+    private String turretString() {
+        List<List<Object>> turList = (List<List<Object>>) getSPA(TUR);
+        String result = "";
+        for (List<Object> currentTurret : turList) {
+            result += "TUR(";
+            for (Object turDamage : currentTurret) {
+                if (turDamage instanceof ASDamageVector) {
+                    result += turDamage;
+                } else {
+                    for (Entry<BattleForceSPA, Object> specialDmg : ((Map<BattleForceSPA, Object>) turDamage).entrySet()) {
+                        result += "," + specialDmg.getKey().toString() + specialDmg.getValue();
+                    }
+                }
+            }
+            result +=")";
+        }
+        return result;
+    }
+    
+    public String specialDamageString(double damageValue) {
+        if (damageValue == 0) {
+            return "-";
+        } else if (damageValue < 0.5) {
+            return "0*";
+        } else {
+            return String.valueOf((int)Math.round(damageValue));
+        }
+    }
+    
+    public Object getSPA(BattleForceSPA spa) {
+        return specialUnitAbilities.get(spa);
+    }
+    
+    public boolean usesOVL() {
+        return isAnyTypeOf(BM, AF);
+    }
+    
+    public boolean isJumpCapable() {
+        return movement.keySet().contains("j");
+    }
+    
+    public int getJumpMove() {
+        return movement.getOrDefault("j", 0);
+    }
+    
+    public ASUnitType getType() {
+        return asUnitType;
+    }
+    
+    public boolean isType(ASUnitType type) {
+        return asUnitType == type;
+    }
+    
+    public boolean isAnyTypeOf(ASUnitType type, ASUnitType... types) {
+        if (isType(type)) {
+            return true;
+        }
+        for (ASUnitType furtherType : types) {
+            if (isType(furtherType)) {
+                return true;
+            }   
+        }
+        return false;
+    }
+    
+    public boolean usesThreshold() {
+        return threshold != -1;
+    }
+    
     
 }

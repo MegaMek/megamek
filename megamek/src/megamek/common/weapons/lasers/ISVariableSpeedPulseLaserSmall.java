@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.BattleForceElement;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
@@ -65,6 +66,21 @@ public class ISVariableSpeedPulseLaserSmall extends
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW,F_WB)
             .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.575;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 0.378;
+        } else {
+            return 0;
+        }
+    }
+    
+    public int getAlphaStrikeHeat() {
+        return 3;
     }
 
 }

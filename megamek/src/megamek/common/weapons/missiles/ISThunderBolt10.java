@@ -14,6 +14,8 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 
 /**
  * @author Sebastian Brocks
@@ -62,5 +64,18 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
             .setProductionFactions(F_FS,F_LC);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.58;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 1;
+        } else if (range == BattleForceElement.LONG_RANGE) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

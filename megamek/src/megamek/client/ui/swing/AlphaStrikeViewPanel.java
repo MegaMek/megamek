@@ -2,7 +2,9 @@ package megamek.client.ui.swing;
 
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -14,7 +16,7 @@ public class AlphaStrikeViewPanel extends JPanel {
     
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
-    public static final int COLS = 11;
+    public static final int COLS = 12;
 
     public AlphaStrikeViewPanel(Collection<Entity> entities, boolean hexMovement) {
         setLayout(new SpringLayout());
@@ -27,53 +29,34 @@ public class AlphaStrikeViewPanel extends JPanel {
         addHeader("Dmg S/M/L");
         addHeader("OV");
         addHeader("Arm/Str");
+        addHeader("Th");
         addHeader("PV");
         addHeader("Specials");
         
         int row = 1;
         for (Entity entity : entities) {
             boolean oddRow = (row++ % 2) == 1;
-            var element = new AlphaStrikeElement(entity);
-            addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
-            addGridElement(element.getUnitType().toString(), oddRow);
-            addGridElement(element.getSize() + "", oddRow);
-            addGridElement(element.getTargetMoveModifier()+"", oddRow);
-            if (hexMovement) {
-                addGridElement(""+element.getPrimaryMovementValue()/2, oddRow);
-            } else {
-                addGridElement(element.getMovementAsString(), oddRow);
-            }
-            addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
-//            addGridElement(element.getDamage(0)+"/"+element.getDamage(1)+"/"+element.getDamage(2), oddRow);
-            addGridElement(element.getASDamageString(0), oddRow);
-            addGridElement(element.calcHeatCapacity(entity)+"", oddRow);
-            addGridElement(element.getFinalArmor() + "/" + element.getStructure(), oddRow);
-            addGridElement(element.getFinalPoints()+"", oddRow);
-            addGridElement("?", oddRow);
-            
-            oddRow = (row++ % 2) == 1;
             var element2 = AlphaStrikeConverter.convertToAlphaStrike(entity);
             addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
             addGridElement(element2.getUnitType().toString(), oddRow);
             addGridElement(element2.getSize() + "", oddRow);
-//            addGridElement(element2.getTargetMoveModifier()+"", oddRow);
-            addGridElement("", oddRow);
+            addGridElement(element2.getTMM()+"", oddRow);
             if (hexMovement) {
                 addGridElement(""+element2.getPrimaryMovementValue()/2, oddRow);
             } else {
                 addGridElement(element2.getMovementAsString(), oddRow);
             }
             addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
-//            addGridElement(element.getDamage(0)+"/"+element.getDamage(1)+"/"+element.getDamage(2), oddRow);
-            addGridElement("", oddRow);
-            addGridElement("", oddRow);
-            addGridElement("", oddRow);
-            addGridElement("", oddRow);
-//            addGridElement(element2.getASDamageString(0), oddRow);
-//            addGridElement(element2.calcHeatCapacity(entity)+"", oddRow);
-//            addGridElement(element2.getFinalArmor() + "/" + element.getStructure(), oddRow);
-//            addGridElement(element2.getFinalPoints()+"", oddRow);
-            addGridElement("?", oddRow);
+            if (element2.usesSML()) {
+                addGridElement(element2.getStandardDamage().getSMLStringWithZero(), oddRow);
+            } else if (element2.usesSMLE()) {
+                addGridElement(element2.getStandardDamage().getSMLEStringWithZero(), oddRow);
+            }
+            addGridElement(element2.getOverheat() + "", oddRow);
+            addGridElement(element2.getFinalArmor() + " / " + element2.getStructure(), oddRow);
+            addGridElement(element2.usesThreshold() ? element2.getFinalThreshold() + "" : " ", oddRow);
+            addGridElement(element2.getFinalPoints() + "", oddRow);
+            addGridElement(element2.getSpecialsString(), oddRow, JComponent.LEFT_ALIGNMENT);
         }
 
         SpringUtilities.makeCompactGrid(this, row, COLS, 5, 5, 1, 5);

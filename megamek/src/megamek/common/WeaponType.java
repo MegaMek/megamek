@@ -1150,6 +1150,15 @@ public class WeaponType extends EquipmentType {
         return 0;
     }
     
+    /** Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat. */
+    public int getAlphaStrikeHeat() {
+        return getHeat();
+    }
+    
+    /** 
+     * Returns true if this weapon type can be used for LRM-type indirect fire. This seems to be
+     * identical for Total Warfare play and for AlphaStrike weapon conversion.
+     */
     public boolean hasIndirectFire() {
         return false;
     }

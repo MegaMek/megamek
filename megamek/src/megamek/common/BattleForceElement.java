@@ -42,12 +42,12 @@ import megamek.common.weapons.missiles.MissileWeapon;
  */
 public class BattleForceElement {
     
-    static final int RANGE_BAND_SHORT = 0;
-    static final int RANGE_BAND_MEDIUM = 1;
-    static final int RANGE_BAND_LONG = 2;
-    static final int RANGE_BAND_EXTREME = 3;
-    static final int RANGE_BAND_NUM_GROUND = 3;
-    static final int RANGE_BAND_NUM_AERO = 4;
+    public static final int RANGE_BAND_SHORT = 0;
+    public static final int RANGE_BAND_MEDIUM = 1;
+    public static final int RANGE_BAND_LONG = 2;
+    public static final int RANGE_BAND_EXTREME = 3;
+    static final int RANGEBANDS_SML = 3;
+    static final int RANGEBANDS_SMLE = 4;
     
     static final int[] STANDARD_RANGES = {0, 4, 16, 24};
     static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
@@ -58,12 +58,18 @@ public class BattleForceElement {
     public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
     
     protected String name;
+    protected String chassis;
+    protected String model;
+    protected UnitRole role;
     protected int size;
     protected LinkedHashMap<String,Integer> movement = new LinkedHashMap<>();
+    protected int tmm;
+    protected ASDamageVector standardDamage;
+    protected int overheat;
     protected double armor;
     protected double threshold = -1;
     protected int structure;
-    protected int rangeBands = RANGE_BAND_NUM_GROUND;
+    protected int rangeBands = RANGEBANDS_SML;
     protected WeaponLocation[] weaponLocations;
     protected String[] locationNames;
     protected int[] heat;
@@ -76,7 +82,7 @@ public class BattleForceElement {
 
     public BattleForceElement(Entity en) {
         name = en.getShortName();
-        size = determineSize(en);
+        size = en.getBattleForceSize();
         computeMovement(en);
         armor = en.getBattleForceArmorPointsRaw();
         if (en instanceof Aero) {
@@ -84,7 +90,7 @@ public class BattleForceElement {
         }
         structure = en.getBattleForceStructurePoints();
         if (en instanceof Aero) {
-        	rangeBands = RANGE_BAND_NUM_AERO;
+        	rangeBands = RANGEBANDS_SMLE;
         }
         initWeaponLocations(en);
         heat = new int[rangeBands];
@@ -115,6 +121,18 @@ public class BattleForceElement {
     
     public int getSize() {
         return size;
+    }
+    
+    public String getChassis() {
+        return chassis;
+    }
+    
+    public String getModel() {
+        return model;
+    }
+    
+    public UnitRole getRole() {
+        return role;
     }
     
     public Set<String> getMovementModes() {
@@ -180,13 +198,11 @@ public class BattleForceElement {
         return locationNames[loc];
     }
     
-    public Integer getSPA(BattleForceSPA spa) {
-    	return specialAbilities.get(spa);
-    }
     
-    public boolean hasSPA(BattleForceSPA spa) {
-    	return specialAbilities.containsKey(spa);
-    }
+    
+    
+    
+    
 
     public int getFinalPoints() {
         return Math.max(1, (int)Math.round(points));
@@ -219,7 +235,7 @@ public class BattleForceElement {
 
             WeaponType weapon = (WeaponType) mount.getType();
             
-            ranges = weapon.isCapital()? CAPITAL_RANGES : STANDARD_RANGES;
+            ranges = weapon.isCapital() ? CAPITAL_RANGES : STANDARD_RANGES;
             
             if (weapon.getAmmoType() == AmmoType.T_INARC) {
                specialAbilities.merge(BattleForceSPA.INARC, 1, Integer::sum);
@@ -709,8 +725,38 @@ public class BattleForceElement {
             return spa.toString() + val;
         }
     }
-
-    protected class WeaponLocation {
+    
+    public int getDmgS() {
+        double dmgS = weaponLocations[0].standardDamage.get(0);
+        return dmgS < 0.5 ? 0 : (int)Math.ceil(dmgS);
+    }
+    
+    public boolean isMinimalDmgS() {
+        double dmgS = weaponLocations[0].standardDamage.get(0);
+        return (dmgS < 0.5) && (dmgS > 0);
+    }
+    
+    public int getDmgM() {
+        double dmgM = weaponLocations[0].standardDamage.get(1);
+        return dmgM < 0.5 ? 0 : (int)Math.ceil(dmgM);
+    }
+    
+    public boolean isMinimalDmgM() {
+        double dmgM = weaponLocations[0].standardDamage.get(1);
+        return (dmgM < 0.5) && (dmgM > 0);
+    }
+    
+    public int getDmgL() {
+        double dmgL = weaponLocations[0].standardDamage.get(2);
+        return dmgL < 0.5 ? 0 : (int)Math.ceil(dmgL);
+    }
+    
+    public boolean isMinimalDmgL() {
+        double dmgL = weaponLocations[0].standardDamage.get(2);
+        return (dmgL < 0.5) && (dmgL > 0);
+    }
+    
+    public class WeaponLocation {
         List<Double> standardDamage = new ArrayList<>();
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
         double indirect;
@@ -737,10 +783,15 @@ public class BattleForceElement {
         }
         
         public boolean hasDamageClass(int damageClass) {
-            return specialDamage.containsKey(damageClass)
-                    && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
+            if (damageClass == WeaponType.BFCLASS_FLAK) {
+                return specialDamage.containsKey(damageClass)
+                        && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
+            } else {
+                return specialDamage.containsKey(damageClass)
+                        && specialDamage.get(damageClass).get(1) >= 1;
+            }
         }
-        
+
         public boolean hasDamageClassRounded(int damageClass) {
             return specialDamage.containsKey(damageClass)
                     && specialDamage.get(damageClass).stream()
@@ -787,6 +838,31 @@ public class BattleForceElement {
         
         public String formatDamageRounded(boolean showMinDamage) {
             return formatDamageRounded(standardDamage, showMinDamage);
+        }
+        
+        public String getSpecialDamageString(int damageClass) {
+            if (!specialDamage.containsKey(damageClass)) {
+                return rangeBands > 3? "0/0/0/0" : "0/0/0";
+            }
+            List<Double> damageList = specialDamage.get(damageClass);
+            if (damageClass == WeaponType.BFCLASS_SRM) {
+                return WeaponType.BF_CLASS_NAMES[WeaponType.BFCLASS_SRM] 
+                        + specialDamageString(damageList.get(0)) + "/"
+                        + specialDamageString(damageList.get(1));
+            } else {
+                return WeaponType.BF_CLASS_NAMES[damageClass]
+                        + specialDamage.get(damageClass).stream().map(this::specialDamageString).collect(Collectors.joining("/"));
+            }
+        }
+
+        public String specialDamageString(double damageValue) {
+            if (damageValue == 0) {
+                return "-";
+            } else if (damageValue < 0.5) {
+                return "0*";
+            } else {
+                return String.valueOf((int)Math.round(damageValue));
+            }
         }
 
         public String formatDamageRounded(int damageClass, boolean showMinDamage) {
@@ -839,9 +915,9 @@ public class BattleForceElement {
         }
 
         private String formatDamageRounded(List<Double> damage, boolean showMinDamage) {
-            while (damage.size() < rangeBands) {
-                damage.add(0.0);
-            }
+//            while (damage.size() < rangeBands) {
+//                damage.add(0.0);
+//            }
             return damage.stream().map(d -> {
                 if (d == 0) {
                     return "0";
@@ -854,46 +930,4 @@ public class BattleForceElement {
         }
     }
     
-    public int determineSize(Entity entity) {
-        
-//        switch ()
-//        
-//        
-//        if (en instanceof Mech) {
-//            return ((Mech)en).isIndustrial() ? IM : BM;
-//        } else if (en instanceof Protomech) {
-//            return PM;
-//        } else if (en instanceof Tank) {
-//            return en.isSupportVehicle() ? SV : CV;
-//        } else if (en instanceof BattleArmor) {
-//            return BA;
-//        } else if (en instanceof Infantry) {
-//            return CI;
-//        } else if (en instanceof SpaceStation) {
-//            return SS;
-//        } else if (en instanceof Warship) {
-//            return WS;
-//        } else if (en instanceof Jumpship) {
-//            return JS;
-//        } else if (en instanceof Dropship) {
-//            return ((Dropship)en).isSpheroid() ? DS : DA;
-//        } else if (en instanceof SmallCraft) {
-//            return SC;
-//        } else if (en instanceof FixedWingSupport) {
-//            return SV;
-//        } else if (en instanceof ConvFighter) {
-//            return CF;
-//        } else if (en instanceof Aero) {
-//            return AF;
-//        }
-        if (entity.getWeight() < 40) {
-            return 1;
-        } else if (entity.getWeight() < 60) {
-            return 2;
-        } else if (entity.getWeight() < 80) {
-            return 3;
-        } else {
-            return 4;
-        }
-    }
 }

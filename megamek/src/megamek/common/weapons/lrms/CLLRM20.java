@@ -13,6 +13,11 @@
  */
 package megamek.common.weapons.lrms;
 
+import static megamek.common.MountedHelper.*;
+
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * @author Sebastian Brocks
  */
@@ -53,5 +58,16 @@ public class CLLRM20 extends LRMWeapon {
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CCY)
             .setProductionFactions(F_CCY);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+            return (range <= BattleForceElement.LONG_RANGE) ? 1.6 : 0;
+        } else if (isArtemisV(fcs)) {
+            return (range <= BattleForceElement.LONG_RANGE) ? 1.68 : 0;
+        } else {
+            return (range <= BattleForceElement.LONG_RANGE) ? 1.2 : 0;
+        }
     }
 }

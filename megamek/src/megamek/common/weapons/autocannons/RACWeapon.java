@@ -75,13 +75,18 @@ public abstract class RACWeapon extends UACWeapon {
 
     @Override
     public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize() * 6;
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
+        if (techAdvancement.getTechBase() == TECH_BASE_IS) {
+            if (rackSize == 2) {
+                return (range <= BattleForceElement.LONG_RANGE) ? 0.8 : 0;
+            } else {
+                return (range <= BattleForceElement.MEDIUM_RANGE) ? 2 : 0;
+            }
+        } else {
+            if (rackSize == 2) {
+                return 0.8;
+            } else {
+                return (range <= BattleForceElement.LONG_RANGE) ? 2 : 0;
             }
         }
-        return damage / 10.0;
     }
 }

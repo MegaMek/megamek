@@ -150,4 +150,16 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Bane is a BattleMech that is based upon a Star League prototype that was never put into production. Tagged the Kraken by Inner Sphere forces who opposed it.
 
+capabilities:The Bane was first built in 2827. It was originally a significant part of many Clan toumans, but was gradually relegated to second-line status following the introduction of the OmniMech. As such, it is still critical to many defensive units. The design uses a lightweight XL Engine so that it can mount the arsenal that it does. Nineteen tons of armor protects this venerable assault 'Mech.
+
+deployment:This redesign actually addresses the ammunition-dependency of the earlier Banes. In this upgrade, Clan Jade Falcon scientists changed many elements of the Bane slightly, resulting in a 'Mech with a different appearance than its predecessors. Its focus is also short range, as evidenced by twin Model SH Ultra Autocannon/20s. Six tons of ammunition is adequate, though only barely. Three System 4 ATM 6s, along with four tons of ammunition, give the design great flexibility at all ranges. A single Series 7K ER Large Laser allows the 'Mech to stay in the fight in the event its ammunition bins have run dry. Seventeen double heat sinks are unequal to the task assigned them. The Falcons first deployed this multi-use design between 3065 and 3067.
+
+manufacturer:Tokasha MechWorks Alpha, Olivetti Weapons
+primaryfactory:Tokasha, Sudetan
+systemmanufacturer:CHASSIS:Type AXT, Mk. XX
+systemmanufacturer:ENGINE:Fusion 300 XL
+systemmanufacturer:ARMOR:Forging C745
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI TTS

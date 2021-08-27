@@ -950,6 +950,11 @@ public class TestMech extends TestEntity {
                     illegal = true;
                     buff.append("Mech can only mount ").append(misc.getName())
                             .append(" in arm with no hand actuator.\n");
+                } else if (replacesLowerArm(misc)
+                            && mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, m.getLocation())) {
+                        illegal = true;
+                        buff.append("Mech can only mount ").append(misc.getName())
+                                .append(" in arm with no lower arm actuator.\n");
                 } else if (requiresHandActuator(misc) && !mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
                     illegal = true;
                     buff.append("Mech requires a hand actuator in the arm that mounts ").append(misc.getName()).append("\n");
@@ -1508,7 +1513,6 @@ public class TestMech extends TestEntity {
                     && (misc.hasSubType(MiscType.S_CHAINSAW)
                     || misc.hasSubType(MiscType.S_BACKHOE)
                     || misc.hasSubType(MiscType.S_DUAL_SAW)
-                    || misc.hasSubType(MiscType.S_PILE_DRIVER)
                     || misc.hasSubType(MiscType.S_MINING_DRILL)
                     || misc.hasSubType(MiscType.S_ROCK_CUTTER)
                     || misc.hasSubType(MiscType.S_SPOT_WELDER)
@@ -1539,6 +1543,14 @@ public class TestMech extends TestEntity {
         return replacesHandActuator(misc) ||
                 (misc.hasFlag(MiscType.F_CLUB)
                 && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE));
+    }
+
+    /**
+     * @param misc A type of equipment that can be mounted in a mech arm
+     * @return     Whether the equipment replaces the lower arm and hand actuators
+     */
+    public static boolean replacesLowerArm(MiscType misc) {
+        return misc.hasFlag(MiscType.F_CLUB) && misc.hasSubType(MiscType.S_PILE_DRIVER);
     }
 
     /**

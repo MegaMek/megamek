@@ -1018,9 +1018,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 || e.getName().equals(GUIPreferences.SHADOWMAP)) {
             clearHexImageCache();
             repaint();
-            
-        } else if (e.getName().equals(GUIPreferences.INCLINES)) {
-            game.getBoard().initializeAllAutomaticTerrain();
+        }
+        if (e.getName().equals(GUIPreferences.INCLINES)) {
+            game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
             clearHexImageCache();
             repaint();
             

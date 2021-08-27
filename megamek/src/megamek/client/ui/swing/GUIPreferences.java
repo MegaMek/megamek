@@ -19,6 +19,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
@@ -240,6 +241,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
     public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
+    public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -348,6 +350,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
+        store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
         store.setDefault(FIRING_SOLUTIONS,true);
@@ -1581,6 +1584,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_KEYBINDS_OVERLAY, !getBoolean(SHOW_KEYBINDS_OVERLAY));
     }
 
+    public LabelDisplayStyle getUnitLabelStyle() {
+        try {
+            return LabelDisplayStyle.valueOf(store.getString(UNIT_LABEL_STYLE));
+        } catch (Exception e) {
+            return LabelDisplayStyle.FULL;
+        }
+    }
+
+    public void setUnitLabelStyle(LabelDisplayStyle style) {
+        store.setValue(UNIT_LABEL_STYLE, style.name());
+    }
 
     public Color getColor(String name) {
         final String text = store.getString(name);

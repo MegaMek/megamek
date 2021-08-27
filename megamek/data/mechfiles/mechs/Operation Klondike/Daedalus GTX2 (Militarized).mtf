@@ -44,7 +44,7 @@ Weapons:12
 1 CLRocketLauncher20Prototype, Right Torso
 1 CLRocketLauncher20Prototype, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -52,7 +52,7 @@ Foot Actuator
 ISMachine Gun
 ISMachine Gun
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -110,7 +110,7 @@ Heat Sink
 Sensors
 Life Support
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -118,7 +118,7 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator

@@ -153,4 +153,18 @@ Clan Endo-Composite
 -Empty-
 -Empty-
 
+overview:The Tomahawk II is an Assault OmniMech first produced by Clan Wolf in 3088. The ‘Mech is considered to be, for its time, the superior 'Mech when compared to other contemporaries within the ranks of the Inner Sphere and Inner Sphere Clans.
 
+capabilities:The Tomahawk II is designed around the use of a DSAM Endo 10-Composite internal structure, which gives the design its cavernous pod capacity of 56 tons. The 'Mech is powered by a 300-Rated Starfire Extra-Light Fusion Engine, giving it a maximum speed of 54 kph. Protecting the engine and the Tomahawk II's other vitals is 19 tons of Advanced/3 standard armor, providing nearly maximum protection against enemy fire.
+
+deployment:Suggested for use in urban combat, the B Configuration comes with a large array of energy and missile weapon systems. This configuration's long-range firepower comes from a pair of arm-mounted Streak LRM-15 launchers and a pair of long-range, torso-mounted ER Large Lasers. For closer ranges, the 'Mech makes use of an ER Large Pulse Laser in each of the arms, and a single ER Medium Laser in the torso. To help this configuration of the Tomahawk II cope with urban settings, the 'Mech sports three Jump Jets, while ten additional Double Heat Sinks try to help with the heat management. A single head-mounted Laser Anti-Missile System is fitted in the head to fight off enemy missiles.
+
+history:The Tomahawk II was based on early prototypes developed during the Clan Invasion era, which were produced in limited numbers. The Tomahawk II was originally produced at the Wolves' W-7 Facilities on Weingarten until the late 3130s when the Clan undertook its migration to then exFree Worlds Leagues space. Production of the 'Mech would resume on Keystone at Earthwerks-FWL, Incorporated. One of the Tomahawk II's most notable uses was during Clan Wolf's invasion of Tharkad in 3143. Beta Galaxy's Galaxy Commander Alaric Ward[5] utilized a binary of Tomahawk IIs in order to demoralize Tharkard's Lyran defenders. He deployed this elite Binary of Tomahawk IIs to defeat elements of the 2nd Royals at Nagelring in July.
+
+manufacturer:Earthwerks-FWL, Inc.
+primaryfactory:Keystone
+systemmanufacturer:CHASSIS:DSAM Endo 10-Composite
+systemmanufacturer:ENGINE:Starfire 300 XL
+systemmanufacturer:ARMOR:Advanced/3
+systemmanufacturer:COMMUNICATIONS:Khan Series (Type 3a)
+systemmanufacturer:TARGETING:Build 4 MadCat TTS

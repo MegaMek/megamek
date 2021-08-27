@@ -157,9 +157,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private int status = CustomMechDialog.DONE;
 
-    ClientGUI clientgui;
-
-    Client client;
+    private final ClientGUI clientgui;
+    private final Client client;
+    private final boolean space;
 
     private PilotOptions options;
     private Quirks quirks;
@@ -193,6 +193,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.entities = entities;
         this.clientgui = clientgui;
         this.client = client;
+        this.space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
 
         // Ensure we have at least one passed entity
         //  Anything less makes no sense
@@ -215,7 +216,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isLAM = true;
         boolean isGlider = true;
         boolean eligibleForOffBoard = true;
-        
+
         for (Entity e : entities) {
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
@@ -226,7 +227,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
-            boolean space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
             //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
             // offboard missiles and we could use it in space for extreme range bearings-only fights, plus Ortillery. 
             if (!space && e.getAltitude() == 0) {
@@ -367,9 +367,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
 
-            panDeploy.add(labStartAltitude, GBC.std());
-            panDeploy.add(fldStartAltitude, GBC.eol());
-                        
+            if (!space) {
+                panDeploy.add(labStartAltitude, GBC.std());
+                panDeploy.add(fldStartAltitude, GBC.eol());
+            }
+
             panDeploy.add(labCurrentFuel, GBC.std());
             panDeploy.add(fldCurrentFuel, GBC.eol());
         }
@@ -444,16 +446,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (isAero || isLAM || isShip) {
             IAero a = (IAero) entity;
-            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity())
-                    .toString());
+
+            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity()).toString());
             fldStartVelocity.addActionListener(this);
 
             fldStartAltitude.setText(Integer.valueOf(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
-            
+
             fuel = a.getFuel();
-            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel())
-                    .toString());
+            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel()).toString());
             fldCurrentFuel.addActionListener(this);
         }
 
@@ -461,6 +462,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
+
         if (isWiGE) {
             chDeployAirborne.setSelected(entity.getElevation() > 0);
         }
@@ -1001,7 +1003,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 height = Integer.parseInt(fldStartHeight.getText());
             }
             if (isWiGE) {
-                height = chDeployAirborne.isSelected()? 1 : 0;
+                height = chDeployAirborne.isSelected() ? 1 : 0;
             }
         } catch (NumberFormatException e) {
             msg = Messages.getString("CustomMechDialog.EnterValidSkills"); //$NON-NLS-1$
@@ -1012,33 +1014,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         
         if (isAero || isShip) {
-            if ((velocity > (2 * entities.get(0).getWalkMP()))
-                    || (velocity < 0)) {
-                msg = Messages
-                        .getString("CustomMechDialog.EnterCorrectVelocity"); //$NON-NLS-1$
-                title = Messages
-                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                        JOptionPane.ERROR_MESSAGE);
+            if ((velocity > (2 * entities.get(0).getWalkMP())) || (velocity < 0)) {
+                msg = Messages.getString("CustomMechDialog.EnterCorrectVelocity");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
-            }
-            if ((altitude < 0) || (altitude > 10)) {
-                msg = Messages
-                        .getString("CustomMechDialog.EnterCorrectAltitude"); //$NON-NLS-1$
-                title = Messages
-                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                        JOptionPane.ERROR_MESSAGE);
+            } else if ((altitude < 0) || (altitude > 10)) {
+                msg = Messages.getString("CustomMechDialog.EnterCorrectAltitude");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
-            }
-            
-            if ((currentfuel < 0) || (currentfuel > fuel)) {
-            	msg = (Messages
-            			 .getString("CustomMechDialog.EnterCorrectFuel") + fuel + "."); //$NON-NLS-1$
-            	title = Messages
-            			.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-            	JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-            			JOptionPane.ERROR_MESSAGE);
+            } else if ((currentfuel < 0) || (currentfuel > fuel)) {
+            	msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
+            	title = Messages.getString("CustomMechDialog.NumberFormatError");
+            	JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
             	return;
             }
         }
@@ -1237,16 +1226,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setCurrentFuel(currentfuel);
-                // we need to determine whether this aero is airborne or not in
-                // order for prohibited terrain and stacking to work right in
-                // the
-                // deployment phase this is very tricky because in atmosphere,
-                // zero
-                // altitude does not necessarily mean grounded
-                if (altitude <= 0) {
-                    a.land();
-                } else {
-                    a.liftOff(altitude);
+                if (!space) {
+                    // we need to determine whether this aero is airborne or not in order for
+                    // prohibited terrain and stacking to work right in the deployment phase.
+                    // This is very tricky because in atmosphere, zero altitude does not necessarily
+                    // mean grounded
+                    if (altitude <= 0) {
+                        a.land();
+                    } else {
+                        a.liftOff(altitude);
+                    }
                 }
             }
             
@@ -1262,7 +1251,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
                     entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
-                    entity.setConversionMode(((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL?
+                    entity.setConversionMode(((LandAirMech) entity).getLAMType() == LandAirMech.LAM_BIMODAL ?
                             LandAirMech.CONV_MODE_FIGHTER : LandAirMech.CONV_MODE_AIRMECH);
                 } else {
                     entity.setConversionMode(LandAirMech.CONV_MODE_MECH);
@@ -1347,6 +1336,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         setVisible(false);
     }
 
+    @Override
     public void itemStateChanged(ItemEvent itemEvent) {
         if (itemEvent.getSource().equals(choStartingMode)) {
             updateStartingModeOptions();
@@ -1376,7 +1366,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployProne.setEnabled(index == 0);
         } else if (entities.get(0) instanceof LandAirMech) {
             int mode = index;
-            if (((LandAirMech)entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
+            if (((LandAirMech) entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
                     && mode == LandAirMech.CONV_MODE_AIRMECH) {
                 mode = LandAirMech.CONV_MODE_FIGHTER;
             }

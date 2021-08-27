@@ -52,7 +52,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         bv = 400;
         cost = 300000;
         //Gonna use the same tech info as the Cannon
-        rulesRefs = "234,TM";
+        rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(true)

@@ -175,7 +175,22 @@
     <hyperAggressionIndex>1</hyperAggressionIndex>
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
-    <braveryIndex>8</braveryIndex>
+    <braveryIndex>2</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+    <behavior>
+    <name>Ambusher</name>
+    <destinationEdge>NONE</destinationEdge>
+    <retreatEdge>NEAREST</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>7</hyperAggressionIndex>
+    <selfPreservationIndex>6</selfPreservationIndex>
+    <herdMentalityIndex>4</herdMentalityIndex>
+    <braveryIndex>7</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

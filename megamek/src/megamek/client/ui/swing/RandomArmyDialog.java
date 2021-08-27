@@ -14,78 +14,36 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
-import megamek.client.ratgenerator.FactionRecord;
-import megamek.client.ratgenerator.FormationType;
-import megamek.client.ratgenerator.MissionRole;
-import megamek.client.ratgenerator.ModelRecord;
-import megamek.client.ratgenerator.UnitTable;
+import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
+import megamek.common.*;
 import megamek.common.IGame.Phase;
-import megamek.common.IPlayer;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.LAMPilot;
-import megamek.common.MechFileParser;
-import megamek.common.MechSearchFilter;
-import megamek.common.MechSummary;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final long serialVersionUID = 4072453002423681675L;
@@ -127,7 +85,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
-    private JButton m_bRandomSkills = new JButton(Messages.getString("RandomSkillDialog.title"));
+    private JButton m_bRandomSkills = new JButton(Messages.getString("SkillGenerationDialog.title"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
@@ -784,12 +742,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
-            m_clientgui.getRandomSkillDialog().showDialog();
+            new SkillGenerationDialog(m_clientgui.getFrame(), m_clientgui, new ArrayList<>()).showDialog();
         }
     }
 
     WindowListener windowListener = new WindowAdapter() {
-
+        @Override
         public void windowClosed(WindowEvent arg0) {
             saveWindowSettings();
         }
@@ -958,27 +916,16 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if (cs.useAverageSkills()) {
-                int[] skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-    
-                int gunnery = skills[0];
-                int piloting = skills[1];
-    
-                e.getCrew().setGunnery(gunnery, i);
-                e.getCrew().setPiloting(piloting, i);
+        if (cs.useAverageSkills()) {
+            m_client.getSkillGenerator().setRandomSkills(e, true);
+        }
 
-                if (e.getCrew() instanceof LAMPilot) {
-                    skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
-                }
-            }
-            e.getCrew().sortRandomSkills();
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, (String) m_chPlayer.getSelectedItem()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance()
+                        .generate(gender, (String) m_chPlayer.getSelectedItem()), i);
             }
         }
     }

@@ -3,33 +3,33 @@ Crossbow
 Prime
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:2870
-Source:TRO 3058 - Succession Wars
-Rules Level:2
+techbase:Clan
+era:2870
+source:TRO 3058 - Succession Wars
+rules level:2
 
-Mass:65
-Engine:325 Fusion (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:65
+engine:325 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:10
-Walk MP:5
-Jump MP:0
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:18
-RA Armor:18
-LT Armor:19
-RT Armor:19
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:9
-RTR Armor:9
-RTC Armor:13
+armor:Standard(Clan)
+LA armor:18
+RA armor:18
+LT armor:19
+RT armor:19
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:9
+RTR armor:9
+RTC armor:13
 
 Weapons:2
 LRM 20, Left Arm
@@ -39,13 +39,13 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLArtemisIV (omnipod)
-Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
-Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLArtemisIV (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -53,13 +53,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLLRM20 (omnipod)
-CLArtemisIV (omnipod)
-Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
-Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLLRM20 (OMNIPOD)
+CLArtemisIV (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -146,3 +146,20 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:Developed during the Golden Century by Clan Steel Viper as an early second-generation OmniMech, the Crossbow is a relatively cheap OmniMech.
+
+capabilities:Often described as a sleeker version of the Star League Longbow, the Crossbow is solidly protected by twelve tons of armor, though its traditionally missile-heavy weapons loadout means that it does not need any extra double heat sinks.
+
+deployment:The weapons on the Crossbow are simple: two Artemis-guided LRM-20s that are just as effective at point blank range as they are at long. The limited ammo supply is rarely a problem in Clan Trials, but it cannot stay on the field for an extended period of time. The majority of the configurations mount all the weapons in the arms, and the primary configuration is no exception.
+
+history:The Crossbow was Clan Steel Viper's first attempt to crash-start their OmniMech manufacturing capability, and was initiated in part by a small cadre of captured Clan Snow Raven scientist caste. Since both parties were relatively new to Omni-technology, the teams developed a novel Omni-pod system confined to replacing the 'Mech's arms. Since only the arms of early Crossbows can mount Omni-pods, early Crossbows are jump-incapable(more recently, configurations have been published containing weapon systems in the torsos). As the Crossbow is much less flexible than most OmniMechs, and since the Crossbow lacks of lighter materials of most OmniMechs, the Crossbow has largely been relegated to second-line duty, though it still appears frequently in the front lines, especially within Clan Steel Viper. However, the Crossbow is still quite effective - from its first engagement at Firebase Climax on Homer in 2870 to the present, the Crossbow's mix of arm-mounted missiles make it a superb fire-support choice. Considered a rare design by the Jihad era, the Crossbow's remaining production facilities would end up being destroyed in 3074 during the Wars of Reaving, effectively phasing it out of use in the Clan Homeworlds. The Crossbow would find new life in the Inner Sphere during the next century, as Clan Wolf used Arcturus' factories to mass-produce the design when they took the planet in 3128. During that battle a Wolf MechWarrior named Andreas managed to destroy an entire company of Lyran 'Mechs while piloting a Crossbow, earning a posthumous place in the Remembrance and ensuring that the newly-won factory would produce more of the design. Sporting an upgraded configuration Crossbows saw extensive use in the Clan Wolf touman, notably with the Seventy-ninth Wolf Battle Cluster on Denebola. When the Jade Falcons later claimed Arcturus after it was abandoned by the Wolves, they neglected the Crossbow's production lines, allowing Clan Sea Fox to buy and sell the design in large numbers. In Jade Falcon service Crossbows were used to less effect, partly because they were relegated to inferior units.
+
+manufacturer:Novy Minsky Armaments Plant
+primaryfactory:New Kent
+systemmanufacturer:CHASSIS:Anaconda OmniHeavy
+systemmanufacturer:ENGINE:New Kent Type 325
+systemmanufacturer:ARMOR:Compound V6
+systemmanufacturer:COMMUNICATIONS:Bishop 211 Meridian
+systemmanufacturer:TARGETING:Spanke 112-A
+

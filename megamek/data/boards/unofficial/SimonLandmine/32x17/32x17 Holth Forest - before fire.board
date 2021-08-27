@@ -1,9 +1,4 @@
 size 32 17
-tag "Rough (Auto)"
-tag "Water (Auto)"
-tag "TropicalTheme (Auto)"
-tag "LowHills (Auto)"
-tag "Woods (Auto)"
 hex 0101 0 "woods:1;foliage_elev:2" "tropical"
 hex 0201 0 "woods:1;foliage_elev:2" "tropical"
 hex 0301 0 "woods:1;foliage_elev:2" "tropical"

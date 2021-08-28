@@ -6,7 +6,6 @@ VERSION HISTORY:
 + PR #3113: Unit Readout Dialog: Add missing space between the dialog name and unit name
 + Issue #2975: Altitude is now properly ignored when customizing aerospace and space units for a space map
 + Issue #2719: Null protecting BotClient::calculatePointBlankShot
-+ PR #3110: Dockable Unit Detail
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

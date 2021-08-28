@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Image;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Window;
@@ -36,10 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
-import megamek.common.Configuration;
 import megamek.common.IPlayer;
-import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 public final class UIUtil {
 
@@ -901,18 +897,7 @@ public final class UIUtil {
     public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
     }
-
-    /**
-     * Loads an icon with a given width and height from data/widgets.
-     */
-    public static Icon loadWidgetIcon(String name, int size) {
-        var file = new MegaMekFile(Configuration.widgetsDir(), name);
-        var image = ImageUtil.loadImageFromFile(file.getFile().toString());
-        return new ImageIcon(
-            image.getScaledInstance(scaleForGUI(size), -1, Image.SCALE_SMOOTH)
-        );
-    }
-
+    
     private static int uiBgBrightness() {
         Color bgColor = UIManager.getColor("Table.background");
         if (bgColor == null) {

@@ -59,7 +59,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private static String STAR3 = "***"; //$NON-NLS-1$
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, statusL, pilotL, playerL,
+    private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, pilotL, playerL,
             teamL, weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
             movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
             visualRangeL;
@@ -99,8 +99,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         mechTypeL0 = createLabel(
                 Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
-        mechTypeL0.setColor(Color.RED);
+        mechTypeL0.setColor(Color.yellow);
         content.addArea(mechTypeL0);
+
+        mechTypeL1 = createLabel(STAR3, fm, 0, getNewYCoord());
+        mechTypeL1.setColor(Color.yellow);
+        content.addArea(mechTypeL1);
 
         fm = comp.getFontMetrics(FONT_VALUE);
 
@@ -258,13 +262,30 @@ public class GeneralInfoMapSet implements DisplayMapSet {
      */
     public void setEntity(Entity en) {
 
-        mechTypeL0.setVisible(false);
+        String s = en.getShortName();
+        mechTypeL1.setVisible(false);
+
+        if (s.length() > GUIPreferences.getInstance().getInt(
+                "AdvancedMechDisplayWrapLength")) {
+            mechTypeL1.setColor(Color.yellow);
+            int i = s
+                    .lastIndexOf(
+                            " ", GUIPreferences.getInstance().getInt("AdvancedMechDisplayWrapLength")); //$NON-NLS-1$
+            mechTypeL0.setString(s.substring(0, i));
+            mechTypeL1.setString(s.substring(i).trim());
+            mechTypeL1.setVisible(true);
+        } else {
+            mechTypeL0.setString(s);
+            mechTypeL1.setString(""); //$NON-NLS-1$
+        }
+
         if (!en.isDesignValid()) {
             // If this is the case, we will just overwrite the name-overflow
             // area, since this info is more important.
-            mechTypeL0.setString(Messages
+            mechTypeL1.setColor(Color.red);
+            mechTypeL1.setString(Messages
                     .getString("GeneralInfoMapSet.invalidDesign"));
-            mechTypeL0.setVisible(true);
+            mechTypeL1.setVisible(true);
         }
 
         statusR.setString(en.isProne() ? Messages

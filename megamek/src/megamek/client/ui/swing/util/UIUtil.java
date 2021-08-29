@@ -77,10 +77,11 @@ public final class UIUtil {
         return result.toString();
     }
 
-    public static void setupForHtml(JTextPane pane) {
+    public static JTextPane setupForHtml(JTextPane pane) {
         var toolkit = new BASE64ToolKit();
         toolkit.setStyleSheet(UI_DEFAULTS);
         pane.setEditorKit(toolkit);
+        return pane;
     }
 
     /** 

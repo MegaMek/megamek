@@ -99,6 +99,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         mechTypeL0 = createLabel(
                 Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
+        mechTypeL0.setVisible(false);
         mechTypeL0.setColor(Color.RED);
         content.addArea(mechTypeL0);
 

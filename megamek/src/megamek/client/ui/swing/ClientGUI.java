@@ -202,8 +202,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     public BoardView1 bv;
     private Component bvc;
+
+    private RoundReportPane roundReport;
+
     public DetachablePane unitDetailPane;
     public UnitDisplay mechD;
+
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -472,7 +476,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
                     {
                         frame.setVisible(false);
-                        unitDetailPane.setVisible(false);
+                        ClientGUI.this.roundReport.setVisible(false);
+                        ClientGUI.this.unitDetailPane.setVisible(false);
                         saveSettings();
                         die();
                     }
@@ -495,6 +500,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
+
+        this.roundReport = new RoundReportPane(client.getGame());
+        this.roundReport.setPreferredSize(new Dimension(400, 600));
+        this.roundReport.setVisible(false);
+        add(this.roundReport, BorderLayout.WEST);
 
         mechD = new UnitDisplay(this, controller);
         mechD.addMechDisplayListener(bv);
@@ -661,6 +671,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Called when the user selects the "View->Round Report" menu item.
      */
     private void showRoundReport() {
+        this.roundReport.setVisible(!this.roundReport.isVisible());
     }
 
     /**
@@ -670,6 +681,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+                this.roundReport.getWindow().setLocation(0, 0);
+                this.roundReport.getWindow().pack();
                 this.unitDetailPane.getWindow().setLocation(0, 0);
                 this.unitDetailPane.getWindow().pack();
                 break;
@@ -1028,6 +1041,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
+                this.roundReport.setVisible(false);
                 this.unitDetailPane.setVisible(false);
                 setMapVisible(false);
                 break;

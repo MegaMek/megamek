@@ -2606,6 +2606,7 @@ public class Game implements Serializable {
             return;
         }
         gameReports.add(roundCount, v);
+        processGameEvent(new GameReportEvent(this, this.roundCount, v));
     }
 
     /**
@@ -2628,6 +2629,9 @@ public class Game implements Serializable {
      */
     public void setAllReports(Vector<Vector<Report>> v) {
         gameReports.set(v);
+        for (int i = 0; i < v.size(); i++) {
+            processGameEvent(new GameReportEvent(this, i, v.get(i)));
+        }
     }
 
     /**

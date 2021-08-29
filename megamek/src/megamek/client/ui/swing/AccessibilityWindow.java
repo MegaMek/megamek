@@ -72,9 +72,6 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 systemEvent("Phase changed it is now " + e.getNewPhase() + ".");
-                if (client.phaseReport != null) {
-                    systemEvent(cleanHtml(client.phaseReport));
-                }
             }
 
             @Override
@@ -86,7 +83,14 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gameReport(GameReportEvent e) {
-                systemEvent(e.getReport());
+                // Only notify of events for the current round
+                if (((Game) e.getSource()).getRoundCount() == e.getRound()) {
+                    var buf = new StringBuilder();
+                    for (var report: e.getReports()) {
+                        buf.append(report.getText());
+                    }
+                    systemEvent(buf.toString());
+                }
             }
 
             @Override

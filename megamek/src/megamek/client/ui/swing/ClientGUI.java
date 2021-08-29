@@ -1772,14 +1772,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Ops 1st ed or Campaign Ops 2ed ed.
                 //XXX;
                 if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog("Tactical Genius Report", e.getReport());
+                    //doAlertDialog("Tactical Genius Report", e.getReport());
                 }
                 break;
             case MOVEMENT:
             case MOVEMENT_REPORT:
                 // Continued movement after getting up
                 if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog("Movement Report", e.getReport());
+                    //doAlertDialog("Movement Report", e.getReport());
                 }
                 break;
             }

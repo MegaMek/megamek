@@ -82,8 +82,6 @@ public class Client implements IClientCommandHandler {
 
     // here's some game phase stuff
     private MapSettings mapSettings;
-    public String phaseReport;
-    public String roundReport;
 
     // random generatorsI
     private AbstractSkillGenerator skillGenerator;
@@ -1517,26 +1515,20 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SENDING_REPORTS:
         case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
-            phaseReport = receiveReport((Vector<Report>) c.getObject(0));
+        case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
+            var report = (Vector<Report>) c.getObject(0);
             if (keepGameLog()) {
                 if ((log == null) && (game.getRoundCount() == 1)) {
                     initGameLog();
                 }
                 if (log != null) {
-                    log.append(phaseReport);
+                    log.append(receiveReport(report));
                 }
             }
-            game.addReports((Vector<Report>) c.getObject(0));
-            roundReport = receiveReport(game.getReports(game.getRoundCount()));
-            if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
-                game.processGameEvent(new GameReportEvent(this, roundReport));
-            }
-            break;
-        case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
-            game.processGameEvent(new GameReportEvent(this, receiveReport((Vector<Report>) c.getObject(0))));
+            game.addReports(report);
             break;
         case Packet.COMMAND_SENDING_REPORTS_ALL:
-            Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
+            var allReports = (Vector<Vector<Report>>) c.getObject(0);
             game.setAllReports(allReports);
             if (keepGameLog()) {
                 // Re-write gamelog.txt from scratch
@@ -1547,11 +1539,6 @@ public class Client implements IClientCommandHandler {
                     }
                 }
             }
-            roundReport = receiveReport(game.getReports(game.getRoundCount()));
-            // We don't really have a copy of the phase report at
-            // this point, so I guess we'll just use the round report
-            // until the next phase actually completes.
-            phaseReport = roundReport;
             break;
         case Packet.COMMAND_ENTITY_ATTACK:
             receiveAttack(c);

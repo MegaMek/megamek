@@ -40,7 +40,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
-        // store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -144,10 +143,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
         return store.getString(GAMELOG_FILENAME);
     }
 
-    // public int getGameLogMaxSize() {
-    // return store.getInt(GAMELOG_MAX_SIZE);
-    // }
-
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -227,10 +222,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public void setPrintEntityChange(boolean print) {
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }
-
-    // public void setGameLogMaxSize(int i) {
-    // store.setValue(GAMELOG_MAX_SIZE, i);
-    // }
 
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);

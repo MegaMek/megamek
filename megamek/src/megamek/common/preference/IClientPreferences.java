@@ -38,7 +38,6 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
-    // public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
@@ -100,8 +99,6 @@ public interface IClientPreferences extends IPreferenceStore {
 
     String getGameLogFilename();
 
-    // int getGameLogMaxSize();
-
     boolean stampFilenames();
 
     String getStampFormat();
@@ -141,8 +138,6 @@ public interface IClientPreferences extends IPreferenceStore {
     void setMaxPathfinderTime(int i);
 
     void setGameLogFilename(String text);
-
-    // void setGameLogMaxSize(int i);
 
     void setStampFilenames(boolean state);
 

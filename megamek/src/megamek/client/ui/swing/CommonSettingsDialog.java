@@ -534,8 +534,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             keepGameLog.setSelected(cs.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(cs.getGameLogFilename());
-            // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
-            // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
             stampFilenames.setSelected(cs.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(cs.getStampFormat());
@@ -734,7 +732,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         cs.setKeepGameLog(keepGameLog.isSelected());
         cs.setGameLogFilename(gameLogFilename.getText());
-        // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
         cs.setStampFilenames(stampFilenames.isSelected());
         cs.setStampFormat(stampFormat.getText());
         cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());

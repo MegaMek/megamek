@@ -26,8 +26,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import megamek.common.preference.PreferenceManager;
+import megamek.MegaMek;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GameReportEvent;
 import megamek.common.util.StringUtil;
+
 
 /**
  * @author Ben
@@ -35,57 +39,59 @@ import megamek.common.util.StringUtil;
  */
 public class GameLog {
 
-    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
-
-    private File logfile;
-
-    BufferedWriter writer;
+    private BufferedWriter writer;
 
     /**
      * Creates GameLog named
-     * 
+     *
      * @filename
      */
-    public GameLog(String filename) {
-        try {
-            File logDir = new File(LOG_DIR);
-            if (!logDir.exists()) {
-                logDir.mkdir();
-            }
-            // maxFilesize = maxSize;
-            if (PreferenceManager.getClientPreferences().stampFilenames()) {
-                filename = StringUtil.addDateTimeStamp(filename);
-            }
-            logfile = new File(LOG_DIR + File.separator + filename);
-            // writer = new BufferedWriter(new FileWriter(LOG_DIR +
-            // File.separator + filename, append));
-            writer = new BufferedWriter(new FileWriter(logfile));
-            append("Log file opened " + LocalDate.now().toString());
-        } catch (IOException ex) {
-            writer = null;
-            System.err.println("GameLog:" + ex.getMessage());
+    public GameLog(Game game, String dir, String filename, boolean useTimestamp)
+        throws IOException {
+        var parent = new File(dir);
+        if (!parent.exists()) {
+            parent.mkdir();
         }
+        if (useTimestamp) {
+            filename = StringUtil.addDateTimeStamp(filename);
+        }
+        writer = new BufferedWriter(new FileWriter(new File(parent, filename)));
+        append("<html><body>"); //$NON-NLS-1$
+        append("Log file opened " + LocalDate.now().toString());
+
+        game.addGameListener(new GameListenerAdapter() {
+                @Override
+                public void gamePlayerChat(GamePlayerChatEvent e) {
+                    append(e.getMessage());
+                }
+                @Override
+                public void gameReport(GameReportEvent e) {
+                    for (var round: e.getReports()) {
+                        // XXX should be logging HTML
+                        append(round.getText());
+                    }
+                }
+            }
+        );
     }
 
-    public void append(String toLog) {
-        // if (writer == null || logfile.length() > maxFilesize) {
-        if (writer == null) {
-            return;
-        }
-        
+    protected void append(String toLog) {
         try {
-            writer.write("<pre>"+toLog+"</pre>");
+            writer.write("<pre>");
+            writer.write(toLog);
+            writer.write("</pre>");
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {
-            // duhhhh...
-            writer = null;
+            MegaMek.getLogger().error("Error writing game log: " + ex.toString(), ex); //$NON-NLS-1$
         }
     }
 
-    public void close() throws java.io.IOException {
+    public void close() throws IOException {
+        append("</body></html>"); //$NON-NLS-1$
         if (writer != null) {
             writer.close();
         }
     }
+
 }

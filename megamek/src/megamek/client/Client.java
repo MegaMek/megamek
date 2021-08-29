@@ -89,7 +89,7 @@ public class Client implements IClientCommandHandler {
     private Vector<CloseClientListener> closeClientListeners = new Vector<>();
 
     // we might want to keep a game log...
-    private GameLog log;
+    private GameLog log = null;
 
     private Set<BoardDimensions> availableSizes = new TreeSet<>();
 
@@ -203,6 +203,22 @@ public class Client implements IClientCommandHandler {
         }
 
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
+
+        var prefs = PreferenceManager.getClientPreferences();
+        if (keepGameLog()) {
+            try {
+                this.log = new GameLog(
+                    this.game,
+                    prefs.getLogDirectory(),
+                    prefs.getGameLogFilename(),
+                    prefs.stampFilenames()
+                );
+            } catch (IOException e) {
+                MegaMek.getLogger().error(
+                    "Error opening log file: " + e.getMessage(), e //$NON-NLS-1$
+                );
+            }
+        }
     }
 
     public int getLocalPlayerNumber() {
@@ -211,6 +227,10 @@ public class Client implements IClientCommandHandler {
 
     public void setLocalPlayerNumber(int localPlayerNumber) {
         this.localPlayerNumber = localPlayerNumber;
+    }
+
+    protected boolean keepGameLog() {
+        return PreferenceManager.getClientPreferences().keepGameLog();
     }
 
     /**
@@ -268,8 +288,9 @@ public class Client implements IClientCommandHandler {
             try {
                 log.close();
             } catch (IOException e) {
-                System.err.print("Exception closing logfile: "); //$NON-NLS-1$
-                e.printStackTrace();
+                MegaMek.getLogger().error(
+                    "Error closing log file: " + e.getMessage(), e //$NON-NLS-1$
+                );
             }
         }
         System.out.println("client: died"); //$NON-NLS-1$
@@ -296,26 +317,6 @@ public class Client implements IClientCommandHandler {
      */
     public Vector<Coords> getArtilleryAutoHit() {
         return artilleryAutoHitHexes;
-    }
-
-    private void initGameLog() {
-        // log = new GameLog(
-        // PreferenceManager.getClientPreferences().getGameLogFilename(),
-        // false,
-        // (new
-        // Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue()
-        // * 1024 * 1024) );
-        log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
-        log.append("<html><body>");
-    }
-
-    /**
-     * Called to determine whether the game log should be kept.
-     * <p>
-     * Default implementation delegates to {@code PreferenceManager.getClientPreferences()}.
-     */
-    protected boolean keepGameLog() {
-        return PreferenceManager.getClientPreferences().keepGameLog();
     }
 
     /**
@@ -1427,12 +1428,6 @@ public class Client implements IClientCommandHandler {
             game.removePlayer(c.getIntValue(0));
             break;
         case Packet.COMMAND_CHAT:
-            if (log == null) {
-                initGameLog();
-            }
-            if ((log != null) && keepGameLog()) {
-                log.append((String) c.getObject(0));
-            }
             game.processGameEvent(new GamePlayerChatEvent(this, null, (String) c.getObject(0)));
             break;
         case Packet.COMMAND_ENTITY_ADD:
@@ -1516,29 +1511,10 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_SENDING_REPORTS:
         case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
         case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
-            var report = (Vector<Report>) c.getObject(0);
-            if (keepGameLog()) {
-                if ((log == null) && (game.getRoundCount() == 1)) {
-                    initGameLog();
-                }
-                if (log != null) {
-                    log.append(receiveReport(report));
-                }
-            }
-            game.addReports(report);
+            game.addReports((Vector<Report>) c.getObject(0));
             break;
         case Packet.COMMAND_SENDING_REPORTS_ALL:
-            var allReports = (Vector<Vector<Report>>) c.getObject(0);
-            game.setAllReports(allReports);
-            if (keepGameLog()) {
-                // Re-write gamelog.txt from scratch
-                initGameLog();
-                if (log != null) {
-                    for (int i = 0; i < allReports.size(); i++) {
-                        log.append(receiveReport(allReports.elementAt(i)));
-                    }
-                }
-            }
+            game.setAllReports((Vector<Vector<Report>>) c.getObject(0));
             break;
         case Packet.COMMAND_ENTITY_ATTACK:
             receiveAttack(c);

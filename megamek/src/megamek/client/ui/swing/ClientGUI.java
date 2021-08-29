@@ -501,6 +501,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         mechD.addMechDisplayListener(bv);
 
         this.unitDetailPane = new DetachablePane("", this.mechD);
+        this.unitDetailPane.setVisible(false);
         this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
         add(this.unitDetailPane, BorderLayout.EAST);
 

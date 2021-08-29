@@ -229,6 +229,13 @@ public class DetachablePane extends JComponent {
     }
 
     @Override
+    public boolean isVisible() {
+        return (this.state == Mode.DETACHED)
+            ? this.window.isVisible()
+            : super.isVisible();
+    }
+
+    @Override
     public void setVisible(boolean visible) {
         if (this.state == Mode.DETACHED) {
             this.window.setVisible(visible);

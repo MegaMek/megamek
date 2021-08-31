@@ -523,7 +523,7 @@ public class GameOptions extends AbstractOptions {
                 IOption option = null;
                 for (int y = 0; y < nl2.getLength(); y++) {
                     final Node wn2 = nl2.item(y);
-                    switch (wn.getNodeName()) {
+                    switch (wn2.getNodeName()) {
                         case "name":
                             option = getOption(wn2.getTextContent().trim());
                             break;
@@ -547,6 +547,7 @@ public class GameOptions extends AbstractOptions {
                                     default:
                                         break;
                                 }
+                                option = null;
                             }
                             break;
                         default:

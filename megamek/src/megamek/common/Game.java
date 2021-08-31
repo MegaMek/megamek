@@ -117,7 +117,7 @@ public class Game implements Serializable {
     private Vector<Team> initiativeRerollRequests = new Vector<>();
 
     // reports
-    private GameReports gameReports = new GameReports();
+    private List<List<Report>> reports = new ArrayList<>();
 
     private boolean forceVictory = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
@@ -2598,47 +2598,60 @@ public class Game implements Serializable {
     }
 
     /**
-     * Adds the given reports vector to the GameReport collection.
-     * @param v the reports vector
+     * Adds the given reports to those of the current round.
+     *
+     * @param reports new reports for the current round
      */
-    public void addReports(Vector<Report> v) {
-        if (v.isEmpty()) {
-            return;
+    public void addReports(List<Report> reports) {
+        while (this.reports.size() <= this.roundCount) {
+            this.reports.add(new ArrayList<Report>());
         }
-        gameReports.add(roundCount, v);
-        processGameEvent(new GameReportEvent(this, this.roundCount, v));
+        var existing = this.reports.get(this.roundCount);
+        existing.addAll(reports);
+        processGameEvent(new GameReportEvent(this, this.roundCount, reports));
     }
 
     /**
-     * @param r Round number
-     * @return a vector of reports for the given round.
+     * Sets the reports for a given round.
+     *
+     * Any existing reports for the given round will be replaced.
+     *
+     * @param round number of the round being set.
+     * @param reports set of all reports for the given round
      */
-    public Vector<Report> getReports(int r) {
-        return gameReports.get(r);
-    }
-
-    /**
-     * @return a vector of all the reports.
-     */
-    public Vector<Vector<Report>> getAllReports() {
-        return gameReports.get();
-    }
-
-    /**
-     * Used to populate previous game reports, e.g. after a client connects to an existing game.
-     */
-    public void setAllReports(Vector<Vector<Report>> v) {
-        gameReports.set(v);
-        for (int i = 0; i < v.size(); i++) {
-            processGameEvent(new GameReportEvent(this, i, v.get(i)));
+    public void setReports(int round, List<Report> reports) {
+        while (this.reports.size() <= round) {
+            this.reports.add(new ArrayList<Report>());
         }
+        var existing = this.reports.get(round);
+        existing.clear();
+        existing.addAll(reports);
+        processGameEvent(new GameReportEvent(this, round, reports));
+    }
+
+    /**
+     * Sets all reports for a game.
+     *
+     * Any existing reports for the game are cleared.
+     *
+     * @param reports set of all reports for the game
+     */
+    public void setAllReports(List<List<Report>> allReports) {
+        var i = 0;
+        for (var reports: allReports) {
+            setReports(i++, reports);
+        }
+    }
+
+    public List<Report> getReports(int round) {
+        return Collections.unmodifiableList(this.reports.get(round));
     }
 
     /**
      * Clears out all the current reports, paving the way for a new game.
      */
     public void clearAllReports() {
-        gameReports.clear();
+        this.reports.clear();
     }
 
     public void end(int winner, int winnerTeam) {

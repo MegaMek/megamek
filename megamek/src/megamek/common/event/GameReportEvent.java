@@ -14,10 +14,8 @@
 
 package megamek.common.event;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import megamek.common.Game;
 import megamek.common.Report;
@@ -35,7 +33,7 @@ public class GameReportEvent extends GameEvent {
     private static final long serialVersionUID = -986977282796844524L;
 
     private int round;
-    private List<Report> reports = new ArrayList<>();
+    private List<Report> reports;
 
     /**
      * Emitted when new game reports are received from the server.
@@ -44,11 +42,10 @@ public class GameReportEvent extends GameEvent {
      * @param round the round this report is associated with
      * @param reports new reports
      */
-    public GameReportEvent(Game source, int round, Vector<Report> reports) {
+    public GameReportEvent(Game source, int round, List<Report> reports) {
         super(source);
         this.round = round;
-        this.reports.addAll(reports);
-        this.reports = Collections.unmodifiableList(this.reports);
+        this.reports = Collections.unmodifiableList(reports);
     }
 
     /**

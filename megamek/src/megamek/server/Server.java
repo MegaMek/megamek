@@ -29530,25 +29530,25 @@ public class Server implements Runnable {
      *         that round. The reports returned this way are properly filtered for
      *         double blind.
      */
-    private Vector<Vector<Report>> filterPastReports(
-            Vector<Vector<Report>> pastReports, IPlayer p) {
+    private List<List<Report>> filterPastReports(
+            List<List<Report>> pastReports, IPlayer p) {
         // Only actually bother with the filtering if double-blind is in effect.
         if (!doBlind()) {
             return pastReports;
         }
         // Perform filtering
-        Vector<Vector<Report>> filteredReports = new Vector<>();
-        for (Vector<Report> roundReports : pastReports) {
-            Vector<Report> filteredRoundReports = new Vector<>();
+        List<List<Report>> filteredReports = new ArrayList<>();
+        for (var roundReports : pastReports) {
+            List<Report> filteredRoundReports = new ArrayList<>();
             for (Report r : roundReports) {
                 if (r.isObscuredRecipient(p.getName())) {
                     r = filterReport(r, null, true);
                 }
                 if (r != null) {
-                    filteredRoundReports.addElement(r);
+                    filteredRoundReports.add(r);
                 }
             }
-            filteredReports.addElement(filteredRoundReports);
+            filteredReports.add(filteredRoundReports);
         }
         return filteredReports;
     }
@@ -30730,8 +30730,12 @@ public class Server implements Runnable {
      * Creates a packet containing all the round reports
      */
     private Packet createAllReportsPacket(IPlayer p) {
+        var allReports = new ArrayList<List<Report>>();
+        for (int i = 0; i < this.game.getRoundCount(); i++) {
+            allReports.add(this.game.getReports(i));
+        }
         return new Packet(Packet.COMMAND_SENDING_REPORTS_ALL,
-                filterPastReports(game.getAllReports(), p));
+                          filterPastReports(allReports, p));
     }
 
     /**

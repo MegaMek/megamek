@@ -144,7 +144,7 @@ public class MegaMekXmlUtil {
 
     public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, String... values) {
         if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+            pw1.println(indentStr(indent) + "<" + name + ">" + escape(StringUtils.join(values, ',')) + "</" + name + ">");
         }
     }
 
@@ -262,7 +262,7 @@ public class MegaMekXmlUtil {
      * @return An encoded copy of the string
      */
     public static String escape(String string) {
-        return StringEscapeUtils.escapeXml10(string);
+        return StringEscapeUtils.escapeXml11(string);
     }
 
     /**

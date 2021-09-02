@@ -24,6 +24,7 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -58,6 +59,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -3559,17 +3562,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
-    public boolean isModalDialogShowing()
-    {
-        Window[] windows = Window.getWindows();
-        if (windows != null) {
-            for (Window w : windows) {
-                if (w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal())
-                    return true;
-            }
-        }
-        return false;
+    public boolean isModalDialogShowing() {
+        return Stream.of(Window.getWindows())
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal());
     }
-    
+
 }
 

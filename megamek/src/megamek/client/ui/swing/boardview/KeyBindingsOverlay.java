@@ -94,7 +94,6 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     
     /** The keybinds to be shown in the Board Editor */
     private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
-//            KeyCommandBind.TOGGLE_ISO,
             KeyCommandBind.HEX_COORDS
             );
 

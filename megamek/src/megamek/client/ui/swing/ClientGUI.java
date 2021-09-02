@@ -1360,7 +1360,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (visible && (mechD.getCurrentEntity() == null)
                 && (getClient() != null) && (getClient().getGame() != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
-            if ((es != null) && (es.size() > 0)) {
+            if ((es != null) && !es.isEmpty()) {
                 mechD.displayEntity(es.get(0));
             }
         }

@@ -63,4 +63,9 @@ public class CLERLaserSmall extends LaserWeapon {
             .setPrototypeFactions(F_CJF)
             .setProductionFactions(F_CJF);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

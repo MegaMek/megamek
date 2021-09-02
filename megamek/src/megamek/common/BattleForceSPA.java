@@ -18,9 +18,8 @@ public enum BattleForceSPA {
     SEAL, XMEC, FR, FD, HT, HELI, HPG, IATM, INARC, IF, ITSM, IT, JMPS, JMPW,
     KF, LG, LEAD, LPRB, LECM, LRM, LTAG, LF, MAG, MT, MTxD, MEC, MEL, MAS, LMAS, MDS, MSW,
     MASH, MFB, MHQ, SNARC, CNARC, NC3, ORO, OMNI, PNT,
-    PT, PTxD, RAIL, RCN, REAR, RSD, SAW, SCR, SRCH, SRM, ST, STxD, SDS, SOA, SPC, STL, SLG, TAG, MTA, BTA,
-    TELE, TSM, TUR, UMU, VRT, VTM, VTMxD, VTH, VTHxD, VTS, VTSxD, VLG, VSTOL, WAT,
-    // From IOps
+    PT, PTxD, RAIL, RCN, REAR, REL, RSD, SAW, SCR, SRCH, SRM, ST, STxD, SDS, SOA, SPC, STL, SLG, TAG, MTAS, BTAS,
+    TELE, TSM, TUR, TOR, UMU, VRT, VTM, VTMxD, VTH, VTHxD, VTS, VTSxD, VLG, VSTOL, WAT,
     ABA, BRA, BHJ2, BHJ3, BIM, DN, GLD, IRA, LAM, MCS, UCS, NOVA, CASEP, QV, RHS,
     RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP, TSEMPO, TSI, VR,
     // Battleforce only
@@ -69,7 +68,10 @@ public enum BattleForceSPA {
     public String toString() {
         String spaName = super.toString();
         if (isArtillery()) {
-            spaName = "ART-" + spaName.replace("ART", "");
+            spaName += "-";
+        }
+        if (this == TSEMPO) {
+            spaName = "TSEMP-O";
         }
         return spaName;
     }
@@ -86,6 +88,10 @@ public enum BattleForceSPA {
                 return FLK;
             case WeaponType.BFCLASS_IATM:
                 return IATM;
+            case WeaponType.BFCLASS_TORP:
+                return TOR;
+            case WeaponType.BFCLASS_REL:
+                return REL;
             default:
                 return null;
         }

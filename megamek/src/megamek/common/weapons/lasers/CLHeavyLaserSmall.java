@@ -63,4 +63,9 @@ public class CLHeavyLaserSmall extends LaserWeapon {
             .setPrototypeFactions(F_CBR,F_CSA)
             .setProductionFactions(F_CSA);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

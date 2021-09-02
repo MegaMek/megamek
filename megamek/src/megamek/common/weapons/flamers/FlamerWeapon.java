@@ -57,4 +57,9 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         }
         return 0;
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

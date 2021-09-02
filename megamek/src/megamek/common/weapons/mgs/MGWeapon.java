@@ -58,4 +58,9 @@ public abstract class MGWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new MGHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

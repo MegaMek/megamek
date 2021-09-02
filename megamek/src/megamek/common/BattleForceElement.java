@@ -295,9 +295,9 @@ public class BattleForceElement {
             
             if (weapon.getAmmoType() == AmmoType.T_TASER) {
                 if (en instanceof BattleArmor) {
-                    specialAbilities.merge(BattleForceSPA.BTA, 1, Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.BTAS, 1, Integer::sum);
                 } else {
-                    specialAbilities.merge(BattleForceSPA.MTA, 1, Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.MTAS, 1, Integer::sum);
                 }
                 continue;
             }

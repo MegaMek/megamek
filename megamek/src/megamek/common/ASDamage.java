@@ -75,6 +75,17 @@ public class ASDamage {
         return new ASDamage((int)Math.round(dmg), false);
     }
     
+    /** 
+     * Creates an AlphaStrike single damage value from the given double value. The value
+     * is first rounded up to the nearest tenth, then rounded "normally" (i.e. up or 
+     * down depending on the tenth) to the nearest integer. There is no minimal damage, 
+     * i.e. dmg < 0.41 becomes 0. 
+     */
+    public static ASDamage createDualRoundedNormalNoMinimal(double dmg) {
+        double intermediate = AlphaStrikeConverter.roundUpToTenth(dmg);
+        return new ASDamage((int)Math.round(intermediate), false);
+    }
+    
     /** Returns true if this ASDamage represents no damage, not even minimal. */ 
     public boolean noDamage() {
         return (damage == 0) && !minimal;

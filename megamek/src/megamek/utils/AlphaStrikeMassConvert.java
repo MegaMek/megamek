@@ -5,6 +5,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
+
 import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
 
@@ -18,10 +19,15 @@ public class AlphaStrikeMassConvert {
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
-            AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
-            if (ase.getUnitType() == typeFilter) {
-                System.out.println(ase.getName());
-                table.append(clipboardElementString(ase));
+            if (!AlphaStrikeConverter.canConvert(entity)) {
+                continue;
+            }
+            if (entity instanceof Aero && entity.isFighter()) {
+                System.out.println(entity.getShortName());
+                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
+//                if (ase.getUnitType() == typeFilter) {
+                    table.append(clipboardElementString(ase));
+//                }
             }
         }
         StringSelection stringSelection = new StringSelection(table.toString());
@@ -43,7 +49,6 @@ public class AlphaStrikeMassConvert {
         headers.add("Arm");
         headers.add("Str");
         headers.add("Thr");
-        headers.add("S");
         headers.add("Dmg S/M/L");
         headers.add("OV");
         headers.add("PV");
@@ -63,15 +68,15 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getMovementAsString());
         stats.add(element.getFinalArmor() + "");
         stats.add(element.getStructure() + "");
-        stats.add(element.getThreshold() + "");
-//        stats.add(element.getTargetMoveModifier()+"");
-        stats.add("");
-//        stats.add(UnitRoleHandler.getRoleFor(entity).toString());
-        stats.add(element.getASDamageString(0));
-        stats.add("");
-//        stats.add(element.calcHeatCapacity(entity)+"");
+        stats.add(element.usesThreshold() ? element.getFinalThreshold() + "" : " ");
+        if (element.usesSML()) {
+            stats.add(element.getStandardDamage().getSMLStringWithZero());
+        } else if (element.usesSMLE()) {
+            stats.add(element.getStandardDamage().getSMLEStringWithZero());
+        }
+        stats.add(element.getOverheat() + "");
         stats.add(element.getFinalPoints()+"");
-        stats.add("?");
+        stats.add(element.getSpecialsString());
         stats.add("\n");
         return new StringBuilder(String.join("\t", stats));
     }

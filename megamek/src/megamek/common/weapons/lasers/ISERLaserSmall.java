@@ -1,5 +1,7 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.WeaponType;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -62,5 +64,10 @@ public class ISERLaserSmall extends LaserWeapon {
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FW,F_WB)
             .setProductionFactions(F_FW);
+    }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

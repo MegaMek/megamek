@@ -65,6 +65,10 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         .setISApproximate(false, false, false,false, false)
         .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
         .setClanApproximate(false, false, false,false, false);
-;
+    }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

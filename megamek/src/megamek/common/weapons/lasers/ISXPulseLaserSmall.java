@@ -63,4 +63,9 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
             .setISAdvancement(3057, 3078, 3082).setPrototypeFactions(F_LC,F_FS)
             .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

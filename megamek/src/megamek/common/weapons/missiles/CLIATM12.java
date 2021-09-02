@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 import megamek.common.weapons.CLIATMWeapon;
 
 /**
@@ -58,4 +60,15 @@ public class CLIATM12 extends CLIATMWeapon {
             .setPrototypeFactions(F_CCY)
             .setProductionFactions(F_CCY);
         }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 3.6;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 2.4;
+        } else {
+            return 1.2;
+        }
+    }
 }

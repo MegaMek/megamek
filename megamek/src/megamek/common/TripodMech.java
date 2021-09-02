@@ -1634,5 +1634,41 @@ public class TripodMech extends Mech {
     public boolean isValidSecondaryFacing(int dir) {
         return canChangeSecondaryFacing();
     }
+    
+    /**
+     * Separate turret weapons from body-mounted
+     */
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 3;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 1) {
+            return "REAR";
+        } else if (index == 2) {
+            return "TUR";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * index 0: Front-facing
+     * index 1: Rear
+     * index 2: Turret (all non-leg weapons)
+     */
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if ((index == 0 && !rearMounted || (index == 1) && rearMounted)) {
+            return 1.0;
+        } else if (index == 2) {
+            if (location != LOC_CLEG && location != LOC_RLEG && location != LOC_LLEG) {
+                return 1.0;
+            }
+        }
+        return 0;
+    }
 
 }

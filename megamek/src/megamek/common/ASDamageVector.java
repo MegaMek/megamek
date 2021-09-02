@@ -130,6 +130,21 @@ public class ASDamageVector {
         return createRoundedNormalNoMinimal(s, m, l, 0);
     }
     
+    /** 
+     * Creates a full AlphaStrike damage value combination of S/M/L/E from the given 
+     * double values. The values are rounded first up to the nearest tenth, then normally 
+     * (i.e. up or down depending on the tenth) the nearest integer. There is no minimal 
+     * damage, so damage values < 0.41 become 0. 
+     */
+    public static ASDamageVector createDualRoundedNormalNoMinimal(double s, double m, double l, double e) {
+        var result = new ASDamageVector();
+        result.S = ASDamage.createDualRoundedNormalNoMinimal(s);
+        result.M = ASDamage.createDualRoundedNormalNoMinimal(m);
+        result.L = ASDamage.createDualRoundedNormalNoMinimal(l);
+        result.E = ASDamage.createDualRoundedNormalNoMinimal(e);
+        return result;
+    }
+    
     /** Returns an S/M String representation of this ASDV, e.g. 2/2. The L and E values are ignored. */
     public String getSMString() {
         return "" + S + "/" + M;

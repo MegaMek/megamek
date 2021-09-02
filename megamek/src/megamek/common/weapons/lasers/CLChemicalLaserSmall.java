@@ -58,5 +58,10 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
             .setClanAdvancement(3059, 3083, 3145).setPrototypeFactions(F_CHH)
             .setProductionFactions(F_CHH).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 
 }

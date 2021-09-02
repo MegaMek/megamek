@@ -59,4 +59,9 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
             .setProductionFactions(F_FS);
 
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

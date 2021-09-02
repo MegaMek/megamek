@@ -15,8 +15,10 @@ package megamek.common;
 
 import static megamek.common.BattleForceSPA.*;
 import static megamek.common.ASUnitType.*;
+import static java.util.stream.Collectors.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,8 @@ public class AlphaStrikeElement extends BattleForceElement {
      * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
      * This represents multiple turrets, each with a standard damage value and SpA damage values.
      * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
-     * with standard damage at least. 
+     * with standard damage at least.
+     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field. 
      */
     protected EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
     
@@ -142,11 +145,19 @@ public class AlphaStrikeElement extends BattleForceElement {
         specialUnitAbilities.put(spa, damage);
     }
     
-    /** 
-     * NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>.
-     */
+    /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
     public void addTurSPA(List<List<Object>> turAbility) {
         specialUnitAbilities.put(TUR, turAbility);
+    }
+    
+    /** NEW version - Adds the LAM Special Unit Ability with a LAM movement map. */
+    public void addLamSPA(Map<String, Integer> specialMoves) {
+        specialUnitAbilities.put(LAM, specialMoves);
+    }
+    
+    /** NEW version - Adds the BIM Special Unit Ability with a LAM movement map. */
+    public void addBimSPA(Map<String, Integer> specialMoves) {
+        specialUnitAbilities.put(BIM, specialMoves);
     }
     
     public boolean usesSML() {
@@ -204,10 +215,22 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     @Override
     public String getMovementAsString() {
-    	return movement.entrySet().stream()
-    			.map(e -> (e.getKey().equals("k") ? "0." + e.getValue() : e.getValue())
-    					+ "\"" + e.getKey())
-    			.collect(Collectors.joining("/"));    	
+    	return movement.entrySet().stream().map(this::moveString).collect(joining("/"));    	
+    }
+    
+    /** Returns the formatted String for a single movement type, e.g. 4a or 12"j. */
+    private String moveString(Entry<String, Integer> move) {
+        if (move.getKey().equals("k")) {
+            return "0." + move.getValue() + "k";
+        } else if (move.getKey().equals("a")) {
+            return move.getValue() + "a";
+        } else if (move.getKey().equals("p")) {
+            return move.getValue() + "p";
+        } else if (isAnyTypeOf(DS, WS, DA, JS, SS) && move.getKey().isBlank()) {
+            return move.getValue() + "";
+        } else {
+            return move.getKey() + "\"" + move.getValue();
+        }
     }
     
     public int getTMM() {
@@ -286,11 +309,29 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     public String getSpecialsString() {
-        return specialUnitAbilities.keySet().stream()
+        //TODO REMOVE:    ONLY FOR COMPARISON WITH THE MUL
+        String s = specialUnitAbilities.keySet().stream()
                 .filter(this::showSpecial)
                 .map(spa -> formatSPAString(spa))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(","));
+        if (hasAnySPAOf(JMPW, JMPS) && !s.isBlank()) {
+            s += ",";
+        }
+        s += hasSPA(JMPW) ? formatSPAString(JMPW) : ""; 
+        s += hasSPA(JMPS) ? formatSPAString(JMPS) : "";
+        return s;
+        
+        
+        
+        
+        
+        
+//        return specialUnitAbilities.keySet().stream()
+//                .filter(this::showSpecial)
+//                .map(spa -> formatSPAString(spa))
+//                .sorted(String.CASE_INSENSITIVE_ORDER)
+//                .collect(Collectors.joining(","));
     }
     
     public boolean hasIF() {
@@ -307,7 +348,23 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     
     public boolean showSpecial(BattleForceSPA spa) {
-        return !(asUnitType == ASUnitType.BM && (spa == BattleForceSPA.SOA || spa == BattleForceSPA.SRCH));
+        //TODO REMOVE:
+        if (spa == JMPS || spa == JMPW) { // ONLY FOR COMPARISON WITH THE MUL
+            return false;
+        }
+        if ((asUnitType == BM) && (spa == SOA || spa == SRCH)) {
+            return false;
+        }
+        if ((asUnitType == CV) && (spa == SRCH)) {
+            return false;
+        }
+        if (!isAnyTypeOf(JS, WS, SC, DA, DS) && spa.isDoor()) {
+            return false;
+        }
+        if (isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA) && (spa == SEAL)) {
+            return false;
+        }
+        return true;
     }
    
     
@@ -397,17 +454,19 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     protected String formatSPAString(BattleForceSPA spa) {
         /* BOMB rating for ASFs and CFs is one less than for BF */
-        if (spa.equals(BOMB) && isAnyTypeOf(ASUnitType.AF, ASUnitType.CF)) {
-            return spa.toString() + ((int) getSPA(spa) - 1);
-        }
+//        if (spa.equals(BOMB) && isAnyTypeOf(ASUnitType.AF, ASUnitType.CF)) {
+//            return spa.toString() + ((int) getSPA(spa) - 1);
+//        }
         if (spa == IF) {
             return spa.toString() + getSPA(spa);
         } else if (spa == TUR) {
             return turretString();
+        } else if (spa == BIM || spa == LAM) {
+            return lamString();
         } else if (spa == SRM) {
             return spa.toString() + ((ASDamageVector) getSPA(spa)).getSMString();
-        } else if ((spa == C3BSS) || (spa == C3M)
-                || (spa == C3BSM) || (spa == C3EM)) {
+        } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
+                || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
             return spa.toString() + ((int) getSPA(spa) == 1 ? "" : (int) getSPA(spa));
         } else {
             return spa.toString() + (getSPA(spa) != null ? getSPA(spa) : "");
@@ -434,6 +493,21 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
             result +=")";
         }
+        return result;
+    }
+    
+    /** 
+     * Returns the formatted TUR Special Ability string such as TUR(3/3/1,AC2/2/-). Requires TUR to
+     * be present. 
+     */ 
+    private String lamString() {
+        BattleForceSPA spa = hasSPA(LAM) ? LAM : BIM;
+        Map<String, Integer> movelist = (Map<String, Integer>) getSPA(spa);
+        String result = spa.toString() + "(";
+        if (spa == LAM) {
+            result += movelist.get("g") + "\"" + "g/";
+        }
+        result += movelist.get("a") + "a)";
         return result;
     }
     

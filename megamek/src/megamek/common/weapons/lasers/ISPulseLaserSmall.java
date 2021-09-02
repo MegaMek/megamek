@@ -69,5 +69,10 @@ public class ISPulseLaserSmall extends PulseLaserWeapon {
             .setProductionFactions(F_TH)
             .setReintroductionFactions(F_DC);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 
 }

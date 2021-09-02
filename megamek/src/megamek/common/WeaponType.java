@@ -1155,11 +1155,24 @@ public class WeaponType extends EquipmentType {
         return getHeat();
     }
     
-    /** 
-     * Returns true if this weapon type can be used for LRM-type indirect fire. This seems to be
-     * identical for Total Warfare play and for AlphaStrike weapon conversion.
-     */
+    /** Returns true if this weapon type can be used for LRM-type indirect fire. */
     public boolean hasIndirectFire() {
+        return false;
+    }
+    
+    /** 
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This
+     * is identical to TW indirect fire for most but not all weapons (see e.g. IATMS) 
+     */
+    public boolean hasAlphaStrikeIndirectFire() {
+        return hasIndirectFire();
+    }
+    
+    /** 
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This
+     * is not identical to TW point defense, therefore implemented separately.
+     */
+    public boolean isAlphaStrikePointDefense() {
         return false;
     }
 

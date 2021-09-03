@@ -13,6 +13,7 @@ VERSION HISTORY:
 + Issue #2854: Only skip the invalid unit when not allowing illegal designs
 + PR #3130: MegaMek XML Util: Fixing Two Escaping Issues
 + PR #2581: MegaMek XML Util: Adding Proper Parsing Methods
++ PR #3000: Top Menu Rewrite
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

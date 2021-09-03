@@ -388,7 +388,7 @@ public interface IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    abstract IPlayer getPlayer(int id);
+    @Nullable IPlayer getPlayer(final int id);
 
     abstract void addPlayer(int id, IPlayer player);
 

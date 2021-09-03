@@ -58,6 +58,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
@@ -148,167 +149,170 @@ public class Precognition implements Runnable {
         // it may be being updated
         GAME_LOCK.lock();
         try {
-        switch (c.getCommand()) {
-            case Packet.COMMAND_PLAYER_UPDATE:
-                receivePlayerInfo(c);
-                break;
-            case Packet.COMMAND_PLAYER_READY:
-                getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
-                break;
-            case Packet.COMMAND_PLAYER_ADD:
-                receivePlayerInfo(c);
-                break;
-            case Packet.COMMAND_PLAYER_REMOVE:
-                getGame().removePlayer(c.getIntValue(0));
-                break;
-            case Packet.COMMAND_CHAT:
-                getGame().processGameEvent(new GamePlayerChatEvent(this, null, 
-                        (String) c.getObject(0)));
-                break;
-            case Packet.COMMAND_ENTITY_ADD:
-                receiveEntityAdd(c);
-                break;
-            case Packet.COMMAND_ENTITY_UPDATE:
-                receiveEntityUpdate(c);
-                break;
-            case Packet.COMMAND_ENTITY_REMOVE:
-                receiveEntityRemove(c);
-                break;
-            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
-                receiveEntityVisibilityIndicator(c);
-                break;
-            case Packet.COMMAND_SENDING_MINEFIELDS:
-                receiveSendingMinefields(c);
-                break;
-            case Packet.COMMAND_SENDING_ILLUM_HEXES:
-                receiveIlluminatedHexes(c);
-                break;
-            case Packet.COMMAND_CLEAR_ILLUM_HEXES:
-                getGame().clearIlluminatedPositions();
-                break;
-            case Packet.COMMAND_UPDATE_MINEFIELDS:
-                receiveUpdateMinefields(c);
-                break;
-            case Packet.COMMAND_DEPLOY_MINEFIELDS:
-                receiveDeployMinefields(c);
-                break;
-            case Packet.COMMAND_REVEAL_MINEFIELD:
-                receiveRevealMinefield(c);
-                break;
-            case Packet.COMMAND_REMOVE_MINEFIELD:
-                receiveRemoveMinefield(c);
-                break;
-            case Packet.COMMAND_ADD_SMOKE_CLOUD:
-                SmokeCloud cloud = (SmokeCloud) c.getObject(0);
-                getGame().addSmokeCloud(cloud);
-                break;
-            case Packet.COMMAND_CHANGE_HEX:
-                getGame().getBoard().setHex((Coords) c.getObject(0),
-                                       (IHex) c.getObject(1));
-                break;
-            case Packet.COMMAND_CHANGE_HEXES:
-                List<Coords> coords = new ArrayList<>(
-                        (Set<Coords>) c.getObject(0));
-                List<IHex> hexes = new ArrayList<>(
-                        (Set<IHex>) c.getObject(1));
-                getGame().getBoard().setHexes(coords, hexes);
-                break;
-            case Packet.COMMAND_BLDG_UPDATE:
-                receiveBuildingUpdate(c);
-                break;
-            case Packet.COMMAND_BLDG_COLLAPSE:
-                receiveBuildingCollapse(c);
-                break;
-            case Packet.COMMAND_PHASE_CHANGE:
-                getGame().setPhase((IGame.Phase) c.getObject(0));
-                break;
-            case Packet.COMMAND_TURN:
-                getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
-                break;
-            case Packet.COMMAND_ROUND_UPDATE:
-                getGame().setRoundCount(c.getIntValue(0));
-                break;
-            case Packet.COMMAND_SENDING_TURNS:
-                receiveTurns(c);
-                break;
-            case Packet.COMMAND_SENDING_BOARD:
-                receiveBoard(c);
-                break;
-            case Packet.COMMAND_SENDING_ENTITIES:
-                receiveEntities(c);
-                break;
-            case Packet.COMMAND_SENDING_REPORTS:
-            case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
-                getGame().addReports((Vector<Report>) c.getObject(0));
-                break;
-            case Packet.COMMAND_SENDING_REPORTS_ALL:
-                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
-                        .getObject(0);
-                getGame().setAllReports(allReports);
-                break;
-            case Packet.COMMAND_ENTITY_ATTACK:
-                receiveAttack(c);
-                break;
-            case Packet.COMMAND_SENDING_GAME_SETTINGS:
-                getGame().setOptions((GameOptions) c.getObject(0));
-                break;
-            case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
-                getGame().setPlanetaryConditions((PlanetaryConditions) c
-                        .getObject(0));
-                getGame().processGameEvent(new GameSettingsChangeEvent(this));
-                break;
-            case Packet.COMMAND_SENDING_TAGINFO:
-                Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
-                for (TagInfo ti : vti) {
-                    getGame().addTagInfo(ti);
-                }
-                break;
-            case Packet.COMMAND_RESET_TAGINFO:
-                getGame().resetTagInfo();
-                break;
-            case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
-                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
-                        .getObject(0);
-                getGame().setArtilleryVector(v);
-                break;
-            case Packet.COMMAND_SENDING_FLARES:
-                Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
-                getGame().setFlares(v2);
-                break;
-            case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
-                getGame().getBoard().setSpecialHexDisplayTable(
-                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
-                                .getObject(0));
-                getGame().processGameEvent(new GameBoardChangeEvent(this));
-                break;
-            case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
-                receiveEntityNovaNetworkModeChange(c);
-                break;
-            case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
-                int cfrType = (int) c.getData()[0];
-                GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
-                switch (cfrType) {
-                    case (Packet.COMMAND_CFR_DOMINO_EFFECT):
-                        cfrEvt.setEntityId((int) c.getData()[1]);
-                        break;
-                    case Packet.COMMAND_CFR_AMS_ASSIGN:
-                        cfrEvt.setEntityId((int) c.getData()[1]);
-                        cfrEvt.setAmsEquipNum((int) c.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
-                        break;
-                    case Packet.COMMAND_CFR_APDS_ASSIGN:
-                        cfrEvt.setEntityId((int) c.getData()[1]);
-                        cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
-                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
-                        break;
-                }
-                getGame().processGameEvent(cfrEvt);
-                break;
-            case Packet.COMMAND_GAME_VICTORY_EVENT:
-                GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
-                getGame().processGameEvent(gve);
-                break;
-        }
+            switch (c.getCommand()) {
+                case Packet.COMMAND_PLAYER_UPDATE:
+                    receivePlayerInfo(c);
+                    break;
+                case Packet.COMMAND_PLAYER_READY:
+                    final IPlayer player = getPlayer(c.getIntValue(0));
+                    if (player != null) {
+                        player.setDone(c.getBooleanValue(1));
+                    }
+                    break;
+                case Packet.COMMAND_PLAYER_ADD:
+                    receivePlayerInfo(c);
+                    break;
+                case Packet.COMMAND_PLAYER_REMOVE:
+                    getGame().removePlayer(c.getIntValue(0));
+                    break;
+                case Packet.COMMAND_CHAT:
+                    getGame().processGameEvent(new GamePlayerChatEvent(this, null,
+                            (String) c.getObject(0)));
+                    break;
+                case Packet.COMMAND_ENTITY_ADD:
+                    receiveEntityAdd(c);
+                    break;
+                case Packet.COMMAND_ENTITY_UPDATE:
+                    receiveEntityUpdate(c);
+                    break;
+                case Packet.COMMAND_ENTITY_REMOVE:
+                    receiveEntityRemove(c);
+                    break;
+                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
+                    receiveEntityVisibilityIndicator(c);
+                    break;
+                case Packet.COMMAND_SENDING_MINEFIELDS:
+                    receiveSendingMinefields(c);
+                    break;
+                case Packet.COMMAND_SENDING_ILLUM_HEXES:
+                    receiveIlluminatedHexes(c);
+                    break;
+                case Packet.COMMAND_CLEAR_ILLUM_HEXES:
+                    getGame().clearIlluminatedPositions();
+                    break;
+                case Packet.COMMAND_UPDATE_MINEFIELDS:
+                    receiveUpdateMinefields(c);
+                    break;
+                case Packet.COMMAND_DEPLOY_MINEFIELDS:
+                    receiveDeployMinefields(c);
+                    break;
+                case Packet.COMMAND_REVEAL_MINEFIELD:
+                    receiveRevealMinefield(c);
+                    break;
+                case Packet.COMMAND_REMOVE_MINEFIELD:
+                    receiveRemoveMinefield(c);
+                    break;
+                case Packet.COMMAND_ADD_SMOKE_CLOUD:
+                    SmokeCloud cloud = (SmokeCloud) c.getObject(0);
+                    getGame().addSmokeCloud(cloud);
+                    break;
+                case Packet.COMMAND_CHANGE_HEX:
+                    getGame().getBoard().setHex((Coords) c.getObject(0),
+                                           (IHex) c.getObject(1));
+                    break;
+                case Packet.COMMAND_CHANGE_HEXES:
+                    List<Coords> coords = new ArrayList<>(
+                            (Set<Coords>) c.getObject(0));
+                    List<IHex> hexes = new ArrayList<>(
+                            (Set<IHex>) c.getObject(1));
+                    getGame().getBoard().setHexes(coords, hexes);
+                    break;
+                case Packet.COMMAND_BLDG_UPDATE:
+                    receiveBuildingUpdate(c);
+                    break;
+                case Packet.COMMAND_BLDG_COLLAPSE:
+                    receiveBuildingCollapse(c);
+                    break;
+                case Packet.COMMAND_PHASE_CHANGE:
+                    getGame().setPhase((IGame.Phase) c.getObject(0));
+                    break;
+                case Packet.COMMAND_TURN:
+                    getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
+                    break;
+                case Packet.COMMAND_ROUND_UPDATE:
+                    getGame().setRoundCount(c.getIntValue(0));
+                    break;
+                case Packet.COMMAND_SENDING_TURNS:
+                    receiveTurns(c);
+                    break;
+                case Packet.COMMAND_SENDING_BOARD:
+                    receiveBoard(c);
+                    break;
+                case Packet.COMMAND_SENDING_ENTITIES:
+                    receiveEntities(c);
+                    break;
+                case Packet.COMMAND_SENDING_REPORTS:
+                case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
+                    getGame().addReports((Vector<Report>) c.getObject(0));
+                    break;
+                case Packet.COMMAND_SENDING_REPORTS_ALL:
+                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
+                            .getObject(0);
+                    getGame().setAllReports(allReports);
+                    break;
+                case Packet.COMMAND_ENTITY_ATTACK:
+                    receiveAttack(c);
+                    break;
+                case Packet.COMMAND_SENDING_GAME_SETTINGS:
+                    getGame().setOptions((GameOptions) c.getObject(0));
+                    break;
+                case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
+                    getGame().setPlanetaryConditions((PlanetaryConditions) c
+                            .getObject(0));
+                    getGame().processGameEvent(new GameSettingsChangeEvent(this));
+                    break;
+                case Packet.COMMAND_SENDING_TAGINFO:
+                    Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
+                    for (TagInfo ti : vti) {
+                        getGame().addTagInfo(ti);
+                    }
+                    break;
+                case Packet.COMMAND_RESET_TAGINFO:
+                    getGame().resetTagInfo();
+                    break;
+                case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
+                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
+                            .getObject(0);
+                    getGame().setArtilleryVector(v);
+                    break;
+                case Packet.COMMAND_SENDING_FLARES:
+                    Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
+                    getGame().setFlares(v2);
+                    break;
+                case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
+                    getGame().getBoard().setSpecialHexDisplayTable(
+                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
+                                    .getObject(0));
+                    getGame().processGameEvent(new GameBoardChangeEvent(this));
+                    break;
+                case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
+                    receiveEntityNovaNetworkModeChange(c);
+                    break;
+                case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
+                    int cfrType = (int) c.getData()[0];
+                    GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
+                    switch (cfrType) {
+                        case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+                            cfrEvt.setEntityId((int) c.getData()[1]);
+                            break;
+                        case Packet.COMMAND_CFR_AMS_ASSIGN:
+                            cfrEvt.setEntityId((int) c.getData()[1]);
+                            cfrEvt.setAmsEquipNum((int) c.getData()[2]);
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            break;
+                        case Packet.COMMAND_CFR_APDS_ASSIGN:
+                            cfrEvt.setEntityId((int) c.getData()[1]);
+                            cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
+                            cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                            break;
+                    }
+                    getGame().processGameEvent(cfrEvt);
+                    break;
+                case Packet.COMMAND_GAME_VICTORY_EVENT:
+                    GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
+                    getGame().processGameEvent(gve);
+                    break;
+            }
         } finally {
             GAME_LOCK.unlock();
         }
@@ -701,7 +705,7 @@ public class Precognition implements Runnable {
     /**
      * Returns the individual player assigned the index parameter.
      */
-    protected IPlayer getPlayer(int idx) {
+    protected @Nullable IPlayer getPlayer(final int idx) {
         return getGame().getPlayer(idx);
     }
 

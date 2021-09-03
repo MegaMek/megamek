@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -29,7 +29,7 @@ TR-11
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 4
 </type>
 
 <motion_type>
@@ -91,6 +91,11 @@ IS Ammo AC/20
 IS Ammo AC/20
 </Fuselage Equipment>
 
+<notes>
+From the TRO: The TR-11 is a factory-built reconnaissance
+variant that removes the four lasers; instead, the cockpit is widened to make room for an observer and a large variety of scanning and sensor equipment. This equipment has never been defined.
+</notes>
+
 <source>
 TRO 3039 - Succession Wars
 </source>
@@ -98,3 +103,4 @@ TRO 3039 - Succession Wars
 <tonnage>
 50.0
 </tonnage>
+

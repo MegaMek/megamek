@@ -220,7 +220,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
-        CommonMenuBar menuBar = new CommonMenuBar();
+        CommonMenuBar menuBar = new CommonMenuBar(this);
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
         showMainMenu();
@@ -291,7 +291,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         scenB.addActionListener(actionListener);
         loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
-        loadB.setActionCommand(ClientGUI.FILE_GAME_OPEN);
+        loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
         connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
@@ -1049,7 +1049,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             case ClientGUI.FILE_GAME_CONNECT_BOT:
                 connectBot();
                 break;
-            case ClientGUI.FILE_GAME_OPEN:
+            case ClientGUI.FILE_GAME_LOAD:
                 loadGame();
                 break;
             case ClientGUI.FILE_GAME_QLOAD:

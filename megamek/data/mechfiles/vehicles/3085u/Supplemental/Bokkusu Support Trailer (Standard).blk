@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Bokkusu Support Trailer
 3086
 </year>
 
+<originalBuildYear>
+3086
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -34,6 +38,7 @@ Wheeled
 
 <transporters>
 troopspace:4.0
+cargobay:18.0:1:1
 </transporters>
 
 <cruiseMP>
@@ -69,7 +74,7 @@ ISAMS Ammo
 
 <Front Equipment>
 ISAntiMissileSystem
-Lift Hoist
+Lift Hoist/Arresting Hoist
 Hitch
 </Front Equipment>
 
@@ -86,10 +91,6 @@ ISAntiMissileSystem
 Hitch
 </Rear Equipment>
 
-<transporters>
-cargobay:18:1
-</transporters>
-
 <source>
 TRO3086S - Early Repubic Era
 </source>
@@ -101,3 +102,4 @@ TRO3086S - Early Repubic Era
 <trailer>
 1
 </trailer>
+

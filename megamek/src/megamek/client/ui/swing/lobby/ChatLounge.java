@@ -24,6 +24,7 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -31,10 +32,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -56,6 +59,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -244,6 +249,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private Map<String, String> boardTags = new HashMap<>();
     
+    LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
+    
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
         super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
@@ -345,6 +352,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         fldSpaceBoardHeight.addFocusListener(focusListener);
         
         comboTeam.addActionListener(lobbyListener);
+        
+        KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        kbfm.addKeyEventDispatcher(lobbyKeyDispatcher);
     }
 
     /** Applies changes to the board and map size when the textfields lose focus. */
@@ -1200,9 +1210,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
             }
         }
-
-        // Enable the "Save Unit List..." button if the local player has units.
-        clientgui.getMenuBar().setUnitList(localUnits);
     }
     
     /** Adjusts the mektable to compact/normal mode. */
@@ -1790,12 +1797,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
                     clientgui.getClient().sendMapDimensions(mapSettings);
                 }
+                
             } else if (ev.getSource() == butMapShrinkH) {
                 if (mapSettings.getMapHeight() > 1) {
                     int newMapHeight = mapSettings.getMapHeight() - 1;
                     mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
                     clientgui.getClient().sendMapDimensions(mapSettings);
                 }
+                
             } else if (ev.getSource() == butDetach) {
                 butDetach.setEnabled(false);
                 panTeam.remove(panTeamOverview);
@@ -1853,6 +1862,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 
             } else if (ev.getSource() == butCollapse) {
                 collapseTree();
+                
             } else if (ev.getSource() == butExpand) {
                 expandTree();
             } 
@@ -2249,6 +2259,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         fldSpaceBoardHeight.removeActionListener(lobbyListener);
         
         comboTeam.removeActionListener(lobbyListener);
+        
+        KeyboardFocusManager kbfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        kbfm.removeKeyEventDispatcher(lobbyKeyDispatcher);
     }
 
     /**
@@ -2488,19 +2501,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } else if (canConfigureMultipleDeployment(entities)) {
                     lobbyActions.customizeMechs(entities);
                 }
-            } else if (code == KeyEvent.VK_C && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
-                e.consume();
-                StringSelection stringSelection = new StringSelection(clipboardString(entities));
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(stringSelection, null);
-                
-            } else if (code == KeyEvent.VK_V && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
-                e.consume();
-                importClipboard(); 
-                
             }
         }
     };
+    
+    /** Copies the selected units, if any, from the displayed Unit Table / Force Tree to the clipboard. */
+    public void copyToClipboard() {
+        List<Entity> entities = isForceView() ? getTreeSelectedEntities() : getSelectedEntities();
+        StringSelection stringSelection = new StringSelection(clipboardString(entities));
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
     
     /** Reads the clipboard and adds units, if it can parse them. */
     public void importClipboard() {
@@ -2639,16 +2650,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (code == KeyEvent.VK_LEFT && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                 e.consume();
                 collapseTree();
-                
-            } else if (code == KeyEvent.VK_C && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
-                e.consume();
-                StringSelection stringSelection = new StringSelection(clipboardString(selEntities));
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(stringSelection, null);
-                
-            } else if (code == KeyEvent.VK_V && e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
-                e.consume();
-                importClipboard();
                 
             }
         }
@@ -3413,7 +3414,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private class MekTable extends JTable {
         private static final long serialVersionUID = -4054214297803021212L;
-
+        
         public MekTable(MekTableModel mekModel) {
             super(mekModel);
         }
@@ -3560,5 +3561,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return butForceView.isSelected();
     }
     
+    /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
+    public boolean isModalDialogShowing() {
+        return Stream.of(Window.getWindows())
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal());
+    }
+
 }
 

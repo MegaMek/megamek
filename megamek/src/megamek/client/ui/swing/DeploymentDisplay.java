@@ -203,9 +203,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); 
-
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
@@ -214,7 +211,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /** Enables relevant buttons and sets up for your turn. */
     private void beginMyTurn() {
-        clientgui.setDisplayVisible(true);
+        clientgui.maybeShowUnitDisplay();
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
         setRemoveEnabled(true);
@@ -229,7 +226,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 && (null != next)
                 && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
@@ -792,7 +789,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
         }
     }
 
@@ -830,7 +827,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 }
             }
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());

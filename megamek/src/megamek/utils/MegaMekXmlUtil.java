@@ -258,7 +258,7 @@ public class MegaMekXmlUtil {
      */
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final Collection<?> values) {
-        if (values.size() > 0) {
+        if (!values.isEmpty()) {
             final StringJoiner stringJoiner = new StringJoiner(",");
             values.forEach(v -> stringJoiner.add(v.toString()));
             pw.println(indentStr(indent) + "<" + name + ">" + escape(stringJoiner.toString()) + "</" + name + ">");
@@ -479,7 +479,7 @@ public class MegaMekXmlUtil {
                 return LocalDate.parse(value + "-01");
         }
 
-        int firstSpace = value.indexOf(' ');
+        final int firstSpace = value.indexOf(' ');
         if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));
         } else if (value.indexOf('-') < 0) {
@@ -522,7 +522,7 @@ public class MegaMekXmlUtil {
      */
     public static int[] parseIntArray(final String value) {
         final String[] values = value.split(",");
-        int[] ints = new int[values.length];
+        final int[] ints = new int[values.length];
         for (int i = 0; i < values.length; i++) {
             ints[i] = Integer.parseInt(values[i]);
         }
@@ -535,7 +535,7 @@ public class MegaMekXmlUtil {
      */
     public static boolean[] parseBooleanArray(final String value) {
         final String[] values = value.split(",");
-        boolean[] booleans = new boolean[values.length];
+        final boolean[] booleans = new boolean[values.length];
         for (int i = 0; i < values.length; i++) {
             booleans[i] = Boolean.parseBoolean(values[i]);
         }
@@ -548,7 +548,7 @@ public class MegaMekXmlUtil {
      */
     public static long[] parseLongArray(final String value) {
         final String[] values = value.split(",");
-        long[] longs = new long[values.length];
+        final long[] longs = new long[values.length];
         for (int i = 0; i < values.length; i++) {
             longs[i] = Long.parseLong(values[i]);
         }
@@ -561,7 +561,7 @@ public class MegaMekXmlUtil {
      */
     public static double[] parseDoubleArray(final String value) {
         final String[] values = value.split(",");
-        double[] doubles = new double[values.length];
+        final double[] doubles = new double[values.length];
         for (int i = 0; i < values.length; i++) {
             doubles[i] = Double.parseDouble(values[i]);
         }

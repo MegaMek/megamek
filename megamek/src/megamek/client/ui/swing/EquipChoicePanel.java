@@ -1322,10 +1322,6 @@ public class EquipChoicePanel extends JPanel {
                 
                 this.setLayout(new GridBagLayout());
                 
-                JLabel weaponName = new JLabel();
-                weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
-                add(weaponName, GBC.std());
-                
                 ammoBins = new JComboBox<>();
                 matchingAmmoBins = new ArrayList<>();
                 
@@ -1348,6 +1344,15 @@ public class EquipChoicePanel extends JPanel {
                         }
                     }
                 }
+                
+                // don't bother displaying the row if there's no ammo to be swapped
+                if (matchingAmmoBins.isEmpty()) {
+                    return;
+                }
+                
+                JLabel weaponName = new JLabel();
+                weaponName.setText("(" + weapon.getEntity().getLocationAbbr(weapon.getLocation()) + ") " + weapon.getName());
+                add(weaponName, GBC.std());
                 
                 add(ammoBins, GBC.eol());
                 refreshAmmoBinNames();

@@ -169,9 +169,7 @@ public class WeaponQuirks extends AbstractOptions {
         
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
             if (en instanceof Protomech
-                || en instanceof BattleArmor
-                || en instanceof Jumpship
-                || en instanceof Dropship) {
+                || en instanceof Jumpship) {
 
                 return false;
             }

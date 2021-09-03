@@ -3,34 +3,34 @@ Longbow
 LGB-14C2
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3088
-Source:RS 3145 NT NU
-Rules Level:3
+techbase:Inner Sphere
+era:3088
+source:RS 3145 NT NU
+rules level:3
 
-Mass:85
-Engine:255 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:85
+engine:255 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:23
-RT Armor:23
-CT Armor:32
-HD Armor:9
-LL Armor:31
-RL Armor:31
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:23
+RT armor:23
+CT armor:32
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:7
 MML 9, Left Arm
@@ -116,8 +116,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
--Empty-
--Empty-
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
 -Empty-
 -Empty-
 -Empty-

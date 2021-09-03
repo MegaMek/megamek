@@ -140,10 +140,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     Mounted m = srcModel.getWeaponAt(i);
                     ent.setCustomWeaponOrder(m, i);
                 }
-                if (unitDisplay.getClientGUI() != null) {
-                    unitDisplay.getClientGUI().getMenuBar()
-                            .updateSaveWeaponOrderMenuItem();
-                }
             }
             addListeners();
         }
@@ -2746,10 +2742,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         } else { // Default
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
             weapComparator = new WeaponComparatorNum(entity);
-        }
-        if (unitDisplay.getClientGUI() != null) {
-            unitDisplay.getClientGUI().getMenuBar()
-                    .updateSaveWeaponOrderMenuItem();
         }
         ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
     }

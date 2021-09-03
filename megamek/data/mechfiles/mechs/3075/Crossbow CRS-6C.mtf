@@ -147,4 +147,17 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The predecessor to Clan Steel Viper's Crossbow OmniMech, the original Crossbow first saw battlefield action for the Lyran Commonwealth in 2468. The 60-ton 'Mech is speedy for its era, capable of 86 km/h. This came at the expense of armor, however, as the Crossbow is only protected by eight tons of armor.
 
+capabilities:This variant introduced in 2481, meant for close-quarters action, removed the missile launchers and one laser in favor of an Autocannon/10, though it had a limited ammunition supply
+
+history:The production model, the 6B, came a few years later. The heavy 'Mech was the first produced by Arcturan Arms and the third homegrown BattleMech produced in the Commonwealth. Arcturan Arms fell on hard times when the capital was relocated from Arcturus to Tharkad, forcing them to shut down the factory in 2490 after producing only a few hundred Crossbows. MacEnroe Motors bought out the financially troubled company in 2541, which shut down Crossbow production in 2550.
+
+manufacturer:Arcturan Arms, MacEnroe Motors
+primaryfactory:Arcturus
+systemmanufacturer:CHASSIS:Arc Walker 6X-B
+systemmanufacturer:ENGINE:AA Eterna 300
+systemmanufacturer:ARMOR:Diamond Skin Beta Series
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Arc Signal 1100
+systemmanufacturer:TARGETING:Arc Walker T&T Prime

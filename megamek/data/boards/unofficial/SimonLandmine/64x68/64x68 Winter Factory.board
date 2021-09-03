@@ -1,13 +1,4 @@
 size 64 68
-tag "Rough (Auto)"
-tag "Foliage (Auto)"
-tag "Water (Auto)"
-tag "Cliffs (Auto)"
-tag "SnowTheme (Auto)"
-tag "Roads (Auto)"
-tag "HighHills (Auto)"
-tag "Woods (Auto)"
-tag "SnowTerrain (Auto)"
 hex 0101 4 "" "snow"
 hex 0201 4 "woods:1;foliage_elev:2" "snow"
 hex 0301 5 "woods:1;foliage_elev:2" "snow"

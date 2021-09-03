@@ -19,6 +19,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
@@ -44,7 +45,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
     public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
-    public static final String ADVANCED_DRAW_ENTITY_LABEL = "AdvancedDrawEntityLabel";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE = "AdvancedMechDisplayArmorSmallFontSize";
@@ -80,7 +80,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
-    public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
     public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
     public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
@@ -98,6 +97,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     /* --End advanced settings-- */
 
 
+    public static final String DRAW_ENTITY_LABEL = "drawEntityLabel";
+    public static final String SHOW_COORDS = "showCoords";
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
     public static final String INCLINES = "Inclines";
@@ -171,6 +172,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMAP_ZOOM = "MinimapZoom";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
+    public static final String SHOW_UNIT_DISPLAY = "ShowUnitDisplay";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
     public static final String MOUSE_WHEEL_ZOOM_FLIP = "MouseWheelZoomFlip";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
@@ -239,6 +241,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
     public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
+    public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -265,7 +268,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
-        store.setDefault(ADVANCED_DRAW_ENTITY_LABEL, true);
+        store.setDefault(DRAW_ENTITY_LABEL, true);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
@@ -317,7 +320,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, false);
-        store.setDefault(ADVANCED_SHOW_COORDS, true);
+        store.setDefault(SHOW_COORDS, true);
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
@@ -347,10 +350,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
+        store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
         store.setDefault(FIRING_SOLUTIONS,true);
         store.setDefault(GUI_SCALE, 1);
+        store.setDefault(SHOW_UNIT_DISPLAY, true);
         store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
         store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
@@ -1557,6 +1562,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setWarningColor(Color color) {
         store.setValue(WARNING_COLOR, getColorString(color));
+    }
+    
+    /** Sets the user preference for the Unit Display window to active. */
+    public void showUnitDisplay() {
+        store.setValue(SHOW_UNIT_DISPLAY, true);
+    }
+    
+    /** Sets the user preference for the Unit Display window to inactive. */
+    public void hideUnitDisplay() {
+        store.setValue(SHOW_UNIT_DISPLAY, false);
+    }
+    
+    /** Toggles the state of the user preference for the Unit Display. */
+    public void toggleUnitDisplay() {
+        store.setValue(SHOW_UNIT_DISPLAY, !getBoolean(SHOW_UNIT_DISPLAY));
+    }
+    
+    /** Toggles the state of the user preference for the Keybinds overlay. */
+    public void toggleKeybindsOverlay() {
+        store.setValue(SHOW_KEYBINDS_OVERLAY, !getBoolean(SHOW_KEYBINDS_OVERLAY));
+    }
+
+    public LabelDisplayStyle getUnitLabelStyle() {
+        try {
+            return LabelDisplayStyle.valueOf(store.getString(UNIT_LABEL_STYLE));
+        } catch (Exception e) {
+            return LabelDisplayStyle.FULL;
+        }
+    }
+
+    public void setUnitLabelStyle(LabelDisplayStyle style) {
+        store.setValue(UNIT_LABEL_STYLE, style.name());
     }
 
     public Color getColor(String name) {

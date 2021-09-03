@@ -49,7 +49,7 @@ Weapons:17
 1 Cargo (1 ton), Right Torso
 1 Cargo (1 ton), Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -57,7 +57,7 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -115,7 +115,7 @@ Heat Sink
 Sensors
 Life Support
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -123,7 +123,7 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator

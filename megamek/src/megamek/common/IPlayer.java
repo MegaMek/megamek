@@ -32,6 +32,11 @@ public interface IPlayer extends ITurnOrdered {
     String[] teamNames = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
     int MAX_TEAMS = teamNames.length;
 
+    /**
+     * Constructs a shallow copy of this object.
+     */
+    IPlayer copy();
+
     Vector<Minefield> getMinefields();
 
     void addMinefield(Minefield mf);
@@ -82,6 +87,10 @@ public interface IPlayer extends ITurnOrdered {
 
     void setName(String name);
 
+    String getEmail();
+
+    void setEmail(String email);
+
     int getId();
 
     int getTeam();
@@ -95,6 +104,12 @@ public interface IPlayer extends ITurnOrdered {
     boolean isGhost();
 
     void setGhost(boolean ghost);
+
+    /** Specifies if this player connected as a bot. */
+    boolean isBot();
+
+    /** Sets whether this player connected as a bot. */
+    void setBot(boolean bot);
 
     boolean isObserver();
 
@@ -202,4 +217,13 @@ public interface IPlayer extends ITurnOrdered {
      * @return string of playercolor
      */
     public String getColorForPlayer();
+
+    /**
+     * Un-sets any data that may be considered private.
+     *
+     * This method clears any data that should not be transmitted to
+     * other players from the server, such as email addresses.
+     */
+    public void redactPrivateData();
+
 }

@@ -3,36 +3,36 @@ Enforcer
 ENF-4R
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2777
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2777
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:50
-Engine:200 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:50
+engine:200 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:12 Single
-Walk MP:4
-Jump MP:4
+heat sinks:12 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:14
-RA Armor:14
-LT Armor:17
-RT Armor:17
-CT Armor:23
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:17
+RT armor:17
+CT armor:23
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:3
-Autocannon/10, Right Arm
 Large Laser, Left Arm
+AC/10, Right Arm
 Small Laser, Left Torso
 
 Left Arm:
@@ -147,4 +147,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:Since it first walked off of the production line, the Enforcer has been the iconic medium-weight workhorse of the Federated Suns' Succession Wars era military.
+
+capabilities:The Enforcer fulfilled the roles of a mobile barrage vehicle, laying down an intense hail of fire as a prelude to an offensive or to blunt an enemy's attack, and as a trooper 'Mech, using its thick frontal armor and good jumping distance of one hundred and twenty meters to effectively brawl with the enemy despite lacking hand actuators. The sturdy and inexpensive design's mobility also made it an ideal city fighter, especially when sniping the enemy during hit-and-run attacks. One of the design's problems was that, with most of its nine tons of armor concentrated forward, the amount of protection in its rear torso is less than on some light 'Mechs. The Enforcer's biggest flaw though was its limited ammunition stores, though when possible a truck-and-crane reloading system is used during less-mobile battles. Attempts were made to replace the small laser with another ton of ammunition, however there were complicated linkage problems in getting the ammo from the left torso to the right arm, increasing the rate of jamming or reducing the rate of fire to unacceptable levels. What's more the rounds had to be routed along the 'Mechs back where its armor was weakest.
+
+deployment:The Enforcer's primary weapon is a Federated Autocannon, an excellent large-caliber model firing in bursts of ten rounds and whose cooling jacket doubles as a protective sleeve for engaging in hand-to-hand combat. While one ton of ammunition only allows for ten bursts total, the rounds are stored in an equivalent number of big clips which are easy to eject and reload. Complementing the autocannon is a ChisComp 43 Large Laser in the left arm, both giving the Enforcer respectable intermediate range firepower, while a ChisComp 32 Small Laser in the left torso provides for close range combat.
+
+history:This is in large part due to production of the Enforcer remaining largely undisturbed throughout the Succession Wars, despite the relative lack of industrialization that has long hampered the Federated Suns. With the autocannon-obsessed Armed Forces of the Federated Suns building up its BattleMech forces upon the collapse of the Star League, the discovery on Achernar of schematics for an unbuilt autocannon-carrying Star League 'Mech was a case of perfect timing. Modifying the design by swapping two medium lasers for a single larger one, Achernar BattleMechs rushed it through development and began production in 2777.
+
+manufacturer:Achernar BattleMechs
+primaryfactory:New Avalon
+systemmanufacturer:CHASSIS:Dorwinion Standard
+systemmanufacturer:ENGINE:Nissan 200
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:JUMPJET:McCloud Specials
+systemmanufacturer:COMMUNICATIONS:Achernar Electronics HICS-11
+systemmanufacturer:TARGETING:Federated Hunter
 

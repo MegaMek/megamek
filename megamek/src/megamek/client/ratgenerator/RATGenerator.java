@@ -1210,7 +1210,7 @@ public class RATGenerator {
                             }
                             pw.println("</availability>");
 
-                            for (ModelRecord mr : cr.getModels()) {
+                            for (ModelRecord mr : cr.getSortedModels()) {
                                 if (cr.getIntroYear() < nextEra
                                         && modelIndex.get(era).containsKey(mr.getKey())) {
                                     avFields.clear();

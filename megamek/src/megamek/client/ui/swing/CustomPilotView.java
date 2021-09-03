@@ -87,7 +87,7 @@ public class CustomPilotView extends JPanel {
         portraitButton.setName("portrait");
         portraitButton.addActionListener(e -> {
             final PortraitChooserDialog portraitDialog = new PortraitChooserDialog(
-                    parent.clientgui.frame, entity.getCrew().getPortrait(slot));
+                    parent.getClientGUI().frame, entity.getCrew().getPortrait(slot));
             if (portraitDialog.showDialog().isConfirmed()) {
                 portrait = portraitDialog.getSelectedItem();
                 portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
@@ -111,11 +111,11 @@ public class CustomPilotView extends JPanel {
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
         button.addActionListener(e -> {
-            int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+            int[] skills = parent.getClientGUI().getClient().getSkillGenerator().generateRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
             if (entity.getCrew() instanceof LAMPilot) {
-                skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+                skills = parent.getClientGUI().getClient().getSkillGenerator().generateRandomSkills(entity);
                 fldGunneryAero.setText(Integer.toString(skills[0]));
                 fldPilotingAero.setText(Integer.toString(skills[1]));
             }
@@ -132,8 +132,7 @@ public class CustomPilotView extends JPanel {
         add(fldNick, GBC.eop());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryL, GBC.eol());
@@ -213,14 +212,14 @@ public class CustomPilotView extends JPanel {
             fldPilotingAero.setText("0");
         }
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldArtillery, GBC.eop());
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldTough, GBC.eop());
@@ -259,7 +258,7 @@ public class CustomPilotView extends JPanel {
 
             // Get the ProtoMechs of this entity's player
             // that *aren't* in the entity's unit.
-            Iterator<Entity> otherUnitEntities = parent.clientgui.getClient().getGame()
+            Iterator<Entity> otherUnitEntities = parent.getClientGUI().getClient().getGame()
                     .getSelectedEntities(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
@@ -281,13 +280,6 @@ public class CustomPilotView extends JPanel {
             }
         }
 
-        if (parent.clientgui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES) //$NON-NLS-1$
-                || parent.clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.EDGE) //$NON-NLS-1$
-                || parent.clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
-        }
         if (!editable) {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);

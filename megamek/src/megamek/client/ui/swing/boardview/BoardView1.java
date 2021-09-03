@@ -124,6 +124,7 @@ import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
+import megamek.common.KeyBindParser;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -511,7 +512,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** The coords where the mouse was last. */
     Coords lastCoords;
 
-
     /**
      * Construct a new board view for the specified game
      */
@@ -732,6 +732,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
 
         SpecialHexDisplay.Type.ARTILLERY_HIT.init();
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init();
@@ -752,23 +753,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private void registerKeyboardCommands(final BoardView1 bv,
             final MegaMekController controller) {
-        // Register the action for TOGGLE_ISO
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_ISO.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        GUIPreferences guip = GUIPreferences.getInstance();
-                        guip.setIsometricEnabled(toggleIsometric());
-                    }
-
-                });
-
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
                 new CommandAction() {
@@ -951,77 +935,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
-
-        // Register the action for Showing the Field of Fire
-        controller.registerCommandAction(KeyCommandBind.FIELD_FIRE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        GUIPreferences guip = GUIPreferences.getInstance();
-                        guip.setShowFieldOfFire(!guip.getShowFieldOfFire());
-                        repaint();
-                    }
-
-                });
-
-        // Register the action for Toggling drawing unit labels
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_DRAW_LABELS.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        GUIPreferences guip = GUIPreferences.getInstance();
-                        LabelDisplayStyle style = guip.getUnitLabelStyle().next();
-                        guip.setUnitLabelStyle(style);
-                        clientgui.systemMessage("Changed unit label display style to: " + style.description);
-                        updateEntityLabels();
-                    }
-
-                });
-        
-        // Register the action for TOGGLE_KEYBIND_DISPLAY
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_KEYBIND_DISPLAY.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        toggleKeybindsOverlay();
-                    }
-                });
-        
-        // Register the action for TOGGLE_HEX_COORDS
-        controller.registerCommandAction(KeyCommandBind.TOGGLE_HEX_COORDS.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        return !shouldIgnoreKeyCommands();
-                    }
-
-                    @Override
-                    public void performAction() {
-                        boolean coordsShown = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS);
-                        GUIPreferences.getInstance().setValue(GUIPreferences.ADVANCED_SHOW_COORDS, !coordsShown);
-                    }
-
-                });
-
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1069,8 +982,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
-        }
-        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)
+            
+        } else if (e.getName().equals(GUIPreferences.DRAW_ENTITY_LABEL)
                 || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
                 || e.getName().equals(GUIPreferences.TEAM_COLORING)
                 || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)
@@ -1082,14 +995,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (Sprite s: isometricWreckSprites) {
                 s.prepare();
             }
-        }
-        if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
+            
+        } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
             getTilesetManager().reloadUnitIcons();
-        }
-        if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
+            
+        } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
+            keybindOverlay.setVisible((boolean)e.getNewValue());
+            repaint();
+            
+        } else if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
                 || e.getName().equals(GUIPreferences.FLOATINGISO)
                 || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
-                || e.getName().equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                || e.getName().equals(GUIPreferences.SHOW_COORDS)
                 || e.getName().equals(GUIPreferences.FOV_DARKEN)
                 || e.getName().equals(GUIPreferences.FOV_DARKEN_ALPHA)
                 || e.getName().equals(GUIPreferences.FOV_GRAYSCALE)
@@ -1106,6 +1023,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
             clearHexImageCache();
             repaint();
+            
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            repaint();
+            
         }
     }
 
@@ -2830,7 +2751,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // write hex coordinate unless deactivated or scale factor too small
-        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS) && (scale >= 0.5)) {
+        if (guip.getBoolean(GUIPreferences.SHOW_COORDS) && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexnum, g);
         }
 
@@ -6490,6 +6411,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();
+        KeyBindParser.removePreferenceChangeListener(this);
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+        PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
     }
 
     /**
@@ -6834,8 +6758,4 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return displayablesRect;
     }
     
-    public void toggleKeybindsOverlay() {
-        keybindOverlay.setVisible(!keybindOverlay.isVisible());
-        repaint();
-    }
 }

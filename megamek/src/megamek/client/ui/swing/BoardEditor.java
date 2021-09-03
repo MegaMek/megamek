@@ -48,7 +48,6 @@ import megamek.client.event.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
@@ -200,12 +199,6 @@ public class BoardEditor extends JPanel
     
     private GUIPreferences guip = GUIPreferences.getInstance();
 
-    //region action commands
-    private static final String FILE_BOARD_EDITOR_EXPAND = "fileBoardExpand";
-    private static final String FILE_BOARD_EDITOR_VALIDATE = "fileBoardValidate";
-    private static final String FILE_SOURCEFILE = "fileSource";
-    //endregion action commands
-    
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
     private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
 
@@ -217,7 +210,7 @@ public class BoardEditor extends JPanel
     public static final int [] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
-    private CommonMenuBar menuBar = new CommonMenuBar();
+    private CommonMenuBar menuBar = new CommonMenuBar(this);
     private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
@@ -487,9 +480,8 @@ public class BoardEditor extends JPanel
      */
     private void setupFrame() {
         setFrameTitle();
-        frame.getContentPane().add(bvc, BorderLayout.CENTER);
-        frame.getContentPane().add(this, BorderLayout.EAST);
-        
+        frame.add(bvc, BorderLayout.CENTER);
+        frame.add(this, BorderLayout.EAST);
         menuBar.addActionListener(this);
         frame.setJMenuBar(menuBar);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -974,7 +966,7 @@ public class BoardEditor extends JPanel
         butBoardNew.setActionCommand(ClientGUI.BOARD_NEW);
 
         butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap"));
-        butExpandMap.setActionCommand(FILE_BOARD_EDITOR_EXPAND);
+        butExpandMap.setActionCommand(ClientGUI.BOARD_RESIZE);
 
         butBoardOpen = new JButton(Messages.getString("BoardEditor.butBoardOpen"));
         butBoardOpen.setActionCommand(ClientGUI.BOARD_OPEN);
@@ -989,10 +981,10 @@ public class BoardEditor extends JPanel
         butBoardSaveAsImage.setActionCommand(ClientGUI.BOARD_SAVE_AS_IMAGE);
 
         butBoardValidate = new JButton(Messages.getString("BoardEditor.butBoardValidate"));
-        butBoardValidate.setActionCommand(FILE_BOARD_EDITOR_VALIDATE);
+        butBoardValidate.setActionCommand(ClientGUI.BOARD_VALIDATE);
         
         butSourceFile = new JButton(Messages.getString("BoardEditor.butSourceFile"));
-        butSourceFile.setActionCommand(FILE_SOURCEFILE);
+        butSourceFile.setActionCommand(ClientGUI.BOARD_SOURCEFILE);
 
         addManyActionListeners(butBoardValidate, butBoardSaveAsImage, butBoardSaveAs, butBoardSave);
         addManyActionListeners(butBoardOpen, butExpandMap, butBoardNew);
@@ -1716,7 +1708,6 @@ public class BoardEditor extends JPanel
         // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curBoardFile != null);
         // Adjust the UI
-        menuBar.setBoard(true);
         bvc.doLayout();
         setFrameTitle();
     }
@@ -1768,7 +1759,7 @@ public class BoardEditor extends JPanel
             ignoreHotKeys = true;
             boardNew(true);
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_EXPAND)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_RESIZE)) {
             ignoreHotKeys = true;
             boardResize();
             ignoreHotKeys = false;
@@ -1788,7 +1779,7 @@ public class BoardEditor extends JPanel
             ignoreHotKeys = true;
             boardSaveAsImage(false);
             ignoreHotKeys = false;
-        } else if (ae.getActionCommand().equals(FILE_SOURCEFILE)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_SOURCEFILE)) {
             if (curBoardFile != null) {
                 try {
                     Desktop.getDesktop().open(curBoardFile);
@@ -1801,7 +1792,7 @@ public class BoardEditor extends JPanel
                     ignoreHotKeys = false;
                 }
             }
-        } else if (ae.getActionCommand().equals(FILE_BOARD_EDITOR_VALIDATE)) {
+        } else if (ae.getActionCommand().equals(ClientGUI.BOARD_VALIDATE)) {
             correctExits();
             validateBoard(true);
         } else if (ae.getSource().equals(butDelTerrain) && !lisTerrain.isSelectionEmpty()) {
@@ -2027,6 +2018,8 @@ public class BoardEditor extends JPanel
                     FUEL_TANK, FUEL_TANK_CF, FUEL_TANK_ELEV, FUEL_TANK_MAGN);
         } else if (ae.getActionCommand().equals(ClientGUI.BOARD_FLATTEN)) {
             boardFlatten();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_RESET_WINDOW_POSITIONS)) {
+            minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
         }
     }
     

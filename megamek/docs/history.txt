@@ -11,6 +11,7 @@ VERSION HISTORY:
 + PR #3123: JToggleButtonPreference: Swapping to using doClick
 + PR #3127: Standardized Game Options File I/O
 + Issue #2854: Only skip the invalid unit when not allowing illegal designs
++ PR #3130: MegaMek XML Util: Fixing Two Escaping Issues
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

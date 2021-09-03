@@ -790,7 +790,7 @@ public final class AlphaStrikeConverter {
                             baseIFDamage = weapon.getBattleForceDamage(ranges[r], null);
                         }
                     }
-                    result.heat[r] += weapon.getBattleForceHeatDamage(ranges[r]);
+                    result.heat[r] += locationMultiplier(entity, 0, mount) * weapon.getBattleForceHeatDamage(ranges[r]);
                 }
             }
 
@@ -1123,9 +1123,14 @@ public final class AlphaStrikeConverter {
         return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
     
+    /** Returns true when the given Mounted blocks ENE. */
     private static boolean isExplosive(Mounted m) {
+        // LAM Bomb Bays are explosive
+        if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+            return true;
+        }
         // Oneshot weapons internally have normal ammo allocated to them which must 
-        // be disqualified as explosive; this ammo has no location
+        // be disqualified as explosive; such ammo has no location
         return m.getType().isExplosive(null) && (m.getExplosionDamage() > 0)
                 && (m.getLocation() != Entity.LOC_NONE);
     }
@@ -1153,7 +1158,7 @@ public final class AlphaStrikeConverter {
                     element.addSPA(LPRB);
                     element.addSPA(ECM);
                 } else if (!m.getType().hasFlag(MiscType.F_EW_EQUIPMENT)){
-                    element.addSPA(PRB);
+                    element.addSPA(LPRB);
                 }
                 if (m.getType().hasFlag(MiscType.F_NOVA)) {
                     element.addSPA(NOVA);

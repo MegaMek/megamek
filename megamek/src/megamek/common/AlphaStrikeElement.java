@@ -348,10 +348,6 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     
     public boolean showSpecial(BattleForceSPA spa) {
-        //TODO REMOVE:
-        if (spa == JMPS || spa == JMPW) { // ONLY FOR COMPARISON WITH THE MUL
-            return false;
-        }
         if ((asUnitType == BM) && (spa == SOA || spa == SRCH)) {
             return false;
         }

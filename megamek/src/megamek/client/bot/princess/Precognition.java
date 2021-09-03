@@ -154,7 +154,10 @@ public class Precognition implements Runnable {
                     receivePlayerInfo(c);
                     break;
                 case Packet.COMMAND_PLAYER_READY:
-                    getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
+                    final IPlayer player = getPlayer(c.getIntValue(0));
+                    if (player != null) {
+                        player.setDone(c.getBooleanValue(1));
+                    }
                     break;
                 case Packet.COMMAND_PLAYER_ADD:
                     receivePlayerInfo(c);

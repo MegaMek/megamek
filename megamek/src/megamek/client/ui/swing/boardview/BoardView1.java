@@ -982,17 +982,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     @Override
                     public void performAction() {
                         GUIPreferences guip = GUIPreferences.getInstance();
-                        boolean drawLabels = guip.getBoolean(
-                                GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL);
-                        guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
-                                !drawLabels);
+                        LabelDisplayStyle style = guip.getUnitLabelStyle().next();
+                        guip.setUnitLabelStyle(style);
+                        clientgui.systemMessage("Changed unit label display style to: " + style.description);
                         updateEntityLabels();
-                        for (Sprite s: wreckSprites) {
-                            s.prepare();
-                        }
-                        for (Sprite s: isometricWreckSprites) {
-                            s.prepare();
-                        }
                     }
 
                 });
@@ -1110,7 +1103,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             repaint();
         }
         if (e.getName().equals(GUIPreferences.INCLINES)) {
-            game.getBoard().initializeAllAutomaticTerrain();
+            game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
             clearHexImageCache();
             repaint();
         }
@@ -4620,13 +4613,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                                                                           .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                                                                                   c2.getBoardNum()}));
             } else {
-                le = LosEffects.calculateLos(game, ae.getId(), te);
-                message.append(Messages.getString(
-                        "BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                                                             ae.getDisplayName(), c1.getBoardNum()}));
-                message.append(Messages.getString(
-                        "BoardView1.Target", new Object[]{ //$NON-NLS-1$
-                                                           te.getDisplayName(), c2.getBoardNum()}));
+                le = LosEffects.calculateLOS(game, ae, te);
+                message.append(Messages.getString("BoardView1.Attacker", ae.getDisplayName(), c1.getBoardNum()));
+                message.append(Messages.getString("BoardView1.Target", te.getDisplayName(), c2.getBoardNum()));
             }
             // Check to see if LoS is blocked
             if (!le.canSee()) {
@@ -6132,13 +6121,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return txt.toString();
     }
 
-    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(
-            Coords c) {
+    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
+        
         for (Enumeration<ArtilleryAttackAction> attacks = game
                 .getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
-            if (a.getTarget(game).getPosition().equals(c)) {
+            Targetable target = a.getTarget(game);
+
+            if ((target != null) && c.equals(target.getPosition())) {
                 v.add(a);
             }
         }

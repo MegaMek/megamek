@@ -1,102 +1,35 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
-/*
- * CustomMechDialog.java
- *
  * Created on March 18, 2002, 2:56 PM
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Board;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LAMPilot;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.OffBoardDirection;
-import megamek.common.Protomech;
-import megamek.common.QuadVee;
-import megamek.common.SmallCraft;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.enums.Gender;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PartialRepairs;
-import megamek.common.options.PilotOptions;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestInfantry;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestSupportVehicle;
-import megamek.common.verifier.TestTank;
+import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -108,15 +41,11 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
  */
 public class CustomMechDialog extends ClientDialog implements ActionListener,
         DialogOptionListener, ItemListener {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -6809436986445582731L;
 
-    public static int DONE = 0;
-    public static int NEXT = 1;
-    public static int PREV = 2;
+    public static final int DONE = 0;
+    public static final int NEXT = 1;
+    public static final int PREV = 2;
 
     private CustomPilotView[] panCrewMember;
     private JPanel panDeploy;
@@ -228,9 +157,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private int status = CustomMechDialog.DONE;
 
-    ClientGUI clientgui;
-
-    Client client;
+    private final ClientGUI clientgui;
+    private final Client client;
+    private final boolean space;
 
     private PilotOptions options;
     private Quirks quirks;
@@ -264,6 +193,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.entities = entities;
         this.clientgui = clientgui;
         this.client = client;
+        this.space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
 
         // Ensure we have at least one passed entity
         //  Anything less makes no sense
@@ -286,7 +216,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isLAM = true;
         boolean isGlider = true;
         boolean eligibleForOffBoard = true;
-        
+
         for (Entity e : entities) {
             isAero &= (e instanceof Aero) && !((e instanceof SmallCraft) || (e instanceof Jumpship));
             isMech &= (e instanceof Mech);
@@ -297,7 +227,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isLAM &= (e instanceof LandAirMech);
             isGlider &= (e instanceof Protomech) && (e.getMovementMode() == EntityMovementMode.WIGE);
             boolean entityEligibleForOffBoard = false;
-            boolean space = clientgui.getClient().getMapSettings().getMedium() == Board.T_SPACE;
             //TODO: This check is good for now, but at some point we want atmospheric flying droppers to be able to lob
             // offboard missiles and we could use it in space for extreme range bearings-only fights, plus Ortillery. 
             if (!space && e.getAltitude() == 0) {
@@ -438,9 +367,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
 
-            panDeploy.add(labStartAltitude, GBC.std());
-            panDeploy.add(fldStartAltitude, GBC.eol());
-                        
+            if (!space) {
+                panDeploy.add(labStartAltitude, GBC.std());
+                panDeploy.add(fldStartAltitude, GBC.eol());
+            }
+
             panDeploy.add(labCurrentFuel, GBC.std());
             panDeploy.add(fldCurrentFuel, GBC.eol());
         }
@@ -515,16 +446,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (isAero || isLAM || isShip) {
             IAero a = (IAero) entity;
-            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity())
-                    .toString());
+
+            fldStartVelocity.setText(Integer.valueOf(a.getCurrentVelocity()).toString());
             fldStartVelocity.addActionListener(this);
 
             fldStartAltitude.setText(Integer.valueOf(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
-            
+
             fuel = a.getFuel();
-            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel())
-                    .toString());
+            fldCurrentFuel.setText(Integer.valueOf(a.getCurrentFuel()).toString());
             fldCurrentFuel.addActionListener(this);
         }
 
@@ -532,6 +462,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartHeight.setText(Integer.valueOf(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
+
         if (isWiGE) {
             chDeployAirborne.setSelected(entity.getElevation() > 0);
         }
@@ -1072,7 +1003,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 height = Integer.parseInt(fldStartHeight.getText());
             }
             if (isWiGE) {
-                height = chDeployAirborne.isSelected()? 1 : 0;
+                height = chDeployAirborne.isSelected() ? 1 : 0;
             }
         } catch (NumberFormatException e) {
             msg = Messages.getString("CustomMechDialog.EnterValidSkills"); //$NON-NLS-1$
@@ -1083,33 +1014,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         
         if (isAero || isShip) {
-            if ((velocity > (2 * entities.get(0).getWalkMP()))
-                    || (velocity < 0)) {
-                msg = Messages
-                        .getString("CustomMechDialog.EnterCorrectVelocity"); //$NON-NLS-1$
-                title = Messages
-                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                        JOptionPane.ERROR_MESSAGE);
+            if ((velocity > (2 * entities.get(0).getWalkMP())) || (velocity < 0)) {
+                msg = Messages.getString("CustomMechDialog.EnterCorrectVelocity");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
-            }
-            if ((altitude < 0) || (altitude > 10)) {
-                msg = Messages
-                        .getString("CustomMechDialog.EnterCorrectAltitude"); //$NON-NLS-1$
-                title = Messages
-                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-                        JOptionPane.ERROR_MESSAGE);
+            } else if ((altitude < 0) || (altitude > 10)) {
+                msg = Messages.getString("CustomMechDialog.EnterCorrectAltitude");
+                title = Messages.getString("CustomMechDialog.NumberFormatError");
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
                 return;
-            }
-            
-            if ((currentfuel < 0) || (currentfuel > fuel)) {
-            	msg = (Messages
-            			 .getString("CustomMechDialog.EnterCorrectFuel") + fuel + "."); //$NON-NLS-1$
-            	title = Messages
-            			.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
-            	JOptionPane.showMessageDialog(clientgui.frame, msg, title,
-            			JOptionPane.ERROR_MESSAGE);
+            } else if ((currentfuel < 0) || (currentfuel > fuel)) {
+            	msg = (Messages.getString("CustomMechDialog.EnterCorrectFuel") + fuel + ".");
+            	title = Messages.getString("CustomMechDialog.NumberFormatError");
+            	JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
             	return;
             }
         }
@@ -1231,8 +1149,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setGender(gender, i);
-                entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory(), i);
-                entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename(), i);
+                entity.getCrew().setPortrait(panCrewMember[i].getPortrait().clone(), i);
                 if (backup >= 0) {
                     if (i == entity.getCrew().getCrewType().getPilotPos()) {
                         entity.getCrew().setBackupPilotPos(backup);
@@ -1309,16 +1226,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 a.setCurrentFuel(currentfuel);
-                // we need to determine whether this aero is airborne or not in
-                // order for prohibited terrain and stacking to work right in
-                // the
-                // deployment phase this is very tricky because in atmosphere,
-                // zero
-                // altitude does not necessarily mean grounded
-                if (altitude <= 0) {
-                    a.land();
-                } else {
-                    a.liftOff(altitude);
+                if (!space) {
+                    // we need to determine whether this aero is airborne or not in order for
+                    // prohibited terrain and stacking to work right in the deployment phase.
+                    // This is very tricky because in atmosphere, zero altitude does not necessarily
+                    // mean grounded
+                    if (altitude <= 0) {
+                        a.land();
+                    } else {
+                        a.liftOff(altitude);
+                    }
                 }
             }
             
@@ -1334,7 +1251,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
                     entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
-                    entity.setConversionMode(((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL?
+                    entity.setConversionMode(((LandAirMech) entity).getLAMType() == LandAirMech.LAM_BIMODAL ?
                             LandAirMech.CONV_MODE_FIGHTER : LandAirMech.CONV_MODE_AIRMECH);
                 } else {
                     entity.setConversionMode(LandAirMech.CONV_MODE_MECH);
@@ -1419,6 +1336,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         setVisible(false);
     }
 
+    @Override
     public void itemStateChanged(ItemEvent itemEvent) {
         if (itemEvent.getSource().equals(choStartingMode)) {
             updateStartingModeOptions();
@@ -1448,7 +1366,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployProne.setEnabled(index == 0);
         } else if (entities.get(0) instanceof LandAirMech) {
             int mode = index;
-            if (((LandAirMech)entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
+            if (((LandAirMech) entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
                     && mode == LandAirMech.CONV_MODE_AIRMECH) {
                 mode = LandAirMech.CONV_MODE_FIGHTER;
             }

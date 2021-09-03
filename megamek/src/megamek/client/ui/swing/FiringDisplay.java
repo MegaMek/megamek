@@ -182,8 +182,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 "FiringDisplay.Done") + "</b></html>"); //$NON-NLS-1$ //$NON-NLS-2$
         butDone.setEnabled(false);
 
-        layoutScreen();
-
         setupButtonPanel();
 
         clientgui.bv.addKeyListener(this);
@@ -1831,9 +1829,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         IGame game = clientgui.getClient().getGame();
         // allow spotting
         if ((ce() != null) && !ce().isSpotting() && ce().canSpot() && (target != null)
-                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
-            boolean hasLos = LosEffects.calculateLos(game, cen, target)
-                    .canSee();
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            boolean hasLos = LosEffects.calculateLOS(game, ce(), target).canSee();
             // In double blind, we need to "spot" the target as well as LoS
             if (hasLos
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -2184,10 +2181,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     public void actionPerformed(ActionEvent ev) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
             return;
         }
 

@@ -7,6 +7,8 @@ import java.util.Map;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.MiscType;
+import megamek.common.QuadMech;
+import megamek.common.TripodMech;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity
@@ -26,6 +28,7 @@ public class CachedEntityState {
     private Map<BigInteger, Boolean> hasWorkingMisc;
     private Integer torsoJumpJets;
     private Integer jumpMPNoGravity;
+    private Integer numBreachedLegs;
     
     public CachedEntityState(Entity entity) {
         backingEntity = entity;
@@ -131,5 +134,34 @@ public class CachedEntityState {
         return hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
                 hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
                 hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+    }
+    
+    /**
+     * Convenience property to determine how many armor-breached legs this entity has.
+     * By default, this is 0 unless the unit is a mech.
+     */
+    public int getNumBreachedLegs() {
+        if (numBreachedLegs == null) {
+            if (backingEntity instanceof QuadMech) {
+                numBreachedLegs = 
+                        ((backingEntity.getArmor(QuadMech.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMech.LOC_LARM) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMech.LOC_RLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(QuadMech.LOC_RARM) > 0) ? 0 : 1);
+            } else if (backingEntity instanceof TripodMech) {
+                numBreachedLegs = 
+                        ((backingEntity.getArmor(TripodMech.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(TripodMech.LOC_CLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(TripodMech.LOC_RLEG) > 0) ? 0 : 1);
+            } else if (backingEntity instanceof Mech) {
+                numBreachedLegs = 
+                        ((backingEntity.getArmor(Mech.LOC_LLEG) > 0) ? 0 : 1) +
+                        ((backingEntity.getArmor(Mech.LOC_RLEG) > 0) ? 0 : 1);
+            } else {
+                numBreachedLegs = 0;
+            }
+        }
+        
+        return numBreachedLegs;
     }
 }

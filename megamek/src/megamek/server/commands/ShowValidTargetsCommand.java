@@ -33,7 +33,7 @@ public class ShowValidTargetsCommand extends ServerCommand {
 
                 for (int i = 0; i < entList.size(); i++) {
                     target = entList.get(i);
-                    thd = LosEffects.calculateLos(server.getGame(), id, target)
+                    thd = LosEffects.calculateLOS(server.getGame(), ent, target)
                             .losModifiers(server.getGame());
                     if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                         thd.setSideTable(target.sideTable(ent.getPosition()));

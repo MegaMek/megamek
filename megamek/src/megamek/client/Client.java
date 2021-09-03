@@ -3,39 +3,26 @@
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client;
 
-import java.awt.*;
-import java.awt.image.RenderedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-
 import com.thoughtworks.xstream.XStream;
-
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
-import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.generator.RandomUnitGenerator;
+import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
+import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -54,8 +41,20 @@ import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.RenderedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+
 /**
- * This class is instanciated for each client and for each bot running on that
+ * This class is instantiated for each client and for each bot running on that
  * client. non-local clients are not also instantiated on the local server.
  */
 public class Client implements IClientCommandHandler {
@@ -84,14 +83,14 @@ public class Client implements IClientCommandHandler {
     public String roundReport;
 
     // random generatorsI
-    private RandomSkillsGenerator rsg;
+    private AbstractSkillGenerator skillGenerator;
     // And close client events!
-    private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
+    private Vector<CloseClientListener> closeClientListeners = new Vector<>();
 
     // we might want to keep a game log...
     private GameLog log;
 
-    private Set<BoardDimensions> availableSizes = new TreeSet<BoardDimensions>();
+    private Set<BoardDimensions> availableSizes = new TreeSet<>();
 
     private Vector<Coords> artilleryAutoHitHexes = null;
 
@@ -100,7 +99,7 @@ public class Client implements IClientCommandHandler {
     private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
-    public Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
+    public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
 
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
@@ -147,11 +146,7 @@ public class Client implements IClientCommandHandler {
             // Instead, if we will have the event dispatch thread handle it,
             // by using SwingUtilities.invokeLater
             // Not running this on the AWT EDT can lead to dead-lock
-            Runnable handlePacketEvent = new Runnable() {
-                public void run() {
-                    Client.this.disconnected();
-                }
-            };
+            Runnable handlePacketEvent = Client.this::disconnected;
             SwingUtilities.invokeLater(handlePacketEvent);
         }
 
@@ -165,11 +160,7 @@ public class Client implements IClientCommandHandler {
             // Client.handlePacket should play well with the AWT event queue,
             // but nothing appears to really be designed to be thread safe, so
             // this is a reasonable hack for now
-            Runnable handlePacketEvent = new Runnable() {
-                public void run() {
-                    handlePacket(e.getPacket());
-                }
-            };
+            Runnable handlePacketEvent = () -> handlePacket(e.getPacket());
             SwingUtilities.invokeLater(handlePacketEvent);
         }
 
@@ -210,7 +201,7 @@ public class Client implements IClientCommandHandler {
             commandsHash.put(direction.toLowerCase(), tileCommand);
         }
 
-        rsg = new RandomSkillsGenerator();
+        setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
     }
 
     public int getLocalPlayerNumber() {
@@ -1385,11 +1376,17 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
-            send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            send(new Packet(
+                     Packet.COMMAND_CLIENT_NAME,
+                     new Object[] { name, isBot() }
+                 ));
             Object[] versionData = new Object[2];
             versionData[0] = MegaMek.VERSION;
             versionData[1] = MegaMek.getMegaMekSHA256();
             send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
+            if (this instanceof Princess) {
+                ((Princess)this).sendPrincessSettings();
+            }
             break;
         case Packet.COMMAND_SERVER_CORRECT_NAME:
             correctName(c);
@@ -1406,6 +1403,9 @@ public class Client implements IClientCommandHandler {
             if (player != null) {
                 player.setDone(c.getBooleanValue(1));
             }
+            break;
+        case Packet.COMMAND_PRINCESS_SETTINGS:
+            game.setBotSettings((Map<String, BehaviorSettings>)c.getObject(0));
             break;
         case Packet.COMMAND_PLAYER_ADD:
             receivePlayerInfo(c);
@@ -1478,8 +1478,8 @@ public class Client implements IClientCommandHandler {
             game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
             break;
         case Packet.COMMAND_CHANGE_HEXES:
-            List<Coords> coords = new ArrayList<Coords>((Set<Coords>) c.getObject(0));
-            List<IHex> hexes = new ArrayList<IHex>((Set<IHex>) c.getObject(1));
+            List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
+            List<IHex> hexes = new ArrayList<>((Set<IHex>) c.getObject(1));
             game.getBoard().setHexes(coords, hexes);
             break;
         case Packet.COMMAND_BLDG_UPDATE:
@@ -1755,6 +1755,10 @@ public class Client implements IClientCommandHandler {
         return name;
     }
 
+    public boolean isBot() {
+        return false;
+    }
+
     public int getPort() {
         return port;
     }
@@ -1841,6 +1845,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the command associated with the specified name
      */
+    @Override
     public ClientCommand getCommand(String commandName) {
         return commandsHash.get(commandName);
     }
@@ -1850,12 +1855,17 @@ public class Client implements IClientCommandHandler {
      *
      * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
      */
+    @Override
     public Enumeration<String> getAllCommandNames() {
         return commandsHash.keys();
     }
 
-    public RandomSkillsGenerator getRandomSkillsGenerator() {
-        return rsg;
+    public AbstractSkillGenerator getSkillGenerator() {
+        return skillGenerator;
+    }
+
+    public void setSkillGenerator(final AbstractSkillGenerator skillGenerator) {
+        this.skillGenerator = skillGenerator;
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {

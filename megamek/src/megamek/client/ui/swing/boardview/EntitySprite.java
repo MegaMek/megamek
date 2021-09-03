@@ -30,7 +30,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.Transparency;
-import java.util.ArrayList;
+import java.util.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
@@ -71,7 +71,15 @@ class EntitySprite extends Sprite {
     
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
-
+    
+    /** Generic terms that can be removed from the end of vehicle names to create a chassis name. */
+    private static final Set<String> REMOVABLE_NAME_PARTS = Set.of(
+            "Defense", "Heavy", "Medium", "Light", "Artillery", "Tank", 
+            "Wheeled", "Command", "Standard", "Hover", "Hovercraft", "Mechanized", 
+            "(Standard)", "Platoon", "Transport", "Vehicle", "Air", 
+            "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
+            "Fighting", "Fire", "Suport", "Reconnaissance", "Fast");
+    
     public EntitySprite(BoardView1 boardView1, final Entity entity,
             int secondaryPos, Image radarBlipImage) {
         super(boardView1);
@@ -88,18 +96,91 @@ class EntitySprite extends Sprite {
     
     private String getAdjShortName() {
         if (onlyDetectedBySensors()) {
-            return Messages.getString("BoardView1.sensorReturn"); //$NON-NLS-1$
+            return Messages.getString("BoardView1.sensorReturn");
         } else {
-            String name = entity.getShortName();
-            int firstApo = name.indexOf('\'');
-            int secondApo = name.indexOf('\'', name.indexOf('\'')+1);
-            if ((firstApo >= 0) && (secondApo >= 0)) {
-                name = name
-                        .substring(firstApo+1, secondApo)
-                        .toUpperCase();
+            switch (GUIPreferences.getInstance().getUnitLabelStyle()) {
+                case FULL:
+                    return standardLabelName();
+                case ABBREV:
+                    return (entity instanceof Mech) ? entity.getModel() : abbreviateUnitName(standardLabelName());
+                case CHASSIS:
+                    return reduceVehicleName(entity.getChassis());
+                case NICKNAME:
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\"";
+                    } else if (!unitNick().isBlank()) {
+                        return "\'" + unitNick() + "\'";
+                    } else {
+                        return reduceVehicleName(entity.getChassis());
+                    }
+                case ONLY_NICKNAME:
+                    if (!pilotNick().isBlank()) {
+                        return "\"" + pilotNick().toUpperCase() + "\"";
+                    } else if (!unitNick().isBlank()) {
+                        return "\'" + unitNick() + "\'";
+                    } else {
+                        return "";
+                    }
+                default: // ONLY_STATUS
+                    return "";
             }
-            return name;
         }
+    }
+    
+    /** 
+     * Returns a shortened unit name string, mostly for vehicles. Words contained
+     * in the removableNameStrings list are taken away from the end of the name
+     * until something is encountered that is not contained in that list. 
+     * On Mech names this will typically have no effect.
+     */
+    private static String reduceVehicleName(String unitName) {
+        String[] tokens = unitName.split(" ");
+        int i = tokens.length - 1;
+        for ( ; i > 0; i--) {
+            if (!REMOVABLE_NAME_PARTS.contains(tokens[i])) {
+                break;
+            }
+        }
+        return String.join(" ", Arrays.copyOfRange(tokens, 0, i + 1));
+    }
+    
+    /** Returns the string with some content shortened like Battle Armor -> BA */
+    private static String abbreviateUnitName(String unitName) {
+        return unitName
+                .replace("(Standard)", "").replace("Battle Armor", "BA")
+                .replace("Standard", "Std.").replace("Vehicle", "Veh.")
+                .replace("Medium", "Med.").replace("Support", "Spt.")
+                .replace("Heavy", "Hvy.").replace("Light", "Lgt.")
+                .replace("Assault", "Asslt.").replace("Transport", "Trnsp.")
+                .replace("Command", "Cmd.").replace("Mechanized", "Mechn.")
+                .replace("Wheeled", "Whee.").replace("Platoon", "Plt.")
+                .replace("Artillery", "Arty.").replace("Defense", "Def.")
+                .replace("Hovercraft", "Hov.").replace("Platoon", "Plt.")
+                .replace("Reconnaissance", "Rcn.").replace("Recon", "Rcn.")
+                .replace("Tank", "Tk.").replace("Hover ", "Hov. ");
+    }
+    
+    private String pilotNick() {
+        if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
+            return entity.getCrew().getNickname();
+        } else {
+            return "";
+        }
+    }
+    
+    private String unitNick() {
+        String name = entity.getShortName();
+        int firstApo = name.indexOf('\'');
+        int secondApo = name.indexOf('\'', name.indexOf('\'') + 1);
+        if ((firstApo >= 0) && (secondApo >= 0)) {
+            return name.substring(firstApo + 1, secondApo);
+        } else {
+            return "";
+        }
+    }
+    
+    private String standardLabelName() {
+        return entity.getShortName();
     }
 
     @Override
@@ -137,8 +218,7 @@ class EntitySprite extends Sprite {
         if (labelRect != null)
             oldRect = new Rectangle(labelRect);
         
-        int face = (entity.isCommander() && !onlyDetectedBySensors()) ? 
-                Font.ITALIC : Font.PLAIN;
+        int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
         labelFont = new Font("SansSerif", face, (int)(10*Math.max(bv.scale,0.9))); //$NON-NLS-1$
         
         // Check the hexes in directions 2,5,1,4 if they are free of entities
@@ -516,7 +596,7 @@ class EntitySprite extends Sprite {
             graph.scale(1/bv.scale, 1/bv.scale);
             
             // Label background
-            if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+            if (!getAdjShortName().isBlank()) {
                 if (criticalStatus) {
                     graph.setColor(LABEL_CRITICAL_BACK);
                 } else {
@@ -542,7 +622,7 @@ class EntitySprite extends Sprite {
                     }
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
-                    graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
+                    graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1, 
                             labelRect.width + 1, labelRect.height + 1, 5, 10);
                     graph.setStroke(oldStroke);
                 }
@@ -551,12 +631,10 @@ class EntitySprite extends Sprite {
                 graph.setFont(labelFont);
                 Color textColor = LABEL_TEXT_COLOR;
                 if (!entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = guip.getColor(
-                            GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                    textColor = guip.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
                 }
                 if (isSelected) {
-                    textColor = guip.getColor(
-                            GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                    textColor = guip.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
                 }
                 BoardView1.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,

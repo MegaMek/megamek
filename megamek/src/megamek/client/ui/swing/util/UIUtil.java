@@ -23,7 +23,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -31,9 +34,13 @@ import javax.swing.border.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.IPlayer;
 
 public final class UIUtil {
+
+    /** The width for a tooltip displayed to the side of a dialog uising one of TipXX classes. */
+    private static final int TOOLTIP_WIDTH = 300;
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
@@ -44,6 +51,8 @@ public final class UIUtil {
     public final static String WARNING_SIGN = " \u26A0 ";
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
+    public static final String BOT_MARKER = " \u259A ";
+    
     
     public static String repeat(String str, int count) {
         StringBuilder result = new StringBuilder();
@@ -337,8 +346,13 @@ public final class UIUtil {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
+    /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
+    public static void adjustDialog(JDialog dialog) {
+        adjustDialog(dialog.getContentPane());
+    }
+    
     /** 
-     * Applies the current gui scale to a given dialog or whatever Container is given.
+     * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
      * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
      * gui scale.
@@ -424,7 +438,7 @@ public final class UIUtil {
         
         public Content() {
             super();
-            setBorder(BorderFactory.createEmptyBorder(8, 8, 5, 8));
+            setBorder(BorderFactory.createEmptyBorder(8, 25, 5, 25));
             setAlignmentX(Component.LEFT_ALIGNMENT);
         }
     }
@@ -494,9 +508,8 @@ public final class UIUtil {
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
+            return new Point(parentDialog.getWidth() - p.x, 0);
         }
         
         @Override
@@ -514,20 +527,16 @@ public final class UIUtil {
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipButton extends JButton {
-        private static final long serialVersionUID = 9076500965039634219L;
-        
-        private JDialog parentDialog;
 
-        public TipButton(String text, JDialog parent) {
+        public TipButton(String text) {
             super(text);
-            parentDialog = parent;
         }
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
         }
         
         @Override
@@ -545,20 +554,50 @@ public final class UIUtil {
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipCombo<E> extends JComboBox<E> {
-        private static final long serialVersionUID = 8663494450966107303L;
         
-        private JDialog parentDialog;
-
-        public TipCombo(JDialog parent) {
+        public TipCombo() {
             super();
-            parentDialog = parent;
+        }
+        
+        public TipCombo(E[] items) {
+            super(items);
         }
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A JList with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     */
+    public static class TipList<E> extends JList<E> {
+        
+        public TipList() {
+            super();
+        }
+        
+        public TipList(ListModel<E> dataModel) {
+            super(dataModel);
+        }
+        
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
         }
         
         @Override
@@ -572,24 +611,74 @@ public final class UIUtil {
     
     /** 
      * A JTextField with a specialized tooltip display. Displays the tooltip to the right side
-     * of the parent dialog, not following the mouse. 
+     * of the parent dialog, not following the mouse. Can also display a hint text 
+     * such as "..., ..." when empty.
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipTextField extends JTextField {
         private static final long serialVersionUID = -2226586551388519966L;
         
-        private JDialog parentDialog;
-
-        public TipTextField(int n, JDialog parent) {
+        String hintText;
+        
+        public TipTextField(int n) {
             super(n);
-            parentDialog = parent;
         }
+        
+        public TipTextField(String text, int n) {
+            super(text, n);
+        }
+        
+        public TipTextField(int n, String hint) {
+            this(n);
+            prepareForHint(hint);
+            
+        }
+        
+        public TipTextField(String text, int n, String hint) {
+            this(text, n);
+            prepareForHint(hint);
+        }
+        
+        private void prepareForHint(String hint) {
+            hintText = hint;
+            addFocusListener(l);
+            updateHint();
+        }
+        
+        private void updateHint() {
+            if (getText().isEmpty()) {
+                setText(hintText);
+                setForeground(uiGray());
+                setCaretPosition(0);
+            }
+        }
+        
+        @Override
+        public void setText(String t) {
+            if ((t != null) && !t.isBlank()) {
+                setForeground(null);
+            }
+            super.setText(t);
+        }
+        
+        FocusListener l = new FocusListener() {
+            public void focusLost(FocusEvent e) {
+                updateHint();
+            };
+            
+            public void focusGained(FocusEvent e) {
+                if (getText().equals(hintText)) {
+                    setText("");
+                }
+                setForeground(null);
+            };
+        };
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            int x = -getLocation().x + parentDialog.getWidth();
-            int y = 0;
-            return new Point(x, y);
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
         }
         
         @Override
@@ -599,6 +688,98 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+    }
+    
+    /** 
+     * A JPanel with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent dialog, not following the mouse. 
+     */
+    public static class TipPanel extends JPanel {
+        
+        public TipPanel() {
+            super();
+        }
+        
+        public TipPanel(LayoutManager lm) {
+            super(lm);
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A JSlider with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent window (dialog), not following the mouse. 
+     * Implement the missing super constructors as necessary.
+     */
+    public static class TipSlider extends JSlider {
+        
+        public TipSlider(int orientation, int min, int max, int value) {
+            super(orientation, min, max, value);
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * A MMToggleButton with a specialized tooltip display. Displays the tooltip to the right side
+     * of the parent window (dialog), not following the mouse. 
+     */
+    public static class TipMMToggleButton extends MMToggleButton {
+        
+        public TipMMToggleButton(String text) {
+            super(text);
+        }
+
+        @Override
+        public Point getToolTipLocation(MouseEvent event) {
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
+        }
+        
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = super.createToolTip();
+            tip.setBackground(alternateTableBGColor());
+            tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
+            return tip;
+        }
+    }
+    
+    /** 
+     * Completes the tooltip for a dialog using one of the TipXXX clasess, setting 
+     * its width and adding HTML tags. 
+     */
+    public static String formatSideTooltip(String text) {
+        String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return UIUtil.scaleStringForGUI(result);
     }
     
     /**

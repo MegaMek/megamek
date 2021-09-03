@@ -90,7 +90,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        t.setMovementMode(EntityMovementMode.getMode(sMotion));
+        t.setMovementMode(EntityMovementMode.parseFromString(sMotion));
         // Add equipment to calculate unit tech advancement correctly
         try {
             switch (t.getMovementMode()) {

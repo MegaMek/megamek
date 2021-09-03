@@ -1,0 +1,158 @@
+Version:1.0
+Thunderbolt
+C 2
+
+Config:Biped
+techbase:Clan
+era:3054
+source:ilClan RecGuide 15 - Clan Invasion
+rules level:2
+
+mass:65
+engine:260 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:17 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:12
+
+Weapons:11
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER PPC, Right Arm
+Streak SRM 6, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
+Anti-Missile System, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERSmallLaser
+CLERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+Clan Streak SRM 6 Ammo
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSmallPulseLaser
+CLSmallPulseLaser
+CLAntiMissileSystem
+CLAMS Ammo
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

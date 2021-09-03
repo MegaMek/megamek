@@ -20,15 +20,10 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.AbstractIconChooserDialog;
 import megamek.client.ui.dialogs.PortraitChooserDialog;
-import megamek.common.Entity;
-import megamek.common.EntitySelector;
-import megamek.common.Infantry;
-import megamek.common.LAMPilot;
-import megamek.common.Protomech;
-import megamek.common.Tank;
+import megamek.common.*;
 import megamek.common.enums.Gender;
+import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
@@ -71,9 +66,8 @@ public class CustomPilotView extends JPanel {
     
     private final List<Entity> entityUnitNum = new ArrayList<>();
     private final JComboBox<String> choUnitNum = new JComboBox<>();
-    
-    private String portraitCategory;
-    private String portraitFilename;
+
+    private Portrait portrait;
 
     public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
@@ -92,17 +86,15 @@ public class CustomPilotView extends JPanel {
         portraitButton.setPreferredSize(new Dimension(72, 72));
         portraitButton.setName("portrait");
         portraitButton.addActionListener(e -> {
-            final AbstractIconChooserDialog portraitDialog = new PortraitChooserDialog(parent.clientgui.frame,
-                    entity.getCrew().getPortrait(slot));
+            final PortraitChooserDialog portraitDialog = new PortraitChooserDialog(
+                    parent.getClientGUI().frame, entity.getCrew().getPortrait(slot));
             if (portraitDialog.showDialog().isConfirmed()) {
-                portraitCategory = portraitDialog.getSelectedItem().getCategory();
-                portraitFilename = portraitDialog.getSelectedItem().getFilename();
+                portrait = portraitDialog.getSelectedItem();
                 portraitButton.setIcon(portraitDialog.getSelectedItem().getImageIcon());
             }
         });
-        
-        portraitCategory = entity.getCrew().getPortraitCategory(slot);
-        portraitFilename = entity.getCrew().getPortraitFileName(slot);
+
+        portrait = entity.getCrew().getPortrait(slot);
         portraitButton.setIcon(entity.getCrew().getPortrait(slot).getImageIcon());
         add(portraitButton, GBC.std().gridheight(2));
 
@@ -119,11 +111,11 @@ public class CustomPilotView extends JPanel {
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomSkill"));
         button.addActionListener(e -> {
-            int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+            int[] skills = parent.getClientGUI().getClient().getSkillGenerator().generateRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
             if (entity.getCrew() instanceof LAMPilot) {
-                skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+                skills = parent.getClientGUI().getClient().getSkillGenerator().generateRandomSkills(entity);
                 fldGunneryAero.setText(Integer.toString(skills[0]));
                 fldPilotingAero.setText(Integer.toString(skills[1]));
             }
@@ -140,8 +132,7 @@ public class CustomPilotView extends JPanel {
         add(fldNick, GBC.eop());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT);
             add(label, GBC.std());
             add(fldGunneryL, GBC.eol());
@@ -221,14 +212,14 @@ public class CustomPilotView extends JPanel {
             fldPilotingAero.setText("0");
         }
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldArtillery, GBC.eop());
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
-        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+        if (parent.getClientGUI().getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldTough, GBC.eop());
@@ -267,7 +258,7 @@ public class CustomPilotView extends JPanel {
 
             // Get the ProtoMechs of this entity's player
             // that *aren't* in the entity's unit.
-            Iterator<Entity> otherUnitEntities = parent.clientgui.getClient().getGame()
+            Iterator<Entity> otherUnitEntities = parent.getClientGUI().getClient().getGame()
                     .getSelectedEntities(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
@@ -289,13 +280,6 @@ public class CustomPilotView extends JPanel {
             }
         }
 
-        if (parent.clientgui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES) //$NON-NLS-1$
-                || parent.clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.EDGE) //$NON-NLS-1$
-                || parent.clientgui.getClient().getGame().getOptions()
-                        .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
-        }
         if (!editable) {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
@@ -329,8 +313,7 @@ public class CustomPilotView extends JPanel {
         entityUnitNum.clear();
 
         // Make an entry for "no change".
-        choUnitNum.addItem(Messages
-                .getString("CustomMechDialog.doNotSwapUnits")); //$NON-NLS-1$
+        choUnitNum.addItem(Messages.getString("CustomMechDialog.doNotSwapUnits"));
         entityUnitNum.add(entity);
 
         // Walk through the other entities.
@@ -407,26 +390,22 @@ public class CustomPilotView extends JPanel {
     public int getPilotingAero() {
         return Integer.parseInt(fldPilotingAero.getText());
     }
-    
+
     public int getToughness() {
         return Integer.parseInt(fldTough.getText());
     }
-    
-    public String getPortraitCategory() {
-        return portraitCategory;
+
+    public Portrait getPortrait() {
+        return portrait;
     }
-    
-    public String getPortraitFilename() {
-        return portraitFilename;
-    }
-    
+
     public Entity getEntityUnitNumSwap() {
-        if (entityUnitNum.isEmpty() || choUnitNum.getSelectedIndex() <= 0) {
+        if (entityUnitNum.isEmpty() || (choUnitNum.getSelectedIndex() <= 0)) {
             return null;
         }
         return entityUnitNum.get(choUnitNum.getSelectedIndex());
     }
-    
+
     public int getBackup() {
         if (null != cbBackup.getSelectedItem()) {
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
@@ -437,7 +416,7 @@ public class CustomPilotView extends JPanel {
         }
         return -1;
     }
-    
+
     private void missingToggled() {
         for (int i = 0; i < getComponentCount(); i++) {
             if (!getComponent(i).equals(chkMissing)) {
@@ -445,7 +424,7 @@ public class CustomPilotView extends JPanel {
             }
         }
     }
-    
+
     void enableMissing(boolean enable) {
         chkMissing.setEnabled(enable);
     }

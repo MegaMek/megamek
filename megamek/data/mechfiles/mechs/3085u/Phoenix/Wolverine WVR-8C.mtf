@@ -3,32 +3,32 @@ Wolverine
 WVR-8C
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:Civil War
+rules level:2
 
-Mass:55
-Engine:275 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:55
+engine:275 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:5
-Jump MP:5
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:18
-RA Armor:18
-LT Armor:20
-RT Armor:20
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:5
 Large Pulse Laser, Right Arm
@@ -42,11 +42,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -59,8 +59,8 @@ Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
 ISSmallPulseLaser
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -76,8 +76,8 @@ Jump Jet
 Jump Jet
 ISStreakSRM6
 ISStreakSRM6
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -91,7 +91,7 @@ Jump Jet
 ISStreakSRM6
 ISStreakSRM6
 IS Streak SRM 6 Ammo
-Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -149,4 +149,20 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\wolverine WLV-8C.jpg
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:The 8C variant of the Wolverine, introduced by Victory Industries in 3067 after the success of the 8K, is built on an Endo Steel chassis and uses an XL Engine for power. It carries a large pulse laser as its primary weapon, as well as a medium pulse laser and a small pulse laser. For additional close-combat capability this version carries two Streak SRM-6 launchers while a C3 Slave Unit allows it to share targeting telemetry with friendly units but only carries thirteen double heat sinks.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Victory Industries (formerly Norse BattleMech Works)
+primaryfactory:Marduk
+systemmanufacturer:CHASSIS:Crucia-A
+systemmanufacturer:ENGINE:Nissan 275XL
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:JUMPJET:Northrup 12000
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:Cat Eyes 5
+

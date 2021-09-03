@@ -149,4 +149,17 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The predecessor to Clan Steel Viper's Crossbow OmniMech, the original Crossbow first saw battlefield action for the Lyran Commonwealth in 2468. The 60-ton 'Mech is speedy for its era, capable of 86 km/h. This came at the expense of armor, however, as the Crossbow is only protected by eight tons of armor.
 
+capabilities:Produced by Arcturan Arms Refit Facility a variant dating to the 3070s, the 9A upgrades the Crossbow by removing all the weapons. In their places are two Streak SRM-6s and a pair of ER Medium Lasers. An ER Large Laser provides long-range firepower for this close-range brawler. The heat dissipation system is upgraded with double heat sinks, giving it adequate capabilities. The use of the remaining tonnage and Ferro-Fibrous armor allowed the designers to substantially upgrade the armor protection
+
+history:The production model, the 6B, came a few years later. The heavy 'Mech was the first produced by Arcturan Arms and the third homegrown BattleMech produced in the Commonwealth. Arcturan Arms fell on hard times when the capital was relocated from Arcturus to Tharkad, forcing them to shut down the factory in 2490 after producing only a few hundred Crossbows. MacEnroe Motors bought out the financially troubled company in 2541, which shut down Crossbow production in 2550.
+
+manufacturer:Arcturan Arms Refit Facility,
+primaryfactory:Arcturus
+systemmanufacturer:CHASSIS:Arc Walker 6X-B
+systemmanufacturer:ENGINE:AA Eterna 300
+systemmanufacturer:ARMOR:Diamond Skin Beta Series
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Arc Signal 1100
+systemmanufacturer:TARGETING:Arc Walker T&T Prime

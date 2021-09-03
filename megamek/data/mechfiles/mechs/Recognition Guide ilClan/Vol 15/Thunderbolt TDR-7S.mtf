@@ -1,0 +1,157 @@
+Version:1.1
+Thunderbolt
+TDR-7S
+
+Config:Biped
+techbase:Inner Sphere
+era:3091
+source:ilClan RecGuide 15 - Early Republic
+rules level:2
+
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Heavy Duty Gyro
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:6
+RTR armor:6
+RTC armor:11
+
+Weapons:8
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+ER Large Laser, Right Arm
+LRM 15, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+SRM 2, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISSmallXPulseLaser
+ISSmallXPulseLaser
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Left Torso:
+LRM 15
+LRM 15
+LRM 15
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-2
+ISCASEII
+-Empty-
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+SRM 2
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

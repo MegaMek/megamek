@@ -1,0 +1,168 @@
+Version:1.0
+Kraken (Bane)
+3
+
+Config:Biped
+techbase:Clan
+era:3054
+source:Recognition Guide:ilClan #17 - Clan Invasion
+rules level:2
+
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:19 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:9
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
+Streak SRM 4 (OS), Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLStreakSRM4 (OS)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Bane is a BattleMech that is based upon a Star League prototype that was never put into production. Tagged the Kraken by Inner Sphere forces who opposed it.
+
+capabilities:The Bane was first built in 2827. It was originally a significant part of many Clan toumans, but was gradually relegated to second-line status following the introduction of the OmniMech. As such, it is still critical to many defensive units. The design uses a lightweight XL Engine so that it can mount the arsenal that it does. Nineteen tons of armor protects this venerable assault 'Mech.
+
+deployment:This design changes the weapons configuration totally. Eight LRM-15 provide fire support, while sixteen tons of ammunition proves sufficient for the design. A One-Shot Streak SRM-4 provides one-time close support. Nineteen double heat sinks are up to the task of keeping the design cool.
+
+manufacturer:Tokasha MechWorks Alpha, Olivetti Weapons
+primaryfactory:Tokasha, Sudetan
+systemmanufacturer:CHASSIS:Type AXT, Mk. XX
+systemmanufacturer:ENGINE:Fusion 300 XL
+systemmanufacturer:ARMOR:Forging C745
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI TTS

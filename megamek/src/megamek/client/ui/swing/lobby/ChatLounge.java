@@ -68,12 +68,15 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.dialogs.EntityReadoutDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -86,6 +89,7 @@ import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.*;
 import megamek.common.options.*;
@@ -1081,13 +1085,28 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     public void previewGameBoard() {
+        IBoard newBoard = getPossibleGameBoard(false);
+        boardPreviewGame.setBoard(newBoard);
+        boardPreviewW.setVisible(true);
+    }
+    
+    /** 
+     * Returns the game map as it is currently set in the map settings tab.
+     * When onlyFixedBoards is true, all Generated and Surprise boards are 
+     * replaced by empty boards, otherwise they are filled with a generated or
+     * a choice of the surprise maps.
+     */
+    public IBoard getPossibleGameBoard(boolean onlyFixedBoards) {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             String name = mapSettings.getBoardsSelectedVector().get(i);
-            if (name.startsWith(MapSettings.BOARD_GENERATED) 
+            if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
+                    && onlyFixedBoards) {
+                sheetBoards[i] = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+            } else if (name.startsWith(MapSettings.BOARD_GENERATED) 
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
@@ -1102,9 +1121,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
                 mapSettings.getMapHeight(), sheetBoards, rotateBoard, mapSettings.getMedium());
-        
-        boardPreviewGame.setBoard(newBoard);
-        boardPreviewW.setVisible(true);
+        return newBoard;
     }
 
     /**
@@ -1456,12 +1473,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setNbrMFVibra(psd.getVibMines());
             player.setNbrMFActive(psd.getActMines());
             player.setNbrMFInferno(psd.getInfMines());
-            var rsg = c.getRandomSkillsGenerator();
-            rsg.setMethod(psd.getMethod());
-            rsg.setType(psd.getPilot());
-            rsg.setLevel(psd.getXP());
-            rsg.setClose(psd.getForceGP());
-            
+            psd.getSkillGenerationOptionsPanel().updateClient();
+            player.setEmail(psd.getEmail());
+
             // The deployment position
             int startPos = psd.getStartPos();
             final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
@@ -1545,9 +1559,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         clientgui.getRandomArmyDialog().setVisible(true);
     }
 
-    public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
-    }
 
     public void loadRandomNames() {
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
@@ -1563,8 +1574,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewGameBoard();
         }
     }
-    
-    
 
     //
     // GameListener
@@ -1637,10 +1646,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     
     private ActionListener lobbyListener = new ActionListener() {
-
         @Override
         public void actionPerformed(ActionEvent ev) {
-
             // Are we ignoring events?
             if (isIgnoringEvents()) {
                 return;
@@ -1648,28 +1655,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             
             if (ev.getSource().equals(butAdd)) {
                 addUnit();
-                
             } else if (ev.getSource().equals(butArmy)) {
                 createArmy();
-                
             } else if (ev.getSource().equals(butSkills)) {
-                loadRandomSkills();
-                
+                new SkillGenerationDialog(clientgui.getFrame(), clientgui,
+                        clientgui.getClient().getGame().getEntitiesVector()).showDialog();
             } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
-                
             } else if (ev.getSource().equals(tablePlayers)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(comboTeam)) {
                 lobbyActions.changeTeam(getselectedPlayers(), comboTeam.getSelectedIndex());
-                
             } else if (ev.getSource().equals(butConfigPlayer)) {
                 configPlayer();
-                
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
-                
             } else if (ev.getSource().equals(butOptions)) {
                 // Make sure the game options dialog is editable.
                 if (!clientgui.getGameOptionsDialog().isEditable()) {
@@ -1678,10 +1678,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Display the game options dialog.
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
-                
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
-                
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current
                 // list of entities with a list from a file.
@@ -1706,26 +1704,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         c.getLocalPlayer().getName());
                 
             } else if (ev.getSource().equals(butAddBot)) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
-                bcd.setVisible(true);
-                if (bcd.dialogAborted) {
-                    return; // user didn't click 'ok', add no bot
-                }
-                if (clientgui.getBots().containsKey(bcd.getBotName())) {
-                    clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertExistsBot.title"),
-                            Messages.getString("ChatLounge.AlertExistsBot.message"));  //$NON-NLS-2$
-                } else {
-                    BotClient c = bcd.getSelectedBot(clientgui.getClient().getHost(), clientgui.getClient().getPort());
-                    c.setClientGUI(clientgui);
-                    c.getGame().addGameListener(new BotGUI(c));
-                    try {
-                        c.connect();
-                    } catch (Exception e) {
-                        clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"),
-                                Messages.getString("ChatLounge.AlertBot.message"));  //$NON-NLS-2$
-                    }
-                    clientgui.getBots().put(bcd.getBotName(), c);
-                }
+                configAndCreateBot(null);
                 
             } else if (ev.getSource().equals(butRemoveBot)) {
                 removeBot();
@@ -1894,6 +1873,32 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
+    private void configAndCreateBot(@Nullable IPlayer toReplace) {
+        BehaviorSettings behavior = null;
+        String botName = null;
+        if (toReplace != null) {
+            behavior = game().getBotSettings().get(toReplace.getName());
+            botName = toReplace.getName();
+        }
+        var bcd = new BotConfigDialog(clientgui.frame, botName, behavior, clientgui);
+        bcd.setVisible(true);
+        if (bcd.getResult() == DialogResult.CANCELLED) {
+            return;
+        }
+        Princess botClient = Princess.createPrincess(bcd.getBotName(), client().getHost(), 
+                client().getPort(), bcd.getBehaviorSettings());
+        botClient.setClientGUI(clientgui);
+        botClient.getGame().addGameListener(new BotGUI(botClient));
+        try {
+            botClient.connect();
+            clientgui.getBots().put(bcd.getBotName(), botClient);
+        } catch (Exception e) {
+            clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"),
+                    Messages.getString("ChatLounge.AlertBot.message"));
+            botClient.die();
+        }
+    }
+
     
     /** 
      * Opens a file chooser and saves the current map setup to the file,
@@ -1977,21 +1982,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private void doBotSettings() {
         IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-        BotClient bot = (BotClient) clientgui.getBots().get(player.getName());
-        BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, bot, false);
+        Princess bot = (Princess) clientgui.getBots().get(player.getName());
+        var bcd = new BotConfigDialog(clientgui.frame, bot.getLocalPlayer().getName(), bot.getBehaviorSettings(), clientgui);
         bcd.setVisible(true);
-
-        if (bcd.dialogAborted) {
-            return; // user didn't click 'ok', add no bot
-        } else if (bot instanceof Princess) {
-            ((Princess) bot).setBehaviorSettings(bcd.getBehaviorSettings());
-            
-            // bookkeeping:
-            clientgui.getBots().remove(player.getName());
-            bot.setName(bcd.getBotName());
-            clientgui.getBots().put(bot.getName(), bot);
-            player.setName(bcd.getBotName());
-            clientgui.chatlounge.refreshPlayerTable();
+        if (bcd.getResult() == DialogResult.CONFIRMED) {
+            bot.setBehaviorSettings(bcd.getBehaviorSettings());
         }
     }
     
@@ -2452,6 +2447,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
                 break;
                 
+            case PlayerTablePopup.PTP_REPLACE:
+                IPlayer player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+                configAndCreateBot(player);
             }
         }
     };
@@ -3553,6 +3551,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return clientgui.getClient().getGame();
     }
     
+    /** Convenience for clientgui.getClient() */
     Client client() {
         return clientgui.getClient();
     }

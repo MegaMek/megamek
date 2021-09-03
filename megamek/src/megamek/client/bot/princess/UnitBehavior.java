@@ -37,7 +37,7 @@ public class UnitBehavior {
             }
             
             return BehaviorType.ForcedWithdrawal;
-        } else if (botSettings.getDestinationEdge() != CardinalEdge.NONE) {
+        } else if (botSettings.shouldAutoFlee() && botSettings.getDestinationEdge() != CardinalEdge.NONE) {
             if(owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }

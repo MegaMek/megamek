@@ -17,11 +17,11 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
+
+import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.icons.AbstractIcon;
-import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.CrewSkillSummaryUtil;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
@@ -110,18 +110,15 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < crew.getSlotCount(); i++) {
-            String category = crew.getPortraitCategory(i);
-            String file = crew.getPortraitFileName(i);
-            if ((category == null) || (file == null) 
-                    || (file.equals(AbstractIcon.DEFAULT_ICON_FILENAME))
-                    || (file.equals(Portrait.DEFAULT_PORTRAIT_FILENAME))) {
+            if (crew.getPortrait(i).isDefault()) {
                 continue;
             }
+
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
                 float imgSize = scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int)imgSize, Image.SCALE_SMOOTH);
+                Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
                 // Write the scaled portrait to file
                 // This is done to avoid using HTML rescaling on the portrait which does
                 // not do any smoothing and has extremely ugly results
@@ -132,9 +129,9 @@ public final class PilotToolTip {
                     bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                     ImageIO.write(bufferedImage, "PNG", tempFile);
                 }
-                result.append("<TD VALIGN=TOP><IMG SRC=file:" + tempPath + "></TD>");
+                result.append("<TD VALIGN=TOP><IMG SRC=file:").append(tempPath).append("></TD>");
             } catch (Exception e) {
-                e.printStackTrace();
+                MegaMek.getLogger().error(e);
             }
             result.append("<TD WIDTH=3></TD>");
         }

@@ -184,9 +184,9 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private void initComponents() {
         JPanel panButtons = new JPanel();
-        butOkay = new JButton(Messages.getString("RandomSkillDialog.Okay"));
-        butSave = new JButton(Messages.getString("RandomSkillDialog.Save"));
-        butCancel = new JButton(Messages.getString("Cancel"));
+        butOkay = new JButton(Messages.getString("Randomize.text"));
+        butSave = new JButton(Messages.getString("Save.text"));
+        butCancel = new JButton(Messages.getString("Cancel.text"));
         JPanel panMain = new JPanel();
         JLabel lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
         JLabel lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));

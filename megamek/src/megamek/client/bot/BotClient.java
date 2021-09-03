@@ -201,11 +201,11 @@ public abstract class BotClient extends Client {
                         try {
                             Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
                             
-                            if(pointBlankShots == null) {
+                            if (pointBlankShots.isEmpty()) {
                                 sendHiddenPBSCFRResponse(null);
                             } else {
                                 // we send two packets because the server will ignore the first one
-                                sendHiddenPBSCFRResponse(new Vector<EntityAction>());
+                                sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
                         } catch(Exception e) {
@@ -222,6 +222,10 @@ public abstract class BotClient extends Client {
             }
 
         });
+    }
+
+    public boolean isBot() {
+        return true;
     }
 
     BotConfiguration config = new BotConfiguration();
@@ -266,7 +270,7 @@ public abstract class BotClient extends Client {
     protected abstract PhysicalOption calculatePhysicalTurn();
     
     protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
-        return null;
+        return new Vector<>();
     }
     
     protected int pickTagTarget(GameCFREvent evt) {

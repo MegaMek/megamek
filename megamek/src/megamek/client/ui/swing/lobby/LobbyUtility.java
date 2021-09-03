@@ -191,7 +191,7 @@ public class LobbyUtility {
      * Removes the board size ("16x17") and file path from the given board name if it is
      * a board file. Also, reconstructs the text if it's a surprise map or generated map.
      */
-    static String cleanBoardName(String boardName, MapSettings mapSettings) {
+    public static String cleanBoardName(String boardName, MapSettings mapSettings) {
         // Remove the file path
         if (isBoardFile(boardName)) {
             boardName = new File(boardName).getName();
@@ -207,7 +207,7 @@ public class LobbyUtility {
         }
         // Remove board sizes ("16x17")
         String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight();
-        return boardName.replace(boardSize, "").trim();
+        return boardName.replace(boardSize, "").replace(".board", "").trim();
     }
     
     /** 

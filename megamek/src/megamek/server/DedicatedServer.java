@@ -14,51 +14,70 @@
 package megamek.server;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Properties;
 
 import megamek.MegaMek;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.util.EmailService;
 
 public class DedicatedServer {
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
-            + "[-password <pass>] [-port <port>] [<saved game>]";
+            + "[-password <pass>] [-port <port>] [-mail <javamail.properties>] [<saved game>]";
 
     public static void start(String[] args) {
         CommandLineParser cp = new CommandLineParser(args);
         try {
             cp.parse();
-            String saveGameFileName = cp.getGameFilename();
-            int usePort;
-            if (cp.getPort() != -1) {
-                usePort = cp.getPort();
-            } else {
-                usePort = PreferenceManager.getClientPreferences().getLastServerPort();
-            }
-            String announceUrl = cp.getAnnounceUrl();
-            String password = cp.getPassword();
-
-            // kick off a RNG check
-            megamek.common.Compute.d6();
-            // start server
-            Server dedicated;
-            try {
-                if (password == null || password.length() == 0) {
-                    password = PreferenceManager.getClientPreferences().getLastServerPass();
-                }
-                dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl);
-            } catch (IOException ex) {
-                MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
-                        + ex.getMessage() + ").");
-                return;
-            }
-            if (null != saveGameFileName) {
-                dedicated.loadGame(new File(saveGameFileName));
-            }
         } catch (AbstractCommandLineParser.ParseException e) {
             MegaMek.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                             + ARGUMENTS_DESCRIPTION_MESSAGE);
+        }
+
+        String saveGameFileName = cp.getGameFilename();
+        int usePort;
+        if (cp.getPort() != -1) {
+            usePort = cp.getPort();
+        } else {
+            usePort = PreferenceManager.getClientPreferences().getLastServerPort();
+        }
+        String announceUrl = cp.getAnnounceUrl();
+        String password = cp.getPassword();
+
+        EmailService mailer = null;
+        if (cp.getMailProperties() != null) {
+            File propsFile = new File(cp.getMailProperties());
+            try (var propsReader = new FileReader(propsFile)) {
+                var mailProperties = new Properties();
+                mailProperties.load(propsReader);
+                mailer = new EmailService(mailProperties);
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(
+                    "Error: could not load mail properties file \"" +
+                    propsFile.getAbsolutePath() + "\"", ex);
+                return;
+            }
+        }
+
+        // kick off a RNG check
+        megamek.common.Compute.d6();
+        // start server
+        Server dedicated;
+        try {
+            if (password == null || password.length() == 0) {
+                password = PreferenceManager.getClientPreferences().getLastServerPass();
+            }
+            dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl, mailer);
+        } catch (Exception ex) {
+            MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
+                                      + ex.getMessage() + ").");
+            return;
+        }
+        if (null != saveGameFileName) {
+            dedicated.loadGame(new File(saveGameFileName));
         }
     }
 
@@ -71,11 +90,13 @@ public class DedicatedServer {
         private int port;
         private String password;
         private String announceUrl = "";
+        private String mailProperties;
 
         // Options
         private static final String OPTION_PORT = "port";
         private static final String OPTION_PASSWORD = "password";
         private static final String OPTION_ANNOUNCE = "announce";
+        private static final String OPTION_MAIL = "mail";
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -99,6 +120,10 @@ public class DedicatedServer {
 
         public String getAnnounceUrl() {
             return announceUrl;
+        }
+
+        public String getMailProperties() {
+            return mailProperties;
         }
 
         /**
@@ -127,6 +152,10 @@ public class DedicatedServer {
                         case OPTION_PASSWORD:
                             nextToken();
                             parsePassword();
+                            break;
+                        case OPTION_MAIL:
+                            nextToken();
+                            parseMail();
                             break;
                     }
                     break;
@@ -176,5 +205,14 @@ public class DedicatedServer {
                 throw new ParseException("password expected");
             }
         }
+
+        private void parseMail() throws ParseException {
+            if (getToken() == TOK_LITERAL) {
+                mailProperties = getTokenValue();
+            } else {
+                throw new ParseException("mail properties expected");
+            }
+        }
+
     }
 }

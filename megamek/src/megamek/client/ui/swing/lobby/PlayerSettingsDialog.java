@@ -19,28 +19,33 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
-import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.dialogs.BotConfigDialog;
+import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.SkillGenerationOptionsPanel;
+import megamek.client.ui.swing.CancelAction;
+import megamek.client.ui.swing.ClientDialog;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.IPlayer;
+import megamek.common.IStartingPositions;
 import megamek.common.options.OptionsConstants;
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
  * A dialog that can be used to adjust advanced player settings like initiative,
@@ -99,27 +104,19 @@ public class PlayerSettingsDialog extends ClientDialog {
     public int getStartPos() {
         return currentPlayerStartPos;
     }
-    
-    /** Returns the chosen random skill roll method. */
-    public int getMethod() {
-        return cmbMethod.getSelectedIndex();
+
+    /**
+     * @return the current {@link SkillGenerationOptionsPanel}
+     */
+    public SkillGenerationOptionsPanel getSkillGenerationOptionsPanel() {
+        return skillGenerationOptionsPanel;
     }
-    
-    /** Returns the chosen random skill roll pilot type. */
-    public int getPilot() {
-        return cmbPilot.getSelectedIndex();
+
+    /** Returns the player's email address. */
+    public String getEmail() {
+        return fldEmail.getText().trim();
     }
-    
-    /** Returns the chosen random skill roll experience. */
-    public int getXP() {
-        return cmbXP.getSelectedIndex();
-    }
-    
-    /** Returns the chosen random skill roll experience. */
-    public boolean getForceGP() {
-        return butForceGP.isSelected();
-    }
-    
+
     // PRIVATE
 
     private final Client client;
@@ -130,7 +127,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     
     // Initiative Section
     private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
-    private TipTextField fldInit = new TipTextField(3, this);
+    private TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
     private JLabel labConventional = new JLabel(getString(PSD + "labConventional"), SwingConstants.RIGHT); 
@@ -143,14 +140,12 @@ public class PlayerSettingsDialog extends ClientDialog {
     private JTextField fldInferno = new JTextField(3);
 
     // Skills Section
-    private JLabel labMethod = new JLabel(getString(PSD + "labMethod"), SwingConstants.RIGHT); 
-    private JLabel labPilot = new JLabel(getString(PSD + "labPilot"), SwingConstants.RIGHT); 
-    private JLabel labXP = new JLabel(getString(PSD + "labXP"), SwingConstants.RIGHT);
-    private TipCombo<String> cmbMethod = new TipCombo<String>(this);
-    private JComboBox<String> cmbPilot = new JComboBox<String>();
-    private JComboBox<String> cmbXP = new JComboBox<String>();
-    private MMToggleButton butForceGP = new MMToggleButton(getString(PSD + "butForceGP"));
-    
+    private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
+
+    // Email section
+    private JLabel labEmail = new JLabel(getString(PSD + "labEmail"), SwingConstants.RIGHT);
+    private JTextField fldEmail = new JTextField(20);
+
     private JPanel panStartButtons = new JPanel();
     private TipButton[] butStartPos = new TipButton[11];
     private JButton butBotSettings = new JButton(Messages.getString(PSD + "botSettings"));
@@ -179,6 +174,9 @@ public class PlayerSettingsDialog extends ClientDialog {
             mainPanel.add(mineSection());
         }
         mainPanel.add(skillsSection());
+        if (!(client instanceof BotClient)) {
+            mainPanel.add(emailSection());
+        }
         mainPanel.add(Box.createVerticalGlue());
     }
     
@@ -221,7 +219,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         fldInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
         return result;
     }
-    
+
     private JPanel mineSection() {
         JPanel result = new OptionPanel(PSD + "header.minefields");
         Content panContent = new Content(new GridLayout(4, 2, 10, 5));
@@ -236,22 +234,28 @@ public class PlayerSettingsDialog extends ClientDialog {
         panContent.add(fldInferno);
         return result;
     }
-    
+
     private JPanel skillsSection() {
-        JPanel result = new OptionPanel(PSD + "header.skills");
-        Content panContent = new Content(new GridLayout(4, 2, 10, 5));
+        final JPanel skillsPanel = new OptionPanel(PSD + "header.skills");
+        skillsPanel.setName("skillsPanel");
+
+        skillGenerationOptionsPanel = new SkillGenerationOptionsPanel(clientgui.getFrame(), clientgui, client);
+        skillGenerationOptionsPanel.setBorder(BorderFactory.createEmptyBorder(8, 25, 5, 25));
+        skillGenerationOptionsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        skillsPanel.add(skillGenerationOptionsPanel);
+
+        return skillsPanel;
+    }
+
+    private JPanel emailSection() {
+        JPanel result = new OptionPanel(PSD + "header.email");
+        Content panContent = new Content(new GridLayout(1, 2, 10, 5));
         result.add(panContent);
-        panContent.add(labMethod);
-        panContent.add(cmbMethod);
-        panContent.add(labPilot);
-        panContent.add(cmbPilot);
-        panContent.add(labXP);
-        panContent.add(cmbXP);
-        panContent.add(new JLabel());
-        panContent.add(butForceGP);
+        panContent.add(labEmail);
+        panContent.add(fldEmail);
         return result;
     }
-    
+
     private JPanel buttonPanel() {
         JPanel result = new JPanel(new FlowLayout());
         butOkay.addActionListener(listener);
@@ -267,27 +271,13 @@ public class PlayerSettingsDialog extends ClientDialog {
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
-        for (int i = 0; i < RandomSkillsGenerator.M_SIZE; i++) {
-            cmbMethod.addItem(RandomSkillsGenerator.getMethodDisplayableName(i));
-        }
-        for (int i = 0; i < RandomSkillsGenerator.T_SIZE; i++) {
-            cmbPilot.addItem(RandomSkillsGenerator.getTypeDisplayableName(i));
-        }
-        for (int i = 0; i < RandomSkillsGenerator.L_SIZE; i++) {
-            cmbXP.addItem(RandomSkillsGenerator.getLevelDisplayableName(i));
-        }
-        cmbMethod.setSelectedIndex(client.getRandomSkillsGenerator().getMethod());
-        adjustSkillMethodTip();
-        cmbPilot.setSelectedIndex(client.getRandomSkillsGenerator().getType());
-        cmbXP.setSelectedIndex(client.getRandomSkillsGenerator().getLevel());
-        butForceGP.setSelected(client.getRandomSkillsGenerator().isClose());
-        cmbMethod.addItemListener(e -> adjustSkillMethodTip());
+        fldEmail.setText(player.getEmail());
     }
-    
+
     private void setupStartGrid() {
         panStartButtons.setAlignmentX(Component.LEFT_ALIGNMENT);
         for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new TipButton("", this);
+            butStartPos[i] = new TipButton("");
             butStartPos[i].addActionListener(listener);
         }
         panStartButtons.setLayout(new GridLayout(4, 3));
@@ -310,12 +300,12 @@ public class PlayerSettingsDialog extends ClientDialog {
         StringBuilder[] butText = new StringBuilder[11];
         StringBuilder[] butTT = new StringBuilder[11];
         boolean[] hasPlayer = new boolean[11];
-        
+
         for (int i = 0; i < 11; i++) {
             butText[i] = new StringBuilder();
             butTT[i] = new StringBuilder();
         }
-        
+
         for (int i = 0; i < 11; i++) {
             butText[i].append("<HTML><P ALIGN=CENTER>");
             if (!isValidStartPos(client.getGame(), client.getLocalPlayer(), i)) {
@@ -324,9 +314,9 @@ public class PlayerSettingsDialog extends ClientDialog {
             } else {
                 butText[i].append(guiScaledFontHTML());
             }
-            butText[i].append(IStartingPositions.START_LOCATION_NAMES[i] + "</FONT><BR>");
+            butText[i].append(IStartingPositions.START_LOCATION_NAMES[i]).append("</FONT><BR>");
         }
-        
+
         for (IPlayer player: client.getGame().getPlayersVector()) {
             int pos = player.getStartingPos(); 
             if (!player.equals(client.getLocalPlayer()) && (pos >= 0) && (pos <= 19)) { 
@@ -340,7 +330,7 @@ public class PlayerSettingsDialog extends ClientDialog {
                     butTT[index].append(Messages.getString(PSD + "deployingHere"));
                     hasPlayer[index] = true;
                 }
-                butTT[index].append("<BR>" + player.getName());
+                butTT[index].append("<BR>").append(player.getName());
             }
         }
         
@@ -356,6 +346,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
 
     ActionListener listener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             // OKAY
             if (e.getSource().equals(butOkay)) {
@@ -372,25 +363,16 @@ public class PlayerSettingsDialog extends ClientDialog {
             }
 
             // Bot settings button
-            if (butBotSettings.equals(e.getSource())) {
-                BotConfigDialog bcd = new BotConfigDialog(clientgui.frame, (BotClient) client, false);
+            if (butBotSettings.equals(e.getSource()) && client instanceof Princess) {
+                BehaviorSettings behavior = ((Princess) client).getBehaviorSettings();
+                var bcd = new BotConfigDialog(clientgui.frame, client.getLocalPlayer().getName(), behavior, clientgui);
                 bcd.setVisible(true);
-                if (!bcd.dialogAborted && client instanceof Princess) {
+                if (bcd.getResult() == DialogResult.CONFIRMED) {
                     ((Princess) client).setBehaviorSettings(bcd.getBehaviorSettings());
                 }
             }
         }
     };
-    
-    private void adjustSkillMethodTip() {
-        if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_TW) {
-            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descTW")));
-        } else if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_TAHARQA) {
-            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descTaharqa")));
-        } else if (cmbMethod.getSelectedIndex() == RandomSkillsGenerator.M_CONSTANT) {
-            cmbMethod.setToolTipText(formatTooltip(getString("RandomSkillDialog.descConstant")));
-        }
-    }
     
     /** 
      * Parse the given field and return the integer it contains or 0, if
@@ -435,6 +417,5 @@ public class PlayerSettingsDialog extends ClientDialog {
             var maxHeight = clientgui.getFrame().getHeight() / 10 * 8;
             return new Dimension(prefSize.width, Math.min(maxHeight, prefSize.height));
         }
-    }; 
-
+    }
 }

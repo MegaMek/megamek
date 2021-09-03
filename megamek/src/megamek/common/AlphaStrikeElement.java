@@ -229,7 +229,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         } else if (isAnyTypeOf(DS, WS, DA, JS, SS) && move.getKey().isBlank()) {
             return move.getValue() + "";
         } else {
-            return move.getKey() + "\"" + move.getValue();
+            return move.getValue() + "\"" + move.getKey();
         }
     }
     

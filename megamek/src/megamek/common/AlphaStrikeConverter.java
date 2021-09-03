@@ -1018,7 +1018,7 @@ public final class AlphaStrikeConverter {
                 }
             }
         }
-        System.out.println("Standard M total damage: "+sums);
+        System.out.println("Standard S total damage: "+sums);
         result.standardDamage = ASDamageVector.createDualRoundedUp(sums, summ, suml, sume);
 
         double sumRears = 0;

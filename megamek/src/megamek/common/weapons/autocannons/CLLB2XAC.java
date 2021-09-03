@@ -1,5 +1,8 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -62,5 +65,14 @@ public class CLLB2XAC extends LBXACWeapon {
         .setClanApproximate(true, true, false,false, false)
         .setProductionFactions(F_CCY)
         .setReintroductionFactions(F_CGS);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.069;
+        } else {
+            return 0.105;
+        }
     }
 }

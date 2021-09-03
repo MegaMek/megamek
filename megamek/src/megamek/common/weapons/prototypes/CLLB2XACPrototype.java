@@ -17,6 +17,9 @@
  */
 package megamek.common.weapons.prototypes;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * @author Andrew Hunter
  */
@@ -60,5 +63,14 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
         .setClanApproximate(true, false, false,true, false)
         .setPrototypeFactions(F_CGS);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.069;
+        } else {
+            return 0.105;
+        }
     }
 }

@@ -1,5 +1,8 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -60,5 +63,14 @@ public class ISLB10XAC extends LBXACWeapon {
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)
             .setReintroductionFactions(F_FS);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range <= BattleForceElement.LONG_RANGE) {
+            return 0.63;
+        } else {
+            return 0;
+        }
     }
 }

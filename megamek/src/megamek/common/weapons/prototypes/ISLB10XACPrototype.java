@@ -18,7 +18,9 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -79,5 +81,14 @@ public class ISLB10XACPrototype extends LBXACWeapon {
             return new PrototypeLBXHandler(toHit, waa, game, server);
         }
         return new PrototypeACWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range <= BattleForceElement.LONG_RANGE) {
+            return 0.63;
+        } else {
+            return 0;
+        }
     }
 }

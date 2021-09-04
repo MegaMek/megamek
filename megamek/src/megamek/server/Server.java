@@ -25505,7 +25505,7 @@ public class Server implements Runnable {
                     Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
                         //Bay Weapons

@@ -264,8 +264,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
@@ -281,6 +280,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$

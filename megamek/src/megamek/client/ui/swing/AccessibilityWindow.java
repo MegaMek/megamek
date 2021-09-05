@@ -35,7 +35,6 @@ import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 public class AccessibilityWindow extends JDialog implements KeyListener {
-    private static final String cleanHtmlRegex = "<[^>]*>";
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
@@ -194,16 +193,6 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         if (s != null) {
             chatArea.append(s + "\n");
         }
-    }
-
-    private String cleanHtml(String str) {
-        str = str.replaceAll(cleanHtmlRegex, "");
-        //replace &nbsp; with space
-        str = str.replace("&nbsp;", " ");
-        //replace &amp; with &
-        str = str.replace("&amp;", "&");
-
-        return str;
     }
 
     /**

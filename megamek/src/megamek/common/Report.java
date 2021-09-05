@@ -18,6 +18,9 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Map;
+
+import megamek.MegaMek;
 
 /**
  * This class defines a single server report. It holds information such as the
@@ -68,7 +71,9 @@ public class Report implements Serializable {
     private static final long serialVersionUID = -5586008091586682078L;
         
     private static final int MESSAGE_NONE = -1;
-    
+
+    private static final String cleanHtmlRegex = "<[^>]*>";
+
     /** Report Type: visible to all players. */
     public static final int PUBLIC = 0;
     
@@ -129,20 +134,20 @@ public class Report implements Serializable {
      * How this report is handled when double-blind play is in effect. See
      * constants below for more details.
      */
-    public transient int type = Report.HIDDEN;
+    public int type = Report.HIDDEN;
 
     /**
      * The entity this report concerns, if applicable. If this is left blank,
      * then the report will be considered <code>public</code>.
      */
-    public transient int subject = Entity.NONE;
-    
+    public int subject = Entity.NONE;
+
     /**
      * The player this report concerns, if applicable. This should be filled in
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
-    public transient int player = IPlayer.PLAYER_NONE;
+    public int player = IPlayer.PLAYER_NONE;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
@@ -159,14 +164,11 @@ public class Report implements Serializable {
      */
     private Vector<String> obscuredRecipients = new Vector<String>();
 
+    /** Determines if an image of the message's subject will be added. */
+    private boolean showImage = false;
+
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
-
-    /** bool for determining when code should be used to show image. */
-    private transient boolean showImage = false;
-
-    /** string to add to reports to show sprites **/
-    private String imageCode = "";
 
     /**
      * Default constructor, note that using this means the
@@ -325,29 +327,15 @@ public class Report implements Serializable {
     }
 
     /**
-     * Shortcut method for adding entity name and owner data at the same time.
-     * Assumes that the entity name should be obscured, but the owner should
-     * not.
+     * Shortcut method for adding entity
      *
      * @param entity the entity you wish to add
      */
     public void addDesc(Entity entity) {
-        if (entity != null) {
-            if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
-                imageCode = "<span id='" + entity.getId() + "'></span>";
-            }
-            add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>", true);
-            add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
-                    + entity.getOwner().getName() + "</font></B>");
-        }
-    }
-
-    /**
-     * Manually Toggle if the report should show an image of the entity
-    */
-    public void setShowImage(boolean showImage){
-        this.showImage = showImage;
+        add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
+            + "\">" + entity.getShortName() + "</a></font>", true);
+        add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
+            + entity.getOwner().getName() + "</font></B>");
     }
 
     /**
@@ -377,6 +365,13 @@ public class Report implements Serializable {
      */
     public void hideData(int index) {
         tagData.setElementAt(null, index);
+    }
+
+    /**
+     * Prepend an entity image to the start of the report.
+     */
+    public void showImage() {
+        this.showImage = true;
     }
 
     /**
@@ -426,22 +421,37 @@ public class Report implements Serializable {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error: Report#getText --> Array Index out of "
-                    + "Bounds Exception (index: " + index
-                    + ") for a report with ID " + messageId
-                    + ".  Maybe Report#add wasn't called enough "
-                    + "times for the amount of tags in the message?");
+            MegaMek.getLogger().error(
+                "Error: Report#getText --> Array Index out of "
+                + "Bounds Exception (index: " + index
+                + ") for a report with ID " + messageId
+                + ".  Maybe Report#add wasn't called enough "
+                + "times for the amount of tags in the message?",
+                e
+            );
             return "[Reporting Error: see megameklog.txt for details]";
         }
     }
 
     /**
-     * Get the report in its final form, with all the necessary substitutions
-     * made.
+     * Generates the report as plain text with all necessary substitutions.
      *
-     * @return a String with the final report
+     * @return report formatted as plain text
      */
     public String getText() {
+        var str = getHtml(null).replaceAll(cleanHtmlRegex, "");
+        //replace &nbsp; with space
+        str = str.replace("&nbsp;", " ");
+        //replace &amp; with &
+        return str.replace("&amp;", "&");
+    }
+
+    /**
+     * Generates the report as HTML with all necessary substitutions.
+     *
+     * @return report formatted as HTML
+     */
+    public String getHtml(Map<Integer,String> entityImages) {
         // The raw text of the message, with tags.
         String raw = ReportMessages.getString(String.valueOf(messageId));
 
@@ -450,8 +460,7 @@ public class Report implements Serializable {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            System.out.println("Error: No message found for ID "
-                    + messageId);
+            MegaMek.getLogger().error("Error: No message found for ID " + messageId);
             text.append("[Reporting Error for message ID ").append(
                     messageId).append("]");
         } else {
@@ -503,20 +512,26 @@ public class Report implements Serializable {
                 }
                 i++;
             }
-            //add the sprite code at the beginning of the line
-            if (imageCode != null && !imageCode.isEmpty()) {
-                if (text.toString().startsWith("\n")) {
-                    text.insert(1, imageCode);
-                }
-                else {
-                    text.insert(0, imageCode);
-                }
-            }
+
             text.append(raw.substring(mark));
             handleIndentation(text);
             text.append(getNewlines());
         }
         tagCounter = 0;
+
+        //add the sprite code at the beginning of the line
+        if (this.showImage &&
+            this.subject != Entity.NONE &&
+            entityImages != null) {
+            var image = entityImages.get(this.subject);
+            if (image != null) {
+                text.insert(
+                    text.toString().startsWith("\n") ? 1 : 0,
+                    image
+                );
+            }
+        }
+
         // debugReport
         if (type == Report.TESTING) {
             Report.mark(text);
@@ -562,10 +577,10 @@ public class Report implements Serializable {
     public static void addNewline(Vector<Report> v) {
         try {
             v.elementAt(v.size() - 1).newlines++;
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
-            System.err.println("Report.addNewline failed, array index out " +
-                    "of bounds");
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            MegaMek.getLogger().error(
+                "Report.addNewline failed, array index out of bounds", ex
+            );
         }
     }
 

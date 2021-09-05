@@ -501,7 +501,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        this.roundReport = new RoundReportPane(client.getGame());
+        this.roundReport = new RoundReportPane(
+            client.getGame(),
+            client.getEntityImageCache()
+        );
         this.roundReport.setPreferredSize(new Dimension(400, 600));
         this.roundReport.setVisible(false);
         add(this.roundReport, BorderLayout.WEST);

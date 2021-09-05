@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -84,14 +85,17 @@ class RoundReportPane extends DetachablePane {
 
 
     private JTabbedPane rounds;
+    private Map<Integer,String> entityImageCache;
 
 
-    RoundReportPane(Game game) {
+    RoundReportPane(Game game, Map<Integer,String> entityImageCache) {
         super(
             "Round reports",
             new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT)
         );
         this.rounds = (JTabbedPane) getContent();
+
+        this.entityImageCache = entityImageCache;
 
         game.addGameListener(new GameListenerAdapter() {
                 @Override
@@ -113,10 +117,14 @@ class RoundReportPane extends DetachablePane {
         }
 
         this.rounds.setSelectedIndex(round);
-        var reportUi = (RoundReport) this.rounds.getComponentAt(round);
+        var html = new StringBuilder("<pre>");
         for (var report: reports) {
-            reportUi.append("<pre>" + report.getText() + "</pre>");
+            html.append(report.getHtml(this.entityImageCache));
         }
+        html.append("</pre>");
+
+        var reportUi = (RoundReport) this.rounds.getComponentAt(round);
+        reportUi.append(html.toString());
     }
 
 }

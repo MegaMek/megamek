@@ -49,8 +49,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -103,7 +103,7 @@ public class Client implements IClientCommandHandler {
     public Map<String, Client> bots = new TreeMap<>(StringUtil.stringComparator());
 
     //Hashtable for storing image tags containing base64Text src
-    private Hashtable<Integer, String> imgCache;
+    private Map<Integer,String> imgCache = null;
 
     //board view for getting entity art assets
     private BoardView1 bv;
@@ -204,11 +204,17 @@ public class Client implements IClientCommandHandler {
 
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
 
+
+        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)) {
+            this.imgCache = new HashMap<Integer,String>();
+        }
+
         var prefs = PreferenceManager.getClientPreferences();
         if (keepGameLog()) {
             try {
                 this.log = new GameLog(
                     this.game,
+                    this.imgCache,
                     prefs.getLogDirectory(),
                     prefs.getGameLogFilename(),
                     prefs.stampFilenames()
@@ -385,6 +391,13 @@ public class Client implements IClientCommandHandler {
      */
     public int getNextDeployableEntityNum(int entityId) {
         return game.getNextDeployableEntityNum(getMyTurn(), entityId);
+    }
+
+    /**
+     * Get hexes designated for automatic artillery hits.
+     */
+    public Map<Integer,String> getEntityImageCache() {
+        return this.imgCache;
     }
 
     /**
@@ -1205,69 +1218,12 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-
-    // Should be private?
-    public String receiveReport(Vector<Report> v) {
-        if (v == null) {
-            return "[null report vector]";
-        }
-
-        StringBuffer report = new StringBuffer();
-        for (Report r : v) {
-            report.append(r.getText());
-        }
-
-        Set<Integer> set = new HashSet<Integer>();
-        //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<s(.*?)n>");
-        Matcher m = p.matcher(report.toString());
-
-        //add all instances to a hashset to prevent duplicates
-        while(m.find()){
-            String cleanedText = m.group(1).replaceAll("\\D", "");
-            if(cleanedText.length() > 0) {
-                set.add(Integer.parseInt(cleanedText));
-            }
-        }
-
-        String updatedReport = report.toString();
-        //loop through the hashset of unique ids and replace the ids with img tags
-        for (int i : set) {
-            if(getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
-            }
-        }
-        return updatedReport;
-    }
-
-    /**
-     * returns the stored <img> tag for given unit id
-     */
-    private String getCachedImgTag(int id){
-        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
-                || (imgCache == null) || !imgCache.containsKey(id)) {
-            return null;
-        }
-        return imgCache.get(id);
-    }
-
     /**
      * Hashtable for storing <img> tags containing base64Text src.
      */
     protected void cacheImgTag(Entity entity) {
-        if(entity == null) {
-            return;
-        }
-
-        if (imgCache == null) {
-            imgCache = new Hashtable<>();
-        } else if (imgCache.containsKey(entity.getId())) {
-            //remove images that should be refreshed
-            imgCache.remove(entity.getId());
-        }
-
-        if (getTargetImage(entity) != null) {
-            //convert image to base64, add to to <img> tag and store in cache
+        if (this.imgCache != null &&
+            !this.imgCache.containsKey(entity.getId())) {
             Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
             try {
                 String base64Text;
@@ -1277,7 +1233,7 @@ public class Client implements IClientCommandHandler {
                 base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
                 baos.close();
                 String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                imgCache.put(entity.getId(), img);
+                this.imgCache.put(entity.getId(), img);
             } catch (final IOException ioe) {
                 throw new UncheckedIOException(ioe);
             }

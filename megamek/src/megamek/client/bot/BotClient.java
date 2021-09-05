@@ -1224,15 +1224,6 @@ public abstract class BotClient extends Client {
     }
     
     /**
-     * The bot client doesn't really need a text report
-     * Let's save ourselves a little processing time and not deal with any of it
-     */
-    @Override
-    public String receiveReport(Vector<Report> v) {
-        return "";
-    }
-    
-    /**
      * The bot client has no need of image tag caching
      * Let's save ourselves some CPU and memory and not deal with it
      */

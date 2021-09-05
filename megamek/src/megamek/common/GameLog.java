@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Map;
 
 import megamek.MegaMek;
 import megamek.common.event.GameListenerAdapter;
@@ -40,14 +41,20 @@ import megamek.common.util.StringUtil;
 public class GameLog {
 
     private BufferedWriter writer;
+    private Map<Integer,String> entityImageCache;
+
 
     /**
      * Creates GameLog named
      *
      * @filename
      */
-    public GameLog(Game game, String dir, String filename, boolean useTimestamp)
+    public GameLog(Game game,
+                   Map<Integer,String> entityImageCache,
+                   String dir, String filename, boolean useTimestamp)
         throws IOException {
+        this.entityImageCache = entityImageCache;
+
         var parent = new File(dir);
         if (!parent.exists()) {
             parent.mkdir();
@@ -66,10 +73,11 @@ public class GameLog {
                 }
                 @Override
                 public void gameReport(GameReportEvent e) {
-                    for (var round: e.getReports()) {
-                        // XXX should be logging HTML
-                        append(round.getText());
+                    append("<pre>");
+                    for (var report: e.getReports()) {
+                        append(report.getHtml(GameLog.this.entityImageCache));
                     }
+                    append("</pre>");
                 }
             }
         );
@@ -77,10 +85,7 @@ public class GameLog {
 
     protected void append(String toLog) {
         try {
-            writer.write("<pre>");
             writer.write(toLog);
-            writer.write("</pre>");
-            writer.newLine();
             writer.flush();
         } catch (IOException ex) {
             MegaMek.getLogger().error("Error writing game log: " + ex.toString(), ex); //$NON-NLS-1$

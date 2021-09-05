@@ -110,9 +110,7 @@ public class Report implements Serializable {
 
     /** Prefix for entity hyperlinks */
     public static final String ENTITY_LINK = "#entity:";
-    /** Prefix for tooltip text */
-    public static final String TOOLTIP_LINK = "#tooltip:";
-    
+
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
     
@@ -295,21 +293,16 @@ public class Report implements Serializable {
     }
 
     /**
-     * Adds target roll to report with details available as a tooltip
-     * @param targetRoll the target roll
+     * Adds target roll to report with details.
+     *
+     * @param roll a role to be added
      */
-    public void add(TargetRoll targetRoll) {
-        addDataWithTooltip(targetRoll.getValueAsString(), targetRoll.getDesc());
-    }
-
-    /**
-     * Adds a field to the report with additional data available as a tooltip
-     * @param data the data for the report field
-     * @param tooltip the tooltip text
-     */
-    public void addDataWithTooltip(String data, String tooltip) {
-        tagData.addElement(String.format("<font color='0xffffff'><a href='%s%s'>%s</a></font>",
-                TOOLTIP_LINK, tooltip, data));
+    public void add(TargetRoll roll) {
+        tagData.addElement(
+            String.format("<samp title=\"%s\">%s</samp>",
+                          roll.getDesc(),
+                          roll.getValueAsString())
+        );
     }
 
     /**

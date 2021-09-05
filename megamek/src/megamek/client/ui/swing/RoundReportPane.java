@@ -15,8 +15,10 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -25,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
@@ -53,7 +56,24 @@ class RoundReportPane extends DetachablePane {
         private RoundReport() {
             setLayout(new BorderLayout());
 
-            this.report = UIUtil.setupForHtml(new JTextPane());
+            this.report = UIUtil.setupForHtml(new JTextPane() {
+                    @Override
+                    public String getToolTipText(MouseEvent event) {
+                        Optional<String> text = Optional.empty();
+                        var offset = viewToModel2D(event.getPoint());
+                        if (offset >= 0) {
+                            var doc = (HTMLDocument) getDocument();
+                            var element = doc.getCharacterElement(offset);
+                            if (element != null) {
+                                text = UIUtil.getHtmlAttribute(
+                                    element, HTML.Attribute.TITLE
+                                );
+                            }
+                        }
+                        return (text.isPresent())
+                            ? text.get() : super.getToolTipText(event);
+                    }
+                });
             this.report.setEditable(false);
 
             this.scroller = new JScrollPane(
@@ -63,6 +83,8 @@ class RoundReportPane extends DetachablePane {
             );
 
             add(this.scroller, BorderLayout.CENTER);
+
+            ToolTipManager.sharedInstance().registerComponent(this.report);
         }
 
         public void append(String html) {

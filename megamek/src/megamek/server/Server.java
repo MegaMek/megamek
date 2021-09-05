@@ -16944,7 +16944,7 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 r.add(ae.getShortName());
                 r.add(te.getShortName());
-                r.addDataWithTooltip(String.valueOf(toHitValue), toHitDesc);
+                r.add(new TargetRoll(toHitValue, toHitDesc));
                 r.add(roll);
                 r.indent(2);
                 r.newlines = 0;

@@ -31,6 +31,9 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.StyleSheet;
 
 import megamek.MegaMek;
@@ -82,6 +85,41 @@ public final class UIUtil {
         toolkit.setStyleSheet(UI_DEFAULTS);
         pane.setEditorKit(toolkit);
         return pane;
+    }
+
+    public static Optional<String> getHtmlAttribute(Element swingElement,
+                                                    HTML.Attribute htmlName) {
+        // For HTMLDocument instances, Swing Element objects contain
+        // attributes with at least two kinds of HTML.Tag instances
+        // associated with it:
+        //
+        // One is the value of the attributed named
+        // AttributeSet.NameAttribute, which indicates its type as
+        // applicable to JTextComponent, which despite being a
+        // HTML.Tag instance does not contain any HTML-specific
+        // information at all.
+        //
+        // A second is a different instance to the first, one that
+        // actually represents the HTML element it was generated from,
+        // and that has as its value a different AttributeSet that
+        // represents the HTML attributes on the element. Since
+        // however it's not possible to know what the HTML element is
+        // a-priori, it's not possible to directly look it up, and
+        // hence we need to loop through all of the Swing Element's
+        // attribute keys and look for it,
+
+        String text = null;
+        var elementAttrs = swingElement.getAttributes();
+        for (var e = elementAttrs.getAttributeNames(); e.hasMoreElements();) {
+            var name = e.nextElement();
+            if (name instanceof HTML.Tag) {
+                var tagAttrs = (AttributeSet) elementAttrs.getAttribute(name);
+                if (tagAttrs!= null) {
+                    text = (String) tagAttrs.getAttribute(htmlName);
+                }
+            }
+        }
+        return Optional.ofNullable(text);
     }
 
     /** 
@@ -977,6 +1015,9 @@ public final class UIUtil {
             "font-family: " + font.getFamily() + "; " +
             "font-size: " + font.getSize() + "pt; " +
             "font-style: normal;" +
+            "}" +
+            "samp {" +
+            "  text-decoration: underline dotted;" +
             "}"
         );
 

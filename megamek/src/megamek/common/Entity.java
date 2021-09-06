@@ -1025,6 +1025,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return the game.
      */
+    @Nullable
     public IGame getGame() {
         return game;
     }
@@ -14667,9 +14668,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public Camouflage getCamouflageOrElse(final Camouflage camouflage, final boolean checkForces) {
-        final Force force = checkForces ? game.getForces().getForce(this) : null;
+        // if we're checking forces and the game exists, then initialize the force. Leave it as null otherwise.
+        final Force force = checkForces && (game != null) ? 
+                game.getForces().getForce(this) : null;
+                
+        // if the camouflage is default and the force is null, return the current entity-specific camouflage
+        //      if the force is not null, return the force specific camouflage
+        // if the camouflage is not default, just return the current entity-specific camouflage
         return getCamouflage().hasDefaultCategory()
-                ? ((force == null) ? camouflage : force.getCamouflageOrElse(game, camouflage)) : getCamouflage();
+                ? ((force == null) ? camouflage : force.getCamouflageOrElse(game, camouflage)) 
+                        : getCamouflage();
     }
 
     public void setCamouflage(Camouflage camouflage) {

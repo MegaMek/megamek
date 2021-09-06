@@ -191,7 +191,12 @@ class PlayerTable extends JTable {
             // Deployment Position
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
-            result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+                result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            } else {
+                result.append("Start: None");
+            }
+            
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
                 result.append(guiScaledFontHTML(uiYellow())); 
                 result.append(WARNING_SIGN + "</FONT>");

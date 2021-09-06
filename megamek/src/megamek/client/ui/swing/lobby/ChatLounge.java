@@ -1020,6 +1020,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                             boardForImage = extractSurpriseMaps(boardName).get(0);
                         }
+                        
+                        boolean rotateBoard = false;
+                        // for a rotation board, set a flag (when appropriate) and fix the name
+                        if (boardForImage.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                            // only rotate boards with an even width
+                            if ((mapSettings.getBoardWidth() % 2) == 0) {
+                                rotateBoard = true;
+                            }
+                            
+                            boardForImage = boardForImage.replace(Board.BOARD_REQUEST_ROTATION, "");
+                        }
+                        
                         File boardFile = new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile();
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
@@ -1027,6 +1039,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             StringBuffer errs = new StringBuffer();
                             try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile())) {
                                 buttonBoard.load(is, errs, true);
+                                BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                             }
@@ -1112,6 +1125,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
+            
             String name = mapSettings.getBoardsSelectedVector().get(i);
             if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
                     && onlyFixedBoards) {
@@ -1120,12 +1134,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
+                boolean flipBoard = false;
+                
                 if (name.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boardList = extractSurpriseMaps(name);
                     int rnd = (int)(Math.random() * boardList.size());
                     name = boardList.get(rnd);
+                } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                    // only rotate boards with an even width
+                    if ((mapSettings.getBoardWidth() % 2) == 0) {
+                        flipBoard = true;
+                    }
+                    name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
                 }
+
                 sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
+                BoardUtilities.flip(sheetBoards[i], flipBoard, flipBoard);
             }
         }
 
@@ -2664,7 +2688,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             switch (command[0]) {
             case MapListPopup.MLP_BOARD:
-                changeMapDnD(command[2], mapButtons.get(Integer.parseInt(command[1])));
+                boolean rotate = (command.length > 3) && Boolean.valueOf(command[3]);
+                String rotateRequest = rotate ? Board.BOARD_REQUEST_ROTATION : "";
+                
+                changeMapDnD(rotateRequest + command[2], mapButtons.get(Integer.parseInt(command[1])));
                 break;
 
             case MapListPopup.MLP_SURPRISE:

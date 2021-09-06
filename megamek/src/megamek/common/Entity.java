@@ -1025,6 +1025,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return the game.
      */
+    @Nullable
     public IGame getGame() {
         return game;
     }

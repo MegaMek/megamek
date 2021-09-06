@@ -19,16 +19,20 @@ public class AlphaStrikeMassConvert {
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
-            if (!AlphaStrikeConverter.canConvert(entity)) {
-                continue;
-            }
-            if (entity instanceof Aero && entity.isFighter()) {
+            if (entity instanceof SuperHeavyTank) {
                 System.out.println(entity.getShortName());
-                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
-//                if (ase.getUnitType() == typeFilter) {
-                    table.append(clipboardElementString(ase));
-//                }
             }
+            continue;
+//            if (!AlphaStrikeConverter.canConvert(entity)) {
+//                continue;
+//            }
+//            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech || entity instanceof Tank) {
+//                System.out.println(entity.getShortName());
+//                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
+////                if (ase.getUnitType() == typeFilter) {
+//                    table.append(clipboardElementString(ase));
+////                }
+//            }
         }
         StringSelection stringSelection = new StringSelection(table.toString());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -70,9 +74,9 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getStructure() + "");
         stats.add(element.usesThreshold() ? element.getFinalThreshold() + "" : " ");
         if (element.usesSML()) {
-            stats.add(element.getStandardDamage().getSMLStringWithZero());
+            stats.add(element.getStandardDamage() + "");
         } else if (element.usesSMLE()) {
-            stats.add(element.getStandardDamage().getSMLEStringWithZero());
+            stats.add(element.getStandardDamage() + "");
         }
         stats.add(element.getOverheat() + "");
         stats.add(element.getFinalPoints()+"");

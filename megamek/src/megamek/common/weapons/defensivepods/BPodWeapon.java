@@ -19,6 +19,7 @@ package megamek.common.weapons.defensivepods;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -83,5 +84,10 @@ public abstract class BPodWeapon extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new BPodHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
     }
 }

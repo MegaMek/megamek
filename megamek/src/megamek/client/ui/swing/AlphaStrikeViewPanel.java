@@ -47,11 +47,7 @@ public class AlphaStrikeViewPanel extends JPanel {
                 addGridElement(element2.getMovementAsString(), oddRow);
             }
             addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
-            if (element2.usesSML()) {
-                addGridElement(element2.getStandardDamage().getSMLStringWithZero(), oddRow);
-            } else if (element2.usesSMLE()) {
-                addGridElement(element2.getStandardDamage().getSMLEStringWithZero(), oddRow);
-            }
+            addGridElement(element2.getStandardDamage() + "", oddRow);
             addGridElement(element2.getOverheat() + "", oddRow);
             addGridElement(element2.getFinalArmor() + " / " + element2.getStructure(), oddRow);
             addGridElement(element2.usesThreshold() ? element2.getFinalThreshold() + "" : " ", oddRow);

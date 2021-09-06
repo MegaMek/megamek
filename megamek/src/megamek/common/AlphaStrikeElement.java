@@ -18,13 +18,13 @@ import static megamek.common.ASUnitType.*;
 import static java.util.stream.Collectors.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+
 import java.lang.String;
 
 /**
@@ -40,6 +40,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     static final double AP_MOUNT_DAMAGE = 0.05;
 
     protected ASUnitType asUnitType;
+    
     /** 
      * NEW Version
      * This covers all SpAs, including the damage values such as SRM2/2.
@@ -55,6 +56,18 @@ public class AlphaStrikeElement extends BattleForceElement {
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field. 
      */
     protected EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
+    
+    /** 
+     * The multiple arced damage value groups of spaceships and LG support vehicles.
+     * Ground units and fighters use standardDamage instead. 
+     */
+    public EnumMap<ASArcs, EnumMap<ASAttackType, ASDamageVector>> arcDamage = new EnumMap<>(ASArcs.class);
+    
+    /** 
+     * The multiple arced lists of Special Unit Abilities of spaceships and LG support vehicles.
+     * Ground units and fighters do not use these. 
+     */
+    public EnumMap<ASArcs, EnumMap<BattleForceSPA, Object>> arcSpecials = new EnumMap<>(ASArcs.class);
     
     public AlphaStrikeElement() {
         
@@ -309,29 +322,11 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     public String getSpecialsString() {
-        //TODO REMOVE:    ONLY FOR COMPARISON WITH THE MUL
-        String s = specialUnitAbilities.keySet().stream()
+        return specialUnitAbilities.keySet().stream()
                 .filter(this::showSpecial)
                 .map(spa -> formatSPAString(spa))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(","));
-        if (hasAnySPAOf(JMPW, JMPS) && !s.isBlank()) {
-            s += ",";
-        }
-        s += hasSPA(JMPW) ? formatSPAString(JMPW) : ""; 
-        s += hasSPA(JMPS) ? formatSPAString(JMPS) : "";
-        return s;
-        
-        
-        
-        
-        
-        
-//        return specialUnitAbilities.keySet().stream()
-//                .filter(this::showSpecial)
-//                .map(spa -> formatSPAString(spa))
-//                .sorted(String.CASE_INSENSITIVE_ORDER)
-//                .collect(Collectors.joining(","));
     }
     
     public boolean hasIF() {
@@ -449,18 +444,10 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     protected String formatSPAString(BattleForceSPA spa) {
-        /* BOMB rating for ASFs and CFs is one less than for BF */
-//        if (spa.equals(BOMB) && isAnyTypeOf(ASUnitType.AF, ASUnitType.CF)) {
-//            return spa.toString() + ((int) getSPA(spa) - 1);
-//        }
-        if (spa == IF) {
-            return spa.toString() + getSPA(spa);
-        } else if (spa == TUR) {
+        if (spa == TUR) {
             return turretString();
         } else if (spa == BIM || spa == LAM) {
             return lamString();
-        } else if (spa == SRM) {
-            return spa.toString() + ((ASDamageVector) getSPA(spa)).getSMString();
         } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
                 || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
             return spa.toString() + ((int) getSPA(spa) == 1 ? "" : (int) getSPA(spa));
@@ -482,8 +469,9 @@ public class AlphaStrikeElement extends BattleForceElement {
                 if (turDamage instanceof ASDamageVector) {
                     result += turDamage;
                 } else {
-                    for (Entry<BattleForceSPA, Object> specialDmg : ((Map<BattleForceSPA, Object>) turDamage).entrySet()) {
-                        result += "," + specialDmg.getKey().toString() + specialDmg.getValue();
+                    for (Entry<BattleForceSPA, Object> specialDmg : 
+                        ((Map<BattleForceSPA, Object>) turDamage).entrySet()) {
+                        result += "," + specialDmg.getKey() + specialDmg.getValue();
                     }
                 }
             }
@@ -493,7 +481,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     /** 
-     * Returns the formatted TUR Special Ability string such as TUR(3/3/1,AC2/2/-). Requires TUR to
+     * Returns the formatted LAM/BIM Special Ability string such as LAM(36"g/4a). Requires LAM or BIM to
      * be present. 
      */ 
     private String lamString() {
@@ -556,6 +544,21 @@ public class AlphaStrikeElement extends BattleForceElement {
     public boolean usesThreshold() {
         return threshold != -1;
     }
+    
+    /** 
+     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units. 
+     * When this is the case, the standardDamage of this unit is not used and is zero. Instead,
+     * arcDamage is used. 
+     */
+    public boolean usesArcs() {
+        if (isAnyTypeOf(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySPAOf(LG, SLG, VLG))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    
     
     
 }

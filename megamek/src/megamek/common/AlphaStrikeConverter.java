@@ -417,21 +417,18 @@ public final class AlphaStrikeConverter {
                 case EquipmentType.T_ARMOR_COMMERCIAL:
                     armorMod = .5;
                     break;
-                case EquipmentType.T_ARMOR_INDUSTRIAL:
-                case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
-                    armorMod = entity.getBARRating(0) / 10;
-                    break;
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                     armorMod = 1.2;
                     break;
                 case EquipmentType.T_ARMOR_HARDENED:
-                    armorMod = 1.5;
-                    break;
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_REACTIVE:
-                    armorMod = .75;
+                    armorMod = 2;
                     break;
             }
+            
+            if ((entity.getBARRating(0) < 9) && (entity.getArmorType(loc) != EquipmentType.T_ARMOR_COMMERCIAL)) {
+                armorMod *= 0.1 * entity.getBARRating(0);
+            }
+            
             armorPoints += armorMod * entity.getArmor(loc);
             if (entity.hasRearArmor(loc)) {
                 armorPoints += armorMod * entity.getArmor(loc, true);
@@ -633,6 +630,7 @@ public final class AlphaStrikeConverter {
             }
 
             WeaponType weapon = (WeaponType) mount.getType();
+            System.out.println(weapon.getName());
             
             ranges = weapon.isCapital() ? CAPITAL_RANGES : STANDARD_RANGES;
             
@@ -653,8 +651,12 @@ public final class AlphaStrikeConverter {
                 continue;
             }
 
-            if (weapon.hasFlag(WeaponType.F_AMS)) {
-                result.addSPA(AMS);
+            if (weapon.hasFlag(WeaponType.F_AMS) && !(entity instanceof Aero)) {
+                if (entity instanceof Aero) {
+                    pointDefense += 0.3;
+                } else {
+                    result.addSPA(AMS);
+                }
                 continue;
             }
 
@@ -882,161 +884,56 @@ public final class AlphaStrikeConverter {
         
         adjustForHeat(entity, result);
         
+        // Big Aero (using Arcs)
+        if (result.usesArcs()) {
+//            arc
+        }
+        
+        
+        
+        
         // Rules state that all flamer and plasma weapons on the unit contribute to the heat rating, so we don't separate by arc
         int htS = resultingHTValue(result.heat[RANGE_BAND_SHORT]);
         int htM = resultingHTValue(result.heat[RANGE_BAND_MEDIUM]);
         int htL = resultingHTValue(result.heat[RANGE_BAND_LONG]);
         if (htS + htM + htL > 0) {
-            result.addSPA(HT, ASDamageVector.createRoundedNormal(htS, htM, htL));
+            result.addSPA(HT, ASDamageVector.createSpecialDamage(htS, htM, htL));
         }
-        
-        // Aero do not get IF, i.e. all units with IF use SML damage values and may only have TUR or REAR with IF
-        double sumIF = 0;
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].isBlank()) {
-                sumIF += result.weaponLocations[loc].getIF();
-            }
-        }
-        if (sumIF > 0) {
-            result.addSPA(IF, ASDamage.createDualRoundedNormal(sumIF));
-        }
-        
-        // Aero do not get LRM/SRM/AC
-        if (!(entity instanceof Aero)) {
-            double sumLRMs = 0;
-            double sumLRMm = 0;
-            double sumLRMl = 0;
-            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-                if (result.locationNames[loc].isBlank()) {
-                    sumLRMs += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_LRM, RANGE_BAND_SHORT);
-                    sumLRMm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_LRM, RANGE_BAND_MEDIUM);
-                    sumLRMl += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_LRM, RANGE_BAND_LONG);
-                }
-            }
-            if (roundUpToTenth(sumLRMm) >= 1) {
-                result.addSPA(LRM, ASDamageVector.createDualRoundedNormalNoMinimal(sumLRMs, sumLRMm, sumLRMl, 0));
-            }
 
-            double sumACs = 0;
-            double sumACm = 0;
-            double sumACl = 0;
-            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-                if (result.locationNames[loc].isBlank()) {
-                    sumACs += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_AC, RANGE_BAND_SHORT);
-                    sumACm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_AC, RANGE_BAND_MEDIUM);
-                    sumACl += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_AC, RANGE_BAND_LONG);
-                }
+        // IF
+        if (result.weaponLocations[0].getIF() > 0) {
+            result.addSPA(IF, ASDamageVector.createSpecialDamage(result.weaponLocations[0].getIF()));
+        }
+
+        // LRM ... IATM specials
+        for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
+            // Aero do not get LRM/SRM/AC/IATM
+            if ((entity instanceof Aero) && i != WeaponType.BFCLASS_FLAK) {
+                continue;
             }
-            if (roundUpToTenth(sumACm) >= 1) {
-                result.addSPA(AC, ASDamageVector.createDualRoundedNormalNoMinimal(sumACs, sumACm, sumACl, 0));
-            }
-            
-            double sumIATMs = 0;
-            double sumIATMm = 0;
-            double sumIATMl = 0;
-            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-                if (result.locationNames[loc].isBlank()) {
-                    sumIATMs += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_IATM, RANGE_BAND_SHORT);
-                    sumIATMm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_IATM, RANGE_BAND_MEDIUM);
-                    sumIATMl += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_IATM, RANGE_BAND_LONG);
-                }
-            }
-            if (roundUpToTenth(sumIATMm) >= 1) {
-                result.addSPA(IATM, ASDamageVector.createDualRoundedNormalNoMinimal(sumIATMs, sumIATMm, sumIATMl, 0));
-            }
-            
-            double sumTORs = 0;
-            double sumTORm = 0;
-            double sumTORl = 0;
-            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-                if (result.locationNames[loc].isBlank()) {
-                    sumTORs += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_TORP, RANGE_BAND_SHORT);
-                    sumTORm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_TORP, RANGE_BAND_MEDIUM);
-                    sumTORl += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_TORP, RANGE_BAND_LONG);
-                }
-            }
-            System.out.println("TOR M: "+ sumTORm);
-            if (roundUpToTenth(sumTORs) + roundUpToTenth(sumTORm) + roundUpToTenth(sumTORl) > 0) {
-                result.addSPA(TOR, ASDamageVector.createDualRoundedNormal(sumTORs, sumTORm, sumTORl));
-            }
-            
-            double sumSRMs = 0;
-            double sumSRMm = 0;
-            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-                if (result.locationNames[loc].isBlank()) {
-                    sumSRMs += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_SRM, RANGE_BAND_SHORT);
-                    sumSRMm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_SRM, RANGE_BAND_MEDIUM);
-                }
-            }
-            if (roundUpToTenth(sumSRMm) >= 1) {
-                result.addSPA(SRM, ASDamageVector.createDualRoundedNormalNoMinimal(sumSRMs, sumSRMm, 0, 0));
+            if (result.weaponLocations[0].hasDamageClass(i)) {
+                result.addSPA(
+                        BattleForceSPA.getSPAForDmgClass(i), 
+                        ASDamageVector.createSpecialDamage(
+                                result.weaponLocations[0].specialDamage.get(i), 
+                                i == WeaponType.BFCLASS_SRM ? 2 : result.rangeBands));
             }
         }
 
-        double sumFlaks = 0;
-        double sumFlakm = 0;
-        double sumFlakl = 0;
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].isBlank()) {
-                sumFlaks += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_FLAK, RANGE_BAND_SHORT);
-                sumFlakm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_FLAK, RANGE_BAND_MEDIUM);
-                sumFlakl += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_FLAK, RANGE_BAND_LONG);
-            }
-        }
-        if (roundUpToTenth(sumFlaks) + roundUpToTenth(sumFlakm) + roundUpToTenth(sumFlakl) > 0) {
-            result.addSPA(FLK, ASDamageVector.createDualRoundedNormal(sumFlaks, sumFlakm, sumFlakl));
-        }
-        
-        double sumRELm = 0;
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].isBlank()) {
-                sumRELm += result.weaponLocations[loc].getDamage(WeaponType.BFCLASS_REL, RANGE_BAND_MEDIUM);
-            }
-        }
-        if (roundUpToTenth(sumRELm) >= 1) {
+        // REL
+        if (result.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_REL)) {
             result.addSPA(REL);
         }
         
-        
-        //TODO: This should not be necessary:
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            while (result.weaponLocations[loc].standardDamage.size() < 4)
-                result.weaponLocations[loc].standardDamage.add(0.0);
-        }
-        
-        double sums = 0;
-        double summ = 0;
-        double suml = 0;
-        double sume = 0;
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].isBlank()) {
-                sums += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_SHORT);
-                summ += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_MEDIUM);
-                suml += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_LONG);
-                if (result.rangeBands == RANGEBANDS_SMLE) {
-                    sume += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_EXTREME);
-                }
-            }
-        }
-        System.out.println("Standard S total damage: "+sums);
-        result.standardDamage = ASDamageVector.createDualRoundedUp(sums, summ, suml, sume);
+        // Standard damage
+        result.standardDamage = ASDamageVector.createStandardDamage(
+                result.weaponLocations[0].standardDamage, result.rangeBands);
 
-        double sumRears = 0;
-        double sumRearm = 0;
-        double sumRearl = 0;
-        double sumReare = 0;
-        for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].equals("REAR") && result.weaponLocations[loc].hasDamage()) {
-                sumRears += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_SHORT);
-                sumRearm += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_MEDIUM);
-                sumRearl += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_LONG);
-                if (result.rangeBands == RANGEBANDS_SMLE) {
-                    sumReare += result.weaponLocations[loc].standardDamage.get(RANGE_BAND_EXTREME);
-                }
-            }
-        }
-        if (sumRears + sumRearm + sumRearl + sumReare > 0) {
-            result.addSPA(REAR, ASDamageVector.createRoundedNormal(sumRears, sumRearm, sumRearl, sumReare));
+        // REAR damage
+        int rearLoc = getRearLocation(result);
+        if (rearLoc != -1 && result.weaponLocations[rearLoc].hasDamage()) {
+            result.addSPA(REAR, ASDamageVector.createSpecialDamage(
+                    result.weaponLocations[rearLoc].standardDamage, result.rangeBands));
         }
 
         //TODO: Turrets have SRM, LRM, AC, FLK, HT, TSEMP, TOR, AMS, TAG, ARTx, xNARC, IATM
@@ -1045,36 +942,20 @@ public final class AlphaStrikeConverter {
             if (result.locationNames[loc].equals("TUR")) {
                 var curTurret = new ArrayList<Object>();
                 turList.add(curTurret);
-                if (result.rangeBands == RANGEBANDS_SML) {
-                    var std = ASDamageVector.createDualRoundedUp(
-                            result.weaponLocations[loc].standardDamage.get(0),
-                            result.weaponLocations[loc].standardDamage.get(1),
-                            result.weaponLocations[loc].standardDamage.get(2));
-                    curTurret.add(std);
-                    var specialMap = new HashMap<BattleForceSPA, Object>();
-                    curTurret.add(specialMap);
-                    for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
-                        if (result.weaponLocations[loc].hasDamageClass(i)) {
-                          //TODO: This should not be necessary:
-                                while (result.weaponLocations[loc].specialDamage.get(i).size() < 4)
-                                    result.weaponLocations[loc].specialDamage.get(i).add(0.0);
-                            var dmg = ASDamageVector.createDualRoundedNormal(
-                                    result.weaponLocations[loc].specialDamage.get(i).get(0),
-                                    result.weaponLocations[loc].specialDamage.get(i).get(1),
-                                    result.weaponLocations[loc].specialDamage.get(i).get(2));
-                            System.out.println("class "+i+" dmg "+dmg);
-                            specialMap.put(BattleForceSPA.getSPAForDmgClass(i), dmg);
-                        }
-                        if (result.weaponLocations[loc].getIF() > 0) {
-                            specialMap.put(IF, ASDamage.createDualRoundedNormal(result.weaponLocations[loc].getIF()));
-                        }
+                curTurret.add(ASDamageVector.createStandardDamage(result.weaponLocations[loc].standardDamage, 
+                        result.rangeBands));
+                var specialMap = new HashMap<BattleForceSPA, Object>();
+                curTurret.add(specialMap);
+                for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
+                    if (result.weaponLocations[loc].hasDamageClass(i)) {
+                        specialMap.put(BattleForceSPA.getSPAForDmgClass(i), 
+                                ASDamageVector.createSpecialDamage(
+                                        result.weaponLocations[loc].specialDamage.get(i), 
+                                        i == WeaponType.BFCLASS_SRM ? 2 : result.rangeBands));
                     }
-                } else {
-                    result.addSPA(TUR, ASDamageVector.createDualRoundedUp(
-                            result.weaponLocations[loc].standardDamage.get(0),
-                            result.weaponLocations[loc].standardDamage.get(1),
-                            result.weaponLocations[loc].standardDamage.get(2),
-                            result.weaponLocations[loc].standardDamage.get(3)));
+                    if (result.weaponLocations[loc].getIF() > 0) {
+                        specialMap.put(IF, ASDamageVector.createSpecialDamage(result.weaponLocations[loc].getIF()));
+                    }
                 }
             }
         }
@@ -1146,25 +1027,29 @@ public final class AlphaStrikeConverter {
             if (!(m.getType() instanceof MiscType)) {
                 continue;
             }
-            System.out.println(m.getName());
-            if (m.getType().hasFlag(MiscType.F_BAP)) {
+
+            if (m.getType().getInternalName().equals(Sensor.BAP)
+                    || m.getType().getInternalName().equals(Sensor.BAPP)
+                    || m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
                 element.addSPA(RCN);
-                if (m.getType().hasFlag(MiscType.F_BLOODHOUND)) {
-                    element.addSPA(BH);
-                } else if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT) || MountedHelper.isLightActiveProbe(m)) {
-                    element.addSPA(LPRB);
-                } else if (m.getType().hasFlag(MiscType.F_WATCHDOG)) {
-                    element.addSPA(WAT);
-                    element.addSPA(LPRB);
-                    element.addSPA(ECM);
-                } else if (!m.getType().hasFlag(MiscType.F_EW_EQUIPMENT)){
-                    element.addSPA(LPRB);
-                }
-                if (m.getType().hasFlag(MiscType.F_NOVA)) {
-                    element.addSPA(NOVA);
-                    element.addSPA(ECM);
-                    element.addSPA(MHQ, 1.5);
-                }
+                element.addSPA(PRB);
+            } else if (m.getType().getInternalName().equals(Sensor.LIGHT_AP)
+                    || m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP)
+                    || m.getType().getInternalName().equals(Sensor.EW_EQUIPMENT)) {
+                element.addSPA(LPRB);
+            } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
+                element.addSPA(BH);
+                element.addSPA(RCN);
+            } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
+                element.addSPA(LPRB);
+                element.addSPA(ECM);
+                element.addSPA(RCN);
+                element.addSPA(WAT);
+            } else if (m.getType().getInternalName().equals(Sensor.NOVA)) {
+                element.addSPA(NOVA);
+                element.addSPA(PRB);
+                element.addSPA(ECM);
+                element.addSPA(MHQ, 1.5);
             } else if (m.getType().hasFlag(MiscType.F_ECM)) {
                 if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                     element.addSPA(AECM);
@@ -1205,8 +1090,13 @@ public final class AlphaStrikeConverter {
                 element.addSPA(CASE);
             } else if (m.getType().hasFlag(MiscType.F_CASEII) && !element.isAnyTypeOf(AF, CF, CI, BA)) {
                 element.addSPA(CASEII);
-            } else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+            } else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)
+                    || m.getType().hasFlag(MiscType.F_SRCS)
+                    || m.getType().hasFlag(MiscType.F_SASRCS)
+                    || m.getType().hasFlag(MiscType.F_CASPAR)
+                    || m.getType().hasFlag(MiscType.F_CASPARII)) {
                 element.addSPA(DRO);
+                element.addSPA(RBT);
             } else if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                 element.addSPA(DCC, (int) m.getSize());
             } else if (m.getType().hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
@@ -1262,6 +1152,7 @@ public final class AlphaStrikeConverter {
             } else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
                 element.addSPA(HJ);
             } else if (m.getType().hasFlag(MiscType.F_CARGO)) {
+                System.out.println("Tonnage: "+ m.getTonnage());
                 element.addSPA(CT, m.getTonnage());
             }
             
@@ -1338,7 +1229,8 @@ public final class AlphaStrikeConverter {
                 } else if (m.getType().hasFlag(MiscType.F_DUNE_BUGGY)) {
                     element.addSPA(DUN);
                 } else if (m.getType().hasFlag(MiscType.F_TRACTOR_MODIFICATION)
-                        || m.getType().hasFlag(MiscType.F_TRAILER_MODIFICATION)) {
+                        || m.getType().hasFlag(MiscType.F_TRAILER_MODIFICATION)
+                        || m.getType().hasFlag(MiscType.F_HITCH)) {
                     element.addSPA(HTC);
                 }
             }
@@ -1423,7 +1315,7 @@ public final class AlphaStrikeConverter {
                 element.addSPA(ATxD, ((ASFBay)t).getDoors());
                 element.addSPA(MFB);
             } else if (t instanceof CargoBay) {
-                element.addSPA(CT, (int)((CargoBay)t).getCapacity());
+                element.addSPA(CT, ((CargoBay)t).getCapacity());
                 element.addSPA(CTxD, ((CargoBay)t).getDoors());
             } else if (t instanceof DockingCollar) {
                 element.addSPA(DT, 1);
@@ -1716,18 +1608,23 @@ public final class AlphaStrikeConverter {
             WeaponLocation wloc = element.weaponLocations[loc];
             double adjustment = element.locationNames[loc].equals("REAR") ? rearAdjustment : frontadjustment;
             for (int i = 0; i < Math.min(maxAdjustmentRange, wloc.standardDamage.size()); i++) {
-                wloc.standardDamage.set(i, wloc.standardDamage.get(i) * adjustment);
+                wloc.standardDamage.set(i, heatAdjust(wloc.standardDamage.get(i), adjustment));
             }
             for (List<Double> damage : wloc.specialDamage.values()) {
                 for (int i = 0; i < Math.min(maxAdjustmentRange, damage.size()); i++) {
-                    damage.set(i, damage.get(i) * adjustment);
+                    damage.set(i, heatAdjust(damage.get(i), adjustment));
                 }
             }
             // IF is long-range fire; only adjust when the unit can overheat even in long range 
             if (element.hasSPA(OVL)) {
-                wloc.indirect *= adjustment; 
+                //TODO: really adjust this with round up to tenth?
+                wloc.indirect = heatAdjust(wloc.indirect, adjustment); 
             }
         }
+    }
+    
+    private static double heatAdjust(double value, double adjustment) {
+        return roundUpToTenth(value * adjustment);
     }
     
     /** 
@@ -1954,7 +1851,7 @@ public final class AlphaStrikeConverter {
             result += ht.M.damage > 0 ? 0.5 : 0;
         }
         if (element.hasSPA(IF)) {
-            result += element.isMinimalIF() ? 0.5 : ((ASDamage)element.getSPA(IF)).damage;
+            result += element.isMinimalIF() ? 0.5 : ((ASDamageVector)element.getSPA(IF)).S.damage;
         }
         if (element.hasSPA(RHS)) {
             if (element.hasSPA(OVL)) {
@@ -2226,6 +2123,15 @@ public final class AlphaStrikeConverter {
         return weapon.getBattleForceClass() == WeaponType.BFCLASS_SRM 
                 || weapon.getBattleForceClass() == WeaponType.BFCLASS_LRM
                 || weapon.getBattleForceClass() == WeaponType.BFCLASS_MML;
+    }
+    
+    private static int getRearLocation(AlphaStrikeElement element) {
+        for (int loc = 0; loc < element.weaponLocations.length; loc++) {
+            if (element.locationNames[loc].equals("REAR")) {
+                return loc;
+            }
+        }
+        return -1;
     }
 
 }

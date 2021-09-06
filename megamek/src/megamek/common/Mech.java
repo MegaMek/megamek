@@ -8340,7 +8340,7 @@ public abstract class Mech extends Entity {
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if ((index == 0 && !rearMounted
                 || (index == 1) && rearMounted)) {
-            return 1.0;
+            return 1;
         } else if (index == 2) {
             return 1;
         }

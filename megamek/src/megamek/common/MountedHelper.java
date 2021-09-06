@@ -38,8 +38,4 @@ public class MountedHelper {
         return isArtemisIV(m) || isArtemisV(m) || isArtemisProto(m);
     }
     
-    /** Returns true if the given Mounted m is a Clan Light Active Probe. */
-    public static boolean isLightActiveProbe(@Nullable Mounted m) {
-        return (m != null) && m.getType().getInternalName().equals(Sensor.LIGHT_AP);
-    }
 }

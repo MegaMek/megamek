@@ -1,5 +1,8 @@
 package megamek.common.weapons.lasers;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
@@ -67,5 +70,14 @@ public class CLERLaserMicro extends LaserWeapon {
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.2;
+        } else {
+            return 0;
+        }
     }
 }

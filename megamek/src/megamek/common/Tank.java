@@ -3879,17 +3879,12 @@ public class Tank extends Entity {
         return (int) Math.ceil(struct / 10.0);
     }
     
-    /**
-     * Separate turret weapons from body-mounted
-     */
     @Override
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
-            return 3;
         } else {
-            return 4;
+            return 3;
         }
     }
     
@@ -3897,33 +3892,20 @@ public class Tank extends Entity {
     public String getBattleForceLocationName(int index) {
         if (index == 1) {
             return "REAR";
-        }
-        if (index > 1) {
-            if (m_bHasNoDualTurret) {
-                return "TUR";
-            } else {
-                return "TUR" + index;
-            }
+        } else if (index == 2) {
+            return "TUR";
         } else {
             return "";
         }
     }
 
-    /**
-     * index 0 (Front, Left, Right)
-     * index 1+ (Turret(s))
-     */
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if ((index == 0) && ((location == LOC_FRONT) || (location == LOC_LEFT) 
-                 || (location == LOC_RIGHT)  
-                 || (location == LOC_TURRET) || (location == LOC_TURRET_2))) {
+        if ((index == 0) && (location != LOC_REAR)) {
             return 1;
-        } else if (index == 1 && (location == LOC_REAR)) {
+        } else if ((index == 1) && (location == LOC_REAR)) {
             return 1;
-        } else if ((index == 2) && (location == LOC_TURRET)) {
-            return 1;
-        } else if ((index == 3) && (location == LOC_TURRET_2)) {
+        } else if ((index == 2) && ((location == LOC_TURRET) || (location == LOC_TURRET_2))) {
             return 1;
         }
         return 0;

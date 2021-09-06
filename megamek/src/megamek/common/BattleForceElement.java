@@ -42,6 +42,14 @@ import megamek.common.weapons.missiles.MissileWeapon;
  */
 public class BattleForceElement {
     
+    public enum ASArcs {
+        Front, Left, Right, Rear;
+    }
+    
+    public enum ASAttackType {
+        STD, CAP, SCAP, MSL; 
+    }
+    
     public static final int RANGE_BAND_SHORT = 0;
     public static final int RANGE_BAND_MEDIUM = 1;
     public static final int RANGE_BAND_LONG = 2;
@@ -64,7 +72,13 @@ public class BattleForceElement {
     protected int size;
     protected LinkedHashMap<String,Integer> movement = new LinkedHashMap<>();
     protected int tmm;
+    
+    /** 
+     * The normal damage values of a ground unit (S/M/L) or fighter (S/M/L/E).  
+     * Spaceships and LG support vehicles use arcDamage instead.
+     */
     protected ASDamageVector standardDamage;
+    
     protected int overheat;
     protected double armor;
     protected double threshold = -1;
@@ -823,6 +837,13 @@ public class BattleForceElement {
                 return specialDamage.get(damageClass).get(rangeIndex);
             }
             return 0;
+        }
+        
+        public List<Double> getDamageForClass(int damageClass) {
+            if (specialDamage.containsKey(damageClass)) {
+                return specialDamage.get(damageClass);
+            }
+            return new ArrayList<>();
         }
         
         public String formatDamageUp() {

@@ -117,6 +117,10 @@ public final class Force implements Serializable {
     }
 
     public Camouflage getCamouflageOrElse(final IGame game, final Camouflage camouflage) {
+        if (getCamouflage() == null) {
+            setCamouflage(new Camouflage());
+        }
+        
         return getCamouflage().hasDefaultCategory()
                 ? ((getParentId() == NO_FORCE) ? camouflage : getParent(game).getCamouflageOrElse(game, camouflage))
                 : getCamouflage();

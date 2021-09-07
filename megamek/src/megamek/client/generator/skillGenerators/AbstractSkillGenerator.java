@@ -52,6 +52,10 @@ public abstract class AbstractSkillGenerator implements Serializable {
     }
 
     public SkillLevel getLevel() {
+        if (level == null) {
+            level = SkillLevel.REGULAR;
+        }
+        
         return level;
     }
 

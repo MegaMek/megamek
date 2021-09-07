@@ -108,8 +108,14 @@ public class Report implements Serializable {
     /** Number of spaces to use per indentation level. */
     private static final int DEFAULT_INDENTATION = 4;
 
-    /** Prefix for entity hyperlinks */
-    public static final String ENTITY_LINK = "#entity:";
+    /** URL scheme for entity hyperlinks */
+    public static final String ENTITY_SCHEME = "entity";
+
+    /** URL scheme for player hyperlinks */
+    public static final String PLAYER_SCHEME = "player";
+
+    /** URL scheme for hex hyperlinks */
+    public static final String HEX_SCHEME = "hex";
 
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
@@ -293,16 +299,47 @@ public class Report implements Serializable {
     }
 
     /**
-     * Adds target roll to report with details.
+     * Adds target roll to the report with details, marked as to be obscured.
      *
      * @param roll a role to be added
      */
     public void add(TargetRoll roll) {
-        tagData.addElement(
-            String.format("<samp title=\"%s\">%s</samp>",
+        add(String.format("<samp title=\"%s\">%s</samp>",
                           roll.getDesc(),
-                          roll.getValueAsString())
-        );
+                          roll.getValueAsString()),
+            true);
+    }
+
+    /**
+     * Adds a hex reference as the next data item, marked as to be obscured.
+     *
+     * @param hex a hex to be added
+     */
+    public void add(Coords hex) {
+        add(String.format(
+                "<a class=\"hex\" href=\"%s:%d,%d\">%s</a>",
+                HEX_SCHEME, hex.getX(), hex.getY(), hex.getBoardNum()
+            ), true);
+    }
+
+    /**
+     * Adds an entity and its owner as the next two data items.
+     *
+     * @param entity the entity you wish to add
+     */
+    public void addDesc(Entity entity) {
+        add(String.format(
+                "<font color='0xffffff'><a class=\"entity\" href=\"%s:%s\">%s</a></font>",
+                ENTITY_SCHEME, entity.getId(), entity.getShortName()
+            ), true);
+        var owner = entity.getOwner();
+        add(String.format(
+                "<b><font color=\"%s\"><a class=\"player\" href=\"%s:%s\">%s</a></font></b>",
+                owner.getColour().getHexString(0x00F0F0F0),
+                PLAYER_SCHEME,
+                owner.getId(),
+                owner.getName()
+            ), true);
     }
 
     /**
@@ -317,18 +354,6 @@ public class Report implements Serializable {
      */
     public void choose(boolean choice) {
         tagData.addElement(String.valueOf(choice));
-    }
-
-    /**
-     * Shortcut method for adding entity
-     *
-     * @param entity the entity you wish to add
-     */
-    public void addDesc(Entity entity) {
-        add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-            + "\">" + entity.getShortName() + "</a></font>", true);
-        add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
-            + entity.getOwner().getName() + "</font></B>");
     }
 
     /**

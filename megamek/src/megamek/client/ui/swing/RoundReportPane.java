@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.ToolTipManager;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
@@ -35,6 +37,7 @@ import javax.swing.text.html.HTMLDocument;
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.DetachablePane;
+import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.event.GameListenerAdapter;
@@ -46,7 +49,7 @@ import megamek.common.event.GameReportEvent;
 class RoundReportPane extends DetachablePane {
 
 
-    private static class RoundReport extends JComponent {
+    private class RoundReport extends JComponent {
 
 
         private JTextPane report;
@@ -74,6 +77,9 @@ class RoundReportPane extends DetachablePane {
                             ? text.get() : super.getToolTipText(event);
                     }
                 });
+            this.report.addHyperlinkListener(
+                (e) -> RoundReportPane.this.linkClicked(e)
+            );
             this.report.setEditable(false);
 
             this.scroller = new JScrollPane(
@@ -106,18 +112,21 @@ class RoundReportPane extends DetachablePane {
     }
 
 
-    private JTabbedPane rounds;
+    private ClientGUI gui;
+    private Game game;
     private Map<Integer,String> entityImageCache;
+    private JTabbedPane rounds;
 
 
-    RoundReportPane(Game game, Map<Integer,String> entityImageCache) {
+    RoundReportPane(ClientGUI gui, Game game, Map<Integer,String> entityImageCache) {
         super(
             "Round reports",
             new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT)
         );
-        this.rounds = (JTabbedPane) getContent();
-
+        this.gui = gui;
+        this.game = game;
         this.entityImageCache = entityImageCache;
+        this.rounds = (JTabbedPane) getContent();
 
         game.addGameListener(new GameListenerAdapter() {
                 @Override
@@ -147,6 +156,45 @@ class RoundReportPane extends DetachablePane {
 
         var reportUi = (RoundReport) this.rounds.getComponentAt(round);
         reportUi.append(html.toString());
+    }
+
+    private void linkClicked(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            try {
+                var uri = new URI(e.getDescription());
+                var remainder = uri.getSchemeSpecificPart();
+                int id = -1;
+                switch (uri.getScheme()) {
+                    case Report.ENTITY_SCHEME:
+                        id = Integer.parseInt(remainder);
+                        var entity = this.game.getEntityFromAllSources(id);
+                        if (entity != null) {
+                            this.gui.selectEntity(entity);
+                        }
+                        break;
+
+                    case Report.HEX_SCHEME:
+                        var parts = remainder.split(",");
+                        this.gui.showHex(new Coords(
+                            Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1])
+                        ));
+                        break;
+
+                    case Report.PLAYER_SCHEME:
+                        id = Integer.parseInt(remainder);
+                        var player = this.game.getPlayer(id);
+                        if (player != null) {
+                            this.gui.chatTo(player);
+                        }
+                        break;
+                }
+            } catch (Exception ex) {
+                MegaMek.getLogger().error(
+                    "Error handing round report link activation", ex //$NON-NLS-1$
+                );
+            }
+        }
     }
 
 }

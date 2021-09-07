@@ -502,6 +502,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(offBoardOverlay);
 
         this.roundReport = new RoundReportPane(
+            this,
             client.getGame(),
             client.getEntityImageCache()
         );
@@ -2146,6 +2147,37 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
         bv.selectEntity(client.getGame().getEntity(selectedEntityNum));
+    }
+
+    /**
+     * Selects the given entity in the game interface.
+     */
+    public void selectEntity(final Entity target) {
+        setSelectedEntityNum(target.getId());
+        var pos = target.getPosition();
+        if (pos != null) {
+            this.bv.highlight(target.getPosition());
+            this.bv.centerOnHex(target.getPosition());
+        }
+        this.mechD.displayEntity(target);
+    }
+
+    /**
+     * Highlights the given hex in the game interface.
+     */
+    public void showHex(final Coords target) {
+        this.bv.highlight(target);
+        this.bv.centerOnHex(target);
+    }
+
+    /**
+     * Selects the given entity in the game interface.
+     */
+    public void chatTo(final IPlayer player) {
+        this.bv.setChatterBoxActive(true);
+        this.cb2.setMessage(player.getName() + ": ");
+        this.cb2.slideUp();
+        this.bv.requestFocus();
     }
 
     public RandomArmyDialog getRandomArmyDialog() {

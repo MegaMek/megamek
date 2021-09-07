@@ -17,6 +17,7 @@ VERSION HISTORY:
 + Data: Few new maps from SimonLandmine and UlyssesSockdrawer. Some unit file fixes. 
 + Issue #3089: Fixing messages implementation to handle localization
 + PR #3132: Princess Player NPE
++ Issue #3140: Moltke missing from FWL General generated RATs
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

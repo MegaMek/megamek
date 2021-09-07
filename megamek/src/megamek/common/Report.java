@@ -433,9 +433,8 @@ public class Report implements Serializable {
      */
     public String getText() {
         var str = getHtml(null).replaceAll(cleanHtmlRegex, "");
-        //replace &nbsp; with space
+        str = str.replace("<br>", "\n");
         str = str.replace("&nbsp;", " ");
-        //replace &amp; with &
         return str.replace("&amp;", "&");
     }
 
@@ -495,7 +494,7 @@ public class Report implements Serializable {
                         tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx)
                             .equals("newline")) {
-                        text.append("\n");
+                        text.append("<br>");
                     } else {
                         // not a special tag, so treat as literal text
                         text.append(raw.substring(i, endTagIdx + 1));
@@ -519,7 +518,7 @@ public class Report implements Serializable {
             var image = entityImages.get(this.subject);
             if (image != null) {
                 text.insert(
-                    text.toString().startsWith("\n") ? 1 : 0,
+                    text.toString().startsWith("<br>") ? "<br>".length() : 0,
                     image
                 );
             }
@@ -537,7 +536,7 @@ public class Report implements Serializable {
             return;
         }
         int i = 0;
-        while (sb.substring(i, i+4).equals("\n")) {
+        while (sb.substring(i, i+4).equals("<br>")) {
             i+=4;
             if (i == sb.length()) {
                 continue;
@@ -557,7 +556,7 @@ public class Report implements Serializable {
     private String getNewlines() {
         StringBuffer sbNewlines = new StringBuffer();
         for (int i = 0; i < newlines; i++) {
-            sbNewlines.append("\n");
+            sbNewlines.append("<br>");
         }
         return sbNewlines.toString();
     }

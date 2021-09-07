@@ -73,11 +73,11 @@ public class GameLog {
                 }
                 @Override
                 public void gameReport(GameReportEvent e) {
-                    append("<pre>");
+                    append("<div>");
                     for (var report: e.getReports()) {
                         append(report.getHtml(GameLog.this.entityImageCache));
                     }
-                    append("</pre>");
+                    append("</div>");
                 }
             }
         );

@@ -1011,11 +1011,12 @@ public final class UIUtil {
         var font = UIManager.getFont("Label.font");
         HTML_DEFAULTS = new StyleSheet();
         HTML_DEFAULTS.addRule(
-            "pre {" +
-            "font-family: " + font.getFamily() + "; " +
-            "font-size: " + font.getSize() + "pt; " +
-            "font-style: normal;" +
-            "}" +
+            "body {" +
+            "  font-family: " + font.getFamily() + "; " +
+            "  font-size: " + font.getSize() + "pt; " +
+            "}"
+        );
+        HTML_DEFAULTS.addRule(
             "samp {" +
             "  text-decoration: underline dotted;" +
             "}"

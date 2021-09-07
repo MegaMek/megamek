@@ -139,11 +139,11 @@ class RoundReportPane extends DetachablePane {
         }
 
         this.rounds.setSelectedIndex(round);
-        var html = new StringBuilder("<pre>");
+        var html = new StringBuilder("<div>");
         for (var report: reports) {
             html.append(report.getHtml(this.entityImageCache));
         }
-        html.append("</pre>");
+        html.append("</div>");
 
         var reportUi = (RoundReport) this.rounds.getComponentAt(round);
         reportUi.append(html.toString());

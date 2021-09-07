@@ -1379,7 +1379,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText("<pre>" + message + "</pre>");
+        textArea.setText("<div>" + message + "</div>");
         scrollPane.setPreferredSize(new Dimension(
                 (int) (getSize().getWidth() / 1.5), (int) (getSize()
                         .getHeight() / 1.5)));

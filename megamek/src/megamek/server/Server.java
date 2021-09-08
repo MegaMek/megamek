@@ -5085,6 +5085,7 @@ public class Server implements Runnable {
             else if (null != crashDropShip) {
                 r = new Report(2050);
                 r.subject = entity.getId();
+                r.showImage();
                 r.indent();
                 r.add(crashDropShip.getShortName(), true);
                 r.add(nextPos.getBoardNum(), true);
@@ -5222,6 +5223,7 @@ public class Server implements Runnable {
                         // Update report.
                         r = new Report(2050);
                         r.subject = entity.getId();
+                        r.showImage();
                         r.indent();
                         r.add(target.getShortName(), true);
                         r.add(nextPos.getBoardNum(), true);
@@ -12077,6 +12079,7 @@ public class Server implements Runnable {
         // okay, print the info
         Report r = new Report(2180);
         r.subject = entity.getId();
+        r.showImage();
         r.addDesc(entity);
         r.add(roll.getLastPlainDesc(), true);
         addReport(r);
@@ -12140,6 +12143,7 @@ public class Server implements Runnable {
         // okay, print the info
         Report r = new Report(2180);
         r.subject = entity.getId();
+        r.showImage();
         r.addDesc(entity);
         r.add(roll.getLastPlainDesc(), true);
         addReport(r);
@@ -12200,6 +12204,7 @@ public class Server implements Runnable {
         // Start the info for this roll.
         Report r = new Report(1210);
         r.subject = entity.getId();
+        r.showImage();
         r.addDesc(entity);
 
         // Will the entity fall in the source or destination hex?
@@ -15219,6 +15224,7 @@ public class Server implements Runnable {
             // report who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -15492,6 +15498,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -15740,6 +15747,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -15936,6 +15944,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -16178,6 +16187,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -16301,6 +16311,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -16442,6 +16453,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -16590,6 +16602,7 @@ public class Server implements Runnable {
             // who is making the attacks
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17040,6 +17053,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17193,6 +17207,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17293,6 +17308,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17376,6 +17392,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17582,6 +17599,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17771,6 +17789,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -17916,6 +17935,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -18064,6 +18084,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -18647,6 +18668,7 @@ public class Server implements Runnable {
             // who is making the attack
             r = new Report(4005);
             r.subject = ae.getId();
+            r.showImage();
             r.addDesc(ae);
             addReport(r);
         }
@@ -19362,6 +19384,7 @@ public class Server implements Runnable {
             entity.heat -= toSink;
             r = new Report(5035);
             r.subject = entity.getId();
+            r.showImage();
             r.addDesc(entity);
             r.add(entity.heatBuildup);
             r.add(toSink);
@@ -20628,6 +20651,7 @@ public class Server implements Runnable {
             // okay, print the info
             r = new Report(2180);
             r.subject = entity.getId();
+            r.showImage();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc());
             vPhaseReport.add(r);
@@ -21030,6 +21054,7 @@ public class Server implements Runnable {
                 // loop through rolls we do have to make...
                 r = new Report(9310);
                 r.subject = e.getId();
+                r.showImage();
                 r.addDesc(e);
                 r.add(rolls.size());
                 r.add(reasons.toString()); // international issue
@@ -21155,6 +21180,7 @@ public class Server implements Runnable {
                 // report something
                 r = new Report(9340);
                 r.subject = e.getId();
+                r.showImage();
                 r.addDesc(e);
                 r.add(base.getDesc()); // international issue
                 vReport.add(r);
@@ -21162,6 +21188,7 @@ public class Server implements Runnable {
             }
             r = new Report(9345);
             r.subject = e.getId();
+            r.showImage();
             r.addDesc(e);
             r.add(base.getDesc()); // international issue
             vReport.add(r);
@@ -26368,6 +26395,7 @@ public class Server implements Runnable {
                     && !hex.containsTerrain(Terrains.WOODS)) {
                 Report r = new Report(2180);
                 r.subject = en.getId();
+                r.showImage();
                 r.addDesc(en);
                 r.add(psr.getLastPlainDesc(), true);
                 vDesc.add(r);
@@ -33485,6 +33513,7 @@ public class Server implements Runnable {
                     entity.getCrew().getCurrentPilotIndex(), autoEject);
             r = new Report(2180);
             r.subject = entity.getId();
+            r.showImage();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc(), true);
             r.indent();
@@ -33725,6 +33754,7 @@ public class Server implements Runnable {
                     entity.getCrew().getCurrentPilotIndex(), false);
             r = new Report(2180);
             r.subject = entity.getId();
+            r.showImage();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc(), true);
             r.indent();
@@ -35448,6 +35478,7 @@ public class Server implements Runnable {
                         r = new Report(3100);
                     }
                     r.subject = aId;
+                    r.showImage();
                     Entity ae = game.getEntity(aId);
                     r.addDesc(ae);
                     handleAttackReports.addElement(r);
@@ -35483,6 +35514,7 @@ public class Server implements Runnable {
                         r = new Report(3100);
                     }
                     r.subject = aId;
+                    r.showImage();
                     Entity ae = game.getEntity(aId);
                     // for arty, attacker may be dead, or fled, so check out-of-
                     // game entities

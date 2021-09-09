@@ -168,7 +168,7 @@ public final class Configuration {
     public static File dataDir() {
         lock.readLock().lock();
         try {
-            return data_dir;
+            return toExistingPath(data_dir);
         } finally {
             lock.readLock().unlock();
         }
@@ -195,7 +195,7 @@ public final class Configuration {
     public static File docsDir() {
         lock.readLock().lock();
         try {
-            return docs_dir;
+            return toExistingPath(docs_dir);
         } finally {
             lock.readLock().unlock();
         }
@@ -222,7 +222,7 @@ public final class Configuration {
     public static File skinsDir() {
         lock.readLock().lock();
         try {
-            return skins_dir;
+            return toExistingPath(skins_dir);
         } finally {
             lock.readLock().unlock();
         }
@@ -608,6 +608,22 @@ public final class Configuration {
      */
     public static File widgetsDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_WIDGETS);
+    }
+
+    /**
+     * Returns a file that could exist in the MM install location or the userdata directory.
+
+     * The path is first checked to see if it exists within the
+     * userdata directory, and if it does, that file is returned.
+     * However, if it doesn't exist, then the file is used from MM's
+     * install directory instead.
+     */
+    private static File toExistingPath(final File path) {
+        var existing = new File(userdataDir(), path.getName());
+        if (!existing.exists()) {
+            existing = path;
+        }
+        return existing;
     }
 
     // **************************************************************************

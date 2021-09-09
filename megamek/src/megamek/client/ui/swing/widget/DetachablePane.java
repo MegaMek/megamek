@@ -135,7 +135,7 @@ public class DetachablePane extends JComponent {
         this.window = new JFrame();
         this.window.addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing​(WindowEvent e) {
+                public void windowClosing(WindowEvent e) {
                     attachPane();
                 }
             });

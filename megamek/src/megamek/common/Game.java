@@ -2598,17 +2598,30 @@ public class Game implements Serializable {
     }
 
     /**
+     * Adds the given reports to those of the current round at standard priority
+     *
+     * @param round new reports for the current round
+     */
+    public void addReports(List<Report> round) {
+        addReports(round, false);
+    }
+
+    /**
      * Adds the given reports to those of the current round.
      *
      * @param reports new reports for the current round
+     * @param isImportant determines if the reports are high-priority
+     *                    or standard priority
      */
-    public void addReports(List<Report> reports) {
+    public void addReports(List<Report> reports, boolean isImportant) {
         while (this.reports.size() <= this.roundCount) {
             this.reports.add(new ArrayList<Report>());
         }
         var existing = this.reports.get(this.roundCount);
         existing.addAll(reports);
-        processGameEvent(new GameReportEvent(this, this.roundCount, reports));
+        processGameEvent(
+            new GameReportEvent(this, this.roundCount, reports, isImportant)
+        );
     }
 
     /**
@@ -2626,7 +2639,9 @@ public class Game implements Serializable {
         var existing = this.reports.get(round);
         existing.clear();
         existing.addAll(reports);
-        processGameEvent(new GameReportEvent(this, round, reports));
+        processGameEvent(
+            new GameReportEvent(this, round, reports, false)
+        );
     }
 
     /**
@@ -2634,7 +2649,7 @@ public class Game implements Serializable {
      *
      * Any existing reports for the game are cleared.
      *
-     * @param reports set of all reports for the game
+     * @param allReports set of all reports for the game
      */
     public void setAllReports(List<List<Report>> allReports) {
         var i = 0;
@@ -2643,6 +2658,11 @@ public class Game implements Serializable {
         }
     }
 
+    /*
+     * Returns a read-only list of reports for the given round.
+     *
+     * @param round the desired round
+     */
     public List<Report> getReports(int round) {
         return Collections.unmodifiableList(this.reports.get(round));
     }

@@ -1465,9 +1465,11 @@ public class Client implements IClientCommandHandler {
             receiveEntities(c);
             break;
         case Packet.COMMAND_SENDING_REPORTS:
+            game.addReports((Vector<Report>) c.getObject(0), false);
+            break;
         case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
         case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
-            game.addReports((Vector<Report>) c.getObject(0));
+            game.addReports((Vector<Report>) c.getObject(0), true);
             break;
         case Packet.COMMAND_SENDING_REPORTS_ALL:
             game.setAllReports((List<List<Report>>) c.getObject(0));

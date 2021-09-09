@@ -34,6 +34,7 @@ public class GameReportEvent extends GameEvent {
 
     private int round;
     private List<Report> reports;
+    private boolean isImportant;
 
     /**
      * Emitted when new game reports are received from the server.
@@ -41,11 +42,17 @@ public class GameReportEvent extends GameEvent {
      * @param source game instance that emitted the event
      * @param round the round this report is associated with
      * @param reports new reports
+     * @param isImportant determines if the reports are high-priority
+     *                    or standard priority
      */
-    public GameReportEvent(Game source, int round, List<Report> reports) {
+    public GameReportEvent(Game source,
+                           int round,
+                           List<Report> reports,
+                           boolean isImportant) {
         super(source);
         this.round = round;
         this.reports = Collections.unmodifiableList(reports);
+        this.isImportant = isImportant;
     }
 
     /**
@@ -64,6 +71,15 @@ public class GameReportEvent extends GameEvent {
      */
     public List<Report> getReports() {
         return this.reports;
+    }
+
+    /**
+     * Determines if these are high or standard priority reports.
+     *
+     * @return true if high priority, false if standard
+     */
+    public boolean isImportant() {
+        return this.isImportant;
     }
 
     @Override

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.BoardsTagger.Tags;
 
 /**
@@ -118,7 +117,7 @@ public class BoardClassifier {
         String[] fileList = boardDir.list();
         if (fileList != null) {
             for (String filename : fileList) {
-                File filePath = new MegaMekFile(boardDir, filename).getFile();
+                File filePath = new File(boardDir, filename);
                 
                 // this is a "partial" board path that omits the "data/boards" part of the path
                 // and is usable 

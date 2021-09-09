@@ -50,7 +50,6 @@ import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.common.Configuration;
 import megamek.common.PlanetaryConditions;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.common.PlanetaryConditions.*;
@@ -162,7 +161,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     private JPanel headerSection() {
         JPanel result = new FixedYPanel();
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
-        File iconFile = new MegaMekFile(Configuration.widgetsDir(), "Planetary.png").getFile();
+        File iconFile = new File(Configuration.widgetsDir(), "Planetary.png");
         Image image = ImageUtil.loadImageFromFile(iconFile.toString());
         Icon planetIcon = new ImageIcon(image.getScaledInstance(scaleForGUI(40), -1, Image.SCALE_SMOOTH));
         JLabel planetLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"), 

@@ -56,7 +56,6 @@ import megamek.common.event.*;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Obviously, displays the map in scaled-down size. 
@@ -290,7 +289,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         int green;
         int blue;
 
-        File coloursFile = new MegaMekFile(Configuration.hexesDir(), GUIP.getMinimapColours()).getFile();
+        File coloursFile = new File(Configuration.hexesDir(), GUIP.getMinimapColours());
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {

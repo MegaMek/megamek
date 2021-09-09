@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Enumeration;
 
 import javax.swing.DefaultListModel;
@@ -45,7 +46,6 @@ import megamek.common.Mounted;
 import megamek.common.Sensor;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
@@ -291,7 +291,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         Image tile = getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -299,28 +299,28 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
+                new File(Configuration.widgetsDir(), udSpec.getTopLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
+                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
+                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
+                new File(Configuration.widgetsDir(), udSpec.getRightLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -328,7 +328,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -336,7 +336,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
+                new File(Configuration.widgetsDir(), udSpec
                         .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -345,7 +345,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -353,7 +353,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
+                new File(Configuration.widgetsDir(), udSpec
                         .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));

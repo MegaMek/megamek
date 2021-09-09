@@ -24,6 +24,7 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -38,13 +39,12 @@ import megamek.common.force.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /** A specialized renderer for the Mek Force tree. */
 public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -2002064111324279609L;
-    private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
+    private final String UNKNOWN_UNIT = new File(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
 
     private ChatLounge lobby;

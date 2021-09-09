@@ -21,13 +21,13 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * A subclass of JButton that supports specifying the look and feel of the
@@ -215,11 +215,11 @@ public class MegamekButton extends JButton implements MouseListener {
                         + "2 background images!");
                 iconsLoaded = false;
             }
-            java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
-                    spec.backgrounds.get(0)).getFile().toURI();
+            java.net.URI imgURL = new File(Configuration.widgetsDir(),
+                    spec.backgrounds.get(0)).toURI();
             backgroundIcon = new ImageIcon(imgURL.toURL());
-            imgURL = new MegaMekFile(Configuration.widgetsDir(),
-                    spec.backgrounds.get(1)).getFile().toURI();
+            imgURL = new File(Configuration.widgetsDir(),
+                    spec.backgrounds.get(1)).toURI();
             backgroundPressedIcon = new ImageIcon(imgURL.toURL());
         } catch (Exception e) {
             System.out.println("Error: loading background icons for "

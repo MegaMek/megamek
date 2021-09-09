@@ -178,7 +178,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -744,10 +743,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
         flareImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
+                new File(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
         radarBlipImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(),
+                new File(Configuration.miscImagesDir(),
                         FILENAME_RADAR_BLIP_IMAGE).toString());
     }
 
@@ -6074,8 +6073,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         try {
             File file;
             if (bvSkinSpec.backgrounds.size() > 0) {
-                file = new MegaMekFile(Configuration.widgetsDir(),
-                        bvSkinSpec.backgrounds.get(0)).getFile();
+                file = new File(Configuration.widgetsDir(),
+                        bvSkinSpec.backgrounds.get(0));
                 if (!file.exists()) {
                     MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
                             + file.getAbsolutePath());
@@ -6086,8 +6085,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
-                file = new MegaMekFile(Configuration.widgetsDir(),
-                        bvSkinSpec.backgrounds.get(1)).getFile();
+                file = new File(Configuration.widgetsDir(),
+                        bvSkinSpec.backgrounds.get(1));
                 if (!file.exists()) {
                     MegaMek.getLogger().error("BoardView1 Error: icon doesn't exist: "
                             + file.getAbsolutePath());

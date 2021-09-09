@@ -50,7 +50,6 @@ import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 public class Board implements Serializable, IBoard {
     private static final long serialVersionUID = -5744058872091016636L;
@@ -860,7 +859,7 @@ public class Board implements Serializable, IBoard {
         }
 
         StringBuffer errBuff = new StringBuffer();
-        try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), board).getFile())) {
+        try (InputStream is = new FileInputStream(new File(Configuration.boardsDir(), board))) {
             tempBoard.load(is, errBuff, false);
         } catch (IOException ex) {
             return false;
@@ -959,7 +958,7 @@ public class Board implements Serializable, IBoard {
     @Override
     @Deprecated
     public void load(final String filename) {
-        load(new MegaMekFile(Configuration.boardsDir(), filename).getFile());
+        load(new File(Configuration.boardsDir(), filename));
     }
 
     /**
@@ -1035,8 +1034,7 @@ public class Board implements Serializable, IBoard {
                     index++;
                 } else if ((st.ttype == StreamTokenizer.TT_WORD) && st.sval.equalsIgnoreCase("background")) {
                     st.nextToken();
-                    File bgFile = new MegaMekFile(Configuration.boardBackgroundsDir(),
-                            st.sval).getFile();
+                    File bgFile = new File(Configuration.boardBackgroundsDir(), st.sval);
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
                     } else {

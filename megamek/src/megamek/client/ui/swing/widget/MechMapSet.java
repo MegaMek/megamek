@@ -21,6 +21,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -32,7 +33,6 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for
@@ -415,13 +415,13 @@ public class MechMapSet implements DisplayMapSet {
 
         Image tile = comp.getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
+                new File(Configuration.widgetsDir(), udSpec.getMechOutline())
                         .toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER

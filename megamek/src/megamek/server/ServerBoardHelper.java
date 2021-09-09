@@ -27,7 +27,6 @@ import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.MapSettings;
 import megamek.common.util.StringUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 class ServerBoardHelper {
     
@@ -73,7 +72,7 @@ class ServerBoardHelper {
         String[] fileList = boardDir.list();
         if (fileList != null) {
             for (String filename : fileList) {
-                File filePath = new MegaMekFile(boardDir, filename).getFile();
+                File filePath = new File(boardDir, filename);
                 if (filePath.isDirectory()) {
                     scanForBoardsInDir(filePath, basePath + File.separator + filename, dimensions, boards);
                 } else {

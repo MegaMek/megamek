@@ -32,6 +32,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -80,7 +81,6 @@ import megamek.common.MechSummaryCache;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardViewListener,
         ActionListener, ComponentListener {
@@ -216,16 +216,16 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
                         .toString()));
         frame.setIconImages(iconList);
 

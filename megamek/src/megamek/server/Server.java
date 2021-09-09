@@ -82,7 +82,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.EmailService;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
@@ -3361,8 +3360,7 @@ public class Server implements Runnable {
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
-                        + ".board").getFile());
+                sheetBoards[i].load(new File(Configuration.boardsDir(), name + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
@@ -29745,8 +29743,8 @@ public class Server implements Runnable {
         for (final Entity entity : new ArrayList<>(entities)) {
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
-                        Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+                Server.entityVerifier = EntityVerifier.getInstance(
+                    new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
             }
 
             // Create a TestEntity instance for supported unit types

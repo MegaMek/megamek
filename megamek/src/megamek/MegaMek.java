@@ -47,7 +47,6 @@ import megamek.common.logging.LogConfig;
 import megamek.common.logging.MMLogger;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -617,8 +616,7 @@ public class MegaMek {
                                 ms.getEntryName()).getEntity();
                         getLogger().info("Validating Entity: " + entity.getShortNameRaw());
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
-                                new MegaMekFile(Configuration.unitsDir(),
-                                        EntityVerifier.CONFIG_FILENAME).getFile());
+                                new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView.getMechReadout());
                         if ((entity instanceof Mech) || (entity instanceof Tank)

@@ -21,6 +21,7 @@ package megamek.client.ui.swing.lobby;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -40,7 +41,6 @@ import megamek.common.icons.Camouflage;
 import megamek.common.icons.Portrait;
 import megamek.common.options.*;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -63,9 +63,9 @@ public class MekTableModel extends AbstractTableModel {
     /** Control value for the size of camo and portraits in the table at GUI scale == 1. */
     static final int MEKTABLE_IMGHEIGHT = 60;
 
-    private static final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
+    private static final String UNKNOWN_UNIT = new File(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
-    private static final String DEF_PORTRAIT = new MegaMekFile(Configuration.portraitImagesDir(),
+    private static final String DEF_PORTRAIT = new File(Configuration.portraitImagesDir(),
             Portrait.DEFAULT_PORTRAIT_FILENAME).toString();
 
     // Parent access

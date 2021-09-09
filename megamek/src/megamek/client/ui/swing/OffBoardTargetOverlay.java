@@ -20,6 +20,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,6 @@ import megamek.common.IGame;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.IPlayer;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
@@ -81,7 +81,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         this.clientgui = clientgui;
         
         offBoardTargetImage = ImageUtil.loadImageFromFile(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE)
+                new File(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE)
                         .toString());
         
         //Maybe TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire 

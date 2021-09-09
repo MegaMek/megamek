@@ -42,7 +42,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.*;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -83,7 +82,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     // mech images
     private MechTileset wreckTileset = new MechTileset(
-            new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
+            new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS));
     private List<EntityImage> mechImageList = new ArrayList<>();
     private Map<ArrayList<Integer>, EntityImage> mechImages = new HashMap<>();
     private Map<String, Image> wreckageDecals = new HashMap<>();
@@ -125,7 +124,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         } catch (Exception FileNotFoundException) {
             MegaMek.getLogger().error("Error loading tileset "
                     + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
-            if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
+            if (new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists()){
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
                 MegaMek.getLogger().fatal("Could not load default tileset " + FILENAME_DEFAULT_HEX_SET);
@@ -498,7 +497,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     /** Local method. Loads and returns the image. */
     public static Image LoadSpecificImage(File path, String name) {
-        Image result = ImageUtil.loadImageFromFile(new MegaMekFile(path, name).toString());
+        Image result = ImageUtil.loadImageFromFile(new File(path, name).toString());
         if ((result == null) || (result.getWidth(null) <= 0) || (result.getHeight(null) <= 0)) {
             MegaMek.getLogger().error("Error opening image: " + name);
         }

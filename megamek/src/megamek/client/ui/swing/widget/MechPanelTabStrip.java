@@ -13,9 +13,10 @@ import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 public class MechPanelTabStrip extends PicMap {
 
@@ -59,20 +60,20 @@ public class MechPanelTabStrip extends PicMap {
                 .getUnitDisplaySkin();
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
-        idleImage[0] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
-        idleImage[1] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
-        idleImage[2] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
-        idleImage[3] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
-        idleImage[4] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
-        idleImage[5] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
-        activeImage[0] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
-        activeImage[1] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
-        activeImage[2] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
-        activeImage[3] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
-        activeImage[4] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
-        activeImage[5] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
-        idleCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
-        selectedCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
+        idleImage[0] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
+        idleImage[1] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
+        idleImage[2] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
+        idleImage[3] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
+        idleImage[4] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
+        idleImage[5] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
+        activeImage[0] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
+        activeImage[1] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
+        activeImage[2] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
+        activeImage[3] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
+        activeImage[4] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
+        activeImage[5] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
+        idleCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
+        selectedCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
 
         // If we don't flush, we might have stale data
         idleCorner.flush();

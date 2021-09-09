@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,7 +71,6 @@ import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -864,7 +864,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         Image tile = getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -872,28 +872,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
+                new File(Configuration.widgetsDir(), udSpec.getTopLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
+                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
+                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
+                new File(Configuration.widgetsDir(), udSpec.getRightLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -902,7 +902,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -910,7 +910,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
+                new File(Configuration.widgetsDir(), udSpec
                         .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -919,7 +919,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit()
                 .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
+                        new File(Configuration.widgetsDir(), udSpec
                                 .getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -927,7 +927,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
+                new File(Configuration.widgetsDir(), udSpec
                         .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));

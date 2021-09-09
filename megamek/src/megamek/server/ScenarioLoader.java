@@ -74,7 +74,6 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
@@ -419,7 +418,7 @@ public class ScenarioLoader {
         if (optionFile == null) {
             g.getOptions().loadOptions();
         } else {
-            g.getOptions().loadOptions(new MegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
+            g.getOptions().loadOptions(new File(scenarioFile.getParentFile(), optionFile), true);
         }
         fixedGameOptions = parseBoolean(p, PARAM_GAME_OPTIONS_FIXED, false);
 
@@ -900,12 +899,12 @@ public class ScenarioLoader {
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
-                File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
+                File fBoard = new File(Configuration.boardsDir(), sBoardFile);
                 if (!fBoard.exists()) {
                     throw new ScenarioLoaderException("nonexistantBoard", board);
                 }
                 ba[n] = new Board();
-                ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
+                ba[n].load(new File(Configuration.boardsDir(), sBoardFile));
                 if (cf > 0) {
                     ba[n].setBridgeCF(cf);
                 }

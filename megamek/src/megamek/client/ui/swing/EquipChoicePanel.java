@@ -17,6 +17,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,7 +42,6 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -242,8 +242,8 @@ public class EquipChoicePanel extends JPanel {
             //  pick legal combinations of manipulators
             BattleArmor ba = (BattleArmor) entity;
             EntityVerifier verifier = EntityVerifier.getInstance(
-                    new MegaMekFile(Configuration.unitsDir(),
-                            EntityVerifier.CONFIG_FILENAME).getFile());
+                    new File(Configuration.unitsDir(),
+                            EntityVerifier.CONFIG_FILENAME));
             TestBattleArmor testBA = new TestBattleArmor(ba, 
                     verifier.baOption, null);
             double maxTrooperWeight = 0;

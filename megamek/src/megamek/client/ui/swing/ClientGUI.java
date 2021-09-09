@@ -79,7 +79,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, 
@@ -392,16 +391,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
         ));
         frame.setIconImages(iconList);
     }

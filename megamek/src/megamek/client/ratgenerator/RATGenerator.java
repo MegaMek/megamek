@@ -37,7 +37,6 @@ import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 /**
@@ -865,7 +864,7 @@ public class RATGenerator {
     }
     
     private void loadFactions(File dir) {
-        File file = new MegaMekFile(dir, "factions.xml").getFile();
+        File file = new File(dir, "factions.xml");
         FileInputStream fis;
         try {
             fis = new FileInputStream(file);
@@ -917,7 +916,7 @@ public class RATGenerator {
         }
         chassisIndex.put(era, new HashMap<>());
         modelIndex.put(era, new HashMap<>());
-        File file = new MegaMekFile(dir, era + ".xml").getFile();
+        File file = new File(dir, era + ".xml");
         FileInputStream fis;
         try {
             fis = new FileInputStream(file);

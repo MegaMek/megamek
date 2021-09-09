@@ -102,7 +102,6 @@ import megamek.common.preference.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.BoardsTagger;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
@@ -939,7 +938,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshBoardTags() {
         boardTags.clear();
         for (String boardName : mapSettings.getBoardsAvailableVector()) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            File boardFile = new File(Configuration.boardsDir(), boardName + ".board");
             Set<String> tags = Board.getTags(boardFile);
             boardTags.put(boardName, String.join("||", tags).toLowerCase());
         }
@@ -1020,12 +1019,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                             boardForImage = extractSurpriseMaps(boardName).get(0);
                         }
-                        File boardFile = new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile();
+                        File boardFile = new File(Configuration.boardsDir(), boardForImage + ".board");
                         if (boardFile.exists()) {
                             buttonBoard = new Board(16, 17);
-                            buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile());
+                            buttonBoard.load(new File(Configuration.boardsDir(), boardForImage + ".board"));
                             StringBuffer errs = new StringBuffer();
-                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + ".board").getFile())) {
+                            try (InputStream is = new FileInputStream(new File(Configuration.boardsDir(), boardForImage + ".board"))) {
                                 buttonBoard.load(is, errs, true);
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
@@ -1125,7 +1124,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     int rnd = (int)(Math.random() * boardList.size());
                     name = boardList.get(rnd);
                 }
-                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name + ".board").getFile());
+                sheetBoards[i].load(new File(Configuration.boardsDir(), name + ".board"));
             }
         }
 
@@ -3256,7 +3255,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         
         private Image prepareImage(String boardName) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            File boardFile = new File(Configuration.boardsDir(), boardName + ".board");
             IBoard board;
             StringBuffer errs = new StringBuffer();
             if (boardFile.exists()) {

@@ -35,7 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 
 import org.w3c.dom.Document;
@@ -150,7 +149,7 @@ public class SkinXMLHandler {
      * @return
      */
     public static boolean validSkinSpecFile(String fileName) {
-        File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
+        File file = new File(Configuration.skinsDir(), fileName);
         if (!file.exists() || !file.isFile()) {
             return false;
         }
@@ -194,7 +193,7 @@ public class SkinXMLHandler {
             return false;
         }
 
-        File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
+        File file = new File(Configuration.skinsDir(), fileName);
         if (!file.exists() || !file.isFile()) {
             System.out.println("ERROR: Bad skin specification file: " +
                     "file doesn't exist!  File name: " + fileName);
@@ -549,8 +548,7 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        File filePath = new MegaMekFile(Configuration.skinsDir(),
-                filename).getFile();
+        File filePath = new File(Configuration.skinsDir(), filename);
 
         try (Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(filePath)));){

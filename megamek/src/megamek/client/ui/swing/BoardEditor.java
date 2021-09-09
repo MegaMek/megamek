@@ -62,7 +62,6 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import static megamek.common.Terrains.*;
 
 // TODO: center map
@@ -536,7 +535,7 @@ public class BoardEditor extends JPanel
     private ScalingIconButton prepareButton(String iconName, String buttonName, 
             List<ScalingIconButton> bList, int width) {
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
+        File file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png");
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
             imageButton = ImageUtil.failStandardImage();
@@ -544,12 +543,12 @@ public class BoardEditor extends JPanel
         ScalingIconButton button = new ScalingIconButton(imageButton, width);
 
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
+        file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png");
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setRolloverImage(imageButton);
         
         // Get the disabled icon, if any
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png").getFile();
+        file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_G.png");
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setDisabledImage(imageButton);
 
@@ -571,7 +570,7 @@ public class BoardEditor extends JPanel
     private ScalingIconToggleButton prepareToggleButton(String iconName, String buttonName, 
             List<ScalingIconToggleButton> bList, int width) {
         // Get the normal icon
-        File file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png").getFile();
+        File file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+".png");
         Image imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         if (imageButton == null) {
             imageButton = ImageUtil.failStandardImage();
@@ -579,12 +578,12 @@ public class BoardEditor extends JPanel
         ScalingIconToggleButton button = new ScalingIconToggleButton(imageButton, width);
         
         // Get the hover icon
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png").getFile();
+        file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_H.png");
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setRolloverImage(imageButton);
         
         // Get the selected icon, if any
-        file = new MegaMekFile(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png").getFile();
+        file = new File(Configuration.widgetsDir(), "/MapEditor/"+iconName+"_S.png");
         imageButton = ImageUtil.loadImageFromFile(file.getAbsolutePath());
         button.setSelectedImage(imageButton);
         

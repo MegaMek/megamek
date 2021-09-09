@@ -20,7 +20,6 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.options.*;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -28,6 +27,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.List;
 import java.util.*;
 
@@ -1288,8 +1288,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         // Check validity of units after customization
         for (Entity entity : entities) {
-            EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
-                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+            EntityVerifier verifier = EntityVerifier.getInstance(new File(
+                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
             TestEntity testEntity = null;
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity, verifier.mechOption,

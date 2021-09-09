@@ -30747,14 +30747,6 @@ public class Server implements Runnable {
     }
 
     /**
-     * Creates a packet containing a Vector of Reports that represent a Tactical
-     * Genius re-roll request which needs to update a current phase's report.
-     */
-    private Packet createTacticalGeniusReportPacket() {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport.clone());
-    }
-
-    /**
      * Creates a packet containing all the round reports
      */
     private Packet createAllReportsPacket(IPlayer p) {
@@ -31110,7 +31102,7 @@ public class Server implements Runnable {
     /**
      * Send the round report to all connected clients.
      */
-    private void sendReport(boolean tacticalGeniusReport) {
+    private void sendReport(boolean isImportant) {
         if (mailer != null) {
             for (var player: mailer.getEmailablePlayers(game)) {
                 try {
@@ -31133,8 +31125,8 @@ public class Server implements Runnable {
             IConnection conn = connEnum.nextElement();
             IPlayer p = game.getPlayer(conn.getId());
             Packet packet;
-            if (tacticalGeniusReport) {
-                packet = createTacticalGeniusReportPacket();
+            if (isImportant) {
+                packet = createSpecialReportPacket();
             } else {
                 packet = createReportPacket(p);
             }

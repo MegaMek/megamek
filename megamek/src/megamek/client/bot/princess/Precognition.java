@@ -200,7 +200,6 @@ public class Precognition implements Runnable {
                     receiveEntities(c);
                     break;
                 case Packet.COMMAND_SENDING_REPORTS:
-                case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
                     getGame().addReports((List<Report>) c.getObject(0));
                     break;
                 case Packet.COMMAND_SENDING_REPORTS_ALL:

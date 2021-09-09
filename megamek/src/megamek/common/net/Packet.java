@@ -88,7 +88,6 @@ public class Packet {
     public static final int COMMAND_SENDING_TURNS = 300;
     public static final int COMMAND_SENDING_REPORTS = 310;
     public static final int COMMAND_SENDING_REPORTS_SPECIAL = 320;
-    public static final int COMMAND_SENDING_REPORTS_TACTICAL_GENIUS = 330;
     public static final int COMMAND_SENDING_REPORTS_ALL = 340;
 
     public static final int COMMAND_SENDING_GAME_SETTINGS = 350;

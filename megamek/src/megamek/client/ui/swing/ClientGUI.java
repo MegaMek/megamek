@@ -1812,27 +1812,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gameReport(GameReportEvent e) {
-            // Normally the Report Display is updated when the panel is
-            // switched during a phase change.
-            // This update is for reports that get sent at odd times,
-            switch (client.getGame().getPhase()) {
-            case INITIATIVE:
-            case INITIATIVE_REPORT:
-                // Pilots with the Tactical Geneous Special Pilot
-                // Ability an re-roll an initiative roll. See Strat
-                // Ops 1st ed or Campaign Ops 2ed ed.
-                //XXX;
-                if (!(getClient() instanceof TestBot)) {
-                    //doAlertDialog("Tactical Genius Report", e.getReport());
+            if (e.isImportant()) {
+                var buf = new StringBuilder();
+                for (var report: e.getReports()) {
+                    buf.append(
+                        report.getHtml(ClientGUI.this.client.getEntityImageCache())
+                    );
                 }
-                break;
-            case MOVEMENT:
-            case MOVEMENT_REPORT:
-                // Continued movement after getting up
-                if (!(getClient() instanceof TestBot)) {
-                    //doAlertDialog("Movement Report", e.getReport());
-                }
-                break;
+                doAlertDialog("Incoming report", buf.toString());
             }
         }
 

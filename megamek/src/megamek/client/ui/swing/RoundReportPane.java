@@ -131,7 +131,13 @@ class RoundReportPane extends DetachablePane {
         game.addGameListener(new GameListenerAdapter() {
                 @Override
                 public void gameReport(GameReportEvent e) {
-                    append(e.getRound(), e.getReports());
+                    // Only add non-important reports, since important
+                    // ones will be displayed by the client elsewhere,
+                    // and will be included in the eventual of round
+                    // report.
+                    if (!e.isImportant()) {
+                        append(e.getRound(), e.getReports());
+                    }
                 }
             }
         );

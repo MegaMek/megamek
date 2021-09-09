@@ -141,6 +141,10 @@ class RoundReportPane extends DetachablePane {
         }
     }
 
+    public void showCurrentRound() {
+        this.rounds.setSelectedIndex(this.rounds.getTabCount() - 1);
+    }
+
     private void append(int round, Iterable<Report> reports) {
         for (int i = this.rounds.getTabCount(); i <= round; i++) {
             var label = (i == 0) ? "Deployment" : "Round " + i;

@@ -672,9 +672,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /**
+     * Show's the current round's report.
+     */
+    private void showCurrentRoundReport() {
+        this.roundReport.showCurrentRound();
+        this.roundReport.setVisible(true);
+    }
+
+    /**
      * Called when the user selects the "View->Round Report" menu item.
      */
-    private void showRoundReport() {
+    private void toggleRoundReport() {
         this.roundReport.setVisible(!this.roundReport.isVisible());
     }
 
@@ -773,7 +781,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 showPlayerList();
                 break;
             case VIEW_ROUND_REPORT:
-                showRoundReport();
+                toggleRoundReport();
                 break;
             case BOARD_SAVE:
                 ignoreHotKeys = true;
@@ -1069,10 +1077,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case OFFBOARD_REPORT:
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
-            case END_REPORT:
                 client.sendDone(true);
                 return;
+            case END_REPORT:
             case VICTORY:
+                showCurrentRoundReport();
                 break;
             default:
                 break;
@@ -1248,8 +1257,32 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case OFFBOARD_REPORT:
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
+                break;
             case END_REPORT:
+                component = new InterstitialDisplay(
+                    this, InterstitialDisplay.Type.END_OF_ROUND
+                );
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "InterstitialDisplay"; //$NON-NLS-1$
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
             case VICTORY:
+                component = new InterstitialDisplay(
+                    this, InterstitialDisplay.Type.END_OF_GAME
+                );
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "InterstitialDisplay"; //$NON-NLS-1$
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
                 break;
             default:
                 component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
@@ -1802,7 +1835,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             }
         }
-
 
         @Override
         public void gameEnd(GameEndEvent e) {

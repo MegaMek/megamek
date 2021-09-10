@@ -130,16 +130,31 @@ public class ASDamageVector {
     /** 
      * Creates an ASDamageVector for special damage from the given double values and 
      * the number of ranges to be used. The values are rounded first up to the nearest tenth, then normally 
-     * (i.e. up or down depending on the tenth) the nearest integer. 
+     * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage will be used.
      * When printed, the ASDamageVector will use - for zero values.
      */
     public static ASDamageVector createSpecialDamage(List<Double> values, int ranges) {
-        List<Double> copy = new ArrayList<Double>(values);
+        List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
         }
         return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3), 
                 ASDamage::createDualRoundedNormal, ranges, false);
+    }
+
+    /**
+     * Creates an ASDamageVector for special damage from the given double values and
+     * the number of ranges to be used. The values are rounded first up to the nearest tenth, then normally
+     * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage is not used.
+     * When printed, the ASDamageVector will use - for zero values.
+     */
+    public static ASDamageVector createSpecialDamageNoMinimal(List<Double> values, int ranges) {
+        List<Double> copy = new ArrayList<>(values);
+        while (copy.size() < 4) {
+            copy.add(0.0);
+        }
+        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+                ASDamage::createDualRoundedNormalNoMinimal, ranges, false);
     }
     
     /** 
@@ -193,6 +208,11 @@ public class ASDamageVector {
         result.L = func.apply(l);
         result.E = func.apply(e);
         return result;
+    }
+
+    /** Returns true if this ASDamageVector represents any damage at any range, minimal or 1 or more. */
+    public boolean hasDamage() {
+        return S.hasDamage() || M.hasDamage() || L.hasDamage() || E.hasDamage();
     }
     
     @Override

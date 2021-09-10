@@ -773,8 +773,18 @@ public class BattleForceElement {
     public class WeaponLocation {
         List<Double> standardDamage = new ArrayList<>();
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
+        List<Integer> heatDamage = new ArrayList<>();
         double indirect;
         double overheat;
+
+        WeaponLocation() {
+            while (standardDamage.size() < 4) {
+                standardDamage.add(0.0);
+            }
+            while (heatDamage.size() < 4) {
+                heatDamage.add(0);
+            }
+        }
         
         public boolean hasStandardDamage() {
             return standardDamage.stream().mapToDouble(Double::doubleValue).sum() > 0;

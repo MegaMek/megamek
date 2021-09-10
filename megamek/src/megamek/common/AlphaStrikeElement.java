@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import static megamek.common.BattleForceSPA.*;
 import static megamek.common.ASUnitType.*;
 import static java.util.stream.Collectors.*;
@@ -58,17 +60,11 @@ public class AlphaStrikeElement extends BattleForceElement {
     protected EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
     
     /** 
-     * The multiple arced damage value groups of spaceships and LG support vehicles.
+     * The multiple arced damage value groups and specials of spaceships, MSs and large SVs.
      * Ground units and fighters use standardDamage instead. 
      */
-    public EnumMap<ASArcs, EnumMap<ASAttackType, ASDamageVector>> arcDamage = new EnumMap<>(ASArcs.class);
-    
-    /** 
-     * The multiple arced lists of Special Unit Abilities of spaceships and LG support vehicles.
-     * Ground units and fighters do not use these. 
-     */
-    public EnumMap<ASArcs, EnumMap<BattleForceSPA, Object>> arcSpecials = new EnumMap<>(ASArcs.class);
-    
+    public EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
+
     public AlphaStrikeElement() {
         
     };
@@ -156,6 +152,14 @@ public class AlphaStrikeElement extends BattleForceElement {
      */
     public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
         specialUnitAbilities.put(spa, damage);
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
+     * that SPA is already present, the new value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+        specialUnitAbilities.put(spa, value);
     }
     
     /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
@@ -300,7 +304,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     //TODO: Override calculatePointValue(Entity en)
-    
+
     public String getASDamageString(int loc) {
     	return getASDamageString(loc, true);
     }
@@ -324,7 +328,7 @@ public class AlphaStrikeElement extends BattleForceElement {
     public String getSpecialsString() {
         return specialUnitAbilities.keySet().stream()
                 .filter(this::showSpecial)
-                .map(spa -> formatSPAString(spa))
+                .map(spa -> formatSPAString(spa, getSPA(spa)))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(","));
     }
@@ -443,16 +447,16 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.newLine();
     }
     
-    protected String formatSPAString(BattleForceSPA spa) {
+    public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
-            return turretString();
+            return "TUR(" + spaObject + ")";
         } else if (spa == BIM || spa == LAM) {
-            return lamString();
+            return lamString(spa, spaObject);
         } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
                 || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
-            return spa.toString() + ((int) getSPA(spa) == 1 ? "" : (int) getSPA(spa));
+            return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
         } else {
-            return spa.toString() + (getSPA(spa) != null ? getSPA(spa) : "");
+            return spa.toString() + (spaObject != null ? spaObject : "");
         }
     }
     
@@ -484,14 +488,14 @@ public class AlphaStrikeElement extends BattleForceElement {
      * Returns the formatted LAM/BIM Special Ability string such as LAM(36"g/4a). Requires LAM or BIM to
      * be present. 
      */ 
-    private String lamString() {
-        BattleForceSPA spa = hasSPA(LAM) ? LAM : BIM;
-        Map<String, Integer> movelist = (Map<String, Integer>) getSPA(spa);
+    private static String lamString(BattleForceSPA spa, Object spaObject) {
+//        BattleForceSPA spa = element.hasSPA(LAM) ? LAM : BIM;
+//        Map<String, Integer> movelist = (Map<String, Integer>) element.getSPA(spa);
         String result = spa.toString() + "(";
         if (spa == LAM) {
-            result += movelist.get("g") + "\"" + "g/";
+            result += ((Map<String, Integer>)spaObject).get("g") + "\"" + "g/";
         }
-        result += movelist.get("a") + "a)";
+        result += ((Map<String, Integer>)spaObject).get("a") + "a)";
         return result;
     }
     

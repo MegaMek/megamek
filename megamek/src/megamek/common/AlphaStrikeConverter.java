@@ -1,7 +1,26 @@
+/*
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
 import megamek.MegaMek;
 import megamek.common.BattleForceElement.WeaponLocation;
+import megamek.common.annotations.Nullable;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -19,6 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
+ * handled in WeaponType/AmmoType/MiscType.
+ *
+ * Original conversion code by neoancient
+ * Update by Simon (Juliez)
+ */
 public final class AlphaStrikeConverter {
 
     public static AlphaStrikeElement convertToAlphaStrike(Entity entity) {
@@ -614,6 +640,27 @@ public final class AlphaStrikeConverter {
         double pointDefense = 0;
         int bombRacks = 0;
         double baseIFDamage = 0;
+        //TODO: multiple turrets
+        var turretsArcs = new HashMap<String,ASArcSummary>();
+        ASArcSummary turret = ASArcSummary.createTurretSummary();
+        var arcsTurrets = new ArrayList<ASArcSummary>();
+        if (result.usesArcs()) {
+            turretsArcs.put("NOSE", ASArcSummary.createArcSummary());
+            turretsArcs.put("LEFT", ASArcSummary.createArcSummary());
+            turretsArcs.put("RIGHT", ASArcSummary.createArcSummary());
+            turretsArcs.put("REAR", ASArcSummary.createArcSummary());
+            arcsTurrets.add(ASArcSummary.createArcSummary());
+            arcsTurrets.add(ASArcSummary.createArcSummary());
+            arcsTurrets.add(ASArcSummary.createArcSummary());
+            arcsTurrets.add(ASArcSummary.createArcSummary());
+        } else {
+            for (int loc = 0; loc < result.weaponLocations.length; loc++) {
+                if (result.locationNames[loc].startsWith("TUR")) {
+                    turretsArcs.put(result.locationNames[loc], ASArcSummary.createTurretSummary());
+                    arcsTurrets.add(ASArcSummary.createTurretSummary());
+                }
+            }
+        }
         //Track weapons we've already calculated ammunition for
         HashMap<String,Boolean> ammoForWeapon = new HashMap<>();
 
@@ -633,29 +680,39 @@ public final class AlphaStrikeConverter {
             System.out.println(weapon.getName());
             
             ranges = weapon.isCapital() ? CAPITAL_RANGES : STANDARD_RANGES;
-            
+
             if (weapon.getAmmoType() == AmmoType.T_INARC) {
-               result.addSPA(INARC, 1);
-               continue;
+                result.addSPA(INARC, 1);
+                findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(INARC, 1));
+                continue;
             } else if (weapon.getAmmoType() == AmmoType.T_NARC) {
                 if (weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
                     result.addSPA(CNARC, 1);
                 } else {
                     result.addSPA(SNARC, 1);
+                    findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(SNARC, 1));
                 }
                 continue;
             }
-            
+
             if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
                 result.addSPA(SCR, 1);
                 continue;
             }
 
-            if (weapon.hasFlag(WeaponType.F_AMS) && !(entity instanceof Aero)) {
+            //TODO: really not Aero? Where is AMS pointdefense handled else?
+            if (weapon.hasFlag(WeaponType.F_AMS)) {
                 if (entity instanceof Aero) {
                     pointDefense += 0.3;
                 } else {
                     result.addSPA(AMS);
+                }
+                for (ASArcSummary arcTurret : findArcTurret(result, entity, mount, turretsArcs)) {
+                    if (entity instanceof Aero) {
+                        arcTurret.addSPA(PNT, 0.3);
+                    } else {
+                        arcTurret.addSPA(AMS);
+                    }
                 }
                 continue;
             }
@@ -670,21 +727,26 @@ public final class AlphaStrikeConverter {
                 }
                 if (weapon.getShortRange() < 5) {
                     result.addSPA(LTAG);
+                    findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(LTAG));
                 } else {
                     result.addSPA(TAG);
+                    findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(TAG));
                 }
                 continue;
             }
             
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-                addArtillery(weapon, result);
+                result.addSPA(getArtilleryType(weapon), 1);
+                findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(getArtilleryType(weapon), 1));
                 continue;
             }
             if (weapon instanceof ArtilleryBayWeapon) {
                 for (int index : mount.getBayWeapons()) {
                     Mounted m = entity.getEquipment(index);
                     if (m.getType() instanceof WeaponType) {
-                        addArtillery((WeaponType)m.getType(), result);
+                        result.addSPA(getArtilleryType((WeaponType)m.getType()), 1);
+                        findArcTurret(result, entity, mount, turretsArcs).stream()
+                                .forEach(a -> a.addSPA(getArtilleryType((WeaponType)m.getType()), 1));
                     }
                 }
             }
@@ -704,11 +766,9 @@ public final class AlphaStrikeConverter {
             }
             
             if (weapon.hasFlag(WeaponType.F_TSEMP)) {
-                if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                    result.addSPA(TSEMPO, 1);
-                } else {
-                    result.addSPA(TSEMP, 1);
-                }
+                BattleForceSPA spa = weapon.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP;
+                result.addSPA(spa, 1);
+                findArcTurret(result, entity, mount, turretsArcs).stream().forEach(a -> a.addSPA(spa, 1));
                 continue;
             }
             
@@ -792,7 +852,14 @@ public final class AlphaStrikeConverter {
                             baseIFDamage = weapon.getBattleForceDamage(ranges[r], null);
                         }
                     }
-                    result.heat[r] += locationMultiplier(entity, 0, mount) * weapon.getBattleForceHeatDamage(ranges[r]);
+                    for (int loc = 0; loc < result.weaponLocations.length; loc++) {
+                        Integer ht = result.weaponLocations[loc].heatDamage.get(r);
+                        if (ht == null) {
+                            ht = 0;
+                        }
+                        ht += (int)(locationMultiplier(entity, loc, mount) * weapon.getBattleForceHeatDamage(ranges[r]));
+                        result.weaponLocations[loc].heatDamage.set(r, ht);
+                    }
                 }
             }
 
@@ -811,9 +878,6 @@ public final class AlphaStrikeConverter {
             
             for (int loc = 0; loc < result.weaponLocations.length; loc++) {
                 double locMultiplier = locationMultiplier(entity, loc, mount);
-                if (result.locationNames[loc].equals("TUR") && entity instanceof Mech) {
-                    locMultiplier = mount.isMechTurretMounted() ? 1 : 0;
-                }
                 if (locMultiplier == 0) {
                     continue;
                 }
@@ -888,14 +952,11 @@ public final class AlphaStrikeConverter {
         if (result.usesArcs()) {
 //            arc
         }
-        
-        
-        
-        
-        // Rules state that all flamer and plasma weapons on the unit contribute to the heat rating, so we don't separate by arc
-        int htS = resultingHTValue(result.heat[RANGE_BAND_SHORT]);
-        int htM = resultingHTValue(result.heat[RANGE_BAND_MEDIUM]);
-        int htL = resultingHTValue(result.heat[RANGE_BAND_LONG]);
+
+        // Standard HT
+        int htS = resultingHTValue(result.weaponLocations[0].heatDamage.get(0));
+        int htM = resultingHTValue(result.weaponLocations[0].heatDamage.get(1));
+        int htL = resultingHTValue(result.weaponLocations[0].heatDamage.get(2));
         if (htS + htM + htL > 0) {
             result.addSPA(HT, ASDamageVector.createSpecialDamage(htS, htM, htL));
         }
@@ -906,17 +967,21 @@ public final class AlphaStrikeConverter {
         }
 
         // LRM ... IATM specials
-        for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
+        for (int i = WeaponType.BFCLASS_LRM; i < WeaponType.BFCLASS_REL; i++) {
             // Aero do not get LRM/SRM/AC/IATM
             if ((entity instanceof Aero) && i != WeaponType.BFCLASS_FLAK) {
                 continue;
             }
-            if (result.weaponLocations[0].hasDamageClass(i)) {
-                result.addSPA(
-                        BattleForceSPA.getSPAForDmgClass(i), 
-                        ASDamageVector.createSpecialDamage(
-                                result.weaponLocations[0].specialDamage.get(i), 
-                                i == WeaponType.BFCLASS_SRM ? 2 : result.rangeBands));
+            BattleForceSPA spa = BattleForceSPA.getSPAForDmgClass(i);
+            List<Double> dmg = result.weaponLocations[0].specialDamage.get(i);
+            if ((dmg != null) && qualifiesForSpecial(dmg, spa)) {
+                if (spa == SRM) {
+                    result.addSPA(SRM, ASDamageVector.createSpecialDamageNoMinimal(dmg, 2));
+                } else if ((spa == LRM) || (spa == TOR) || (spa == AC) || (spa == IATM)) {
+                    result.addSPA(spa, ASDamageVector.createSpecialDamageNoMinimal(dmg, result.rangeBands));
+                } else if (spa == FLK) {
+                    result.addSPA(spa, ASDamageVector.createSpecialDamage(dmg, result.rangeBands));
+                }
             }
         }
 
@@ -936,33 +1001,42 @@ public final class AlphaStrikeConverter {
                     result.weaponLocations[rearLoc].standardDamage, result.rangeBands));
         }
 
-        //TODO: Turrets have SRM, LRM, AC, FLK, HT, TSEMP, TOR, AMS, TAG, ARTx, xNARC, IATM
-        var turList = new ArrayList<List<Object>>();
+        //TODO: Turrets have SRM, LRM, AC, FLK, HT, TSEMP, TOR, AMS, TAG, ARTx, xNARC, IATM, -REL-
+        //TODO: 2 Turrets?
         for (int loc = 0; loc < result.weaponLocations.length; loc++) {
-            if (result.locationNames[loc].equals("TUR")) {
-                var curTurret = new ArrayList<Object>();
-                turList.add(curTurret);
-                curTurret.add(ASDamageVector.createStandardDamage(result.weaponLocations[loc].standardDamage, 
+            if (turretsArcs.containsKey(result.locationNames[loc])) {
+                ASArcSummary arcTurret = turretsArcs.get(result.locationNames[loc]);
+                arcTurret.setStdDamage(ASDamageVector.createStandardDamage(result.weaponLocations[loc].standardDamage,
                         result.rangeBands));
-                var specialMap = new HashMap<BattleForceSPA, Object>();
-                curTurret.add(specialMap);
-                for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
-                    if (result.weaponLocations[loc].hasDamageClass(i)) {
-                        specialMap.put(BattleForceSPA.getSPAForDmgClass(i), 
-                                ASDamageVector.createSpecialDamage(
-                                        result.weaponLocations[loc].specialDamage.get(i), 
-                                        i == WeaponType.BFCLASS_SRM ? 2 : result.rangeBands));
+                for (int i = WeaponType.BFCLASS_LRM; i < WeaponType.BFCLASS_REL; i++) {
+                    BattleForceSPA spa = BattleForceSPA.getSPAForDmgClass(i);
+                    List<Double> dmg = result.weaponLocations[loc].specialDamage.get(i);
+                    if ((dmg != null) && qualifiesForSpecial(dmg, spa)) {
+                        if (spa == SRM) {
+                            arcTurret.addSPA(SRM, ASDamageVector.createSpecialDamageNoMinimal(dmg, 2));
+                        } else if ((spa == LRM) || (spa == TOR) || (spa == AC) || (spa == IATM)) {
+                            arcTurret.addSPA(spa, ASDamageVector.createSpecialDamageNoMinimal(dmg, result.rangeBands));
+                        } else if (spa == FLK) {
+                            arcTurret.addSPA(spa, ASDamageVector.createSpecialDamage(dmg, result.rangeBands));
+                        }
                     }
-                    if (result.weaponLocations[loc].getIF() > 0) {
-                        specialMap.put(IF, ASDamageVector.createSpecialDamage(result.weaponLocations[loc].getIF()));
-                    }
+                }
+                if (result.weaponLocations[loc].getIF() > 0) {
+                    arcTurret.addSPA(IF, ASDamageVector.createSpecialDamage(result.weaponLocations[loc].getIF()));
+                }
+                htS = resultingHTValue(result.weaponLocations[loc].heatDamage.get(0));
+                htM = resultingHTValue(result.weaponLocations[loc].heatDamage.get(1));
+                htL = resultingHTValue(result.weaponLocations[loc].heatDamage.get(2));
+                if (htS + htM + htL > 0) {
+                    arcTurret.addSPA(HT, ASDamageVector.createSpecialDamage(htS, htM, htL));
+                }
+                if (!arcTurret.isEmpty()) {
+                    //TODO: If this is an arc??
+                    result.addSPA(TUR, arcTurret);
                 }
             }
         }
-        if (!turList.isEmpty()) {
-            result.addTurSPA(turList);
-        }
-        
+
         // For MHQ, the values may contain decimals, but the the final MHQ value is rounded down to an int.
         if (result.getSPA(MHQ) instanceof Double) {
             double mhqValue = (double) result.getSPA(MHQ);
@@ -989,7 +1063,21 @@ public final class AlphaStrikeConverter {
             }
         }
     }
-    
+
+    /**
+     * Returns true when the heat-adjusted and tenth-rounded damage values in the List allow the given spa.
+     * Only use for the damage specials LRM, SRM, TOR, IATM, AC, FLK
+     */
+    private static boolean qualifiesForSpecial(List<Double> dmg, BattleForceSPA spa) {
+        if ((spa == FLK) && dmg.stream().mapToDouble(Double::doubleValue).sum() > 0) {
+            return true;
+        } else if ((dmg.size() > 1) && (Math.round(dmg.get(1)) >= 1)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private static int resultingHTValue(int heatSum) {
         if (heatSum > 10) {
             return 2;
@@ -1001,9 +1089,24 @@ public final class AlphaStrikeConverter {
     }
     
     private static double locationMultiplier(Entity en, int loc, Mounted mount) {
-        return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+        if (en.getBattleForceLocationName(loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
+            return 1;
+        } else {
+            return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+        }
     }
-    
+
+    private static List<ASArcSummary> findArcTurret(AlphaStrikeElement element, Entity entity,
+                                                    Mounted mount, Map<String, ASArcSummary> arcsTurrets) {
+        var result = new ArrayList<ASArcSummary>();
+        for (int loc = 0; loc < element.weaponLocations.length; loc++) {
+            if (element.locationNames[loc].equals("TUR") && (locationMultiplier(entity, loc, mount) != 0)) {
+                result.add(arcsTurrets.get(element.locationNames[loc]));
+            }
+        }
+        return result;
+    }
+
     /** Returns true when the given Mounted blocks ENE. */
     private static boolean isExplosive(Mounted m) {
         // LAM Bomb Bays are explosive
@@ -1157,7 +1260,7 @@ public final class AlphaStrikeConverter {
             }
             
             if (m.getType().hasFlag(MiscType.F_SPACE_MINE_DISPENSER) && (entity instanceof Aero)) {
-                element.addSPA(MDS, 1);
+                element.addSPA(MDS, 2);
             }
 
             if (entity instanceof Mech) {
@@ -1206,7 +1309,8 @@ public final class AlphaStrikeConverter {
                     element.addSPA(AFC);
                 } else if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)) {
                     element.addSPA(BFC);
-                } else if (m.getType().hasFlag(MiscType.F_AMPHIBIOUS)) {
+                } else if (m.getType().hasFlag(MiscType.F_AMPHIBIOUS) || m.getType().hasFlag(MiscType.F_FULLY_AMPHIBIOUS)
+                        || m.getType().hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)) {
                     element.addSPA(AMP);
                 } else if (m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
                     element.addSPA(ARS);
@@ -1217,7 +1321,7 @@ public final class AlphaStrikeConverter {
                         element.addSPA(SOA);
                     }
                 } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) { 
-                    element.addSPA(MDS, 1);
+                    element.addSPA(MDS, 2);
                 } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
                     element.addSPA(MSW);
                 } else if (m.getType().hasFlag(MiscType.F_MASH)) {
@@ -1492,6 +1596,43 @@ public final class AlphaStrikeConverter {
             element.addSPA(SEAL);
         }
         
+    }
+
+    private static @Nullable BattleForceSPA getArtilleryType(WeaponType weapon) {
+        switch (weapon.getAmmoType()) {
+            case AmmoType.T_ARROW_IV:
+                if (weapon.getInternalName().substring(0, 1).equals("C")) {
+                    return BattleForceSPA.ARTAC;
+                } else {
+                    return BattleForceSPA.ARTAIS;
+                }
+            case AmmoType.T_LONG_TOM:
+                return BattleForceSPA.ARTLT;
+            case AmmoType.T_SNIPER:
+                return BattleForceSPA.ARTS;
+            case AmmoType.T_THUMPER:
+                return BattleForceSPA.ARTT;
+            case AmmoType.T_LONG_TOM_CANNON:
+                return BattleForceSPA.ARTLTC;
+            case AmmoType.T_SNIPER_CANNON:
+                return BattleForceSPA.ARTSC;
+            case AmmoType.T_THUMPER_CANNON:
+                return BattleForceSPA.ARTTC;
+            case AmmoType.T_CRUISE_MISSILE:
+                switch(weapon.getRackSize()) {
+                    case 50:
+                        return BattleForceSPA.ARTCM5;
+                    case 70:
+                        return BattleForceSPA.ARTCM7;
+                    case 90:
+                        return BattleForceSPA.ARTCM9;
+                    case 120:
+                        return BattleForceSPA.ARTCM12;
+                }
+            case AmmoType.T_BA_TUBE:
+                return BattleForceSPA.ARTBA;
+        }
+        return null;
     }
     
     private static void addArtillery(WeaponType weapon, AlphaStrikeElement result) {

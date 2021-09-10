@@ -86,9 +86,9 @@ public class ASDamage {
         return new ASDamage((int)Math.round(intermediate), false);
     }
     
-    /** Returns true if this ASDamage represents no damage, not even minimal. */ 
-    public boolean noDamage() {
-        return (damage == 0) && !minimal;
+    /** Returns true if this ASDamage represents any damage, minimal or 1 or more. */
+    public boolean hasDamage() {
+        return (damage > 0) || minimal;
     }
     
     @Override

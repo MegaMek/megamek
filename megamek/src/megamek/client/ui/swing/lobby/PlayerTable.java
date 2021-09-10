@@ -191,6 +191,7 @@ class PlayerTable extends JTable {
             } else {
                 result.append("Start: None");
             }
+            result.append("</FONT>");
             
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
                 result.append(guiScaledFontHTML(uiYellow())); 
@@ -202,6 +203,7 @@ class PlayerTable extends JTable {
             result.append(guiScaledFontHTML());
             result.append("BV: ");
             result.append((player.getBV() != 0) ? NumberFormat.getIntegerInstance().format(player.getBV()) : "--");
+            result.append("</FONT>");
 
             // Initiative Mod
             if (player.getConstantInitBonus() != 0) {
@@ -210,6 +212,7 @@ class PlayerTable extends JTable {
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
                 result.append("Init: ").append(sign);
                 result.append(player.getConstantInitBonus());
+                result.append("</FONT>");
             }
 
             setText(result.toString());

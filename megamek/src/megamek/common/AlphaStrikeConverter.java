@@ -21,6 +21,7 @@ package megamek.common;
 import megamek.MegaMek;
 import megamek.common.BattleForceElement.WeaponLocation;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -65,7 +66,7 @@ public final class AlphaStrikeConverter {
         result.model = undamagedEntity.getModel();
         result.chassis = undamagedEntity.getChassis();
         result.role = UnitRoleHandler.getRoleFor(undamagedEntity);
-        result.asUnitType = getType(undamagedEntity);
+        result.asUnitType = ASUnitType.getUnitType(undamagedEntity);
         result.size = getSize(undamagedEntity);
         result.movement = getMovement(undamagedEntity);
         result.tmm = getTMM(result);
@@ -112,38 +113,6 @@ public final class AlphaStrikeConverter {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /** Type conversion, AlphaStrike Companion, p.91 */
-    private static ASUnitType getType(Entity entity) {
-        if (entity instanceof Mech) {
-            return ((Mech)entity).isIndustrial() ? IM : BM;
-        } else if (entity instanceof Protomech) {
-            return PM;
-        } else if (entity instanceof Tank) {
-            return entity.isSupportVehicle() ? SV : CV;
-        } else if (entity instanceof BattleArmor) {
-            return BA;
-        } else if (entity instanceof Infantry) {
-            return CI;
-        } else if (entity instanceof SpaceStation) {
-            return SS;
-        } else if (entity instanceof Warship) {
-            return WS;
-        } else if (entity instanceof Jumpship) {
-            return JS;
-        } else if (entity instanceof Dropship) {
-            return ((Dropship)entity).isSpheroid() ? DS : DA;
-        } else if (entity instanceof SmallCraft) {
-            return SC;
-        } else if (entity instanceof FixedWingSupport) {
-            return SV;
-        } else if (entity instanceof ConvFighter) {
-            return CF;
-        } else if (entity instanceof Aero) {
-            return AF;
-        }
-        return null;
     }
 
     /** Size conversion, AlphaStrike Companion, p.92 */
@@ -293,7 +262,7 @@ public final class AlphaStrikeConverter {
 
     private static LinkedHashMap<String, Integer> getMovementForNonInfantry(Entity entity) {
         var result = new LinkedHashMap<String, Integer>();
-        double walkMP = entity.getWalkMP();
+        double walkMP = entity.getOriginalWalkMP();
         int jumpMove = entity.getJumpMP() * 2;
         if (entity instanceof Mech) {
             if (hasSupercharger(entity) && hasMechMASC(entity)) {
@@ -301,8 +270,12 @@ public final class AlphaStrikeConverter {
             } else if (hasSupercharger(entity) || hasMechMASC(entity)) {
                 walkMP *= 1.25;
             }
+            walkMP = Math.round(walkMP);
 
             if (((Mech)entity).hasMPReducingHardenedArmor()) {
+                walkMP--;
+            }
+            if (hasMPReducingShield(entity)) {
                 walkMP--;
             }
         } else if (entity instanceof VTOL) {
@@ -314,9 +287,9 @@ public final class AlphaStrikeConverter {
                 walkMP *= 1.25;
             }
         }
-        int baseMove = ((int)Math.round(walkMP)) * 2;
+        int baseMove = ((int)Math.round(walkMP) * 2);
 
-        if (jumpMove == baseMove) {
+        if ((jumpMove == baseMove) && (jumpMove > 0)) {
             result.put("j", baseMove);
         } else {
             result.put(getMovementCode(entity), baseMove);
@@ -384,7 +357,6 @@ public final class AlphaStrikeConverter {
                         && (m.hasSubType(MiscType.S_SHIELD_LARGE)
                                 || m.hasSubType(MiscType.S_SHIELD_MEDIUM))));
     }
-
 
     /** Returns the AlphaStrike movement type code letter such as "v" for VTOL. */
     public static String getMovementCode(Entity entity) {
@@ -967,7 +939,7 @@ public final class AlphaStrikeConverter {
         }
 
         // LRM ... IATM specials
-        for (int i = WeaponType.BFCLASS_LRM; i < WeaponType.BFCLASS_REL; i++) {
+        for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
             // Aero do not get LRM/SRM/AC/IATM
             if ((entity instanceof Aero) && i != WeaponType.BFCLASS_FLAK) {
                 continue;
@@ -977,10 +949,12 @@ public final class AlphaStrikeConverter {
             if ((dmg != null) && qualifiesForSpecial(dmg, spa)) {
                 if (spa == SRM) {
                     result.addSPA(SRM, ASDamageVector.createSpecialDamageNoMinimal(dmg, 2));
-                } else if ((spa == LRM) || (spa == TOR) || (spa == AC) || (spa == IATM)) {
+                } else if ((spa == LRM) || (spa == AC) || (spa == IATM)) {
                     result.addSPA(spa, ASDamageVector.createSpecialDamageNoMinimal(dmg, result.rangeBands));
-                } else if (spa == FLK) {
+                } else if ((spa == FLK) || (spa == TOR)) {
                     result.addSPA(spa, ASDamageVector.createSpecialDamage(dmg, result.rangeBands));
+                } else if (spa == REL) {
+                    result.addSPA(spa);
                 }
             }
         }
@@ -1001,23 +975,25 @@ public final class AlphaStrikeConverter {
                     result.weaponLocations[rearLoc].standardDamage, result.rangeBands));
         }
 
-        //TODO: Turrets have SRM, LRM, AC, FLK, HT, TSEMP, TOR, AMS, TAG, ARTx, xNARC, IATM, -REL-
+        // Turrets have SRM, LRM, AC, FLK, HT, TSEMP, TOR, AMS, TAG, ARTx, xNARC, IATM, REL
         //TODO: 2 Turrets?
         for (int loc = 0; loc < result.weaponLocations.length; loc++) {
             if (turretsArcs.containsKey(result.locationNames[loc])) {
                 ASArcSummary arcTurret = turretsArcs.get(result.locationNames[loc]);
                 arcTurret.setStdDamage(ASDamageVector.createStandardDamage(result.weaponLocations[loc].standardDamage,
                         result.rangeBands));
-                for (int i = WeaponType.BFCLASS_LRM; i < WeaponType.BFCLASS_REL; i++) {
+                for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
                     BattleForceSPA spa = BattleForceSPA.getSPAForDmgClass(i);
                     List<Double> dmg = result.weaponLocations[loc].specialDamage.get(i);
                     if ((dmg != null) && qualifiesForSpecial(dmg, spa)) {
                         if (spa == SRM) {
-                            arcTurret.addSPA(SRM, ASDamageVector.createSpecialDamageNoMinimal(dmg, 2));
+                            arcTurret.addSPA(spa, ASDamageVector.createSpecialDamageNoMinimal(dmg, 2));
                         } else if ((spa == LRM) || (spa == TOR) || (spa == AC) || (spa == IATM)) {
                             arcTurret.addSPA(spa, ASDamageVector.createSpecialDamageNoMinimal(dmg, result.rangeBands));
                         } else if (spa == FLK) {
                             arcTurret.addSPA(spa, ASDamageVector.createSpecialDamage(dmg, result.rangeBands));
+                        } else if (spa == REL) {
+                            arcTurret.addSPA(spa);
                         }
                     }
                 }
@@ -1052,6 +1028,11 @@ public final class AlphaStrikeConverter {
         if (result.hasSPA(AECM)) {
             result.removeSPA(ECM);
         }
+
+        // Some SUAs are accompanied by RCN
+        if (result.hasAnySPAOf(PRB, LPRB, NOVA, BH, WAT)) {
+            result.addSPA(RCN);
+        }
         
         // CT value may be decimal but replace it with an integer value if it is integer
         if (result.hasSPA(CT)) {
@@ -1069,9 +1050,9 @@ public final class AlphaStrikeConverter {
      * Only use for the damage specials LRM, SRM, TOR, IATM, AC, FLK
      */
     private static boolean qualifiesForSpecial(List<Double> dmg, BattleForceSPA spa) {
-        if ((spa == FLK) && dmg.stream().mapToDouble(Double::doubleValue).sum() > 0) {
+        if (((spa == FLK) || (spa == TOR)) && dmg.stream().mapToDouble(Double::doubleValue).sum() > 0) {
             return true;
-        } else if ((dmg.size() > 1) && (Math.round(dmg.get(1)) >= 1)) {
+        } else if ((dmg.size() > 1) && (dmg.get(1) >= 1)) {
             return true;
         } else {
             return false;
@@ -1090,6 +1071,10 @@ public final class AlphaStrikeConverter {
     
     private static double locationMultiplier(Entity en, int loc, Mounted mount) {
         if (en.getBattleForceLocationName(loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
+
+            return 1;
+        } else if (en.getBattleForceLocationName(loc).startsWith("TUR") && (en instanceof Tank)
+                && (mount.isPintleTurretMounted() || mount.isSponsonTurretMounted())) {
             return 1;
         } else {
             return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
@@ -1134,7 +1119,6 @@ public final class AlphaStrikeConverter {
             if (m.getType().getInternalName().equals(Sensor.BAP)
                     || m.getType().getInternalName().equals(Sensor.BAPP)
                     || m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
-                element.addSPA(RCN);
                 element.addSPA(PRB);
             } else if (m.getType().getInternalName().equals(Sensor.LIGHT_AP)
                     || m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP)
@@ -1142,11 +1126,9 @@ public final class AlphaStrikeConverter {
                 element.addSPA(LPRB);
             } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                 element.addSPA(BH);
-                element.addSPA(RCN);
             } else if (m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
                 element.addSPA(LPRB);
                 element.addSPA(ECM);
-                element.addSPA(RCN);
                 element.addSPA(WAT);
             } else if (m.getType().getInternalName().equals(Sensor.NOVA)) {
                 element.addSPA(NOVA);
@@ -1278,9 +1260,11 @@ public final class AlphaStrikeConverter {
                     element.addSPA(TSM);
                 } else if (m.getType().hasFlag(MiscType.F_VOIDSIG)) {
                     element.addSPA(MAS);
-                } else if (((Mech) entity).isIndustrial() && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                        && entity.getEngine().getEngineType() != Engine.COMBUSTION_ENGINE) {
-                    element.addSPA(SOA);
+                } else if (((Mech) entity).isIndustrial() && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                    element.addSPA(SEAL);
+                    if (entity.getEngine().getEngineType() != Engine.COMBUSTION_ENGINE) {
+                        element.addSPA(SOA);
+                    }
                 } else if (m.getType().hasFlag(MiscType.F_NULLSIG)
                         || m.getType().hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
                     element.addSPA(STL);
@@ -1341,6 +1325,11 @@ public final class AlphaStrikeConverter {
 
         }
 
+        // TODO: why doesnt this work?
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_TRAILER_HITCH)) {
+            element.addSPA(HTC);
+        }
+
         if (entity.isOmni() && ((entity instanceof Mech) || (entity instanceof Tank))) {
             element.addSPA(OMNI);
         }
@@ -1353,8 +1342,6 @@ public final class AlphaStrikeConverter {
         if (!entity.hasPatchworkArmor()) {
             switch (entity.getArmorType(0)) {
             case EquipmentType.T_ARMOR_COMMERCIAL:
-            case EquipmentType.T_ARMOR_INDUSTRIAL:
-            case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
                 element.addSPA(BAR);
                 break;
             case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
@@ -1424,11 +1411,9 @@ public final class AlphaStrikeConverter {
             } else if (t instanceof DockingCollar) {
                 element.addSPA(DT, 1);
             } else if (t instanceof InfantryBay) {
-                // We do not record number of doors for infantry
-                element.addSPA(IT, (int)((InfantryBay)t).getCapacity());
+                element.addSPA(IT, ((InfantryBay)t).getCapacity());
             } else if (t instanceof TroopSpace) {
-                // We do not record number of doors for infantry
-                element.addSPA(IT, (int)((TroopSpace)t).getUnused());
+                element.addSPA(IT, ((TroopSpace)t).getUnused());
             } else if (t instanceof MechBay) {
                 element.addSPA(MT, (int)((MechBay)t).getCapacity());
                 element.addSPA(MTxD, ((MechBay)t).getDoors());
@@ -1565,6 +1550,16 @@ public final class AlphaStrikeConverter {
                 element.addSPA(JMPW, walkTMM - jumpTMM);
             }
         }
+
+        if (element.getMovementModes().contains("s") && element.getMovementModes().contains("")) {
+            int umuTMM = tmmForMovement(element.getMovement("s"));
+            int walkTMM = tmmForMovement(element.getMovement(""));
+            if (umuTMM > walkTMM) {
+                element.addSPA(SUBS, umuTMM - walkTMM);
+            } else if (umuTMM < walkTMM) {
+                element.addSPA(SUBW, walkTMM - umuTMM);
+            }
+        }
         
         if (element.isType(CF) || (entity instanceof VTOL)) {
             element.addSPA(ATMO);
@@ -1591,11 +1586,10 @@ public final class AlphaStrikeConverter {
             element.addSPA(QV);
         }
         
-        if (((entity instanceof Tank) && (entity.getMovementMode() == EntityMovementMode.SUBMARINE))
-                || element.isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA)) {
+        if (element.hasAutoSeal()) {
             element.addSPA(SEAL);
         }
-        
+
     }
 
     private static @Nullable BattleForceSPA getArtilleryType(WeaponType weapon) {
@@ -1711,7 +1705,7 @@ public final class AlphaStrikeConverter {
         if (!entity.tracksHeat()) {
             return; 
         }
-        double totalFrontHeat = getHeatGeneration(entity, false, false);
+        double totalFrontHeat = getHeatGeneration(entity, element,false, false);
         int heatCapacity = getHeatCapacity(entity, element);
         if (totalFrontHeat - 4 <= heatCapacity) {
             return;   
@@ -1730,7 +1724,7 @@ public final class AlphaStrikeConverter {
         
         // Determine OVL from long range damage and heat
         if (element.overheat > 0 && element.usesOVL()) {
-            double heatLong = getHeatGeneration(entity, false, true);
+            double heatLong = getHeatGeneration(entity, element, false, true);
             System.out.println("Long Range Heat: " + heatLong);
             if (heatLong - 4 > heatCapacity) {
                 double nonRoundedL = element.weaponLocations[0].standardDamage.get(RANGE_BAND_LONG);
@@ -1743,7 +1737,7 @@ public final class AlphaStrikeConverter {
         // Adjust all weapon damages (L/E depending on OVL)
         int maxAdjustmentRange = 1 + (element.hasSPA(OVL) ? RANGE_BAND_EXTREME : RANGE_BAND_MEDIUM);
         double frontadjustment = heatCapacity / (totalFrontHeat - 4);
-        double rearHeat = getHeatGeneration(entity, true, false);
+        double rearHeat = getHeatGeneration(entity, element,true, false);
         double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
         for (int loc = 0; loc < element.weaponLocations.length; loc++) {
             WeaponLocation wloc = element.weaponLocations[loc];
@@ -1786,9 +1780,9 @@ public final class AlphaStrikeConverter {
      * facing weapons are included!
      * If onlyLongRange is true, only weapons with an L damage value are included. 
      */
-    private static int getHeatGeneration(Entity entity, boolean onlyRear, boolean onlyLongRange) {
+    private static int getHeatGeneration(Entity entity, AlphaStrikeElement element, boolean onlyRear, boolean onlyLongRange) {
         if (entity instanceof Mech) {
-            return getMechHeatGeneration((Mech)entity, onlyRear, onlyLongRange);
+            return getMechHeatGeneration((Mech)entity, element, onlyRear, onlyLongRange);
         } else {
             return getAeroHeatGeneration((Aero)entity, onlyRear, onlyLongRange);
         }
@@ -1801,15 +1795,15 @@ public final class AlphaStrikeConverter {
      * facing weapons are included!
      * If onlyLongRange is true, only weapons with an L damage value are included. 
      */
-    private static int getMechHeatGeneration(Mech entity, boolean onlyRear, boolean onlyLongRange) {
+    private static int getMechHeatGeneration(Mech entity, AlphaStrikeElement element, boolean onlyRear, boolean onlyLongRange) {
         int totalHeat = 0;
 
         if (entity.getJumpMP() > 0) {
-            totalHeat += entity.getJumpHeat(entity.getJumpMP());
+            totalHeat += getJumpHeat(entity, element);
         } else if (!entity.isIndustrial() && entity.hasEngine()) {
             totalHeat += entity.getEngine().getRunHeat(entity);
         }
-        
+
         System.out.println("Total Heat Movement: " + totalHeat);
 
         for (Mounted mount : entity.getWeaponList()) {
@@ -1832,7 +1826,7 @@ public final class AlphaStrikeConverter {
                 System.out.println(weapon.getName() + " Heat: " + weapon.getHeat());
             }
         }
-        
+
         System.out.println("Total Heat After wps: " + totalHeat);
 
         if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1)) {
@@ -1840,6 +1834,19 @@ public final class AlphaStrikeConverter {
         }
 
         return totalHeat;
+    }
+
+    private static int getJumpHeat(Entity entity, AlphaStrikeElement element) {
+        if ((entity.getJumpType() == Mech.JUMP_IMPROVED)
+                && (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+            return Math.max(3, element.getJumpMove() / 2);
+        } else if (entity.getJumpType() == Mech.JUMP_IMPROVED) {
+            return Math.max(3, roundUp(element.getJumpMove() / 4));
+        } else if (entity.getEngine().getEngineType() == Engine.XXL_ENGINE) {
+            return Math.max(6, element.getJumpMove());
+        } else {
+            return Math.max(3, element.getJumpMove() / 2);
+        }
     }
     
     /** 

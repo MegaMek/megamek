@@ -294,6 +294,15 @@ public final class UIUtil {
     public static Color uiTTWeaponColor() {
         return uiLightBlue();
     }
+
+    /**
+     * Returns a dark blue color suitable as a background color. The supplied
+     * color depends on the UI look and feel and will be darker for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiDarkBlue() {
+        return uiBgBrightness() > 130 ? LIGHTUI_DARKBLUE : DARKUI_DARKBLUE;
+    }
     
     public static int scaleForGUI(int value) {
         return Math.round(scaleForGUI((float)value));
@@ -871,6 +880,8 @@ public final class UIUtil {
     private final static Color DARKUI_LIGHTCYAN = new Color(100, 180, 180);
     private final static Color LIGHTUI_LIGHTGREEN = new Color(80, 180, 80);
     private final static Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
+    private final static Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
+    private final static Color DARKUI_DARKBLUE = new Color(50, 50, 80);
     
     /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
     private static String sizeString() {

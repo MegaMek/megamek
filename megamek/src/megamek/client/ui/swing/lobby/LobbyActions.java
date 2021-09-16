@@ -32,6 +32,7 @@ import megamek.client.generator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.StrategicBattleForceStatsDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.common.*;
@@ -1033,7 +1034,18 @@ public class LobbyActions {
         }
         return entities.stream().map(e -> e.getOwner()).findAny().get();
     }
-    
+
+    /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
+    void showSbfView(Collection<Force> fo) {
+        var formations = new ArrayList<SBFFormation>();
+        for (Force force: fo) {
+            formations.add(StrategicBattleForceConverter.createSbfFormationFromForce(force, lobby.game()));
+        }
+        formations.removeIf(f -> f == null);
+        new StrategicBattleForceStatsDialog(frame(), formations).setVisible(true);
+    }
+
+    /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */
     void showAlphaStrikeView(Collection<Entity> en) {
         new AlphaStrikeStatsDialog(frame(), en).setVisible(true);
     }

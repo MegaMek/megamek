@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.utils;
 
 import java.awt.Toolkit;
@@ -19,20 +37,16 @@ public class AlphaStrikeMassConvert {
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
-            if (entity instanceof SuperHeavyTank) {
-                System.out.println(entity.getShortName());
+            if (!AlphaStrikeConverter.canConvert(entity)) {
+                continue;
             }
-            continue;
-//            if (!AlphaStrikeConverter.canConvert(entity)) {
-//                continue;
-//            }
-//            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech || entity instanceof Tank) {
-//                System.out.println(entity.getShortName());
-//                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
-////                if (ase.getUnitType() == typeFilter) {
-//                    table.append(clipboardElementString(ase));
-////                }
-//            }
+            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech || entity instanceof Tank) {
+                System.out.println(entity.getShortName());
+                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
+//                if (ase.getUnitType() == typeFilter) {
+                    table.append(clipboardElementString(ase));
+//                }
+            }
         }
         StringSelection stringSelection = new StringSelection(table.toString());
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

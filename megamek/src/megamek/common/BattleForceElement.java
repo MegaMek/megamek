@@ -156,9 +156,15 @@ public class BattleForceElement {
     public int getMovement(String mode) {
     	return movement.get(mode);
     }
-    
+
+    /** Returns the primary movement value, i.e. the type "" for ground units or "s" for submarines. */
     public int getPrimaryMovementValue() {
     	return movement.values().iterator().next();
+    }
+
+    /** Returns the primary movement type String, such as "" for ground units or "s" for submarines. */
+    public String getPrimaryMovementType() {
+        return movement.keySet().iterator().next();
     }
     
     public String getMovementAsString() {

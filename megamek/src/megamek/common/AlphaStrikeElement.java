@@ -20,11 +20,8 @@ import static megamek.common.ASUnitType.*;
 import static java.util.stream.Collectors.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import java.lang.String;
@@ -356,10 +353,20 @@ public class AlphaStrikeElement extends BattleForceElement {
         if (!isAnyTypeOf(JS, WS, SC, DA, DS) && spa.isDoor()) {
             return false;
         }
-        if (isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA) && (spa == SEAL)) {
+        if (hasAutoSeal() && (spa == SEAL)) {
             return false;
         }
         return true;
+    }
+
+    public boolean hasAutoSeal() {
+        return isSubmarine()
+                || isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA);
+//                || isType(BA) Exoskeleton??
+    }
+
+    public boolean isSubmarine() {
+        return isType(CV) && getPrimaryMovementType().equals("s");
     }
    
     
@@ -520,7 +527,8 @@ public class AlphaStrikeElement extends BattleForceElement {
     public boolean isJumpCapable() {
         return movement.keySet().contains("j");
     }
-    
+
+    /** Returns the element's jump movement (in inches) or 0 if it has no jump movement. */
     public int getJumpMove() {
         return movement.getOrDefault("j", 0);
     }
@@ -528,21 +536,15 @@ public class AlphaStrikeElement extends BattleForceElement {
     public ASUnitType getType() {
         return asUnitType;
     }
-    
+
+    /** Returns true if this AS Element is of the given type. */
     public boolean isType(ASUnitType type) {
         return asUnitType == type;
     }
-    
-    public boolean isAnyTypeOf(ASUnitType type, ASUnitType... types) {
-        if (isType(type)) {
-            return true;
-        }
-        for (ASUnitType furtherType : types) {
-            if (isType(furtherType)) {
-                return true;
-            }   
-        }
-        return false;
+
+    /** Returns true if this AS Element is any of the given types. */
+    public boolean isAnyTypeOf(ASUnitType type, ASUnitType... furtherTypes) {
+        return isType(type) || Arrays.stream(furtherTypes).anyMatch(this::isType);
     }
     
     public boolean usesThreshold() {
@@ -561,8 +563,21 @@ public class AlphaStrikeElement extends BattleForceElement {
             return false;
         }
     }
-    
-    
-    
-    
+
+    /** Returns true if this AlphaStrike element is either BA or CI. */
+    public boolean isInfantry() {
+        return isAnyTypeOf(BA, CI);
+    }
+
+    /** Returns true if this AS Element Type represents a ground unit. */
+    public boolean isGround() {
+        return !isAerospace();
+    }
+
+    /** Returns true if this AS Element Type represents an aerospace unit (including some SV units). */
+    public boolean isAerospace() {
+        return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS)
+                || (isType(SV) && getMovementModes().contains("a") || getMovementModes().contains("k")
+                || getMovementModes().contains("i") || getMovementModes().contains("p"));
+    }
 }

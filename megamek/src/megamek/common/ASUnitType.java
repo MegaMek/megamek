@@ -1,5 +1,8 @@
 package megamek.common;
 
+import java.util.Arrays;
+
+/** Represents the AlphaStrike Element Types (ASC, page 91) */
 public enum ASUnitType {
 
     BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
@@ -34,4 +37,11 @@ public enum ASUnitType {
         }
         return null;
     }
+
+    /** Returns true if this AS Element Type is equal to any of the given Types. */
+    public boolean isAnyOf(ASUnitType type, ASUnitType... furtherTypes) {
+        return (this == type) || Arrays.stream(furtherTypes).anyMatch(t -> this == t);
+    }
+
+
 }

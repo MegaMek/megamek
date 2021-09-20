@@ -40,9 +40,9 @@ public class AlphaStrikeMassConvert {
             if (!AlphaStrikeConverter.canConvert(entity)) {
                 continue;
             }
-            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech || entity instanceof Tank) {
+            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech || entity instanceof Tank || entity instanceof Infantry) {
                 System.out.println(entity.getShortName());
-                AlphaStrikeElement ase = AlphaStrikeConverter.convertToAlphaStrike(entity);
+                AlphaStrikeElement ase = AlphaStrikeConverter.convert(entity);
 //                if (ase.getUnitType() == typeFilter) {
                     table.append(clipboardElementString(ase));
 //                }

@@ -36,6 +36,7 @@ public final class SBFFormation {
     private int size;
     private int tmm;
     private int movement;
+    private String moveMode;
     private int jumpMove;
     private int trspMovement;
     private int tactics;
@@ -72,15 +73,12 @@ public final class SBFFormation {
     public int getJumpMove() {
         return jumpMove;
     }
-
     public void setJumpMove(int jumpMove) {
         this.jumpMove = jumpMove;
     }
-
     public int getTrspMovement() {
         return trspMovement;
     }
-
     public void setTrspMovement(int trspMovement) {
         this.trspMovement = trspMovement;
     }
@@ -234,6 +232,7 @@ public final class SBFFormation {
     }
 
     public boolean showSpecial(BattleForceSPA spa) {
+        //TODO
         if ((type == SBFElementType.BM) && (spa == SOA || spa == SRCH)) {
             return false;
         }
@@ -261,7 +260,7 @@ public final class SBFFormation {
      * Returns the Artillery Special's SBF damage (standard, not homing missile damage).
      * Returns 0 when the given SPA is not an Artillery SPA.
      */
-    public int getSbfArtilleryDamage(BattleForceSPA spa) {
+    public static int getSbfArtilleryDamage(BattleForceSPA spa) {
         switch (spa) {
             case ARTTC:
                 return 1;
@@ -293,7 +292,7 @@ public final class SBFFormation {
      * Returns the Artillery Special's SBF damage for homing missiles.
      * Returns 0 when the given SPA is not ARTAIS or ARTAC.
      */
-    public int getSbfArtilleryHomingDamage(BattleForceSPA spa) {
+    public static int getSbfArtilleryHomingDamage(BattleForceSPA spa) {
         return spa.isAnyOf(ARTAIS, ARTAC) ? 2 : 0;
     }
 }

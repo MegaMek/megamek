@@ -18,18 +18,14 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.StringJoiner;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.AlphaStrikeViewPanel;
@@ -44,6 +40,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     private final MMToggleButton pilotToggle = new MMToggleButton("Include Pilot");
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
+    private final JPanel centerPanel = new JPanel();
 
     public AlphaStrikeStatsDialog(JFrame frame, Collection<Entity> en) {
         super(frame, "AlphaStrikeStatsDialog", "Ok.text");
@@ -54,11 +51,10 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        var result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
         
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
-        optionsPanel.setBorder(new EmptyBorder(15, 30, 10, 0));
+        optionsPanel.add(Box.createVerticalStrut(25));
         optionsPanel.add(moveToggle);
         optionsPanel.add(pilotToggle);
         optionsPanel.add(clipBoardButton);
@@ -66,16 +62,19 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         pilotToggle.addActionListener(e -> setupTable());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         
-        setupTable();
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        
-        result.add(optionsPanel);
-        result.add(scrollPane);
-        return result;
+
+        centerPanel.add(Box.createVerticalStrut(15));
+        centerPanel.add(optionsPanel);
+        centerPanel.add(Box.createVerticalStrut(15));
+        setupTable();
+        return centerPanel;
     }
     
     private void setupTable() {
-        scrollPane.getViewport().setView(new AlphaStrikeViewPanel(entities, moveToggle.isSelected()));
+        centerPanel.remove(scrollPane);
+        scrollPane = new JScrollPane(new AlphaStrikeViewPanel(entities, moveToggle.isSelected(), pilotToggle.isSelected()));
+        centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }
     

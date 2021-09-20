@@ -6,7 +6,9 @@ import java.util.Arrays;
 public enum ASUnitType {
 
     BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
-    
+
+    /** Returns the AlphaStrike element type for the given entity or null if it has no AS equivalent. */
+    //TODO: Add a NONE type to avoid null, maybe for buildings?
     public static ASUnitType getUnitType(Entity en) {
         if (en instanceof Mech) {
             return ((Mech)en).isIndustrial() ? IM : BM;
@@ -42,6 +44,5 @@ public enum ASUnitType {
     public boolean isAnyOf(ASUnitType type, ASUnitType... furtherTypes) {
         return (this == type) || Arrays.stream(furtherTypes).anyMatch(t -> this == t);
     }
-
 
 }

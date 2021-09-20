@@ -43,6 +43,8 @@ import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
 import megamek.server.Server;
 
+import static megamek.common.MountedHelper.*;
+
 /**
  * @author Sebastian Brocks
  */
@@ -129,31 +131,6 @@ public abstract class MMLWeapon extends MissileWeapon {
         }
 
         return new SRMHandler(toHit, waa, game, server);
-    }
-    
-    
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        int clusterRoll = 7;
-        if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
-                clusterRoll = 9;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                clusterRoll = 8;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
-            }
-        }
-        double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-            damage = adjustBattleForceDamageForMinRange(damage);
-        }
-        if (range < BattleForceElement.MEDIUM_RANGE) {
-            damage *= 2;
-        } else if (range < BattleForceElement.LONG_RANGE) {
-            damage *= 1.5;
-        }
-        return damage / 10.0;
     }
     
     @Override

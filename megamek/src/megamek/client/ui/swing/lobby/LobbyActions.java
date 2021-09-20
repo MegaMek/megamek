@@ -1037,12 +1037,20 @@ public class LobbyActions {
 
     /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
     void showSbfView(Collection<Force> fo) {
-        var formations = new ArrayList<SBFFormation>();
-        for (Force force: fo) {
-            formations.add(StrategicBattleForceConverter.createSbfFormationFromForce(force, lobby.game()));
+//        var formations = new ArrayList<SBFFormation>();
+//        for (Force force: fo) {
+//            formations.add(StrategicBattleForceConverter.createSbfFormationFromForce(force, lobby.game()));
+//        }
+//        if (formations.removeIf(f -> f == null)) {
+//        };
+        if (fo.stream().anyMatch(f -> !StrategicBattleForceConverter.canConvertToSbfFormation(f, lobby.game()))) {
+
+            LobbyErrors.showSBFConversion(frame());
         }
-        formations.removeIf(f -> f == null);
-        new StrategicBattleForceStatsDialog(frame(), formations).setVisible(true);
+//        if (!formations.isEmpty()) {
+//            new StrategicBattleForceStatsDialog(frame(), formations).setVisible(true);
+//        }
+        new StrategicBattleForceStatsDialog(frame(), fo, lobby.game()).setVisible(true);
     }
 
     /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */

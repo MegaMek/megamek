@@ -19,46 +19,42 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.AlphaStrikeViewPanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.SBFViewPanel;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.AlphaStrikeElement;
-import megamek.common.Entity;
-import megamek.common.SBFFormation;
-import megamek.common.UnitRoleHandler;
+import megamek.common.*;
 import megamek.common.force.Force;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class StrategicBattleForceStatsDialog extends AbstractDialog {
 
-    private final Collection<SBFFormation> formations;
+    private final Collection<Force> forceList;
+    private final IGame game;
+    private Collection<SBFFormation> formations;
     private final MMToggleButton pilotToggle = new MMToggleButton("Include Pilot");
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
+    private final JPanel centerPanel = new JPanel();
 
-    public StrategicBattleForceStatsDialog(JFrame frame, Collection<SBFFormation> fo) {
-        super(frame, "AlphaStrikeStatsDialog", "Ok.text");
-        formations = fo;
+    public StrategicBattleForceStatsDialog(JFrame frame, Collection<Force> fo, IGame gm) {
+        super(frame, true, "AlphaStrikeStatsDialog", "Ok.text");
+        forceList = fo;
+        game = gm;
         initialize();
         UIUtil.adjustDialog(this);
     }
 
     @Override
     protected Container createCenterPane() {
-        var result = new JPanel();
-        result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
 
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
-        optionsPanel.setBorder(new EmptyBorder(15, 30, 10, 0));
+        optionsPanel.add(Box.createHorizontalStrut(25));
         optionsPanel.add(pilotToggle);
         optionsPanel.add(clipBoardButton);
         pilotToggle.addActionListener(e -> setupTable());
@@ -67,13 +63,21 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
         setupTable();
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        result.add(optionsPanel);
-        result.add(scrollPane);
-        return result;
+        centerPanel.add(Box.createVerticalStrut(15));
+        centerPanel.add(optionsPanel);
+        centerPanel.add(Box.createVerticalStrut(15));
+        centerPanel.add(scrollPane);
+        return centerPanel;
     }
 
     private void setupTable() {
-        scrollPane.getViewport().setView(new SBFViewPanel(formations));
+        centerPanel.remove(scrollPane);
+        formations = forceList.stream()
+                .map(f -> StrategicBattleForceConverter.convert(f, game, pilotToggle.isSelected()))
+                .filter(fo -> fo != null)
+                .collect(Collectors.toList());
+        scrollPane = new JScrollPane(new SBFViewPanel(formations));
+        centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }
 

@@ -16,6 +16,9 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
 /**
  * @author Andrew Hunter
  */
@@ -68,5 +71,10 @@ public class ISAC2 extends ACWeapon {
         .setClanApproximate(false, false, false,true, false)
         .setPrototypeFactions(F_TA)
         .setProductionFactions(F_TA);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == BattleForceElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

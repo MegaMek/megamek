@@ -26,10 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static megamek.common.ASUnitType.*;
 import static megamek.common.BattleForceSPA.*;
+import static megamek.common.SBFElementType.*;
 
-
+/**
+ * Represents an SBF Unit (Ground Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike
+ * elements and is the building block of SBF Formations.
+ */
 public class SBFUnit {
 
     private String name;
@@ -267,6 +270,21 @@ public class SBFUnit {
     /** Returns true if this SBF Unit is any of the given types. */
     public boolean isAnyTypeOf(SBFElementType type, SBFElementType... types) {
         return isType(type) || Arrays.stream(types).anyMatch(this::isType);
+    }
+
+    /** Returns true if this SBF Unit represents a ground Unit. */
+    public boolean isGround() {
+        return !isAerospace();
+    }
+
+    /** Returns true if this SBF Unit represents an aerospace unit. */
+    public boolean isAerospace() {
+        return isAnyTypeOf(AS, LA);
+    }
+
+    /** Returns true if this SBF Unit has any of the given SPAs. */
+    public boolean hasAnySPAOf(BattleForceSPA spa, BattleForceSPA... furtherSpas) {
+        return (hasSPA(spa)) || Arrays.stream(furtherSpas).anyMatch(this::hasSPA);
     }
 
 }

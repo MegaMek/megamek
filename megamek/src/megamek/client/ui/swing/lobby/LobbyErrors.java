@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import javax.swing.JOptionPane;
 
 import megamek.client.ui.Messages;
+import megamek.common.SBFUnit;
 
 /** Contains static methods that show common info/error messages for the lobby. */
 public final class LobbyErrors {
@@ -49,6 +50,10 @@ public final class LobbyErrors {
     private static final String FORCE_EMPTY = "Please select only empty forces.";
     private static final String FORCE_ASSIGN_ONLYTEAM = "Can only reassign a force to a teammate when reassigning without units.";
     private static final String FORCE_ATTACH_TOSUB = "Cannot attach a force to its own subforce.";
+    private static final String SBF_CONVERSIONERROR = "At least some of the forces you selected cannot be " +
+            "converted to SBF Formations. Please select only the topmost forces to be converted, no subforces. " +
+            "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
+            "will typically work with companies created in the Force Generator.";
     
     public static void showOnlyOwnBot(Frame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);
@@ -136,6 +141,10 @@ public final class LobbyErrors {
     
     public static void showOnlyEmptyForce(Frame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_EMPTY);
+    }
+
+    public static void showSBFConversion(Frame owner) {
+        JOptionPane.showMessageDialog(owner, SBF_CONVERSIONERROR);
     }
 
 

@@ -1,5 +1,7 @@
 package megamek.common.weapons.autocannons;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -59,6 +61,11 @@ public class ISHVAC10 extends HVACWeapon {
             .setISAdvancement(3059, 3079)
             .setPrototypeFactions(F_CC).setProductionFactions(F_CC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return 1;
     }
 
 }

@@ -62,6 +62,16 @@ public class AlphaStrikeElement extends BattleForceElement {
      */
     public EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
 
+    public int getSkill() {
+        return skill;
+    }
+
+    public void setSkill(int skill) {
+        this.skill = skill;
+    }
+
+    private int skill = 4;
+
     public AlphaStrikeElement() {
         
     };
@@ -496,8 +506,6 @@ public class AlphaStrikeElement extends BattleForceElement {
      * be present. 
      */ 
     private static String lamString(BattleForceSPA spa, Object spaObject) {
-//        BattleForceSPA spa = element.hasSPA(LAM) ? LAM : BIM;
-//        Map<String, Integer> movelist = (Map<String, Integer>) element.getSPA(spa);
         String result = spa.toString() + "(";
         if (spa == LAM) {
             result += ((Map<String, Integer>)spaObject).get("g") + "\"" + "g/";

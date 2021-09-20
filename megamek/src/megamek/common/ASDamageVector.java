@@ -60,7 +60,7 @@ public class ASDamageVector {
      * The value is rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage.
      */
-    public static ASDamageVector createSpecialDamage(double s) {
+    public static ASDamageVector createNormRndDmg(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormal, 1, false);
     }
     
@@ -69,7 +69,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamage(double s, double m) {
+    public static ASDamageVector createNormRndDmg(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormal, 2, false);
     }
     
@@ -78,7 +78,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamage(double s, double m, double l) {
+    public static ASDamageVector createNormRndDmg(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedNormal, 3, false);
     }
     
@@ -87,7 +87,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer
      * and values between 0 and 0.5 excl. end up as minimal damage. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamage(double s, double m, double l, double e) {
+    public static ASDamageVector createNormRndDmg(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormal, 4, false);
     }
     
@@ -96,7 +96,7 @@ public class ASDamageVector {
      * The value is rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamageNoMinimal(double s) {
+    public static ASDamageVector createNormRndDmgNoMin(double s) {
         return create(s, 0, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 1, false);
     }
     
@@ -105,7 +105,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamageNoMinimal(double s, double m) {
+    public static ASDamageVector createNormRndDmgNoMin(double s, double m) {
         return create(s, m, 0, 0, ASDamage::createDualRoundedNormalNoMinimal, 2, false);
     }
     
@@ -114,7 +114,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamageNoMinimal(double s, double m, double l) {
+    public static ASDamageVector createNormRndDmgNoMin(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedNormalNoMinimal, 3, false);
     }
     
@@ -123,7 +123,7 @@ public class ASDamageVector {
      * The values are rounded first up to the nearest tenth, then normally to the nearest integer.
      * Minimal damage is not used. 0 values are printed as - (dash)
      */
-    public static ASDamageVector createSpecialDamageNoMinimal(double s, double m, double l, double e) {
+    public static ASDamageVector createNormRndDmgNoMin(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedNormalNoMinimal, 4, false);
     }
     
@@ -133,7 +133,7 @@ public class ASDamageVector {
      * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage will be used.
      * When printed, the ASDamageVector will use - for zero values.
      */
-    public static ASDamageVector createSpecialDamage(List<Double> values, int ranges) {
+    public static ASDamageVector createNormRndDmg(List<Double> values, int ranges) {
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
@@ -148,7 +148,7 @@ public class ASDamageVector {
      * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage is not used.
      * When printed, the ASDamageVector will use - for zero values.
      */
-    public static ASDamageVector createSpecialDamageNoMinimal(List<Double> values, int ranges) {
+    public static ASDamageVector createNormRndDmgNoMin(List<Double> values, int ranges) {
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
@@ -164,13 +164,29 @@ public class ASDamageVector {
      * end up as minimal damage.
      * When printed, the ASDamageVector will use 0 (not a dash) for zero values.
      */
-    public static ASDamageVector createStandardDamage(List<Double> values, int ranges) {
+    public static ASDamageVector createUpRndDmg(List<Double> values, int ranges) {
         List<Double> copy = new ArrayList<Double>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
         }
         return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3), 
                 ASDamage::createDualRoundedUp, ranges, true);
+    }
+
+    /**
+     * Creates an ASDamageVector for special damage from the given double values and
+     * the number of ranges to be used (usually 3 or 4). The values are rounded first up to the
+     * nearest tenth, then up to the nearest integer and values between 0 and 0.5 excl.
+     * end up as minimal damage.
+     * When printed, the ASDamageVector will use "-" for zero values.
+     */
+    public static ASDamageVector createUpRndDmgMinus(List<Double> values, int ranges) {
+        List<Double> copy = new ArrayList<Double>(values);
+        while (copy.size() < 4) {
+            copy.add(0.0);
+        }
+        return create(copy.get(0), copy.get(1), copy.get(2), copy.get(3),
+                ASDamage::createDualRoundedUp, ranges, false);
     }
     
     /** 
@@ -179,7 +195,7 @@ public class ASDamageVector {
      * to the nearest integer and values between 0 and 0.5 excl. end up as minimal damage.
      * When printed, the ASDamageVector will use 0 (not a dash) for zero values.
      */
-    public static ASDamageVector createStandardDamage(double s, double m, double l) {
+    public static ASDamageVector createUpRndDmg(double s, double m, double l) {
         return create(s, m, l, 0, ASDamage::createDualRoundedUp, 3, true);
     }
     
@@ -189,7 +205,7 @@ public class ASDamageVector {
      * to the nearest integer and values between 0 and 0.5 excl. end up as minimal damage.
      * When printed, the ASDamageVector will use 0 (not a dash) for zero values.
      */
-    public static ASDamageVector createStandardDamage(double s, double m, double l, double e) {
+    public static ASDamageVector createUpRndDmg(double s, double m, double l, double e) {
         return create(s, m, l, e, ASDamage::createDualRoundedUp, 4, true);
     }
     

@@ -13,6 +13,11 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
+
+import static megamek.common.MountedHelper.*;
+
 /**
  * @author Sebastian Brocks
  */
@@ -51,5 +56,18 @@ public class ISMML3 extends MMLWeapon {
             .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_MERC)
             .setProductionFactions(F_WB);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.4;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 0.3;
+        } else if (range == BattleForceElement.LONG_RANGE) {
+            return 0.2;
+        } else {
+            return 0;
+        }
     }
 }

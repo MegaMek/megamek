@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lrms;
 
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -51,5 +53,10 @@ public class ISExtendedLRM10 extends ExtendedLRMWeapon {
         .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
         .setISAdvancement(3054, 3078, 3083, DATE_NONE, DATE_NONE).setPrototypeFactions(F_FS,F_LC)
         .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == BattleForceElement.SHORT_RANGE ? 0.15 : 0.6;
     }
 }

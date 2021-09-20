@@ -20,10 +20,8 @@ package megamek.common;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import static megamek.common.BattleForceSPA.*;
-import static megamek.common.BattleForceSPA.SNARC;
 
 /** 
  * This class holds the AlphaStrike information for one arc of a multi-arc unit such as a
@@ -42,16 +40,16 @@ public class ASArcSummary {
     private final boolean isTurret;
 
     /** Represents the standard-type, non-special damage of this arc or turret, including arc STD damage. */
-    private ASDamageVector stdDamage = ASDamageVector.createStandardDamage(0,0,0,0);
+    private ASDamageVector stdDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
 
     /** Represents the Capital Weapon (CAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector CAPDamage = ASDamageVector.createStandardDamage(0,0,0,0);
+    private ASDamageVector CAPDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
 
     /** Represents the Subcapital Weapon (SCAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector SCAPDamage = ASDamageVector.createStandardDamage(0,0,0,0);
+    private ASDamageVector SCAPDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
 
     /** Represents the Capital Missile Weapon (MSL) damage of this arc on a multi-arc element. */
-    private ASDamageVector MSLDamage = ASDamageVector.createStandardDamage(0,0,0,0);
+    private ASDamageVector MSLDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
 
     /** Contains all Special Unit Abilities of this arc or turret. */
     public EnumMap<BattleForceSPA, Object> arcSpecials = new EnumMap<>(BattleForceSPA.class);
@@ -172,11 +170,18 @@ public class ASArcSummary {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("" + stdDamage);
+        StringBuilder result = new StringBuilder();
+        if (!isTurret || stdDamage.hasDamage()) {
+            result.append(stdDamage);
+        }
         for (BattleForceSPA spa : arcSpecials.keySet()) {
             result.append(",").append(AlphaStrikeElement.formatSPAString(spa, arcSpecials.get(spa)));
         }
-        return result.toString();
+        String res = result.toString();
+        if (res.startsWith(",")) {
+            res = res.substring(1);
+        }
+        return res;
     }
 
     public Object getSPA(BattleForceSPA spa) {

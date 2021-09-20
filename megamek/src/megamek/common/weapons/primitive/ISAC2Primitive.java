@@ -14,10 +14,7 @@
  */
 package megamek.common.weapons.primitive;
 
-import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.SimpleTechLevel;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
@@ -84,5 +81,10 @@ public class ISAC2Primitive extends ACWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
                                               WeaponAttackAction waa, IGame game, Server server) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, server);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == BattleForceElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

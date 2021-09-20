@@ -8330,7 +8330,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getNumBattleForceWeaponsLocations() {
-        if (hasMisc(MiscType.F_QUAD_TURRET) || hasMisc(MiscType.F_SHOULDER_TURRET)) {
+        if (hasMisc(MiscType.F_QUAD_TURRET) || hasMisc(MiscType.F_SHOULDER_TURRET) || hasMisc(MiscType.F_HEAD_TURRET)) {
             return 3;
         }
         return 2;
@@ -8342,7 +8342,7 @@ public abstract class Mech extends Entity {
                 || (index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            return 1;
+            return 0;
         }
         return 0;
     }

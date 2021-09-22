@@ -50,7 +50,6 @@ import javax.swing.tree.TreePath;
 
 import megamek.MegaMek;
 import megamek.client.Client;
-import megamek.client.generator.RandomSkillsGenerator;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
@@ -58,6 +57,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame.Phase;
 import megamek.common.UnitType;
+import megamek.common.enums.SkillLevel;
 
 /**
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
@@ -303,18 +303,19 @@ public class ForceGeneratorViewUi {
 	            }
 	        }
 	    }
-        fd.getSubforces().forEach(sf -> configureNetworks(sf));
-        fd.getAttached().forEach(sf -> configureNetworks(sf));
+        fd.getSubforces().forEach(this::configureNetworks);
+        fd.getAttached().forEach(this::configureNetworks);
 	}
 	
 	private void setGeneratedForce(ForceDescriptor fd) {
 		forceTree.setModel(new ForceTreeModel(fd));
 
 		if (null != fd) {
-    		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null? "" : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
+    		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
+					? "" : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
     		lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
-    		lblRating.setText(RandomSkillsGenerator.getLevelDisplayableName(fd.getExperience())
-    				+ ((fd.getRating() == null)?"":"/" + fd.getRating()));
+    		lblRating.setText(SkillLevel.values()[fd.getExperience()].toString()
+    				+ ((fd.getRating() == null) ? "" : "/" + fd.getRating()));
 		} else {
             lblOrganization.setText("");
             lblFaction.setText("");

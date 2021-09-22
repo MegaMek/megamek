@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.MegaMek;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardEvent;
@@ -477,7 +476,7 @@ public class Board implements Serializable, IBoard {
         }
         
         // Internally handled terrain (inclines, cliff-bottoms)
-        initializeAutomaticTerrain(x, y);
+        initializeAutomaticTerrain(x, y, /* useInclines: */ true);
         
         // Add woods/jungle elevation where none was saved
         initializeFoliageElev(x, y);
@@ -511,9 +510,12 @@ public class Board implements Serializable, IBoard {
     
     /** 
      * Checks all hex edges of the hex at (x,y) if automatically handled 
-     * terrains such as inclines must be placed or removed. 
+     * terrains such as inclines must be placed or removed.
+     * @param x The hex X-coord.
+     * @param y The hex Y-coord.
+     * @param useInclines Indicates whether or not to include inclines at hex exits.
      */
-    private void initializeAutomaticTerrain(int x, int y) {
+    private void initializeAutomaticTerrain(int x, int y, boolean useInclines) {
         IHex hex = getHex(x, y);
         int origCliffTopExits = 0;
         int correctedCliffTopExits = 0;
@@ -590,7 +592,7 @@ public class Board implements Serializable, IBoard {
         }
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_TOP, correctedCliffTopExits);
         addOrRemoveAutoTerrain(hex, Terrains.CLIFF_BOTTOM, cliffBotExits);
-        if (GUIPreferences.getInstance().getHexInclines()) {
+        if (useInclines) {
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_TOP, inclineTopExits);
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_BOTTOM, inclineBotExits);
             addOrRemoveAutoTerrain(hex, Terrains.INCLINE_HIGH_TOP, highInclineTopExits);
@@ -616,11 +618,13 @@ public class Board implements Serializable, IBoard {
         }
     }
     
-    /** Rebuilds automatic terrains for the whole board. */
-    public void initializeAllAutomaticTerrain() {
+    /** Rebuilds automatic terrains for the whole board.
+     * @param useInclines Indicates whether or not to use inclines on hex exits.
+     */
+    public void initializeAllAutomaticTerrain(boolean useInclines) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                initializeAutomaticTerrain(x, y);
+                initializeAutomaticTerrain(x, y, useInclines);
             }
         }
         processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_CHANGED_ALL_HEXES));
@@ -1409,7 +1413,6 @@ public class Board implements Serializable, IBoard {
         return buildings.elements();
     }
     
-    @Override
     public Vector<Building> getBuildingsVector() {
         return buildings;
     }

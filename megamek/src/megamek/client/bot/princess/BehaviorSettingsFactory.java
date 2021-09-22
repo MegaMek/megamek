@@ -120,6 +120,16 @@ public class BehaviorSettingsFactory {
             behaviorMap.put(behaviorSettings.getDescription().trim(), behaviorSettings);
         }
     }
+    
+    /**
+     * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was 
+     * removed (or null if there was no such BehaviorSettings). 
+     */
+    public BehaviorSettings removeBehavior(String settingName) {
+        synchronized (behaviorMap) {
+            return behaviorMap.remove(settingName);
+        }
+    }
 
     /**
      * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.
@@ -238,6 +248,17 @@ public class BehaviorSettingsFactory {
         }
         Collections.sort(names);
         return names.toArray(new String[names.size()]);
+    }
+    
+    /** 
+     * Returns a list of the names of all the available 
+     * {@link megamek.client.bot.princess.BehaviorSettings BehaviorSettings}.
+     */
+    public List<String> getBehaviorNameList() {
+        init(false);
+        synchronized (behaviorMap) {
+            return new ArrayList<>(behaviorMap.keySet());
+        }
     }
 
     //******************

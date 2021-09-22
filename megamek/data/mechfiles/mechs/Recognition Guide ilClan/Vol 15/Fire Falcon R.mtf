@@ -1,0 +1,166 @@
+Version:1.0
+Fire Falcon
+R
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3142
+source:ilClan RecGuide 15 - Dark Age
+rules level:4
+
+mass:25
+engine:200 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:8
+walk mp:8
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:6
+RA armor:6
+LT armor:9
+RT armor:9
+CT armor:10
+HD armor:9
+LL armor:10
+RL armor:10
+RTL armor:2
+RTR armor:2
+RTC armor:3
+
+Weapons:6
+Micro Pulse Laser, Left Arm
+Micro Pulse Laser, Left Arm
+Medium Re-engineered Laser, Right Arm
+Small Re-engineered Laser, Right Arm
+ATM 3, Left Torso
+ATM 3, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLMicroPulseLaser (OMNIPOD)
+CLMicroPulseLaser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Small Re-engineered Laser (OMNIPOD)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+CLATM3 (OMNIPOD)
+Clan Ammo ATM-3 (OMNIPOD)
+Clan Ammo ATM-3 (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Fire Falcon was created in the early-3050s, apparently as a replacement for the Mist Lynx.
+
+capabilities:Unknown
+
+deployment:The Fire Falcon is faster, has more front-facing armor, and more pod space, though it lacks the Jump Jets of that earlier 'Mech. It makes use of weight-saving materials in the form of an XL Engine, an Endo Steel internal structure, and four tons of Ferro-Fibrous armor. Clan Jade Falcon first produced this OmniMech on their capital of Ironhold, but they soon began to produce it on the Occupation Zone headquarters of Sudeten.[1][5] In November of 3069, Clan Steel Viper would sack Ironhold as part that Clan's effort to expel the Jade Falcons from the Clan Homeworlds. The invasion would end up destroying the Fire Falcon's production facilities, letting the design fade from use by Homeworlds based Clans.
+
+manufacturer:Ironhold Alpha Complex, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF 3 Light Endo-Steel
+systemmanufacturer:ENGINE:JF 200 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVIII KITT

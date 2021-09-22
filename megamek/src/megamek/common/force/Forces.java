@@ -18,27 +18,20 @@
  */ 
 package megamek.common.force;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
-
 import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
 
-import static megamek.common.force.Force.*;
-import static java.util.stream.Collectors.*;
+import java.io.Serializable;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.common.force.Force.NO_FORCE;
 
 /**
  * Manages a collection of Forces for a game. The game only needs to hold one Forces object.
@@ -64,36 +57,34 @@ public final class Forces implements Serializable {
      * Returns the id of the newly created Force or Force.NO_FORCE if no force was 
      * created.  
      */
-    public synchronized int addTopLevelForce(String forceName, IPlayer owner) {
-        if (!verifyForceName(forceName) || owner == null) {
+    public synchronized int addTopLevelForce(final Force force, final @Nullable IPlayer owner) {
+        if (!verifyForceName(force.getName()) || (owner == null)) {
             return NO_FORCE;
         }
 
-        int newId = newId();
-        Force newForce = new Force(forceName, newId, owner);
-        forces.put(newId, newForce);
+        final int newId = newId();
+        forces.put(newId, new Force(force.getName(), newId, force.getCamouflage().clone(), owner));
         return newId;
     }
-    
+
     /** 
-     * Adds a subforce with the provided name to the provided parent. Verifies the name
-     * and the force before applying the change.
-     * Returns the id of the newly created Force or Force.NO_FORCE if no new subforce was 
-     * created.  
+     * Adds the provided subforce to the provided parent. Verifies the name and the force before
+     * applying the change.
+     * @return the id of the newly created Force or Force.NO_FORCE if no new subforce was created.
      */
-    public synchronized int addSubForce(String forceName, Force parent) {
-        if (!contains(parent) || !verifyForceName(forceName)) {
+    public synchronized int addSubForce(final Force force, final Force parent) {
+        if (!contains(parent) || !verifyForceName(force.getName())) {
             return NO_FORCE;
         }
-        
+
         // Create and add the new force
-        int newId = newId();
-        Force newForce = new Force(forceName, newId, parent);
+        final int newId = newId();
+        final Force newForce = new Force(force.getName(), newId, force.getCamouflage().clone(), parent);
         forces.put(newId, newForce);
         parent.addSubForce(newForce);
         return newId;
     }
-    
+
     /** Returns a list of all the game's entities that are not part of any force. */
     public List<Entity> forcelessEntities() {
         return game.getEntitiesStream().filter(e -> !e.partOfForce()).collect(toList());
@@ -139,7 +130,6 @@ public final class Forces implements Serializable {
     public Entity getEntity(int id) {
         return game.getEntity(id);
     }
-    
     
     /** 
      * Adds the provided Entity to the provided force. Does nothing if the force doesn't exist
@@ -277,10 +267,10 @@ public final class Forces implements Serializable {
      * E.g., If it is part of a lance in a company, the lance will be returned.
      * If it is part of no force, returns null. 
      */
-    public Force getForce(Entity entity) {
+    public @Nullable Force getForce(final Entity entity) {
         return forces.get(getForceId(entity.getId()));
     }
-    
+
     /** 
      * Returns the id of the force that the provided entity is a direct part of.
      * E.g., If it is part of a lance in a company, the lance id will be returned.
@@ -303,7 +293,7 @@ public final class Forces implements Serializable {
         }
         return Force.NO_FORCE;
     }
-    
+
     /**
      * Parses the force string of the provided entity. 
      * Returns a List of Force stubs in the order of highest to lowest force.
@@ -311,20 +301,30 @@ public final class Forces implements Serializable {
      * contain only the name and id and have no parent and no owner and 
      * the passed entity is not added to them!
      */
-    public static ArrayList<Force> parseForceString(Entity entity) {
-        ArrayList<Force> result = new ArrayList<>();
-        String forceString = entity.getForceString();
-        StringTokenizer st = new StringTokenizer(forceString, "|\\");
-        
-        while (st.hasMoreTokens()) {
-            String forceName = st.nextToken();
-            String forceId = st.nextToken();
-            int id = Integer.parseInt(forceId);
-            result.add(new Force(forceName, id));
+    public static List<Force> parseForceString(Entity entity) {
+        final List<Force> forces = new ArrayList<>();
+        final String a = entity.getForceString();
+        final String[] b = a.split("\\|\\|");
+        for (final String forceText : b) {
+            final String[] force = forceText.split("\\|");
+            if ((force.length != 2) && (force.length != 4)) {
+                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName());
+                break;
+            }
+
+            final Camouflage camouflage = (force.length == 4) ? new Camouflage(force[2], force[3]) : new Camouflage();
+
+            try {
+                final Force f = new Force(force[0], Integer.parseInt(force[1]), camouflage);
+                forces.add(f);
+            } catch (Exception e) {
+                MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName(), e);
+                break;
+            }
         }
-        return result;
+        return forces;
     }
-    
+
     /** 
      * Returns a list of all subforces of the provided force, including
      * subforces of subforces to any depth. 

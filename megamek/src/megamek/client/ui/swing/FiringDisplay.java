@@ -743,9 +743,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 
-            // Update the menu bar.
-            clientgui.getMenuBar().setEntity(ce());
-
             // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
                             && ce().getCrew().isActive());
@@ -827,7 +824,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         target = null;
 
         if (!clientgui.bv.isMovingUnits()) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
         }
         clientgui.bv.clearFieldofF();
 
@@ -885,7 +882,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if ((game.getPhase() == IGame.Phase.PHASE_FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setDisplayVisible(false);
+            clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
         target(null);
@@ -1256,9 +1253,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // clear queue
         attacks.removeAllElements();
-
-        // Clear the menu bar.
-        clientgui.getMenuBar().setEntity(null);
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -2404,7 +2398,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (clientgui.getClient().isMyTurn() && (ce() != null)) {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.bv.centerOnHex(ce().getPosition());
         }
     }
@@ -2423,7 +2417,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 selectEntity(e.getId());
             }
         } else {
-            clientgui.setDisplayVisible(true);
+            clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.bv.centerOnHex(e.getPosition());

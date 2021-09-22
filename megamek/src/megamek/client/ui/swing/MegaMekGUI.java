@@ -74,7 +74,9 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
@@ -218,7 +220,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
-        CommonMenuBar menuBar = new CommonMenuBar();
+        CommonMenuBar menuBar = new CommonMenuBar(this);
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);
         showMainMenu();
@@ -289,7 +291,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         scenB.addActionListener(actionListener);
         loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
-        loadB.setActionCommand(ClientGUI.FILE_GAME_OPEN);
+        loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
         connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
                 SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
@@ -889,20 +891,19 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     void connectBot() {
-        ConnectDialog cd = new ConnectDialog(frame);
+        var cd = new ConnectDialog(frame);
         cd.setVisible(true);
-
         if (!cd.dataValidation("MegaMek.ConnectDialog.title")) {
             return;
         }
 
         // initialize game
-        BotConfigDialog bcd = new BotConfigDialog(frame);
+        var bcd = new BotConfigDialog(frame, cd.getPlayerName());
         bcd.setVisible(true);
-        if (bcd.dialogAborted) {
-            return; // user didn't click 'ok', add no bot
+        if (bcd.getResult() == DialogResult.CANCELLED) {
+            return; 
         }
-        client = bcd.getSelectedBot(cd.getServerAddress(), cd.getPort());
+        client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(), bcd.getBehaviorSettings());
         client.getGame().addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
@@ -1048,7 +1049,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             case ClientGUI.FILE_GAME_CONNECT_BOT:
                 connectBot();
                 break;
-            case ClientGUI.FILE_GAME_OPEN:
+            case ClientGUI.FILE_GAME_LOAD:
                 loadGame();
                 break;
             case ClientGUI.FILE_GAME_QLOAD:

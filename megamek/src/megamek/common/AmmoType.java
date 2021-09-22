@@ -15889,8 +15889,12 @@ public class AmmoType extends EquipmentType {
      * @return true/false - null arguments or linked ammo bin for the weapon result in false
      */
     public static boolean canSwitchToAmmo(Mounted weapon, AmmoType otherAmmo) {
+        // no ammo switching if the weapon doesn't exist
+        // or if it doesn't have an ammo bin
+        // or the other ammo type doesn't exist
         if((weapon == null) ||
                 (weapon.getLinked() == null) ||
+                (!(weapon.getLinked().getType() instanceof AmmoType)) ||
                 (otherAmmo == null)) {
             return false;
         }

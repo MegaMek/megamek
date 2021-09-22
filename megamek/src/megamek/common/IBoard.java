@@ -589,7 +589,7 @@ public interface IBoard {
     public void setTheme(String newTheme);
     
     /** Rebuilds automatic terrains for the whole board. */
-    public void initializeAllAutomaticTerrain();
+    public void initializeAllAutomaticTerrain(boolean useInclines);
     
     /** Returns true when the given Coord c is on the edge of the board. */
     public boolean isOnBoardEdge(Coords c);
@@ -602,4 +602,5 @@ public interface IBoard {
     
     /** Returns the board's tags list. The list is unmodifiable. Use addTag and removeTag to change it. */
     public Set<String> getTags();
+
 }

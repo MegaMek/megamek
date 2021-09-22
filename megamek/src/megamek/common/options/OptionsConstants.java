@@ -477,7 +477,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_ADVANCED_MOVEMENT= "advanced_movement";  //$NON-NLS$
     public static final String ADVAERORULES_HEAT_BY_BAY= "heat_by_bay";  //$NON-NLS$
     public static final String ADVAERORULES_ATMOSPHERIC_CONTROL= "atmospheric_control";  //$NON-NLS$
-    public static final String ADVAERORULES_AMMO_EXPLOSIONS= "ammo_explosions";  //$NON-NLS$
+    public static final String ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS= "ammo_explosions";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_AA_FIRE= "stratops_aa_fire";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_AAA_LASER= "stratops_aaa_laser";  //$NON-NLS$
     public static final String ADVAERORULES_STRATOPS_ADV_POINTDEF= "stratops_adv_pointdef";  //$NON-NLS$

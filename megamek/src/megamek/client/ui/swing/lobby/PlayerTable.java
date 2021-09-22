@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,9 +77,9 @@ class PlayerTable extends JTable {
 
         result.append(guiScaledFontHTML());
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
-            result.append(" (\u259A This Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " This Bot)");
         } else if (lobby.client().bots.containsKey(player.getName())) {
-            result.append(" (\u259A Your Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " Your Bot)");
         } else if (lobby.localPlayer().equals(player)) {
             result.append(" (You)");
         }
@@ -129,13 +130,7 @@ class PlayerTable extends JTable {
 
         @Override
         public String getColumnName(int column) {
-            String result = "<HTML>" + UIUtil.guiScaledFontHTML();
-            switch (column) {
-            case (COL_PLAYER):
-                return result + Messages.getString("ChatLounge.colPlayer");
-            default:
-                return result + "Force";
-            }
+            return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString("ChatLounge.colPlayer");
         }
 
         @Override
@@ -176,7 +171,7 @@ class PlayerTable extends JTable {
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
                     || lobby.client().bots.containsKey(player.getName())) {
-                result.append("\u259A ");
+                result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());
             result.append("<BR>");
@@ -191,12 +186,25 @@ class PlayerTable extends JTable {
             // Deployment Position
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
-            result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+                result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            } else {
+                result.append("Start: None");
+            }
+            result.append("</FONT>");
+            
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
                 result.append(guiScaledFontHTML(uiYellow())); 
                 result.append(WARNING_SIGN + "</FONT>");
             }
             
+            // Player BV
+            result.append(UIUtil.DOT_SPACER);
+            result.append(guiScaledFontHTML());
+            result.append("BV: ");
+            result.append((player.getBV() != 0) ? NumberFormat.getIntegerInstance().format(player.getBV()) : "--");
+            result.append("</FONT>");
+
             // Initiative Mod
             if (player.getConstantInitBonus() != 0) {
                 result.append(UIUtil.DOT_SPACER);
@@ -204,6 +212,7 @@ class PlayerTable extends JTable {
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
                 result.append("Init: ").append(sign);
                 result.append(player.getConstantInitBonus());
+                result.append("</FONT>");
             }
 
             setText(result.toString());

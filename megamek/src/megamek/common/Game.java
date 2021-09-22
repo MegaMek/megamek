@@ -32,6 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import megamek.MegaMek;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -185,6 +186,14 @@ public class Game implements Serializable, IGame {
     private Forces forces = new Forces(this);
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
+    
+    /** 
+     * Stores princess behaviors for game factions. It does not indicate that a 
+     * faction is currently played by a bot, only that the most recent bot connected
+     * as that faction used these settings. Used to add the settings to savegames
+     * and allow restoring bots to their previous settings.
+     */
+    private Map<String, BehaviorSettings> botSettings = new HashMap<>();
 
     /**
      * Constructor
@@ -480,11 +489,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public IPlayer getPlayer(int id) {
-        if (IPlayer.PLAYER_NONE == id) {
-            return null;
-        }
-        return playerIds.get(Integer.valueOf(id));
+    public @Nullable IPlayer getPlayer(final int id) {
+        return (IPlayer.PLAYER_NONE == id) ? null : playerIds.get(id);
     }
 
     public void addPlayer(int id, IPlayer player) {
@@ -3696,6 +3702,16 @@ public class Game implements Serializable, IGame {
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
+    }
+    
+    @Override
+    public Map<String, BehaviorSettings> getBotSettings() {
+        return botSettings;
+    }
+    
+    @Override
+    public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
+        this.botSettings = botSettings;
     }
 
     /**

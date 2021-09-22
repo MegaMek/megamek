@@ -26,6 +26,8 @@ import javax.swing.JOptionPane;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.bot.princess.Princess;
 import megamek.client.generator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
@@ -426,19 +428,9 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        for (Entity e: entities) {
-            Client c = lobby.getLocalClient(e);
-            for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-                int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                e.getCrew().setGunnery(skills[0], i);
-                e.getCrew().setPiloting(skills[1], i);
-                if (e.getCrew() instanceof LAMPilot) {
-                    skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    ((LAMPilot) e.getCrew()).setGunneryAero(skills[0]);
-                    ((LAMPilot) e.getCrew()).setPilotingAero(skills[1]);
-                }
-            }
-            e.getCrew().sortRandomSkills();
+        for (final Entity entity : entities) {
+            final Client client = lobby.getLocalClient(entity);
+            client.getSkillGenerator().setRandomSkills(entity, true);
         }
         sendUpdates(entities);
     }
@@ -451,7 +443,7 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        for (Entity e: entities) {
+        for (Entity e : entities) {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
@@ -469,7 +461,7 @@ public class LobbyActions {
         if (!validateUpdate(entities)) {
             return;
         }
-        for (Entity e: entities) {
+        for (Entity e : entities) {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 e.getCrew().setNickname(RandomCallsignGenerator.getInstance().generate(), i);
             }
@@ -539,6 +531,16 @@ public class LobbyActions {
             }
         }
         sendUpdates(updateCandidates);
+    }
+    
+    /** Adds the given entities as strategic targets for the given local bot. */
+    void setPrioTarget(String botName, Collection<Entity> entities) {
+        Map<String, Client> bots = lobby.getClientgui().getBots();
+        if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
+            return;
+        }
+        BehaviorSettings behavior = ((Princess) bots.get(botName)).getBehaviorSettings();
+        entities.forEach(e -> behavior.addPriorityUnit(e.getId()));
     }
     
     /**

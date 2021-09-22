@@ -48,7 +48,7 @@ public class LargeSupportTank extends SupportTank {
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
-
+    
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;

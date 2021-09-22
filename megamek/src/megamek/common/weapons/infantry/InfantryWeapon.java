@@ -253,6 +253,8 @@ public abstract class InfantryWeapon extends Weapon {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT)
                 || (waa.getEntity(game).isSupportVehicle()
+                    && m.getLinked() != null
+                    && m.getLinked().getType() != null
                     && (((AmmoType) m.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, server);
         }

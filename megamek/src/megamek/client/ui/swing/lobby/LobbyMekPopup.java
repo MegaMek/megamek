@@ -96,6 +96,7 @@ class LobbyMekPopup {
     static final String LMP_BV = "BV";
     static final String LMP_VIEW = "VIEW";
     static final String LMP_MOVE_UP = "MOVE_UP";
+    static final String LMP_PRIO_TARGET = "PRIO_TARGET";
 
     private static final String NOINFO = "|-1";
     
@@ -173,6 +174,7 @@ class LobbyMekPopup {
         popup.add(deployMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
         popup.add(randomizeMenu(hasjoinedEntities, listener, seIds));
         popup.add(swapPilotMenu(hasjoinedEntities, joinedEntities, clientGui, listener));
+        popup.add(prioTargetMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
         
         if (optBurstMG || optLRMHotLoad) {
             popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, optLRMHotLoad, optBurstMG, listener, seIds));
@@ -367,6 +369,23 @@ class LobbyMekPopup {
                 .filter(e -> canLoadAll(e, entities))
                 .forEach(e -> menu.add(menuItem("Join " + e.getShortName(), 
                         LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+        }
+        menu.setEnabled(enabled && (menu.getItemCount() > 0));
+        return menu;
+    }
+    
+    /**
+     * Returns the "Priority Target" submenu, allowing to assign units as a strategic
+     * target to a local Princess bot.
+     */
+    private static JMenu prioTargetMenu(ClientGUI cg, boolean enabled, ActionListener listener,
+            Collection<Entity> entities) {
+
+        JMenu menu = new JMenu("Set Priority Target for");
+        if (enabled && !cg.getBots().isEmpty()) {
+            for (String bot : cg.getBots().keySet()) {
+                menu.add(menuItem(bot, LMP_PRIO_TARGET + "|" + bot + enToken(entities), enabled, listener));
+            }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;

@@ -86,6 +86,7 @@ public class LobbyMekPopupActions implements ActionListener {
         case LMP_HEAT:
         case LMP_HIDDEN:
         case LMP_STAND:
+        case LMP_PRIO_TARGET:
             if (!entities.isEmpty()) {
                 multiEntityAction(command, entities, info);
             }
@@ -316,6 +317,10 @@ public class LobbyMekPopupActions implements ActionListener {
                 
         case LMP_MOVE_UP:
             lobby.lobbyActions.forceMove(LobbyUtility.getForces(lobby.game(), info), entities, true);
+            break;
+            
+        case LMP_PRIO_TARGET:
+            lobby.lobbyActions.setPrioTarget(info, entities);
             break;
         }
     }

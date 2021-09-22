@@ -143,8 +143,8 @@ public class MMPreferences {
 
                 MegaMek.getLogger().info("Finished loading user preferences");
             }
-        } catch (FileNotFoundException e) {
-            MegaMek.getLogger().error("No user preferences file found: " + filePath, e);
+        } catch (FileNotFoundException ignored) {
+
         } catch (IOException e) {
             MegaMek.getLogger().error("Error reading from the user preferences file: " + filePath, e);
         }

@@ -145,3 +145,18 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Panther is one of the BattleMechs that is most iconic of the Draconis Combine. The design was originally commissioned in 2739 at the behest of the Star League to provide fire support for other light, fast-moving 'Mech units, with the first models going to the SLDF to fight bandits along the Periphery border.
+
+capabilities:Luckily the Panther had also proved itself to be quite hardy, sporting six and a half tons of armor, and maneuverable, thanks to four Lexington Lifter jump jets split between both legs for a total jumping distance of 120 meters, thus an attempt to fix its one deficiency was made by League engineers by replacing the laser with a Lord's Light Particle Projection Cannon. The swap in weaponry, along with a superior armor composite, gave the PNT-9R Panther a new lease on life, such that it has seen over three centuries of continuous use since its introduction.
+
+
+history:The original PNT-8Z model underwent a revision after the disastrous Battle of St. John in 2759, when it was revealed that its main weapon, a Tronel Large Laser, was inefficient in both range and firepower for the immense waste heat generated.  The Draconis Combine inherited Alshain Weapons' Panther factory on New Oslo when the Star League dissolved and quickly put the production line to work building new Panthers for the DCMS. Their first large-scale use by Kurita warriors came during the First Succession War in the battle for Quentin, when the 2nd Legion of Vega used their Panthers to severely maul the slower, heavier 'Mechs of the 42nd Avalon Hussars while avoiding return fire. Throughout the Succession Wars, the Combine was the only significant user of the Panther, often pairing it with the Jenner in a deadly combination of speed and firepower; though the other Successor States employed Panthers in smaller numbers, these were either the result of battlefield salvage or older League-era 8Z models. The Panther also proved itself a deadly urban combatant, using its mobility to easily navigate the more restricted space of a city environment and take out heavier opponents from rooftop sniping perches with its main weapon. Lyran MechWarriors eventually took to nicknaming the 'Mech the "Alley Cat" for its propensity to conduct dark alley-way "muggings. Demand for the Panther continued to increase, forcing Alshain to build a secondary factory on Jarett to keep up. In an ironic twist both factories fell within the borders of the Free Rasalhague Republic following its creation in 3034, transferring ownership to the new state, and soon the Panther became a mainstay of the KungsArmé. The situation did not last long however following the invasion of the Clans, and both planets were swiftly conquered by Clan Ghost Bear. While Alshain Weapons crash-built a new line on Tok Do in 3053, they could not maintain their pre-invasion production levels and focused on spare parts and refit kits instead. Eventually Wakazashi Enterprises bought the production license for the Panther and began rolling out new variants from its New Samarkand factory. These have gone on to serve in every DCMS unit since, including the bloody years of the Jihad.
+
+manufacturer:Field Refit
+primaryfactory:Field Refit
+systemmanufacturer:CHASSIS:Alshain 56A-Carrier
+systemmanufacturer:ENGINE:Leenex 140
+systemmanufacturer:ARMOR:Maximillian 42
+systemmanufacturer:JUMPJET:Lexington Ltd. Lifters
+systemmanufacturer:COMMUNICATIONS:Sipher CommCon SCU-4
+systemmanufacturer:TARGETING:Cat’s Eyes 5

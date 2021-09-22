@@ -73,6 +73,8 @@ public class Infantry extends Entity {
             | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
             | TRENCH_ENGINEERS;
 
+    public static final double PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
+    
     /**
      * squad size and number
      */
@@ -2275,11 +2277,26 @@ public class Infantry extends Entity {
             return 0;
         }
 
-        double damage = primaryW.getInfantryDamage() * (squadsize - secondn);
+        // per 09/2021 errata, primary infantry weapon damage caps out at .6
+        double adjustedDamage = primaryW.getInfantryDamage() > PRIMARY_WEAPON_DAMAGE_CAP ? 
+                PRIMARY_WEAPON_DAMAGE_CAP : primaryW.getInfantryDamage();
+        double damage = adjustedDamage * (squadsize - secondn);
         if(null != secondW) {
             damage += secondW.getInfantryDamage() * secondn;
         }
         return damage/squadsize;
+    }
+    
+    public boolean primaryWeaponDamageCapped() {
+        return getPrimaryWeaponDamage() > PRIMARY_WEAPON_DAMAGE_CAP;
+    }
+    
+    public double getPrimaryWeaponDamage() {
+        if (null == primaryW) {
+            return 0;
+        }
+        
+        return primaryW.getInfantryDamage();
     }
 
     public boolean isSquad() {

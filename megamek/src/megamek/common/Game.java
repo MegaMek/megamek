@@ -204,6 +204,11 @@ public class Game implements Serializable, IGame {
         externalGameId = value;
     }
 
+    @Override
+    public Version getVersion() {
+        return version;
+    }
+
     public IBoard getBoard() {
         return board;
     }

@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -170,6 +171,8 @@ public interface IGame {
     abstract int getExternalGameId();
 
     abstract void setExternalGameId(int value);
+
+    Version getVersion();
 
     /**
      * @return the currently active context-object for victorycondition

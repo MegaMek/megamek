@@ -85,16 +85,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.KeyBindParser;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Player;
-import megamek.common.QuirksHandler;
-import megamek.common.WeaponOrderHandler;
+import megamek.common.*;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -547,10 +538,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        IGame newGame = null;
+        Game newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
-            newGame = (IGame) xstream.fromXML(gzi);
+            newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
@@ -558,12 +549,18 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        Vector<String> playerNames = null;
-        if (newGame != null) {
-            playerNames = new Vector<>();
-            for (IPlayer player : newGame.getPlayersVector()) {
-                playerNames.add(player.getName());
-            }
+        if (!MegaMekConstants.VERSION.is(newGame.getVersion())) {
+            final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
+                    newGame.getVersion(), MegaMekConstants.VERSION);
+            JOptionPane.showMessageDialog(frame, message,
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(message);
+            return;
+        }
+
+        Vector<String> playerNames = new Vector<>();
+        for (IPlayer player : newGame.getPlayersVector()) {
+            playerNames.add(player.getName());
         }
 
         HostDialog hd = new HostDialog(frame, playerNames);

@@ -22,6 +22,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.utils.MegaMekXmlUtil;
 
+import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
@@ -201,7 +202,8 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
                     ((text == null) ? "a null string" : text));
             MegaMek.getLogger().fatal(message);
-            // TODO : Can I have a visual return?
+            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -213,7 +215,8 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Version text %s is in an illegal version format. Versions should be in the format 'release.major.minor-SNAPSHOT', with the snapshot being an optional inclusion. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             MegaMek.getLogger().fatal(message);
-            // TODO : Can I have a visual return?
+            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -224,7 +227,8 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Failed to parse the release value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             MegaMek.getLogger().fatal(message, e);
-            // TODO : Can I have a visual return?
+            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -235,7 +239,8 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Failed to parse the major value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             MegaMek.getLogger().fatal(message, e);
-            // TODO : Can I have a visual return?
+            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -246,7 +251,8 @@ public final class Version implements Comparable<Version>, Serializable {
                     "Failed to parse the minor value from Version text %s. This may lead to severe issues that cannot be otherwise explained.",
                     text);
             MegaMek.getLogger().fatal(message, e);
-            // TODO : Can I have a visual return?
+            JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 

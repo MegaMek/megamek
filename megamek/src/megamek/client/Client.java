@@ -1390,7 +1390,7 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
             final Version serverVersion = (Version) c.getObject(0);
             final String message = String.format(
-                    "Failed to connect to server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
+                    "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
                     getHost(), serverVersion, MegaMekConstants.VERSION);
             JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
                     JOptionPane.ERROR_MESSAGE);

@@ -538,10 +538,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        Game newGame;
+        IGame newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
-            newGame = (Game) xstream.fromXML(gzi);
+            newGame = (IGame) xstream.fromXML(gzi);
         } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),

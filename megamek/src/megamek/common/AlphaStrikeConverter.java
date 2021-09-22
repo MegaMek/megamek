@@ -116,6 +116,11 @@ public final class AlphaStrikeConverter {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5 } 
     };
 
+    private final static int[] TROOP_FACTOR = {
+            0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
+            13, 14, 15, 16, 16, 17, 17, 17, 18, 18
+    };
+
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
     private static Entity getUndamagedEntity(Entity entity) {
         try {
@@ -313,7 +318,7 @@ public final class AlphaStrikeConverter {
 
     private static LinkedHashMap<String, Integer> getMovementForInfantry(Entity entity) {
         var result = new LinkedHashMap<String, Integer>();
-        int walkingMP = ((Infantry)entity).getWalkMP(false, true, true);
+        int walkingMP = entity.getWalkMP(false, true, true);
         int jumpingMP = entity.getJumpMP();
         if (entity instanceof BattleArmor) {
             walkingMP = ((BattleArmor)entity).getWalkMP(true, true, true, true, true);
@@ -465,15 +470,6 @@ public final class AlphaStrikeConverter {
             return (int)Math.round(armorPoints * 0.33);
         }
 
-//        if (entity.getEntityType() == Entity.ETYPE_INFANTRY) {
-//            double divisor = ((Infantry) entity).calcDamageDivisor();
-//            if (((Infantry) entity).isMechanized()) {
-//                divisor /= 2.0;
-//            }
-//
-//            armorPoints *= divisor;
-//        }
-        //System.out.println(armorPoints);
         return (int) Math.round(armorPoints / 30);
     }
     
@@ -597,11 +593,10 @@ public final class AlphaStrikeConverter {
             if (entity.getEngine().hasFlag(Engine.LARGE_ENGINE)) {
                 switch (entity.getEngine().getEngineType()) {
                     case Engine.XL_ENGINE:
+                    case Engine.LIGHT_ENGINE:
                         return 4;
                     case Engine.XXL_ENGINE:
                         return 8;
-                    case Engine.LIGHT_ENGINE:
-                        return 4;
                     default:
                         return 2;
                 }
@@ -1040,36 +1035,6 @@ public final class AlphaStrikeConverter {
 
     }
 
-    protected static final int[] TROOP_FACTOR = {
-            0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
-            7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
-            13, 14, 15, 16, 16, 17, 17, 17, 18, 18
-    };
-//
-//    @Override
-//    protected double getConvInfantryStandardDamage(int range, Infantry inf) {
-//        if (inf.getPrimaryWeapon() == null) {
-//            return inf.getDamagePerTrooper() * TROOP_FACTOR[Math.min(inf.getShootingStrength(), 30)]
-//                    / 10.0;
-//        } else {
-//            return 0;
-//        }
-//    }
-//
-//    @Override
-//    protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
-//        double dam = 0;
-//        if (apmMount) {
-//            if (range == 0) {
-//                dam = AP_MOUNT_DAMAGE;
-//            }
-//        } else {
-//            dam = weapon.getBattleForceDamage(range);
-//        }
-//        return dam * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);
-//    }
-//
-
 
     private static void finalizeSpecials(Entity entity, AlphaStrikeElement element) {
         // For MHQ, the values may contain decimals, but the the final MHQ value is rounded down to an int.
@@ -1237,12 +1202,12 @@ public final class AlphaStrikeConverter {
                 element.addSPA(CASEP);
             } else if (m.getType().hasFlag(MiscType.F_CASEII) && !element.isAnyTypeOf(AF, CF, CI, BA)) {
                 element.addSPA(CASEII);
-            } else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)
-                    || m.getType().hasFlag(MiscType.F_SRCS)
+            } else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                element.addSPA(DRO);
+            } else if (m.getType().hasFlag(MiscType.F_SRCS)
                     || m.getType().hasFlag(MiscType.F_SASRCS)
                     || m.getType().hasFlag(MiscType.F_CASPAR)
                     || m.getType().hasFlag(MiscType.F_CASPARII)) {
-                element.addSPA(DRO);
                 element.addSPA(RBT);
             } else if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
                 element.addSPA(DCC, (int) m.getSize());

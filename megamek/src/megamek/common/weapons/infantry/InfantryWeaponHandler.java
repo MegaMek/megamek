@@ -119,8 +119,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         
         // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
         if (target.isConventionalInfantry() && 
-                wtype.hasFlag(WeaponType.F_INF_BURST) || 
-                (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped())) {
+                (wtype.hasFlag(WeaponType.F_INF_BURST) || 
+                (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {

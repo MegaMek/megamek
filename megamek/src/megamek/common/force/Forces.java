@@ -28,6 +28,7 @@ import megamek.common.icons.Camouflage;
 import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -304,9 +305,9 @@ public final class Forces implements Serializable {
     public static List<Force> parseForceString(Entity entity) {
         final List<Force> forces = new ArrayList<>();
         final String a = entity.getForceString();
-        final String[] b = a.split("\\|\\|");
+        final String[] b = a.split(Pattern.quote("\\"));
         for (final String forceText : b) {
-            final String[] force = forceText.split("\\|");
+            final String[] force = forceText.split(Pattern.quote("|"));
             if ((force.length != 2) && (force.length != 4)) {
                 MegaMek.getLogger().error("Cannot parse " + forceText + " into a force! Ending parsing forces for " + entity.getShortName());
                 break;

@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
@@ -519,19 +521,19 @@ public class EntityListFile {
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), "UTF-8"));
+                new FileOutputStream(file), StandardCharsets.UTF_8));
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<unit version=\"" + MegaMek.VERSION + "\" >");
+        output.write("<unit version=\"" + MegaMekConstants.VERSION + "\" >");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
 
         try {
             writeEntityList(output, list);
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             throw exception;
         }
 
@@ -569,13 +571,13 @@ public class EntityListFile {
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), "UTF-8"));
+                new FileOutputStream(file), StandardCharsets.UTF_8));
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<record version=\"" + MegaMek.VERSION + "\" >");
+        output.write("<record version=\"" + MegaMekConstants.VERSION + "\" >");
         
         ArrayList<Entity> living = new ArrayList<Entity>();
         ArrayList<Entity> allied = new ArrayList<Entity>();

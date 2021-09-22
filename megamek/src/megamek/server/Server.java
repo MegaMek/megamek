@@ -55,6 +55,7 @@ import java.util.zip.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
@@ -542,7 +543,7 @@ public class Server implements Runnable {
      */
     private String createMotd() {
         StringBuilder motd = new StringBuilder();
-        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMek.VERSION)
+        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMekConstants.VERSION)
                 .append(", build date ");
         if (MegaMek.TIMESTAMP > 0L) {
             motd.append(new Date(MegaMek.TIMESTAMP).toString());
@@ -735,16 +736,16 @@ public class Server implements Runnable {
         String serverChecksum = MegaMek.getMegaMekSHA256();
         StringBuilder buf = new StringBuilder();
         boolean needs = false;
-        if (!version.equals(MegaMek.VERSION)) {
-            buf.append("Client/Server version mismatch. Server reports: ").append(MegaMek.VERSION)
+        if (!version.equals(MegaMekConstants.VERSION)) {
+            buf.append("Client/Server version mismatch. Server reports: ").append(MegaMekConstants.VERSION)
                     .append(", Client reports: ").append(version);
             MegaMek.getLogger().error("Client/Server Version Mismatch -- Client: " 
-                    + version + " Server: " + MegaMek.VERSION);
+                    + version + " Server: " + MegaMekConstants.VERSION);
             needs = true;
         }
         // print a message indicating client doesn't have jar file
         if (clientChecksum == null) {
-            if (!version.equals(MegaMek.VERSION)) {
+            if (!version.equals(MegaMekConstants.VERSION)) {
                 buf.append(System.lineSeparator()).append(System.lineSeparator());
             }
             buf.append("Client Checksum is null. Client may not have a jar file");
@@ -752,7 +753,7 @@ public class Server implements Runnable {
             needs = true;
         // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
-            if (!version.equals(MegaMek.VERSION)) {
+            if (!version.equals(MegaMekConstants.VERSION)) {
                 buf.append(System.lineSeparator()).append(System.lineSeparator());
             }
             buf.append("Server Checksum is null. Server may not have a jar file");
@@ -760,7 +761,7 @@ public class Server implements Runnable {
             needs = true;
         // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
-            if (!version.equals(MegaMek.VERSION)) {
+            if (!version.equals(MegaMekConstants.VERSION)) {
                 buf.append(System.lineSeparator());
                 buf.append(System.lineSeparator());
             }
@@ -7498,7 +7499,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7545,7 +7546,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7571,7 +7572,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -35772,7 +35773,7 @@ public class Server implements Runnable {
                         && (game.getPhase() != Phase.PHASE_UNKNOWN)) {
                     content += "&close=yes";
                 }
-                content += "&version=" + MegaMek.VERSION;
+                content += "&version=" + MegaMekConstants.VERSION;
                 if (isPassworded()) {
                     content += "&pw=yes";
                 }

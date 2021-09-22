@@ -17,6 +17,7 @@ package megamek.client;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
@@ -1381,11 +1382,11 @@ public class Client implements IClientCommandHandler {
                      new Object[] { name, isBot() }
                  ));
             Object[] versionData = new Object[2];
-            versionData[0] = MegaMek.VERSION;
+            versionData[0] = MegaMekConstants.VERSION;
             versionData[1] = MegaMek.getMegaMekSHA256();
             send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
             if (this instanceof Princess) {
-                ((Princess)this).sendPrincessSettings();
+                ((Princess) this).sendPrincessSettings();
             }
             break;
         case Packet.COMMAND_SERVER_CORRECT_NAME:

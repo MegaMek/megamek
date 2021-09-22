@@ -67,6 +67,7 @@ import javax.swing.filechooser.FileFilter;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -236,7 +237,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION,
+                    Messages.getString("MegaMek.welcome.title") + MegaMekConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
@@ -275,7 +276,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION,
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250,15));
         if (skinSpec.fontColors.size() > 0) {

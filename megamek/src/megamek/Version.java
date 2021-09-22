@@ -93,7 +93,6 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if this version is higher than the version passed
      *
      * @param other The version we want to see if it is lower than this version
-     *
      * @return true if this is higher than checkVersion
      */
     public boolean isHigherThan(final String other) {
@@ -104,7 +103,6 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if the version passed is less than this Version object.
      *
      * @param other The version we want to see if is less than this version
-     *
      * @return true if checkVersion is less than this Version object
      */
     public boolean isHigherThan(final Version other) {
@@ -115,7 +113,6 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if this version is lower than the version passed
      *
      * @param other The version we want to see if it is higher than this version.
-     *
      * @return true if this is lower than checkVersion
      */
     public boolean isLowerThan(final String other) {
@@ -126,7 +123,6 @@ public final class Version implements Comparable<Version>, Serializable {
      * Use this method to determine if this version is lower than the version passed
      *
      * @param other The version we want to see if it is higher than this version.
-     *
      * @return true if this is lower than checkVersion
      */
     public boolean isLowerThan(final Version other) {

@@ -56,6 +56,7 @@ import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
 import megamek.MegaMekConstants;
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
@@ -649,9 +650,8 @@ public class Server implements Runnable {
     /**
      * Sent when a client attempts to connect.
      */
-    void greeting(int cn) {
-        // send server greeting -- client should reply with client info.
-        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_GREETING));
+    void clientVersionCheck(int cn) {
+        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_VERSION_CHECK));
     }
 
     /**
@@ -730,61 +730,53 @@ public class Server implements Runnable {
         return oldName;
     }
 
-    private void receivePlayerVersion(Packet packet, int connId) {
-        String version = (String) packet.getObject(0);
-        String clientChecksum = (String) packet.getObject(1);
-        String serverChecksum = MegaMek.getMegaMekSHA256();
-        StringBuilder buf = new StringBuilder();
-        boolean needs = false;
-        if (!version.equals(MegaMekConstants.VERSION)) {
-            buf.append("Client/Server version mismatch. Server reports: ").append(MegaMekConstants.VERSION)
-                    .append(", Client reports: ").append(version);
-            MegaMek.getLogger().error("Client/Server Version Mismatch -- Client: " 
-                    + version + " Server: " + MegaMekConstants.VERSION);
-            needs = true;
+    private boolean receivePlayerVersion(Packet packet, int connId) {
+        final Version version = (Version) packet.getObject(0);
+        if (!MegaMekConstants.VERSION.is(version)) {
+            final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
+                    version, MegaMekConstants.VERSION);
+            MegaMek.getLogger().error(message);
+
+            final IPlayer player = getPlayer(connId);
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
+            return false;
         }
+
+        final String clientChecksum = (String) packet.getObject(1);
+        final String serverChecksum = MegaMek.getMegaMekSHA256();
+        final String message;
+
         // print a message indicating client doesn't have jar file
         if (clientChecksum == null) {
-            if (!version.equals(MegaMekConstants.VERSION)) {
-                buf.append(System.lineSeparator()).append(System.lineSeparator());
-            }
-            buf.append("Client Checksum is null. Client may not have a jar file");
-            MegaMek.getLogger().info("Client does not have a jar file");
-            needs = true;
+            message = "Client Checksum is null. Client may not have a jar file";
+            MegaMek.getLogger().info(message);
         // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
-            if (!version.equals(MegaMekConstants.VERSION)) {
-                buf.append(System.lineSeparator()).append(System.lineSeparator());
-            }
-            buf.append("Server Checksum is null. Server may not have a jar file");
-            MegaMek.getLogger().info("Server does not have a jar file");
-            needs = true;
+            message = "Server Checksum is null. Server may not have a jar file";
+            MegaMek.getLogger().info(message);
         // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
-            if (!version.equals(MegaMekConstants.VERSION)) {
-                buf.append(System.lineSeparator());
-                buf.append(System.lineSeparator());
-            }
-            buf.append("Client/Server checksum mismatch. Server reports: ").append(serverChecksum)
-                    .append(", Client reports: ").append(clientChecksum);
-            MegaMek.getLogger().error("Client/Server Checksum Mismatch -- Client: " + clientChecksum 
-                    + " Server: " + serverChecksum);
-
-            needs = true;
+            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
+                    serverChecksum, clientChecksum);
+            MegaMek.getLogger().warning(message);
+        } else {
+            message = "";
         }
 
         // Now, if we need to, send message!
-        if (needs) {
-            IPlayer player = getPlayer(connId);
-            if (null != player) {
-                sendServerChat("For " + player.getName() + " Server reports:"
-                        + System.lineSeparator()
-                        + buf.toString());
-            }
-        } else {
+        if (message.isEmpty()) {
             MegaMek.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum (" 
                     + clientChecksum + ") matched");
+        } else {
+            IPlayer player = getPlayer(connId);
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
         }
+
+        return true;
     }
 
     /**
@@ -31296,7 +31288,13 @@ public class Server implements Runnable {
         // act on it
         switch (packet.getCommand()) {
             case Packet.COMMAND_CLIENT_VERSIONS:
-                receivePlayerVersion(packet, connId);
+                final boolean valid = receivePlayerVersion(packet, connId);
+                if (valid) {
+                    sendToPending(connId, new Packet(Packet.COMMAND_SERVER_GREETING));
+                } else {
+                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MegaMekConstants.VERSION));
+                    getPendingConnection(connId).close();
+                }
                 break;
             case Packet.COMMAND_CLOSE_CONNECTION:
                 // We have a client going down!
@@ -31597,7 +31595,7 @@ public class Server implements Runnable {
                     newConnThread.start();
                     connectionHandlers.put(id, ch);
 
-                    greeting(id);
+                    clientVersionCheck(id);
                     ConnectionWatchdog w = new ConnectionWatchdog(this, id);
                     watchdogTimer.schedule(w, 1000, 500);
                 }

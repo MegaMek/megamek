@@ -30,12 +30,12 @@ import java.util.Map;
 public abstract class AbstractIconChooserTree extends JTree {
     //region Constructors
     protected AbstractIconChooserTree() {
-        this(TreeSelectionModel.SINGLE_TREE_SELECTION, true);
+        this(true);
     }
 
-    protected AbstractIconChooserTree(final int selectionModel, final boolean initialize) {
+    protected AbstractIconChooserTree(final boolean initialize) {
         super();
-        getSelectionModel().setSelectionMode(selectionModel);
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         if (initialize) {
             setModel(createTreeModel());

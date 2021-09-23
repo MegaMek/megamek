@@ -135,6 +135,12 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         setLayout(new BorderLayout());
         add(searchPanel(), BorderLayout.PAGE_START);
         add(splitPane, BorderLayout.CENTER);
+
+        finalizeInitialization();
+    }
+
+    protected void finalizeInitialization() {
+
     }
 
     /** Constructs a functions panel containing the search bar. */
@@ -248,6 +254,13 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      */
     public @Nullable AbstractIcon getSelectedItem() {
         return getImageList().getSelectedValue();
+    }
+
+    /**
+     * Clears the selected AbstractIcon(s)
+     */
+    public void clearSelectedItems() {
+        getImageList().clearSelection();
     }
 
     /**

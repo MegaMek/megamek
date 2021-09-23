@@ -17,11 +17,9 @@ package megamek.client.ui.lists;
 
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
 /**
@@ -51,6 +49,32 @@ public class ImageList extends JList<AbstractIcon> {
         setCellRenderer(renderer);
     }
     //endregion Constructors
+
+    public void setSelectedValues(final AbstractIcon... icons) {
+        clearSelection();
+        for (final AbstractIcon icon : icons) {
+            final int index = getIndex(icon);
+            if (index >= 0) {
+                addSelectionInterval(index, index);
+            }
+        }
+    }
+
+    public int getIndex(final @Nullable AbstractIcon icon) {
+        if (icon == null) {
+            return -1;
+        } else if (getModel() instanceof DefaultListModel) {
+            return ((DefaultListModel<AbstractIcon>) getModel()).indexOf(icon);
+        }
+
+        for (int i = 0; i < getModel().getSize(); i++) {
+            if (icon.equals(getModel().getElementAt(i))) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
     /** 
      * Updates the list to show (only) the given icons.

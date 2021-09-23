@@ -359,17 +359,16 @@ public final class Forces implements Serializable {
         return (owner != null) && !owner.isEnemyOf(player);
     }
     
-    public String forceStringFor(Entity entity) {
-        List<Force> ancestors = forceChain(entity);
-        String result = "";
-        for (Force ancestor: ancestors) {
-            result += "\\" + ancestor.getName() + "|" + ancestor.getId();
+    public String forceStringFor(final Entity entity) {
+        final StringBuilder result = new StringBuilder();
+        for (final Force ancestor : forceChain(entity)) {
+            result.append(ancestor.getName()).append("|").append(ancestor.getId());
+            if (!ancestor.getCamouflage().isDefault()) {
+                result.append("|").append(ancestor.getCamouflage().getCategory()).append("|").append(ancestor.getCamouflage().getFilename());
+            }
+            result.append("||");
         }
-        // Remove the backslash at the start
-        if (result.length() > 0) {
-            result = result.substring(1);
-        }
-        return result;
+        return result.toString();
     }
     
     /** 

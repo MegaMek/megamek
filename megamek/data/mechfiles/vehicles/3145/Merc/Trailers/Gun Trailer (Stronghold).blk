@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,12 +24,16 @@ Gun Trailer
 3092
 </year>
 
+<originalBuildYear>
+3092
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
 
 <motion_type>
-Wheeled
+Tracked
 </motion_type>
 
 <transporters>
@@ -41,7 +45,7 @@ troopspace:4.0
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor>
@@ -70,8 +74,8 @@ Hitch
 
 <Rear Equipment>
 Machine Gun
-ISVehicularGrenadeLauncher (R)
-ISVehicularGrenadeLauncher (R)
+ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher
 </Rear Equipment>
 
 <Turret Equipment>
@@ -86,6 +90,11 @@ TRO 3145 Mercenaries - Early Republic
 35.0
 </tonnage>
 
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
 <trailer>
 1
 </trailer>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -40,7 +40,7 @@ Aerodyne
 </transporters>
 
 <SafeThrust>
-5
+8
 </SafeThrust>
 
 <cockpit_type>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <armor>
@@ -113,3 +113,4 @@ TRO 3145 Federated Suns - Early Republic
 <tonnage>
 55.0
 </tonnage>
+

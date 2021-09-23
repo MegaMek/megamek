@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -46,6 +46,10 @@ Aerodyne
 <cockpit_type>
 0
 </cockpit_type>
+
+<vstol>
+1
+</vstol>
 
 <heatsinks>
 10
@@ -92,6 +96,7 @@ ISTAG
 IS Vehicular Stealth
 IS Vehicular Stealth
 IS Vehicular Stealth
+IS Vehicular Stealth
 ISGuardianECMSuite
 </Aft Equipment>
 
@@ -108,3 +113,4 @@ TRO 3145 Capellan Confederation - Early Republic
 <tonnage>
 25.0
 </tonnage>
+

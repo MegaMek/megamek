@@ -471,9 +471,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public synchronized void setEnabled(String command, boolean enabled) {
         if (itemMap.containsKey(command)) {
             itemMap.get(command).setEnabled(enabled);
-        } else {
-            MegaMek.getLogger().error("ActionCommand " + command + " not recognized.");
-            return;
         }
     }
 

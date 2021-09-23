@@ -18,7 +18,11 @@
  */
 package megamek.client.ui.panels;
 
+import megamek.client.ui.baseComponents.AbstractPanel;
 import megamek.client.ui.lists.ImageList;
+import megamek.client.ui.preferences.JSplitPanePreference;
+import megamek.client.ui.preferences.JToggleButtonPreference;
+import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -39,7 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public abstract class AbstractIconChooser extends JPanel implements TreeSelectionListener {
+public abstract class AbstractIconChooser extends AbstractPanel implements TreeSelectionListener {
     //region Variable Declarations
     private AbstractIcon originalIcon;
 
@@ -60,15 +64,19 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Variable Declarations
 
     //region Constructors
-    public AbstractIconChooser(final @Nullable JTree tree, final @Nullable AbstractIcon icon) {
-        this(tree, icon, true);
+    protected AbstractIconChooser(final JFrame frame, final String name, final @Nullable JTree tree,
+                                  final @Nullable AbstractIcon icon) {
+        this(frame, name, tree, icon, true);
     }
 
-    public AbstractIconChooser(final @Nullable JTree tree, final @Nullable AbstractIcon icon,
-                               final boolean initialize) {
+    protected AbstractIconChooser(final JFrame frame, final String name, final @Nullable JTree tree,
+                                  final @Nullable AbstractIcon icon, final boolean initialize) {
+        super(frame, name);
         setOriginalIcon(icon);
+        setTreeCategories(tree);
+
         if (initialize) {
-            initialize(tree);
+            initialize();
             setSelection(icon);
         }
     }
@@ -113,7 +121,8 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     //endregion Getters/Setters
 
     //region Initialization
-    protected void initialize(final @Nullable JTree tree) {
+    @Override
+    protected void initialize() {
         // Set up the image list (right panel)
         setImageList(new ImageList(new AbstractIconRenderer()));
         JScrollPane scrpImages = new JScrollPane(getImageList());
@@ -121,7 +130,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         scrpImages.setMinimumSize(new Dimension(500, 240));
 
         // set up the directory tree (left panel)
-        setTreeCategories(tree);
         if (getTreeCategories() != null) {
             getTreeCategories().addTreeSelectionListener(this);
         }
@@ -139,9 +147,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         finalizeInitialization();
     }
 
-    protected void finalizeInitialization() {
-
-    }
 
     /** Constructs a functions panel containing the search bar. */
     private JPanel searchPanel() {
@@ -213,6 +218,17 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         for (Iterator<String> iconNames = getDirectory().getItemNames(category); iconNames.hasNext(); ) {
             icons.add(createIcon(category, iconNames.next()));
         }
+    }
+
+    protected void finalizeInitialization() {
+        setPreferences();
+    }
+
+    @Override
+    protected void setCustomPreferences(final PreferencesNode preferences) {
+        super.setCustomPreferences(preferences);
+        preferences.manage(new JSplitPanePreference(getSplitPane()));
+        preferences.manage(new JToggleButtonPreference(getChkIncludeSubdirectories()));
     }
     //endregion Initialization
 

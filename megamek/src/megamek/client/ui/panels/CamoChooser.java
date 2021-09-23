@@ -26,6 +26,7 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.AbstractDirectory;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +36,9 @@ public class CamoChooser extends AbstractIconChooser {
     //endregion Variable Declarations
 
     //region Constructors
-    public CamoChooser(final @Nullable AbstractIcon camouflage, final boolean canHaveIndividualCamouflage) {
-        super(new CamoChooserTree(), camouflage);
+    public CamoChooser(final JFrame frame, @Nullable AbstractIcon camouflage,
+                       final boolean canHaveIndividualCamouflage) {
+        super(frame, "CamouflageChooser", new CamoChooserTree(), camouflage);
         setCanHaveIndividualCamouflage(canHaveIndividualCamouflage);
     }
     //endregion Constructors

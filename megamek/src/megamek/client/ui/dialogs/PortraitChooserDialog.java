@@ -37,7 +37,7 @@ public class PortraitChooserDialog extends AbstractIconChooserDialog {
     //region Constructors
     public PortraitChooserDialog(final JFrame frame, final @Nullable AbstractIcon icon) {
         super(frame, "PortraitChooserDialog","PortraitChoiceDialog.select_portrait",
-                new PortraitChooser(icon), true);
+                new PortraitChooser(frame, icon), true);
     }
     //endregion Constructors
 

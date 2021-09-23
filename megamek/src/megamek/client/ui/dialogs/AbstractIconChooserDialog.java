@@ -128,13 +128,6 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
 
         return panel;
     }
-
-    @Override
-    protected void setCustomPreferences(final PreferencesNode preferences) {
-        super.setCustomPreferences(preferences);
-        preferences.manage(new JSplitPanePreference(getChooser().getSplitPane()));
-        preferences.manage(new JToggleButtonPreference(getChooser().getChkIncludeSubdirectories()));
-    }
     //endregion Initialization
 
     //region Button Actions

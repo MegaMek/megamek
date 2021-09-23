@@ -45,7 +45,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     public CamoChooserDialog(final JFrame frame, final @Nullable AbstractIcon camouflage,
                              final boolean canHaveIndividualCamouflage) {
         super(frame, "CamoChooserDialog", "CamoChoiceDialog.select_camo_pattern",
-                new CamoChooser(camouflage, canHaveIndividualCamouflage), true);
+                new CamoChooser(frame, camouflage, canHaveIndividualCamouflage), true);
     }
     //endregion Constructors
 

@@ -25,10 +25,12 @@ import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.AbstractDirectory;
 
+import javax.swing.*;
+
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
-    public PortraitChooser(final AbstractIcon icon) {
-        super(new PortraitChooserTree(), icon);
+    public PortraitChooser(final JFrame frame, final AbstractIcon icon) {
+        super(frame, "PortraitChooser", new PortraitChooserTree(), icon);
     }
     //endregion Constructors
 

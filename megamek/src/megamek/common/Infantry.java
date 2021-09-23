@@ -2278,8 +2278,7 @@ public class Infantry extends Entity {
         }
 
         // per 09/2021 errata, primary infantry weapon damage caps out at .6
-        double adjustedDamage = primaryW.getInfantryDamage() > PRIMARY_WEAPON_DAMAGE_CAP ? 
-                PRIMARY_WEAPON_DAMAGE_CAP : primaryW.getInfantryDamage();
+        double adjustedDamage = Math.min(PRIMARY_WEAPON_DAMAGE_CAP, primaryW.getInfantryDamage());
         double damage = adjustedDamage * (squadsize - secondn);
         if(null != secondW) {
             damage += secondW.getInfantryDamage() * secondn;

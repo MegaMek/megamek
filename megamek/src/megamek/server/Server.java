@@ -25505,7 +25505,7 @@ public class Server implements Runnable {
                     Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
                         //Bay Weapons
@@ -29903,17 +29903,17 @@ public class Server implements Runnable {
 
             // Restore forces from MULs or other external sources from the forceString, if any
             if (entity.getForceString().length() > 0) {
-                ArrayList<Force> forceList = Forces.parseForceString(entity);
+                List<Force> forceList = Forces.parseForceString(entity);
                 int realId = Force.NO_FORCE;
                 boolean topLevel = true;
 
                 for (Force force: forceList) {
                     if (!forceMapping.containsKey(force.getId())) {
                         if (topLevel) {
-                            realId = game.getForces().addTopLevelForce(force.getName(), entity.getOwner());
+                            realId = game.getForces().addTopLevelForce(force, entity.getOwner());
                         } else {
                             Force parent = game.getForces().getForce(realId);
-                            realId = game.getForces().addSubForce(force.getName(), parent);
+                            realId = game.getForces().addSubForce(force, parent);
                         }
                         forceMapping.put(force.getId(), realId);
                     } else {

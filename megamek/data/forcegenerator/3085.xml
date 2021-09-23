@@ -10877,7 +10877,7 @@
 		</model>
 	</chassis>
 	<chassis name='Moltke MBT' unitType='Tank'>
-		<availability>CC:4,MOC:4,OP:4,PR:4,DoO:4,DO:4,MERC:4,DTA:4,RF:4,PG:4,TP:4,DA:6,RCM:4,RFS:4</availability>
+		<availability>CC:4,MOC:4,OP:4,PR:4,DoO:4,DO:4,MERC:4,DTA:4,RF:4,PG:4,FWL:4,TP:4,DA:6,RCM:4,RFS:4</availability>
 		<model name='M1'>
 			<availability>General:8</availability>
 		</model>
@@ -10886,7 +10886,7 @@
 		</model>
 		<model name='M3'>
 			<roles>spotter</roles>
-			<availability>FWL:2,DA:4</availability>
+			<availability>DA:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Monarch' unitType='Dropship'>

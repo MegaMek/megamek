@@ -854,19 +854,15 @@ public class ForceDescriptor {
             ancestors.add(p);
             p = p.parent;
         }
-        
-        String forceString = "";
+
+        StringBuilder result = new StringBuilder();
         int id = 0;
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
             id = 17 * id + ancestor.index + 1;
-            forceString += "\\" + ancestor.parseName() + "|" + id;
+            result.append(ancestor.parseName()).append("|").append(id).append("||");
         }
-        // Remove the backslash at the start
-        if (forceString.length() > 0) {
-            forceString = forceString.substring(1);
-        }
-        return forceString;
+        return result.toString();
     }
 
     public void assignCommanders() {

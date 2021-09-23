@@ -16,6 +16,12 @@ VERSION HISTORY:
 + PR #3000: Top Menu Rewrite
 + Data: Few new maps from SimonLandmine and UlyssesSockdrawer. Some unit file fixes. 
 + Issue #3089: Fixing messages implementation to handle localization
++ PR #3132: Princess Player NPE
++ Data: (Errata) StratOps Advanced Anti-air now an unofficial option per its removal from StratOps.
++ Issue #3140: Moltke missing from FWL General generated RATs
++ Data - Some unit fixes and a new board.
++ Issue #3134:Show BV of players in the lobby player table
++ PR #3159: Per errata, primary infantry weapons doing more than .6 damage per trooper have been nerfed to .6; infantry burst fire trait added for those
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

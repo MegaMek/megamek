@@ -2427,6 +2427,7 @@ exact "Mad Cat Mk II 6" "mechs/MadcatMKII_6.png"
 exact "Mad Cat Mk II Enhanced" "mechs/MadcatMKII_Enhanced.png"
 #Mad Cat MK III
 chassis "Mad Cat III" "mechs/Mad Cat III.png"
+exact "Mad Cat III 2" "mechs/Mad Cat III.png"
 exact "Mad Cat III 3" "mechs/Mad Cat III 3.png"
 exact "Mad Cat III 4" "mechs/Mad Cat III 4.png"
 exact "Mad Cat III 3 (Eve)" "mechs/Mad Cat III 3.png"

@@ -151,19 +151,18 @@ Foot Actuator
 -Empty-
 
 
-Overview: The Kintaro is a BattleMech with an unusual conception. Contrary to most other designs, the Kintaro was built around a single new revolutionary weapon system: the NARC launcher. Able to emit loud homing signals, NARC pods would guide all friendly NARC-capable missiles onto the target, potentially increasing missile accuracy for entire forces at a time. The SLDF lept on the opportunity to field this advanced technology, and Kintaros became a popular element of their missile-heavy formations. It was only after the fall of the Star League and the extinction of NARC technology that Kintaro variants based around other systems would emerge; these would, however, be few and far between.
+overview:Introduced in 2587 for the SLDF, the Kintaro was designed with one sole mission: tagging enemy units with a Narc Missile Beacon. As such, it is a 'Mech that is intended to work in a team with a missile-heavy lance.
 
-Capabilities: Kintaros, whether mounting a NARC launcher or not, a;ways carry missile-heavy armaments means to take advantage of the NARC homing signal. They are always capable BattleMechs, mounting impressive firepower and carrying heavy amounts of armor to facilitate the delivery of their missile weaponry. Rather fast for their size, the Kintaro as a whole can act as a capable cavalry design, able to brawl well and exploit holes in the armor of other damaged BattleMechs.
+capabilities:After it delivers its deadly package to the enemy, the Kintaro disengages and lets its lance mates do most of the work as their missiles track the signal from the beacon. The act of putting this into practice is far less simple. With a maximum speed of 86.4 km/h the Kintaro is not able to engage and disengage from enemy units as easily as its designers envisioned and because of this, if a pilot is not observant of their surroundings and the enemy, they can find themselves in a very dangerous situation.
 
-Deployment: The Kintaro was a popular Star League design but never spread much to the Successor States. ComStar, as the inheritor of most examples of the design, would eventually deliver some to the Draconis Combine as part of Operation:ROSEBUD. Even so, the design mostly stayed in the hands of the telecommunications company and their branch-off sect, the Word of Blake. The few downgraded KTO-18's, the result of the technological degradation of the Succession Wars, mostly ended up in Federated Suns space. While the Draconis Combine would eventually lay their hands on a few thanks to ComStar, most of their examples were of the better-upgraded -20 variant, and the -18 largely remained a House Davion BattleMech.
+deployment:Put into production during the Third Succession War for the Federated Suns by General Dynamics of Ozawa, the downgraded KTO-18 Kintaro was manufactured using the Succession Wars era technology available at the time. As far as the weapons on the 'Mech, the then LosTech Narc beacon was replaced with an additional SRM-6 giving the KTO-18 increased close range capabilities. The advanced Ferro-Fibrous plating was exchanged for eleven tons of standard armor, resulting in only a negligible loss of armor protection. This refit had the interesting effect of making the Kintaro somewhat more popular than the older model, particularly among Periphery worlds that could not always afford heavier missile attackers; while the design "ran hotter than hell's saunas", as one MechTech famously put it, the sheer power of three SRM-6es mounted on a relatively fast frame with good armor made the KTO-18 an excellent hard-hitting strike and brawling unit.
 
-systemmanufacturer:CHASSIS:Technicron
-systemmode:CHASSIS:-1
-systemmanufacturer:ENGINE:Core Tek
-systemmode:ENGINE:275
-systemmanufacturer:ARMOR:Leopard
-systemmode:ARMOR:V
-systemmanufacturer:COMMUNICATIONS:Omnicomm
-systemmode:COMMUNICATIONS:3
-systemmanufacturer:TARGETING:Starbeam
-systemmode:TARGETING:3000
+history:The Succession Wars saw the last known Narc factory destroyed in 2792, and the advances made during the Star League era became lostech. The loss of Narc beacons rendered the Kintaro's role unnecessary, and it became just another missile-armed 'Mech. By the Third Succession War the Kintaro was nearly extinct, but in the end was saved when General Dynamics rebuilt a Kintaro factory on Ozawa, though they could only produce the downgraded KTO-18 variant. ComStar however maintained a number of original Kintaros which they used to outfit their Com Guards. They also produced their own slightly-downgraded variant, the KTO-20, which they gifted to the Draconis Combine as part of Operation Rosebud. Concentrated among the Ghost Regiments and certain Sword of Light regiments, the superiority of these 'Mechs over their Federated Commonwealth cousins caused an overreaction during the War of 3039 as they were targeted for destruction more than necessary, leaving other units free to fight.
+
+manufacturer:General Mechanics, General Dynamics
+primaryfactory:Mars,Ozawa
+systemmanufacturer:CHASSIS:Technicron-1
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Leopard V Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:OmniComm 3
+systemmanufacturer:TARGETING:Starbeam 3000

@@ -22,6 +22,8 @@ VERSION HISTORY:
 + Data - Some unit fixes and a new board.
 + Issue #3134:Show BV of players in the lobby player table
 + PR #3159: Per errata, primary infantry weapons doing more than .6 damage per trooper have been nerfed to .6; infantry burst fire trait added for those
++ Data: Various Unit file fixes
++ Issue #3128: Restore bot ability to unload infantry/BA from transports.
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

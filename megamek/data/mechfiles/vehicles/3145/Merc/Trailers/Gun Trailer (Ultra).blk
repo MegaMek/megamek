@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,6 +24,10 @@ Gun Trailer
 3098
 </year>
 
+<originalBuildYear>
+3098
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -32,12 +36,15 @@ IS Level 3
 Wheeled
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 0
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor_type>
@@ -90,6 +97,11 @@ TRO 3145 Mercenaries - Early Republic
 35.0
 </tonnage>
 
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
 <trailer>
 1
 </trailer>
+

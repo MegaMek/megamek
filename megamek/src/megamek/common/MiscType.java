@@ -2637,7 +2637,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "205,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C).setISAdvancement(2557, 2571, 3055, 2810, 3040)
-                .setISApproximate(false, false, false, true, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, true, true).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
         return misc;
     }
@@ -6931,8 +6931,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "221,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2559, 2567, 3045, 2865, 3040)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        		.setISAdvancement(2559, 2567, 3045, 2865, 3040)
+                .setISApproximate(false, false, false, false, true)
+                .setPrototypeFactions(F_TH)
+                .setTechRating(RATING_E)
                 .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
         return misc;
     }

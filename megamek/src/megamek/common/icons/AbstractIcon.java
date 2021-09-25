@@ -170,9 +170,9 @@ public abstract class AbstractIcon implements Serializable {
             return;
         }
 
-        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, name);
+        MegaMekXmlUtil.writeSimpleXMLOpenTag(pw, indent++, name);
         writeBodyToXML(pw, indent);
-        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, name);
+        MegaMekXmlUtil.writeSimpleXMLCloseTag(pw, --indent, name);
     }
 
     protected void writeBodyToXML(final PrintWriter pw, int indent) {

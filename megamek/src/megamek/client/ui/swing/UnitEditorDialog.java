@@ -1291,7 +1291,7 @@ public class UnitEditorDialog extends JDialog {
             }
 
             for (int i = 0; i < actuatorCrits.length; i++) {
-                for (int j = 0; j < actuatorCrits[0].length; j++) {
+                for (int j = 0; j < actuatorCrits[i].length; j++) {
                     CheckCritPanel actuatorCrit = actuatorCrits[i][j];
                     if (null == actuatorCrit) {
                         continue;

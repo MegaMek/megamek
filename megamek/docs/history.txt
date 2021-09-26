@@ -20,7 +20,7 @@ VERSION HISTORY:
 + Data: (Errata) StratOps Advanced Anti-air now an unofficial option per its removal from StratOps.
 + Issue #3140: Moltke missing from FWL General generated RATs
 + Data - Some unit fixes and a new board.
-+ Issue #3134:Show BV of players in the lobby player table
++ Issue #3134: Show BV of players in the lobby player table
 + PR #3159: Per errata, primary infantry weapons doing more than .6 damage per trooper have been nerfed to .6; infantry burst fire trait added for those
 + Data: Various Unit file fixes
 + Issue #3128: Restore bot ability to unload infantry/BA from transports.

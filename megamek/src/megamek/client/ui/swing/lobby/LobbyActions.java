@@ -41,6 +41,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.*;
@@ -1043,7 +1044,7 @@ public class LobbyActions {
 //        }
 //        if (formations.removeIf(f -> f == null)) {
 //        };
-        if (fo.stream().anyMatch(f -> !StrategicBattleForceConverter.canConvertToSbfFormation(f, lobby.game()))) {
+        if (fo.stream().anyMatch(f -> !SBFFormationConverter.canConvertToSbfFormation(f, lobby.game()))) {
 
             LobbyErrors.showSBFConversion(frame());
         }

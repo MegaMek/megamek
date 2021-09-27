@@ -20,88 +20,87 @@ package megamek.common;
 
 /** 
  * Represents a single AlphaStrike damage value that may be minimal damage (0*).
- * Minimal Damage is repesented by minimal == true, all other values by damage being
- * their damage value and minimal == false. 
+ * Minimal Damage is repesented by isMinimal() returning true, all other values
+ * by getDamage() being their damage value and isMinimal() returning false.
  */
 public class ASDamage {
     
+    /**
+     * The value of this damage. Is 0 for both zero damage and minimal damage.
+     * When using this for damage resolution, make sure to check for minimal
+     * damage separately.
+     */
     public final int damage;
+
+    /** True if this is minimal damage, i.e. 0*  */
     public final boolean minimal;
-    
-    public ASDamage(int dmg, boolean minim) {
-        damage = dmg;
-        minimal = minim;
+
+    /**
+     * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*.
+     * When 0 < damageValue < 0.5, the result will be minimal damage.
+     * Otherwise, damageValue is rounded normally (a negative damageValue is set to 0).
+     */
+    public ASDamage(double damageValue) {
+        this(damageValue, true);
     }
-    
-    /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
-     * is rounded "normally" (i.e. up or down depending on the tenth) to the nearest
-     * integer and values between 0 and 0.5 excl. end up as minimal damage. 
+
+    /**
+     * Creates an AlphaStrike damage value. It may be minimal damage, i.e. 0*, only if
+     * allowMinimal is true. In that case, when 0 < damageValue < 0.5, the result will
+     * be minimal damage. When allowMinimal is false or damageValue >= 0.5, damageValue
+     * is rounded normally (a negative damageValue is set to 0).
+     */
+    public ASDamage(double damageValue, boolean allowMinimal) {
+        this((int) Math.round(damageValue), (damageValue > 0) && (damageValue < 0.5) && allowMinimal);
+    }
+
+    /**
+     * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*.
+     * When the given isMinimal is true, this overrides any damageValue given and
+     * the resulting ASDamage will be 0*. Otherwise, the resulting ASDamage will be
+     * equal to the damageValue (a negative damageValue is set to 0).
+     */
+    public ASDamage(int damageValue, boolean isMinimal) {
+        minimal = isMinimal;
+        damage = (isMinimal || damageValue < 0) ? 0 : damageValue;
+    }
+
+    /**
+     * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*.
+     * When 0 < damageValue < 0.5, the result will be minimal damage.
+     * Otherwise, damageValue is rounded normally (a negative damageValue is set to 0).
      */
     public static ASDamage createRoundedNormal(double dmg) {
-        return new ASDamage((int)Math.round(dmg), (dmg > 0) && (dmg < 0.5));
+        return new ASDamage(dmg);
     }
     
     /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
+     * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*. The value
      * is first rounded up to the nearest tenth, then assigned minimal damage if < 0.5,  
-     * otherwise rounded up (i.e. up or down depending on the tenth) to the nearest integer.
+     * otherwise rounded normally (i.e. up or down depending on the tenth) to the nearest integer.
      */
     public static ASDamage createDualRoundedNormal(double dmg) {
-        double intermediate = AlphaStrikeConverter.roundUpToTenth(dmg);
-        if (intermediate < 0.5) {
-            return new ASDamage(0, intermediate > 0);
-        } else {
-            return new ASDamage((int)Math.round(intermediate), false);
-        }
+        return new ASDamage(AlphaStrikeConverter.roundUpToTenth(dmg));
     }
-    
+
     /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
-     * is rounded "up" (i.e. up or down depending on the tenth) to the nearest integer
-     * except for values smaller than 0.5 and values between 0 and 0.5 excl. end up as 
-     * minimal damage. 
-     */
-    public static ASDamage createRoundedUp(double dmg) {
-        if (dmg < 0.5) {
-            return new ASDamage(0, dmg > 0);
-        } else {
-            return new ASDamage((int)Math.ceil(dmg), false);
-        }
-    }
-    
-    /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
+     * Creates an AlphaStrike damage value from the given double value. The value
      * is first rounded up to the nearest tenth, then assigned minimal damage if < 0.5,  
      * otherwise rounded up (i.e. up or down depending on the tenth) to the nearest integer.
      */
     public static ASDamage createDualRoundedUp(double dmg) {
         double intermediate = AlphaStrikeConverter.roundUpToTenth(dmg);
-        if (intermediate < 0.5) {
-            return new ASDamage(0, intermediate > 0);
-        } else {
-            return new ASDamage((int)Math.round(intermediate + 0.4), false);
-        }
+        return intermediate < 0.5 ? new ASDamage(intermediate) : new ASDamage(intermediate + 0.4);
     }
-    
-    /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
-     * is rounded "normally" (i.e. up or down depending on the tenth) to the nearest
-     * integer. There is no minimal damage, i.e. dmg < 0.5 becomes 0. 
-     */
-    public static ASDamage createRoundedNormalNoMinimal(double dmg) {
-        return new ASDamage((int)Math.round(dmg), false);
-    }
-    
-    /** 
-     * Creates an AlphaStrike single damage value from the given double value. The value
-     * is first rounded up to the nearest tenth, then rounded "normally" (i.e. up or 
+
+    /**
+     * Creates an AlphaStrike damage value from the given double value. The value
+     * is first rounded up to the nearest tenth, then rounded normally (i.e. up or
      * down depending on the tenth) to the nearest integer. There is no minimal damage, 
      * i.e. dmg < 0.41 becomes 0. 
      */
     public static ASDamage createDualRoundedNormalNoMinimal(double dmg) {
-        double intermediate = AlphaStrikeConverter.roundUpToTenth(dmg);
-        return new ASDamage((int)Math.round(intermediate), false);
+        return new ASDamage((int)Math.round(AlphaStrikeConverter.roundUpToTenth(dmg)), false);
     }
     
     /** Returns true if this ASDamage represents any damage, minimal or 1 or more. */
@@ -116,7 +115,7 @@ public class ASDamage {
         } else if (damage == 0) {
             return "-";
         } else {
-            return "" + damage;
+            return damage + "";
         }
     }
     
@@ -124,7 +123,7 @@ public class ASDamage {
         if (minimal) {
             return "0*";
         } else {
-            return "" + damage;
+            return damage + "";
         }
     }
 }

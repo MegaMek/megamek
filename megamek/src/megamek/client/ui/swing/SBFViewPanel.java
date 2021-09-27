@@ -20,7 +20,8 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 import javax.swing.*;
 import java.awt.*;

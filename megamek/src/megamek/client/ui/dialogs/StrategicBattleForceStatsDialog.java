@@ -24,10 +24,11 @@ import megamek.client.ui.swing.SBFViewPanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFFormationConverter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
     private void setupTable() {
         centerPanel.remove(scrollPane);
         formations = forceList.stream()
-                .map(f -> StrategicBattleForceConverter.convert(f, game, pilotToggle.isSelected()))
+                .map(f -> SBFFormationConverter.convert(f, game, pilotToggle.isSelected()))
                 .filter(fo -> fo != null)
                 .collect(Collectors.toList());
         scrollPane = new JScrollPane(new SBFViewPanel(formations));

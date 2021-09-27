@@ -24,7 +24,6 @@ import java.text.MessageFormat;
 import javax.swing.JOptionPane;
 
 import megamek.client.ui.Messages;
-import megamek.common.SBFUnit;
 
 /** Contains static methods that show common info/error messages for the lobby. */
 public final class LobbyErrors {

@@ -2623,7 +2623,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the primary facing, or -1 if n/a
      */
     public int getFacing() {
-        if (Entity.NONE != conveyance) {
+        if ((Entity.NONE != conveyance) && (game != null)) {
             Entity transporter = game.getEntity(conveyance);
             if (transporter == null) {
                 transporter = game.getOutOfGameEntity(conveyance);

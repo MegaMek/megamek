@@ -27,6 +27,7 @@ VERSION HISTORY:
 + PR #3167: Tripod 'Mech Center Leg Actuator Damage Customization
 + PR #3168: Array bounds protecting Entity::getCritical
 + Issue #3133: Adding before round 1 deployment option
++ PR #3170: Fix NPE preventing loading MULs containing transported units
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

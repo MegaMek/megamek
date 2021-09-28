@@ -629,17 +629,15 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private void drawButtons(Graphics g) {
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];
-            xPoints[0] = Math.round((getSize().width - 11) / 2);
-            xPoints[1] = xPoints[0] + 11;
+        xPoints[0] = Math.round((getSize().width - 11) / 2);
+        xPoints[1] = xPoints[0] + 11;
         if (minimized) {
             yPoints[0] = getSize().height - 10;
             yPoints[1] = yPoints[0];
             xPoints[2] = xPoints[0] + 6;
             yPoints[2] = yPoints[0] + 5;
         } else {
-//            xPoints[0] = Math.round((getSize().width - 11) / 2);
             yPoints[0] = getSize().height - 4;
-//            xPoints[1] = xPoints[0] + 11;
             yPoints[1] = yPoints[0];
             xPoints[2] = xPoints[0] + 5;
             yPoints[2] = yPoints[0] - 5;

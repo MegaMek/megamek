@@ -23,22 +23,14 @@ package megamek.client.ui.swing;
 import static megamek.client.ui.minimap.MiniMapUnitSymbols.*;
 import static megamek.common.Terrains.*;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -99,12 +91,12 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     private BufferedImage mapImage;
-    private IBoardView bv;
-    private IGame game;
+    private final IBoardView bv;
+    private final IGame game;
     private IBoard board;
-    private JDialog dialog;
+    private final JDialog dialog;
     private Client client;
-    private ClientGUI clientGui = null;
+    private final ClientGUI clientGui;
     
     private int margin = MARGIN;
     private int topMargin;
@@ -114,10 +106,11 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private int buttonHeight = 0;
     /** Indicates if the minimap has been rolled up using the wide green button. */
     private boolean minimized = false;
+    /** Stores the (non-minimized) height of the minimap when it is minimized. */
     private int heightBuffer;
     private int unitSize = 6;
     /** A list of information on hexes with roads or bridges. */
-    private List<int[]> roadHexes = new ArrayList<>();
+    private final List<int[]> roadHexes = new ArrayList<>();
     private int zoom = GUIP.getMinimapZoom();
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     
@@ -130,7 +123,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private boolean[][] dirty = new boolean[1][1];
     private Image terrainBuffer;
     
-    private Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
+    private final Map<Coords, Integer> multiUnits = new HashMap<>();
     private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
     
     private boolean dragging = false;
@@ -189,8 +182,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             tempMM.zoom = zoom;
             tempMM.initializeMap();
             tempMM.drawMap(true);
-            BufferedImage img = ImageUtil.createAcceleratedImage(tempMM.mapImage);
-            return img;
+            return ImageUtil.createAcceleratedImage(tempMM.mapImage);
         } catch (Exception e) {
             e.printStackTrace();
             return ImageUtil.failStandardImage();
@@ -388,10 +380,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     /** Marks all the minimap as clean (not requiring an update). */
     private void markAsClean() {
         dirtyMap = false;
-        for (int i = 0; i < dirty.length; i++) {
-            for (int j = 0; j < dirty[i].length; j++) {
-                dirty[i][j] = false;
-            }
+        for (boolean[] booleans : dirty) {
+            Arrays.fill(booleans, false);
         }
     }
 
@@ -404,7 +394,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         leftMargin = margin;
         int requiredWidth = (board.getWidth() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
                 + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
-        int requiredHeight = (((2 * board.getHeight()) + 1)
+        int requiredHeight = minimized ? 14 : (((2 * board.getHeight()) + 1)
                 * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
@@ -433,10 +423,10 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         gg.fillRect(0, 0, getSize().width, getSize().height);
     }
 
-    protected long lastDrawMapReq = 0;
-    protected long lastDrawStarted = 0;
-    protected Runnable drawMapable = new Runnable() {
-        protected final int redrawDelay = 0;
+    private long lastDrawMapReq = 0;
+    private long lastDrawStarted = 0;
+    private final Runnable drawMapable = new Runnable() {
+        private final int redrawDelay = 0;
 
         public void run() {
             try {
@@ -497,7 +487,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 for (int k = 0; k < board.getHeight(); k++) {
                     IHex h = board.getHex(j, k);
                     if (dirtyMap || dirty[j / 10][k / 10]) {
-                        gg.setColor(terrainColor(h, j, k));
+                        gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {
                             paintSpaceCoord(gg, j, k, true);
                         } else {
@@ -639,17 +629,17 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private void drawButtons(Graphics g) {
         int[] xPoints = new int[3];
         int[] yPoints = new int[3];
-        if (minimized) {
             xPoints[0] = Math.round((getSize().width - 11) / 2);
-            yPoints[0] = getSize().height - 10;
             xPoints[1] = xPoints[0] + 11;
+        if (minimized) {
+            yPoints[0] = getSize().height - 10;
             yPoints[1] = yPoints[0];
             xPoints[2] = xPoints[0] + 6;
             yPoints[2] = yPoints[0] + 5;
         } else {
-            xPoints[0] = Math.round((getSize().width - 11) / 2);
+//            xPoints[0] = Math.round((getSize().width - 11) / 2);
             yPoints[0] = getSize().height - 4;
-            xPoints[1] = xPoints[0] + 11;
+//            xPoints[1] = xPoints[0] + 11;
             yPoints[1] = yPoints[0];
             xPoints[2] = xPoints[0] + 5;
             yPoints[2] = yPoints[0] - 5;
@@ -738,7 +728,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     }
     
-    private int[] xPoints(int x, int y) {
+    private int[] xPoints(int x) {
         int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int[] xPoints = new int[6];
         xPoints[0] = baseX;
@@ -764,11 +754,11 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
         g.setColor(c);
-        g.drawPolygon(xPoints(x, y), yPoints(x, y), 6);
+        g.drawPolygon(xPoints(x), yPoints(x, y), 6);
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
-        int[] xPoints = xPoints(x, y);
+        int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
@@ -782,7 +772,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
         int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
-        int[] xPoints = xPoints(x, y);
+        int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
@@ -1030,7 +1020,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
     /** Draws the road elements previously assembles into the roadHexes list. */
     private void paintRoads(Graphics g) {
-        int exits = 0;
+        int exits;
         int baseX;
         int baseY;
         int x;
@@ -1134,7 +1124,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    private Color terrainColor(IHex hex, int boardX, int boardY) {
+    private Color terrainColor(IHex hex) {
         Color terrColor = terrainColors[0];
         if (hex.getLevel() < 0) {
             terrColor = SINKHOLE;
@@ -1267,57 +1257,57 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    private void processMouseClick(int x, int y, MouseEvent me) {
-        if (y > (getSize().height - 14) && !dragging) {
-            if (minimized) {
-                setSize(getSize().width, heightBuffer);
-                mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
-                minimized = false;
-                initializeMap();
-            } else {
-                if (x < 14) {
-                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
-                        zoomOut();
-                    } else {
-                        zoomIn();
-                    }
-                } else if ((x < 28) && (zoom > 2)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
-                    initializeMap();
-                } else if (x > (getSize().width - 14)) {
-                    if (GUIPreferences.getInstance().getMouseWheelZoomFlip()) {
-                        zoomIn();
-                    } else {
-                        zoomOut();
-                    }
-                } else {
-                    // Minimize button
-                    heightBuffer = getSize().height;
-                    setSize(getSize().width, 14);
-                    mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
-                    minimized = true;
-                    initializeMap();
-                }  
-            }
-        } else if (bv != null) {
-            if ((x < DIALOG_MARGIN) || (x > (getSize().width - leftMargin))
+    private void processMouseDrag(int x, int y, int modifiers) {
+        if ((x < DIALOG_MARGIN) || (x > (getSize().width - leftMargin))
                 || (y < topMargin)
-                || (y > (getSize().height - topMargin - 14))) {
-                return;
+                || (y > (getSize().height - topMargin - buttonHeight))) {
+            return;
+        }
+
+        if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
+            bv.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+        } else {
+            if (!dragging) {
+                dragging = true;
+                setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             }
-            if ((me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
-                bv.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+            bv.centerOnPointRel(
+                    ((double)(x - leftMargin))/(double)((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom])*board.getWidth()),
+                    ((double)(y - topMargin))/(double)(2 * HEX_SIDE_BY_COS30[zoom]*board.getHeight()));
+            bv.stopSoftCentering();
+            repaint();
+        }
+    }
+
+    private void processMouseClick(int x, int y) {
+        if ((x < 0) || (y < 0) || (x >= getSize().width) || (y >= getSize().height)
+                || (y <= getSize().height - buttonHeight)) {
+            return;
+        }
+        if (minimized) {
+            setSize(getSize().width, heightBuffer);
+            mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
+            minimized = false;
+            initializeMap();
+        } else {
+            if (x < 14) {
+                zoomOut();
+            } else if ((x < 28) && (zoom > 2)) {
+                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                initializeMap();
+            } else if (x > (getSize().width - 14)) {
+                zoomIn();
             } else {
-                bv.centerOnPointRel(
-                        ((double)(x - leftMargin))/(double)((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom])*board.getWidth()),
-                        ((double)(y - topMargin))/(double)(2 * HEX_SIDE_BY_COS30[zoom]*board.getHeight()));
-                bv.stopSoftCentering();
-                repaint();
+                heightBuffer = getSize().height;
+                setSize(getSize().width, 14);
+                mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
+                minimized = true;
+                initializeMap();
             }
         }
     }
 
-    protected BoardListener boardListener = new BoardListenerAdapter() {
+    private final BoardListener boardListener = new BoardListenerAdapter() {
         @Override
         public void boardNewBoard(BoardEvent b) {
             initializeMap();
@@ -1336,7 +1326,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     };
 
-    protected GameListener gameListener = new GameListenerAdapter() {
+    private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
@@ -1385,7 +1375,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         @Override
         public void gameNewAction(GameNewActionEvent e) {
             refreshMap();
-        };
+        }
     };
 
     BoardViewListener boardViewListener = new BoardViewListenerAdapter() {
@@ -1435,36 +1425,31 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         @Override
         public void mouseReleased(MouseEvent me) {
             // Center main map on clicked area, if there was no dragging
-            if (dialog instanceof JDialog && !dragging) {
-                processMouseClick(me.getX(), me.getY(), me);
+            if (!dragging) {
+                Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
+                processMouseClick(mapPoint.x, mapPoint.y);
             }
-            // Clear up variables related to dragging
             dragging = false;
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
-
     };
 
     MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
 
         @Override
-        public void mouseDragged(MouseEvent e) {
-            if (!dragging) {
-                dragging = true;
-                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            }
-            processMouseClick(e.getX(), e.getY(), e);
+        public void mouseDragged(MouseEvent me) {
+            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
+            processMouseDrag(mapPoint.x, mapPoint.y, me.getModifiersEx());
         }
     };
 
     MouseWheelListener mouseWheelListener = (we) -> {
-        if (we.getWheelRotation() < 0) {
+        if (we.getWheelRotation() > 0 ^ GUIP.getMouseWheelZoomFlip()) {
             zoomIn();
         } else {
             zoomOut();
         }
     };
-
 
     ComponentListener componentListener = new ComponentAdapter() {
         @Override

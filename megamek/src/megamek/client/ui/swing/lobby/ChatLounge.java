@@ -2776,6 +2776,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                // If the right mouse button is pressed over an unselected entity,
+                // clear the selection and select that entity instead
+                int row = mekTable.rowAtPoint(e.getPoint());
+                if (!mekTable.isRowSelected(row)) {
+                    mekTable.changeSelection(row, row, false, false);
+                }
+                showPopup(e);
+            }
+        }
+
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
             if (mekTable.getSelectedRowCount() == 0) {

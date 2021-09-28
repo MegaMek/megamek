@@ -28,6 +28,8 @@ VERSION HISTORY:
 + PR #3168: Array bounds protecting Entity::getCritical
 + Issue #3133: Adding before round 1 deployment option
 + PR #3170: Fix NPE preventing loading MULs containing transported units
++ Issue #3126: Display Water0 under rough/swamp again
++ Issue #3102: Add mousePressed check to lobby popup trigger
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

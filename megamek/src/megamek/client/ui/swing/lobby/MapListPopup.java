@@ -26,7 +26,8 @@ class MapListPopup {
     static final String MLP_BOARD = "BOARD";
     static final String MLP_SURPRISE = "SURPRISE";
 
-    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, ChatLounge lobby) {
+    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, 
+            ChatLounge lobby, boolean enableRotation) {
         
         if (boards.isEmpty()) {
             return new ScalingPopup();
@@ -36,7 +37,11 @@ class MapListPopup {
 
         ScalingPopup popup = new ScalingPopup();
         popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
-        popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+        
+        if (enableRotation) {
+            popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+        }
+        
         popup.add(multiBoardRandomMenu(!oneSelected, listener, numButtons, boards));
         popup.add(multiBoardSurpriseMenu(!oneSelected, listener, numButtons, boards));
         return popup;

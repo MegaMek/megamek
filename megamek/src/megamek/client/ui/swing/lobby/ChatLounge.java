@@ -2722,7 +2722,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
-            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this);
+            boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
+            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -2792,6 +2793,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                // If the right mouse button is pressed over an unselected entity,
+                // clear the selection and select that entity instead
+                int row = mekTable.rowAtPoint(e.getPoint());
+                if (!mekTable.isRowSelected(row)) {
+                    mekTable.changeSelection(row, row, false, false);
+                }
+                showPopup(e);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 // If the right mouse button is pressed over an unselected entity,
                 // clear the selection and select that entity instead

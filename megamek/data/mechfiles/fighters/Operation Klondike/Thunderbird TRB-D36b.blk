@@ -118,3 +118,31 @@ H:Operation Klondyke - Star League
 <tonnage>
 100.0
 </tonnage>
+
+<overview>
+While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
+</overview>
+
+<deployment>
+This version of the Thunderbird was developed in 2715 and mounted an ER Large Laser, Gauss Rifle, and Medium Laser in each wing. The nose carried an ER Large Laser and a pair of medium lasers. The D36b carried two tons of Gauss Rifle ammunition and twenty four double heat sinks.
+</deployment>
+
+<history>
+Created in 2487 as part of an alliance between the Lockheed Corporation of Gibbs and CBM Aerospace of Donegal, the original Thunderbird was built for the LCAF as an assault fighter, well suited to air-to-ground attack and DropShip escort missions in the so-called Age of War. Despite its less than sleek look, the sturdy and dependable Thunderbird spread across the Star League as a number of other manufacturers were able to precisely duplicate the fighter, ensuring the design survived the centuries.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp,Wangker AeroSpace
+</manufacturer>
+
+<primaryFactory>
+Gibbs,Axton
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed/CBM 300-TRB
+ENGINE:Vlar 300
+ARMOR:L/CBM AeroSteel
+COMMUNICATIONS:Neil 6000-a
+TARGETING:N&D Longreach
+</systemManufacturers>

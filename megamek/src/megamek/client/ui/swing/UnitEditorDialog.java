@@ -576,19 +576,23 @@ public class UnitEditorDialog extends JDialog {
             lamLandingGearCrit.entrySet().forEach(e -> addToPanel.accept(e, Messages.getString("UnitEditorDialog.landingGear")));
         }
 
-        if (entity instanceof QuadVee) {
+        final boolean tripod = entity.hasETypeFlag(Entity.ETYPE_TRIPOD_MECH);
+        if (tripod) {
+            actuatorCrits = new CheckCritPanel[5][4];
+        } else if (entity instanceof QuadVee) {
             actuatorCrits = new CheckCritPanel[4][5];
         } else {
             actuatorCrits = new CheckCritPanel[4][4];
         }
 
-        for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LLEG; loc++) {
+        for (int loc = Mech.LOC_RARM; loc <= (tripod ? Mech.LOC_CLEG : Mech.LOC_LLEG); loc++) {
             int start = Mech.ACTUATOR_SHOULDER;
             int end = Mech.ACTUATOR_HAND;
             if ((loc >= Mech.LOC_RLEG) || (entity instanceof QuadMech)) {
                 start = Mech.ACTUATOR_HIP;
                 end = Mech.ACTUATOR_FOOT;
             }
+
             for (int i = start; i <= end; i++) {
                 if (!entity.hasSystem(i, loc)) {
                     continue;
@@ -597,7 +601,8 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 gridBagConstraints.weighty = 0.0;
-                if ((loc == Mech.LOC_LLEG) && (i == end) && !(entity instanceof QuadVee)) {
+                if ((loc == (tripod ? Mech.LOC_CLEG : Mech.LOC_LLEG)) && (i == end)
+                        && !(entity instanceof QuadVee)) {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(
@@ -613,6 +618,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridx = 1;
                 panSystem.add(actuatorCrit, gridBagConstraints);
             }
+
             if (entity instanceof QuadVee) {
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy++;
@@ -1283,8 +1289,9 @@ public class UnitEditorDialog extends JDialog {
                             loc, lamLandingGearCrit.get(loc).getHits());
                 }
             }
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
+
+            for (int i = 0; i < actuatorCrits.length; i++) {
+                for (int j = 0; j < actuatorCrits[i].length; j++) {
                     CheckCritPanel actuatorCrit = actuatorCrits[i][j];
                     if (null == actuatorCrit) {
                         continue;
@@ -1297,8 +1304,9 @@ public class UnitEditorDialog extends JDialog {
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,
                             loc, actuatorCrit.getHits());
                 }
+
                 if (entity instanceof QuadVee) {
-                    for (int j = 0; j < 4; j++) {
+                    for (int j = 0; j < actuatorCrits.length; j++) {
                         CheckCritPanel actuatorCrit = actuatorCrits[i][4];
                         if (null == actuatorCrit) {
                             continue;

@@ -2722,7 +2722,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
-            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this);
+            boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
+            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }

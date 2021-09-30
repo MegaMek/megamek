@@ -84,6 +84,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
     private static final int DIALOG_MARGIN = 6;
     private static final int MARGIN = 3;
+    private static final int BUTTON_HEIGHT = 14;
     
     /** The minimap zoom at which game summary images are saved regardless of the ingame minimap setting. */
     private static final int GAME_SUMMARY_ZOOM = 4;
@@ -104,7 +105,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     //This value is variable.
     //if the container m_dialog is an instance of JDialog, it is 14. otherwise 0.
     private int buttonHeight = 0;
-    /** Indicates if the minimap has been rolled up using the wide green button. */
+    /** Indicates if the minimap has been rolled up using the wide green button. Can only be true when in a dialog. */
     private boolean minimized = false;
     /** Stores the (non-minimized) height of the minimap when it is minimized. */
     private int heightBuffer;
@@ -209,7 +210,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         if (dialog != null) {
             initializeDialog();
             initializeListeners();
-            buttonHeight = 14;
+            buttonHeight = BUTTON_HEIGHT;
             margin = DIALOG_MARGIN;
         }
     }
@@ -304,7 +305,6 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
                 switch (st.nextToken()) {
                     case StreamTokenizer.TT_EOF:
-                        break scan;
                     case StreamTokenizer.TT_EOL:
                         break scan;
                     case StreamTokenizer.TT_WORD:
@@ -394,7 +394,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         leftMargin = margin;
         int requiredWidth = (board.getWidth() * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
                 + HEX_SIDE_BY_SIN30[zoom] + (2 * margin);
-        int requiredHeight = minimized ? 14 : (((2 * board.getHeight()) + 1)
+        int requiredHeight = minimized ? BUTTON_HEIGHT : (((2 * board.getHeight()) + 1)
                 * HEX_SIDE_BY_COS30[zoom]) + (2 * margin) + buttonHeight;
 
         if (dialog != null) {
@@ -489,7 +489,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {
-                            paintSpaceCoord(gg, j, k, true);
+                            paintSpaceCoord(gg, j, k);
                         } else {
                             paintCoord(gg, j, k, zoom > 1);
                         }
@@ -622,65 +622,69 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
     }
 
-    /**
-     * Draws green JButton in the bottom to close and open mini map. Height of
-     * button is fixed to 14pix.
-     */
+    /** Draws the green control buttons at the bottom of the MiniMap. */
     private void drawButtons(Graphics g) {
-        int[] xPoints = new int[3];
-        int[] yPoints = new int[3];
-        xPoints[0] = Math.round((getSize().width - 11) / 2);
-        xPoints[1] = xPoints[0] + 11;
-        if (minimized) {
-            yPoints[0] = getSize().height - 10;
-            yPoints[1] = yPoints[0];
-            xPoints[2] = xPoints[0] + 6;
-            yPoints[2] = yPoints[0] + 5;
-        } else {
-            yPoints[0] = getSize().height - 4;
-            yPoints[1] = yPoints[0];
-            xPoints[2] = xPoints[0] + 5;
-            yPoints[2] = yPoints[0] - 5;
-        }
-        g.setColor(Color.green.darker().darker());
-        g.fillRect(0, getSize().height - 14, getSize().width, 14);
-        g.setColor(Color.green.darker());
-        g.drawLine(0, getSize().height - 14, getSize().width, getSize().height - 14);
-        g.drawLine(0, getSize().height - 14, 0, getSize().height);
-        g.setColor(Color.black);
-        g.drawLine(0, getSize().height - 1, getSize().width, getSize().height - 1);
-        g.drawLine(getSize().width - 1, getSize().height - 14, getSize().width - 1, getSize().height);
-        g.setColor(Color.yellow);
-        g.fillPolygon(xPoints, yPoints, 3);
+        int w = getSize().width;
+        int h = getSize().height;
+        int w0 = w - BUTTON_HEIGHT;
+        int y0 = h - BUTTON_HEIGHT;
 
-        // drawing "+" and "-" buttons
+        // the center bar for rolling up/down the Minimap
+        g.setColor(Color.green.darker().darker());
+        g.fillRect(0, y0, w, BUTTON_HEIGHT);
+        g.setColor(Color.green.darker());
+        g.drawLine(0, y0, w, y0);
+        g.drawLine(0, y0, 0, h);
+        g.setColor(Color.black);
+        g.drawLine(0, h - 1, w, h - 1);
+        g.drawLine(w - 1, y0, w - 1, h);
+
+        int[] xTriangle = new int[3];
+        int[] yTriangle = new int[3];
+        xTriangle[0] = Math.round((w - 11) / 2);
+        xTriangle[1] = xTriangle[0] + 11;
+        if (minimized) {
+            yTriangle[0] = h - 10;
+            yTriangle[1] = yTriangle[0];
+            xTriangle[2] = xTriangle[0] + 6;
+            yTriangle[2] = yTriangle[0] + 5;
+        } else {
+            yTriangle[0] = h - 4;
+            yTriangle[1] = yTriangle[0];
+            xTriangle[2] = xTriangle[0] + 5;
+            yTriangle[2] = yTriangle[0] - 5;
+        }
+        g.setColor(Color.yellow);
+        g.fillPolygon(xTriangle, yTriangle, 3);
+
+        // the zoom control "+" and "-" buttons
         if (!minimized) {
             g.setColor(Color.black);
-            g.drawLine(14 - 1, getSize().height - 14, 14 - 1, getSize().height);
-            g.drawLine(getSize().width - 14 - 1, getSize().height - 14, getSize().width - 14 - 1, getSize().height);
+            g.drawLine(BUTTON_HEIGHT - 1, y0, BUTTON_HEIGHT - 1, h);
+            g.drawLine(w0 - 1, y0, w0 - 1, h);
             g.setColor(Color.green.darker());
-            g.drawLine(14, getSize().height - 14, 14, getSize().height);
-            g.drawLine(getSize().width - 14, getSize().height - 14, getSize().width - 14, getSize().height);
+            g.drawLine(BUTTON_HEIGHT, y0, BUTTON_HEIGHT, getSize().height);
+            g.drawLine(w0, y0, w0, h);
             if (zoom == 0) {
                 g.setColor(Color.gray.brighter());
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect(3, (getSize().height - 14) + 6, 8, 2);
+            g.fillRect(3, y0 + 6, 8, 2);
             if (zoom == (HEX_SIDE.length - 1)) {
                 g.setColor(Color.gray.brighter());
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect((getSize().width - 14) + 3, (getSize().height - 14) + 6, 8, 2);
-            g.fillRect((getSize().width - 14) + 6, (getSize().height - 14) + 3, 2, 8);
+            g.fillRect(w0 + 3, y0 + 6, 8, 2);
+            g.fillRect(w0 + 6, y0 + 3, 2, 8);
 
-            if (zoom > 2) {
-                // JButton for displying heights.
+            if (zoom > 3) {
+                // the button for displaying heights
                 g.setColor(Color.black);
-                g.drawLine(28 - 1, getSize().height - 14, 28 - 1, getSize().height);
+                g.drawLine(2 * BUTTON_HEIGHT - 1, y0, 2 * BUTTON_HEIGHT - 1, h);
                 g.setColor(Color.green.darker());
-                g.drawLine(28, getSize().height - 14, 28, getSize().height);
+                g.drawLine(2 * BUTTON_HEIGHT, y0, 2 * BUTTON_HEIGHT, h);
                 g.setColor(Color.yellow);
                 String label;
                 switch (heightDisplayMode) {
@@ -699,7 +703,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     default:
                         label = "";
                 }
-                g.drawString(label, 17, (getSize().height - 14) + 12);
+                g.drawString(label, 17, y0 + 12);
             }
         }
     }
@@ -761,22 +765,18 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         g.fillPolygon(xPoints, yPoints, 6);
         if (border) {
             g.setColor(g.getColor().darker());
-            g.drawPolygon(xPoints, yPoints, 6);
-        } else {
-            g.drawPolygon(xPoints, yPoints, 6);
         }
+        g.drawPolygon(xPoints, yPoints, 6);
     }
     
-    private void paintSpaceCoord(Graphics g, int x, int y, boolean border) {
+    private void paintSpaceCoord(Graphics g, int x, int y) {
         int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
         int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        if (border) {
-            g.setColor(new Color(20,20,60));
-            g.drawPolygon(xPoints, yPoints, 6);
-        }
+        g.setColor(new Color(20,20,60));
+        g.drawPolygon(xPoints, yPoints, 6);
         // Drop in a star
         int dx = (int)(Math.random() * HEX_SIDE[zoom]);
         int dy = (int)((Math.random() - 0.5) * HEX_SIDE_BY_COS30[zoom]);
@@ -1255,54 +1255,52 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    private void processMouseDrag(int x, int y, int modifiers) {
-        if ((x < DIALOG_MARGIN) || (x > (getSize().width - leftMargin))
-                || (y < topMargin)
-                || (y > (getSize().height - topMargin - buttonHeight))) {
+    private void processMouseRelease(int x, int y, int modifiers) {
+        if (!new Rectangle(getSize()).contains(x, y)) {
             return;
         }
-
         if ((modifiers & InputEvent.CTRL_DOWN_MASK) != 0) {
             bv.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+        }
+        if (dragging) {
+            return;
+        }
+        if (y <= getSize().height - BUTTON_HEIGHT) {
+            // This is a click on the map itself
+            centerOnPos(x, y);
         } else {
-            if (!dragging) {
-                dragging = true;
-                setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            // This is a click on the green control button bar
+            if (minimized) {
+                setSize(getSize().width, heightBuffer);
+                mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
+                minimized = false;
+                initializeMap();
+            } else {
+                if (x < BUTTON_HEIGHT) {
+                    zoomOut();
+                } else if ((x < 2 * BUTTON_HEIGHT) && (zoom > 3)) {
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                    initializeMap();
+                } else if (x > (getSize().width - BUTTON_HEIGHT)) {
+                    zoomIn();
+                } else {
+                    heightBuffer = getSize().height;
+                    setSize(getSize().width, BUTTON_HEIGHT);
+                    mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), BUTTON_HEIGHT);
+                    minimized = true;
+                    initializeMap();
+                }
             }
-            bv.centerOnPointRel(
-                    ((double)(x - leftMargin))/(double)((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom])*board.getWidth()),
-                    ((double)(y - topMargin))/(double)(2 * HEX_SIDE_BY_COS30[zoom]*board.getHeight()));
-            bv.stopSoftCentering();
-            repaint();
         }
     }
 
-    private void processMouseClick(int x, int y) {
-        if ((x < 0) || (y < 0) || (x >= getSize().width) || (y >= getSize().height)
-                || (y <= getSize().height - buttonHeight)) {
-            return;
-        }
-        if (minimized) {
-            setSize(getSize().width, heightBuffer);
-            mapImage = ImageUtil.createAcceleratedImage(getSize().width, heightBuffer);
-            minimized = false;
-            initializeMap();
-        } else {
-            if (x < 14) {
-                zoomOut();
-            } else if ((x < 28) && (zoom > 2)) {
-                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
-                initializeMap();
-            } else if (x > (getSize().width - 14)) {
-                zoomIn();
-            } else {
-                heightBuffer = getSize().height;
-                setSize(getSize().width, 14);
-                mapImage = ImageUtil.createAcceleratedImage(Math.max(1, getSize().width), 14);
-                minimized = true;
-                initializeMap();
-            }
-        }
+    /** Centers the boardview connected to the MiniMap on x, y in the MiniMap's pixel coordinates. */
+    private void centerOnPos(double x, double y) {
+        bv.centerOnPointRel(
+                ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
+                ((y - topMargin)) / (2 * HEX_SIDE_BY_COS30[zoom] * board.getHeight()));
+        bv.stopSoftCentering();
+        repaint();
     }
 
     private final BoardListener boardListener = new BoardListenerAdapter() {
@@ -1422,11 +1420,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void mouseReleased(MouseEvent me) {
-            // Center main map on clicked area, if there was no dragging
-            if (!dragging) {
-                Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
-                processMouseClick(mapPoint.x, mapPoint.y);
-            }
+            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
+            processMouseRelease(mapPoint.x, mapPoint.y, me.getModifiersEx());
             dragging = false;
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
@@ -1437,15 +1432,27 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         @Override
         public void mouseDragged(MouseEvent me) {
             Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
-            processMouseDrag(mapPoint.x, mapPoint.y, me.getModifiersEx());
+            if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
+                if (!dragging) {
+                    dragging = true;
+                    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                }
+                centerOnPos(mapPoint.x, mapPoint.y);
+            }
         }
     };
 
-    MouseWheelListener mouseWheelListener = (we) -> {
-        if (we.getWheelRotation() > 0 ^ GUIP.getMouseWheelZoomFlip()) {
-            zoomIn();
-        } else {
-            zoomOut();
+    MouseWheelListener mouseWheelListener = new MouseWheelListener() {
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent we) {
+            Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), MiniMap.this);
+            if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
+                if (we.getWheelRotation() > 0 ^ GUIP.getMouseWheelZoomFlip()) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
         }
     };
 

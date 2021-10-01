@@ -717,6 +717,8 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             String boardName = boardsSelected.get(i);
             if (boardName != null) {
+                boardName = boardName.replace(Board.BOARD_REQUEST_ROTATION, "");
+                
                 if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();

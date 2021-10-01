@@ -339,6 +339,9 @@ public class ForceGeneratorViewUi {
         private void showPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 TreePath path = forceTree.getPathForLocation(e.getX(), e.getY());
+				if (path == null) {
+					return;
+				}
                 Object node = path.getLastPathComponent();
                 if (node instanceof ForceDescriptor) {
                     final ForceDescriptor fd = (ForceDescriptor) node;

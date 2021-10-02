@@ -9353,14 +9353,12 @@ public class Server implements Runnable {
             entity.setDone(false);
             entity.setTurnInterrupted(true);
             
-            if (!game.isPhaseSimultaneous()) {
-                GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
-                // Need to set the new turn's multiTurn state
-                newTurn.setMultiTurn(true);
-                game.insertNextTurn(newTurn);
-                // brief everybody on the turn update
-                send(createTurnVectorPacket());
-            }
+            GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+            // Need to set the new turn's multiTurn state
+            newTurn.setMultiTurn(true);
+            game.insertNextTurn(newTurn);
+            // brief everybody on the turn update
+            send(createTurnVectorPacket());
             
             // let everyone know about what just happened
             if (vPhaseReport.size() > 1) {

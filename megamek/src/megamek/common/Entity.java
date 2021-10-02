@@ -710,6 +710,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean isCommander = false;
 
     protected boolean isCarefulStanding = false;
+    
+    private boolean turnWasInterrupted = false;
 
     /**
      * a vector of currently active sensors that might be able to check range
@@ -6528,6 +6530,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setSelfDestructedThisTurn(false);
 
         setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        
+        setTurnInterrupted(false);
     }
 
     /**
@@ -12331,6 +12335,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean isCarefulStand() {
         return false;
+    }
+    
+    public void setTurnInterrupted(boolean interrupted) {
+        turnWasInterrupted = interrupted;
+    }
+    
+    /**
+     * This should eventually be true for any situation where the entity's
+     * turn was interrupted, e.g. walking over a minefield
+     */
+    public boolean turnWasInterrupted() {
+        return turnWasInterrupted;
     }
 
     public Vector<Sensor> getSensors() {

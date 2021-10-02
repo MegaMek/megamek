@@ -2023,7 +2023,8 @@ public class Server implements Runnable {
         GameTurn turn = game.getTurn();
         if (game.isPhaseSimultaneous()
             && (entityUsed != null)
-            && !turn.isValid(entityUsed.getOwnerId(), game)) {
+            && !turn.isValid(entityUsed.getOwnerId(), game)
+            && !entityUsed.turnWasInterrupted()) {
             // turn played out of order
             outOfOrder = true;
             entityUsed.setDone(false);
@@ -9331,12 +9332,17 @@ public class Server implements Runnable {
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
-            GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
-            // Need to set the new turn's multiTurn state
-            newTurn.setMultiTurn(true);
-            game.insertNextTurn(newTurn);
-            // brief everybody on the turn update
-            send(createTurnVectorPacket());
+            entity.setTurnInterrupted(true);
+            
+            if (!game.isPhaseSimultaneous()) {
+                GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+                // Need to set the new turn's multiTurn state
+                newTurn.setMultiTurn(true);
+                game.insertNextTurn(newTurn);
+                // brief everybody on the turn update
+                send(createTurnVectorPacket());
+            }
+            
             // let everyone know about what just happened
             if (vPhaseReport.size() > 1) {
                 send(entity.getOwner().getId(), createSpecialReportPacket());
@@ -11582,6 +11588,7 @@ public class Server implements Runnable {
             if (mf.hasDetonated()) {
                 boom = true;
                 mf.checkReduction(0, true);
+                revealMinefield(mf);
             }
 
         }

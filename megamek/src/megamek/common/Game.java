@@ -2,17 +2,16 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -32,6 +31,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -62,13 +63,10 @@ import megamek.server.victory.VictoryResult;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
- * Client and the Server should have one of these objects and it is their job to
+ * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
 public class Game implements Serializable, IGame {
-    /**
-     *
-     */
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -79,12 +77,7 @@ public class Game implements Serializable, IGame {
     /**
      * Stores the version of MM, so that it can be serialized in saved games.
      */
-    public String mmVersion = MegaMek.VERSION;
-
-    /**
-     * Define constants to describe the condition a unit was in when it wass
-     * removed from the game.
-     */
+    public final Version version = MegaMekConstants.VERSION;
 
     private GameOptions options = new GameOptions();
 
@@ -209,6 +202,11 @@ public class Game implements Serializable, IGame {
 
     public void setExternalGameId(int value) {
         externalGameId = value;
+    }
+
+    @Override
+    public Version getVersion() {
+        return version;
     }
 
     public IBoard getBoard() {
@@ -489,11 +487,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    public IPlayer getPlayer(int id) {
-        if (IPlayer.PLAYER_NONE == id) {
-            return null;
-        }
-        return playerIds.get(Integer.valueOf(id));
+    public @Nullable IPlayer getPlayer(final int id) {
+        return (IPlayer.PLAYER_NONE == id) ? null : playerIds.get(id);
     }
 
     public void addPlayer(int id, IPlayer player) {

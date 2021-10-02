@@ -441,10 +441,10 @@ class ServerLobbyHelper {
 
         int newId;
         if (force.isTopLevel()) {
-            newId = game.getForces().addTopLevelForce(force.getName(), game.getPlayer(force.getOwnerId()));
+            newId = game.getForces().addTopLevelForce(force, game.getPlayer(force.getOwnerId()));
         } else {
             Force parent = game.getForces().getForce(force.getParentId()); 
-            newId = game.getForces().addSubForce(force.getName(), parent);
+            newId = game.getForces().addSubForce(force, parent);
         }
         for (var entity: entities) {
             game.getForces().addEntity(game.getEntity(entity.getId()), newId);

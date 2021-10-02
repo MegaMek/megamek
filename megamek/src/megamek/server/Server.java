@@ -55,6 +55,8 @@ import java.util.zip.GZIPOutputStream;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
@@ -542,7 +544,7 @@ public class Server implements Runnable {
      */
     private String createMotd() {
         StringBuilder motd = new StringBuilder();
-        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMek.VERSION)
+        motd.append("Welcome to MegaMek.  Server is running version ").append(MegaMekConstants.VERSION)
                 .append(", build date ");
         if (MegaMek.TIMESTAMP > 0L) {
             motd.append(new Date(MegaMek.TIMESTAMP).toString());
@@ -648,9 +650,8 @@ public class Server implements Runnable {
     /**
      * Sent when a client attempts to connect.
      */
-    void greeting(int cn) {
-        // send server greeting -- client should reply with client info.
-        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_GREETING));
+    void clientVersionCheck(int cn) {
+        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_VERSION_CHECK));
     }
 
     /**
@@ -729,61 +730,53 @@ public class Server implements Runnable {
         return oldName;
     }
 
-    private void receivePlayerVersion(Packet packet, int connId) {
-        String version = (String) packet.getObject(0);
-        String clientChecksum = (String) packet.getObject(1);
-        String serverChecksum = MegaMek.getMegaMekSHA256();
-        StringBuilder buf = new StringBuilder();
-        boolean needs = false;
-        if (!version.equals(MegaMek.VERSION)) {
-            buf.append("Client/Server version mismatch. Server reports: ").append(MegaMek.VERSION)
-                    .append(", Client reports: ").append(version);
-            MegaMek.getLogger().error("Client/Server Version Mismatch -- Client: " 
-                    + version + " Server: " + MegaMek.VERSION);
-            needs = true;
+    private boolean receivePlayerVersion(Packet packet, int connId) {
+        final Version version = (Version) packet.getObject(0);
+        if (!MegaMekConstants.VERSION.is(version)) {
+            final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
+                    version, MegaMekConstants.VERSION);
+            MegaMek.getLogger().error(message);
+
+            final IPlayer player = getPlayer(connId);
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
+            return false;
         }
+
+        final String clientChecksum = (String) packet.getObject(1);
+        final String serverChecksum = MegaMek.getMegaMekSHA256();
+        final String message;
+
         // print a message indicating client doesn't have jar file
         if (clientChecksum == null) {
-            if (!version.equals(MegaMek.VERSION)) {
-                buf.append(System.lineSeparator()).append(System.lineSeparator());
-            }
-            buf.append("Client Checksum is null. Client may not have a jar file");
-            MegaMek.getLogger().info("Client does not have a jar file");
-            needs = true;
+            message = "Client Checksum is null. Client may not have a jar file";
+            MegaMek.getLogger().info(message);
         // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
-            if (!version.equals(MegaMek.VERSION)) {
-                buf.append(System.lineSeparator()).append(System.lineSeparator());
-            }
-            buf.append("Server Checksum is null. Server may not have a jar file");
-            MegaMek.getLogger().info("Server does not have a jar file");
-            needs = true;
+            message = "Server Checksum is null. Server may not have a jar file";
+            MegaMek.getLogger().info(message);
         // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
-            if (!version.equals(MegaMek.VERSION)) {
-                buf.append(System.lineSeparator());
-                buf.append(System.lineSeparator());
-            }
-            buf.append("Client/Server checksum mismatch. Server reports: ").append(serverChecksum)
-                    .append(", Client reports: ").append(clientChecksum);
-            MegaMek.getLogger().error("Client/Server Checksum Mismatch -- Client: " + clientChecksum 
-                    + " Server: " + serverChecksum);
-
-            needs = true;
+            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
+                    serverChecksum, clientChecksum);
+            MegaMek.getLogger().warning(message);
+        } else {
+            message = "";
         }
 
         // Now, if we need to, send message!
-        if (needs) {
-            IPlayer player = getPlayer(connId);
-            if (null != player) {
-                sendServerChat("For " + player.getName() + " Server reports:"
-                        + System.lineSeparator()
-                        + buf.toString());
-            }
-        } else {
+        if (message.isEmpty()) {
             MegaMek.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum (" 
                     + clientChecksum + ") matched");
+        } else {
+            IPlayer player = getPlayer(connId);
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
         }
+
+        return true;
     }
 
     /**
@@ -7498,7 +7491,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7545,7 +7538,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -7571,7 +7564,7 @@ public class Server implements Runnable {
                             + entity.getOwner().getName() + " disagrees.");
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
-                            + " is running MegaMek " + MegaMek.VERSION
+                            + " is running MegaMek " + MegaMekConstants.VERSION
                             + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
@@ -25505,7 +25498,7 @@ public class Server implements Runnable {
                     Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                     // possibly check for an ammo explosion
                     // don't allow ammo explosions on fighter squadrons
-                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS)
                         && !(aero instanceof FighterSquadron)
                         && (weapon.getType() instanceof WeaponType)) {
                         //Bay Weapons
@@ -29740,8 +29733,9 @@ public class Server implements Runnable {
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
 
-        for (final Entity entity : entities) {
-
+        // Need to use a new ArrayLiut to prevent a concurrent modification exception when removing
+        // illegal entities
+        for (final Entity entity : new ArrayList<>(entities)) {
             // Verify the entity's design
             if (Server.entityVerifier == null) {
                 Server.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
@@ -29781,11 +29775,11 @@ public class Server implements Runnable {
                         entity.setDesignValid(false);
                     } else {
                         IPlayer cheater = game.getPlayer(connIndex);
-                        sendServerChat("Player " + cheater.getName()
-                                       + " attempted to add an illegal unit design ("
-                                       + entity.getShortNameRaw()
-                                       + "), the unit was rejected.");
-                        return;
+                        sendServerChat(String.format(
+                                "Player %s attempted to add an illegal unit design (%s), the unit was rejected.",
+                                cheater.getName(), entity.getShortNameRaw()));
+                        entities.remove(entity);
+                        continue;
                     }
                 }
             }
@@ -29793,21 +29787,20 @@ public class Server implements Runnable {
             // If we're adding a ProtoMech, calculate it's unit number.
             if (entity instanceof Protomech) {
                 // How many ProtoMechs does the player already have?
-                int numPlayerProtos = game
-                        .getSelectedEntityCount(new EntitySelector() {
-                            private final int ownerId = entity.getOwnerId();
+                int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
+                    private final int ownerId = entity.getOwnerId();
 
-                            public boolean accept(Entity entity) {
-                                return (entity instanceof Protomech)
-                                        && (ownerId == entity.getOwnerId());
-                            }
-                        });
+                    @Override
+                    public boolean accept(Entity entity) {
+                        return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
+                    }
+                });
 
                 // According to page 54 of the BMRr, ProtoMechs must be
                 // deployed in full Points of five, unless circumstances have
                 // reduced the number to less than that.
                 entity.setUnitNumber((short) (numPlayerProtos / 5));
-            } // End added-ProtoMech
+            }
 
             // Only assign an entity ID when the client hasn't.
             if (Entity.NONE == entity.getId()) {
@@ -29903,17 +29896,17 @@ public class Server implements Runnable {
 
             // Restore forces from MULs or other external sources from the forceString, if any
             if (entity.getForceString().length() > 0) {
-                ArrayList<Force> forceList = Forces.parseForceString(entity);
+                List<Force> forceList = Forces.parseForceString(entity);
                 int realId = Force.NO_FORCE;
                 boolean topLevel = true;
 
                 for (Force force: forceList) {
                     if (!forceMapping.containsKey(force.getId())) {
                         if (topLevel) {
-                            realId = game.getForces().addTopLevelForce(force.getName(), entity.getOwner());
+                            realId = game.getForces().addTopLevelForce(force, entity.getOwner());
                         } else {
                             Force parent = game.getForces().getForce(realId);
-                            realId = game.getForces().addSubForce(force.getName(), parent);
+                            realId = game.getForces().addSubForce(force, parent);
                         }
                         forceMapping.put(force.getId(), realId);
                     } else {
@@ -29924,9 +29917,8 @@ public class Server implements Runnable {
                 entity.setForceString("");
                 game.getForces().addEntity(entity, realId);
             }
-
         }
-        
+
         // Cycle through the entities again and update any carried units
         // and carrier units to use the correct server-given IDs.
         // Typically necessary when loading a MUL containing transported units.
@@ -29934,8 +29926,8 @@ public class Server implements Runnable {
         // First, deal with units loaded into bays. These are saved for the carrier
         // in MULs and must be restored exactly to recreate the bay loading.
         Set<Entity> transportCorrected = new HashSet<>();
-        for (final Entity carrier: entities) {
-            for (int carriedId: carrier.getBayLoadedUnitIds()) {
+        for (final Entity carrier : entities) {
+            for (int carriedId : carrier.getBayLoadedUnitIds()) {
                 // First, see if a bay loaded unit can be found and unloaded,
                 // because it might be the wrong unit
                 Entity carried = game.getEntity(carriedId);
@@ -29959,7 +29951,7 @@ public class Server implements Runnable {
 
         // Now restore the transport settings from the entities' transporter IDs
         // With anything other than bays, MULs only show the carrier, not the carried units 
-        for (final Entity entity: entities) {
+        for (final Entity entity : entities) {
             // Don't correct those that are already corrected
             if (transportCorrected.contains(entity)) {
                 continue;
@@ -29993,7 +29985,7 @@ public class Server implements Runnable {
         // When entering a game from the lobby, this list is generated again, but not when 
         // the added entities are loaded during a game. When getting loaded units from a MUL,
         // act as if they were loaded in the lobby.
-        for (final Entity entity: entities) {
+        for (final Entity entity : entities) {
             if (entity.getLoadedUnits().size() > 0) {
                 Vector<Integer> v = new Vector<>();
                 for (Entity en : entity.getLoadedUnits()) {
@@ -30003,7 +29995,7 @@ public class Server implements Runnable {
             }
         }
 
-        List<Integer> changedForces = new ArrayList<Integer>(forceMapping.values());
+        List<Integer> changedForces = new ArrayList<>(forceMapping.values());
 
         send(createAddEntityPacket(entityIds, changedForces));
     }
@@ -31296,7 +31288,13 @@ public class Server implements Runnable {
         // act on it
         switch (packet.getCommand()) {
             case Packet.COMMAND_CLIENT_VERSIONS:
-                receivePlayerVersion(packet, connId);
+                final boolean valid = receivePlayerVersion(packet, connId);
+                if (valid) {
+                    sendToPending(connId, new Packet(Packet.COMMAND_SERVER_GREETING));
+                } else {
+                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MegaMekConstants.VERSION));
+                    getPendingConnection(connId).close();
+                }
                 break;
             case Packet.COMMAND_CLOSE_CONNECTION:
                 // We have a client going down!
@@ -31597,7 +31595,7 @@ public class Server implements Runnable {
                     newConnThread.start();
                     connectionHandlers.put(id, ch);
 
-                    greeting(id);
+                    clientVersionCheck(id);
                     ConnectionWatchdog w = new ConnectionWatchdog(this, id);
                     watchdogTimer.schedule(w, 1000, 500);
                 }
@@ -35773,7 +35771,7 @@ public class Server implements Runnable {
                         && (game.getPhase() != Phase.PHASE_UNKNOWN)) {
                     content += "&close=yes";
                 }
-                content += "&version=" + MegaMek.VERSION;
+                content += "&version=" + MegaMekConstants.VERSION;
                 if (isPassworded()) {
                     content += "&pw=yes";
                 }

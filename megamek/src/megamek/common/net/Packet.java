@@ -23,7 +23,9 @@ import megamek.common.annotations.Nullable;
 public class Packet {
 
     public static final int COMMAND_CLOSE_CONNECTION = 0;
+    public static final int COMMAND_SERVER_VERSION_CHECK = 9;
     public static final int COMMAND_SERVER_GREETING = 10;
+    public static final int COMMAND_ILLEGAL_CLIENT_VERSION = 11;
     public static final int COMMAND_CLIENT_NAME = 20;
     public static final int COMMAND_CLIENT_VERSIONS = 25;
     public static final int COMMAND_LOCAL_PN = 30;

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -40,7 +40,7 @@ Aerodyne
 </transporters>
 
 <SafeThrust>
-11
+12
 </SafeThrust>
 
 <cockpit_type>
@@ -52,7 +52,7 @@ Aerodyne
 </heatsinks>
 
 <sink_type>
-0
+1
 </sink_type>
 
 <fuel>
@@ -60,7 +60,7 @@ Aerodyne
 </fuel>
 
 <engine_type>
-4
+2
 </engine_type>
 
 <armor_type>
@@ -72,10 +72,10 @@ Aerodyne
 </armor_tech>
 
 <armor>
-46
-32
-32
-33
+48
+34
+34
+36
 </armor>
 
 <Nose Equipment>
@@ -106,3 +106,4 @@ TRO 3075 - Jihad
 <tonnage>
 30.0
 </tonnage>
+

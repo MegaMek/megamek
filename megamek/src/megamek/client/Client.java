@@ -17,6 +17,8 @@ package megamek.client;
 
 import com.thoughtworks.xstream.XStream;
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.commands.*;
@@ -1374,19 +1376,26 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_CLOSE_CONNECTION:
             disconnected();
             break;
+        case Packet.COMMAND_SERVER_VERSION_CHECK:
+            send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, new Object[] {
+                    MegaMekConstants.VERSION, MegaMek.getMegaMekSHA256() }));
+            break;
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
-            send(new Packet(
-                     Packet.COMMAND_CLIENT_NAME,
-                     new Object[] { name, isBot() }
-                 ));
-            Object[] versionData = new Object[2];
-            versionData[0] = MegaMek.VERSION;
-            versionData[1] = MegaMek.getMegaMekSHA256();
-            send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
+            send(new Packet(Packet.COMMAND_CLIENT_NAME, new Object[] { name, isBot() }));
             if (this instanceof Princess) {
-                ((Princess)this).sendPrincessSettings();
+                ((Princess) this).sendPrincessSettings();
             }
+            break;
+        case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
+            final Version serverVersion = (Version) c.getObject(0);
+            final String message = String.format(
+                    "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
+                    getHost(), serverVersion, MegaMekConstants.VERSION);
+            JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference",
+                    JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(message);
+            disconnected();
             break;
         case Packet.COMMAND_SERVER_CORRECT_NAME:
             correctName(c);

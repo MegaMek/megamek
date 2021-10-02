@@ -74,15 +74,20 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.Packet;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
+public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, 
+                    ActionListener, ComponentListener, IPreferenceChangeListener {
     //region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
+    
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -102,8 +107,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     //region file menu
     //game submenu
     public static final String FILE_GAME_NEW = "fileGameNew";
-    public static final String FILE_GAME_OPEN = "fileGameOpen";
     public static final String FILE_GAME_SAVE = "fileGameSave";
+    public static final String FILE_GAME_LOAD = "fileGameLoad";
     public static final String FILE_GAME_SAVE_SERVER = "fileGameSaveServer";
     public static final String FILE_GAME_QSAVE = "fileGameQSave";
     public static final String FILE_GAME_QLOAD = "fileGameQLoad";
@@ -118,6 +123,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String BOARD_SAVE_AS = "fileBoardSaveAs";
     public static final String BOARD_SAVE_AS_IMAGE = "fileBoardSaveAsImage";
     public static final String BOARD_SAVE_AS_IMAGE_UNITS = "fileBoardSaveAsImageUnits";
+    public static final String BOARD_RESIZE = "boardResize";
+    public static final String BOARD_VALIDATE = "boardValidate";
+    public static final String BOARD_SOURCEFILE = "boardSourcefile";
     public static final String BOARD_UNDO = "boardUndo";
     public static final String BOARD_REDO = "boardRedo";
     public static final String BOARD_RAISE = "boardRaise";
@@ -136,12 +144,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String FILE_UNITS_OPEN = "fileUnitsOpen";
     public static final String FILE_UNITS_SAVE = "fileUnitsSave";
     public static final String FILE_UNITS_PASTE = "fileUnitsPaste";
+    public static final String FILE_UNITS_COPY = "fileUnitsCopy";
     //endregion file menu
 
     //region view menu
     public static final String VIEW_INCGUISCALE = "viewIncGUIScale";
     public static final String VIEW_DECGUISCALE = "viewDecGUIScale";
-    public static final String VIEW_MEK_DISPLAY = "viewMekDisplay";
+    public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
     public static final String VIEW_MINI_MAP = "viewMiniMap";
@@ -149,6 +158,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
+    public static final String VIEW_TOGGLE_HEXCOORDS = "viewToggleHexCoords";
+    public static final String VIEW_LABELS = "viewLabels";
     public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire";
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
@@ -352,7 +363,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title"));
-        menuBar.setGame(client.getGame());
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = getVirtualBounds();
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -520,9 +530,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
+        mechW.setFocusable(false);
+        mechW.setFocusableWindowState(false);
         mechD = new UnitDisplay(this, controller);
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
+        mechW.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                GUIP.hideUnitDisplay();
+            }
+        });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
@@ -554,6 +572,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         randomArmyDialog = new RandomArmyDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
         frame.setVisible(true);
+        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -704,11 +723,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 ignoreHotKeys = false;
                 break;
             case FILE_UNITS_PASTE:
-                ignoreHotKeys = true;
                 if (curPanel instanceof ChatLounge) {
+                    ignoreHotKeys = true;
                     ((ChatLounge) curPanel).importClipboard();
+                    ignoreHotKeys = false;
                 }
-                ignoreHotKeys = false;
+                break;
+            case FILE_UNITS_COPY:
+                if (curPanel instanceof ChatLounge) {
+                    ignoreHotKeys = true;
+                    ((ChatLounge) curPanel).copyToClipboard();
+                    ignoreHotKeys = false;
+                }
                 break;
             case FILE_UNITS_OPEN:
                 ignoreHotKeys = true;
@@ -776,17 +802,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case FILE_GAME_REPLACE_PLAYER:
                 replacePlayer();
                 break;
-            case VIEW_MEK_DISPLAY:
-                toggleDisplay();
-                break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
-                break;
-            case VIEW_KEYBINDS_OVERLAY:
-                bv.toggleKeybindsOverlay();
-                break;
-            case VIEW_MINI_MAP:
-                toggleMap();
                 break;
             case VIEW_UNIT_OVERVIEW:
                 toggleUnitOverview();
@@ -856,7 +873,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
                             ent.getModel(), ent.getWeaponSortOrder(),
                             ent.getCustomWeaponOrder());
-                    getMenuBar().updateSaveWeaponOrderMenuItem();
                     client.sendEntityWeaponOrderUpdate(ent);
                 }
                 break;
@@ -992,6 +1008,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             menuBar.die();
             menuBar = null;
         }
+        GUIP.removePreferenceChangeListener(this);
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -1056,7 +1073,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_FIRING:
             case PHASE_PHYSICAL:
                 if (frame.isShowing()) {
-                    setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
+                    maybeShowMinimap();
+                    maybeShowUnitDisplay();
                 }
                 break;
             case PHASE_INITIATIVE_REPORT:
@@ -1071,7 +1089,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 cb.setDoneButton(rD.butDone);
                 rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
                 setMapVisible(false);
-                mechW.setVisible(false);
+                setUnitDisplayVisible(false);
                 break;
             default:
                 break;
@@ -1288,20 +1306,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * both will be shown.
      */
     public void toggleMMUDDisplays() {
-        boolean wasVisible = mechW.isVisible();
-        setDisplayVisible(!wasVisible);
-        GUIPreferences.getInstance().setMinimapEnabled(!wasVisible);
-        toggleMap();
-    }
-
-    /**
-     * Toggles the entity display window
-     */
-    private void toggleDisplay() {
-        mechW.setVisible(!mechW.isVisible());
-        if (mechW.isVisible()) {
-            frame.requestFocus();
-        }
+        GUIP.toggleUnitDisplay();
+        GUIP.setMinimapEnabled(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
     }
 
     /**
@@ -1314,30 +1320,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    /**
-     * Sets the visibility of the entity display window
-     */
-    public void setDisplayVisible(boolean visible) {
-        // If no unit displayed, select a unit so display can be safely shown
-        // This can happen when using mouse button 4
-        Entity unitToSelect = null;
-        IGame game = (getClient() != null) ? getClient().getGame() : null;
-        if ((mechD.getCurrentEntity() == null) && (game != null)) {
-            List<Entity> es = getClient().getGame().getEntitiesVector();
-            if ((es != null) && (es.size() > 0)) {
-                unitToSelect = es.get(0);
-            }
-        }
-
-        mechW.setVisible(visible);
-        if (unitToSelect != null) {
-            mechD.displayEntity(unitToSelect);
-        }
-        if (visible) {
-            frame.requestFocus();
-        }
-    }
-
     private void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
         GUIPreferences.getInstance().setShowUnitOverview(uo.isVisible());
@@ -1345,20 +1327,47 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
-    private void toggleMap() {
-        setMapVisible(GUIPreferences.getInstance().getMinimapEnabled());
+    private void maybeShowMinimap() {
+        setMapVisible(GUIP.getMinimapEnabled());
     }
 
     /** 
-     * Shows or hides the minimap based on the given visible. This works independently 
-     * of the current menu setting, so it should be used only when the minimap is to 
-     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby. 
-     * Does not change the menu bar setting. 
+     * Shows or hides the Minimap based on the given visible. This works independently 
+     * of the current menu setting, so it should be used only when the Minimap is to 
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
+     * or a report phase. 
+     * Does not change the menu setting. 
      */
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
+    
+    /** Shows or hides the Unit Display based on the current menu setting. */
+    public void maybeShowUnitDisplay() {
+        setUnitDisplayVisible(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+    }
 
+    /** 
+     * Shows or hides the Unit Display based on the given visible. This works independently 
+     * of the current menu setting, so it should be used only when the Unit Display is to 
+     * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
+     * or a report phase. 
+     * Does not change the menu setting. 
+     */
+    public void setUnitDisplayVisible(boolean visible) {
+        // If no unit displayed, select a unit so display can be safely shown
+        // This can happen when using mouse button 4
+        if (visible && (mechD.getCurrentEntity() == null)
+                && (getClient() != null) && (getClient().getGame() != null)) {
+            List<Entity> es = getClient().getGame().getEntitiesVector();
+            if ((es != null) && !es.isEmpty()) {
+                mechD.displayEntity(es.get(0));
+            }
+        }
+       
+        mechW.setVisible(visible);
+    }
+    
     private boolean fillPopup(Coords coords) {
         popup = new MapMenu(coords, client, curPanel, this);
         return popup.getHasMenu();
@@ -1715,7 +1724,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     @Override
     public void windowClosing(WindowEvent windowEvent) {
         if (windowEvent.getWindow().equals(mechW)) {
-            setDisplayVisible(false);
+            GUIP.hideUnitDisplay();
         }
     }
 
@@ -2471,6 +2480,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public int getPointblankEID() {
         return pointblankEID;
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
+            maybeShowMinimap();
+        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
+            maybeShowUnitDisplay();
+        }
+        
     }
 
 }

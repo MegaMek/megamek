@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
@@ -96,6 +96,7 @@ BeagleActiveProbe
 </Wings Equipment>
 
 <Fuselage Equipment>
+ImprovedSmartRoboticControlSystem
 </Fuselage Equipment>
 
 <source>
@@ -105,3 +106,7 @@ JHS Terra - Jihad
 <tonnage>
 35.0
 </tonnage>
+
+<notes>
+Aerospace Smart Robotic Control System (Improved) gives the Tabanid a Piloting Skill of 5 and a Gunnery Skill of 4
+</notes>

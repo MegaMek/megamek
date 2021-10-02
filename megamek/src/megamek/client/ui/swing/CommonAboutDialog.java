@@ -13,11 +13,9 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-
 package megamek.client.ui.swing;
 
 import static megamek.MegaMek.TIMESTAMP;
-import static megamek.MegaMek.VERSION;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -33,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import megamek.MegaMekConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -89,9 +88,9 @@ public class CommonAboutDialog extends JDialog {
         // Version text
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
-                .append(VERSION).append(
+                .append(MegaMekConstants.VERSION).append(
                         Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
-                .append(new Date(TIMESTAMP).toString()).append(
+                .append(new Date(TIMESTAMP)).append(
                         Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
                 .append(System.getProperty("java.vendor"))//$NON-NLS-1$
                 .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$

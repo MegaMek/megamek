@@ -13,7 +13,7 @@
  */
 package megamek.common;
 
-import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
@@ -21,18 +21,9 @@ import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -517,24 +508,22 @@ public class EntityListFile {
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list)
-            throws IOException {
-
+    public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), "UTF-8"));
+                new FileOutputStream(file), StandardCharsets.UTF_8));
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<unit version=\"" + MegaMek.VERSION + "\" >");
+        output.write("<unit version=\"" + MegaMekConstants.VERSION + "\" >");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
 
         try {
             writeEntityList(output, list);
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             throw exception;
         }
 
@@ -572,20 +561,20 @@ public class EntityListFile {
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(file), "UTF-8"));
+                new FileOutputStream(file), StandardCharsets.UTF_8));
 
         // Output the doctype and header stuff.
         output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
-        output.write("<record version=\"" + MegaMek.VERSION + "\" >");
+        output.write("<record version=\"" + MegaMekConstants.VERSION + "\" >");
         
         ArrayList<Entity> living = new ArrayList<Entity>();
         ArrayList<Entity> allied = new ArrayList<Entity>();
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> retreated = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
-        Hashtable<String, String> kills = new Hashtable<String, String>();        
+        Hashtable<String, String> kills = new Hashtable<String, String>();
 
         //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
         Iterator<Entity> entities = client.getGame().getEntities();

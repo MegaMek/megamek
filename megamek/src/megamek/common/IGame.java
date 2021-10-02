@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Stream;
 
+import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -99,6 +100,14 @@ public interface IGame {
         public boolean isBefore(Phase otherPhase) {
             return compareTo(otherPhase) < 0;
         }
+        
+        /** Returns true when this phase shows the game map (boardview). */
+        public boolean isOnMap() {
+            return (this == PHASE_SET_ARTYAUTOHITHEXES) || (this == PHASE_DEPLOY_MINEFIELDS)
+                    || (this == PHASE_MOVEMENT) || (this == PHASE_FIRING)
+                    || (this == PHASE_PHYSICAL) || (this == PHASE_OFFBOARD)
+                    || (this == PHASE_TARGETING) || (this == PHASE_DEPLOYMENT);
+        }
 
         /**
          * Get the displayable name for the given Phase.
@@ -162,6 +171,8 @@ public interface IGame {
     abstract int getExternalGameId();
 
     abstract void setExternalGameId(int value);
+
+    Version getVersion();
 
     /**
      * @return the currently active context-object for victorycondition
@@ -380,7 +391,7 @@ public interface IGame {
     /**
      * Returns the individual player assigned the id parameter.
      */
-    abstract IPlayer getPlayer(int id);
+    @Nullable IPlayer getPlayer(final int id);
 
     abstract void addPlayer(int id, IPlayer player);
 

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -84,9 +84,11 @@ ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
+Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
+Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -110,3 +112,4 @@ TRO Prototypes - Jihad
 <tonnage>
 50.0
 </tonnage>
+

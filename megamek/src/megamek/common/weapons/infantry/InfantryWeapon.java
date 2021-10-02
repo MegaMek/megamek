@@ -74,13 +74,13 @@ public abstract class InfantryWeapon extends Weapon {
 
     @Override
     public double getShortAV() {
-        return infantryDamage;
+        return getInfantryDamage();
     }
 
     @Override
     public double getMedAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_SHORT]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -89,7 +89,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public double getLongAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_MED]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -98,7 +98,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public double getExtAV() {
         if (infantryRange * 3 > AIRBORNE_WEAPON_RANGES[RANGE_LONG]) {
-            return infantryDamage;
+            return getInfantryDamage();
         } else {
             return 0.0;
         }
@@ -240,7 +240,7 @@ public abstract class InfantryWeapon extends Weapon {
     public int getSupportVeeSlots(Entity entity) {
         return 1;
     }
-
+    
     /*
      * (non-Javadoc)
      *
@@ -260,5 +260,4 @@ public abstract class InfantryWeapon extends Weapon {
         }
         return new InfantryWeaponHandler(toHit, waa, game, server);
     }
-
 }

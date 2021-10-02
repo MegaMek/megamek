@@ -16,6 +16,8 @@ package megamek.common.options;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.xml.bind.JAXBContext;
@@ -33,6 +35,8 @@ import javax.xml.namespace.QName;
 import megamek.MegaMek;
 import megamek.common.TechConstants;
 import megamek.utils.MegaMekXmlUtil;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Contains the options determining play in the current game.
@@ -260,8 +264,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
@@ -277,6 +280,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
@@ -419,9 +423,9 @@ public class GameOptions extends AbstractOptions {
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+                marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
             }
             
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
@@ -444,11 +448,10 @@ public class GameOptions extends AbstractOptions {
     }
 
     private static class GameOptionsInfo extends AbstractOptionsInfo {
-
         private static AbstractOptionsInfo instance = new GameOptionsInfo();
 
         protected GameOptionsInfo() {
-            super("GameOptionsInfo"); //$NON-NLS-1$
+            super("GameOptionsInfo");
         }
 
         public static AbstractOptionsInfo getInstance() {
@@ -460,9 +463,8 @@ public class GameOptions extends AbstractOptions {
      * A helper class for the XML binding.
      */
     @XmlRootElement(name = "options")
-    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlAccessorType(value = XmlAccessType.FIELD)
     private static class GameOptionsXML {
-
         @XmlElement(name = "gameoption", type = BasicOption.class)
         private Vector<IBasicOption> options;
         
@@ -473,12 +475,89 @@ public class GameOptions extends AbstractOptions {
         /**
          * Required for JAXB.
          */
-        @SuppressWarnings("unused")
+        @SuppressWarnings(value = "unused")
         private GameOptionsXML() {
+
         }
 
         public Vector<IBasicOption> getOptions() {
             return options;
         }
     }
+
+    //region MekHQ I/O
+    /**
+     * This is used by MekHQ to write the game options to the standard file
+     *
+     * @param pw the PrintWriter to write to
+     * @param indent the indent to write at
+     */
+    public void writeToXML(final PrintWriter pw, int indent) {
+        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
+            final IOptionGroup group = groups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
+                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "name", option.getName());
+                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
+                MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+            }
+        }
+        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+    }
+
+    /**
+     * This is used to fill a GameOptions object from an XML node list written using writeToXML.
+     * @param nl the node list to parse
+     */
+    public void fillFromXML(final NodeList nl) {
+        for (int x = 0; x < nl.getLength(); x++) {
+            try {
+                final Node wn = nl.item(x);
+                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes())  {
+                    continue;
+                }
+
+                final NodeList nl2 = wn.getChildNodes();
+                IOption option = null;
+                for (int y = 0; y < nl2.getLength(); y++) {
+                    final Node wn2 = nl2.item(y);
+                    switch (wn2.getNodeName()) {
+                        case "name":
+                            option = getOption(wn2.getTextContent().trim());
+                            break;
+                        case "value":
+                            final String value = wn2.getTextContent().trim();
+                            if ((option != null) && !option.getValue().toString().equals(value)) {
+                                switch (option.getType()) {
+                                    case IOption.STRING:
+                                    case IOption.CHOICE:
+                                        option.setValue(value);
+                                        break;
+                                    case IOption.BOOLEAN:
+                                        option.setValue(Boolean.valueOf(value));
+                                        break;
+                                    case IOption.INTEGER:
+                                        option.setValue(Integer.valueOf(value));
+                                        break;
+                                    case IOption.FLOAT:
+                                        option.setValue(Float.valueOf(value));
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                option = null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                MegaMek.getLogger().error("Failed to parse Game Option Node", e);
+            }
+        }
+    }
+    //endregion MekHQ I/O
 }

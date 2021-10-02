@@ -342,7 +342,7 @@ public class MapMenu extends JPopupMenu {
                 try {
                     selectedEntity = game.getEntity(Integer.parseInt(e
                             .getActionCommand()));
-                    gui.setDisplayVisible(true);
+                    GUIPreferences.getInstance().showUnitDisplay();
                     gui.mechD.displayEntity(selectedEntity);
                 } catch (Exception ex) {
                     ex.printStackTrace();

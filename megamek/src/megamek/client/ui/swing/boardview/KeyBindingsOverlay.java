@@ -33,11 +33,14 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.IGame;
+import megamek.common.KeyBindParser;
 import megamek.common.IGame.Phase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 
 /** 
@@ -46,7 +49,7 @@ import megamek.common.util.ImageUtil;
  * 
  * @author SJuliez
  */
-public class KeyBindingsOverlay implements IDisplayable {
+public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListener {
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 30;
@@ -61,7 +64,6 @@ public class KeyBindingsOverlay implements IDisplayable {
     private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
             KeyCommandBind.NEXT_WEAPON,
             KeyCommandBind.PREV_WEAPON,
-            KeyCommandBind.FIELD_FIRE,
             KeyCommandBind.NEXT_TARGET,
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
@@ -70,7 +72,6 @@ public class KeyBindingsOverlay implements IDisplayable {
 
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
-            KeyCommandBind.MOVE_ENVELOPE,
             KeyCommandBind.TOGGLE_MOVEMODE,
             KeyCommandBind.TOGGLE_CONVERSIONMODE
             );
@@ -87,15 +88,13 @@ public class KeyBindingsOverlay implements IDisplayable {
     /** The keybinds to be shown in all phases during any player's turn */
     private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(
             KeyCommandBind.TOGGLE_CHAT,
-            KeyCommandBind.TOGGLE_ISO,
-            KeyCommandBind.TOGGLE_DRAW_LABELS,
-            KeyCommandBind.TOGGLE_HEX_COORDS
+            KeyCommandBind.DRAW_LABELS,
+            KeyCommandBind.HEX_COORDS
             );
     
     /** The keybinds to be shown in the Board Editor */
     private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
-            KeyCommandBind.TOGGLE_ISO,
-            KeyCommandBind.TOGGLE_HEX_COORDS
+            KeyCommandBind.HEX_COORDS
             );
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
@@ -131,6 +130,7 @@ public class KeyBindingsOverlay implements IDisplayable {
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
         clientGui = cg;
+        KeyBindParser.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class KeyBindingsOverlay implements IDisplayable {
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
         
-        KeyCommandBind kcb = KeyCommandBind.TOGGLE_KEYBIND_DISPLAY;
+        KeyCommandBind kcb = KeyCommandBind.KEY_BINDS;
         String mod = KeyEvent.getModifiersExText(kcb.modifiers);
         String key = KeyEvent.getKeyText(kcb.key);
         String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
@@ -336,5 +336,12 @@ public class KeyBindingsOverlay implements IDisplayable {
             changed = true;
         }
     };
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            changed = true;
+        }
+    }
 
 }

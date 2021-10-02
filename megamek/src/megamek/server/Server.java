@@ -8122,10 +8122,11 @@ public class Server implements Runnable {
                 }
             }
             
-            // check for minefields. have to check both new hex and new
-            // elevation
+            // check for minefields. have to check both new hex and new elevation
             // VTOLs may land and submarines may rise or lower into a minefield
-            if (!lastPos.equals(curPos) || (lastElevation != curElevation)) {
+            // jumping units may end their movement with a turn but should still check at end of movement
+            if (!lastPos.equals(curPos) || (lastElevation != curElevation) || 
+                    ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasMoreElements())) {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = checkVibrabombs(entity, curPos, false, lastPos, curPos, vPhaseReport);

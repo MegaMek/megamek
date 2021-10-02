@@ -505,9 +505,10 @@ public class ServerHelper {
                     if (roll >= minefield.getBAPDetectionTarget()) {
                         minefieldDetected = true;
                         
-                        Report r = new Report(2120);
+                        Report r = new Report(2163);
                         r.subject = entity.getId();
                         r.add(entity.getShortName(), true);
+                        r.add(potentialMineCoords.toFriendlyString());
                         vPhaseReport.add(r);
                         
                         server.revealMinefield(entity.getOwner(), minefield);

@@ -18,6 +18,8 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -62,6 +64,17 @@ public class SniperCannon extends ArtilleryCannonWeapon {
             .setISAdvancement(3012, 3079).setClanAdvancement(3032, 3079)
             .setPrototypeFactions(F_LC,F_CWF).setProductionFactions(F_LC)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.83;
+        } else if (range == BattleForceElement.MEDIUM_RANGE) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }

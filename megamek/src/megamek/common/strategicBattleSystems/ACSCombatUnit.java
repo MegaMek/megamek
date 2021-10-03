@@ -23,8 +23,13 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.common.ASDamageVector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ACSCombatUnit extends SBFFormation {
 
+
+    private final List<ACSCombatTeam> teams = new ArrayList<>();
     public final int armor;
     public final ASDamageVector damage;
 
@@ -33,6 +38,9 @@ public class ACSCombatUnit extends SBFFormation {
         damage = ASDamageVector.createNormRndDmg(8);
     }
 
+    public List<ACSCombatTeam> getTeams() {
+        return teams;
+    }
 
     public ASDamageVector getDamage() {
         return damage;

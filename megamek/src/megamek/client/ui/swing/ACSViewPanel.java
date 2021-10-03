@@ -1,25 +1,30 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ *  * Copyright (c) 03.10.21, 18:00 - The MegaMek Team. All Rights Reserved.
+ *  *
+ *  * This file is part of MegaMek.
+ *  *
+ *  * MegaMek is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * MegaMek is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.strategicBattleSystems.ACSCombatTeam;
+import megamek.common.strategicBattleSystems.ACSCombatUnit;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
@@ -27,49 +32,49 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class SBFViewPanel extends JPanel {
+public class ACSViewPanel extends JPanel {
 
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
     public static final int COLS = 12;
-    
+
     private int elements = 0;
 
-    public SBFViewPanel(Collection<SBFFormation> formations) {
+    public ACSViewPanel(Collection<ACSCombatUnit> cUnits) {
         setLayout(new SpringLayout());
 
-        for (SBFFormation formation : formations) {
+        for (ACSCombatUnit cUnit : cUnits) {
             addFormationHeaders();
-            addGridElement(formation.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
-            addGridElement(formation.getType().toString(), UIUtil.uiDarkBlue());
-            addGridElement(formation.getSize() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getMovement() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getJumpMove() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTrspMovement() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTmm() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTactics() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getMorale() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSkill() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getPointValue() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSpecialsString() + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+            addGridElement(cUnit.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+            addGridElement(cUnit.getType().toString(), UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getSize() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getMovement() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getJumpMove() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getTrspMovement() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getTmm() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getTactics() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getMorale() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getSkill() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getPointValue() + "", UIUtil.uiDarkBlue());
+            addGridElement(cUnit.getSpecialsString() + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
 
             addUnitHeaders();
             int row = 1;
-            for (SBFUnit unit : formation.getUnits()) {
+            for (ACSCombatTeam team : cUnit.getTeams()) {
                 boolean oddRow = (row++ % 2) == 1;
                 Color bgColor = oddRow ? UIUtil.alternateTableBGColor() : null;
-                addGridElement("  " + unit.getName(), bgColor, FlowLayout.LEFT);
-                addGridElement(unit.getType().toString(), bgColor);
-                addGridElement(unit.getSize() + "", bgColor);
-                addGridElement(unit.getMovement() + unit.getMoveType(), bgColor);
-                addGridElement(unit.getJumpMove() + "", bgColor);
-                addGridElement(unit.getTrspMovement() + "", bgColor);
-                addGridElement(unit.getTmm() + "", bgColor);
-                addGridElement(unit.getArmor() + "", bgColor);
-                addGridElement(unit.getDamage() + "", bgColor);
-                addGridElement(unit.getSkill() + "", bgColor);
-                addGridElement(unit.getPointValue() + "", bgColor);
-                addGridElement(unit.getSpecialsString(), bgColor, FlowLayout.LEFT);
+                addGridElement("  " + team.getName(), bgColor, FlowLayout.LEFT);
+                addGridElement(team.getType().toString(), bgColor);
+                addGridElement(team.getSize() + "", bgColor);
+//                addGridElement(team.getMovement() + team.getMoveType(), bgColor);
+                addGridElement(team.getJumpMove() + "", bgColor);
+                addGridElement(team.getTrspMovement() + "", bgColor);
+                addGridElement(team.getTmm() + "", bgColor);
+                addGridElement(team.getArmor() + "", bgColor);
+                addGridElement(team.getDamage() + "", bgColor);
+                addGridElement(team.getSkill() + "", bgColor);
+                addGridElement(team.getPointValue() + "", bgColor);
+                addGridElement(team.getSpecialsString(), bgColor, FlowLayout.LEFT);
             }
             addSpacer();
         }

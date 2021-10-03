@@ -67,6 +67,7 @@ public final class AlphaStrikeConverter {
         //System.out.println("----------Unit: "+entity.getShortName());
         var result = new AlphaStrikeElement();
         result.name = undamagedEntity.getShortName();
+        result.setQuirks(undamagedEntity.getQuirks());
         result.model = undamagedEntity.getModel();
         result.chassis = undamagedEntity.getChassis();
         result.role = UnitRoleHandler.getRoleFor(undamagedEntity);
@@ -721,9 +722,13 @@ public final class AlphaStrikeConverter {
             }
             
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-                result.addSPA(getArtilleryType(weapon), 1);
-                findArcTurret(result, entity, mount, turretsArcs).forEach(a -> a.addSPA(getArtilleryType(weapon), 1));
-                continue;
+                if ((entity instanceof Aero) && isArtilleryCannon(weapon)) {
+
+                } else {
+                    result.addSPA(getArtilleryType(weapon), 1);
+                    findArcTurret(result, entity, mount, turretsArcs).forEach(a -> a.addSPA(getArtilleryType(weapon), 1));
+                    continue;
+                }
             }
             if (weapon instanceof ArtilleryBayWeapon) {
                 for (int index : mount.getBayWeapons()) {
@@ -869,7 +874,7 @@ public final class AlphaStrikeConverter {
                 }
                 for (int r = 0; r < result.rangeBands; r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-                    //System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
+                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -1344,6 +1349,8 @@ public final class AlphaStrikeConverter {
                         || m.getType().hasFlag(MiscType.F_TRAILER_MODIFICATION)
                         || m.getType().hasFlag(MiscType.F_HITCH)) {
                     element.addSPA(HTC);
+                } else if (m.getType().hasFlag(MiscType.F_COMMAND_CONSOLE)) {
+                    element.addSPA(MHQ, 1);
                 }
             }
 
@@ -1367,7 +1374,7 @@ public final class AlphaStrikeConverter {
         }
 
         // TODO: why doesnt this work?
-        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_TRAILER_HITCH)) {
+        if (element.hasQuirk(OptionsConstants.QUIRK_POS_TRAILER_HITCH)) {
             element.addSPA(HTC);
         }
 
@@ -1499,7 +1506,10 @@ public final class AlphaStrikeConverter {
             }
         }
 
-        if (entity instanceof Aero) { 
+        if (entity instanceof Aero) {
+            if (((Aero) entity).getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
+                element.addSPA(MHQ, 1);
+            }
             if (entity.isFighter()) {
                 element.addSPA(BOMB, element.getSize());
             }
@@ -1675,6 +1685,12 @@ public final class AlphaStrikeConverter {
                 return BattleForceSPA.ARTBA;
         }
         return null;
+    }
+
+    private static boolean isArtilleryCannon(WeaponType weapon) {
+        return (weapon.getAmmoType() == AmmoType.T_LONG_TOM_CANNON)
+                || (weapon.getAmmoType() == AmmoType.T_SNIPER_CANNON)
+                || (weapon.getAmmoType() == AmmoType.T_THUMPER_CANNON);
     }
 
     private static double getConvInfantryStandardDamage(Infantry inf) {

@@ -18,6 +18,8 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -64,4 +66,14 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 1.32;
+        } else if (range < BattleForceElement.EXTREME_RANGE) {
+            return 3;
+        } else {
+            return 0;
+        }
+    }
 }

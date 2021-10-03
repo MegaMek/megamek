@@ -19,6 +19,8 @@
 package megamek.common;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.Quirks;
 
 import static megamek.common.BattleForceSPA.*;
 import static megamek.common.ASUnitType.*;
@@ -66,6 +68,26 @@ public class AlphaStrikeElement extends BattleForceElement {
      * Ground units and fighters use standardDamage instead. 
      */
     public EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
+
+    /**
+     * AlphaStrike Quirks.
+     * Ideally these would be converted/filtered according to AS Companion, p. 59, but
+     * currently, the TW quirks are just reproduced here.
+     */
+    private Quirks quirks = new Quirks();
+
+
+    public Quirks getQuirks() {
+        return quirks;
+    }
+
+    public void setQuirks(Quirks quirks) {
+        this.quirks = quirks;
+    }
+
+    public boolean hasQuirk(String name) {
+        return quirks.booleanOption(name);
+    }
 
     public int getSkill() {
         return skill;

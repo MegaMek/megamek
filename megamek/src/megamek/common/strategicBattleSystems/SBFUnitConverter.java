@@ -20,6 +20,7 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.MegaMek;
 import megamek.common.*;
+import megamek.common.options.OptionsConstants;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class SBFUnitConverter {
             return types.stream()
                     .filter(e -> Collections.frequency(types, e) == highestOccurrence)
                     .findFirst()
-                    .get();
+                    .orElse(null);
         }
     }
 
@@ -120,6 +121,7 @@ public class SBFUnitConverter {
         sumUnitSpasDivideBy3(elements, unit, ATAC, BOMB, IF);
         sumUnitArtillery(elements, unit, ARTLT, ARTS, ARTT, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12);
         calcUnitMhq(elements, unit);
+        calcUnitRcn(elements, unit);
 
         double flkMSum = elements.stream().filter(e -> e.hasSPA(FLK)).map(e -> (ASDamageVector)e.getSPA(FLK)).mapToDouble(dv -> sbfDamage(dv.M)).sum();
         int flkM = (int) Math.round(flkMSum / 3);
@@ -237,7 +239,21 @@ public class SBFUnitConverter {
         }
     }
 
+    private static void calcUnitRcn(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
+        if (elements.stream().filter(e -> e.hasSPA(RCN) || isConsideredRcn(e)).count() >= 2) {
+            unit.addSPA(RCN);
+        }
+    }
 
+    private static boolean isConsideredRcn(AlphaStrikeElement el) {
+        return (el.isType(ASUnitType.BM) && el.getSize() <= 2 && el.getPrimaryMovementValue() >= 14)
+                || (el.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM) && el.getJumpMove() >= 12)
+                || (el.isGround() && el.getSize() <= 2 && el.getPrimaryMovementValue() >= 18)
+                || el.getName().contains("Scout")
+                || el.getName().contains("Recon")
+                || el.getName().contains("Sensor")
+                || el.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS);
+    }
 
     /** Returns the SBF damage of an AlphaStrike damage (0.5 for minimal damage, the AS damage otherwise). */
     private static double sbfDamage(ASDamage asDamage) {
@@ -303,13 +319,14 @@ public class SBFUnitConverter {
         }
         switch (element.getPrimaryMovementType()) {
             case "":
-                if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM)) {
+                if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
                     return new SBFMoveMode("l", 60);
                 } else if (element.isType(ASUnitType.WS)) {
                     return new SBFMoveMode("aw", 31);
                 } else if (element.isType(ASUnitType.BA)) {
                     return new SBFMoveMode("l", 50);
                 }
+                break;
             case "w":
             case "w(b)":
             case "w(m)":
@@ -349,6 +366,7 @@ public class SBFUnitConverter {
                 } else if (element.isType(ASUnitType.BA)) {
                     return new SBFMoveMode("s", 51);
                 }
+                break;
             case "j":
                 if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM)) {
                     return new SBFMoveMode("j", 70);
@@ -357,8 +375,7 @@ public class SBFUnitConverter {
                 } else if (element.isType(ASUnitType.CI)) {
                     return new SBFMoveMode("j", 53);
                 }
-
-
+                break;
         }
         return new SBFMoveMode("unknown", 0);
     }

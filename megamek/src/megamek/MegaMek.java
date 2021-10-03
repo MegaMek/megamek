@@ -65,7 +65,6 @@ public class MegaMek {
     private static MMLogger logger = null;
     private static MMPreferences preferences = null;
 
-    public static String VERSION = "0.49.4-SNAPSHOT";
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified();
 
@@ -399,23 +398,14 @@ public class MegaMek {
      */
     private static void showInfo() {
         // echo some useful stuff
-        String msg = "Starting MegaMek v" + VERSION + " ..." + "\n\tCompiled on " +
-                new Date(TIMESTAMP).toString() + "\n\tToday is " + LocalDate.now().toString() +
+        String msg = "Starting MegaMek v" + MegaMekConstants.VERSION + " ..." + "\n\tCompiled on " +
+                new Date(TIMESTAMP) + "\n\tToday is " + LocalDate.now() +
                 "\n\tJava vendor " + System.getProperty("java.vendor") + "\n\tJava version "
                 + System.getProperty("java.version") + "\n\tPlatform " + System.getProperty("os.name")
                 + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")"
                 + "\n\tTotal memory available to MegaMek: "
                 + MegaMek.commafy.format(Runtime.getRuntime().maxMemory() / 1024) + " kB";
         getLogger().info(msg);
-    }
-
-    /**
-     * Returns the version of Megamek
-     *
-     * @return the version of Megamek as a string.
-     */
-    public static String getVersion() {
-        return VERSION;
     }
 
     /**

@@ -2088,7 +2088,7 @@ public class Princess extends BotClient {
     private void unloadTransportedInfantry(MovePath path) {
         // if my objective is to cross the board, even though it's tempting, I won't be leaving the infantry
         // behind. They're not that good at screening against high speed pursuit anyway.
-        if(getBehaviorSettings().shouldGoHome()) {
+        if (getBehaviorSettings().shouldAutoFlee()) {
             return;
         }
         

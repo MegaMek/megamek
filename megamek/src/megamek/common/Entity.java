@@ -2623,7 +2623,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the primary facing, or -1 if n/a
      */
     public int getFacing() {
-        if (Entity.NONE != conveyance) {
+        if ((Entity.NONE != conveyance) && (game != null)) {
             Entity transporter = game.getEntity(conveyance);
             if (transporter == null) {
                 transporter = game.getOutOfGameEntity(conveyance);
@@ -4626,8 +4626,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns a critical hit slot
      */
-    public CriticalSlot getCritical(int loc, int slot) {
-        return crits[loc][slot];
+    public @Nullable CriticalSlot getCritical(int loc, int slot) {
+        return ((loc < crits.length) && (slot < crits[loc].length)) ? crits[loc][slot] : null;
     }
 
     /**

@@ -438,7 +438,7 @@ class LobbyMekPopup {
             // Late deployment
             JMenu lateMenu = new JMenu("Deployment round");
             lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, enabled, listener));
-            for (int i = 2; i < 11; i++) {
+            for (int i = 1; i < 11; i++) {
                 lateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, enabled, listener));
             }
             JMenu veryLateMenu = new JMenu("Later");

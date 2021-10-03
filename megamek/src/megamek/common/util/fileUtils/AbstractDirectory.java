@@ -22,10 +22,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.sorter.NaturalOrderComparator;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * AbstractDirectory is a class that is used to define a directory.
@@ -102,14 +99,18 @@ public abstract class AbstractDirectory {
         return (category == null) ? null : category.getCategory(categories, index + 1);
     }
 
-    /**
-     * Get the names of all the categories.
-     *
-     * @return an <code>Iterator</code> of <code>String</code> names.
-     *         This value will not be <code>null</code>, but it may be empty.
-     */
-    public Iterator<String> getCategoryNames() {
-        return getCategories().keySet().iterator();
+    public List<String> getNonEmptyCategoryPaths() {
+        // This needs to be a list because the same name can be found twice, in different paths
+        final List<String> categoryNames = new ArrayList<>();
+        for (final AbstractDirectory directory : getCategories().values()) {
+            categoryNames.addAll(directory.getNonEmptyCategoryPaths());
+        }
+
+        if (!getItems().isEmpty()) {
+            categoryNames.add(getRootPath());
+        }
+
+        return categoryNames;
     }
 
     public Map<String, ItemFile> getItems() {

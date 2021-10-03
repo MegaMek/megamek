@@ -163,7 +163,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * empty.
      */
     private void updateSearch(final String contents) {
-        if (contents.isEmpty()) {
+        if (contents.length() > 2) {
+            imageList.updateImages(getSearchedItems(contents));
+        } else {
             TreePath path = treeCategories.getSelectionPath();
             if (path == null) {
                 return;
@@ -179,8 +181,6 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
             imageList.updateImages(getIcons(category.toString()));
-        } else if (contents.length() > 2) {
-            imageList.updateImages(getSearchedItems(contents));
         }
     }
 
@@ -225,6 +225,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @return a list of items that should be shown for the category which is given as a TreePath.
      */
     protected List<AbstractIcon> getIcons(final String category) {
+        if (getDirectory() == null) {
+            return new ArrayList<>();
+        }
         final List<AbstractIcon> icons = new ArrayList<>();
         if (includeSubDirs) {
             recursivelyDetermineCategoryIcons(getDirectory().getCategory(category), icons);
@@ -256,22 +259,26 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @return a list of icons that fit the provided search string
      */
     protected List<AbstractIcon> getSearchedItems(String searchString) {
+        if (getDirectory() == null) {
+            return new ArrayList<>();
+        }
+
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain
         // the search string are added.
         List<AbstractIcon> result = new ArrayList<>();
         String lowerSearched = searchString.toLowerCase();
 
-        for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-            String tcat = catNames.next();
-            if (tcat.toLowerCase().contains(lowerSearched)) {
-                addCategoryIcons(tcat, result);
+        for (final String category : getDirectory().getNonEmptyCategoryPaths()) {
+            if (category.toLowerCase().contains(lowerSearched)) {
+                addCategoryIcons(category, result);
                 continue;
             }
-            for (Iterator<String> itemNames = getDirectory().getItemNames(tcat); itemNames.hasNext(); ) {
+
+            for (Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext(); ) {
                 String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
-                    result.add(createIcon(tcat, item));
+                    result.add(createIcon(category, item));
                 }
             }
         }

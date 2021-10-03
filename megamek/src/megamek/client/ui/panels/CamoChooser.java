@@ -24,10 +24,9 @@ import megamek.client.ui.trees.CamoChooserTree;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CamoChooser extends AbstractIconChooser {
@@ -53,40 +52,27 @@ public class CamoChooser extends AbstractIconChooser {
     //endregion Getters/Setters
 
     @Override
-    protected DirectoryItems getDirectory() {
+    protected @Nullable AbstractDirectory getDirectory() {
         return MMStaticDirectoryManager.getCamouflage();
     }
 
     @Override
-    protected AbstractIcon createIcon(final String category, final String filename) {
+    protected AbstractIcon createIcon(String category, final String filename) {
         return new Camouflage(category, filename);
     }
 
     @Override
-    protected List<AbstractIcon> getItems(final String category) {
-        final List<AbstractIcon> result = new ArrayList<>();
-
+    protected List<AbstractIcon> getIcons(final String category) {
         if (category.startsWith(Camouflage.COLOUR_CAMOUFLAGE)) {
+            final List<AbstractIcon> icons = new ArrayList<>();
             // This section is a list of all colour camouflages supported
             for (PlayerColour colour : PlayerColour.values()) {
-                result.add(createIcon(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
+                icons.add(createIcon(Camouflage.COLOUR_CAMOUFLAGE, colour.name()));
             }
+            return icons;
         } else {
-            // In any other camouflage section, the camouflages of the selected category are
-            // presented. When the includeSubDirs flag is true, all categories
-            // below the selected one are also presented.
-            if (includeSubDirs) {
-                for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-                    final String tcat = catNames.next();
-                    if (tcat.startsWith(category)) {
-                        addCategoryItems(tcat, result);
-                    }
-                }
-            } else {
-                addCategoryItems(category, result);
-            }
+            return super.getIcons(category);
         }
-        return result;
     }
 
     @Override

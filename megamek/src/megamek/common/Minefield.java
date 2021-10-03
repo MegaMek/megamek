@@ -72,7 +72,7 @@ public class Minefield implements Serializable, Cloneable {
     private boolean sea = false;
     private int depth = 0;
     private boolean detonated = false;
-    private boolean weaponDelivered = false;
+    private boolean weaponDelivered = true;
 
     private Minefield() {
         //Creates a minefield
@@ -222,6 +222,13 @@ public class Minefield implements Serializable, Cloneable {
      *                    a result of another minefield in the same hex explodin
      */
     public void checkReduction(int bonus, boolean direct) {
+        // per TacOps:AR page 176, non-conventional minefields automatically reduce
+        if (getType() != Minefield.TYPE_CONVENTIONAL &&
+                getType() != Minefield.TYPE_INFERNO) {
+            setDensity(getDensity() - 5);
+            return;
+        }
+        
         boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
         if(getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;

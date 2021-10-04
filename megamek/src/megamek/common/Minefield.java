@@ -223,8 +223,8 @@ public class Minefield implements Serializable, Cloneable {
      */
     public void checkReduction(int bonus, boolean direct) {
         // per TacOps:AR page 176, non-conventional minefields automatically reduce
-        if (getType() != Minefield.TYPE_CONVENTIONAL &&
-                getType() != Minefield.TYPE_INFERNO) {
+        if ((getType() != Minefield.TYPE_CONVENTIONAL) &&
+                (getType() != Minefield.TYPE_INFERNO)) {
             setDensity(getDensity() - 5);
             return;
         }

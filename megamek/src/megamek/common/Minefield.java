@@ -219,7 +219,7 @@ public class Minefield implements Serializable, Cloneable {
      * check for a reduction in density
      * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
      * @param direct - a <code>boolean</code> indicating whether this reduction was due to a direct explosion or
-     *                    a result of another minefield in the same hex explodin
+     *                 a result of another minefield in the same hex exploding
      */
     public void checkReduction(int bonus, boolean direct) {
         // per TacOps:AR page 176, non-conventional minefields automatically reduce

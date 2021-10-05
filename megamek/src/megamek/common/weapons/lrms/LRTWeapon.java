@@ -15,7 +15,7 @@ package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -60,7 +60,7 @@ public abstract class LRTWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
     

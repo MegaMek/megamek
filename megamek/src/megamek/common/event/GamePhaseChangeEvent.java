@@ -14,7 +14,7 @@
 
 package megamek.common.event;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 
 /**
  * Instances of this class are sent when Game phase changes
@@ -29,12 +29,12 @@ public class GamePhaseChangeEvent extends GameEvent {
     /**
      * Old phase
      */
-    private IGame.Phase oldPhase;
+    private Game.Phase oldPhase;
 
     /**
      * new phase
      */
-    private IGame.Phase newPhase;
+    private Game.Phase newPhase;
 
     /**
      * Constructs new <code>GamePhaseChangeEvent</code>
@@ -43,7 +43,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * @param oldPhase
      * @param newPhase
      */
-    public GamePhaseChangeEvent(Object source, IGame.Phase oldPhase, IGame.Phase newPhase) {
+    public GamePhaseChangeEvent(Object source, Game.Phase oldPhase, Game.Phase newPhase) {
         super(source);
         this.oldPhase = oldPhase;
         this.newPhase = newPhase;
@@ -54,7 +54,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * 
      * @return the newPhase.
      */
-    public IGame.Phase getNewPhase() {
+    public Game.Phase getNewPhase() {
         return newPhase;
     }
 
@@ -63,7 +63,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * 
      * @return the oldPhase.
      */
-    public IGame.Phase getOldPhase() {
+    public Game.Phase getOldPhase() {
         return oldPhase;
     }
 

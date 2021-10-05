@@ -19,7 +19,7 @@ import megamek.MegaMek;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -54,7 +54,7 @@ public class BayWeaponHandler extends WeaponHandler {
      * @param g
      * @param s
      */
-    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -126,7 +126,7 @@ public class BayWeaponHandler extends WeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
 
         if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
@@ -361,7 +361,7 @@ public class BayWeaponHandler extends WeaponHandler {
         return 0;
     }
 
-    public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handleAeroSanity(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

@@ -50,7 +50,7 @@ import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -1723,7 +1723,7 @@ public class Princess extends BotClient {
         }
     }
 
-    public IGame getGame() {
+    public Game getGame() {
         return game;
     }
 

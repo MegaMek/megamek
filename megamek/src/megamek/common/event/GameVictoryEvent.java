@@ -20,14 +20,14 @@ import java.util.Vector;
 
 import megamek.common.Entity;
 import megamek.common.IEntityRemovalConditions;
-import megamek.common.IGame;
+import megamek.common.Game;
 
 /**
  * An event that is fired at the end of the victory phase, before the game state
  * is reset.  It can be used to retrieve information from the game before the
  * state is reset and the lounge phase begins.
  *
- * @see IGame#end(int, int)
+ * @see Game#end(int, int)
  * @see GameListener
  */
 public class GameVictoryEvent extends GameEvent {
@@ -52,7 +52,7 @@ public class GameVictoryEvent extends GameEvent {
      * @param source event source
      */
     @SuppressWarnings("unchecked")
-    public GameVictoryEvent(Object source, IGame game) {
+    public GameVictoryEvent(Object source, Game game) {
         super(source);
         for (Entity entity : game.getEntitiesVector()) {
             entities.add(entity);

@@ -1629,7 +1629,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();
@@ -2151,7 +2151,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     @Override
     public void ready() {
         final Client client = clientgui.getClient();
-        final IGame game = client.getGame();
+        final Game game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         
         // enforce exclusive deployment zones in double blind
@@ -3589,7 +3589,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
     
-    IGame game() {
+    Game game() {
         return clientgui.getClient().getGame();
     }
     

@@ -20,7 +20,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -46,7 +46,7 @@ public class LRMSwarmHandler extends LRMHandler {
      * @param g
      * @param s
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         sSalvoType = " swarm missile(s) ";
     }
@@ -57,7 +57,7 @@ public class LRMSwarmHandler extends LRMHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
@@ -350,7 +350,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean bldgDamagedOnMiss, Building bldg,
-            Vector<Report> vPhaseReport, IGame.Phase phase) {
+            Vector<Report> vPhaseReport, Game.Phase phase) {
         super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();

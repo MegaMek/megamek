@@ -93,7 +93,7 @@ public interface IBomber {
      * equipment.
      */
     default void applyBombs() {
-        IGame game = ((Entity)this).getGame();
+        Game game = ((Entity)this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions()
                 .stringOption("techlevel"));
         Integer[] sorted = new Integer[BombType.B_NUM];

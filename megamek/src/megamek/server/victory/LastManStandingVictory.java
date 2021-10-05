@@ -16,7 +16,7 @@ package megamek.server.victory;
 import java.io.Serializable;
 import java.util.Map;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 
 /**
@@ -29,7 +29,7 @@ public class LastManStandingVictory implements IVictoryConditions, Serializable 
     public LastManStandingVictory() {
     }
 
-    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult victory(Game game, Map<String, Object> ctx) {
         // check all players/teams for aliveness
         int playersAlive = 0;
         IPlayer lastPlayer = null;

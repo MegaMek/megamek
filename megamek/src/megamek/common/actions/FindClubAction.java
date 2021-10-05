@@ -23,7 +23,7 @@ package megamek.common.actions;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Terrains;
@@ -52,7 +52,7 @@ public class FindClubAction extends AbstractEntityAction {
     /**
      * Returns whether an entity can find a club in its current location
      */
-    public static boolean canMechFindClub(IGame game, int entityId) {
+    public static boolean canMechFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
         if ((null == entity) || null == (entity.getPosition())) {
             return false;

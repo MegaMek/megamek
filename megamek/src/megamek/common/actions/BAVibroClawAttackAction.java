@@ -17,7 +17,7 @@ package megamek.common.actions;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -52,12 +52,12 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         return Compute.missilesHit(((BattleArmor)entity).getShootingStrength()) * entity.getVibroClaws();
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()));
     }
 
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;

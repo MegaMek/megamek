@@ -21,7 +21,7 @@ import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;

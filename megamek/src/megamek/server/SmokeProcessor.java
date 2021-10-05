@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
@@ -27,7 +27,7 @@ import megamek.common.options.OptionsConstants;
 
 public class SmokeProcessor extends DynamicTerrainProcessor {
 
-    private IGame game;
+    private Game game;
     Vector<Report> vPhaseReport;
 
     public SmokeProcessor(Server server) {

@@ -21,7 +21,7 @@ import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.LosEffects;
 import megamek.common.MoveStep;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;

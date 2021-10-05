@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
@@ -463,7 +463,7 @@ public class MoveStep implements Serializable {
      *         example, the enemy being charged. This value may be
      *         <code>null</code>
      */
-    public Targetable getTarget(IGame game) {
+    public Targetable getTarget(Game game) {
         if (targetId == Entity.NONE) {
             return null;
         }
@@ -489,7 +489,7 @@ public class MoveStep implements Serializable {
      * @param entity
      * @param prev
      */
-    private void compileMove(final IGame game, final Entity entity,
+    private void compileMove(final Game game, final Entity entity,
                              MoveStep prev, CachedEntityState cachedEntityState) {
 
         IHex destHex = game.getBoard().getHex(getPosition());
@@ -756,7 +756,7 @@ public class MoveStep implements Serializable {
      * @param entity the <code>Entity</code> taking this step.
      * @param prev   the previous step in the path.
      */
-    protected void compile(final IGame game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
+    protected void compile(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
         final boolean isInfantry = entity instanceof Infantry;
         boolean isFieldArtillery = (entity instanceof Infantry)
                 && ((Infantry) entity).hasActiveFieldArtillery();
@@ -1173,7 +1173,7 @@ public class MoveStep implements Serializable {
      * @param game
      * @param prev
      */
-    public void copy(final IGame game, MoveStep prev) {
+    public void copy(final Game game, MoveStep prev) {
         if (prev == null) {
             setFromEntity(getEntity(), game);
             return;
@@ -1220,7 +1220,7 @@ public class MoveStep implements Serializable {
      *
      * @param entity
      */
-    public void setFromEntity(Entity entity, IGame game) {
+    public void setFromEntity(Entity entity, Game game) {
         this.entity = entity;
         position = entity.getPosition();
         facing = entity.getFacing();
@@ -1878,7 +1878,7 @@ public class MoveStep implements Serializable {
      * @param entity
      * @param prev
      */
-    private void compileIllegal(final IGame game, final Entity entity,
+    private void compileIllegal(final Game game, final Entity entity,
             final MoveStep prev, CachedEntityState cachedEntityState) {
         final MoveStepType stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
@@ -2911,7 +2911,7 @@ public class MoveStep implements Serializable {
     /**
      * Amount of movement points required to move from start to dest
      */
-    protected void calcMovementCostFor(IGame game, MoveStep prevStep, CachedEntityState cachedEntityState) {
+    protected void calcMovementCostFor(Game game, MoveStep prevStep, CachedEntityState cachedEntityState) {
         final Coords prev = prevStep.getPosition();
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity()
@@ -3132,7 +3132,7 @@ public class MoveStep implements Serializable {
      * This function does not comment on whether an overall movement path is
      * possible, just whether the <em>current</em> step is possible.
      */
-    public boolean isMovementPossible(IGame game, Coords src, int srcEl, CachedEntityState cachedEntityState) {
+    public boolean isMovementPossible(Game game, Coords src, int srcEl, CachedEntityState cachedEntityState) {
         final IHex srcHex = game.getBoard().getHex(src);
         final Coords dest = getPosition();
         final IHex destHex = game.getBoard().getHex(dest);
@@ -3746,7 +3746,7 @@ public class MoveStep implements Serializable {
         return velocityLeft;
     }
 
-    public int asfTurnCost(IGame game, MoveStepType direction, Entity entity) {
+    public int asfTurnCost(Game game, MoveStepType direction, Entity entity) {
 
         // jumpships (but not space stations and warships) never pay
         if ((entity instanceof Jumpship) && !(entity instanceof Warship)
@@ -3865,7 +3865,7 @@ public class MoveStep implements Serializable {
     /**
      * can this aero turn for any reason in atmosphere?
      */
-    public boolean canAeroTurn(IGame game) {
+    public boolean canAeroTurn(Game game) {
         Entity en = getEntity();
         
         if (!en.isAero()) {
@@ -4008,7 +4008,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occuring for an aerodyne unit
      * flying in atmosphere?
      */
-    boolean useAeroAtmosphere(IGame game, Entity en) {
+    boolean useAeroAtmosphere(Game game, Entity en) {
         if (!en.isAero()) {
             return false;
         }
@@ -4027,7 +4027,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occurring for a spheroid unit
      * flying in atmosphere?
      */
-    public boolean useSpheroidAtmosphere(IGame game, Entity en) {
+    public boolean useSpheroidAtmosphere(Game game, Entity en) {
         return Compute.useSpheroidAtmosphere(game, en);
     }
 
@@ -4046,7 +4046,7 @@ public class MoveStep implements Serializable {
         return entity;
     }
 
-    public IGame getGame() {
+    public Game getGame() {
         if (getEntity() != null) {
             return getEntity().getGame();
         } else {
@@ -4067,7 +4067,7 @@ public class MoveStep implements Serializable {
     /**
      * Helper function to determine whether sprint is available as a game option to the entity
      */
-    public boolean canUseSprint(IGame game) {
+    public boolean canUseSprint(Game game) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
             return false;
         }

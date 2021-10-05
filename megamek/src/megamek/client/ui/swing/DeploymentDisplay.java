@@ -220,9 +220,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     /** Clears out old deployment data and disables relevant buttons. */
     private void endMyTurn() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((IGame.Phase.PHASE_DEPLOYMENT == game.getPhase())
+        if ((Game.Phase.PHASE_DEPLOYMENT == game.getPhase())
                 && (null != next)
                 && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
@@ -258,7 +258,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /** Sends a deployment to the server. */
     @Override
     public void ready() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity en = ce();
 
         if ((en instanceof Dropship) && !en.isAirborne()) {
@@ -358,7 +358,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // On simultaneous phases, each player ending their turn will generalte a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
@@ -367,7 +367,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 && (game.getTurnIndex() != 0)) {
             return;
         }
-        if (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
+        if (game.getPhase() != Game.Phase.PHASE_DEPLOYMENT) {
             // ignore
             return;
         }
@@ -395,14 +395,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.bv.markDeploymentHexesFor(null);
         
        // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
             endMyTurn();
         }
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_DEPLOYMENT) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
         }
     }
@@ -438,7 +438,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // check for a deployment
         Coords moveto = b.getCoords();
         final IBoard board = clientgui.getClient().getGame().getBoard();
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final IHex deployhex = board.getHex(moveto);
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce().isAero();
@@ -525,7 +525,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     
     private boolean processBuildingDeploy(Coords moveto) {
         final IBoard board = clientgui.getClient().getGame().getBoard();
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
         if (ce().getMovementMode() == EntityMovementMode.WIGE) {

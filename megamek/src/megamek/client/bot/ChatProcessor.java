@@ -24,7 +24,7 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
@@ -190,7 +190,7 @@ public class ChatProcessor {
         }
     }
 
-    private IPlayer getPlayer(IGame game, String playerName) {
+    private IPlayer getPlayer(Game game, String playerName) {
         Enumeration<IPlayer> players = game.getPlayers();
         while (players.hasMoreElements()) {
             IPlayer testPlayer = players.nextElement();

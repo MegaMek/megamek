@@ -459,7 +459,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
-        skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        skinEditor.switchPanel(Game.Phase.PHASE_MOVEMENT);
         launch(skinEditor.getFrame());        
     }
 
@@ -538,10 +538,10 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        IGame newGame;
+        Game newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
-            newGame = (IGame) xstream.fromXML(gzi);
+            newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
             MegaMek.getLogger().error("Unable to load file: " + fc.getSelectedFile(), e);
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.LoadGameAlert.message"),
@@ -713,7 +713,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
 
         ScenarioLoader sl = new ScenarioLoader(fc.getSelectedFile());
-        IGame g;
+        Game g;
         try {
             g = sl.createGame();
         } catch (Exception e) {

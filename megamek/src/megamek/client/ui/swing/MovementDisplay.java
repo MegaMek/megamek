@@ -47,7 +47,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -668,7 +668,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         boolean forwardIni = false;
         GameOptions opts = null;
         if (clientgui != null) {
-            IGame game = clientgui.getClient().getGame();
+            Game game = clientgui.getClient().getGame();
             IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
             forwardIni = (game.getTeamForPlayer(localPlayer) != null)
                     && (game.getTeamForPlayer(localPlayer).getSize() > 1);
@@ -1006,7 +1006,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((IGame.Phase.PHASE_MOVEMENT == clientgui.getClient().getGame()
+        if ((Game.Phase.PHASE_MOVEMENT == clientgui.getClient().getGame()
                 .getPhase())
                 && (null != next)
                 && (null != ce)
@@ -1994,7 +1994,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
     
     private void updateTakeCoverButton() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final GameOptions gOpts = game.getOptions();
         boolean isInfantry = (ce() instanceof Infantry);
         
@@ -2719,7 +2719,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
     
     private synchronized void updateLoadButtons() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
         if (null == ce) {
             return;
@@ -2928,7 +2928,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private Entity getLoadedUnit() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         Entity choice = null;
 
         Vector<Entity> choices = new Vector<Entity>();
@@ -3043,7 +3043,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * value may be null if there are no eligible targets
      */
     private Entity getTowedUnit() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         Entity choice = null;
 
         List<Entity> choices = new ArrayList<Entity>();
@@ -3401,7 +3401,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * is ended and hops on. need a new function
      */
     private synchronized void updateRecoveryButton() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
         if (null == ce) {
             return;
@@ -3473,7 +3473,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * a squadron or another solo fighter
      */
     private synchronized void updateJoinButton() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
             return;
         }
@@ -3866,7 +3866,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * get the unit id that the player wants to be recovered by
      */
     private int getRecoveryUnit() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
         List<Entity> choices = new ArrayList<Entity>();
 
@@ -3951,7 +3951,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @return the unit id that the player wants to join
      */
     private int getUnitJoined() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
         List<Entity> choices = new ArrayList<Entity>();
 
@@ -4106,7 +4106,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
 
         // Assume that we have *no* choice.
@@ -4331,7 +4331,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_MOVEMENT) {
             // ignore
             return;
         }
@@ -4367,7 +4367,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase() 
-                == IGame.Phase.PHASE_LOUNGE) {
+                == Game.Phase.PHASE_LOUNGE) {
             endMyTurn();
         }
         
@@ -4376,10 +4376,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn()
-            && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+            && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_MOVEMENT)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_MOVEMENT) {
             setStatusBarText(Messages
                                      .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
@@ -5352,7 +5352,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Collect the stranded entities into the vector.
         Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
                 new EntitySelector() {
-                    private final IGame game = clientgui.getClient().getGame();
+                    private final Game game = clientgui.getClient().getGame();
                     private final GameTurn turn = clientgui.getClient()
                             .getGame().getTurn();
                     private final int ownerId = clientgui.getClient()

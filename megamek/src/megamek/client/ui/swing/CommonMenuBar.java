@@ -31,7 +31,7 @@ import megamek.client.ui.swing.util.UIUtil;
 
 import static megamek.client.ui.Messages.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import static megamek.client.ui.swing.ClientGUI.*;
@@ -53,7 +53,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** True when this menu is attached to a client (lobby or ingame). */
     private boolean isGame = false;
     /** The current phase of the game, if any. */
-    private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
+    private Game.Phase phase = Game.Phase.PHASE_UNKNOWN;
 
     // The Game menu
     private JMenuItem gameLoad = new JMenuItem(getString("CommonMenuBar.fileGameLoad"));
@@ -463,7 +463,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      *            valid values for this argument are defined as constants in the
      *            <code>Game</code> class).
      */
-    public synchronized void setPhase(IGame.Phase current) {
+    public synchronized void setPhase(Game.Phase current) {
         phase = current;
         updateEnabledStates();
     }

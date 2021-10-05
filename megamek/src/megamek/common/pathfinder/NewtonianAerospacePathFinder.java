@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.DefaultMmLogger;
@@ -22,7 +22,7 @@ import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
  *
  */
 public class NewtonianAerospacePathFinder {
-    private IGame game;
+    private Game game;
     protected List<MovePath> aerospacePaths;
     protected MovePath offBoardPath;
     private MMLogger logger;
@@ -33,7 +33,7 @@ public class NewtonianAerospacePathFinder {
     // This is a list of all possible moves
     protected List<MoveStepType> moves;
     
-    protected NewtonianAerospacePathFinder(IGame game) {
+    protected NewtonianAerospacePathFinder(Game game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
         
@@ -102,7 +102,7 @@ public class NewtonianAerospacePathFinder {
         }
     }
     
-    public static NewtonianAerospacePathFinder getInstance(IGame game) {
+    public static NewtonianAerospacePathFinder getInstance(Game game) {
         NewtonianAerospacePathFinder npf = new NewtonianAerospacePathFinder(game);
 
         return npf;

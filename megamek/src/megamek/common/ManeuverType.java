@@ -50,7 +50,7 @@ public class ManeuverType {
      */
     public static boolean canPerform(int type, int velocity, int altitude, 
                                      int ceiling, boolean isVTOL, int distance, 
-                                     IGame game, MovePath mp) {
+                                     Game game, MovePath mp) {
 
         // We can only perform one maneuver in a turn (important for side-slip)
         for (final MoveStep step : mp.getStepVector()){

@@ -42,7 +42,7 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.annotations.Nullable;
 
 import static megamek.common.Terrains.*;

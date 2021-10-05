@@ -18,7 +18,7 @@ import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
@@ -94,7 +94,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         return false;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return PunchAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                                                                            getTargetId()), getArm(), isZweihandering());
     }
@@ -108,7 +108,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae,
+    protected static String toHitIsImpossible(Game game, Entity ae,
                                               Targetable target, int arm) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
                 game, ae, target);
@@ -184,7 +184,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified arm to punch
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
 

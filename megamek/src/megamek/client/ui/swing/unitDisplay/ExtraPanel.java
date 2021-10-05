@@ -36,7 +36,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.IPlayer;
@@ -181,12 +181,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         activateHiddenPhase.setToolTipText(Messages
                 .getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
         activateHidden.addActionListener(this);
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_MOVEMENT));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_FIRING));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_PHYSICAL));
+        activateHiddenPhase.addItem(Game.Phase
+                .getDisplayableName(Game.Phase.PHASE_MOVEMENT));
+        activateHiddenPhase.addItem(Game.Phase
+                .getDisplayableName(Game.Phase.PHASE_FIRING));
+        activateHiddenPhase.addItem(Game.Phase
+                .getDisplayableName(Game.Phase.PHASE_PHYSICAL));
         activateHiddenPhase.addItem(Messages
                 .getString("MechDisplay.ActivateHidden.StopActivating"));
 
@@ -604,7 +604,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
         /*
          * if (en instanceof Aero && ((Aero) en).hasBombs() &&
-         * IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
+         * Game.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
          * .getPhase()) { // TODO: I should at some point check and make
          * sure that this // unit has any bombs that it could dump
          * dumpBombs.setEnabled(!dontChange); } else {
@@ -697,7 +697,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
-            IGame.Phase activationPhase = IGame.Phase
+            Game.Phase activationPhase = Game.Phase
                     .getPhaseFromName((String) activateHiddenPhase
                             .getSelectedItem());
             clientgui.getClient().sendActivateHidden(myMechId, activationPhase);

@@ -32,9 +32,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.KeyBindParser;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -125,7 +125,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * An overlay for the Boardview that displays a selection of keybinds
      * for the current game situation. 
      */
-    public KeyBindingsOverlay(IGame game, ClientGUI cg) {
+    public KeyBindingsOverlay(Game game, ClientGUI cg) {
         visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);

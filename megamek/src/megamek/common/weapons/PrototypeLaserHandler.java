@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,7 +36,7 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      * @param g
      * @param s
      */
-    public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

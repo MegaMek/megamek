@@ -27,7 +27,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Minefield;
 import megamek.common.IPlayer;
@@ -399,10 +399,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)) {
+                && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_DEPLOY_MINEFIELDS)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_DEPLOY_MINEFIELDS) {
             setStatusBarText(Messages
                     .getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }

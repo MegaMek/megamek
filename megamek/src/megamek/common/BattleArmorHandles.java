@@ -40,7 +40,7 @@ import megamek.common.annotations.Nullable;
      * The troopers being carried.
      */
     protected int troopers = Entity.NONE;
-    transient IGame game;
+    transient Game game;
 
     /**
      * The set of front locations that load troopers externally.
@@ -329,7 +329,7 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 } // End package class BattleArmorHandles implements Transporter

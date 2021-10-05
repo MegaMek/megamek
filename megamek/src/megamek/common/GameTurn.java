@@ -67,11 +67,11 @@ public class GameTurn implements Serializable {
      * Determine if the specified entity is a valid one to use for this turn.
      *
      * @param entity the <code>Entity</code> that may take this turn.
-     * @param game the <code>IGame</code> this turn belongs to.
+     * @param game the <code>Game</code> this turn belongs to.
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(Entity entity, IGame game) {
+    public boolean isValidEntity(Entity entity, Game game) {
         return isValidEntity(entity,game,true);
     }
     
@@ -88,17 +88,17 @@ public class GameTurn implements Serializable {
      * parameter.
      *
      * @param entity the <code>Entity</code> that may take this turn.
-     * @param game the <code>IGame</code> this turn belongs to.
+     * @param game the <code>Game</code> this turn belongs to.
      * @param useValidNonInfantryCheck Boolean that determines if we should 
      *        check to see if infantry can be moved yet
      * @return <code>true</code> if the specified entity can take this turn.
      *         <code>false</code> if the entity is not valid for this turn.
      */
-    public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
+    public boolean isValidEntity(final @Nullable Entity entity, final Game game,
                                  final boolean useValidNonInfantryCheck) {
         return (entity != null) && (entity.getOwnerId() == playerId) && entity.isSelectableThisTurn()
                 // This next bit enforces the "A players Infantry/ProtoMechs move after that player's other units" options.
-                && !(useValidNonInfantryCheck && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                && !(useValidNonInfantryCheck && (game.getPhase() == Game.Phase.PHASE_MOVEMENT)
                 && (((entity instanceof Infantry) && game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER))
                 || ((entity instanceof Protomech) && game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)))
                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
@@ -107,14 +107,14 @@ public class GameTurn implements Serializable {
     /**
      * Returns true if the player and entity are both valid.
      */
-    public boolean isValid(int playerId, Entity entity, IGame game) {
+    public boolean isValid(int playerId, Entity entity, Game game) {
         return (playerId == this.playerId) && isValidEntity(entity, game);
     }
 
     /**
      * Returns true if the player is valid.
      */
-    public boolean isValid(int playerId, IGame game) {
+    public boolean isValid(int playerId, Game game) {
         return playerId == this.playerId;
     }
 
@@ -157,7 +157,7 @@ public class GameTurn implements Serializable {
          * entity that can move this turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
                     && (entity.getId() == entityId);
@@ -188,7 +188,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -225,7 +225,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
 
@@ -257,7 +257,7 @@ public class GameTurn implements Serializable {
          * has declared an action.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game, 
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -362,11 +362,11 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param entity the <code>Entity</code> being tested for the move.
-         * @param game the <code>IGame</code> the entity belongs to
+         * @param game the <code>Game</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(final @Nullable Entity entity, final IGame game,
+        public boolean isValidEntity(final @Nullable Entity entity, final Game game,
                                      final boolean useValidNonInfantryCheck) {
             // The entity must pass the requirements of the parent class and be in the mask.
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
@@ -500,11 +500,11 @@ public class GameTurn implements Serializable {
          * Determine if the given entity is a valid one to use for this turn.
          *
          * @param entity the <code>Entity</code> being tested for the move.
-         * @param game the <code>IGame</code> the entity belongs to
+         * @param game the <code>Game</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game) {
+        public boolean isValidEntity(Entity entity, Game game) {
             boolean retVal = false;
             // Null entities don't need to be checked.
             if (null != entity) {
@@ -527,7 +527,7 @@ public class GameTurn implements Serializable {
          * Returns true if the player and entity are both valid.
          */
         @Override
-        public boolean isValid(final int playerId, final @Nullable Entity entity, final IGame game) {
+        public boolean isValid(final int playerId, final @Nullable Entity entity, final Game game) {
             return isValidEntity(entity, game) && (entity.getOwnerId() == playerId);
         }
 
@@ -535,7 +535,7 @@ public class GameTurn implements Serializable {
          * Returns true if the player is valid.
          */
         @Override
-        public boolean isValid(int playerId, IGame game) {
+        public boolean isValid(int playerId, Game game) {
             boolean retVal = false;
             for (int index = 0; (index < entityIds.length) && !retVal; index++) {
                 if ((game.getEntity(entityIds[index]) != null)
@@ -586,7 +586,7 @@ public class GameTurn implements Serializable {
          * turn.
          */
         @Override
-        public boolean isValidEntity(Entity entity, IGame game,
+        public boolean isValidEntity(Entity entity, Game game,
                 boolean useValidNonInfantryCheck) {
             return (super.isValidEntity(entity, game, useValidNonInfantryCheck) 
                     && (unitNumber == entity.getUnitNumber()));

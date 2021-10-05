@@ -63,7 +63,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             boolean leaf, int row, boolean hasFocus) {
 
         isSelected = sel;
-        IGame game = lobby.getClientgui().getClient().getGame();
+        Game game = lobby.getClientgui().getClient().getGame();
         localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
         selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);

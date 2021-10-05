@@ -77,7 +77,7 @@ public class Client implements IClientCommandHandler {
     private int port;
 
     // the game state object
-    protected IGame game = new Game();
+    protected Game game = new Game();
 
     // here's some game phase stuff
     private MapSettings mapSettings;
@@ -415,7 +415,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Changes the game phase, and the displays that go along with it.
      */
-    public void changePhase(IGame.Phase phase) {
+    public void changePhase(Game.Phase phase) {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
@@ -577,7 +577,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Send activate hidden data to the server
      */
-    public void sendActivateHidden(int nEntity, IGame.Phase phase) {
+    public void sendActivateHidden(int nEntity, Game.Phase phase) {
         Object[] data = { Integer.valueOf(nEntity), phase };
         send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
     }
@@ -940,7 +940,7 @@ public class Client implements IClientCommandHandler {
             game.reset();
             
             XStream xstream = SerializationHelper.getXStream();            
-            IGame newGame = (IGame) xstream.fromXML(is);
+            Game newGame = (Game) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[] { newGame }));
         } catch (Exception e) {
@@ -1498,7 +1498,7 @@ public class Client implements IClientCommandHandler {
             receiveBuildingCollapse(c);
             break;
         case Packet.COMMAND_PHASE_CHANGE:
-            changePhase((IGame.Phase) c.getObject(0));
+            changePhase((Game.Phase) c.getObject(0));
             break;
         case Packet.COMMAND_TURN:
             changeTurnIndex(c.getIntValue(0), c.getIntValue(1));
@@ -1881,7 +1881,7 @@ public class Client implements IClientCommandHandler {
         return availableSizes;
     }
 
-    public IGame getGame() {
+    public Game getGame() {
         return game;
     }
 

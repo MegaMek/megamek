@@ -19,6 +19,6 @@ package megamek.common;
  */
 public interface PhaseUpdated {
 
-    public void newPhase(IGame.Phase phase);
+    public void newPhase(Game.Phase phase);
 
 }

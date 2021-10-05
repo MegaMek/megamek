@@ -31,7 +31,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Coords;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
@@ -154,7 +154,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         p = clientgui.getClient().getLocalPlayer();
         // By default, we should get 5 hexes per 4 mapsheets (4 mapsheets is
         // 16*17*4 hexes, so 1088)
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         IBoard board = game.getBoard();
         int preDesignateArea = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE);
         int hexesPer = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE);
@@ -288,10 +288,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
+                && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }

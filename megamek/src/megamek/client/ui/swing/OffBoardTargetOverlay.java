@@ -36,7 +36,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HexTarget;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.util.ImageUtil;
@@ -62,7 +62,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private TargetingPhaseDisplay targetingPhaseDisplay;
     private Image offBoardTargetImage;
     
-    private IGame getCurrentGame() {
+    private Game getCurrentGame() {
         return clientgui.getClient().getGame();
     }
     
@@ -94,7 +94,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
         boolean visible = clientgui.getClient().isMyTurn() &&
-                (getCurrentGame().getPhase() == IGame.Phase.PHASE_TARGETING);
+                (getCurrentGame().getPhase() == Game.Phase.PHASE_TARGETING);
         
         if(!visible) {
             return false;

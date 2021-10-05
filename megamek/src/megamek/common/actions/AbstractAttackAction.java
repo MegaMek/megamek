@@ -17,7 +17,7 @@ import megamek.client.Client;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
@@ -66,7 +66,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         this.targetId = targetId;
     }
 
-    public @Nullable Targetable getTarget(final IGame game) {
+    public @Nullable Targetable getTarget(final Game game) {
         return game.getTarget(getTargetType(), getTargetId());
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets the entity associated with this attack action, using the passed-in game object.
      * Returns the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(IGame g) {
+    public Entity getEntity(Game g) {
         return getEntity(g, getEntityId());
     }
     
@@ -82,7 +82,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets an entity with the given ID, using the passed-in game object.
      * Returns the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(IGame g, int entityID) {
+    public Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
         // if we have an artyattack, we might need to get an out-of-game entity
         // if it died or fled
@@ -96,7 +96,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * used by the toHit of derived classes atype may be null if not using an
      * ammo based weapon
      */
-    public static ToHitData nightModifiers(IGame game, Targetable target,
+    public static ToHitData nightModifiers(Game game, Targetable target,
             AmmoType atype, Entity attacker, boolean isWeapon) {
         ToHitData toHit = null;
 

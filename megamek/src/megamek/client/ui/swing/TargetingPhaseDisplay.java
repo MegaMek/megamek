@@ -51,7 +51,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -132,7 +132,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     private boolean shiftheld;
 
-    private final IGame.Phase phase;
+    private final Game.Phase phase;
 
     private Entity[] visibleTargets;
 
@@ -144,8 +144,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         super(clientgui);
-        phase = offboard ? IGame.Phase.PHASE_OFFBOARD
-                : IGame.Phase.PHASE_TARGETING;
+        phase = offboard ? Game.Phase.PHASE_OFFBOARD
+                : Game.Phase.PHASE_TARGETING;
         shiftheld = false;
 
         // fire
@@ -546,7 +546,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
@@ -796,7 +796,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         WeaponAttackAction waa = new WeaponAttackAction(cen,
                 target.getTargetType(), target.getTargetId(), weaponNum);
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game),
                 waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
@@ -1018,7 +1018,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.mechD.wPan.wRangeR
                     .setText(String.format("%d %s", targetDistance, flightTimeText)); //$NON-NLS-1$
             
-            IGame game = clientgui.getClient().getGame();
+            Game game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(),
                     target);
             if (m.isUsedThisRound()) {
@@ -1230,7 +1230,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
-            } else if (phase == IGame.Phase.PHASE_TARGETING) {
+            } else if (phase == Game.Phase.PHASE_TARGETING) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
@@ -1317,7 +1317,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generalte a turn change

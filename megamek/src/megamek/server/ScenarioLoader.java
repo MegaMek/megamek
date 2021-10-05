@@ -51,7 +51,7 @@ import megamek.common.HitData;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.MapSettings;
@@ -164,7 +164,7 @@ public class ScenarioLoader {
     }
     
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
-    private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
+    private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         final EquipmentType currentAmmoType = mounted.getType();
@@ -382,7 +382,7 @@ public class ScenarioLoader {
         }
     }
 
-    public IGame createGame() throws Exception {
+    public Game createGame() throws Exception {
         MegaMek.getLogger().info("Loading scenario from " + scenarioFile);
         StringMultiMap p = load();
 
@@ -433,7 +433,7 @@ public class ScenarioLoader {
         // Set up the teams (for initiative)
         g.setupTeams();
 
-        g.setPhase(IGame.Phase.PHASE_STARTING_SCENARIO);
+        g.setPhase(Game.Phase.PHASE_STARTING_SCENARIO);
 
         g.setupRoundDeployment();
 
@@ -997,7 +997,7 @@ public class ScenarioLoader {
 
     public static void main(String[] saArgs) throws Exception {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
-        IGame g = sl.createGame();
+        Game g = sl.createGame();
         if (g != null) {
             MegaMek.getLogger().info("Successfully loaded.");
         }

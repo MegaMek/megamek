@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Report;
@@ -40,7 +40,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, IGame g, Server s) {
+    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 

@@ -19,7 +19,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -43,7 +43,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }
@@ -55,7 +55,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }

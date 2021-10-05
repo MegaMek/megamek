@@ -30,7 +30,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
@@ -90,9 +90,9 @@ class ArmorPanel extends PicMap {
     private static final int minAeroTopMargin = 8;
     private static final int minAeroLeftMargin = 8;
 
-    private IGame game;
+    private Game game;
 
-    ArmorPanel(IGame g, UnitDisplay unitDisplay) {
+    ArmorPanel(Game g, UnitDisplay unitDisplay) {
         game = g;
         this.unitDisplay = unitDisplay;
     }

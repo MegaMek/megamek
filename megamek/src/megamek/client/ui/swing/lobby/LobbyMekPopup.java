@@ -106,7 +106,7 @@ class LobbyMekPopup {
             ActionListener listener, ChatLounge lobby) {
 
         ClientGUI clientGui = lobby.getClientgui();
-        IGame game = lobby.game();
+        Game game = lobby.game();
         GameOptions opts = game.getOptions();
         
         boolean optQuirks = opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
@@ -249,7 +249,7 @@ class LobbyMekPopup {
         return menu;
     }
     
-    private static JMenuItem forceTreeMenu(Force force, IGame game, String enToken, ActionListener listener) {
+    private static JMenuItem forceTreeMenu(Force force, Game game, String enToken, ActionListener listener) {
         JMenuItem result;
         String item = "<HTML>" + force.getName() + idString(game, force.getId());
         if (force.getSubForces().isEmpty()) {
@@ -263,7 +263,7 @@ class LobbyMekPopup {
         return result;
     }
     
-    static String idString(IGame game, int id) {
+    static String idString(Game game, int id) {
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             return " <FONT" + UIUtil.colorString(UIUtil.uiGray()) +">[" + id + "]</FONT>"; 
         } else {
@@ -277,7 +277,7 @@ class LobbyMekPopup {
     private static JMenu loadMenu(ClientGUI cg, boolean enabled, ActionListener listener,
             Collection<Entity> entities) {
 
-        IGame game = cg.getClient().getGame();
+        Game game = cg.getClient().getGame();
         JMenu menu = new JMenu("Load onto");
         if (enabled && !entities.isEmpty()) {
 
@@ -506,7 +506,7 @@ class LobbyMekPopup {
             Entity entity = entities.stream().filter(e -> e.hasAnyC3System()).findAny().get();
             // ideally, find one slave or C3i/NC3/Nova to get some connection options
             entity = entities.stream().filter(e -> e.hasC3S() || e.hasNhC3()).findAny().orElse(entity);
-            IGame game = cg.getClient().getGame();
+            Game game = cg.getClient().getGame();
             ArrayList<String> usedNetIds = new ArrayList<String>();
             
             for (Entity other : cg.getClient().getEntitiesVector()) {
@@ -579,7 +579,7 @@ class LobbyMekPopup {
         menu.setEnabled(enabled);
         menu.setMnemonic(KeyEvent.VK_O);
         
-        IGame game = clientGui.getClient().getGame();
+        Game game = clientGui.getClient().getGame();
         Forces gameForces = game.getForces();
         
         if (!entities.isEmpty()) {
@@ -677,7 +677,7 @@ class LobbyMekPopup {
      * only one unit can swap pilot with one other unit.
      */
     private static JMenu swapPilotMenu(boolean enabled, Collection<Entity> entities, ClientGUI clientGui, ActionListener listener) {
-        IGame game = clientGui.getClient().getGame();
+        Game game = clientGui.getClient().getGame();
         
         JMenu menu = new JMenu("Swap pilots with");
         if (!entities.isEmpty()) {

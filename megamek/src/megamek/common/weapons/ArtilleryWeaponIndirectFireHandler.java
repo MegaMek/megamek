@@ -27,7 +27,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.HexTarget;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.INarcPod;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
@@ -69,7 +69,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ArtilleryWeaponIndirectFireHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor)w.getEntity(g)).getNumberActiverTroopers();
@@ -82,9 +82,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(IGame.Phase phase) {
-        if ((phase == IGame.Phase.PHASE_OFFBOARD)
-                || (phase == IGame.Phase.PHASE_TARGETING)) {
+    public boolean cares(Game.Phase phase) {
+        if ((phase == Game.Phase.PHASE_OFFBOARD)
+                || (phase == Game.Phase.PHASE_TARGETING)) {
             return true;
         }
         return false;
@@ -96,13 +96,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.Phase.PHASE_TARGETING) {
+        if (phase == Game.Phase.PHASE_TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself

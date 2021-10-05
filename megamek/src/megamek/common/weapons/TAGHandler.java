@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.Targetable;
@@ -37,7 +37,7 @@ public class TAGHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, IGame g, Server s) {
+    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -136,8 +136,8 @@ public class TAGHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(IGame.Phase phase) {
-        if (phase == IGame.Phase.PHASE_OFFBOARD) {
+    public boolean cares(Game.Phase phase) {
+        if (phase == Game.Phase.PHASE_OFFBOARD) {
             return true;
         }
         return false;

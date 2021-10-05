@@ -37,7 +37,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -241,7 +241,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     MovePath path,
                                     EntityState targetState,
                                     int distance,
-                                    IGame game) {
+                                    Game game) {
 
         // If they don't have the range, they can't do damage.
         int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
@@ -277,7 +277,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
-    double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
+    double calculateKickDamagePotential(Entity enemy, MovePath path, Game game) {
         if (!(enemy instanceof Mech)) {
             return 0.0;
         }
@@ -294,7 +294,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     double calculateMyDamagePotential(MovePath path, Entity enemy,
-                                      int distance, IGame game) {
+                                      int distance, Game game) {
         Entity me = path.getEntity();
 
         // If I don't have range, I can't do damage.
@@ -340,7 +340,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     double calculateMyKickDamagePotential(MovePath path, Entity enemy,
-                                          IGame game) {
+                                          Game game) {
         if (!(path.getEntity() instanceof Mech)) {
             return 0.0;
         }
@@ -355,7 +355,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path,
-                                                IGame game) {
+                                                Game game) {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
@@ -394,7 +394,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     // The further I am from a target, the lower this path ranks (weighted by 
     // Hyper Aggression.
     protected double calculateAggressionMod(Entity movingUnit, MovePath path,
-                                          IGame game, StringBuilder formula) {
+                                          Game game, StringBuilder formula) {
         double distToEnemy = distanceToClosestEnemy(movingUnit,
                                                     path.getFinalCoords(),
                                                     game);
@@ -433,7 +433,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     // todo account for damaged locations and face those away from enemy.
-    private double calculateFacingMod(Entity movingUnit, IGame game,
+    private double calculateFacingMod(Entity movingUnit, Game game,
                                       final MovePath path,
                                       StringBuilder formula) {
 
@@ -471,7 +471,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
-                                                IGame game,
+                                                Game game,
                                                 StringBuilder formula) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()); 
         
@@ -517,7 +517,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * A path ranking
      */
     @Override
-    protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
+    protected RankedPath rankPath(MovePath path, Game game, int maxRange,
                                double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
@@ -676,7 +676,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * Calculate who all other units would shoot at if I weren't around
      */
     @Override
-    public void initUnitTurn(Entity unit, IGame game) {
+    public void initUnitTurn(Entity unit, Game game) {
         bestDamageByEnemies.clear();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
@@ -703,7 +703,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
 
-    protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
+    protected void calcDamageToStrategicTargets(MovePath path, Game game,
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
                 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
@@ -751,9 +751,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      *
      * @param me       Entity who has enemies
      * @param position Coords from which the closest enemy is found
-     * @param game     IGame that we're playing
+     * @param game     Game that we're playing
      */
-    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
+    public double distanceToClosestEnemy(Entity me, Coords position, Game game) {
         Targetable closest = findClosestEnemy(me, position, game);
         if (closest == null) {
             return -1;
@@ -764,7 +764,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     /**
      * Gives the distance to the closest edge
      */
-    int distanceToClosestEdge(Coords position, IGame game) {
+    int distanceToClosestEdge(Coords position, Game game) {
        int width = game.getBoard().getWidth();
         int height = game.getBoard().getHeight();
         int minimum = position.getX();
@@ -780,7 +780,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return minimum;
     }
 
-    double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {
+    double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
         StringBuilder logMsg = new StringBuilder("Checking Path (")
                 .append(path.toString()).append(") for hazards.");
 

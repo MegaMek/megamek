@@ -35,7 +35,7 @@ import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
@@ -69,7 +69,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public int roll;
     protected boolean isJammed = false;
 
-    protected IGame game;
+    protected Game game;
     protected transient Server server; // must not save the server
     protected boolean bMissed;
     protected boolean bSalvo = false;
@@ -412,8 +412,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Do we care about the specified phase?
      */
-    public boolean cares(IGame.Phase phase) {
-        if (phase == IGame.Phase.PHASE_FIRING) {
+    public boolean cares(Game.Phase phase) {
+        if (phase == Game.Phase.PHASE_FIRING) {
             return true;
         }
         return false;
@@ -770,7 +770,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
-    public boolean handle(IGame.Phase phase, Vector<Report> returnedReports) {
+    public boolean handle(Game.Phase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
         }
@@ -1779,7 +1779,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     // Among other things, basically a refactored Server#preTreatWeaponAttack
-    public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         damageType = DamageType.NONE;
         toHit = t;
         waa = w;
@@ -2041,7 +2041,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Insert any additionaly attacks that should occur before this attack
      */
-    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    protected void insertAttacks(Game.Phase phase, Vector<Report> vPhaseReport) {
         return;
     }
 

@@ -68,7 +68,7 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.*;
@@ -563,7 +563,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
-        client.changePhase(IGame.Phase.PHASE_UNKNOWN);
+        client.changePhase(Game.Phase.PHASE_UNKNOWN);
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
@@ -651,7 +651,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Called when the user selects the "View->Game Options" menu item.
      */
     private void showOptions() {
-        if (client.getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (client.getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
             getGameOptionsDialog().setEditable(true);
         } else {
             getGameOptionsDialog().setEditable(false);
@@ -1029,7 +1029,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return conditionsDialog;
     }
 
-    void switchPanel(IGame.Phase phase) {
+    void switchPanel(Game.Phase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -1052,11 +1052,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         switch (phase) {
             case PHASE_LOUNGE:
                 // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
-                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
+                ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(Game.Phase.PHASE_LOUNGE));
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
@@ -1085,7 +1085,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_PHYSICAL_REPORT:
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                rD = (ReportDisplay) phaseComponents.get(String.valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
                 cb.setDoneButton(rD.butDone);
                 rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
                 setMapVisible(false);
@@ -1123,14 +1123,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    public void updateButtonPanel(IGame.Phase phase) {
+    public void updateButtonPanel(Game.Phase phase) {
         if ((currPhaseDisplay != null)
                 && client.getGame().getPhase().equals(phase)) {
             currPhaseDisplay.setupButtonPanel();
         }
     }
 
-    private JComponent initializePanel(IGame.Phase phase) {
+    private JComponent initializePanel(Game.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
         JComponent component;
@@ -1272,10 +1272,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String.valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
+                    component = initializePanel(Game.Phase.PHASE_INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;
@@ -2127,7 +2127,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         // Used to indicate it's this player's turn
                         setPointblankEID(evt.getEntityId());
                         // Switch to the right display
-                        switchPanel(IGame.Phase.PHASE_POINTBLANK_SHOT);
+                        switchPanel(Game.Phase.PHASE_POINTBLANK_SHOT);
                         PointblankShotDisplay curDisp = ((PointblankShotDisplay) curPanel);
                         // Set targeting info
                         curDisp.beginMyTurn();

@@ -53,120 +53,6 @@ import megamek.server.victory.VictoryResult;
  * should be documented. wtf is an exchange-phase?
  */
 public interface IGame {
-
-    public static int ILLUMINATED_NONE = 0;
-    public static int ILLUMINATED_FIRE = 1;
-    public static int ILLUMINATED_FLARE = 2;
-    public static int ILLUMINATED_LIGHT = 3;
-
-    public enum Phase {
-        PHASE_UNKNOWN,
-        PHASE_LOUNGE,
-        PHASE_SELECTION,
-        PHASE_EXCHANGE,
-        PHASE_DEPLOYMENT,
-        PHASE_INITIATIVE,
-        PHASE_INITIATIVE_REPORT,
-        PHASE_TARGETING,
-        PHASE_TARGETING_REPORT,
-        PHASE_MOVEMENT,
-        PHASE_MOVEMENT_REPORT,
-        PHASE_OFFBOARD,
-        PHASE_OFFBOARD_REPORT,
-        PHASE_POINTBLANK_SHOT, // Fake phase only reached through hidden units
-        PHASE_FIRING,
-        PHASE_FIRING_REPORT,
-        PHASE_PHYSICAL,
-        PHASE_PHYSICAL_REPORT,
-        PHASE_END,
-        PHASE_END_REPORT,
-        PHASE_VICTORY,
-        PHASE_DEPLOY_MINEFIELDS,
-        PHASE_STARTING_SCENARIO,
-        PHASE_SET_ARTYAUTOHITHEXES;
-
-        /**
-         * @param otherPhase
-         * @return
-         */
-        public boolean isDuringOrAfter(Phase otherPhase) {
-            return compareTo(otherPhase) >= 0;
-        }
-
-        /**
-         * @param otherPhase
-         * @return
-         */
-        public boolean isBefore(Phase otherPhase) {
-            return compareTo(otherPhase) < 0;
-        }
-        
-        /** Returns true when this phase shows the game map (boardview). */
-        public boolean isOnMap() {
-            return (this == PHASE_SET_ARTYAUTOHITHEXES) || (this == PHASE_DEPLOY_MINEFIELDS)
-                    || (this == PHASE_MOVEMENT) || (this == PHASE_FIRING)
-                    || (this == PHASE_PHYSICAL) || (this == PHASE_OFFBOARD)
-                    || (this == PHASE_TARGETING) || (this == PHASE_DEPLOYMENT);
-        }
-
-        /**
-         * Get the displayable name for the given Phase.
-         *
-         * @param phase
-         * @return
-         */
-        static public String getDisplayableName(Phase phase) {
-            return Messages.getString("GAME_" + phase.name());
-        }
-
-        /**
-         * Given a displayable name for a phase, return the Phase instance for
-         * that name.  Null will be returned if no match is found or a null
-         * string is passed.
-         *
-         * @param name
-         * @return
-         */
-        @Nullable
-        static public Phase getPhaseFromName(@Nullable String name) {
-            if (name == null) {
-                return null;
-            }
-
-            for (Phase p : values()) {
-                if (name.equals(getDisplayableName(p))) {
-                    return p;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Returns true if this phase is simultaneous.
-         *
-         * @param game  Game instance used to get game options
-         * @return
-         */
-        public boolean isPhaseSimultaneous(IGame game) {
-            switch (this) {
-                case PHASE_DEPLOYMENT:
-                    return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
-                case PHASE_MOVEMENT:
-                    return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
-                case PHASE_FIRING:
-                    return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
-                case PHASE_PHYSICAL:
-                    return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
-                case PHASE_TARGETING:
-                case PHASE_OFFBOARD:
-                    return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
-                default:
-                    return false;
-            }
-        }
-
-    }
-
     // New accessors for external game id
     abstract int getExternalGameId();
 
@@ -450,7 +336,7 @@ public interface IGame {
      * Returns true if this phase has turns. If false, the phase is simply
      * waiting for everybody to declare "done".
      */
-    abstract boolean phaseHasTurns(IGame.Phase phase);
+    abstract boolean phaseHasTurns(Game.Phase phase);
 
     /**
      * @return true if the current phase can be played simultaneously
@@ -530,13 +416,13 @@ public interface IGame {
      */
     abstract void setTurnVector(List<GameTurn> turnVector);
 
-    abstract IGame.Phase getPhase();
+    abstract Game.Phase getPhase();
 
-    abstract void setPhase(IGame.Phase phase);
+    abstract void setPhase(Game.Phase phase);
 
-    abstract IGame.Phase getLastPhase();
+    abstract Game.Phase getLastPhase();
 
-    abstract void setLastPhase(IGame.Phase lastPhase);
+    abstract void setLastPhase(Game.Phase lastPhase);
 
     abstract void setDeploymentComplete(boolean deploymentComplete);
 
@@ -1467,7 +1353,7 @@ public interface IGame {
      * Returns the level of illumination for a given coords.  Different light
      * sources affect how much the night-time penalties are reduced. Note: this
      * method should be used for determining is a Coords/Hex is illuminated, not
-     * IGame. getIlluminatedPositions(), as that just returns the hexes that
+     * Game. getIlluminatedPositions(), as that just returns the hexes that
      * are effected by spotlights, whereas this one considers searchlights as
      * well as other light sources.
      */
@@ -1534,7 +1420,7 @@ public interface IGame {
      * Get a set of Coords illuminated by searchlights.
      *
      * Note: coords could be illuminated by other sources as well, it's likely
-     * that IGame.isPositionIlluminated is desired unless the searchlighted hex
+     * that Game.isPositionIlluminated is desired unless the searchlighted hex
      * set is being sent to the client or server.
      */
     abstract HashSet<Coords> getIlluminatedPositions();

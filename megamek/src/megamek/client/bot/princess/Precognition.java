@@ -40,7 +40,7 @@ import megamek.common.Entity;
 import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.GameTurn;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Minefield;
@@ -87,7 +87,7 @@ public class Precognition implements Runnable {
      *  Princess share the same game reference, than this will cause concurrency
      *  issues. 
      */
-    private IGame game;
+    private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
@@ -224,7 +224,7 @@ public class Precognition implements Runnable {
                     receiveBuildingCollapse(c);
                     break;
                 case Packet.COMMAND_PHASE_CHANGE:
-                    getGame().setPhase((IGame.Phase) c.getObject(0));
+                    getGame().setPhase((Game.Phase) c.getObject(0));
                     break;
                 case Packet.COMMAND_TURN:
                     getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
@@ -496,7 +496,7 @@ public class Precognition implements Runnable {
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement
-                    if (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+                    if (getGame().getPhase() != Game.Phase.PHASE_MOVEMENT) {
                         continue;
                     }
                     GameEntityChangeEvent changeEvent = (GameEntityChangeEvent) event;
@@ -510,7 +510,7 @@ public class Precognition implements Runnable {
                     }
                     // a lot of odd entity changes are send during the firing phase,
                     // none of which are relevant
-                    if (getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
+                    if (getGame().getPhase() == Game.Phase.PHASE_FIRING) {
                         continue;
                     }
                     Coords position = entity.getPosition();
@@ -531,7 +531,7 @@ public class Precognition implements Runnable {
                     getOwner().getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
-                    if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    if (phaseChange.getNewPhase() == Game.Phase.PHASE_MOVEMENT) {
                         getPathEnumerator().clear();
                         for (Entity entity : getGame().getEntitiesVector()) {
                             if (entity.isActive() && entity.isDeployed() && entity.getPosition() != null) {
@@ -589,7 +589,7 @@ public class Precognition implements Runnable {
                     if ((getGame().getEntity(index) == null) || (!getGame()
                             .getEntity(index).isSelectableThisTurn())
                             && (getGame()
-                                    .getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                                    .getPhase() == Game.Phase.PHASE_MOVEMENT)) {
                         toRemove.add(index);
                     }
                 }
@@ -618,7 +618,7 @@ public class Precognition implements Runnable {
             }
             Entity entity = getGame().getEntity(id);
             if ((entity != null) && (entity.isSelectableThisTurn()) ||
-                (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                (getGame().getPhase() != Game.Phase.PHASE_MOVEMENT)) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
                 getPathEnumerator().getLastKnownLocations().put(id,
@@ -691,7 +691,7 @@ public class Precognition implements Runnable {
         }
     }
 
-    private IGame getGame() {
+    private Game getGame() {
         GAME_LOCK.lock();
         try {
             getOwner().getLogger().debug("GAME_LOCK read locked.");

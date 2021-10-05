@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TagInfo;
@@ -51,7 +51,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
@@ -94,7 +94,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;

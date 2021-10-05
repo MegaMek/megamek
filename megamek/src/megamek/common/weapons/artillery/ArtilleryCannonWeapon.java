@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -50,12 +50,12 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         // AmmoType atype = (AmmoType)
         // game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         return new ArtilleryCannonWeaponHandler(toHit, waa, game, server);

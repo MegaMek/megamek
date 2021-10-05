@@ -19,7 +19,7 @@ import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -50,7 +50,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);        
     }
@@ -260,7 +260,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     }     
    
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         
         if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);

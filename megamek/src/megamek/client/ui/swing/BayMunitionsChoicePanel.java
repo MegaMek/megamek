@@ -35,7 +35,7 @@ import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.LocationFullException;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -55,10 +55,10 @@ public class BayMunitionsChoicePanel extends JPanel {
     private static final long serialVersionUID = -7741380967676720496L;
     
     private final Entity entity;
-    private final IGame game;
+    private final Game game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
     
-    public BayMunitionsChoicePanel(Entity entity, IGame game) {
+    public BayMunitionsChoicePanel(Entity entity, Game game) {
         this.entity = entity;
         this.game = game;
         

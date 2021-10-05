@@ -18,7 +18,7 @@ import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ITerrainFactory;
 import megamek.common.PlanetaryConditions;
@@ -38,7 +38,7 @@ import megamek.common.Terrains;
 
 public class WeatherProcessor extends DynamicTerrainProcessor {
 
-    private IGame game;
+    private Game game;
     Vector<Report> vPhaseReport;
 
     //track turns of snow, sleet, and ice

@@ -30,7 +30,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -261,7 +261,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Utility function that returns true if an attack on the building in the given coordinates
      * will result in damage to friendly units. Computation is cached as it is somewhat expensive to perform for each possible path node.
      */
-    private boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
+    private boolean friendlyFireCheck(Entity shooter, Game game, Coords position, boolean includeMobileUnits) {
         if (friendlyFireCheckResults.containsKey(position)) {
             return friendlyFireCheckResults.get(position);
         }

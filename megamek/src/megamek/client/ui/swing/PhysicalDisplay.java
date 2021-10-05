@@ -45,7 +45,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.INarcPod;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -319,7 +319,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((IGame.Phase.PHASE_PHYSICAL == clientgui.getClient().getGame()
+        if ((Game.Phase.PHASE_PHYSICAL == clientgui.getClient().getGame()
                 .getPhase())
             && (null != next)
             && (null != ce())
@@ -1509,7 +1509,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // Assume that we have *no* choice.
         Targetable choice = null;
 
@@ -1600,7 +1600,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_PHYSICAL) {
 
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
@@ -1631,7 +1631,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
             endMyTurn();
         }
 
@@ -1641,11 +1641,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
+                && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_PHYSICAL)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_PHYSICAL) {
             setStatusBarText(Messages
                     .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }

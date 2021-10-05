@@ -633,7 +633,7 @@ public class PlanetaryConditions implements Serializable {
      * is the given entity type doomed in these conditions?
      * @return a string given the reason for being doomed, null if not doomed
      */
-    public String whyDoomed(Entity en, IGame game) {
+    public String whyDoomed(Entity en, Game game) {
         if ((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
             return "vacuum";
         }

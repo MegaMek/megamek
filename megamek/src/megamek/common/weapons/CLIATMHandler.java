@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -54,7 +54,7 @@ public class CLIATMHandler extends ATMHandler {
      * @param g
      * @param s
      */
-    public CLIATMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }
@@ -477,7 +477,7 @@ public class CLIATMHandler extends ATMHandler {
      */
 
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
             if (!cares(phase)) {

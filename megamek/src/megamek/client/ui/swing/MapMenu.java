@@ -33,7 +33,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.event.BoardViewEvent;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.actions.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.*;
@@ -49,7 +49,7 @@ public class MapMenu extends JPopupMenu {
     private static final long serialVersionUID = 2879345079968414986L;
 
     private Coords coords;
-    IGame game;
+    Game game;
     Component currentPanel;
     private IBoard board;
     Client client;
@@ -448,7 +448,7 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
-        IGame game = client.getGame();
+        Game game = client.getGame();
                 
         IPlayer localPlayer = client.getLocalPlayer();
         
@@ -829,7 +829,7 @@ public class MapMenu extends JPopupMenu {
                     Targetable target = panel.getTarget();
                     for (Mounted weapon : weapons) {
                         // If the weapon has been used at all this turn, ignore
-                        if (weapon.usedInPhase() != IGame.Phase.PHASE_UNKNOWN) {
+                        if (weapon.usedInPhase() != Game.Phase.PHASE_UNKNOWN) {
                             continue;
                         }
                         int weaponNum = weapToId.get(weapon);

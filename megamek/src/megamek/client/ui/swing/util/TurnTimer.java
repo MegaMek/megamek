@@ -17,7 +17,7 @@ package megamek.client.ui.swing.util;
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 
@@ -118,10 +118,10 @@ public class TurnTimer {
         Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
         // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options
         if (timer.intValue() > 0 ) {
-            IGame.Phase phase = client.getGame().getPhase();
+            Game.Phase phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase == IGame.Phase.PHASE_MOVEMENT || phase == IGame.Phase.PHASE_FIRING || phase == IGame.Phase.PHASE_PHYSICAL || phase == IGame.Phase.PHASE_TARGETING;
+            return phase == Game.Phase.PHASE_MOVEMENT || phase == Game.Phase.PHASE_FIRING || phase == Game.Phase.PHASE_PHYSICAL || phase == Game.Phase.PHASE_TARGETING;
         }
         return false;
     }

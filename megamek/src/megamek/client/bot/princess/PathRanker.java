@@ -29,7 +29,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
@@ -65,7 +65,7 @@ public abstract class PathRanker implements IPathRanker {
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
      */
-    RankedPath rankPath(MovePath path, IGame game) {
+    RankedPath rankPath(MovePath path, Game game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
         int maxWeaponRange = me.getMaxWeaponRange();
@@ -76,10 +76,10 @@ public abstract class PathRanker implements IPathRanker {
         return rankPath(path, game, maxWeaponRange, fallTolerance, enemies, allyCenter);
     }
 
-    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance,
+    abstract RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords);
 
-    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
                                     double fallTolerance,
                                     List<Entity> enemies, List<Entity> friends) {
         // No point in ranking an empty list.
@@ -139,7 +139,7 @@ public abstract class PathRanker implements IPathRanker {
         return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, IGame game, int maxRange, double fallTolerance) {
+    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange, double fallTolerance) {
         LogLevel logLevel = LogLevel.DEBUG;
 
         if (startingPathList.isEmpty()) {
@@ -253,17 +253,17 @@ public abstract class PathRanker implements IPathRanker {
      * unit on this turn. Rankers that extend this class should override this
      * function
      */
-    public void initUnitTurn(Entity unit, IGame game) {
+    public void initUnitTurn(Entity unit, Game game) {
     }
 
-    public Targetable findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Targetable findClosestEnemy(Entity me, Coords position, Game game) {
         return findClosestEnemy(me, position, game, true);
     }
     
     /**
      * Find the closest enemy to a unit with a path
      */
-    public Targetable findClosestEnemy(Entity me, Coords position, IGame game, boolean includeStrategicTargets) {
+    public Targetable findClosestEnemy(Entity me, Coords position, Game game, boolean includeStrategicTargets) {
         int range = 9999;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
@@ -362,10 +362,10 @@ public abstract class PathRanker implements IPathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game     The {@link IGame} currently in play.
+     * @param game     The {@link Game} currently in play.
      * @return The distance to the unit's home edge.
      */
-    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, IGame game) {
+    public int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game) {
         int width = game.getBoard().getWidth();
         int height = game.getBoard().getHeight();
 
@@ -427,10 +427,10 @@ public abstract class PathRanker implements IPathRanker {
      * todo incorporate test for building damage just from moving through building
      *
      * @param path The {@link MovePath} being traversed.
-     * @param game The {@link IGame} being played.
+     * @param game The {@link Game} being played.
      * @return True if there is a building in our path that might collapse.
      */
-    private boolean willBuildingCollapse(MovePath path, IGame game) {
+    private boolean willBuildingCollapse(MovePath path, Game game) {
         // airborne aircraft cannot collapse buildings
         if(path.getEntity().isAero() || path.getEntity().hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
@@ -474,7 +474,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     @Nullable
-    Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
+    Coords calcAllyCenter(int myId, List<Entity> friends, Game game) {
         if ((friends == null) || friends.isEmpty()) {
             return null;
         }

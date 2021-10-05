@@ -41,7 +41,7 @@ import megamek.client.ui.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.minimap.MiniMapUnitSymbols;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.Game.Phase;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
@@ -93,7 +93,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     
     private BufferedImage mapImage;
     private final IBoardView bv;
-    private final IGame game;
+    private final Game game;
     private IBoard board;
     private final JDialog dialog;
     private Client client;
@@ -137,7 +137,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * @param game A game containing at least the board, but not necessarily anything else
      * @param cg Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, IGame game, @Nullable ClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
         result.setAutoRequestFocus(false);
         result.setFocusable(false);
@@ -164,7 +164,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     
     /** Returns a minimap image of the given board at the given zoom index. */
     public static BufferedImage getMinimapImage(IBoard board, int zoom) {
-        IGame game = new Game();
+        Game game = new Game();
         game.setBoard(board);
         return getMinimapImage(game, null, zoom);
     }
@@ -173,7 +173,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * Returns a minimap image of the given board at the given zoom index. The 
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(IGame game, IBoardView bv, int zoom) {
+    public static BufferedImage getMinimapImage(Game game, IBoardView bv, int zoom) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < 0) || (zoom > MAX_ZOOM)) {
@@ -197,7 +197,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
      * used to create a snapshot image. When a boardview is given, the visible area is shown.
      */
-    private MiniMap(@Nullable JDialog dlg, IGame g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
+    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
@@ -496,7 +496,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
-                    if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) && !h.isValid(null)) {
+                    if ((game != null) && (game.getPhase() == Game.Phase.PHASE_UNKNOWN) && !h.isValid(null)) {
                         gg.setColor(GUIPreferences.getInstance().getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
@@ -558,7 +558,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) 
-                && (IGame.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
+                && (Game.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
@@ -1333,7 +1333,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     dir.mkdirs();
                 }
 				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-						+ IGame.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+						+ Game.Phase.getDisplayableName(e.getOldPhase()) + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {

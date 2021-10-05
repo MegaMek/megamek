@@ -20,7 +20,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -55,7 +55,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -65,7 +65,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

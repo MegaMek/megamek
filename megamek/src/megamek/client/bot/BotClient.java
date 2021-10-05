@@ -51,7 +51,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -163,7 +163,7 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) {
+                if (game.getPhase() == Game.Phase.PHASE_INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -390,7 +390,7 @@ public abstract class BotClient extends Client {
 
     // TODO: move initMovement to be called on phase end
     @Override
-    public void changePhase(IGame.Phase phase) {
+    public void changePhase(Game.Phase phase) {
         super.changePhase(phase);
 
         try {
@@ -544,7 +544,7 @@ public abstract class BotClient extends Client {
         currentTurnFriendlyEntities = null;
         
         try {
-            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == Game.Phase.PHASE_MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
@@ -560,9 +560,9 @@ public abstract class BotClient extends Client {
                     }
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+            } else if (game.getPhase() == Game.Phase.PHASE_FIRING) {
                 calculateFiringTurn();
-            } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
+            } else if (game.getPhase() == Game.Phase.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
@@ -572,21 +572,21 @@ public abstract class BotClient extends Client {
                     sendAttackData(game.getFirstEntityNum(getMyTurn()),
                                    new Vector<>(0));
                 }
-            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+            } else if (game.getPhase() == Game.Phase.PHASE_DEPLOYMENT) {
                 calculateDeployment();
-            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase() == Game.Phase.PHASE_DEPLOY_MINEFIELDS) {
                 Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (Minefield mine : mines) {
                     game.addMinefield(mine);
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
-            } else if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+            } else if (game.getPhase() == Game.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
-                       || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
+            } else if ((game.getPhase() == Game.Phase.PHASE_TARGETING)
+                       || (game.getPhase() == Game.Phase.PHASE_OFFBOARD)) {
                 // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
             }
@@ -598,7 +598,7 @@ public abstract class BotClient extends Client {
         }
     }
 
-    public double getMassOfAllInBuilding(final IGame game, final Coords coords) {
+    public double getMassOfAllInBuilding(final Game game, final Coords coords) {
         double mass = 0;
 
         // Add the mass of anyone else standing in/on this building.
@@ -1005,7 +1005,7 @@ public abstract class BotClient extends Client {
      * Compute.getExpectedDamage; the logfile print commands were removed due to
      * excessive data generated
      */
-    private static float getDeployDamage(IGame g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
+    private static float getDeployDamage(Game g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
         Entity attacker = g.getEntity(waa.getEntityId());
         boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());

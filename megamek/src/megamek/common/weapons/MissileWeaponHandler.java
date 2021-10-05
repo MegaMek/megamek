@@ -24,7 +24,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -56,7 +56,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
@@ -669,7 +669,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

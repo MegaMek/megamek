@@ -135,7 +135,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     private int armorValue = 0;
 
-    private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
+    private Game.Phase phase = Game.Phase.PHASE_UNKNOWN;
 
     public static final int MINE_NONE = -1;
     public static final int MINE_CONVENTIONAL = 0;
@@ -409,7 +409,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         called.reset();
     }
 
-    public void newPhase(IGame.Phase phase) {
+    public void newPhase(Game.Phase phase) {
         jammed = jammedThisPhase;
     }
 
@@ -607,15 +607,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (usedThisRound) {
             phase = entity.game.getPhase();
         } else {
-            phase = IGame.Phase.PHASE_UNKNOWN;
+            phase = Game.Phase.PHASE_UNKNOWN;
         }
     }
 
-    public IGame.Phase usedInPhase() {
+    public Game.Phase usedInPhase() {
         if (usedThisRound) {
             return phase;
         }
-        return IGame.Phase.PHASE_UNKNOWN;
+        return Game.Phase.PHASE_UNKNOWN;
     }
 
     public boolean isBreached() {

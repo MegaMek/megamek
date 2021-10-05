@@ -1111,7 +1111,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_MOVEMENT);
+            clientgui.updateButtonPanel(Game.Phase.PHASE_MOVEMENT);
         }
         
         // Deploy
@@ -1127,7 +1127,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_DEPLOYMENT);
+            clientgui.updateButtonPanel(Game.Phase.PHASE_DEPLOYMENT);
         }        
         
         // Firing
@@ -1143,7 +1143,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_FIRING);
+            clientgui.updateButtonPanel(Game.Phase.PHASE_FIRING);
         }
         
         // Physical
@@ -1159,7 +1159,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_PHYSICAL);
+            clientgui.updateButtonPanel(Game.Phase.PHASE_PHYSICAL);
         }
         
         // Targeting
@@ -1175,7 +1175,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
+            clientgui.updateButtonPanel(Game.Phase.PHASE_TARGETING);
         }
 
         setVisible(false);

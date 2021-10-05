@@ -17,7 +17,7 @@
 package megamek.client.bot.princess;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 
 /**
@@ -44,5 +44,5 @@ public interface IMoralUtil {
      * @param player           The {@link IPlayer} of the Princess bot.
      * @param game             The game being played.
      */
-    void checkMoral(boolean forcedWithdrawal, int bravery, int selfPreservation, IPlayer player, IGame game);
+    void checkMoral(boolean forcedWithdrawal, int bravery, int selfPreservation, IPlayer player, Game game);
 }

@@ -42,7 +42,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -493,9 +493,9 @@ public class PointblankShotDisplay extends FiringDisplay implements
      */
     protected void endMyTurn() {
         // end my turn, then.
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == IGame.Phase.PHASE_FIRING)
+        if ((game.getPhase() == Game.Phase.PHASE_FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setUnitDisplayVisible(false);
@@ -512,7 +512,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
-        clientgui.switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        clientgui.switchPanel(Game.Phase.PHASE_MOVEMENT);
     }
 
     /**
@@ -681,7 +681,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
      * queue.
      */
     void fire() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // get the selected weaponnum
         final int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
@@ -817,7 +817,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
      */
     public void updateTarget() {
         setFireEnabled(false);
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
 
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();

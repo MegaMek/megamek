@@ -29,7 +29,7 @@ import java.util.Vector;
 public final class Player extends TurnOrdered implements IPlayer {
     private static final long serialVersionUID = 6828849559007455761L;
 
-    private transient IGame game;
+    private transient Game game;
 
     private String name;
     private String email;
@@ -228,7 +228,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 
@@ -300,7 +300,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean isObserver() {
-        if ((game != null) && (game.getPhase() == IGame.Phase.PHASE_VICTORY)) {
+        if ((game != null) && (game.getPhase() == Game.Phase.PHASE_VICTORY)) {
             return false;
         }
         return observer;

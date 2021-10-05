@@ -26,7 +26,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -58,7 +58,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * @param g
      */
     public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
@@ -71,12 +71,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.Phase.PHASE_TARGETING) {
+        if (phase == Game.Phase.PHASE_TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself

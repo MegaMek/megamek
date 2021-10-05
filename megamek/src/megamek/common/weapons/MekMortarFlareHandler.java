@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -42,7 +42,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MekMortarFlareHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MekMortarFlareHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -62,7 +62,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

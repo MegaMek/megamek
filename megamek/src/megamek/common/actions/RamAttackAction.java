@@ -29,7 +29,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.FighterSquadron;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Jumpship;
@@ -70,7 +70,7 @@ public class RamAttackAction extends AbstractAttackAction {
     /**
      * To-hit number for a ram, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
                      entity.getPosition(), entity.getElevation(), 
@@ -80,7 +80,7 @@ public class RamAttackAction extends AbstractAttackAction {
     /**
      * To-hit number for a ram, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src,
+    public ToHitData toHit(Game game, Targetable target, Coords src,
             int elevation, Coords priorSrc, EntityMovementType movement) {
         final Entity ae = getEntity(game);
 
@@ -231,7 +231,7 @@ public class RamAttackAction extends AbstractAttackAction {
     /**
      * Checks if a ram can hit the target, taking account of movement
      */
-    public ToHitData toHit(IGame game, MovePath md) {
+    public ToHitData toHit(Game game, MovePath md) {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
         Coords ramSrc = ae.getPosition();

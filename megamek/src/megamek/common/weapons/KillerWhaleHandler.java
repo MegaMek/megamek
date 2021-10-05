@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -34,7 +34,7 @@ public class KillerWhaleHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public KillerWhaleHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public KillerWhaleHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

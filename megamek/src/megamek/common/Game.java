@@ -196,17 +196,17 @@ public class Game implements Serializable {
     public IBoard board = new Board();
 
     private final List<Entity> entities = new CopyOnWriteArrayList<>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<Integer, Entity>();
+    private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
 
     /**
      * Track entities removed from the game (probably by death)
      */
-    Vector<Entity> vOutOfGame = new Vector<Entity>();
+    Vector<Entity> vOutOfGame = new Vector<>();
 
-    private Vector<IPlayer> players = new Vector<IPlayer>();
-    private Vector<Team> teams = new Vector<Team>(); // DES
+    private Vector<IPlayer> players = new Vector<>();
+    private Vector<Team> teams = new Vector<>();
 
-    private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
+    private Hashtable<Integer, IPlayer> playerIds = new Hashtable<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
@@ -228,7 +228,7 @@ public class Game implements Serializable {
     /**
      * The current turn list
      */
-    private Vector<GameTurn> turnVector = new Vector<GameTurn>();
+    private Vector<GameTurn> turnVector = new Vector<>();
     private int turnIndex = 0;
 
     /**
@@ -242,14 +242,14 @@ public class Game implements Serializable {
     private Phase lastPhase = Phase.PHASE_UNKNOWN;
 
     // phase state
-    private Vector<EntityAction> actions = new Vector<EntityAction>();
-    private Vector<AttackAction> pendingCharges = new Vector<AttackAction>();
-    private Vector<AttackAction> pendingRams = new Vector<AttackAction>();
-    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<AttackAction>();
-    private Vector<PilotingRollData> pilotRolls = new Vector<PilotingRollData>();
-    private Vector<PilotingRollData> extremeGravityRolls = new Vector<PilotingRollData>();
-    private Vector<PilotingRollData> controlRolls = new Vector<PilotingRollData>();
-    private Vector<Team> initiativeRerollRequests = new Vector<Team>();
+    private Vector<EntityAction> actions = new Vector<>();
+    private Vector<AttackAction> pendingCharges = new Vector<>();
+    private Vector<AttackAction> pendingRams = new Vector<>();
+    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<>();
+    private Vector<PilotingRollData> pilotRolls = new Vector<>();
+    private Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
+    private Vector<PilotingRollData> controlRolls = new Vector<>();
+    private Vector<Team> initiativeRerollRequests = new Vector<>();
 
     // reports
     private GameReports gameReports = new GameReports();
@@ -258,20 +258,19 @@ public class Game implements Serializable {
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
 
-    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<Integer, Vector<Entity>>();
+    private Hashtable<Integer, Vector<Entity>> deploymentTable = new Hashtable<>();
     private int lastDeploymentRound = 0;
 
-    private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<Coords, Vector<Minefield>>();
-    private Vector<Minefield> vibrabombs = new Vector<Minefield>();
-    private Vector<AttackHandler> attacks = new Vector<AttackHandler>();
-    private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<ArtilleryAttackAction>();
+    private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<>();
+    private Vector<Minefield> vibrabombs = new Vector<>();
+    private Vector<AttackHandler> attacks = new Vector<>();
+    private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<>();
 
     private int lastEntityId;
 
-    private Vector<TagInfo> tagInfoForTurn = new Vector<TagInfo>();
-    private Vector<Flare> flares = new Vector<Flare>();
-    private HashSet<Coords> illuminatedPositions =
-            new HashSet<Coords>();
+    private Vector<TagInfo> tagInfoForTurn = new Vector<>();
+    private Vector<Flare> flares = new Vector<>();
+    private HashSet<Coords> illuminatedPositions = new HashSet<>();
 
     private HashMap<String, Object> victoryContext = null;
 
@@ -290,7 +289,7 @@ public class Game implements Serializable {
      */
     private Forces forces = new Forces(this);
 
-    transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
+    transient private Vector<GameListener> gameListeners = new Vector<>();
     
     /** 
      * Stores princess behaviors for game factions. It does not indicate that a 
@@ -316,7 +315,6 @@ public class Game implements Serializable {
         externalGameId = value;
     }
 
-    @Override
     public Version getVersion() {
         return version;
     }
@@ -338,7 +336,7 @@ public class Game implements Serializable {
     public Vector<Minefield> getMinefields(Coords coords) {
         Vector<Minefield> mfs = minefields.get(coords);
         if (mfs == null) {
-            return new Vector<Minefield>();
+            return new Vector<>();
         }
         return mfs;
     }
@@ -388,8 +386,7 @@ public class Game implements Serializable {
         if (newMinefields.size() < 1) {
             return;
         }
-        Vector<Minefield> mfs = minefields.get(newMinefields.firstElement()
-                                                            .getCoords());
+        Vector<Minefield> mfs = minefields.get(newMinefields.firstElement().getCoords());
         mfs.clear();
         for (int i = 0; i < newMinefields.size(); i++) {
             Minefield mf = newMinefields.elementAt(i);
@@ -401,7 +398,7 @@ public class Game implements Serializable {
     protected void addMinefieldHelper(Minefield mf) {
         Vector<Minefield> mfs = minefields.get(mf.getCoords());
         if (mfs == null) {
-            mfs = new Vector<Minefield>();
+            mfs = new Vector<>();
             mfs.addElement(mf);
             minefields.put(mf.getCoords(), mfs);
             return;
@@ -465,12 +462,10 @@ public class Game implements Serializable {
         return vibrabombs.contains(mf);
     }
 
-    @Override
     public GameOptions getOptions() {
         return options;
     }
 
-    @Override
     public void setOptions(final @Nullable GameOptions options) {
         if (options == null) {
             MegaMek.getLogger().error("Can't set the game options to null!");
@@ -523,9 +518,9 @@ public class Game implements Serializable {
      * their own object
      */
     public void setupTeams() {
-        Vector<Team> initTeams = new Vector<Team>();
+        Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
-                                          .booleanValue();
+                .booleanValue();
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
@@ -606,7 +601,7 @@ public class Game implements Serializable {
     public void addPlayer(int id, IPlayer player) {
         player.setGame(this);
         players.addElement(player);
-        playerIds.put(Integer.valueOf(id), player);
+        playerIds.put(id, player);
         setupTeams();
         updatePlayer(player);
     }
@@ -615,7 +610,7 @@ public class Game implements Serializable {
         final IPlayer oldPlayer = getPlayer(id);
         player.setGame(this);
         players.setElementAt(player, players.indexOf(oldPlayer));
-        playerIds.put(Integer.valueOf(id), player);
+        playerIds.put(id, player);
         setupTeams();
         updatePlayer(player);
     }
@@ -627,7 +622,7 @@ public class Game implements Serializable {
     public void removePlayer(int id) {
         IPlayer playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
-        playerIds.remove(Integer.valueOf(id));
+        playerIds.remove(id);
         setupTeams();
         processGameEvent(new GamePlayerChangeEvent(this, playerToRemove));
     }
@@ -733,7 +728,7 @@ public class Game implements Serializable {
      * entity
      */
     public List<Entity> getValidTargets(Entity entity) {
-        List<Entity> ents = new ArrayList<Entity>();
+        List<Entity> ents = new ArrayList<>();
 
         boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
@@ -891,9 +886,7 @@ public class Game implements Serializable {
      */
     public void setTurnVector(List<GameTurn> turnVector) {
         this.turnVector.clear();
-        for (GameTurn turn : turnVector) {
-            this.turnVector.add(turn);
-        }
+        this.turnVector.addAll(turnVector);
     }
 
     public Phase getPhase() {
@@ -960,23 +953,16 @@ public class Game implements Serializable {
      * Sets up up the hashtable of who deploys when
      */
     public void setupRoundDeployment() {
-        deploymentTable = new Hashtable<Integer, Vector<Entity>>();
+        deploymentTable = new Hashtable<>();
 
         for (Entity ent : entities) {
             if (ent.isDeployed()) {
                 continue;
             }
 
-            Vector<Entity> roundVec = deploymentTable.get(Integer.valueOf(ent.getDeployRound()));
-
-            if (null == roundVec) {
-                roundVec = new Vector<Entity>();
-                deploymentTable.put(ent.getDeployRound(), roundVec);
-            }
-
+            Vector<Entity> roundVec = deploymentTable.computeIfAbsent(ent.getDeployRound(), k -> new Vector<>());
             roundVec.addElement(ent);
-            lastDeploymentRound = Math.max(lastDeploymentRound,
-                                           ent.getDeployRound());
+            lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
         }
     }
 
@@ -1001,21 +987,21 @@ public class Game implements Serializable {
     }
 
     private Vector<Entity> getEntitiesToDeployForRound(int round) {
-        return deploymentTable.get(Integer.valueOf(round));
+        return deploymentTable.get(round);
     }
 
     /**
      * Clear this round from this list of entities to deploy
      */
     public void clearDeploymentThisRound() {
-        deploymentTable.remove(Integer.valueOf(getRoundCount()));
+        deploymentTable.remove(getRoundCount());
     }
 
     /**
      * Returns a vector of entities that have not yet deployed
      */
     public List<Entity> getUndeployedEntities() {
-        List<Entity> entList = new ArrayList<Entity>();
+        List<Entity> entList = new ArrayList<>();
         Enumeration<Vector<Entity>> iter = deploymentTable.elements();
 
         while (iter.hasMoreElements()) {
@@ -1090,7 +1076,7 @@ public class Game implements Serializable {
      */
     public void setOutOfGameEntitiesVector(List<Entity> vOutOfGame) {
         assert (vOutOfGame != null) : "New out-of-game list should not be null.";
-        Vector<Entity> newOutOfGame = new Vector<Entity>();
+        Vector<Entity> newOutOfGame = new Vector<>();
 
         // Add entities for the existing players to the game.
         for (Entity entity : vOutOfGame) {
@@ -1139,7 +1125,7 @@ public class Game implements Serializable {
      * @see #getC3SubNetworkMembers(Entity)
      */
     public Vector<Entity> getC3NetworkMembers(Entity entity) {
-        Vector<Entity> members = new Vector<Entity>();
+        Vector<Entity> members = new Vector<>();
         //WOR
         // Does the unit have a C3 computer?
         if ((entity != null) && entity.hasAnyC3System()) {
@@ -1181,7 +1167,7 @@ public class Game implements Serializable {
             return getC3NetworkMembers(entity);
         }
 
-        Vector<Entity> members = new Vector<Entity>();
+        Vector<Entity> members = new Vector<>();
 
         // Does the unit have a C3 computer?
         if (entity.hasC3()) {
@@ -1210,8 +1196,8 @@ public class Game implements Serializable {
      * <code>Entity</code>s at that position.
      */
     public Hashtable<Coords, Vector<Entity>> getPositionMap() {
-        Hashtable<Coords, Vector<Entity>> positionMap = new Hashtable<Coords, Vector<Entity>>();
-        Vector<Entity> atPos = null;
+        Hashtable<Coords, Vector<Entity>> positionMap = new Hashtable<>();
+        Vector<Entity> atPos;
 
         // Walk through the entities in this game.
         for (Entity entity : entities) {
@@ -1241,7 +1227,7 @@ public class Game implements Serializable {
      * Returns an enumeration of salvagable entities.
      */
     public Enumeration<Entity> getGraveyardEntities() {
-        Vector<Entity> graveyard = new Vector<Entity>();
+        Vector<Entity> graveyard = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
@@ -1257,7 +1243,7 @@ public class Game implements Serializable {
      * Returns an enumeration of wrecked entities.
      */
     public Enumeration<Entity> getWreckedEntities() {
-        Vector<Entity> wrecks = new Vector<Entity>();
+        Vector<Entity> wrecks = new Vector<>();
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
                 || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
@@ -1274,7 +1260,7 @@ public class Game implements Serializable {
      */
  // TODO: Correctly implement "Captured" Entities
     public Enumeration<Entity> getRetreatedEntities() {
-        Vector<Entity> sanctuary = new Vector<Entity>();
+        Vector<Entity> sanctuary = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
@@ -1291,7 +1277,7 @@ public class Game implements Serializable {
      * Returns an enumeration of entities that were utterly destroyed
      */
     public Enumeration<Entity> getDevastatedEntities() {
-        Vector<Entity> smithereens = new Vector<Entity>();
+        Vector<Entity> smithereens = new Vector<>();
 
         for (Entity entity : vOutOfGame) {
             if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
@@ -1307,7 +1293,7 @@ public class Game implements Serializable {
      * crews that are still on the map.
      */
     public Enumeration<Entity> getCarcassEntities() {
-        Vector<Entity> carcasses = new Vector<Entity>();
+        Vector<Entity> carcasses = new Vector<>();
         
         for (Entity entity : entities) {
             if (entity.isCarcass()) {
@@ -1328,7 +1314,6 @@ public class Game implements Serializable {
     /**
      * Returns the appropriate target for this game given a type and id
      */
-    @Override
     public @Nullable Targetable getTarget(int nType, int nID) {
         try {
             switch (nType) {
@@ -1371,7 +1356,6 @@ public class Game implements Serializable {
     /**
      * Returns the entity with the given id number, if any.
      */
-    @Override
     public @Nullable Entity getEntity(final int id) {
         return entityIds.get(id);
     }
@@ -1381,9 +1365,9 @@ public class Game implements Serializable {
      */
     public Entity getEntityFromAllSources(int id) {
         Entity en = getEntity(id);
-        if(null == en) {
+        if (null == en) {
             for (Entity entity : vOutOfGame) {
-                if(entity.getId() == id) {
+                if (entity.getId() == id) {
                     return entity;
                 }
             }
@@ -1440,7 +1424,7 @@ public class Game implements Serializable {
         // Add this Entity, ensuring that it's id is unique
         int id = entity.getId();
         if (!entityIds.containsKey(id)) {
-            entityIds.put(Integer.valueOf(id), entity);
+            entityIds.put(id, entity);
         } else {
             id = getNextEntityId();
             entity.setId(id);
@@ -1515,7 +1499,7 @@ public class Game implements Serializable {
      * game.
      */
     public boolean hasEntity(int entityId) {
-        return entityIds.containsKey(Integer.valueOf(entityId));
+        return entityIds.containsKey(entityId);
     }
 
     /**
@@ -1615,17 +1599,6 @@ public class Game implements Serializable {
         }
     }
 
-//    private void removeMinefields() {
-//        minefields.clear();
-//        vibrabombs.removeAllElements();
-//
-//        Enumeration<IPlayer> iter = getPlayers();
-//        while (iter.hasMoreElements()) {
-//            IPlayer player = iter.nextElement();
-//            player.removeMinefields();
-//        }
-//    }
-
     /**
      * Regenerates the entities by id hashtable by going thru all entities in
      * the Vector
@@ -1638,7 +1611,7 @@ public class Game implements Serializable {
             // Add these entities to the game.
             for (Entity entity : entities) {
                 final int id = entity.getId();
-                entityIds.put(Integer.valueOf(id), entity);
+                entityIds.put(id, entity);
 
                 if (id > lastEntityId) {
                     lastEntityId = id;
@@ -1757,9 +1730,9 @@ public class Game implements Serializable {
      * @return
      */
     public synchronized List<Entity> getAllOffboardEnemyEntities(IPlayer player) {
-        List<Entity> vector = new ArrayList<Entity>();
-        for(Entity e : entities) {
-            if(e.getOwner().isEnemyOf(player) && e.isOffBoard() && !e.isDestroyed() && e.isDeployed()) {
+        List<Entity> vector = new ArrayList<>();
+        for (Entity e : entities) {
+            if (e.getOwner().isEnemyOf(player) && e.isOffBoard() && !e.isDestroyed() && e.isDeployed()) {
                 vector.add(e);
             }
         }
@@ -1774,7 +1747,7 @@ public class Game implements Serializable {
      * @return <code>Vector<Entity></code>
      */
     public Vector<GunEmplacement> getGunEmplacements(Coords c) {
-        Vector<GunEmplacement> vector = new Vector<GunEmplacement>();
+        Vector<GunEmplacement> vector = new Vector<>();
 
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
@@ -1794,7 +1767,7 @@ public class Game implements Serializable {
      */
     public boolean hasRooftopGunEmplacement(Coords c) {
         Building building = getBoard().getBuildingAt(c);
-        if(building == null) {
+        if (building == null) {
             return false;
         }
         
@@ -2108,7 +2081,7 @@ public class Game implements Serializable {
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
     public ArrayList<Entity> getPlayerEntities(IPlayer player, boolean hide) {
-        ArrayList<Entity> output = new ArrayList<Entity>();
+        ArrayList<Entity> output = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
@@ -2128,7 +2101,7 @@ public class Game implements Serializable {
      * @return a <code>Vector</code> of <code>Entity</code>s.
      */
     public ArrayList<Integer> getPlayerEntityIds(IPlayer player, boolean hide) {
-        ArrayList<Integer> output = new ArrayList<Integer>();
+        ArrayList<Integer> output = new ArrayList<>();
         for (Entity entity : entities) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
@@ -2402,7 +2375,7 @@ public class Game implements Serializable {
     }
     
     public int removeSpecificEntityTurnsFor(Entity entity) {
-        List<GameTurn> turnsToRemove = new ArrayList<GameTurn>();
+        List<GameTurn> turnsToRemove = new ArrayList<>();
         
         for (GameTurn turn : turnVector) {
             if (turn instanceof SpecificEntityTurn) {
@@ -2539,7 +2512,7 @@ public class Game implements Serializable {
      */
     public void removeActionsFor(int entityId) {
         // or rather, only keeps actions NOT by that entity
-        Vector<EntityAction> toKeep = new Vector<EntityAction>(actions.size());
+        Vector<EntityAction> toKeep = new Vector<>(actions.size());
         for (EntityAction ea : actions) {
             if (ea.getEntityId() != entityId) {
                 toKeep.addElement(ea);
@@ -2575,7 +2548,7 @@ public class Game implements Serializable {
 
     public void rollInitAndResolveTies() {
         if (getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
+            Vector<TurnOrdered> vRerolls = new Vector<>();
             for (int i = 0; i < entities.size(); i++) {
                 Entity e = entities.get(i);
                 if (initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
@@ -2734,13 +2707,13 @@ public class Game implements Serializable {
         for (i = 0; i < pilotRolls.size(); i++) {
             roll = pilotRolls.elementAt(i);
             if (roll.getEntityId() == entity.getId()) {
-                rollsToRemove.addElement(Integer.valueOf(i));
+                rollsToRemove.addElement(i);
             }
         }
 
         // now, clear them out
         for (i = rollsToRemove.size() - 1; i > -1; i--) {
-            pilotRolls.removeElementAt(rollsToRemove.elementAt(i).intValue());
+            pilotRolls.removeElementAt(rollsToRemove.elementAt(i));
         }
     }
 
@@ -2763,14 +2736,13 @@ public class Game implements Serializable {
         for (i = 0; i < extremeGravityRolls.size(); i++) {
             roll = extremeGravityRolls.elementAt(i);
             if (roll.getEntityId() == entity.getId()) {
-                rollsToRemove.addElement(Integer.valueOf(i));
+                rollsToRemove.addElement(i);
             }
         }
 
         // now, clear them out
         for (i = rollsToRemove.size() - 1; i > -1; i--) {
-            extremeGravityRolls.removeElementAt(rollsToRemove.elementAt(i)
-                    .intValue());
+            extremeGravityRolls.removeElementAt(rollsToRemove.elementAt(i));
         }
     }
 
@@ -2821,7 +2793,7 @@ public class Game implements Serializable {
      * reset the attacks vector
      */
     public void resetAttacks() {
-        attacks = new Vector<AttackHandler>();
+        attacks = new Vector<>();
     }
 
     /**
@@ -3211,7 +3183,7 @@ public class Game implements Serializable {
     public Enumeration<Entity> getNemesisTargets(Entity attacker, Coords target) {
         final Coords attackerPos = attacker.getPosition();
         final ArrayList<Coords> in = Coords.intervening(attackerPos, target);
-        Vector<Entity> nemesisTargets = new Vector<Entity>();
+        Vector<Entity> nemesisTargets = new Vector<>();
         for (Coords c : in) {
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isINarcedWith(INarcPod.NEMESIS)
@@ -3231,7 +3203,7 @@ public class Game implements Serializable {
     public void addGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<GameListener>();
+            gameListeners = new Vector<>();
         }
         gameListeners.addElement(listener);
     }
@@ -3244,7 +3216,7 @@ public class Game implements Serializable {
     public void removeGameListener(GameListener listener) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<GameListener>();
+            gameListeners = new Vector<>();
         }
         gameListeners.removeElement(listener);
     }
@@ -3257,7 +3229,7 @@ public class Game implements Serializable {
     public List<GameListener> getGameListeners() {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<GameListener>();
+            gameListeners = new Vector<>();
         }
         return Collections.unmodifiableList(gameListeners);
     }
@@ -3268,7 +3240,7 @@ public class Game implements Serializable {
     public void purgeGameListeners() {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<GameListener>();
+            gameListeners = new Vector<>();
         }
         gameListeners.clear();
     }
@@ -3282,7 +3254,7 @@ public class Game implements Serializable {
     public void processGameEvent(GameEvent event) {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
-            gameListeners = new Vector<GameListener>();
+            gameListeners = new Vector<>();
         }
         for (Enumeration<GameListener> e = gameListeners.elements(); e
                 .hasMoreElements(); ) {
@@ -3318,7 +3290,6 @@ public class Game implements Serializable {
     }
 
     public boolean isIn8HexRadius(Coords c1, Coords c2) {
-
         // errata says we now always use 8 hex radius
         if (c2.distance(c1) <= 8) {
             return true;
@@ -3374,7 +3345,6 @@ public class Game implements Serializable {
     /**
      * Setter for the list of Coords illuminated by search lights.
      */
-    @Override
     public void setIlluminatedPositions(final @Nullable HashSet<Coords> ip) {
         if (ip == null) {
             throw MegaMek.getLogger().error(new RuntimeException("Illuminated Positions is null."));
@@ -3441,7 +3411,7 @@ public class Game implements Serializable {
      * drift with wind. (called at end of turn)
      */
     public Vector<Report> ageFlares() {
-        Vector<Report> reports = new Vector<Report>();
+        Vector<Report> reports = new Vector<>();
         Report r;
         for (int i = flares.size() - 1; i >= 0; i--) {
             Flare flare = flares.elementAt(i);
@@ -3458,7 +3428,7 @@ public class Game implements Serializable {
                     // strength 1 and 2: drift 1 hex
                     // strength 3: drift 2 hexes
                     // strength 4: drift 3 hexes
-                    // for each above strenght 4 (storm), drift one more
+                    // for each above strength 4 (storm), drift one more
                     if (str > 0) {
                         flare.position = flare.position.translated(dir);
                         if (str > 2) {
@@ -3544,20 +3514,20 @@ public class Game implements Serializable {
      */
     public void resetControlRolls(Entity entity) {
         PilotingRollData roll;
-        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        Vector<Integer> rollsToRemove = new Vector<>();
         int i = 0;
 
         // first, find all the rolls belonging to the target entity
         for (i = 0; i < controlRolls.size(); i++) {
             roll = controlRolls.elementAt(i);
             if (roll.getEntityId() == entity.getId()) {
-                rollsToRemove.addElement(Integer.valueOf(i));
+                rollsToRemove.addElement(i);
             }
         }
 
         // now, clear them out
         for (i = rollsToRemove.size() - 1; i > -1; i--) {
-            controlRolls.removeElementAt(rollsToRemove.elementAt(i).intValue());
+            controlRolls.removeElementAt(rollsToRemove.elementAt(i));
         }
     }
 
@@ -3624,18 +3594,15 @@ public class Game implements Serializable {
         return false;
     }
 
-    @Override
     public boolean checkForValidSmallCraft(int playerId) {
         return getPlayerEntities(getPlayer(playerId), false).stream().anyMatch(e ->
                 (e instanceof SmallCraft) && getTurn().isValidEntity(e, this));
     }
 
-    @Override
     public PlanetaryConditions getPlanetaryConditions() {
         return planetaryConditions;
     }
 
-    @Override
     public void setPlanetaryConditions(final @Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
             MegaMek.getLogger().error("Can't set the planetary conditions to null!");
@@ -3687,7 +3654,7 @@ public class Game implements Serializable {
         for (Coords pos : newPositions) {
             HashSet<Integer> posEntities = entityPosLookup.get(pos);
             if (posEntities == null) {
-                posEntities = new HashSet<Integer>();
+                posEntities = new HashSet<>();
                 posEntities.add(e.getId());
                 entityPosLookup.put(pos, posEntities);
             } else {
@@ -3723,16 +3690,16 @@ public class Game implements Serializable {
     }
     
     /**
-     * A check to ensure that the position cache is properly updated.  This 
+     * A check to ensure that the position cache is properly updated. This
      * is only used for debugging purposes, and will cause a number of things
      * to slow down.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings(value = "unused")
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working
-        List<Integer> entitiesInCache = new ArrayList<Integer>();
-        List<Integer> entitiesInVector = new ArrayList<Integer>();
+        List<Integer> entitiesInCache = new ArrayList<>();
+        List<Integer> entitiesInVector = new ArrayList<>();
         int entitiesInCacheCount = countEntitiesInCache(entitiesInCache);
         int entityVectorSize = 0;
         for (Entity e : entities) {
@@ -3798,28 +3765,23 @@ public class Game implements Serializable {
 
     }
 
-    @Override
     public synchronized Forces getForces() {
         return forces;
     }
 
-    @Override
     public Stream<Entity> getEntitiesStream() {
         return getEntitiesVector().stream();
     }
 
-    @Override
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
     }
     
-    @Override
     public Map<String, BehaviorSettings> getBotSettings() {
         return botSettings;
     }
     
-    @Override
     public void setBotSettings(Map<String, BehaviorSettings> botSettings) {
         this.botSettings = botSettings;
     }
@@ -3827,10 +3789,9 @@ public class Game implements Serializable {
     /**
      * cancel victory from the server.java moved here
      */
-    public void cancelVictory(){
+    public void cancelVictory() {
         setForceVictory(false);
         setVictoryPlayerId(IPlayer.PLAYER_NONE);
         setVictoryTeam(IPlayer.TEAM_NONE);
     }
-
 }

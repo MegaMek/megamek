@@ -52,7 +52,7 @@ public abstract class AbstractDirectory {
      */
     protected AbstractDirectory(final File file, final @Nullable String rootName,
                                 final @Nullable String rootPath,
-                                final ItemFileFactory itemFileFactory) {
+                                final ItemFileFactory itemFileFactory) throws NullPointerException {
         Objects.requireNonNull(file, "A null root directory was passed.");
         Objects.requireNonNull(itemFileFactory, "A null item factory was passed.");
 

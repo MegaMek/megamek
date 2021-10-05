@@ -32,7 +32,8 @@ import java.io.File;
  * @version 3
  */
 public class DirectoryItems extends AbstractDirectory {
-    public DirectoryItems(final File root, final ItemFileFactory itemFactory) throws AssertionError {
+    public DirectoryItems(final File root, final ItemFileFactory itemFactory)
+            throws IllegalArgumentException, NullPointerException {
         this(root, "", "", itemFactory);
     }
 
@@ -53,7 +54,8 @@ public class DirectoryItems extends AbstractDirectory {
      * <code>null</code> is passed for <code>itemFactory</code>.
      */
     private DirectoryItems(final File root, final String categoryName, final String categoryPath,
-                           final ItemFileFactory itemFactory) throws AssertionError {
+                           final ItemFileFactory itemFactory)
+            throws IllegalArgumentException, NullPointerException {
         super(root, categoryName, categoryPath, itemFactory);
 
         if (root.isDirectory()) {

@@ -4324,6 +4324,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
+        
+        // if all our entities are actually done, don't start up the turn.
+        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
+                .stream().allMatch(entity -> entity.isDone())) {
+            return;
+        }
 
         if (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             // ignore

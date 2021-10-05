@@ -2016,7 +2016,8 @@ public class Server implements Runnable {
         GameTurn turn = game.getTurn();
         if (game.isPhaseSimultaneous()
             && (entityUsed != null)
-            && !turn.isValid(entityUsed.getOwnerId(), game)) {
+            && !turn.isValid(entityUsed.getOwnerId(), game)
+            && !entityUsed.turnWasInterrupted()) {
             // turn played out of order
             outOfOrder = true;
             entityUsed.setDone(false);
@@ -2823,6 +2824,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_MOVEMENT:
                 detectHiddenUnits();
+                ServerHelper.detectMinefields(game, vPhaseReport, this);
                 updateSpacecraftDetection();
                 detectSpacecraft();
                 resolveWhatPlayersCanSeeWhatUnits();
@@ -6647,6 +6649,7 @@ public class Server implements Runnable {
         boolean fellDuringMovement = false;
         boolean crashedDuringMovement = false;
         boolean dropshipStillUnloading = false;
+        boolean detectedHiddenHazard = false;
         boolean turnOver;
         int prevFacing = curFacing;
         IHex prevHex = game.getBoard().getHex(curPos);
@@ -8097,10 +8100,26 @@ public class Server implements Runnable {
             if (!i.hasMoreElements() && !firstStep) {
                 checkExtremeGravityMovement(entity, step, lastStepMoveType, curPos, cachedGravityLimit);
             }
-            // check for minefields. have to check both new hex and new
-            // elevation
+            
+            // check for revealed minefields;
+            // unless we get errata about it, we assume that the check is done 
+            // every time we enter a new hex
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
+                    && !lastPos.equals(curPos)) {
+                if (ServerHelper.detectMinefields(game, entity, curPos, vPhaseReport, this)) {
+                    detectedHiddenHazard = true;
+                    
+                    if (i.hasMoreElements() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
+                        md.clear();
+                    }
+                }
+            }
+            
+            // check for minefields. have to check both new hex and new elevation
             // VTOLs may land and submarines may rise or lower into a minefield
-            if (!lastPos.equals(curPos) || (lastElevation != curElevation)) {
+            // jumping units may end their movement with a turn but should still check at end of movement
+            if (!lastPos.equals(curPos) || (lastElevation != curElevation) || 
+                    ((stepMoveType == EntityMovementType.MOVE_JUMP) && !i.hasMoreElements())) {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = checkVibrabombs(entity, curPos, false, lastPos, curPos, vPhaseReport);
@@ -8151,7 +8170,7 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             r.add(entity.getShortName(), true);
                             addReport(r);
-                            revealMinefield(game.getTeamForPlayer(owner), mf);
+                            revealMinefield(owner, mf);
                         }
                     }
                 }
@@ -9320,16 +9339,20 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop || continueTurnFromCliffAscent)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop || continueTurnFromCliffAscent
+                || detectedHiddenHazard)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
+            entity.setTurnInterrupted(true);
+            
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
             // Need to set the new turn's multiTurn state
             newTurn.setMultiTurn(true);
             game.insertNextTurn(newTurn);
             // brief everybody on the turn update
             send(createTurnVectorPacket());
+            
             // let everyone know about what just happened
             if (vPhaseReport.size() > 1) {
                 send(entity.getOwner().getId(), createSpecialReportPacket());
@@ -11575,6 +11598,7 @@ public class Server implements Runnable {
             if (mf.hasDetonated()) {
                 boom = true;
                 mf.checkReduction(0, true);
+                revealMinefield(mf);
             }
 
         }
@@ -11631,10 +11655,27 @@ public class Server implements Runnable {
      * @param team The <code>team</code> whose minefield should be revealed
      * @param mf   The <code>Minefield</code> to be revealed
      */
-    private void revealMinefield(Team team, Minefield mf) {
+    public void revealMinefield(Team team, Minefield mf) {
         Enumeration<IPlayer> players = team.getPlayers();
         while (players.hasMoreElements()) {
             IPlayer player = players.nextElement();
+            if (!player.containsMinefield(mf)) {
+                player.addMinefield(mf);
+                send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
+            }
+        }
+    }
+    
+    /**
+     * Reveals a minefield for a specific player
+     * If on a team, does it for the whole team. Otherwise, just the player.
+     */
+    public void revealMinefield(IPlayer player, Minefield mf) {
+        Team team = game.getTeamForPlayer(player);
+        
+        if (team != null) {
+            revealMinefield(team, mf);
+        } else {
             if (!player.containsMinefield(mf)) {
                 player.addMinefield(mf);
                 send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
@@ -14120,17 +14161,23 @@ public class Server implements Runnable {
         }
 
         // If no one is hidden, there's nothing to do
-        if (hiddenUnits.size() < 1) {
+        if (hiddenUnits.isEmpty()) {
             return;
         }
 
         Set<Integer> reportPlayers = new HashSet<>();
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
-            int probeRange = detector.getBAPRange();
-
             // Units without a position won't be able to detect
+            // check for this before calculating BAP range, as that's expensive
             if (detector.getPosition() == null) {
+                continue;
+            }
+           
+            int probeRange = detector.getBAPRange();
+            
+            // if no probe, save ourselves a few loops
+            if (probeRange <= 0) {
                 continue;
             }
 
@@ -30805,7 +30852,7 @@ public class Server implements Runnable {
      * Creates a packet containing a Vector of special Reports which needs to be
      * sent during a phase that is not a report phase.
      */
-    private Packet createSpecialReportPacket() {
+    public Packet createSpecialReportPacket() {
         return new Packet(Packet.COMMAND_SENDING_REPORTS_SPECIAL, vPhaseReport.clone());
     }
 

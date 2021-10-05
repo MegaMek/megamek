@@ -299,6 +299,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 return;
             }
             if (mf != null) {
+                mf.setWeaponDelivered(false);
                 clientgui.getClient().getGame().addMinefield(mf);
                 deployedMinefields.addElement(mf);
             }

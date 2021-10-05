@@ -34,6 +34,10 @@ VERSION HISTORY:
 + PR #3139: Restore 'rotate board' option for maps with even width to rotate the board 180 degrees. 
 + PR #3162: Suite Version Tracking: Adding Full Versioning and Version Protection
 + PR #3176: Fixing ForceGeneratorViewUi NPE
++ PR #3177: Properly reveal vibrabombs detonated during a unit's movement
+	allows active probes to reveal minefields during movement as per TacOps Active Probe rules (unit movement stops if a minefield is revealed)
+	prevent soft-lock when stopping a unit's movement due to minefield detonation with "simultaneous movement phase" turned on
+	
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

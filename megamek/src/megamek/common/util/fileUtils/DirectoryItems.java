@@ -52,11 +52,13 @@ public class DirectoryItems extends AbstractDirectory {
      * @throws AssertionError if <code>root</code> is null or if it is not a directory, or if a
      * <code>null</code> is passed for <code>itemFactory</code>.
      */
-    public DirectoryItems(final File root, final String categoryName,
-                          final String categoryPath, final ItemFileFactory itemFactory)
-            throws AssertionError {
+    private DirectoryItems(final File root, final String categoryName, final String categoryPath,
+                           final ItemFileFactory itemFactory) throws AssertionError {
         super(root, categoryName, categoryPath, itemFactory);
-        assert root.isDirectory() : "The passed file is not a directory.";
+
+        if (root.isDirectory()) {
+            throw new IllegalArgumentException("The passed file is not a directory.");
+        }
 
         final String[] children = root.list();
         if (children == null) {
@@ -67,11 +69,11 @@ public class DirectoryItems extends AbstractDirectory {
         for (final String content : children) {
             final File file = new File(root, content);
 
-            if (file.isDirectory()) { // Is this entry a sub-directory?
+            if (file.isDirectory()) {
                 // Construct the category name for this sub-directory, and add it to the map
                 getCategories().put(content,
                         new DirectoryItems(file, content, getRootPath() + content + "/", itemFactory));
-            } else if (itemFactory.accept(root, content)) { // Does the factory accept this entry?
+            } else if (itemFactory.accept(root, content)) {
                 // Save the ItemFile for this entry.
                 getItems().put(content, itemFactory.getItemFile(file));
             }

@@ -243,13 +243,8 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
             return;
         }
 
-        for (final String filename : category.getItems().keySet()) {
-            icons.add(createIcon(category.getRootPath(), filename));
-        }
-
-        for (final AbstractDirectory child : category.getCategories().values()) {
-            recursivelyDetermineCategoryIcons(child, icons);
-        }
+        category.getItems().keySet().forEach(f -> icons.add(createIcon(category.getRootPath(), f)));
+        category.getCategories().values().forEach(c -> recursivelyDetermineCategoryIcons(c, icons));
     }
 
     /**

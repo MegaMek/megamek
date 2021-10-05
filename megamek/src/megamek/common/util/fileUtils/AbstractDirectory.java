@@ -35,12 +35,12 @@ public abstract class AbstractDirectory {
     /**
      * A map of the category names to the direct sub-categories
      */
-    protected Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
+    private Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
 
     /**
      * A map of item names to the <code>ItemFile</code>s in the root category
      */
-    protected Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
+    private Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
     //endregion Variable Declarations
 
     //region Constructors
@@ -53,8 +53,8 @@ public abstract class AbstractDirectory {
     protected AbstractDirectory(final File file, final @Nullable String rootName,
                                 final @Nullable String rootPath,
                                 final ItemFileFactory itemFileFactory) {
-        assert file != null : "A null root directory was passed.";
-        assert itemFileFactory != null : "A null item factory was passed.";
+        Objects.requireNonNull(file, "A null root directory was passed.");
+        Objects.requireNonNull(itemFileFactory, "A null item factory was passed.");
 
         setRootName((rootName == null) ? "" : rootName);
         setRootPath((rootPath == null) ? "" : rootPath);
@@ -86,7 +86,7 @@ public abstract class AbstractDirectory {
         return categoryPath.isBlank() ? this : getCategory(categoryPath.split("/"), 0);
     }
 
-    public @Nullable AbstractDirectory getCategory(final String[] categories, final int index) {
+    private @Nullable AbstractDirectory getCategory(final String[] categories, final int index) {
         if (categories.length == 0) {
             return null;
         } else if (index >= categories.length) {

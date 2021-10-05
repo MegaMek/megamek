@@ -722,9 +722,7 @@ public final class AlphaStrikeConverter {
             }
             
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-                if ((entity instanceof Aero) && isArtilleryCannon(weapon)) {
-
-                } else {
+                if (!((entity instanceof Aero) && isArtilleryCannon(weapon))) {
                     result.addSPA(getArtilleryType(weapon), 1);
                     findArcTurret(result, entity, mount, turretsArcs).forEach(a -> a.addSPA(getArtilleryType(weapon), 1));
                     continue;
@@ -1783,7 +1781,7 @@ public final class AlphaStrikeConverter {
      * Use only for determining if a unit has OV or OVL.  
      */
     private static int heatDelta(double damage, int heatCapacity, double heat) {
-        int roundedUp = roundUp(damage);
+        int roundedUp = roundUp(roundUpToTenth(damage));
         int roundedUpAdjustedL = roundUp(roundUpToTenth(damage * heatCapacity / (heat - 4)));
         return roundedUp - roundedUpAdjustedL;
     }
@@ -1856,7 +1854,7 @@ public final class AlphaStrikeConverter {
                 && (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
             return Math.max(3, element.getJumpMove() / 2);
         } else if (entity.getJumpType() == Mech.JUMP_IMPROVED) {
-            return Math.max(3, roundUp(element.getJumpMove() / 4));
+            return Math.max(3, roundUp(0.25 * element.getJumpMove()));
         } else if (entity.getEngine().getEngineType() == Engine.XXL_ENGINE) {
             return Math.max(6, element.getJumpMove());
         } else {
@@ -1963,15 +1961,15 @@ public final class AlphaStrikeConverter {
             if (element.movement.containsKey("j")) {
                 defensiveValue += 0.5;
             }
-            defensiveValue += getGroundDefensiveSPAMod(entity, element);
-            defensiveValue += getDefensiveDIR(entity, element);
+            defensiveValue += getGroundDefensiveSPAMod(element);
+            defensiveValue += getDefensiveDIR(element);
             
             double subTotal = offensiveValue + defensiveValue;
             double bonus = agileBonus(element);
             bonus += c3Bonus(element) ? 0.05 * subTotal : 0;
             bonus -= subTotal * brawlerMalus(element);
             subTotal += bonus;
-            subTotal += forceBonus(entity, element);
+            subTotal += forceBonus(element);
             
             return Math.max(1, (int)Math.round(subTotal));
             
@@ -1989,16 +1987,16 @@ public final class AlphaStrikeConverter {
             }
             
             offensiveValue += getAeroOffensiveSPAMod(entity, element);
-            offensiveValue *= getAeroOffensiveBlanketMod(entity, element);
+            offensiveValue *= getAeroOffensiveBlanketMod(element);
             offensiveValue = roundUpToHalf(offensiveValue);
 
             double defensiveValue = 0.25 * getHighestMove(element);
             defensiveValue += getHighestMove(element) >= 10 ? 1 : 0;
-            defensiveValue += getAeroDefensiveSPAMod(entity, element);
+            defensiveValue += getAeroDefensiveSPAMod(element);
             defensiveValue += getAeroDefensiveFactors(element);
 
             double subTotal = offensiveValue + defensiveValue;
-            subTotal += forceBonus(entity, element);
+            subTotal += forceBonus(element);
             
             return Math.max(1, (int)Math.round(subTotal));
         }
@@ -2101,7 +2099,7 @@ public final class AlphaStrikeConverter {
         return result;
     }
     
-    private static double getAeroOffensiveBlanketMod(Entity entity, AlphaStrikeElement element) {
+    private static double getAeroOffensiveBlanketMod(AlphaStrikeElement element) {
         double result = 1;
         result += element.hasSPA(ATAC) ? 0.1 : 0;
         result += element.hasSPA(VRT) ? 0.1 : 0;
@@ -2112,7 +2110,7 @@ public final class AlphaStrikeConverter {
         return result;
     }
    
-    private static double getGroundDefensiveSPAMod(Entity entity, AlphaStrikeElement element) {
+    private static double getGroundDefensiveSPAMod(AlphaStrikeElement element) {
         double result = element.hasSPA(ABA) ? 0.5 : 0;
         result += element.hasSPA(AMS) ? 1 : 0;
         result += element.hasSPA(CR) && element.getStructure() >= 3 ? 0.25 : 0;
@@ -2131,7 +2129,7 @@ public final class AlphaStrikeConverter {
         return result;
     }
     
-    private static double getAeroDefensiveSPAMod(Entity entity, AlphaStrikeElement element) {
+    private static double getAeroDefensiveSPAMod(AlphaStrikeElement element) {
         double result = element.hasSPA(PNT) ? (int)element.getSPA(PNT) : 0;
         result += element.hasSPA(STL) ? 2 : 0;
         if (element.hasSPA(RCA)) {
@@ -2142,10 +2140,10 @@ public final class AlphaStrikeConverter {
         return result;
     }
     
-    private static double getDefensiveDIR(Entity entity, AlphaStrikeElement element) {
+    private static double getDefensiveDIR(AlphaStrikeElement element) {
         double result = element.getFinalArmor() * getArmorFactorMult(element);
         result += element.getStructure() * getStructureMult(element);
-        result *= getDefenseFactor(entity, element);
+        result *= getDefenseFactor(element);
         result = 0.5 * Math.round(result * 2);
         return result;
     }
@@ -2184,9 +2182,9 @@ public final class AlphaStrikeConverter {
         return result;
     }
     
-    private static double getDefenseFactor(Entity entity, AlphaStrikeElement element) {
+    private static double getDefenseFactor(AlphaStrikeElement element) {
         double result = 0;
-        double movemod = getMovementMod(entity, element);
+        double movemod = getMovementMod(element);
         if (element.hasSPA(MAS) && (3 > movemod)) {
             result += 3;
         } else if (element.hasSPA(LMAS) && (2 > movemod)) {
@@ -2194,19 +2192,14 @@ public final class AlphaStrikeConverter {
         } else {
             result += movemod;
         }
-        result += element.asUnitType == BA ? 1 : 0;
-        result += element.asUnitType == PM ? 1 : 0;
-        if ((element.asUnitType == CV) && (element.getMovementModes().contains("g") 
+        result += element.isAnyTypeOf(BA, PM) ? 1 : 0;
+        if ((element.isType(CV)) && (element.getMovementModes().contains("g")
                 || element.getMovementModes().contains("v"))) {
             result++;
         }
         result += element.hasSPA(STL) ? 1 : 0;
         result -= element.hasAnySPAOf(LG, SLG, VLG)  ? 1 : 0;
-        if (result <= 2) {
-            result = 1 + 0.1 * Math.max(result, 0);
-        } else {
-            result = 1 + 0.25 * Math.max(result, 0);
-        }
+        result = 1 + (result <= 2 ? 0.1 : 0.25) * Math.max(result, 0);
         return result;
     }
     
@@ -2214,7 +2207,7 @@ public final class AlphaStrikeConverter {
      * Returns the movement modifier (for the Point Value DIR calculation only),
      * AlphaStrike Companion Errata v1.4, p.17 
      */
-    private static double getMovementMod(Entity entity, AlphaStrikeElement element) {
+    private static double getMovementMod(AlphaStrikeElement element) {
         int highestNonJumpMod = -1;
         int highestJumpMod = -1;
         for (String mode : element.getMovementModes()) {
@@ -2226,9 +2219,7 @@ public final class AlphaStrikeConverter {
             }
         }
         double result = highestNonJumpMod == -1 ? highestJumpMod : highestNonJumpMod;
-        if ((element.asUnitType == CI || element.asUnitType == BA) && element.isJumpCapable()) {
-            result++;
-        }
+        result += element.isInfantry() && element.isJumpCapable() ? 1 : 0;
         return result;
     }
 
@@ -2275,7 +2266,7 @@ public final class AlphaStrikeConverter {
         return element.hasAnySPAOf(C3BSM, C3BSS, C3EM, C3I, C3M, C3S, AC3, NC3, NOVA);
     }
     
-    private static double forceBonus(Entity entity, AlphaStrikeElement element) {
+    private static double forceBonus(AlphaStrikeElement element) {
         double result = element.hasSPA(AECM) ? 3 : 0;
         result += element.hasSPA(BH) ? 2 : 0;
         result += element.hasSPA(C3RS) ? 2 : 0;
@@ -2307,7 +2298,7 @@ public final class AlphaStrikeConverter {
     }
 
     private static int getHighestMove(AlphaStrikeElement element) {
-        return element.movement.values().stream().mapToInt(m -> m).max().getAsInt();
+        return element.movement.values().stream().mapToInt(m -> m).max().orElse(0);
     }
     
     /** Returns true when the given weapon contributes to the LRM/SRM specials. */

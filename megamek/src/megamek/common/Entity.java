@@ -710,6 +710,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean isCommander = false;
 
     protected boolean isCarefulStanding = false;
+    
+    private boolean turnWasInterrupted = false;
 
     /**
      * a vector of currently active sensors that might be able to check range
@@ -2623,7 +2625,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns the primary facing, or -1 if n/a
      */
     public int getFacing() {
-        if (Entity.NONE != conveyance) {
+        if ((Entity.NONE != conveyance) && (game != null)) {
             Entity transporter = game.getEntity(conveyance);
             if (transporter == null) {
                 transporter = game.getOutOfGameEntity(conveyance);
@@ -4626,8 +4628,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns a critical hit slot
      */
-    public CriticalSlot getCritical(int loc, int slot) {
-        return crits[loc][slot];
+    public @Nullable CriticalSlot getCritical(int loc, int slot) {
+        return ((loc < crits.length) && (slot < crits[loc].length)) ? crits[loc][slot] : null;
     }
 
     /**
@@ -6528,6 +6530,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setSelfDestructedThisTurn(false);
 
         setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        
+        setTurnInterrupted(false);
     }
 
     /**
@@ -12331,6 +12335,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean isCarefulStand() {
         return false;
+    }
+    
+    public void setTurnInterrupted(boolean interrupted) {
+        turnWasInterrupted = interrupted;
+    }
+    
+    /**
+     * This should eventually be true for any situation where the entity's
+     * turn was interrupted, e.g. walking over a minefield
+     */
+    public boolean turnWasInterrupted() {
+        return turnWasInterrupted;
     }
 
     public Vector<Sensor> getSensors() {

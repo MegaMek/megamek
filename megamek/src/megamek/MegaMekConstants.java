@@ -20,7 +20,7 @@
  */
 package megamek;
 
-public final class MegaMekConstants {
+public final class MegaMekConstants extends SuiteConstants {
 
     // This holds all required file paths not saved as part of MegaMek Options
     public static final String NAME_FACTIONS_DIRECTORY_PATH = "data/names/factions/";

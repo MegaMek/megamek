@@ -67,6 +67,7 @@ import javax.swing.filechooser.FileFilter;
 import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
+import megamek.MegaMekConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -84,16 +85,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.KeyBindParser;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummaryCache;
-import megamek.common.Player;
-import megamek.common.QuirksHandler;
-import megamek.common.WeaponOrderHandler;
+import megamek.common.*;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -236,7 +228,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame,
-                    Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION,
+                    Messages.getString("MegaMek.welcome.title") + MegaMekConstants.VERSION,
                     Messages.getString("MegaMek.welcome.message"), true);
             confirm.setVisible(true);
             if (!confirm.getShowAgain()) {
@@ -275,7 +267,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION,
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMekConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250,15));
         if (skinSpec.fontColors.size() > 0) {
@@ -546,7 +538,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        IGame newGame = null;
+        IGame newGame;
         try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
             XStream xstream = SerializationHelper.getXStream();
             newGame = (IGame) xstream.fromXML(gzi);
@@ -557,12 +549,18 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             return;
         }
 
-        Vector<String> playerNames = null;
-        if (newGame != null) {
-            playerNames = new Vector<>();
-            for (IPlayer player : newGame.getPlayersVector()) {
-                playerNames.add(player.getName());
-            }
+        if (!MegaMekConstants.VERSION.is(newGame.getVersion())) {
+            final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
+                    newGame.getVersion(), MegaMekConstants.VERSION);
+            JOptionPane.showMessageDialog(frame, message,
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            MegaMek.getLogger().error(message);
+            return;
+        }
+
+        Vector<String> playerNames = new Vector<>();
+        for (IPlayer player : newGame.getPlayersVector()) {
+            playerNames.add(player.getName());
         }
 
         HostDialog hd = new HostDialog(frame, playerNames);

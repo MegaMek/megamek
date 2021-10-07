@@ -11567,7 +11567,7 @@ public class Server implements Runnable {
                     excludeEntityID = entity.getId();
                 }
                     
-                explodeVibrabomb(mf, vMineReport, false, excludeEntityID);
+                explodeVibrabomb(mf, vMineReport, true, excludeEntityID);
             }
 
             // Hack; when moving, the Mech isn't in the hex during

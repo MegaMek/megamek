@@ -156,6 +156,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 import megamek.common.event.GameBoardChangeEvent;
@@ -2718,7 +2719,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Darken the hex for night-time, if applicable
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                && (game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE)
+                && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
@@ -2940,7 +2941,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 // Darken the hex for night-time, if applicable
                 if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                        && (game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE)
+                        && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                         && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
                     for (int x = 0; x < scaledImage.getWidth(null); ++x) {
                         for (int y = 0; y < scaledImage.getHeight(); ++y) {

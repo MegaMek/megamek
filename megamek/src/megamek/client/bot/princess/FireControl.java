@@ -71,6 +71,7 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -3265,7 +3266,7 @@ public class FireControl {
             
             for (Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
                 // if it's already lit up, don't count it 
-                if (shooter.getGame().isPositionIlluminated(intervening) > 0) {
+                if (!IlluminationLevel.determineIlluminationLevel(shooter.getGame(), intervening).isNone()) {
                     continue;
                 }
                 

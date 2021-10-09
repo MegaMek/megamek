@@ -43,6 +43,7 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -4202,8 +4203,7 @@ public class Compute {
 
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            int lightLvl = game.isPositionIlluminated(target.getPosition());
-            teIlluminated = lightLvl != Game.ILLUMINATED_NONE;
+            teIlluminated = !IlluminationLevel.determineIlluminationLevel(game, target.getPosition()).isNone();
         }
 
         // if either does not have a position then return false

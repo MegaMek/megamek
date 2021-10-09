@@ -69,11 +69,6 @@ import megamek.server.victory.VictoryResult;
 public class Game implements Serializable {
     private static final long serialVersionUID = 8376320092671792532L;
 
-    public static final int ILLUMINATED_NONE = 0;
-    public static final int ILLUMINATED_FIRE = 1;
-    public static final int ILLUMINATED_FLARE = 2;
-    public static final int ILLUMINATED_LIGHT = 3;
-
     public enum Phase {
         PHASE_UNKNOWN,
         PHASE_LOUNGE,
@@ -3325,7 +3320,7 @@ public class Game implements Serializable {
      * Get a set of Coords illuminated by searchlights.
      * 
      * Note: coords could be illuminated by other sources as well, it's likely
-     * that Game.isPositionIlluminated is desired unless the searchlighted hex
+     * that IlluminationLevel::isPositionIlluminated is desired unless the searchlighted hex
      * set is being sent to the client or server.
      */
     public HashSet<Coords> getIlluminatedPositions() {
@@ -3363,47 +3358,6 @@ public class Game implements Serializable {
         boolean rv = illuminatedPositions.add(c);
         processGameEvent(new GameBoardChangeEvent(this));
         return rv;
-    }
-
-    /**
-     * Returns the level of illumination for a given coords.  Different light
-     * sources affect how much the night-time penalties are reduced. Note: this
-     * method should be used for determining is a Coords/Hex is illuminated, not
-     * Game. getIlluminatedPositions(), as that just returns the hexes that
-     * are effected by spotlights, whereas this one considers searchlights as
-     * well as other light sources.
-     */
-    public int isPositionIlluminated(Coords c) {
-    	// fix for NPE when recovering spacecraft while in visual range of enemy
-    	if (getBoard().inSpace()) {
-    		return ILLUMINATED_NONE;
-    	}
-        // Flares happen first, because they totally negate nighttime penalties
-        for (Flare flare : flares) {
-            if (flare.illuminates(c)) {
-                return ILLUMINATED_FLARE;
-            }
-        }
-        IHex hex = getBoard().getHex(c);
-
-        // Searchlights reduce nighttime penalties by up to 3 points.
-        if (illuminatedPositions.contains(c)) {
-            return ILLUMINATED_LIGHT;
-        }
-
-        // Fires can reduce nighttime penalties by up to 2 points.
-        if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
-            return ILLUMINATED_FIRE;
-        }
-        // If we are adjacent to a burning hex, we are also illuminated
-        for (int dir = 0; dir < 6; dir++) {
-            Coords adj = c.translated(dir);
-            hex = getBoard().getHex(adj);
-            if (hex != null && hex.containsTerrain(Terrains.FIRE)) {
-                return ILLUMINATED_FIRE;
-            }
-        }
-        return ILLUMINATED_NONE;
     }
 
     /**

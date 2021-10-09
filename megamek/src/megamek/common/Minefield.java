@@ -137,7 +137,7 @@ public class Minefield implements Serializable, Cloneable {
         }
         final Minefield other = (Minefield) obj;
         return (playerId == other.playerId) && Objects.equals(coords, other.coords) && 
-                (type == other.type) && (weaponDelivered == other.weaponDelivered);
+                (type == other.type);
     }
     
     @Override

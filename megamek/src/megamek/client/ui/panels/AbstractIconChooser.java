@@ -22,7 +22,7 @@ import megamek.client.ui.lists.ImageList;
 import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -126,14 +126,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
         return panel;
     }
 
-    /**
-     * Adds the icons of the given category to the given items List.
-     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
-     */
-    protected void addCategoryItems(final String category, final List<AbstractIcon> items) {
-        for (Iterator<String> iconNames = getDirectory().getItemNames(category);
-             iconNames.hasNext(); ) {
-            items.add(createIcon(category, iconNames.next()));
+    private void addCategoryIcons(final String category, final List<AbstractIcon> icons) {
+        for (Iterator<String> iconNames = getDirectory().getItemNames(category); iconNames.hasNext(); ) {
+            icons.add(createIcon(category, iconNames.next()));
         }
     }
     //endregion Initialization
@@ -156,9 +151,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
     }
     //endregion Getters/Setters
 
-    protected abstract DirectoryItems getDirectory();
+    protected abstract @Nullable AbstractDirectory getDirectory();
 
-    protected abstract AbstractIcon createIcon(final String category, final String filename);
+    protected abstract AbstractIcon createIcon(String category, final String filename);
 
     /**
      * Reacts to changes in the search field, showing searched items
@@ -168,7 +163,9 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * empty.
      */
     private void updateSearch(final String contents) {
-        if (contents.isEmpty()) {
+        if (contents.length() > 2) {
+            imageList.updateImages(getSearchedItems(contents));
+        } else {
             TreePath path = treeCategories.getSelectionPath();
             if (path == null) {
                 return;
@@ -183,9 +180,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
             for (int i = 1; i < nodes.length; i++) {
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
-            imageList.updateImages(getItems(category.toString()));
-        } else if (contents.length() > 2) {
-            imageList.updateImages(getSearchedItems(contents));
+            imageList.updateImages(getIcons(category.toString()));
         }
     }
 
@@ -226,10 +221,31 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
 
     /**
      * Called at start and when a new category is selected in the directory tree.
-     * Returns a list of items that should be shown for the category which
-     * is given as a Treepath.
+     * Assumes that the root of the path (AbstractIcon.ROOT_CATEGORY) is passed as ""!
+     * @return a list of items that should be shown for the category which is given as a TreePath.
      */
-    protected abstract List<AbstractIcon> getItems(String category);
+    protected List<AbstractIcon> getIcons(final String category) {
+        if (getDirectory() == null) {
+            return new ArrayList<>();
+        }
+        final List<AbstractIcon> icons = new ArrayList<>();
+        if (includeSubDirs) {
+            recursivelyDetermineCategoryIcons(getDirectory().getCategory(category), icons);
+        } else {
+            addCategoryIcons(category, icons);
+        }
+        return icons;
+    }
+
+    private void recursivelyDetermineCategoryIcons(final @Nullable AbstractDirectory category,
+                                                   final List<AbstractIcon> icons) {
+        if (category == null) {
+            return;
+        }
+
+        category.getItems().keySet().forEach(f -> icons.add(createIcon(category.getRootPath(), f)));
+        category.getCategories().values().forEach(c -> recursivelyDetermineCategoryIcons(c, icons));
+    }
 
     /**
      * Called when at least 3 characters are entered into the search bar.
@@ -238,22 +254,26 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
      * @return a list of icons that fit the provided search string
      */
     protected List<AbstractIcon> getSearchedItems(String searchString) {
+        if (getDirectory() == null) {
+            return new ArrayList<>();
+        }
+
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain
         // the search string are added.
         List<AbstractIcon> result = new ArrayList<>();
         String lowerSearched = searchString.toLowerCase();
 
-        for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-            String tcat = catNames.next();
-            if (tcat.toLowerCase().contains(lowerSearched)) {
-                addCategoryItems(tcat, result);
+        for (final String category : getDirectory().getNonEmptyCategoryPaths()) {
+            if (category.toLowerCase().contains(lowerSearched)) {
+                addCategoryIcons(category, result);
                 continue;
             }
-            for (Iterator<String> itemNames = getDirectory().getItemNames(tcat); itemNames.hasNext(); ) {
+
+            for (Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext(); ) {
                 String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
-                    result.add(createIcon(tcat, item));
+                    result.add(createIcon(category, item));
                 }
             }
         }
@@ -318,7 +338,7 @@ public abstract class AbstractIconChooser extends JPanel implements TreeSelectio
             for (int i = 1; i < nodes.length; i++) {
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
-            imageList.updateImages(getItems(category.toString()));
+            imageList.updateImages(getIcons(category.toString()));
         }
     }
 }

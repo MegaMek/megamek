@@ -58,7 +58,7 @@ public class DirectoryItems extends AbstractDirectory {
             throws IllegalArgumentException, NullPointerException {
         super(root, categoryName, categoryPath, itemFactory);
 
-        if (root.isDirectory()) {
+        if (!root.isDirectory()) {
             throw new IllegalArgumentException("The passed file is not a directory.");
         }
 

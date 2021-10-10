@@ -13,7 +13,11 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
+import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -39,17 +43,28 @@ public class LRMDeadFireHandler extends LRMHandler {
         super(t, w, g, s);
         sSalvoType = " dead fire missile(s) ";
     }
-
+    
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
+     *
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
-    protected int calcnCluster() {
-        return 1;
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        // Per IntOps p. 132, dead-fire missiles do 2 damage per missile, but still in 5 point clusters
+        // so we figure out how many missile hits get done first, then implement a hack similar to that in ATMHandler
+        int hits = super.calcHits(vPhaseReport);
+        // change to 5 damage clusters here, after AMS has been done
+        hits = nDamPerHit * hits;
+        nDamPerHit = 1;
+        return hits;
     }
 
+    @Override
+    protected int getClusterModifiers(boolean clusterRangePenalty) {
+        return super.getClusterModifiers(clusterRangePenalty) - 3;
+    }
+    
     /*
      * (non-Javadoc)
      * 

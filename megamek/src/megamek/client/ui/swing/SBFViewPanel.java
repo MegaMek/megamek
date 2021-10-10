@@ -140,7 +140,7 @@ public class SBFViewPanel extends JPanel {
         addHeader(" ");
         addHeader(" ");
         addHeader("Arm");
-        addHeader("Dmg S/M/L/E");
+        addHeader("Dmg");
         addHeader(" ");
         addHeader(" ");
         addHeader(" ");

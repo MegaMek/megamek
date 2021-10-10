@@ -13,9 +13,7 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.AmmoType;
-import megamek.common.IGame;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
@@ -60,5 +58,14 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
         }
         return super.getCorrectHandler(toHit, waa, game, server);
 
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == BattleForceElement.SHORT_RANGE) {
+            return 0.4;
+        } else {
+            return 0;
+        }
     }
 }

@@ -872,7 +872,7 @@ public final class AlphaStrikeConverter {
                 }
                 for (int r = 0; r < result.rangeBands; r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
+//                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".substring(r, r+1) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -982,6 +982,8 @@ public final class AlphaStrikeConverter {
         }
         
         // Standard damage
+
+//        result.weaponLocations[0].standardDamage.forEach(System.out::println);
         result.standardDamage = ASDamageVector.createUpRndDmg(
                 result.weaponLocations[0].standardDamage, result.rangeBands);
 
@@ -1554,7 +1556,6 @@ public final class AlphaStrikeConverter {
         }
 
         if (entity instanceof Mech) {
-            element.addSPA(SRCH);
             if (((Mech) entity).getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
                 element.addSPA(MHQ, 1);
             } else if (((Mech) entity).getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
@@ -1572,6 +1573,7 @@ public final class AlphaStrikeConverter {
                 }
             } else {
                 element.addSPA(SOA);
+                element.addSPA(SRCH);
             }
         }
 
@@ -1719,28 +1721,29 @@ public final class AlphaStrikeConverter {
         }
         double totalFrontHeat = getHeatGeneration(entity, element,false, false);
         int heatCapacity = getHeatCapacity(entity, element);
-        if (totalFrontHeat - 4 <= heatCapacity) {
-            return;   
-        }
-        
 //        System.out.println("Total Heat Medium Range: "+totalFrontHeat);
 //        System.out.println("Heat Capacity: "+heatCapacity);
-        
+        if (totalFrontHeat - 4 <= heatCapacity) {
+            return;
+        }
+
+
         // Determine OV from the medium range damage
         //TODO: this should not be necessary:
         while (element.weaponLocations[0].standardDamage.size() < 4) {
             element.weaponLocations[0].standardDamage.add(0.0);
         }
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
+//        System.out.println("Total M damage before heat adjust: " + nonRounded);
         element.overheat = Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4);
         
         // Determine OVL from long range damage and heat
         if (element.overheat > 0 && element.usesOVL()) {
             double heatLong = getHeatGeneration(entity, element, false, true);
-            System.out.println("Long Range Heat: " + heatLong);
+//            System.out.println("Long Range Heat: " + heatLong);
             if (heatLong - 4 > heatCapacity) {
                 double nonRoundedL = element.weaponLocations[0].standardDamage.get(RANGE_BAND_LONG);
-                System.out.println("Long Range Damage: " + nonRoundedL);
+//                System.out.println("Long Range Damage: " + nonRoundedL);
                 if (heatDelta(nonRoundedL, heatCapacity, heatLong) >= 1) {
                     element.addSPA(OVL);
                 }
@@ -1817,7 +1820,7 @@ public final class AlphaStrikeConverter {
             totalHeat += entity.getEngine().getRunHeat(entity);
         }
 
-//        //System.out.println("Total Heat Movement: " + totalHeat);
+//        System.out.println("Total Heat Movement: " + totalHeat);
 
         for (Mounted mount : entity.getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
@@ -1836,14 +1839,20 @@ public final class AlphaStrikeConverter {
 //                //System.out.println(weapon.getName() + " Heat: " + weapon.getHeat() * 2);
             } else {
                 totalHeat += weapon.getHeat();
-//                //System.out.println(weapon.getName() + " Heat: " + weapon.getHeat());
+//                System.out.println(weapon.getName() + " Heat: " + weapon.getHeat());
             }
         }
 
-//        //System.out.println("Total Heat After wps: " + totalHeat);
+//        System.out.println("Total Heat After wps: " + totalHeat);
 
-        if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1)) {
+        if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1)
+                || entity.hasWorkingMisc(MiscType.F_VOIDSIG, -1)
+                || entity.hasWorkingMisc(MiscType.F_NULLSIG, -1)) {
             totalHeat += 10;
+        }
+
+        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD, -1)) {
+            totalHeat += 6;
         }
 
         return totalHeat;
@@ -1953,24 +1962,22 @@ public final class AlphaStrikeConverter {
             if (element.getOverheat() >= 1) {
                 offensiveValue += 1 + 0.5 * (element.getOverheat() - 1);
             }
-            
+
             offensiveValue += getGroundOffensiveSPAMod(entity, element);
             offensiveValue *= getGroundOffensiveBlanketMod(entity, element);
-            
+
             double defensiveValue = 0.125 * getHighestMove(element);
             if (element.movement.containsKey("j")) {
                 defensiveValue += 0.5;
             }
             defensiveValue += getGroundDefensiveSPAMod(element);
             defensiveValue += getDefensiveDIR(element);
-            
             double subTotal = offensiveValue + defensiveValue;
             double bonus = agileBonus(element);
             bonus += c3Bonus(element) ? 0.05 * subTotal : 0;
             bonus -= subTotal * brawlerMalus(element);
             subTotal += bonus;
             subTotal += forceBonus(element);
-            
             return Math.max(1, (int)Math.round(subTotal));
             
         } else if (element.isAnyTypeOf(AF, CF) 

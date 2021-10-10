@@ -90,7 +90,7 @@ public class ASDamage {
      */
     public static ASDamage createDualRoundedUp(double dmg) {
         double intermediate = AlphaStrikeConverter.roundUpToTenth(dmg);
-        return intermediate < 0.5 ? new ASDamage(intermediate) : new ASDamage(intermediate + 0.4);
+        return intermediate < 0.5 ? new ASDamage(intermediate) : new ASDamage(AlphaStrikeConverter.roundUp(intermediate));
     }
 
     /**

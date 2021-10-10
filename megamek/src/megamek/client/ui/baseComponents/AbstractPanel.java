@@ -54,7 +54,8 @@ public abstract class AbstractPanel extends JPanel {
      * buffered boolean.
      */
     protected AbstractPanel(final JFrame frame, final String name, final boolean isDoubleBuffered) {
-        this(frame, ResourceBundle.getBundle("megamek.client.messages", new EncodeControl()),
+        this(frame, ResourceBundle.getBundle("megamek.client.messages",
+                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()),
                 name, new FlowLayout(), isDoubleBuffered);
     }
 

@@ -38,6 +38,7 @@ VERSION HISTORY:
 	allows active probes to reveal minefields during movement as per TacOps Active Probe rules (unit movement stops if a minefield is revealed)
 	prevent soft-lock when stopping a unit's movement due to minefield detonation with "simultaneous movement phase" turned on
 + PR #3190: Vibrabombs and other non-conventional/inferno mines always reduce density when detonated per current TacOps rules.
++ Issue #3147: Dead-fire missiles behave according to updated rules (no auto-hotload, cluster hit penalties)
 	
 
 0.49.3 (2021-08-23 2000 UTC)

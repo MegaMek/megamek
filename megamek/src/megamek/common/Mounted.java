@@ -915,9 +915,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
 
             isHotLoaded = link.hotloaded;
-            if (((AmmoType) link.getType()).getMunitionType() == AmmoType.M_DEAD_FIRE) {
-                return true;
-            }
 
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
@@ -932,10 +929,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
         if (getType() instanceof AmmoType) {
             isHotLoaded = hotloaded;
-
-            if (((AmmoType) getType()).getMunitionType() == AmmoType.M_DEAD_FIRE) {
-                return true;
-            }
 
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during

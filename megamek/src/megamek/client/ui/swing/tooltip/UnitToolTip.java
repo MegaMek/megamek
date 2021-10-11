@@ -281,7 +281,7 @@ public final class UnitToolTip {
     private static class WeaponInfo {
         String name;
         String sortString;
-        String range;
+        String range = "";
         int count = 1;
         boolean isClan;
         boolean isFiring = false;
@@ -303,7 +303,8 @@ public final class UnitToolTip {
     }
     
     private static final String RAPIDFIRE = "|RF|";
-    
+    private static final String CLANWP = "|CL|";
+
     /** Returns the assembled weapons with ranges etc. */
     private static StringBuilder weaponList(Entity entity) {
         ArrayList<Mounted> weapons = entity.getWeaponList();
@@ -317,8 +318,14 @@ public final class UnitToolTip {
             }
             String weapDesc = curWp.getDesc();
             // Distinguish equal weapons with and without rapid fire
-            if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire()) {
+            if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire() && !curWp.isDestroyed()) {
                 weapDesc += RAPIDFIRE;
+            }
+            if (weapDesc.startsWith("+")) {
+                weapDesc = weapDesc.substring(1);
+            }
+            if (curWp.getType().isClan()) {
+                weapDesc += CLANWP;
             }
             if (wpInfos.containsKey(weapDesc)) {
                 currentWp = wpInfos.get(weapDesc);
@@ -346,8 +353,7 @@ public final class UnitToolTip {
                     ranges = wtype.getRanges(curWp);
                 } 
                 String rangeString = " \u22EF ";
-                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
-                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
+                if (ranges[RangeType.RANGE_MINIMUM] > 0) {
                     rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
                 }
                 int maxRange = RangeType.RANGE_LONG;
@@ -361,10 +367,12 @@ public final class UnitToolTip {
                         rangeString += "\u2B1D";
                     }
                 }
-                currentWp.range = rangeString;
-                
                 WeaponType wpT = ((WeaponType)curWp.getType());
-                currentWp.isClan = (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear())));
+                if (!wpT.hasFlag(WeaponType.F_AMS)) {
+                    currentWp.range = rangeString;
+                }
+
+                currentWp.isClan = wpT.isClan();
                 wpInfos.put(weapDesc, currentWp);
 
                 // Add ammo info if the weapon has ammo 
@@ -411,8 +419,8 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         boolean subsequentLine = false; 
         // Display sorted by weapon name
-        ArrayList<WeaponInfo> wps = new ArrayList<UnitToolTip.WeaponInfo>(wpInfos.values());
-        wps.sort((w1, w2) -> w1.sortString.compareTo(w2.sortString));
+        var wps = new ArrayList<WeaponInfo>(wpInfos.values());
+        wps.sort(Comparator.comparing(w -> w.sortString));
         int totalWeaponCount = wpInfos.values().stream().mapToInt(wp -> wp.count).sum();
         boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);
         for (WeaponInfo currentEquip : wps) {
@@ -420,75 +428,62 @@ public final class UnitToolTip {
             if (!currentEquip.ammos.isEmpty()) {
                 result.append(createAmmoEntry(currentEquip));
             } else {
+                // This WeaponInfo is a weapon
+                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                boolean isDestroyed = false;
+                String nameStr = currentEquip.name;
+                if (nameStr == null) {
+                    nameStr = "NULL Weapon Name!"; // Happens with Vehicle Flamers!
+                }
+                if (nameStr.startsWith("x ")) {
+                    nameStr = nameStr.substring(2);
+                    isDestroyed = true;
+                }
 
-            // This WeaponInfo is a weapon
+                if (nameStr.startsWith("*")) {
+                    nameStr = nameStr.substring(1);
+                    isDestroyed = true;
+                }
 
-            
-            // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
-            // Also remove "+", means currently selected for firing
-            boolean isDestroyed = false;
-            String nameStr = currentEquip.name;
-            if (nameStr == null) {
-                nameStr = "NULL Weapon Name!"; // Happens with Vehicle Flamers! 
-            }
-            if (nameStr.startsWith("x ")) { 
-                nameStr = nameStr.substring(2);
-                isDestroyed = true;
-            }
+                // Remove the rapid fire marker (used only to distinguish weapons set to different modes)
+                nameStr = nameStr.replace(RAPIDFIRE, "");
+                nameStr = nameStr.replace(CLANWP, "");
+                nameStr += currentEquip.range;
 
-            if (nameStr.startsWith("*")) { 
-                nameStr = nameStr.substring(1);
-                isDestroyed = true;
-            }
+                result.append(guiScaledFontHTML(uiTTWeaponColor()));
+                String clanStr = currentEquip.isClan ? Messages.getString("BoardView1.Tooltip.Clan") : "";
+                String destStr = isDestroyed ? "<S>" : "";
 
-            if (nameStr.startsWith("+")) { 
-                nameStr = nameStr.substring(1);
-                currentEquip.isFiring = true;
-            }
-            
-            // Remove the rapid fire marker (used only to distinguish weapons set to different modes)
-            nameStr = nameStr.replace(RAPIDFIRE, "");
-            nameStr += currentEquip.range;
-
-            result.append(guiScaledFontHTML(uiTTWeaponColor()));
-            if (isDestroyed) {
-                result.append("<S>");
-            }
-
-            String clanStr = currentEquip.isClan ? Messages.getString("BoardView1.Tooltip.Clan") : "";
-
-            // when more than 5 weapons are present, they will be grouped
-            // and listed with a multiplier
-            if (totalWeaponCount > 5 && hasMultiples) {
-                result.append(addToTT("WeaponN", subsequentLine, currentEquip.count, clanStr, nameStr));
-                subsequentLine = true;
-            } else { // few weapons: list each weapon separately
-                for (int i = 0; i < currentEquip.count; i++) {
-                    result.append(addToTT("Weapon", subsequentLine, currentEquip.count, clanStr, nameStr));
+                if (totalWeaponCount > 5 && hasMultiples) {
+                    // more than 5 weapons: group and list with a multiplier "4 x Small Laser"
+                    result.append(addToTT("WeaponN", subsequentLine, currentEquip.count, clanStr, nameStr, destStr));
+                    result.append(weaponModifier(isDestroyed, currentEquip));
                     subsequentLine = true;
+                } else {
+                    // few weapons: list each weapon separately
+                    for (int i = 0; i < currentEquip.count; i++) {
+                        result.append(addToTT("Weapon", subsequentLine, currentEquip.count, clanStr, nameStr, destStr));
+                        result.append(weaponModifier(isDestroyed, currentEquip));
+                        subsequentLine = true;
+                    }
                 }
+                result.append("</FONT>");
             }
-            // Weapon destroyed? End strikethrough
-            if (isDestroyed) {
-                result.append("</S>");
-            } else {
-                // Not destroyed
-                // In-game and set to fire this round?
-                if (currentEquip.isFiring) {
-                    result.append(" \u22EF<I> (Firing)</I>");
-                }
-                // TacOps Modifiers
-                if (currentEquip.isHotloaded) {
-                    result.append(" \u22EF<I> Hot-loaded</I>");
-                }
-                if (currentEquip.isRapidFire) {
-                    result.append(" \u22EF<I> Rapid-fire</I>");
-                }
-            }
-            result.append("</FONT>"); 
-        }}
+        }
         result.append("<BR>");
         return result;
+    }
+
+    private static String weaponModifier(boolean isDestroyed, WeaponInfo currentEquip) {
+        if (isDestroyed) {
+            // Ends the strikethrough that is added for destroyed weapons
+            return "</S>";
+        } else if (currentEquip.isHotloaded) {
+            return " \u22EF<I> Hot-loaded</I>";
+        } else if (currentEquip.isRapidFire) {
+            return " \u22EF<I> Rapid-fire</I>";
+        }
+        return "";
     }
     
     /** Returns the ammo line(s) for the ammo of one weapon type. */

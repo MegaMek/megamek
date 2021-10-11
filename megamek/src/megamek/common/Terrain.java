@@ -438,7 +438,7 @@ public class Terrain implements ITerrain, Serializable {
                 }
                 return 0;
             case Terrains.MUD:
-                if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+                if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE) || e.isNaval()) {
                     return 0;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {

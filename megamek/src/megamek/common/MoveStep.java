@@ -2999,6 +2999,13 @@ public class MoveStep implements Serializable {
             // if this is an amphibious unit crossing water, increment movement cost by 1
             if(isAmphibious && !destHex.containsTerrain(Terrains.ICE) && (destHex.terrainLevel(Terrains.WATER) > 0)) {
                 mp++;
+                
+                // this is kind of a hack, but only occurs when an amphibious unit passes over mud at the bottom
+                // of a body of water. We can't account for that in the hex's movement cost function
+                // because it doesn't have the ability to pretend the entity is at a particular elevation
+                if (destHex.containsTerrain(Terrains.MUD) && destHex.floor() < nDestEl) {
+                    mp--;
+                }
             }
             
             // non-hovers, non-navals and non-VTOLs check for water depth and

@@ -421,12 +421,15 @@ public final class UnitToolTip {
         // Display sorted by weapon name
         var wps = new ArrayList<WeaponInfo>(wpInfos.values());
         wps.sort(Comparator.comparing(w -> w.sortString));
-        int totalWeaponCount = wpInfos.values().stream().mapToInt(wp -> wp.count).sum();
+        int totalWeaponCount = wpInfos.values().stream().filter(i -> i.ammos.isEmpty()).mapToInt(wp -> wp.count).sum();
         boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);
+        result.append("<TABLE CELLSPACING=0 CELLPADDING=0 " + guiScaledFontHTML(uiTTWeaponColor()).substring(1));
         for (WeaponInfo currentEquip : wps) {
             // This WeaponInfo is ammo
             if (!currentEquip.ammos.isEmpty()) {
+                result.append("<TR><TD></TD><TD>");
                 result.append(createAmmoEntry(currentEquip));
+                result.append("</TD></TR>");
             } else {
                 // This WeaponInfo is a weapon
                 // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
@@ -456,21 +459,26 @@ public final class UnitToolTip {
 
                 if (totalWeaponCount > 5 && hasMultiples) {
                     // more than 5 weapons: group and list with a multiplier "4 x Small Laser"
-                    result.append(addToTT("WeaponN", subsequentLine, currentEquip.count, clanStr, nameStr, destStr));
+                    result.append("<TR><TD>");
+                    if (currentEquip.count > 1) {
+                        result.append(currentEquip.count + " x ");
+                    }
+                    result.append("</TD><TD>");
+                    result.append(addToTT("Weapon", false, currentEquip.count, clanStr, nameStr, destStr));
                     result.append(weaponModifier(isDestroyed, currentEquip));
-                    subsequentLine = true;
+                    result.append("</TD></TR>");
                 } else {
                     // few weapons: list each weapon separately
                     for (int i = 0; i < currentEquip.count; i++) {
-                        result.append(addToTT("Weapon", subsequentLine, currentEquip.count, clanStr, nameStr, destStr));
+                        result.append("<TR><TD></TD><TD>");
+                        result.append(addToTT("Weapon", false, currentEquip.count, clanStr, nameStr, destStr));
                         result.append(weaponModifier(isDestroyed, currentEquip));
-                        subsequentLine = true;
+                        result.append("</TD></TR>");
                     }
                 }
-                result.append("</FONT>");
             }
         }
-        result.append("<BR>");
+        result.append("</TABLE>");
         return result;
     }
 
@@ -489,12 +497,12 @@ public final class UnitToolTip {
     /** Returns the ammo line(s) for the ammo of one weapon type. */
     private static StringBuilder createAmmoEntry(WeaponInfo ammoInfo) {
         StringBuilder result = new StringBuilder();
-        result.append(guiScaledFontHTML(-0.2f));
-        
         int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
         if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
-            result.append("<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Out of Ammo!");
+            result.append(guiScaledFontHTML(uiYellow(), -0.2f));
+            result.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Out of Ammo!");
         } else {
+            result.append(guiScaledFontHTML(uiGreen(), -0.2f));
             for (Entry<String, Integer> ammo: ammoInfo.ammos.entrySet()) {
                 String ammoName = ammo.getKey().equals("Standard") && ammoInfo.ammos.size() == 1 ? "" : ammo.getKey() + ": ";
                 // No entry when no ammo of this type left but some other type left
@@ -502,7 +510,7 @@ public final class UnitToolTip {
                     continue;
                 } 
                 
-                result.append("<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"); 
+                result.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                 if (ammoInfo.ammoActiveWeaponCount > 1) { 
                     // Remaining ammo and multiple weapons using it
                     result.append(ammoName);
@@ -521,14 +529,16 @@ public final class UnitToolTip {
     /** Returns a line showing ECM / ECCM. */
     private static StringBuilder ecmInfo(Entity entity) {
         StringBuilder result = new StringBuilder();
+        result.append(guiScaledFontHTML());
         if (entity.hasActiveECM()) {
-            result.append("&nbsp;").append(ECM_SIGN).append(" ");
+            result.append(ECM_SIGN).append(" ");
             result.append(Messages.getString("BoardView1.ecmSource"));
         }
         if (entity.hasActiveECCM()) {
-            result.append("&nbsp;").append(ECM_SIGN).append(" ");
+            result.append(ECM_SIGN).append(" ");
             result.append(Messages.getString("BoardView1.eccmSource"));
         }
+        result.append("</FONT>");
         return result;
     }
 

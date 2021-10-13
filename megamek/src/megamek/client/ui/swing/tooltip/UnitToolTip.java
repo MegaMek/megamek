@@ -29,6 +29,7 @@ import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.templates.TROView;
 import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.SwarmAttack;
@@ -36,6 +37,7 @@ import megamek.common.weapons.SwarmWeaponAttack;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.client.ui.Messages.*;
 
 public final class UnitToolTip {
     
@@ -71,7 +73,9 @@ public final class UnitToolTip {
         // Unit Chassis and Player
         IPlayer owner = game.getPlayer(entity.getOwnerId());
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
-        result.append(addToTT("ChassisPlayer", NOBR, entity.getChassis(), owner.getName()));
+        String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
+        result.append(entity.getChassis()).append(clanStr);
+        result.append("<BR>").append(owner.getName());
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));
         result.append("</FONT>");
@@ -153,7 +157,7 @@ public final class UnitToolTip {
         return result;
     }
     
-    /** Returns the graphical Armor reprentation. */
+    /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         GUIPreferences guip = GUIPreferences.getInstance();
         String armorChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_ARMOR_CHAR);
@@ -265,7 +269,13 @@ public final class UnitToolTip {
         
         if (numIntact > 0) {
             result.append(guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA));
-            result.append(repeat(dChar, numIntact) + "</FONT>");
+            if (numIntact > 15 && numIntact + numDmgd > 30) {
+                int tensIntact = (numIntact - 1) / 10;
+                result.append(dChar + "x" + tensIntact * 10 + " ");
+                result.append(repeat(dChar, numIntact - 10 * tensIntact) + "</FONT>");
+            } else {
+                result.append(repeat(dChar, numIntact) + "</FONT>");
+            }
         }
         if (numPartial > 0) {
             result.append(guiScaledFontHTML(colorPartialDmg, TT_SMALLFONT_DELTA));
@@ -273,7 +283,13 @@ public final class UnitToolTip {
         }
         if (numDmgd > 0) {
             result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
-            result.append(repeat(dChar, numDmgd) + "</FONT>");
+            if (numDmgd > 15 && numIntact + numDmgd > 30) {
+                int tensDmgd = (numDmgd - 1) / 10;
+                result.append(dChar + "x" + tensDmgd * 10 + " ");
+                result.append(repeat(dChar, numDmgd - 10 * tensDmgd) + "</FONT>");
+            } else {
+                result.append(repeat(dChar, numDmgd) + "</FONT>");
+            }
         }
         return result;
     }
@@ -284,7 +300,6 @@ public final class UnitToolTip {
         String range = "";
         int count = 1;
         boolean isClan;
-        boolean isFiring = false;
         boolean isHotloaded = false;
         boolean isRapidFire = false;
         HashMap<String, Integer> ammos = new HashMap<>();
@@ -327,6 +342,7 @@ public final class UnitToolTip {
             if (curWp.getType().isClan()) {
                 weapDesc += CLANWP;
             }
+            weapDesc = weapDesc.replace("[Clan]", "").replace("(Clan)", "").trim();
             if (wpInfos.containsKey(weapDesc)) {
                 currentWp = wpInfos.get(weapDesc);
                 currentWp.count++;
@@ -393,7 +409,7 @@ public final class UnitToolTip {
                         for (Mounted amounted : entity.getAmmo()) {
                             boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(curWp, (AmmoType) amounted.getType());
                             if (canSwitchToAmmo && !amounted.isDumping()) {
-                                String name = amounted.getName()
+                                String name = amounted.getName().replace("Anti-Personnel", "AP")
                                         .replace("Ammo", "").replace("[IS]", "").replace("[Clan]", "")
                                         .replace("(Clan)", "").replace("[Half]", "").replace("Half", "")
                                         .replace(curWp.getDesc(), "").trim();
@@ -427,9 +443,7 @@ public final class UnitToolTip {
         for (WeaponInfo currentEquip : wps) {
             // This WeaponInfo is ammo
             if (!currentEquip.ammos.isEmpty()) {
-                result.append("<TR><TD></TD><TD>");
                 result.append(createAmmoEntry(currentEquip));
-                result.append("</TD></TR>");
             } else {
                 // This WeaponInfo is a weapon
                 // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
@@ -454,7 +468,12 @@ public final class UnitToolTip {
                 nameStr += currentEquip.range;
 
                 result.append(guiScaledFontHTML(uiTTWeaponColor()));
-                String clanStr = currentEquip.isClan ? Messages.getString("BoardView1.Tooltip.Clan") : "";
+                String techBase = "";
+                if (entity.isMixedTech()) {
+                    techBase = currentEquip.isClan ? Messages.getString("BoardView1.Tooltip.Clan") :
+                            Messages.getString("BoardView1.Tooltip.IS");
+                    techBase += " ";
+                }
                 String destStr = isDestroyed ? "<S>" : "";
 
                 if (totalWeaponCount > 5 && hasMultiples) {
@@ -464,14 +483,14 @@ public final class UnitToolTip {
                         result.append(currentEquip.count + " x ");
                     }
                     result.append("</TD><TD>");
-                    result.append(addToTT("Weapon", false, currentEquip.count, clanStr, nameStr, destStr));
+                    result.append(addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr));
                     result.append(weaponModifier(isDestroyed, currentEquip));
                     result.append("</TD></TR>");
                 } else {
                     // few weapons: list each weapon separately
                     for (int i = 0; i < currentEquip.count; i++) {
                         result.append("<TR><TD></TD><TD>");
-                        result.append(addToTT("Weapon", false, currentEquip.count, clanStr, nameStr, destStr));
+                        result.append(addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr));
                         result.append(weaponModifier(isDestroyed, currentEquip));
                         result.append("</TD></TR>");
                     }
@@ -500,16 +519,18 @@ public final class UnitToolTip {
         int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
         if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
             result.append(guiScaledFontHTML(uiYellow(), -0.2f));
+            result.append("<TR><TD></TD><TD>");
             result.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Out of Ammo!");
+            result.append("</TD></TR>");
         } else {
-            result.append(guiScaledFontHTML(uiGreen(), -0.2f));
             for (Entry<String, Integer> ammo: ammoInfo.ammos.entrySet()) {
                 String ammoName = ammo.getKey().equals("Standard") && ammoInfo.ammos.size() == 1 ? "" : ammo.getKey() + ": ";
                 // No entry when no ammo of this type left but some other type left
                 if (ammo.getValue() == 0) {
                     continue;
-                } 
-                
+                }
+                result.append("<TR><TD></TD><TD>");
+                result.append(guiScaledFontHTML(uiGreen(), -0.2f));
                 result.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                 if (ammoInfo.ammoActiveWeaponCount > 1) { 
                     // Remaining ammo and multiple weapons using it
@@ -520,9 +541,9 @@ public final class UnitToolTip {
                     // Remaining ammo and only one weapon using it
                     result.append(ammoName).append(ammo.getValue()).append(" shots");
                 }
+                result.append("</TD></TR>");
             }
         }
-        result.append("</FONT>");
         return result;
     }
 
@@ -730,10 +751,13 @@ public final class UnitToolTip {
         }
 
         // Armor and Internals
-        result.append(addToTT("ArmorInternals", BR, entity.getTotalArmor(), entity.getTotalInternal()));
-        if (entity.isCapitalScale()) {
-            addToTT("ArmorCapital", BR);
+        String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
+        if (!armorType.isBlank()) {
+            armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;
+            armorType = " (" + armorType + ")";
         }
+        String armorStr = " " + entity.getTotalArmor() + armorType;
+        result.append(addToTT("ArmorInternals", BR, armorStr, entity.getTotalInternal()));
         return result;
     }
     

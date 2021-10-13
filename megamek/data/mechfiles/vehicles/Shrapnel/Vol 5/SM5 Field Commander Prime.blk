@@ -1,0 +1,140 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+SM5 Field Commander
+</Name>
+
+<Model>
+Prime
+</Model>
+
+<year>
+3151
+</year>
+
+<originalBuildYear>
+3151
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+26
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+24
+19
+19
+15
+19
+</armor>
+
+<Body Equipment>
+CLCASE
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Supercharger (Clan)
+</Body Equipment>
+
+<Front Equipment>
+CLUltraAC20:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERMediumLaser:OMNI
+ISTAG:OMNI
+</Turret Equipment>
+
+<source>
+Shrapnel 6 - ilClan
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<capabilities>
+The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit.[5] The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
+</capabilities>
+
+<overview>
+The SM1 Tank Destroyer was designed as a speedy infighter by scientists from Clan Nova Cat. The machine is a cheap and effective combat vehicle.
+</overview>
+
+<deployment>
+This prototype OmniVehicle was created by the Kell Hounds using Clan technology. A 215-rated XL Engine engine with Supercharger lets the SM5 speed around at 151km/h and sprint at 194km/h. The Field Commander has eighteen tons of pod space available, and can carry five tons of that equipment in the turret. The only configuration currently mounts an Ultra Autocannon/20 in the nose, with two tons of ammunition in the body. The turret carries an ER Medium Laser and a TAG unit. The biggest change is the eight tons of Ballistic Reinforced Armor used to provide protection.
+</deployment>
+
+<history>
+Following their integration with the Draconis Combine in 3060, Clan Nova Cat found its advanced manufacturing capacities lacking due to the harsh realities of living in the Inner Sphere. Thus the Clan decided to begin to embrace the Inner Sphere's combined-arms doctrine of combat. Working with Luthien Armor Works, as it did with the Shoden project at LAW's defunct facilities on Irece, this facility began to produce the SM1 Tank Destroyer in 3065. Clan Nova Cat provided the advanced technology from their own factories after upgrading LAW's facilities on Irece. The deal with LAW gave the Clan shares in the manufacturing plant itself, and purchasing rights for the SM1's first five years of production. The vehicle was accepted by Nova Cat Galaxies after the performance of volunteer crews. After the vehicles were first introduced, several appeared in the ranks of the Draconis Combine's local Ryuken regiment, which they have apparently won through trials.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Type 215 XL Fusion
+ARMOR:Durallex Ballistic-Reinforced
+COMMUNICATIONS:Unit 2J2 “Basher”
+TARGETING:Able-Seven Sensor Suite
+</systemManufacturers>
+

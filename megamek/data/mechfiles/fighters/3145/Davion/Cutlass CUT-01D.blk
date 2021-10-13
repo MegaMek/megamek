@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -68,14 +68,14 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <armor>
-71
-54
-54
-53
+82
+61
+61
+52
 </armor>
 
 <Nose Equipment>
@@ -113,3 +113,35 @@ TRO 3145 Federated Suns - Late Republic
 <tonnage>
 70.0
 </tonnage>
+
+<overview>
+The Cutlass was intended to battle front-line Capellan Confederation Armed Forces fighters such as the Transgressor and Troika, and the Cutlass quickly found itself taking pride of placement in AFFS interceptor squadrons.
+</overview>
+
+<deployment>
+The Cutlass mounts a Poland Main Model C Gauss Rifle in the nose, which is supplied with two tons of ammunition. Mounted alongside the gauss rifle is a single ExoStar ER Large Laser. The fighter also carries both a Guardian ECM Suite and a Beagle Active Probe. For engagements at shorter ranges the Cutlass mounts a pair of Martell ER Medium Lasers in each wing.
+</deployment>
+
+<history>
+Manufactured for the Armed Forces of the Federated Suns by Wangker Aerospace from their plant on Axton, the Cutlass entered service at the beginning of the thirty-second century.Well equipped with advanced electronic systems, the Cutlass makes good use of its Guardian ECM Suite to close within range of the primary weapons; high acceleration and sixteen tons of Wangker Solarion Reflective Armor help protect the Cutlass after it strikes with its weapons. The Cutlass was swiftly in service in both the Capellan and Draconis Marches.
+</history>
+
+<manufacturer>
+Wangker Aerospace
+</manufacturer>
+
+<primaryFactory>
+Axton
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Wangker IX
+ENGINE:Magna 350 XL
+ARMOR:Wangker Solarion Reflective
+COMMUNICATIONS:Rander 200B with Guardian ECM Suite
+TARGETING:Rander TA1000 with Beagle Active Probe
+</systemManufacturers>
+
+<source>
+TRO 3145 Federated Suns - Late Republic
+</source>

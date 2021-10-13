@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -56,7 +56,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-280
+320
 </fuel>
 
 <engine_type>
@@ -68,7 +68,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <armor>
@@ -107,3 +107,4 @@ TRO 3050u - Succession Wars
 <tonnage>
 20.0
 </tonnage>
+

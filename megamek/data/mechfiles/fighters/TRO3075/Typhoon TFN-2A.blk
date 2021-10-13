@@ -100,3 +100,35 @@ IS Ammo LRM-15
 <tonnage>
 90.0
 </tonnage>
+
+<capabilities>
+The Typhoon features a simple flying wing design, intended to provide both excellent glide characteristics and ample room for bomb ports. Though slow compared to more modern designs, the heavily armored Typhoons speed was more than adequate for its ground attack role when compared with contemporaries of the era.
+</capabilities>
+
+<overview>
+In its heyday the Typhoon was the pre-Star League era Lyran Commonwealth's ground attack AeroSpace Fighter of choice.
+</overview>
+
+<deployment>
+Serving as the core unit during air assault missions, the Typhoon's primary weapons were a series of Defiance 600 PPCs and an array of Rassal Emerald Series Large Lasers in its wings, all of which were supported by a single nose-mounted Screamer LRM-15 rack.
+</deployment>
+
+<history>
+Developed by CBM Aerospace of Donegal, and a vital part of the Lyran military's AeroSpace forces for many years, technology marched on and CBM ultimately discontinued the Typhoon in 2485 as it was entering into a business alliance with Lockheed Corporation of Tharkad to develop the Thunderbird that would ultimately trigger their merger into the powerful Lockheed/CBM Corporation.
+</history>
+
+<manufacturer>
+CBM Aerospace, Lockheed/CBM Corp.
+</manufacturer>
+
+<primaryFactory>
+Donegal, Donegal
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:CBM T02-A
+ENGINE:PlasmaStar 270
+ARMOR:Lexington Lite Standard
+COMMUNICATIONS:CBM COMSET 3
+TARGETING:CBM TRAK-2
+</systemManufacturers>

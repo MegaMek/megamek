@@ -3003,7 +3003,7 @@ public class MoveStep implements Serializable {
                 // this is kind of a hack, but only occurs when an amphibious unit passes over mud at the bottom
                 // of a body of water. We can't account for that in the hex's movement cost function
                 // because it doesn't have the ability to pretend the entity is at a particular elevation
-                if (destHex.containsTerrain(Terrains.MUD) && destHex.floor() < nDestEl) {
+                if (destHex.containsTerrain(Terrains.MUD) && (destHex.floor() < nDestEl)) {
                     mp--;
                 }
             }

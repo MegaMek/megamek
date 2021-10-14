@@ -1151,6 +1151,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 panMain.add(component, main);
                 break;
             case PHASE_EXCHANGE:
+                chatlounge.killPreviewBV();
                 component = new JLabel(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "JLabel-Exchange"; //$NON-NLS-1$
                 component.setName(main);

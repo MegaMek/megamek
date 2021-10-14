@@ -216,6 +216,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     boolean resetSelectedBoards = true;
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
+    private BoardView1 previewBV;
     Dimension currentMapButtonSize = new Dimension(0,0);
     
     private ArrayList<String> invalidBoards = new ArrayList<>();
@@ -727,16 +728,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
-            BoardView1 bv = new BoardView1(boardPreviewGame, null, null);
-            bv.setDisplayInvalidHexInfo(false);
-            bv.setUseLOSTool(false);
-            boardPreviewW.add(bv.getComponent(true));
+            previewBV = new BoardView1(boardPreviewGame, null, null);
+            previewBV.setDisplayInvalidHexInfo(false);
+            previewBV.setUseLOSTool(false);
+            boardPreviewW.add(previewBV.getComponent(true));
             boardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
             // Most boards will be far too large on the standard zoom
-            bv.zoomOut();
-            bv.zoomOut();
-            bv.zoomOut();
-            bv.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
             boardPreviewW.center();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
@@ -3608,5 +3609,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal());
     }
 
+    public void killPreviewBV() {
+        previewBV.die();
+    }
 }
 

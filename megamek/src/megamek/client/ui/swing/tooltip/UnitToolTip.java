@@ -384,7 +384,8 @@ public final class UnitToolTip {
                     }
                 }
                 WeaponType wpT = ((WeaponType)curWp.getType());
-                if (!wpT.hasFlag(WeaponType.F_AMS)) {
+                if (!wpT.hasFlag(WeaponType.F_AMS)
+                        || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
                 }
 

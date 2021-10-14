@@ -517,7 +517,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public BoardView1(final IGame game, final MegaMekController controller, ClientGUI clientgui)
             throws java.io.IOException {
-        System.out.println("Neuer Boardview");
         this.game = game;
         this.clientgui = clientgui;
 

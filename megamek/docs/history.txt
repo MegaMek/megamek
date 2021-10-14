@@ -42,6 +42,7 @@ VERSION HISTORY:
 + Issue #2894: Allow airborne microlite VTOL infantry to flee
 + Issue #2813: Per TW, updated swarm attack modifiers, battle armor vibro claws now do extra damage during swarm attack.
 + Data: New sprites/updated unit fixes and Shrapnel units. 
++ Issue #3813: Multiple improvements to the unit tooltips, in the lobby and otherwise.
 	
 
 0.49.3 (2021-08-23 2000 UTC)

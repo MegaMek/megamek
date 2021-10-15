@@ -1053,6 +1053,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
+                this.roundReport.clear();
                 this.roundReport.setVisible(false);
                 this.unitDetailPane.setVisible(false);
                 setMapVisible(false);

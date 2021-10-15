@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * Holds a component that can be collapsed and detached into a
@@ -78,10 +77,10 @@ public class DetachablePane extends JComponent {
 
     // The component that gets moved between this base pane and the
     // window
-    private Box root;
+    private JComponent root;
 
     private JLabel title;
-    private JPanel header;
+    private JComponent header;
     private JComponent content;
     private JFrame window;
 
@@ -115,16 +114,18 @@ public class DetachablePane extends JComponent {
         buttons.add(new ActionButton(this.attach));
         buttons.add(new ActionButton(this.detach));
 
-        this.header = new JPanel(new BorderLayout(0, 8));
+        this.header = Box.createHorizontalBox();
         this.header.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
-        this.header.add(this.title, BorderLayout.CENTER);
-        this.header.add(buttons, BorderLayout.EAST);
+        this.header.add(this.title);
+        this.header.add(Box.createHorizontalGlue());
+        this.header.add(buttons);
 
         this.content = content;
 
         this.root = Box.createVerticalBox();
         this.root.add(this.header);
         this.root.add(this.content);
+        this.root.add(Box.createVerticalGlue());
 
         this.window = new JFrame();
         this.window.addWindowListener(new WindowAdapter() {

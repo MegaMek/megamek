@@ -386,13 +386,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** Manages the enabled states of the menu items depending on where the menu is empoyed. */
     private synchronized void updateEnabledStates() {
         boolean isLobby = isGame && (phase == GamePhase.LOUNGE);
-        boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
-        boolean isInGameBoardView = isInGame && phase.isOnMap();
-        boolean isBoardView = isInGameBoardView || isBoardEditor;
+        boolean isInGame = isGame && !isLobby && !isBoardEditor;
         boolean canSave = (phase != GamePhase.UNKNOWN) && (phase != GamePhase.SELECTION)
                 && (phase != GamePhase.EXCHANGE) && (phase != GamePhase.VICTORY)
                 && (phase != GamePhase.STARTING_SCENARIO);
-        
+
         viewAccessibilityWindow.setEnabled(false);
         
         boardChangeTheme.setEnabled(isBoardEditor);
@@ -428,29 +426,29 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsReinforceRAT.setEnabled(isLobby || isInGame);
         boardSaveAsImageUnits.setEnabled(isInGame);
         gamePlayerList.setEnabled(isInGame);
-        viewLabels.setEnabled(isInGameBoardView);
+        viewLabels.setEnabled(isInGame);
         
         gameGameOptions.setEnabled(isInGame || isLobby);
         gamePlayerSettings.setEnabled(isInGame);
-        
-        viewMiniMap.setEnabled(isBoardView);
-        viewZoomIn.setEnabled(isBoardView);
-        viewZoomOut.setEnabled(isBoardView);
-        toggleIsometric.setEnabled(isBoardView);
-        viewKeybindsOverlay.setEnabled(isBoardView);
-        toggleHexCoords.setEnabled(isBoardView);
-        
-        viewLOSSetting.setEnabled(isInGameBoardView);
-        viewUnitOverview.setEnabled(isInGameBoardView);
-        toggleFieldOfFire.setEnabled(isInGameBoardView);
-        toggleFovHighlight.setEnabled(isInGameBoardView);
-        toggleFovDarken.setEnabled(isInGameBoardView);
-        toggleFiringSolutions.setEnabled(isInGameBoardView);
-        viewMovementEnvelope.setEnabled(isInGameBoardView);
-        viewMovModEnvelope.setEnabled(isInGameBoardView);
-        gameRoundReport.setEnabled(isInGameBoardView);
-        viewMekDisplay.setEnabled(isInGameBoardView);
-        fireSaveWeaponOrder.setEnabled(isInGameBoardView);
+
+        viewMiniMap.setEnabled(isInGame || isBoardEditor);
+        viewZoomIn.setEnabled(isInGame || isBoardEditor);
+        viewZoomOut.setEnabled(isInGame || isBoardEditor);
+        toggleIsometric.setEnabled(isInGame || isBoardEditor);
+        viewKeybindsOverlay.setEnabled(isInGame || isBoardEditor);
+        toggleHexCoords.setEnabled(isInGame || isBoardEditor);
+
+        viewLOSSetting.setEnabled(isInGame);
+        viewUnitOverview.setEnabled(isInGame);
+        toggleFieldOfFire.setEnabled(isInGame);
+        toggleFovHighlight.setEnabled(isInGame);
+        toggleFovDarken.setEnabled(isInGame);
+        toggleFiringSolutions.setEnabled(isInGame);
+        viewMovementEnvelope.setEnabled(isInGame);
+        viewMovModEnvelope.setEnabled(isInGame);
+        gameRoundReport.setEnabled(isInGame);
+        viewMekDisplay.setEnabled(isInGame);
+        fireSaveWeaponOrder.setEnabled(isInGame);
     }
 
     /**

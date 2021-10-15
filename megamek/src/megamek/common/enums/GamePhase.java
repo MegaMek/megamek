@@ -179,25 +179,6 @@ public enum GamePhase {
     }
 
     /**
-     * Returns true when this phase shows the game map.
-     */
-    public boolean isOnMap() {
-        switch (this) {
-            case DEPLOYMENT:
-            case TARGETING:
-            case MOVEMENT:
-            case OFFBOARD:
-            case FIRING:
-            case PHYSICAL:
-            case DEPLOY_MINEFIELDS:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Should we play this phase or skip it?
      */
     public boolean isPlayable(final Game game) {

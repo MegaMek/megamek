@@ -1264,7 +1264,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     this, InterstitialDisplay.Type.END_OF_ROUND
                 );
                 main = "BoardView"; //$NON-NLS-1$
-                secondary = "InterstitialDisplay"; //$NON-NLS-1$
+                secondary = "InterstitialEndOfRoundDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1277,7 +1277,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     this, InterstitialDisplay.Type.END_OF_GAME
                 );
                 main = "BoardView"; //$NON-NLS-1$
-                secondary = "InterstitialDisplay"; //$NON-NLS-1$
+                secondary = "InterstitialEndOfGameDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);

@@ -1462,7 +1462,7 @@ public class Game implements Serializable {
         removeArtyAutoHitHexes();
         flares.removeAllElements();
         illuminatedPositions.clear();
-        clearAllReports();
+        reports.clear();
         smokeCloudList.clear();
 
         forceVictory = false;
@@ -2665,13 +2665,6 @@ public class Game implements Serializable {
      */
     public List<Report> getReports(int round) {
         return Collections.unmodifiableList(this.reports.get(round));
-    }
-
-    /**
-     * Clears out all the current reports, paving the way for a new game.
-     */
-    public void clearAllReports() {
-        this.reports.clear();
     }
 
     public void end(int winner, int winnerTeam) {

@@ -30,6 +30,7 @@ import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.icons.Camouflage;
+import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.*;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -86,11 +87,11 @@ public class EntityImage {
     }
     
     /** All damage decal/fire/smoke files in DECAL_PATH. */
-    private static DirectoryItems DecalImages;
+    private static AbstractDirectory DecalImages;
 
     static {
         try {
-            DecalImages = new DirectoryItems(DECAL_PATH, "", new ImageFileFactory());
+            DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
             MegaMek.getLogger().warning("Failed to find the damage decal images." + e.getMessage());

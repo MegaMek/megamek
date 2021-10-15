@@ -6044,6 +6044,8 @@ Gyrfalcon 5:SKIRMISHER
 Thunder Stallion 4:JUGGERNAUT
 SuburbanMech UM-R90:AMBUSHER
 SuburbanMech UM-R100:SNIPER
+Crusader CRD-9S:SNIPER
+Crusader CRD-10S:MISSILE_BOAT
 #Tukayyid
 Puma (Adder) TC:STRIKER
 Shadow Cat TC:SCOUT

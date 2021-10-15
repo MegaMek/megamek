@@ -11567,7 +11567,7 @@ public class Server implements Runnable {
                     excludeEntityID = entity.getId();
                 }
                     
-                explodeVibrabomb(mf, vMineReport, false, excludeEntityID);
+                explodeVibrabomb(mf, vMineReport, excludeEntityID);
             }
 
             // Hack; when moving, the Mech isn't in the hex during
@@ -11744,7 +11744,7 @@ public class Server implements Runnable {
      *
      * @param mf The <code>Minefield</code> to explode
      */
-    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, boolean reduce, Integer entityToExclude) {
+    private void explodeVibrabomb(Minefield mf, Vector<Report> vBoomReport, Integer entityToExclude) {
         Iterator<Entity> targets = game.getEntities(mf.getCoords());
         Report r;
 
@@ -11809,9 +11809,7 @@ public class Server implements Runnable {
         }
 
         // check the direct reduction of mine
-        if (reduce) {
-            mf.checkReduction(0, true);
-        }
+        mf.checkReduction(0, true);
         mf.setDetonated(true);
     }
 

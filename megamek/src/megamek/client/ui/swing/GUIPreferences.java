@@ -96,8 +96,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
     /* --End advanced settings-- */
 
-
-    public static final String DRAW_ENTITY_LABEL = "drawEntityLabel";
     public static final String SHOW_COORDS = "showCoords";
     public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
@@ -268,7 +266,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
-        store.setDefault(DRAW_ENTITY_LABEL, true);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);

@@ -1405,21 +1405,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /**
-     * Pops up a dialog box showing an alert
+     * Pops up a dialog box showing an error message.
+     *
+     * @param title human readable dialog title
+     * @param message a plain text, possibly multi-line error message
      */
     public void doAlertDialog(String title, String message) {
-        JTextPane textArea = new JTextPane();
-        UIUtil.setupForHtml(textArea);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText("<div>" + message + "</div>");
-        scrollPane.setPreferredSize(new Dimension(
-                (int) (getSize().getWidth() / 1.5), (int) (getSize()
-                        .getHeight() / 1.5)));
-        JOptionPane.showMessageDialog(frame, scrollPane, title,
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(
+            frame,
+            newHtmlMessage("<pre>" + message + "</pre>"),
+            title,
+            JOptionPane.ERROR_MESSAGE
+        );
     }
 
     /**
@@ -1455,6 +1452,21 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
         return confirm;
+    }
+
+    private JComponent newHtmlMessage(String html) {
+        var textArea = UIUtil.setupForHtml(new JTextPane());
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(
+            textArea,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        );
+        textArea.setText(html);
+        scrollPane.setPreferredSize(new Dimension(
+                (int) (getSize().getWidth() / 1.5), (int) (getSize()
+                        .getHeight() / 1.5)));
+        return scrollPane;
     }
 
     /**
@@ -1814,13 +1826,19 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         @Override
         public void gameReport(GameReportEvent e) {
             if (e.isImportant()) {
-                var buf = new StringBuilder();
+                var buf = new StringBuilder("<div>");
                 for (var report: e.getReports()) {
                     buf.append(
                         report.getHtml(ClientGUI.this.client.getEntityImageCache())
                     );
                 }
-                doAlertDialog("Incoming report", buf.toString());
+                buf.append("</div>");
+                JOptionPane.showMessageDialog(
+                    ClientGUI.this.frame,
+                    newHtmlMessage(buf.toString()),
+                    "Incoming report",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
             }
         }
 

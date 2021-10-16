@@ -39,6 +39,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
 
 class PlayerTable extends JTable {
     private static final long serialVersionUID = 6252953920509362407L;
@@ -202,7 +203,8 @@ class PlayerTable extends JTable {
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
             result.append("BV: ");
-            result.append((player.getBV() != 0) ? NumberFormat.getIntegerInstance().format(player.getBV()) : "--");
+            NumberFormat formatter = NumberFormat.getIntegerInstance(PreferenceManager.getClientPreferences().getLocale());
+            result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
             result.append("</FONT>");
 
             // Initiative Mod

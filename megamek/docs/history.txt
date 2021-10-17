@@ -45,7 +45,7 @@ VERSION HISTORY:
 + Issue #3813: Multiple improvements to the unit tooltips, in the lobby and otherwise.
 + Issue #3202: "Restore" ability to switch unit name display using ctrl-b (full name, just the chassis name, etc)
 + Issue #2207: Prevent additional MP cost and bog down nagging when moving along water surface while the bottom terrain costs extra MP/causes bog down
-	
++ Issue #3015: Update tonnage display in the lobby table to display exact infantry tonnage; update player BV display formatting according to locale
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

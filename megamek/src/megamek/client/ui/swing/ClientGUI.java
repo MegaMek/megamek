@@ -67,6 +67,7 @@ import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.DetachablePane;
 import megamek.common.*;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
@@ -82,7 +83,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, 
+public class ClientGUI extends JPanel implements BoardViewListener,
                     ActionListener, ComponentListener, IPreferenceChangeListener {
     //region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
@@ -202,7 +203,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public ChatterBox2 cb2;
     public BoardView1 bv;
     private Component bvc;
-    public JDialog mechW;
+    public DetachablePane unitDetailPane;
     public UnitDisplay mechD;
     public JDialog minimapW;
     private MapMenu popup;
@@ -310,6 +311,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public IBoardView getBoardView() {
         return bv;
+    }
+
+    public DetachablePane getUnitDetailPane() {
+        return this.unitDetailPane;
     }
 
     /**
@@ -468,6 +473,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
                     {
                         frame.setVisible(false);
+                        unitDetailPane.setVisible(false);
                         saveSettings();
                         die();
                     }
@@ -486,38 +492,24 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         aw = new AccessibilityWindow(this);
         aw.setLocation(0, 0);
-        aw.addWindowListener(this);
         aw.setSize(300, 300);
 
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
-        int x;
-        int y;
-        int h;
-        int w;
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent e) {
-                e.setSource(ClientGUI.this);
-                menuBar.dispatchEvent(e);
-                // Make the source be the ClientGUI and not the dialog
-                // This prevents a ClassCastException in ToolTipManager
-                curPanel.dispatchEvent(e);
-                if (!e.isConsumed()) {
-                    super.processKeyEvent(e);
-                }
-            }
-        };
+
+        mechD = new UnitDisplay(this, controller);
+        mechD.addMechDisplayListener(bv);
+
+        this.unitDetailPane = new DetachablePane("", this.mechD);
+        this.unitDetailPane.setVisible(false);
+        this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
+        add(this.unitDetailPane, BorderLayout.EAST);
+
         Rectangle virtualBounds = getVirtualBounds();
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        int x = GUIPreferences.getInstance().getDisplayPosX();
+        int y = GUIPreferences.getInstance().getDisplayPosY();
+        int h = GUIPreferences.getInstance().getDisplaySizeHeight();
+        int w = GUIPreferences.getInstance().getDisplaySizeWidth();
         if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
             w = Math.min(w, (int)virtualBounds.getWidth());
@@ -526,21 +518,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             y = 0;
             h = Math.min(h, (int)virtualBounds.getHeight());
         }
-        mechW.setLocation(x, y);
-        mechW.setSize(w, h);
-        mechW.setResizable(true);
-        mechW.addWindowListener(this);
-        mechW.setFocusable(false);
-        mechW.setFocusableWindowState(false);
-        mechD = new UnitDisplay(this, controller);
-        mechD.addMechDisplayListener(bv);
-        mechW.add(mechD);
-        mechW.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                GUIP.hideUnitDisplay();
-            }
-        });
+
+        var unitDetailWindow = this.unitDetailPane.getWindow();
+        unitDetailWindow.setLocation(x, y);
+        unitDetailWindow.setSize(w, h);
+        unitDetailWindow.setResizable(true);
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
@@ -692,7 +674,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                mechW.setBounds(0, 0, mechD.getWidth(), mechD.getHeight());
+                this.unitDetailPane.getWindow().setLocation(0, 0);
+                this.unitDetailPane.getWindow().pack();
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -948,11 +931,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
 
         // also mech display
-        if ((mechW != null) && ((mechW.getSize().width * mechW.getSize().height) > 0)) {
-            GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
-            GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(mechW.getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(mechW.getSize().height);
+        var unitDetailWindow = this.unitDetailPane.getWindow();
+        if ((unitDetailWindow.getSize().width * unitDetailWindow.getSize().height) > 0) {
+            GUIPreferences.getInstance().setDisplayPosX(unitDetailWindow.getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(unitDetailWindow.getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(unitDetailWindow.getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(unitDetailWindow.getSize().height);
         }
 
         // also ruler display
@@ -1060,7 +1044,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                mechW.setVisible(false);
+                this.unitDetailPane.setVisible(false);
                 setMapVisible(false);
                 break;
             case PHASE_POINTBLANK_SHOT:
@@ -1365,8 +1349,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 mechD.displayEntity(es.get(0));
             }
         }
-       
-        mechW.setVisible(visible);
+
+        this.unitDetailPane.setVisible(visible);
     }
     
     private boolean fillPopup(Coords coords) {
@@ -1708,45 +1692,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
     }
-
-    //region Window Listeners
-    @Override
-    public void windowActivated(WindowEvent windowEvent) {
-        // ignored
-    }
-
-    @Override
-    public void windowClosed(WindowEvent windowEvent) {
-        // ignored
-    }
-
-    @Override
-    public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(mechW)) {
-            GUIP.hideUnitDisplay();
-        }
-    }
-
-    @Override
-    public void windowDeactivated(WindowEvent windowEvent) {
-        // ignored
-    }
-
-    @Override
-    public void windowDeiconified(WindowEvent windowEvent) {
-        // ignored
-    }
-
-    @Override
-    public void windowIconified(WindowEvent windowEvent) {
-        // ignored
-    }
-
-    @Override
-    public void windowOpened(WindowEvent windowEvent) {
-        // ignored
-    }
-    //endregion Window Listeners
 
     /**
      * @return the frame this client is displayed in

@@ -710,6 +710,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean isCommander = false;
 
     protected boolean isCarefulStanding = false;
+    
+    private boolean turnWasInterrupted = false;
 
     /**
      * a vector of currently active sensors that might be able to check range
@@ -6528,6 +6530,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setSelfDestructedThisTurn(false);
 
         setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        
+        setTurnInterrupted(false);
     }
 
     /**
@@ -7625,10 +7629,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
+        
+        // we check for bog down on entering a new hex or changing altitude
+        // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
+        // not susceptible to bog down as per getBogDownModifier,
+        // and not on pavement
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (step.getElevation() == 0) && !isPavementStep) {
+                && (step.getElevation() == curHex.floor()) && !isPavementStep) {
             roll.append(
                     new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
@@ -12331,6 +12340,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean isCarefulStand() {
         return false;
+    }
+    
+    public void setTurnInterrupted(boolean interrupted) {
+        turnWasInterrupted = interrupted;
+    }
+    
+    /**
+     * This should eventually be true for any situation where the entity's
+     * turn was interrupted, e.g. walking over a minefield
+     */
+    public boolean turnWasInterrupted() {
+        return turnWasInterrupted;
     }
 
     public Vector<Sensor> getSensors() {

@@ -111,3 +111,31 @@ XTRO Liao - Jihad
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+Built as a 'Mech-buster and DropShip attack craft, the Transit isn't fast or agile, but is easy to control and has had few loss of control accidents.
+</capabilities>
+
+<overview>
+A common sight in House Liao and Capellan Confederation air lances, the Transit has armor and weapons to spare.
+</overview>
+
+<deployment>
+This version replaces the standard weaponry with an experimental Improved Heavy Gauss Rifle and four ER Medium Lasers. The heat sinks were replaced by double strength models, and the Transit Glare is protected by ten tons of experimental Reflective Armor.system.
+</deployment>
+
+<manufacturer>
+Ceres Metals Industries
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Mujika Aerospace Type 18
+ENGINE:Rawlings 200 XL
+ARMOR:Mujika StarGlare Reflective
+COMMUNICATIONS:Endicott Type 28 Maser
+TARGETING:Dwyerson Mark XII
+</systemManufacturers>

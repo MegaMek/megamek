@@ -1495,7 +1495,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         if ((ce() instanceof Infantry) && ((Infantry) ce()).hasMicrolite()
                 && (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
-                && !cmd.contains(MoveStepType.FORWARDS)
+                && !cmd.contains(MoveStepType.FORWARDS) && !cmd.contains(MoveStepType.FLEE)
                 && cmd.getFinalElevation() > 0
                 && ce().getGame().getBoard().getHex(cmd.getFinalCoords())
                     .terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
@@ -4322,6 +4322,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().isPhaseSimultaneous()
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+            return;
+        }
+        
+        // if all our entities are actually done, don't start up the turn.
+        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
+                .stream().allMatch(entity -> entity.isDone())) {
             return;
         }
 

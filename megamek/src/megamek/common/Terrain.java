@@ -438,7 +438,7 @@ public class Terrain implements ITerrain, Serializable {
                 }
                 return 0;
             case Terrains.MUD:
-                if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+                if (moveMode.isHoverOrWiGE() || e.isNaval()) {
                     return 0;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
@@ -527,7 +527,8 @@ public class Terrain implements ITerrain, Serializable {
     }
 
     public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
-        if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+        // hovercraft and WiGE don't bog down. Naval units never touch the floor and thus don't bog down.
+        if (moveMode.isHoverOrWiGE() || moveMode.isNaval()) {
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
         switch (type) {

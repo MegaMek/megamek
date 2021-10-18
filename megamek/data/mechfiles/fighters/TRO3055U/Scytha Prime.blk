@@ -123,3 +123,27 @@ TRO 3055u - Succession Wars
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+The primary Scytha is a fearsome beast whose nose is packed with a mammoth Ultra AC/20, ER Large and ER Small Laser, supported by twin ER Large Lasers mounted under each wing. Paired aft-mounted ER Medium Lasers discourage pursuit, while six additional double heat sinks fight to keep the lasers firing and the meager two tons of autocannon reloads from cooking off.
+</deployment>
+
+<manufacturer>
+Complex VI, Falcon's Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Ironhold,Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>

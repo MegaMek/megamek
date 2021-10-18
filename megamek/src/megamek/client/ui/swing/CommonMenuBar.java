@@ -354,8 +354,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
             
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
-            boolean drawLabels = GUIP.getBoolean(GUIPreferences.DRAW_ENTITY_LABEL);
-            GUIP.setValue(GUIPreferences.DRAW_ENTITY_LABEL, !drawLabels);
+            GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
         }
         
         // Pass the action on to each of our listeners.

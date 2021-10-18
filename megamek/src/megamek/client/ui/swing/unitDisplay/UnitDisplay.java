@@ -286,6 +286,9 @@ public class UnitDisplay extends JPanel {
     public void displayEntity(Entity en) {
 
         String enName = en.getShortName();
+        if (clientgui != null) {
+            clientgui.getUnitDetailPane().setTitle(enName);
+        }
         switch (en.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 enName += " [CRIPPLED]";
@@ -303,7 +306,7 @@ public class UnitDisplay extends JPanel {
                 enName += " [UNDAMAGED]";
         }
         if (clientgui != null) {
-            clientgui.mechW.setTitle(enName);
+            clientgui.getUnitDetailPane().getWindow().setTitle(enName);
         }
 
         currentlyDisplaying = en;

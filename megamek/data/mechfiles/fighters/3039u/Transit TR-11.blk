@@ -104,3 +104,31 @@ TRO 3039 - Succession Wars
 50.0
 </tonnage>
 
+<capabilities>
+Built as a 'Mech-buster and DropShip attack craft, the Transit isn't fast or agile, but is easy to control and has had few loss of control accidents.
+</capabilities>
+
+<overview>
+A common sight in House Liao and Capellan Confederation air lances, the Transit has armor and weapons to spare.
+</overview>
+
+<deployment>
+Recon version, eliminating the four Medium Lasers to save weight for an enlarged cockpit and extra sensors. This version also has a second seat for an observer.
+</deployment>
+
+<manufacturer>
+Mujika Aerospace Technologies 
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Mujika Aerospace Type 18
+ENGINE:Rawlings 200
+ARMOR:Mujika AeroFiber 
+COMMUNICATIONS:Endicott Type 28 Maser
+TARGETING:Dwyerson Mark XII
+</systemManufacturers>
+

@@ -41,6 +41,9 @@ public class Minefield implements Serializable, Cloneable {
     public static final int CLEAR_NUMBER_INF_ENG_ACCIDENT = 3;
     public static final int CLEAR_NUMBER_BA_SWEEPER = 6;
     public static final int CLEAR_NUMBER_BA_SWEEPER_ACCIDENT = 2;
+    
+    public static final int BAP_DETECT_TARGET_PREPLACED = 10;
+    public static final int BAP_DETECT_TARGET_WEAPON_DELIVERED = 7;
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
@@ -69,6 +72,7 @@ public class Minefield implements Serializable, Cloneable {
     private boolean sea = false;
     private int depth = 0;
     private boolean detonated = false;
+    private boolean weaponDelivered = true;
 
     private Minefield() {
         //Creates a minefield
@@ -118,6 +122,7 @@ public class Minefield implements Serializable, Cloneable {
         mf.type = type;
         mf.sea = sea;
         mf.depth = depth;
+        mf.weaponDelivered = weaponDelivered;
 
         return mf;
     }
@@ -131,7 +136,8 @@ public class Minefield implements Serializable, Cloneable {
             return false;
         }
         final Minefield other = (Minefield) obj;
-        return (playerId == other.playerId) && Objects.equals(coords, other.coords) && (type == other.type);
+        return (playerId == other.playerId) && Objects.equals(coords, other.coords) && 
+                (type == other.type);
     }
     
     @Override
@@ -201,13 +207,28 @@ public class Minefield implements Serializable, Cloneable {
         return detonated;
     }
     
+    public void setWeaponDelivered(boolean b) {
+        this.weaponDelivered = b;
+    }
+    
+    public boolean isWeaponDelivered() {
+        return weaponDelivered;
+    }
+    
     /**
      * check for a reduction in density
      * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
      * @param direct - a <code>boolean</code> indicating whether this reduction was due to a direct explosion or
-     *                    a result of another minefield in the same hex explodin
+     *                 a result of another minefield in the same hex exploding
      */
     public void checkReduction(int bonus, boolean direct) {
+        // per TacOps:AR page 176, non-conventional minefields automatically reduce
+        if ((getType() != Minefield.TYPE_CONVENTIONAL) &&
+                (getType() != Minefield.TYPE_INFERNO)) {
+            setDensity(getDensity() - 5);
+            return;
+        }
+        
         boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
         if(getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;
@@ -217,4 +238,12 @@ public class Minefield implements Serializable, Cloneable {
         }    
     }
     
+    /**
+     * Gets the BAP detection target #
+     */
+    public int getBAPDetectionTarget() {
+        // per TacOps:AR 178, "pre-placed" minefields are detected on a 10+
+        // while weapon-delivered minefields are detected on a 7+
+        return isWeaponDelivered() ? BAP_DETECT_TARGET_WEAPON_DELIVERED : BAP_DETECT_TARGET_PREPLACED;
+    }
 }

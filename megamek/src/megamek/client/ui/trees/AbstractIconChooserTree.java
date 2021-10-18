@@ -18,64 +18,49 @@
  */
 package megamek.client.ui.trees;
 
-import megamek.MegaMek;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Map;
 
 public abstract class AbstractIconChooserTree extends JTree {
     //region Constructors
     protected AbstractIconChooserTree() {
+        this(true);
+    }
+
+    protected AbstractIconChooserTree(final boolean initialize) {
         super();
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        setModel(createTreeModel());
+
+        if (initialize) {
+            setModel(createTreeModel());
+        }
     }
     //endregion Constructors
 
     //region Initialization
     protected abstract DefaultTreeModel createTreeModel();
 
-    /**
-     * This recursive method is a hack: DirectoryItems flattens the directory
-     * structure, but it provides useful functionality, so this method will
-     * reconstruct the directory structure for the JTree.
-     *
-     * @param node the node to add the category beneath
-     * @param names the categories to add to the tree
-     */
-    protected void addCategoryToTree(final DefaultMutableTreeNode node, final String... names) {
-        // Shouldn't happen
-        if (names.length == 0) {
-            return;
+    protected DefaultTreeModel createTreeModel(final DefaultMutableTreeNode root,
+                                               final @Nullable AbstractDirectory directory) {
+        if (directory != null) {
+            recursivelyAddToRoot(root, directory);
         }
 
-        boolean matched = false;
-        for (Enumeration<?> e = node.children(); e.hasMoreElements();) {
-            final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) e.nextElement();
-            final String nodeName = (String) childNode.getUserObject();
-            if (nodeName.equals(names[0])) {
-                if (names.length > 1) {
-                    addCategoryToTree(childNode, Arrays.copyOfRange(names, 1, names.length));
-                    matched = true;
-                } else {
-                    // I guess we're done? This shouldn't happen, as there shouldn't be duplicates
-                    MegaMek.getLogger().error("Duplicate categories found in tree");
-                }
-            }
-        }
+        return new DefaultTreeModel(root);
+    }
 
-        // If we didn't match, lets create nodes for each name
-        if (!matched) {
-            DefaultMutableTreeNode root = node;
-            for (String name : names) {
-                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(name);
-                root.add(newNode);
-                root = newNode;
-            }
+    private void recursivelyAddToRoot(final DefaultMutableTreeNode root,
+                                      final AbstractDirectory directory) {
+        for (final Map.Entry<String, AbstractDirectory> category : directory.getCategories().entrySet()) {
+            final DefaultMutableTreeNode node = new DefaultMutableTreeNode(category.getKey());
+            recursivelyAddToRoot(node, category.getValue());
+            root.add(node);
         }
     }
     //endregion Initialization

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -29,7 +29,7 @@ A
 </originalBuildYear>
 
 <type>
-Clan Level 2
+Clan Level 4
 </type>
 
 <motion_type>
@@ -112,11 +112,13 @@ CLStreakSRM6:OMNI
 </Wings Equipment>
 
 <Fuselage Equipment>
-Clan Ammo LRM-20:OMNI
-Clan Ammo SRM-6:OMNI
 ISNarc Pods:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo SRM-6:OMNI
+Clan Ammo SRM-6:OMNI
+Clan Ammo SRM-6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLCASE
 </Fuselage Equipment>
@@ -128,3 +130,38 @@ TRO 3055u - Succession Wars
 <tonnage>
 90.0
 </tonnage>
+
+<capabilities>
+While its fourteen tons of Ironhold Series III Ferro-Aluminum armor is below average for a ninety-ton fighter, even with the use of massive 360 XL Engine, four tons of fuel and twenty Double Heat Sinks, this choice give the Scytha a whopping 42.5 tons of pod space. Fast enough to bring its weapons into optimum range, the design is highly popular among the Falcons, who rarely share the design with others.
+</capabilities>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+A missile boat adaptable for short and long ranges, the A Variant is built around its Narc Missile Beacon in its nose, with LRM-20 launcher mounted beside it. Each wing carries a further LRM-20, a SRM-6 and ER Large Laser, with a single Streak SRM-6 launcher mounted aft. Four added double heat sinks fight to prevent the single ton each of Narc, Streak, SRM and three tons of long range reloads from exploding before it must withdraw to rearm.
+</deployment>
+
+<manufacturer>
+Complex VI, Falcon's Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Ironhold,Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>
+
+<notes>
+This unit is intentially build per the TRO which makees in 2 tons overweight.
+</notes>
+
+
+

@@ -115,3 +115,27 @@ XTRO Clans - Jihad
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+This experimental version was created by Clan Snow Raven. Apparently created in a refit facility on Quatre Belle, the Scytha-XR trades its OmniFighter status for a new fixed weapon load. The nose carries a Rotary AC/5 and Large Pulse Laser while each wing carries an Improved Heavy Large Laser. To discourage pursuit, each Scytha-XR carries a pair of ER Medium Lasers firing to the rear. This refit can hang in combat longer since it mounts twenty-six double heat sinks and is protected by more than twenty tons of Ferro-Lamellor armor.
+</deployment>
+
+<manufacturer>
+Crest Foundries (Refit)
+</manufacturer>
+
+<primaryFactory>
+Quatre Belle
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>

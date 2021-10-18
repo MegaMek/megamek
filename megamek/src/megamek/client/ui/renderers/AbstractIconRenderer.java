@@ -83,7 +83,7 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
     //endregion Initialization
 
     /**
-     * Sets the image based on the passed category and name from the DirectoryItems that the list
+     * Sets the image based on the passed category and name from the AbstractDirectory that the list
      * currently displays.
      */
     private void setImage(final AbstractIcon icon) {

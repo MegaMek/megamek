@@ -47,6 +47,7 @@ VERSION HISTORY:
 + Issue #2207: Prevent additional MP cost and bog down nagging when moving along water surface while the bottom terrain costs extra MP/causes bog down
 + Issue #3015: Update tonnage display in the lobby table to display exact infantry tonnage; update player BV display formatting according to locale
 + PR #3110: Dockable Unit Detail
++ PR #3210: Base Components: Client Settings Dialog Swapover 
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

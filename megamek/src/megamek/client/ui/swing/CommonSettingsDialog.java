@@ -269,8 +269,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     @Override
     protected Container createCenterPane() {
         JTabbedPane panTabs = new JTabbedPane();
-        setLayout(new BorderLayout());
-        getContentPane().add(panTabs, BorderLayout.CENTER);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -293,7 +291,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         panTabs.add("Button Order", getButtonOrderPanel());
         panTabs.add("Advanced", advancedSettingsPane);
 
-        pack();
         return panTabs;
     }
 

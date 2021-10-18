@@ -1022,6 +1022,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB:
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
             case GUIPreferences.SHADOWMAP:
+            case GUIPreferences.ANTIALIASING:
                 clearHexImageCache();
                 repaint();
                 break;

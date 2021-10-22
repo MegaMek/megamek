@@ -4833,7 +4833,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
                     } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && 
-                            ((m != null) && m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                            ((m != null) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2())))) {
                         hits++;
                     }
                 }

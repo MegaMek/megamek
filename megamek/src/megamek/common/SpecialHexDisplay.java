@@ -251,13 +251,13 @@ public class SpecialHexDisplay implements Serializable {
      * @param curRound
      * @return
      */
-    public boolean drawNow(Game.Phase phase, int curRound,
-            IPlayer playerChecking) {
+    public boolean drawNow(Game.GamePhase phase, int curRound,
+                           IPlayer playerChecking) {
         boolean shouldDisplay = thisRound(curRound)
                 || (pastRound(curRound) && type.drawBefore())
                 || (futureRound(curRound) && type.drawAfter());
 
-        if (phase.isBefore(Game.Phase.PHASE_OFFBOARD)
+        if (phase.isBefore(Game.GamePhase.OFFBOARD)
                 && ((type == Type.ARTILLERY_TARGET) 
                         || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);

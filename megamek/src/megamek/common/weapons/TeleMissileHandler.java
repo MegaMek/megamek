@@ -116,7 +116,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
         server.deployTeleMissile(ae, wtype, getBayAmmoType(), ae.getEquipmentNum(weapon),
                 getCapMisMod(), calcBayDamageAndHeat(), missileArmor, vPhaseReport);

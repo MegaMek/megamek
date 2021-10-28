@@ -71,7 +71,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                systemEvent("Phase changed it is now " + Game.Phase.getDisplayableName(e.getNewPhase()) + ".");
+                systemEvent("Phase changed it is now " + e.getNewPhase() + ".");
                 if (client.phaseReport != null) {
                     systemEvent(cleanHtml(client.phaseReport));
                 }

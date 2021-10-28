@@ -32,11 +32,11 @@ import megamek.common.actions.WeaponAttackAction;
 public interface AttackHandler {
 
     // Does it care?
-    public boolean cares(Game.Phase phase);
+    public boolean cares(Game.GamePhase phase);
 
     // If it cares, call this. If it needs to remain in queue, returns true,
     // else false.
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReports);
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReports);
 
     // Frankly, wish I could get rid of this, but I think certain things
     // occasionally need to know the firer.

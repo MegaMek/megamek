@@ -61,13 +61,13 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {
-            if (game.getPhase() == Game.Phase.PHASE_FIRING) {
+            if (game.getPhase() == Game.GamePhase.FIRING) {
                 return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
                         server);
             }
             return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game,
                     server);
-        } else if (game.getPhase() == Game.Phase.PHASE_FIRING) {
+        } else if (game.getPhase() == Game.GamePhase.FIRING) {
             return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
                     server);
         } else {

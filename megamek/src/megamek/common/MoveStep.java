@@ -22,18 +22,17 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import megamek.common.Game.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.MMLogger;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeMap;
+import java.util.Vector;
 
 /**
  * A single step in the entity's movement.  Since the path planner uses shallow
@@ -3191,7 +3190,8 @@ public class MoveStep implements Serializable {
         // Hidden units, and activating hidden units cannot move 
         // unless it is the movement phase and the plan is to activate then
         // if we're in this method, we're implicitly in the movement phase
-        if (entity.isHidden() || (entity.isHiddenActivating() && (entity.hiddenActivationPhase != Phase.PHASE_MOVEMENT))) {
+        if (entity.isHidden()
+                || (!entity.getHiddenActivationPhase().isUnknown() && !entity.getHiddenActivationPhase().isMovement())) {
             return false;
         }
 

@@ -63,7 +63,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
         ae.setFiredTsempThisTurn(true);

@@ -1780,8 +1780,8 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isEligibleFor(Game.Phase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != Game.Phase.PHASE_PHYSICAL)) {
+    public boolean isEligibleFor(Game.GamePhase phase) {
+        if ((turnsLayingExplosives > 0) && (phase != Game.GamePhase.PHYSICAL)) {
             return false;
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {

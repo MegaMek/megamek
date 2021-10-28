@@ -3,7 +3,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.GameListener;
@@ -104,7 +104,7 @@ class FovHighlightingAndDarkening {
         boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
 
         if ((darken || highlight)
-                && (this.boardView1.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                && (this.boardView1.game.getPhase() == GamePhase.MOVEMENT)) {
 
             final int pad = 0;
             final int lw = 7;

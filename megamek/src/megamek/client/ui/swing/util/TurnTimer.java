@@ -118,10 +118,10 @@ public class TurnTimer {
         Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
         // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options
         if (timer.intValue() > 0 ) {
-            Game.Phase phase = client.getGame().getPhase();
+            Game.GamePhase phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase == Game.Phase.PHASE_MOVEMENT || phase == Game.Phase.PHASE_FIRING || phase == Game.Phase.PHASE_PHYSICAL || phase == Game.Phase.PHASE_TARGETING;
+            return phase == Game.GamePhase.MOVEMENT || phase == Game.GamePhase.FIRING || phase == Game.GamePhase.PHYSICAL || phase == Game.GamePhase.TARGETING;
         }
         return false;
     }

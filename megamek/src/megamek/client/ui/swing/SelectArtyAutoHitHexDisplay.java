@@ -15,7 +15,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -288,10 +287,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
+                && (clientgui.getClient().getGame().getPhase() != Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }

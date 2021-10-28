@@ -126,7 +126,7 @@ public class BayWeaponHandler extends WeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
 
         if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
@@ -361,7 +361,7 @@ public class BayWeaponHandler extends WeaponHandler {
         return 0;
     }
 
-    public boolean handleAeroSanity(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handleAeroSanity(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

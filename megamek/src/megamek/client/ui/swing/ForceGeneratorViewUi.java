@@ -55,7 +55,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.UnitType;
 import megamek.common.enums.SkillLevel;
 
@@ -241,8 +241,8 @@ public class ForceGeneratorViewUi {
         }
         for (Entity e : modelChosen.allEntities()) {
             e.setOwner(c.getLocalPlayer());
-            if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
-                e.setDeployRound(c.getGame().getRoundCount()+1);
+            if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+                e.setDeployRound(c.getGame().getRoundCount() + 1);
                 e.setGame(c.getGame());
                 // Set these to true, otherwise units reinforced in
                 // the movement turn are considered selectable
@@ -433,7 +433,7 @@ public class ForceGeneratorViewUi {
         @Override
         public Object getChild(Object parent, int index) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().get(index);
+                return ((ForceDescriptor) parent).getAllChildren().get(index);
             }
             return null;
         }
@@ -441,7 +441,7 @@ public class ForceGeneratorViewUi {
         @Override
         public int getChildCount(Object parent) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().size();
+                return ((ForceDescriptor) parent).getAllChildren().size();
             }
             return 0;
         }
@@ -449,7 +449,7 @@ public class ForceGeneratorViewUi {
         @Override
         public int getIndexOfChild(Object parent, Object child) {
             if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor)parent).getAllChildren().indexOf(child);
+                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
             }
             return 0;
         }
@@ -464,7 +464,7 @@ public class ForceGeneratorViewUi {
             return (getChildCount(node) == 0)
                     || ((node instanceof ForceDescriptor)
                             && (((ForceDescriptor) node).getEschelon() != null)
-                            && (((ForceDescriptor)node).getEschelon() == 0));
+                            && (((ForceDescriptor) node).getEschelon() == 0));
         }
 
         @Override

@@ -63,7 +63,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         
         if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
@@ -490,7 +490,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * Insert any additional attacks that should occur before this attack
      */
     @Override
-    protected void insertAttacks(Game.Phase phase, Vector<Report> vPhaseReport) {
+    protected void insertAttacks(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         // If there are no other missiles in the bay that aren't inserted
         // attacks, there will be a spurious "no damage" report
         if (attackValue < 1) {
@@ -544,7 +544,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
     
     @Override
-    public boolean handleAeroSanity(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handleAeroSanity(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

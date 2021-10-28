@@ -20,7 +20,6 @@ package megamek.server;
 
 import java.util.*;
 import megamek.common.*;
-import megamek.common.Game.Phase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
 

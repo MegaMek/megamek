@@ -495,7 +495,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == Game.Phase.PHASE_FIRING)
+        if ((game.getPhase() == Game.GamePhase.FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setUnitDisplayVisible(false);
@@ -512,7 +512,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
-        clientgui.switchPanel(Game.Phase.PHASE_MOVEMENT);
+        clientgui.switchPanel(Game.GamePhase.MOVEMENT);
     }
 
     /**

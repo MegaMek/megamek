@@ -82,9 +82,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(Game.Phase phase) {
-        if ((phase == Game.Phase.PHASE_OFFBOARD)
-                || (phase == Game.Phase.PHASE_TARGETING)) {
+    public boolean cares(Game.GamePhase phase) {
+        if ((phase == Game.GamePhase.OFFBOARD)
+                || (phase == Game.GamePhase.TARGETING)) {
             return true;
         }
         return false;
@@ -96,13 +96,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == Game.Phase.PHASE_TARGETING) {
+        if (phase == Game.GamePhase.TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself

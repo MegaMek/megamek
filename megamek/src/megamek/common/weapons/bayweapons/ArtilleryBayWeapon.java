@@ -77,13 +77,13 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             break;
         }
         if (useHoming) {
-            if (game.getPhase() == Game.Phase.PHASE_FIRING) {
+            if (game.getPhase() == Game.GamePhase.FIRING) {
                 return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa,
                         game, server);
             }
             return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa,
                     game, server);
-        } else if (game.getPhase() == Game.Phase.PHASE_FIRING) {
+        } else if (game.getPhase() == Game.GamePhase.FIRING) {
             return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game,
                     server);
         } else {

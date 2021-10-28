@@ -94,7 +94,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;

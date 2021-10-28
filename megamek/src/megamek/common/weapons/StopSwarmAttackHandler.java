@@ -52,7 +52,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         Entity entityTarget = (Entity) target;
         // ... but only as their *only* attack action.
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

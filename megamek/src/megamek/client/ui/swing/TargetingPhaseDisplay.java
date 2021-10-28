@@ -51,7 +51,7 @@ import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -132,7 +132,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     private boolean shiftheld;
 
-    private final Game.Phase phase;
+    private final GamePhase phase;
 
     private Entity[] visibleTargets;
 
@@ -144,8 +144,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         super(clientgui);
-        phase = offboard ? Game.Phase.PHASE_OFFBOARD
-                : Game.Phase.PHASE_TARGETING;
+        phase = offboard ? GamePhase.OFFBOARD
+                : GamePhase.TARGETING;
         shiftheld = false;
 
         // fire
@@ -1230,7 +1230,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
-            } else if (phase == Game.Phase.PHASE_TARGETING) {
+            } else if (phase == GamePhase.TARGETING) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
@@ -1317,13 +1317,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
@@ -1553,7 +1553,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the arty targeting phase
-        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_TARGETING)) return;
+        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.TARGETING)) return;
         
         clientgui.bv.fieldofFireUnit = unit;
         clientgui.bv.fieldofFireRanges = ranges;

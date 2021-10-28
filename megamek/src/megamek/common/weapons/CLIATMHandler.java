@@ -477,7 +477,7 @@ public class CLIATMHandler extends ATMHandler {
      */
 
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
             if (!cares(phase)) {

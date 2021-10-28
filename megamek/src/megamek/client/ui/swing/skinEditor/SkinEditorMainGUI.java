@@ -72,7 +72,6 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -281,7 +280,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
             die();
         }
-        switchPanel(Game.Phase.PHASE_MOVEMENT);
+        switchPanel(Game.GamePhase.MOVEMENT);
         frame.validate();
 
         // This is a horrible hack
@@ -462,7 +461,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public void switchPanel(Game.Phase phase) {
+    public void switchPanel(Game.GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -483,37 +482,37 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         // Handle phase-specific items.
         switch (phase) {
-            case PHASE_LOUNGE:
+            case LOUNGE:
                 // reset old report tabs and images, if any
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
+                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
                 //ChatLounge cl = (ChatLounge) phaseComponents.get(
-                //        String.valueOf(Game.Phase.PHASE_LOUNGE));
+                //        String.valueOf(Game.Phase.LOUNGE));
                 //cb.setDoneButton(cl.butDone);
                 //cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 break;
-            case PHASE_DEPLOY_MINEFIELDS:
-            case PHASE_DEPLOYMENT:
-            case PHASE_TARGETING:
-            case PHASE_MOVEMENT:
-            case PHASE_OFFBOARD:
-            case PHASE_FIRING:
-            case PHASE_PHYSICAL:
+            case DEPLOY_MINEFIELDS:
+            case DEPLOYMENT:
+            case TARGETING:
+            case MOVEMENT:
+            case OFFBOARD:
+            case FIRING:
+            case PHYSICAL:
                 break;
-            case PHASE_INITIATIVE_REPORT:
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END_REPORT:
-            case PHASE_VICTORY:
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
+                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
                 //cb.setDoneButton(rD.butDone);
                 //rD.add(cb.getComponent(), GBC.eol().fill(
                 //        GridBagConstraints.HORIZONTAL));
@@ -550,40 +549,40 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public void updateButtonPanel(Game.Phase phase) {
+    public void updateButtonPanel(Game.GamePhase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
         }
     }
 
-    private JComponent initializePanel(Game.Phase phase) {
+    private JComponent initializePanel(Game.GamePhase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
         JComponent component;
         String secondary = null;
         String main;
         switch (phase) {
-            case PHASE_LOUNGE:
+            case LOUNGE:
                 component = new ChatLounge(null);
                 main = "ChatLounge"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_STARTING_SCENARIO:
+            case STARTING_SCENARIO:
                 component = new JLabel(
                         Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
                 main = "JLabel-StartingScenario"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_EXCHANGE:
+            case EXCHANGE:
                 component = new JLabel(
                         Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "JLabel-Exchange"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
-            case PHASE_SET_ARTYAUTOHITHEXES:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
@@ -594,7 +593,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_DEPLOY_MINEFIELDS:
+            case DEPLOY_MINEFIELDS:
                 component = new DeployMinefieldDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
@@ -605,7 +604,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_DEPLOYMENT:
+            case DEPLOYMENT:
                 component = new DeploymentDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
@@ -616,7 +615,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_TARGETING:
+            case TARGETING:
                 component = new TargetingPhaseDisplay(null, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -628,7 +627,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_MOVEMENT:
+            case MOVEMENT:
                 component = new MovementDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "MovementDisplay"; //$NON-NLS-1$
@@ -639,7 +638,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_OFFBOARD:
+            case OFFBOARD:
                 component = new TargetingPhaseDisplay(null, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -651,7 +650,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_FIRING:
+            case FIRING:
                 component = new FiringDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
@@ -662,7 +661,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_PHYSICAL:
+            case PHYSICAL:
                 component = new PhysicalDisplay(null);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "PhysicalDisplay"; //$NON-NLS-1$
@@ -673,26 +672,26 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                 currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
-            case PHASE_INITIATIVE_REPORT:
+            case INITIATIVE_REPORT:
                 component = new ReportDisplay(null);
                 main = "ReportDisplay"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(main, component);
                 break;
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-            case PHASE_END_REPORT:
-            case PHASE_VICTORY:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
                 component = phaseComponents.get(String
-                        .valueOf(Game.Phase.PHASE_INITIATIVE_REPORT));
+                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(
-                            Game.Phase.PHASE_INITIATIVE_REPORT);
+                            Game.GamePhase.INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;

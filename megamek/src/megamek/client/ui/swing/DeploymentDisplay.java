@@ -222,7 +222,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         final Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((Game.Phase.PHASE_DEPLOYMENT == game.getPhase())
+        if ((Game.GamePhase.DEPLOYMENT == game.getPhase())
                 && (null != next)
                 && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
@@ -362,12 +362,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // On simultaneous phases, each player ending their turn will generalte a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (game.isPhaseSimultaneous()
+        if (game.getPhase().isSimultaneous(game)
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (game.getTurnIndex() != 0)) {
             return;
         }
-        if (game.getPhase() != Game.Phase.PHASE_DEPLOYMENT) {
+        if (game.getPhase() != Game.GamePhase.DEPLOYMENT) {
             // ignore
             return;
         }
@@ -395,14 +395,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.bv.markDeploymentHexesFor(null);
         
        // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.LOUNGE) {
             endMyTurn();
         }
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_DEPLOYMENT) {
+        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.DEPLOYMENT) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
         }
     }

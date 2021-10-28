@@ -234,7 +234,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if((unit.game.getPhase() != Game.Phase.PHASE_DEPLOYMENT) && (unit.game.getPhase() != Game.Phase.PHASE_LOUNGE)) {
+        if((unit.game.getPhase() != Game.GamePhase.DEPLOYMENT) && (unit.game.getPhase() != Game.GamePhase.LOUNGE)) {
                 loadedThisTurn += 1;
         }
 

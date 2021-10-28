@@ -34,7 +34,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 import megamek.common.KeyBindParser;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -113,7 +113,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The cached image for this Display. */
     Image displayImage;
     /** The current game phase. */
-    Phase currentPhase;
+    GamePhase currentPhase;
     /** True while fading in this overlay. */
     private boolean fadingIn = false;
     /** True while fading out this overlay. */
@@ -212,15 +212,16 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
                 List<KeyCommandBind> listForPhase = new ArrayList<>();
                 switch (currentPhase) {
-                case PHASE_MOVEMENT:
-                    listForPhase = BINDS_MOVE;
-                    break;
-                case PHASE_FIRING:
-                case PHASE_OFFBOARD:
-                case PHASE_PHYSICAL:
-                    listForPhase = BINDS_FIRE;
-                    break;
-                default:
+                    case MOVEMENT:
+                        listForPhase = BINDS_MOVE;
+                        break;
+                    case FIRING:
+                    case OFFBOARD:
+                    case PHYSICAL:
+                        listForPhase = BINDS_FIRE;
+                        break;
+                    default:
+                        break;
                 }
 
                 result.addAll(convertToStrings(listForPhase));

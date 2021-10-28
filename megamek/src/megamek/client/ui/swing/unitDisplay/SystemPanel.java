@@ -491,7 +491,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
                                 && (clientgui.getClient().getGame()
-                                        .getPhase() != Game.Phase.PHASE_FIRING)) {
+                                        .getPhase() != Game.GamePhase.FIRING)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase"));//$NON-NLS-1$
                             return;
@@ -500,7 +500,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
                                 && (clientgui.getClient().getGame().getPhase()
-                                != Game.Phase.PHASE_PHYSICAL)) {
+                                != Game.GamePhase.PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase"));//$NON-NLS-1$
                             return;
@@ -508,7 +508,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_MOVEMENT)) {
+                                && (clientgui.getClient().getGame().getPhase() != Game.GamePhase.MOVEMENT)) {
                             clientgui.systemMessage(Messages.getString(
                                                     "MechDisplay.RetractableBladeModePhase"));//$NON-NLS-1$
                             return;
@@ -539,7 +539,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             this.unitDisplay.wPan.selectWeapon(weap);
                             // displaySlots();
                         } else {
-                            if (Game.Phase.PHASE_DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
+                            if (Game.GamePhase.DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",
                                         m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
@@ -810,8 +810,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
-                        && (client.getGame().getPhase() != Game.Phase.PHASE_DEPLOYMENT)
-                        && (client.getGame().getPhase() != Game.Phase.PHASE_MOVEMENT)
+                        && (client.getGame().getPhase() != Game.GamePhase.DEPLOYMENT)
+                        && (client.getGame().getPhase() != Game.GamePhase.MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()

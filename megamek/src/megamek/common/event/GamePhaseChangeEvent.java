@@ -29,12 +29,12 @@ public class GamePhaseChangeEvent extends GameEvent {
     /**
      * Old phase
      */
-    private Game.Phase oldPhase;
+    private Game.GamePhase oldPhase;
 
     /**
      * new phase
      */
-    private Game.Phase newPhase;
+    private Game.GamePhase newPhase;
 
     /**
      * Constructs new <code>GamePhaseChangeEvent</code>
@@ -43,7 +43,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * @param oldPhase
      * @param newPhase
      */
-    public GamePhaseChangeEvent(Object source, Game.Phase oldPhase, Game.Phase newPhase) {
+    public GamePhaseChangeEvent(Object source, Game.GamePhase oldPhase, Game.GamePhase newPhase) {
         super(source);
         this.oldPhase = oldPhase;
         this.newPhase = newPhase;
@@ -54,7 +54,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * 
      * @return the newPhase.
      */
-    public Game.Phase getNewPhase() {
+    public Game.GamePhase getNewPhase() {
         return newPhase;
     }
 
@@ -63,7 +63,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * 
      * @return the oldPhase.
      */
-    public Game.Phase getOldPhase() {
+    public Game.GamePhase getOldPhase() {
         return oldPhase;
     }
 

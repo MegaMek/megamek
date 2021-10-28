@@ -408,17 +408,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isArtilleryDirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
                 (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
-                && (game.getPhase() == Game.Phase.PHASE_FIRING);
+                && (game.getPhase() == Game.GamePhase.FIRING);
         
         boolean isArtilleryIndirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
                 (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
-                && ((game.getPhase() == Game.Phase.PHASE_TARGETING)
-                        || (game.getPhase() == Game.Phase.PHASE_OFFBOARD));
+                && ((game.getPhase() == Game.GamePhase.TARGETING)
+                        || (game.getPhase() == Game.GamePhase.OFFBOARD));
         
         boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode())
-                            && ((game.getPhase() == Game.Phase.PHASE_TARGETING)
-                                    || (game.getPhase() == Game.Phase.PHASE_FIRING));
+                            && ((game.getPhase() == Game.GamePhase.TARGETING)
+                                    || (game.getPhase() == Game.GamePhase.FIRING));
         
         boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)
                         || (wtype instanceof CapitalMissileWeapon
@@ -1336,15 +1336,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Phase Reasons
 
         // Only bearings-only capital missiles and indirect fire artillery can be fired in the targeting phase
-        if ((game.getPhase() == Game.Phase.PHASE_TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
+        if ((game.getPhase() == Game.GamePhase.TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase
-        if ((game.getPhase() == Game.Phase.PHASE_OFFBOARD) && !isTAG) {
+        if ((game.getPhase() == Game.GamePhase.OFFBOARD) && !isTAG) {
             return Messages.getString("WeaponAttackAction.OnlyTagInOffboard");
         }
         // TAG can't be fired in any phase but offboard
-        if ((game.getPhase() != Game.Phase.PHASE_OFFBOARD) && isTAG) {
+        if ((game.getPhase() != Game.GamePhase.OFFBOARD) && isTAG) {
             return Messages.getString("WeaponAttackAction.TagOnlyInOffboard");
         }
         
@@ -2132,7 +2132,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Can't fire in bearings-only mode within direct-fire range (50 hexes)
-                if (game.getPhase() == Game.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                if (game.getPhase() == Game.GamePhase.TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                     return Messages.getString("WeaponAttackAction.BoMissileMinRange");
                 } 
                 // Can't target anything but hexes
@@ -2622,7 +2622,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Capital Missiles in bearings-only mode target hexes and always hit them
         if (isBearingsOnlyMissile) {
-            if (game.getPhase() == Game.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            if (game.getPhase() == Game.GamePhase.TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 return Messages.getString("WeaponAttackAction.BoMissileHex");
             }
         }

@@ -24,7 +24,6 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -1629,7 +1628,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();

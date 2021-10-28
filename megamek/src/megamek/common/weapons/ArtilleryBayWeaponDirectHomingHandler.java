@@ -50,8 +50,8 @@ public class ArtilleryBayWeaponDirectHomingHandler extends
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(Game.Phase phase) {
-        if (phase == Game.Phase.PHASE_FIRING) {
+    public boolean cares(Game.GamePhase phase) {
+        if (phase == Game.GamePhase.FIRING) {
             return true;
         }
         return false;

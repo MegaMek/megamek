@@ -129,10 +129,10 @@ public abstract class BotClient extends Client {
             public void gameTurnChange(GameTurnChangeEvent e) {
                 // On simultaneous phases, each player ending their turn will generate a turn change
                 // We want to ignore turns from other players and only listen to events we generated
-                boolean ignoreSimTurn = game.isPhaseSimultaneous() && (e.getPreviousPlayerId() != localPlayerNumber)
+                boolean ignoreSimTurn = getGame().getPhase().isSimultaneous(getGame())
+                        && (e.getPreviousPlayerId() != localPlayerNumber)
                         && calculatedTurnThisPhase;
 
-                
                 if (isMyTurn() && !ignoreSimTurn) {
                     calculatedTurnThisPhase = true;
                     // Run bot's turn processing in a separate thread.
@@ -153,7 +153,7 @@ public abstract class BotClient extends Client {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
-                if (e.getOldPhase().isPhaseSimultaneous(game)) {
+                if (e.getOldPhase().isSimultaneous(getGame())) {
                     int numOwnedEntities = game.getEntitiesOwnedBy(getLocalPlayer());
                     System.out.println("BotClient calculated turns, " + getName() + " phase " + e.getOldPhase()
                             + " " + calculatedTurnsThisPhase + "/" + numOwnedEntities);
@@ -163,7 +163,7 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == Game.Phase.PHASE_INITIATIVE_REPORT) {
+                if (game.getPhase() == Game.GamePhase.INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -390,18 +390,18 @@ public abstract class BotClient extends Client {
 
     // TODO: move initMovement to be called on phase end
     @Override
-    public void changePhase(Game.Phase phase) {
+    public void changePhase(Game.GamePhase phase) {
         super.changePhase(phase);
 
         try {
             switch (phase) {
-                case PHASE_LOUNGE:
+                case LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
                     break;
-                case PHASE_DEPLOYMENT:
+                case DEPLOYMENT:
                     initialize();
                     break;
-                case PHASE_MOVEMENT:
+                case MOVEMENT:
                     /* Do not uncomment this. It is so that bots stick around till end of game
                      * for proper salvage. If the bot dies out here, the salvage for all but the
                      * last bot disappears for some reason
@@ -426,30 +426,30 @@ public abstract class BotClient extends Client {
                     }
                     initMovement();
                     break;
-                case PHASE_FIRING:
+                case FIRING:
                     initFiring();
                     break;
-                case PHASE_PHYSICAL:
+                case PHYSICAL:
                     break;
-                case PHASE_TARGETING:
+                case TARGETING:
                     initTargeting();
                     break;
-                case PHASE_END_REPORT:
+                case END_REPORT:
                     // Check if stealth armor should be switched on/off
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
                     endOfTurnProcessing();
                     // intentional fallthrough: all reports must click "done", otherwise the game never moves on.
-                case PHASE_TARGETING_REPORT:
-                case PHASE_INITIATIVE_REPORT:
-                case PHASE_MOVEMENT_REPORT:
-                case PHASE_OFFBOARD_REPORT:
-                case PHASE_FIRING_REPORT:
-                case PHASE_PHYSICAL_REPORT:
+                case TARGETING_REPORT:
+                case INITIATIVE_REPORT:
+                case MOVEMENT_REPORT:
+                case OFFBOARD_REPORT:
+                case FIRING_REPORT:
+                case PHYSICAL_REPORT:
                     sendDone(true);
                     break;
-                case PHASE_VICTORY:
+                case VICTORY:
                     runEndGame();
                     sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
                     die();
@@ -544,7 +544,7 @@ public abstract class BotClient extends Client {
         currentTurnFriendlyEntities = null;
         
         try {
-            if (game.getPhase() == Game.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == Game.GamePhase.MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
@@ -560,9 +560,9 @@ public abstract class BotClient extends Client {
                     }
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == Game.Phase.PHASE_FIRING) {
+            } else if (game.getPhase() == Game.GamePhase.FIRING) {
                 calculateFiringTurn();
-            } else if (game.getPhase() == Game.Phase.PHASE_PHYSICAL) {
+            } else if (game.getPhase() == Game.GamePhase.PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
@@ -572,21 +572,21 @@ public abstract class BotClient extends Client {
                     sendAttackData(game.getFirstEntityNum(getMyTurn()),
                                    new Vector<>(0));
                 }
-            } else if (game.getPhase() == Game.Phase.PHASE_DEPLOYMENT) {
+            } else if (game.getPhase() == Game.GamePhase.DEPLOYMENT) {
                 calculateDeployment();
-            } else if (game.getPhase() == Game.Phase.PHASE_DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase() == Game.GamePhase.DEPLOY_MINEFIELDS) {
                 Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (Minefield mine : mines) {
                     game.addMinefield(mine);
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
-            } else if (game.getPhase() == Game.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+            } else if (game.getPhase() == Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if ((game.getPhase() == Game.Phase.PHASE_TARGETING)
-                       || (game.getPhase() == Game.Phase.PHASE_OFFBOARD)) {
+            } else if ((game.getPhase() == Game.GamePhase.TARGETING)
+                       || (game.getPhase() == Game.GamePhase.OFFBOARD)) {
                 // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
             }

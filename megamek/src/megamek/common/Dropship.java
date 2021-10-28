@@ -1782,7 +1782,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return (isAirborne() || isSpaceborne() || game.getPhase() == Game.Phase.PHASE_LOUNGE);
+        return (isAirborne() || isSpaceborne() || game.getPhase() == Game.GamePhase.LOUNGE);
     }
 
     @Override

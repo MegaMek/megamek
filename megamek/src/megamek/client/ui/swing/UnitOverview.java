@@ -172,13 +172,10 @@ public class UnitOverview implements IDisplayable {
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
             Game game = clientgui.getClient().getGame();
-            GameTurn turn;
-            if (game.isPhaseSimultaneous()) {
-                turn = game.getTurnForPlayer(clientgui.getClient()
-                        .getLocalPlayer().getId());
-            } else {
-                turn = game.getTurn();
-            }
+            GameTurn turn = game.getPhase().isSimultaneous(game)
+                    ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
+                    : game.getTurn();
+
             if ((turn != null) && turn.isValidEntity(e,game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(

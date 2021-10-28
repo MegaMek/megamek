@@ -471,8 +471,8 @@ public class PacketTool extends Frame implements Runnable {
                 case Packet.COMMAND_REROLL_INITIATIVE:
                     System.out.print("COMMAND_REROLL_INITIATIVE");
                     break;
-                case Packet.COMMAND_SET_ARTYAUTOHITHEXES:
-                    System.out.print("COMMAND_SET_ARTYAUTOHITHEXES");
+                case Packet.COMMAND_SET_ARTILLERY_AUTOHIT_HEXES:
+                    System.out.print("COMMAND_SET_ARTILLERY_AUTOHIT_HEXES");
                     break;
                 default:
                     System.out.print("unknown");

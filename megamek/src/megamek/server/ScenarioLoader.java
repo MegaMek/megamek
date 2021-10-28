@@ -51,7 +51,6 @@ import megamek.common.HitData;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
-import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.MapSettings;
@@ -433,7 +432,7 @@ public class ScenarioLoader {
         // Set up the teams (for initiative)
         g.setupTeams();
 
-        g.setPhase(Game.Phase.PHASE_STARTING_SCENARIO);
+        g.setPhase(Game.GamePhase.STARTING_SCENARIO);
 
         g.setupRoundDeployment();
 

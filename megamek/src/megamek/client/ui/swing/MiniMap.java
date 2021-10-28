@@ -41,7 +41,7 @@ import megamek.client.ui.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.minimap.MiniMapUnitSymbols;
 import megamek.common.*;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
@@ -496,7 +496,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
-                    if ((game != null) && (game.getPhase() == Game.Phase.PHASE_UNKNOWN) && !h.isValid(null)) {
+                    if ((game != null) && (game.getPhase() == GamePhase.UNKNOWN) && !h.isValid(null)) {
                         gg.setColor(GUIPreferences.getInstance().getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
@@ -558,7 +558,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) 
-                && (Game.Phase.PHASE_DEPLOYMENT == game.getPhase()) && (dialog != null)) {
+                && (GamePhase.DEPLOYMENT == game.getPhase()) && (dialog != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
@@ -1325,15 +1325,15 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
-                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
-                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
+                    || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
+                    || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
 				File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-						+ Game.Phase.getDisplayableName(e.getOldPhase()) + ".png");
+						+ e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
                 } catch (IOException e1) {

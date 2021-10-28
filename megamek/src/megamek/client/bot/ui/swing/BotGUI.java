@@ -58,8 +58,8 @@ public class BotGUI implements GameListener {
      * @see megamek.common.GameListener#gamePhaseChange(megamek.common.GamePhaseChangeEvent)
      */
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        if (bot.getGame().getPhase() == Game.Phase.PHASE_LOUNGE
-                || bot.getGame().getPhase() == Game.Phase.PHASE_STARTING_SCENARIO) {
+        if (bot.getGame().getPhase() == Game.GamePhase.LOUNGE
+                || bot.getGame().getPhase() == Game.GamePhase.STARTING_SCENARIO) {
             notifyOfBot();
         }
     }

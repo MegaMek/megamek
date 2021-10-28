@@ -47,7 +47,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.Game.Phase;
+import megamek.common.Game.GamePhase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -1006,7 +1006,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((Game.Phase.PHASE_MOVEMENT == clientgui.getClient().getGame()
+        if ((GamePhase.MOVEMENT == clientgui.getClient().getGame()
                 .getPhase())
                 && (null != next)
                 && (null != ce)
@@ -4319,7 +4319,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // On simultaneous phases, each player ending their turn will generalte a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
@@ -4331,7 +4331,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT) {
             // ignore
             return;
         }
@@ -4367,7 +4367,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase() 
-                == Game.Phase.PHASE_LOUNGE) {
+                == GamePhase.LOUNGE) {
             endMyTurn();
         }
         
@@ -4376,10 +4376,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (clientgui.getClient().isMyTurn()
-            && (clientgui.getClient().getGame().getPhase() != Game.Phase.PHASE_MOVEMENT)) {
+            && (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.Phase.PHASE_MOVEMENT) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.MOVEMENT) {
             setStatusBarText(Messages
                                      .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
@@ -5783,7 +5783,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
         // do nothing here outside the movement phase
-        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_MOVEMENT)) return;
+        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.MOVEMENT)) return;
         
         clientgui.bv.fieldofFireUnit = unit;
         clientgui.bv.fieldofFireRanges = ranges;

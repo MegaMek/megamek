@@ -1058,7 +1058,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
                 && (game.getPhase() == mounted.usedInPhase())
-                && (game.getPhase() == Game.Phase.PHASE_FIRING)) {
+                && (game.getPhase() == Game.GamePhase.FIRING)) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {

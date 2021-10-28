@@ -54,7 +54,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(Game.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }

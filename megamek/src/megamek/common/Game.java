@@ -14,22 +14,6 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
-
 import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.Version;
@@ -39,20 +23,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityNewOffboardEvent;
-import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.*;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -60,6 +31,11 @@ import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
 import megamek.server.victory.VictoryResult;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -453,6 +429,12 @@ public class Game implements Serializable {
         vibrabombs.removeElement(mf);
     }
 
+    /**
+     * Checks if the game contains the specified Vibrabomb
+     *
+     * @param mf the Vibrabomb to check
+     * @return true if the minefield contains a vibrabomb.
+     */
     public boolean containsVibrabomb(Minefield mf) {
         return vibrabombs.contains(mf);
     }
@@ -485,7 +467,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * This returns a clone of the vector of teams. Each element is one of the
+     * This returns an immutable clone of the vector of teams. Each element is one of the
      * teams in the game.
      */
     public List<Team> getTeamsVector() {
@@ -493,9 +475,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * Return a players team Note: may return null if player has no team
+     * @return a player's team, which may be null if they do not have a team
      */
-    public Team getTeamForPlayer(IPlayer p) {
+    public @Nullable Team getTeamForPlayer(IPlayer p) {
         for (Team team : teams) {
             for (Enumeration<IPlayer> j = team.getPlayers(); j.hasMoreElements(); ) {
                 final IPlayer player = j.nextElement();
@@ -656,7 +638,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of non-destroyed entityes owned by the player
+     * Returns the number of non-destroyed entities owned by the player
      */
     public int getLiveEntitiesOwnedBy(IPlayer player) {
         int count = 0;
@@ -671,7 +653,7 @@ public class Game implements Serializable {
 
     /**
      * Returns the number of non-destroyed entities owned by the player,
-     * including entities not yet deployed. Ignore offboard units and captured
+     * including entities not yet deployed. Ignores offboard units and captured
      * Mek pilots.
      */
     public int getLiveDeployedEntitiesOwnedBy(IPlayer player) {
@@ -780,14 +762,18 @@ public class Game implements Serializable {
     /**
      * Returns the current GameTurn object
      */
-    public GameTurn getTurn() {
+    public @Nullable GameTurn getTurn() {
         if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
             return null;
         }
         return turnVector.elementAt(turnIndex);
     }
 
-    public GameTurn getTurnForPlayer(int pn) {
+    /**
+     * @return the first GameTurn object for the specified player, or null if the player has no
+     * turns to play
+     */
+    public @Nullable GameTurn getTurnForPlayer(int pn) {
         for (int i = turnIndex; i < turnVector.size(); i++) {
             GameTurn gt = turnVector.get(i);
             if (gt.isValid(pn, this)) {
@@ -837,6 +823,9 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Swaps the turn at index 1 with the turn at index 2.
+     */
     public void swapTurnOrder(int index1, int index2) {
         GameTurn turn1 = turnVector.get(index1);
         GameTurn turn2 = turnVector.get(index2);
@@ -860,6 +849,9 @@ public class Game implements Serializable {
 
     /**
      * Sets the current turn index
+     *
+     * @param turnIndex The new turn index.
+     * @param prevPlayerId  The ID of the player who triggered the turn index change.
      */
     public void setTurnIndex(int turnIndex, int prevPlayerId) {
         // FIXME: occasionally getTurn() returns null. Handle that case
@@ -945,7 +937,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Sets up up the hashtable of who deploys when
+     * Sets up the hashtable of who deploys when
      */
     public void setupRoundDeployment() {
         deploymentTable = new Hashtable<>();
@@ -1011,12 +1003,19 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an enumeration of all the entites in the game.
+     * Returns an enumeration of all the entities in the game.
      */
     public Iterator<Entity> getEntities() {
         return entities.iterator();
     }
 
+    /**
+     * Returns the previous entity from the master list of entities. Will wrap
+     * around to the end of the list if necessary.
+     *
+     * @param current The <code>Entity</code> whose list position you wish to start from.
+     * @return The previous <code>Entity</code> in the list.
+     */
     public Entity getPreviousEntityFromList(Entity current) {
         if ((current != null) && entities.contains(current)) {
             int prev = entities.indexOf(current) - 1;
@@ -1028,11 +1027,18 @@ public class Game implements Serializable {
         return null;
     }
 
+    /**
+     * Returns the next entity from the master list of entities. Will wrap around to the beginning
+     * of the list if necessary.
+     *
+     * @param current The <code>Entity</code> whose list position you wish to start from.
+     * @return The next <code>Entity</code> in the list.
+     */
     public Entity getNextEntityFromList(Entity current) {
         if ((current != null) && entities.contains(current)) {
             int next = entities.indexOf(current) + 1;
             if (next >= entities.size()) {
-                next = 0; // wrap-around to begining
+                next = 0; // wrap-around to beginning
             }
             return entities.get(next);
         }
@@ -1069,8 +1075,8 @@ public class Game implements Serializable {
      *                   value should <em>not</em> be <code>null</code>.
      * @throws IllegalArgumentException if the new list is <code>null</code>.
      */
-    public void setOutOfGameEntitiesVector(List<Entity> vOutOfGame) {
-        assert (vOutOfGame != null) : "New out-of-game list should not be null.";
+    public void setOutOfGameEntitiesVector(final List<Entity> vOutOfGame) {
+        Objects.requireNonNull(vOutOfGame, "New out-of-game list should not be null.");
         Vector<Entity> newOutOfGame = new Vector<>();
 
         // Add entities for the existing players to the game.
@@ -1369,7 +1375,13 @@ public class Game implements Serializable {
         }
         return en;
     }
-    
+
+    /**
+     * Adds a collection of new Entities.
+     * Only one GameEntityNewEvent is created for the whole list.
+     *
+     * @param entities the Entity objects to be added.
+     */
     public void addEntities(List<Entity> entities) {
         for (int i = 0; i < entities.size(); i++) {
             addEntity(entities.get(i), false);
@@ -1380,16 +1392,35 @@ public class Game implements Serializable {
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
 
+    /**
+     * Adds a new Entity. The id parameter is ignored and addEntity(Entity) is called instead. This
+     * is just to maintain compatibility.
+     *
+     * @param id Value that is ignored: the id is pulled from the passed Entity
+     * @param entity The Entity to add to the game.
+     */
+    @Deprecated
     public void addEntity(int id, Entity entity) {
         // Disregard the passed id, addEntity(Entity) pulls the id from the
         //  Entity instance.
         addEntity(entity);
     }
 
+    /**
+     * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
+     *
+     * @param entity The Entity to add.
+     */
     public void addEntity(Entity entity) {
         addEntity(entity, true);
     }
 
+    /**
+     * Adds a new Entity to this Game object.
+     *
+     * @param entity The Entity to add.
+     * @param genEvent A flag that determines whether a GameEntityNewEvent is generated.
+     */
     public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
         if (entity instanceof Mech) {
@@ -1490,8 +1521,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns true if an entity with the specified id number exists in this
-     * game.
+     * @return <code>true</code> if an entity with the specified id number exists in this game.
      */
     public boolean hasEntity(int entityId) {
         return entityIds.containsKey(entityId);
@@ -1640,7 +1670,7 @@ public class Game implements Serializable {
      * Returns the first enemy entity at the given coordinate, if any. Only
      * returns targetable (non-dead) entities.
      *
-     * @param c             the coordinates to search at
+     * @param c the coordinates to search at
      * @param currentEntity the entity that is firing
      */
     public Entity getFirstEnemyEntity(Coords c, Entity currentEntity) {
@@ -1781,25 +1811,25 @@ public class Game implements Serializable {
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
      *
-     * @param c      The <code>Coords</code> of the hex in which the accidental
-     *               fall from above happens
-     * @param ignore The entity who is falling
+     * @param c The <code>Coords</code> of the hex in which the accidental fall from above happens
+     * @param ignore The entity who is falling, so shouldn't be returned
      * @return The <code>Entity</code> that should be an AFFA target.
      */
-    public Entity getAffaTarget(Coords c, Entity ignore) {
-        Vector<Entity> vector = new Vector<Entity>();
+    public @Nullable Entity getAffaTarget(Coords c, Entity ignore) {
+        Vector<Entity> vector = new Vector<>();
         if (board.contains(c)) {
             IHex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
-                    && ((entity.getElevation() == 0) // Standing on hex surface 
-                            || (entity.getElevation() == -hex.depth())) // Standing on hex floor
-                    && (entity.getAltitude() == 0)
-                    && !(entity instanceof Infantry) && (entity != ignore)) {
+                        && ((entity.getElevation() == 0) // Standing on hex surface
+                                || (entity.getElevation() == -hex.depth())) // Standing on hex floor
+                        && (entity.getAltitude() == 0)
+                        && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
                 }
             }
         }
+
         if (!vector.isEmpty()) {
             int count = vector.size();
             int random = Compute.randomInt(count);
@@ -1809,82 +1839,69 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an <code>Enumeration</code> of the enemy's active entities at the
-     * given coordinates.
+     * Returns an <code>Iterator</code> of the enemy's active entities at the given coordinates.
      *
-     * @param c
-     *            the <code>Coords</code> of the hex being examined.
-     * @param currentEntity
-     *            the <code>Entity</code> whose enemies are needed.
-     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
-     *         coordinates who are enemies of the given unit.
+     * @param c the <code>Coords</code> of the hex being examined.
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are
+     * enemies of the given unit.
      */
-    public Iterator<Entity> getEnemyEntities(final Coords c,
-            final Entity currentEntity) {
+    public Iterator<Entity> getEnemyEntities(final Coords c, final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
             private Coords coords = c;
             private Entity friendly = currentEntity;
 
+            @Override
             public boolean accept(Entity entity) {
-                if (coords.equals(entity.getPosition())
-                        && entity.isTargetable() && entity.isEnemyOf(friendly)) {
-                    return true;
-                }
-                return false;
+                return coords.equals(entity.getPosition()) && entity.isTargetable()
+                        && entity.isEnemyOf(friendly);
             }
         });
     }
-    
+
     /**
-     * Returns an <code>Enumeration</code> of all active enemy entities.
+     * Returns an <code>Enumeration</code> of active enemy entities
      *
-     * @param currentEntity
-     *            the <code>Entity</code> whose enemies are needed.
-     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
-     *         coordinates who are enemies of the given unit.
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are
+     * enemies of the given unit.
      */
     public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
-    	return getSelectedEntities(new EntitySelector() {
-    		private Entity friendly = currentEntity;
-    		
-    		public boolean accept(Entity entity) {
-    			return entity.isTargetable() && entity.isEnemyOf(friendly);
-    		}
-    	});
-    }
-
-    /**
-     * Returns an <code>Enumeration</code> of friendly active entities at the
-     * given coordinates.
-     *
-     * @param c
-     *            the <code>Coords</code> of the hex being examined.
-     * @param currentEntity
-     *            the <code>Entity</code> whose friends are needed.
-     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
-     *         coordinates who are friends of the given unit.
-     */
-    public Iterator<Entity> getFriendlyEntities(final Coords c,
-            final Entity currentEntity) {
-        // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
-            private Coords coords = c;
             private Entity friendly = currentEntity;
 
+            @Override
             public boolean accept(Entity entity) {
-                if (coords.equals(entity.getPosition())
-                        && entity.isTargetable() && !entity.isEnemyOf(friendly)) {
-                    return true;
-                }
-                return false;
+                return entity.isTargetable() && entity.isEnemyOf(friendly);
             }
         });
     }
 
     /**
-     * Moves an entity into the graveyard so it stops getting sent out every
-     * phase.
+     * Returns an <code>Iterator</code> of friendly active entities at the given coordinates.
+     *
+     * @param c the <code>Coords</code> of the hex being examined.
+     * @param currentEntity the <code>Entity</code> whose friends are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are
+     * friends of the given unit.
+     */
+    public Iterator<Entity> getFriendlyEntities(final Coords c, final Entity currentEntity) {
+        // Use an EntitySelector to avoid walking the entities vector twice.
+        return getSelectedEntities(new EntitySelector() {
+            private Coords coords = c;
+            private Entity friendly = currentEntity;
+
+            @Override
+            public boolean accept(Entity entity) {
+                return coords.equals(entity.getPosition()) && entity.isTargetable()
+                        && !entity.isEnemyOf(friendly);
+            }
+        });
+    }
+
+    /**
+     * Moves an entity into the graveyard, so it stops getting sent out every phase.
      */
     public void moveToGraveyard(int id) {
         removeEntity(id, IEntityRemovalConditions.REMOVE_SALVAGEABLE);
@@ -1919,53 +1936,51 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the first entity that can act in the present turn, or null if
-     * none can.
+     * @return the first entity that can act in the present turn, or null if none can.
      */
-    public Entity getFirstEntity() {
+    public @Nullable Entity getFirstEntity() {
         return getFirstEntity(getTurn());
     }
 
     /**
-     * Returns the first entity that can act in the specified turn, or null if
-     * none can.33
+     * @param turn the current game turn, which may be null
+     * @return the first entity that can act in the specified turn, or null if none can.
      */
-    public Entity getFirstEntity(GameTurn turn) {
+    public @Nullable Entity getFirstEntity(final @Nullable GameTurn turn) {
         return getEntity(getFirstEntityNum(turn));
     }
 
     /**
-     * Returns the id of the first entity that can act in the current turn, or
-     * -1 if none can.
+     * @return the id of the first entity that can act in the current turn, or -1 if none can.
      */
     public int getFirstEntityNum() {
         return getFirstEntityNum(getTurn());
     }
 
     /**
-     * Returns the id of the first entity that can act in the specified turn, or
-     * -1 if none can.
+     * @param turn the current game turn, which may be null
+     * @return the id of the first entity that can act in the specified turn, or -1 if none can.
      */
-    public int getFirstEntityNum(GameTurn turn) {
+    public int getFirstEntityNum(final @Nullable GameTurn turn) {
         if (turn == null) {
             return -1;
         }
+
         for (Entity entity : entities) {
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
         }
+
         return -1;
     }
 
     /**
-     * Returns the next selectable entity that can act this turn, or null if
-     * none can.
-     *
      * @param start the index number to start at (not an Entity Id)
+     * @return the next selectable entity that can act this turn, or null if none can.
      */
-    public Entity getNextEntity(int start) {
-        if (entities.size() == 0) {
+    public @Nullable Entity getNextEntity(int start) {
+        if (entities.isEmpty()) {
             return null;
         }
         start = start % entities.size();
@@ -1974,13 +1989,11 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the entity id of the next entity that can move during the
-     * specified
-     *
-     * @param turn  the turn to use
+     * @param turn the turn to use, which may be null
      * @param start the entity id to start at
+     * @return the entity id of the next entity that can move during the specified turn
      */
-    public int getNextEntityNum(GameTurn turn, int start) {
+    public int getNextEntityNum(final @Nullable GameTurn turn, int start) {
         // If we don't have a turn, return ENTITY_NONE
         if (turn == null) {
             return Entity.NONE;
@@ -2008,11 +2021,9 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the entity id of the previous entity that can move during the
-     * specified
-     *
-     * @param turn  the turn to use
+     * @param turn the turn to use
      * @param start the entity id to start at
+     * @return the entity id of the previous entity that can move during the specified turn
      */
     public int getPrevEntityNum(GameTurn turn, int start) {
         boolean hasLooped = false;
@@ -2041,26 +2052,31 @@ public class Game implements Serializable {
         return -1;
     }
 
-    public int getFirstDeployableEntityNum(GameTurn turn) {
+    /**
+     * @param turn the current game turn, which may be null
+     * @return the number of the first deployable entity that is valid for the specified turn
+     */
+    public int getFirstDeployableEntityNum(final @Nullable GameTurn turn) {
         // Repeat the logic from getFirstEntityNum.
         if (turn == null) {
             return -1;
         }
         for (Entity entity : entities) {
-            if (turn.isValidEntity(entity, this)
-                && entity.shouldDeploy(getRoundCount())) {
+            if (turn.isValidEntity(entity, this) && entity.shouldDeploy(getRoundCount())) {
                 return entity.getId();
             }
         }
         return -1;
     }
 
+    /**
+     * @return the number of the next deployable entity that is valid for the specified turn
+     */
     public int getNextDeployableEntityNum(GameTurn turn, int start) {
         if (start >= 0) {
             for (int i = start; i < entities.size(); i++) {
                 final Entity entity = entities.get(i);
-                if (turn.isValidEntity(entity, this)
-                    && entity.shouldDeploy(getRoundCount())) {
+                if (turn.isValidEntity(entity, this) && entity.shouldDeploy(getRoundCount())) {
                     return entity.getId();
                 }
             }
@@ -2142,16 +2158,16 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of remaining selectable infantry owned by a player.
+     * @param playerId the player's Id
+     * @return number of infantry <code>playerId</code> has not selected yet this turn
      */
     public int getInfantryLeft(int playerId) {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
-            if (player.equals(entity.getOwner())
-                && entity.isSelectableThisTurn()
-                && (entity instanceof Infantry)) {
+            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
+                    && (entity instanceof Infantry)) {
                 remaining++;
             }
         }
@@ -2160,16 +2176,16 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of remaining selectable Protomechs owned by a player.
+     * @param playerId the player's Id
+     * @return number of ProtoMechs <code>playerId</code> has not selected yet this turn
      */
     public int getProtomechsLeft(int playerId) {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
-            if (player.equals(entity.getOwner())
-                && entity.isSelectableThisTurn()
-                && (entity instanceof Protomech)) {
+            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
+                    && (entity instanceof Protomech)) {
                 remaining++;
             }
         }
@@ -2178,21 +2194,16 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of Vehicles that <code>playerId</code> has not moved
-     * yet this turn.
-     *
-     * @param playerId
-     * @return number of vehicles <code>playerId</code> has not moved yet this
-     * turn
+     * @param playerId the player's Id
+     * @return number of vehicles <code>playerId</code> has not selected yet this turn
      */
     public int getVehiclesLeft(int playerId) {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
-            if (player.equals(entity.getOwner())
-                && entity.isSelectableThisTurn()
-                && (entity instanceof Tank)) {
+            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
+                    && (entity instanceof Tank)) {
                 remaining++;
             }
         }
@@ -2201,21 +2212,16 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of Mechs that <code>playerId</code> has not moved
-     * yet this turn.
-     *
-     * @param playerId
-     * @return number of vehicles <code>playerId</code> has not moved yet this
-     * turn
+     * @param playerId the player's Id
+     * @return number of 'Mechs <code>playerId</code> has not selected yet this turn
      */
     public int getMechsLeft(int playerId) {
         IPlayer player = getPlayer(playerId);
         int remaining = 0;
 
         for (Entity entity : entities) {
-            if (player.equals(entity.getOwner())
-                && entity.isSelectableThisTurn()
-                && (entity instanceof Mech)) {
+            if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
+                    && (entity instanceof Mech)) {
                 remaining++;
             }
         }
@@ -2368,7 +2374,14 @@ public class Game implements Serializable {
             }
         }
     }
-    
+
+    /**
+     * Removes any turns that can only be taken by the specified entity. Useful if the specified
+     * Entity is being removed from the game to ensure any turns that only it can take are gone.
+     *
+     * @param entity the entity to remove turns for
+     * @return The number of turns returned
+     */
     public int removeSpecificEntityTurnsFor(Entity entity) {
         List<GameTurn> turnsToRemove = new ArrayList<>();
         
@@ -2383,85 +2396,6 @@ public class Game implements Serializable {
         turnVector.removeAll(turnsToRemove);
         return turnsToRemove.size();
     }
-
-    /**
-     * Check each player for the presence of a Battle Armor squad equipped with
-     * a Magnetic Clamp. If one unit is found, update that player's units to
-     * allow the squad to be transported.
-     * <p/>
-     * This method should be called </b>*ONCE*</b> per game, after all units for
-     * all players have been loaded.
-     *
-     * @return <code>true</code> if a unit was updated, <code>false</code> if no
-     *         player has a Battle Armor squad equipped with a Magnetic Clamp.
-     */
-    /* Taharqa: I am removing this function and instead I am simply adding clamp mounts to all
-     * non omni/ none BA handled mechs in the game.addEntity routine - It should not be too much memory to
-     * do this and it allows us to load these units in the lobby
-    public boolean checkForMagneticClamp() {
-
-        // Declare local variables.
-        Player player = null;
-        Entity unit = null;
-        boolean result;
-        Hashtable<Player, Boolean> playerFlags = null;
-
-        // Assume that we don't need new transporters.
-        result = false;
-
-        // Create a map of flags for the players.
-        playerFlags = new Hashtable<Player, Boolean>(getNoOfPlayers());
-
-        // Walk through the game's entities.
-        for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
-
-            // Is the next unit a Battle Armor squad?
-            unit = i.nextElement();
-            if (unit instanceof BattleArmor) {
-
-                if (unit.countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0) {
-                    // The unit's player needs new transporters.
-                    result = true;
-                    playerFlags.put(unit.getOwner(), Boolean.TRUE);
-
-                }
-
-            } // End unit-is-BattleArmor
-
-        } // Handle the next entity.
-
-        // Do we need to add any Magnetic Clamp transporters?
-        if (result) {
-
-            // Walk through the game's entities again.
-            for (Enumeration<Entity> i = entities.elements(); i
-                    .hasMoreElements();) {
-
-                // Get this unit's player.
-                unit = i.nextElement();
-                player = unit.getOwner();
-
-                // Does this player need updated transporters?
-                if (Boolean.TRUE.equals(playerFlags.get(player))) {
-
-                    // Add the appropriate transporter to the unit.
-                    if (!unit.isOmni() && !unit.hasBattleArmorHandles() && (unit instanceof Mech)) {
-                        unit.addTransporter(new ClampMountMech());
-                    } else if (!unit.isOmni() && !unit.hasBattleArmorHandles() && (unit instanceof Tank)
-                            && !(unit instanceof VTOL)) {
-                        unit.addTransporter(new ClampMountTank());
-                    }
-
-                }
-            } // End player-needs-transports
-
-        } // Handle the next unit.
-
-        // Return the result.
-        return result;
-
-    } // End private boolean checkForMagneticClamp()
-     */
 
     /**
      * Adds the specified action to the actions list for this phase.
@@ -2640,8 +2574,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an Enumeration of ramming attacks scheduled for the end of the
-     * physical phase.
+     * @return an Enumeration of telemissile attacks.
      */
     public Enumeration<AttackAction> getTeleMissileAttacks() {
         return pendingTeleMissileAttacks.elements();
@@ -2655,8 +2588,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the rams vector. Do not modify. >:[ Used for sending all charges
-     * to the client.
+     * This is used to send all telemissile attacks to the client.
+     * @return an unmodifiable list of pending telemissile attacks.
      */
     public List<AttackAction> getTeleMissileAttacksVector() {
         return Collections.unmodifiableList(pendingTeleMissileAttacks);
@@ -2822,7 +2755,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Getter for property forceVictory.
+     * Getter for property forceVictory. This tells us that there is an active claim for victory.
      *
      * @return Value of property forceVictory.
      */
@@ -2839,25 +2772,42 @@ public class Game implements Serializable {
         this.forceVictory = forceVictory;
     }
 
+    /**
+     * Adds the given reports vector to the GameReport collection.
+     * @param v the reports vector
+     */
     public void addReports(Vector<Report> v) {
-        if (v.size() == 0) {
+        if (v.isEmpty()) {
             return;
         }
         gameReports.add(roundCount, v);
     }
 
+    /**
+     * @param r Round number
+     * @return a vector of reports for the given round.
+     */
     public Vector<Report> getReports(int r) {
         return gameReports.get(r);
     }
 
+    /**
+     * @return a vector of all the reports.
+     */
     public Vector<Vector<Report>> getAllReports() {
         return gameReports.get();
     }
 
+    /**
+     * Used to populate previous game reports, e.g. after a client connects to an existing game.
+     */
     public void setAllReports(Vector<Vector<Report>> v) {
         gameReports.set(v);
     }
 
+    /**
+     * Clears out all the current reports, paving the way for a new game.
+     */
     public void clearAllReports() {
         gameReports.clear();
     }
@@ -2907,7 +2857,7 @@ public class Game implements Serializable {
 
     /**
      * Returns true if the specified player is either the victor, or is on the
-     * winning team. Best to call during PHASE_VICTORY.
+     * winning team. Best to call during GamePhase::VICTORY.
      */
     public boolean isPlayerVictor(IPlayer player) {
         if (player.getTeam() == IPlayer.TEAM_NONE) {
@@ -2916,19 +2866,18 @@ public class Game implements Serializable {
         return player.getTeam() == victoryTeam;
     }
 
+    /**
+     * @return the currently active context-object for VictoryCondition checking. This should be a
+     * mutable object, and it will be modified by the victory condition checkers. Whoever saves the
+     * game state when doing saves is also responsible for saving this state. At the start of the
+     * game this should be initialized to an empty HashMap
+     */
     public HashMap<String, Object> getVictoryContext() {
         return victoryContext;
     }
 
     public void setVictoryContext(HashMap<String, Object> ctx) {
         victoryContext = ctx;
-    }
-
-    /**
-     * Shortcut to isPlayerVictor(Player player)
-     */
-    public boolean isPlayerVictor(int playerId) {
-        return isPlayerVictor(getPlayer(playerId));
     }
 
     /**
@@ -3166,14 +3115,12 @@ public class Game implements Serializable {
     }
 
     /**
-     * Get Entities that have have a iNarc Nemesis pod attached and are situated
-     * between two Coords
+     * Get Entities that have have a iNarc Nemesis pod attached and are situated between two Coords
      *
      * @param attacker The attacking <code>Entity</code>.
-     * @param target   The <code>Coords</code> of the original target.
-     * @return a <code>Enumeration</code> of entities that have nemesis pods
-     * attached and are located between attacker and target and are
-     * friendly with the attacker.
+     * @param target The <code>Coords</code> of the original target.
+     * @return an <code>Enumeration</code> of entities that have nemesis pods attached, are
+     * located between attacker and target, and are friendly with the attacker.
      */
     public Enumeration<Entity> getNemesisTargets(Entity attacker, Coords target) {
         final Coords attackerPos = attacker.getPosition();
@@ -3258,43 +3205,28 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns this turn's tag information
+     * @return this turn's TAG information
      */
     public Vector<TagInfo> getTagInfo() {
         return tagInfoForTurn;
     }
 
+    /**
+     * add the results of one TAG attack
+     */
     public void addTagInfo(TagInfo info) {
         tagInfoForTurn.addElement(info);
     }
 
+    /**
+     * Resets TAG information
+     */
     public void resetTagInfo() {
         tagInfoForTurn.removeAllElements();
     }
 
-    public void clearTagInfoShots(Entity ae, Coords tc) {
-        for (int i = 0; i < tagInfoForTurn.size(); i++) {
-            TagInfo info = tagInfoForTurn.elementAt(i);
-            Entity attacker = getEntity(info.attackerId);
-            Targetable target = info.target;
-            if (!ae.isEnemyOf(attacker) && isIn8HexRadius(target.getPosition(), tc)) {
-                info.shots = info.priority;
-                tagInfoForTurn.setElementAt(info, i);
-            }
-        }
-    }
-
-    public boolean isIn8HexRadius(Coords c1, Coords c2) {
-        // errata says we now always use 8 hex radius
-        if (c2.distance(c1) <= 8) {
-            return true;
-        }
-        return false;
-
-    }
-
     /**
-     * Get a list of flares
+     * @return the list of flares
      */
     public Vector<Flare> getFlares() {
         return flares;
@@ -3429,6 +3361,11 @@ public class Game implements Serializable {
                 .intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT)));
     }
 
+    /**
+     * Uses VictoryFactory to generate a new VictoryCondition checker provided that the
+     * VictoryContext is saved properly. Calling this method at any time is ok and should not affect
+     * anything unless the VictoryCondition Config Options have changed.
+     */
     public void createVictoryConditions() {
         victory = new Victory(getOptions());
     }
@@ -3457,7 +3394,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an Enumeration of pending Control rolls.
+     * @return an Enumeration of pending Control rolls.
      */
     public Enumeration<PilotingRollData> getControlRolls() {
         return controlRolls.elements();
@@ -3486,7 +3423,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Resets the PSR list.
+     * Resets the Control Roll list.
      */
     public void resetControlRolls() {
         controlRolls.removeAllElements();
@@ -3707,9 +3644,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Get a string representation of the UUId for this game.
-     *
-     * @return
+     * @return a string representation of this game's UUID.
      */
     public String getUUIDString() {
         if (uuid == null) {
@@ -3727,6 +3662,10 @@ public class Game implements Serializable {
         return getEntitiesVector().stream();
     }
 
+    /**
+     * Overwrites the current forces object with the provided object.
+     * Called from server messages when loading a game.
+     */
     public synchronized void setForces(Forces fs) {
         forces = fs;
         forces.setGame(this);
@@ -3741,7 +3680,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * cancel victory from the server.java moved here
+     * Cancels a victory
      */
     public void cancelVictory() {
         setForceVictory(false);

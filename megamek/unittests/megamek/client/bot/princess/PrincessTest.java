@@ -28,8 +28,11 @@ import megamek.common.MechWarrior;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
+import megamek.common.enums.GamePhase;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -282,6 +285,10 @@ public class PrincessTest {
 
         // Test a list of normal units.
         Game mockGame = Mockito.mock(Game.class);
+        GameOptions mockOptions = Mockito.mock(GameOptions.class);
+        Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)).thenReturn(false);
+        Mockito.when(mockGame.getPhase()).thenReturn(GamePhase.MOVEMENT);
         GameTurn mockTurn = Mockito.mock(GameTurn.class);
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
         Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(Game.class))).thenCallRealMethod();
@@ -296,7 +303,7 @@ public class PrincessTest {
         Entity pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockBA, pickedEntity);
 
-        // Add the off-board artillery, which should be ignored.  Otherwise it would be picked as the next to move.
+        // Add the off-board artillery, which should be ignored. Otherwise it would be picked as the next to move.
         testEntityList.add(mockOffBoardArty);
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockBA, pickedEntity);

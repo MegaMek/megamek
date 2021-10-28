@@ -173,7 +173,7 @@ public class OptionsConstants {
     public static final String PILOT_ZWEIHANDER= "zweihander"; //$NON-NLS$
 
     // GUNNERY SKILLS
-    // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
+    public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";
     // //$NON-NLS$
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter"; // $NON-NLS$
     public static final String GUNNERY_CLUSTER_MASTER = "cluster_master"; // $NON-NLS$

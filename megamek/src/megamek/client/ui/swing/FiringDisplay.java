@@ -79,6 +79,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
+        FIRE_BLOOD_STALKER("fireBloodStalker"),
         FIRE_MORE("fireMore");
 
         String cmd;
@@ -1308,6 +1309,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
     }
+    
+    /**
+     * This pops up a menu allowing the user to choose one of several 
+     * SPA
+     */
+    private void doActivateSpecialAbility() {
+        JOptionPane.showInputDialog(clientgui, Messages
+                .getString("FiringDisplay.ClearWeaponJam" + ".question"), //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
+                //$NON-NLS-1$
+                JOptionPane.QUESTION_MESSAGE, null, names, null);
+    }
 
     /**
      * fire searchlight
@@ -1926,6 +1939,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } 
 
         updateSearchlight();
+        updateBloodStalker();
 
         // Hidden units can only spot
         if ((ce() != null) && ce().isHidden()) {
@@ -2277,6 +2291,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             setStrafeEnabled(false);
         }
     }
+    
+    private void updateBloodStalker() {
+        // "blood stalker" can be used if current entity has SPA and no blood stalker target yet.
+        setBloodStalkerEnabled(ce().hasAbility(OptionsConstants.GUNNERY_BLOOD_STALKER) &&
+                (ce().getBloodStalkerTarget() == Entity.NONE));
+    }
 
     protected void setFireEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
@@ -2357,6 +2377,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void setNextEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
+    }
+    
+    protected void setBloodStalkerEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_BLOOD_STALKER).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_BLOOD_STALKER.getCmd(), enabled);
     }
 
     @Override

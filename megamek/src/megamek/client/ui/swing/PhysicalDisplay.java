@@ -70,6 +70,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -319,7 +320,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((Game.GamePhase.PHYSICAL == clientgui.getClient().getGame()
+        if ((GamePhase.PHYSICAL == clientgui.getClient().getGame()
                 .getPhase())
             && (null != next)
             && (null != ce())
@@ -1600,7 +1601,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
 
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
@@ -1631,7 +1632,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
         }
 
@@ -1641,11 +1642,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != Game.GamePhase.PHYSICAL)) {
+                && (clientgui.getClient().getGame().getPhase() != GamePhase.PHYSICAL)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
             setStatusBarText(Messages
                     .getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
         }

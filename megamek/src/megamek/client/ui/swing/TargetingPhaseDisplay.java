@@ -49,9 +49,9 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.Game.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -59,16 +59,12 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
-/*
+/**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
  */
-
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         KeyListener, ItemListener, ListSelectionListener {
-    /**
-     *
-     */
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**

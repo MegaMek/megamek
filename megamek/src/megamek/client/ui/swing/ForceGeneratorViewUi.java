@@ -55,8 +55,8 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
-import megamek.common.Game.GamePhase;
 import megamek.common.UnitType;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 
 /**

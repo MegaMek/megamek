@@ -38,6 +38,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -477,7 +478,7 @@ public class CLIATMHandler extends ATMHandler {
      */
 
     @Override
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
             if (!cares(phase)) {

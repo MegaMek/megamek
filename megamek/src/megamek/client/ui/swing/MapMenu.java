@@ -33,8 +33,8 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.event.BoardViewEvent;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.Game.GamePhase;
 import megamek.common.actions.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.*;
 
@@ -42,10 +42,6 @@ import megamek.common.weapons.other.*;
  * Context menu for the board.
  */
 public class MapMenu extends JPopupMenu {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 2879345079968414986L;
 
     private Coords coords;

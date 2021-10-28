@@ -22,6 +22,7 @@ import megamek.client.ui.dialogs.helpDialogs.BotHelpDialog;
 import megamek.client.ui.swing.ConfirmDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Game;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameCFREvent;
@@ -58,8 +59,8 @@ public class BotGUI implements GameListener {
      * @see megamek.common.GameListener#gamePhaseChange(megamek.common.GamePhaseChangeEvent)
      */
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        if (bot.getGame().getPhase() == Game.GamePhase.LOUNGE
-                || bot.getGame().getPhase() == Game.GamePhase.STARTING_SCENARIO) {
+        if (bot.getGame().getPhase() == GamePhase.LOUNGE
+                || bot.getGame().getPhase() == GamePhase.STARTING_SCENARIO) {
             notifyOfBot();
         }
     }

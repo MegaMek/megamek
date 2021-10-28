@@ -21,6 +21,7 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryWeaponDirectFireHandler;
 import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
@@ -61,13 +62,13 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {
-            if (game.getPhase() == Game.GamePhase.FIRING) {
+            if (game.getPhase() == GamePhase.FIRING) {
                 return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
                         server);
             }
             return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game,
                     server);
-        } else if (game.getPhase() == Game.GamePhase.FIRING) {
+        } else if (game.getPhase() == GamePhase.FIRING) {
             return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
                     server);
         } else {

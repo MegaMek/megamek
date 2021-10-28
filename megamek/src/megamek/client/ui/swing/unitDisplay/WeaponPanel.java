@@ -69,6 +69,7 @@ import megamek.common.WeaponComparatorDamage;
 import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -1058,7 +1059,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
                 && (game.getPhase() == mounted.usedInPhase())
-                && (game.getPhase() == Game.GamePhase.FIRING)) {
+                && (game.getPhase() == GamePhase.FIRING)) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {

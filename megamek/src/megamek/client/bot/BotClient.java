@@ -70,6 +70,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -163,7 +164,7 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == Game.GamePhase.INITIATIVE_REPORT) {
+                if (game.getPhase() == GamePhase.INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -390,7 +391,7 @@ public abstract class BotClient extends Client {
 
     // TODO: move initMovement to be called on phase end
     @Override
-    public void changePhase(Game.GamePhase phase) {
+    public void changePhase(GamePhase phase) {
         super.changePhase(phase);
 
         try {
@@ -544,7 +545,7 @@ public abstract class BotClient extends Client {
         currentTurnFriendlyEntities = null;
         
         try {
-            if (game.getPhase() == Game.GamePhase.MOVEMENT) {
+            if (game.getPhase() == GamePhase.MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
@@ -560,9 +561,9 @@ public abstract class BotClient extends Client {
                     }
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == Game.GamePhase.FIRING) {
+            } else if (game.getPhase() == GamePhase.FIRING) {
                 calculateFiringTurn();
-            } else if (game.getPhase() == Game.GamePhase.PHYSICAL) {
+            } else if (game.getPhase() == GamePhase.PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
@@ -572,21 +573,21 @@ public abstract class BotClient extends Client {
                     sendAttackData(game.getFirstEntityNum(getMyTurn()),
                                    new Vector<>(0));
                 }
-            } else if (game.getPhase() == Game.GamePhase.DEPLOYMENT) {
+            } else if (game.getPhase() == GamePhase.DEPLOYMENT) {
                 calculateDeployment();
-            } else if (game.getPhase() == Game.GamePhase.DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase() == GamePhase.DEPLOY_MINEFIELDS) {
                 Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (Minefield mine : mines) {
                     game.addMinefield(mine);
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
-            } else if (game.getPhase() == Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
+            } else if (game.getPhase() == GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if ((game.getPhase() == Game.GamePhase.TARGETING)
-                       || (game.getPhase() == Game.GamePhase.OFFBOARD)) {
+            } else if ((game.getPhase() == GamePhase.TARGETING)
+                       || (game.getPhase() == GamePhase.OFFBOARD)) {
                 // Princess implements arty targeting; no plans to do so for testbod
                 calculateTargetingOffBoardTurn();
             }

@@ -32,6 +32,7 @@ import megamek.common.IHex;
 import megamek.common.Minefield;
 import megamek.common.IPlayer;
 import megamek.common.Terrains;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
@@ -399,10 +400,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != Game.GamePhase.DEPLOY_MINEFIELDS)) {
+                && (clientgui.getClient().getGame().getPhase() != GamePhase.DEPLOY_MINEFIELDS)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.DEPLOY_MINEFIELDS) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.DEPLOY_MINEFIELDS) {
             setStatusBarText(Messages
                     .getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }

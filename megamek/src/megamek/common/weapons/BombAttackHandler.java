@@ -33,6 +33,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -94,7 +95,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         int[] payload = waa.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;

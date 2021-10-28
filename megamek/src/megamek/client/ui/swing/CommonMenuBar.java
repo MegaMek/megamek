@@ -30,12 +30,11 @@ import megamek.client.ui.swing.util.UIUtil;
 
 import static megamek.client.ui.Messages.*;
 import megamek.common.*;
-import megamek.common.Game.GamePhase;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import static megamek.client.ui.swing.ClientGUI.*;
 import static java.awt.event.KeyEvent.*;
-
 
 /**
  * The menu bar that is used across MM, i.e. in the main menu, the board editor and

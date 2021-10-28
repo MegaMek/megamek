@@ -35,6 +35,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -297,7 +298,7 @@ public class FireCommand extends ClientCommand {
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == Game.GamePhase.FIRING
+            } else if (getClient().getGame().getPhase() == GamePhase.FIRING
                         && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");

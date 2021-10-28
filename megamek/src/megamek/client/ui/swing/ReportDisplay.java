@@ -33,6 +33,7 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Report;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -140,7 +141,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if ((clientgui.getClient().getGame().getPhase() == Game.GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+        if ((clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);

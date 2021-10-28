@@ -67,6 +67,7 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
@@ -432,7 +433,7 @@ public class ScenarioLoader {
         // Set up the teams (for initiative)
         g.setupTeams();
 
-        g.setPhase(Game.GamePhase.STARTING_SCENARIO);
+        g.setPhase(GamePhase.STARTING_SCENARIO);
 
         g.setupRoundDeployment();
 

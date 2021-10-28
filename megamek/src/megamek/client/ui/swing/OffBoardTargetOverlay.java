@@ -39,6 +39,7 @@ import megamek.common.HexTarget;
 import megamek.common.Game;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.IPlayer;
@@ -94,7 +95,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
         boolean visible = clientgui.getClient().isMyTurn() &&
-                (getCurrentGame().getPhase() == Game.GamePhase.TARGETING);
+                (getCurrentGame().getPhase() == GamePhase.TARGETING);
         
         if(!visible) {
             return false;

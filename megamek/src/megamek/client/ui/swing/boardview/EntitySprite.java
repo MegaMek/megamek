@@ -35,7 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
-import megamek.common.Game.GamePhase;
+import megamek.common.enums.GamePhase;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an

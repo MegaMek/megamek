@@ -30,6 +30,7 @@ import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.Server;
 
@@ -63,7 +64,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
         ae.setFiredTsempThisTurn(true);

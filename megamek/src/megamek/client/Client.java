@@ -31,6 +31,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -415,7 +416,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Changes the game phase, and the displays that go along with it.
      */
-    public void changePhase(Game.GamePhase phase) {
+    public void changePhase(GamePhase phase) {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
@@ -577,7 +578,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Send activate hidden data to the server
      */
-    public void sendActivateHidden(int nEntity, Game.GamePhase phase) {
+    public void sendActivateHidden(int nEntity, GamePhase phase) {
         Object[] data = { Integer.valueOf(nEntity), phase };
         send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
     }
@@ -1498,7 +1499,7 @@ public class Client implements IClientCommandHandler {
             receiveBuildingCollapse(c);
             break;
         case Packet.COMMAND_PHASE_CHANGE:
-            changePhase((Game.GamePhase) c.getObject(0));
+            changePhase((GamePhase) c.getObject(0));
             break;
         case Packet.COMMAND_TURN:
             changeTurnIndex(c.getIntValue(0), c.getIntValue(1));

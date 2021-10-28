@@ -76,6 +76,7 @@ import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
@@ -280,7 +281,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                     Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
             die();
         }
-        switchPanel(Game.GamePhase.MOVEMENT);
+        switchPanel(GamePhase.MOVEMENT);
         frame.validate();
 
         // This is a horrible hack
@@ -461,7 +462,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public void switchPanel(Game.GamePhase phase) {
+    public void switchPanel(GamePhase phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -485,7 +486,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case LOUNGE:
                 // reset old report tabs and images, if any
                 ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
+                        .valueOf(GamePhase.INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
@@ -512,7 +513,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case END_REPORT:
             case VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
+                        .valueOf(GamePhase.INITIATIVE_REPORT));
                 //cb.setDoneButton(rD.butDone);
                 //rD.add(cb.getComponent(), GBC.eol().fill(
                 //        GridBagConstraints.HORIZONTAL));
@@ -549,13 +550,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public void updateButtonPanel(Game.GamePhase phase) {
+    public void updateButtonPanel(GamePhase phase) {
         if ((currPhaseDisplay != null)) {
             currPhaseDisplay.setupButtonPanel();
         }
     }
 
-    private JComponent initializePanel(Game.GamePhase phase) {
+    private JComponent initializePanel(GamePhase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
         JComponent component;
@@ -687,11 +688,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
                 component = phaseComponents.get(String
-                        .valueOf(Game.GamePhase.INITIATIVE_REPORT));
+                        .valueOf(GamePhase.INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(
-                            Game.GamePhase.INITIATIVE_REPORT);
+                            GamePhase.INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;

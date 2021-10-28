@@ -32,6 +32,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Sensor;
 import megamek.common.Tank;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.other.TSEMPWeapon;
@@ -81,7 +82,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     JButton activateHidden = new JButton(
             Messages.getString("MechDisplay.ActivateHidden.Label"));
 
-    MMComboBox<Game.GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
+    MMComboBox<GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
 
     ExtraPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -167,15 +168,15 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         activateHidden.setToolTipText(Messages.getString("MechDisplay.ActivateHidden.ToolTip"));
         comboActivateHiddenPhase.setToolTipText(Messages.getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
         activateHidden.addActionListener(this);
-        comboActivateHiddenPhase.addItem(Game.GamePhase.UNKNOWN);
-        comboActivateHiddenPhase.addItem(Game.GamePhase.MOVEMENT);
-        comboActivateHiddenPhase.addItem(Game.GamePhase.FIRING);
-        comboActivateHiddenPhase.addItem(Game.GamePhase.PHYSICAL);
+        comboActivateHiddenPhase.addItem(GamePhase.UNKNOWN);
+        comboActivateHiddenPhase.addItem(GamePhase.MOVEMENT);
+        comboActivateHiddenPhase.addItem(GamePhase.FIRING);
+        comboActivateHiddenPhase.addItem(GamePhase.PHYSICAL);
         comboActivateHiddenPhase.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 return super.getListCellRendererComponent(list,
-                        (((value instanceof Game.GamePhase) && ((Game.GamePhase) value).isUnknown())
+                        (((value instanceof GamePhase) && ((GamePhase) value).isUnknown())
                                 ? Messages.getString("MechDisplay.ActivateHidden.StopActivating")
                                 : value),
                         index, isSelected, cellHasFocus);
@@ -690,8 +691,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
-            final Game.GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
-            clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? Game.GamePhase.UNKNOWN : phase);
+            final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
+            clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
         }
     }
 }

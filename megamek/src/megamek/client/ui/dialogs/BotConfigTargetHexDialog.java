@@ -34,8 +34,8 @@ import megamek.client.ui.swing.util.UIUtil.TipList;
 import megamek.client.ui.swing.util.UIUtil.TipTextField;
 import megamek.client.ui.Messages;
 import megamek.common.*;
-import megamek.common.Game.GamePhase;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 
 public class BotConfigTargetHexDialog extends AbstractButtonDialog {
 

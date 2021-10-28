@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -50,8 +51,8 @@ public class ArtilleryBayWeaponDirectHomingHandler extends
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(Game.GamePhase phase) {
-        if (phase == Game.GamePhase.FIRING) {
+    public boolean cares(GamePhase phase) {
+        if (phase == GamePhase.FIRING) {
             return true;
         }
         return false;

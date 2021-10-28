@@ -17,6 +17,7 @@ import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.net.Packet;
 import megamek.common.options.GameOptions;
@@ -181,7 +182,7 @@ public class Precognition implements Runnable {
                     receiveBuildingCollapse(c);
                     break;
                 case Packet.COMMAND_PHASE_CHANGE:
-                    getGame().setPhase((Game.GamePhase) c.getObject(0));
+                    getGame().setPhase((GamePhase) c.getObject(0));
                     break;
                 case Packet.COMMAND_TURN:
                     getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));

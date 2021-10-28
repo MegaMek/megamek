@@ -29,6 +29,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -57,7 +58,7 @@ public class LRMSwarmHandler extends LRMHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
@@ -350,7 +351,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean bldgDamagedOnMiss, Building bldg,
-            Vector<Report> vPhaseReport, Game.GamePhase phase) {
+            Vector<Report> vPhaseReport, GamePhase phase) {
         super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();

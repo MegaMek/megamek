@@ -14,6 +14,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
@@ -300,7 +301,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean isObserver() {
-        if ((game != null) && (game.getPhase() == Game.GamePhase.VICTORY)) {
+        if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
             return false;
         }
         return observer;

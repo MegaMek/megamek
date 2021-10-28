@@ -34,7 +34,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 import megamek.common.KeyBindParser;
-import megamek.common.Game.GamePhase;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;

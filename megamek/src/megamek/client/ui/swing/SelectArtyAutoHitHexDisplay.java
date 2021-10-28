@@ -34,6 +34,7 @@ import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -287,10 +288,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES)) {
+                && (clientgui.getClient().getGame().getPhase() != GamePhase.SET_ARTILLERY_AUTOHIT_HEXES)) {
             endMyTurn();
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }

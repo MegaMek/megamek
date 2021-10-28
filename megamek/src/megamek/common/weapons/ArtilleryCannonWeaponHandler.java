@@ -29,6 +29,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -65,7 +66,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

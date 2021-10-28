@@ -39,6 +39,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
@@ -82,9 +83,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(Game.GamePhase phase) {
-        if ((phase == Game.GamePhase.OFFBOARD)
-                || (phase == Game.GamePhase.TARGETING)) {
+    public boolean cares(GamePhase phase) {
+        if ((phase == GamePhase.OFFBOARD)
+                || (phase == GamePhase.TARGETING)) {
             return true;
         }
         return false;
@@ -96,13 +97,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(Game.GamePhase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == Game.GamePhase.TARGETING) {
+        if (phase == GamePhase.TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself

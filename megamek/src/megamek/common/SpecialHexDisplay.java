@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.io.Serializable;
 import java.util.Objects;
 
+import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -251,13 +252,13 @@ public class SpecialHexDisplay implements Serializable {
      * @param curRound
      * @return
      */
-    public boolean drawNow(Game.GamePhase phase, int curRound,
+    public boolean drawNow(GamePhase phase, int curRound,
                            IPlayer playerChecking) {
         boolean shouldDisplay = thisRound(curRound)
                 || (pastRound(curRound) && type.drawBefore())
                 || (futureRound(curRound) && type.drawAfter());
 
-        if (phase.isBefore(Game.GamePhase.OFFBOARD)
+        if (phase.isBefore(GamePhase.OFFBOARD)
                 && ((type == Type.ARTILLERY_TARGET) 
                         || (type == Type.ARTILLERY_HIT))) {
             shouldDisplay = shouldDisplay || thisRound(curRound - 1);

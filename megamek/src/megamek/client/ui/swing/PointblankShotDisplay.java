@@ -51,6 +51,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -495,7 +496,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == Game.GamePhase.FIRING)
+        if ((game.getPhase() == GamePhase.FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setUnitDisplayVisible(false);
@@ -512,7 +513,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
-        clientgui.switchPanel(Game.GamePhase.MOVEMENT);
+        clientgui.switchPanel(GamePhase.MOVEMENT);
     }
 
     /**

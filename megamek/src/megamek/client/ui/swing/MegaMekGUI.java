@@ -86,6 +86,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -459,7 +460,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
-        skinEditor.switchPanel(Game.GamePhase.MOVEMENT);
+        skinEditor.switchPanel(GamePhase.MOVEMENT);
         launch(skinEditor.getFrame());        
     }
 

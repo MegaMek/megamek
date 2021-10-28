@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
-import megamek.common.Game.GamePhase;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
 /**

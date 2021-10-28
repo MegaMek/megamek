@@ -35,6 +35,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -222,7 +223,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         final Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((Game.GamePhase.DEPLOYMENT == game.getPhase())
+        if ((GamePhase.DEPLOYMENT == game.getPhase())
                 && (null != next)
                 && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
@@ -367,7 +368,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 && (game.getTurnIndex() != 0)) {
             return;
         }
-        if (game.getPhase() != Game.GamePhase.DEPLOYMENT) {
+        if (game.getPhase() != GamePhase.DEPLOYMENT) {
             // ignore
             return;
         }
@@ -395,14 +396,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.bv.markDeploymentHexesFor(null);
         
        // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
         }
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().getGame().getPhase() == Game.GamePhase.DEPLOYMENT) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.DEPLOYMENT) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
         }
     }

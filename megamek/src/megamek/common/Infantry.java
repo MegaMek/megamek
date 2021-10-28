@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -1780,8 +1781,8 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isEligibleFor(Game.GamePhase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != Game.GamePhase.PHYSICAL)) {
+    public boolean isEligibleFor(GamePhase phase) {
+        if ((turnsLayingExplosives > 0) && (phase != GamePhase.PHYSICAL)) {
             return false;
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {

@@ -24,6 +24,7 @@ import megamek.common.TagInfo;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 public class TAGHandler extends WeaponHandler {
@@ -136,8 +137,8 @@ public class TAGHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(Game.GamePhase phase) {
-        if (phase == Game.GamePhase.OFFBOARD) {
+    public boolean cares(GamePhase phase) {
+        if (phase == GamePhase.OFFBOARD) {
             return true;
         }
         return false;

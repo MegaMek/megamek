@@ -14,11 +14,13 @@
 
 package megamek.common;
 
+import megamek.common.enums.GamePhase;
+
 /**
  * Defines things that need to be updated each phase.
  */
 public interface PhaseUpdated {
 
-    public void newPhase(Game.GamePhase phase);
+    public void newPhase(GamePhase phase);
 
 }

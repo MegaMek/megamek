@@ -1,5 +1,18 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MMComboBox;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.HeatEffects;
+import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.other.TSEMPWeapon;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,50 +20,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 
-import javax.swing.*;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.HeatEffects;
-import megamek.client.ui.swing.Slider;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.BattleArmor;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Sensor;
-import megamek.common.Tank;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
-
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-
-    /**
-     * 
-     */
-    private final UnitDisplay unitDisplay;
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4907296187995261075L;
+
+    private final UnitDisplay unitDisplay;
 
     private JLabel lblLastTarget;
     private JLabel curSensorsL;

@@ -579,8 +579,7 @@ public class Client implements IClientCommandHandler {
      * Send activate hidden data to the server
      */
     public void sendActivateHidden(int nEntity, GamePhase phase) {
-        Object[] data = { Integer.valueOf(nEntity), phase };
-        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
+        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, new Object[] { nEntity, phase }));
     }
 
     /**

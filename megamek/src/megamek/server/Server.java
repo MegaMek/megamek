@@ -2900,7 +2900,7 @@ public class Server implements Runnable {
         // activating phase
         for (Entity ent : game.getEntitiesVector()) {
             if (ent.getHiddenActivationPhase() == game.getPhase()) {
-                ent.setHiddenActivationPhase(null);
+                ent.setHiddenActivationPhase(GamePhase.UNKNOWN);
             }
         }
     }
@@ -30171,7 +30171,7 @@ public class Server implements Runnable {
      */
     private void receiveEntityActivateHidden(Packet c, int connIndex) {
         int entityId = c.getIntValue(0);
-        GamePhase phase = (GamePhase)c.getObject(1);
+        GamePhase phase = (GamePhase) c.getObject(1);
         Entity e = game.getEntity(entityId);
         if (connIndex != e.getOwnerId()) {
             MegaMek.getLogger().error("Player " + connIndex 

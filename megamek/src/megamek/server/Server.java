@@ -1626,25 +1626,11 @@ public class Server implements Runnable {
         }
     }
 
-
-    /**
-     * are we currently in a reporting phase
-     *
-     * @return <code>true</code> if we are or <code>false</code> if not.
-     */
-    private boolean isReportingPhase() {
-        return (game.getPhase() == GamePhase.FIRING_REPORT)
-                || (game.getPhase() == GamePhase.INITIATIVE_REPORT)
-                || (game.getPhase() == GamePhase.MOVEMENT_REPORT)
-                || (game.getPhase() == GamePhase.OFFBOARD_REPORT)
-                || (game.getPhase() == GamePhase.PHYSICAL_REPORT);
-    }
-
     /**
      * Called at the beginning of certain phases to make every player not ready.
      */
     private void resetPlayersDone() {
-        if (isReportingPhase()) {
+        if (getGame().getPhase().isReport()) {
             return;
         }
         for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
@@ -1659,9 +1645,6 @@ public class Server implements Runnable {
      * ready.
      */
     private void resetActivePlayersDone() {
-        /*
-         * if (isReportingPhase()) { return; }
-         */
         for (Enumeration<IPlayer> i = game.getPlayers(); i.hasMoreElements(); ) {
             final IPlayer player = i.nextElement();
 

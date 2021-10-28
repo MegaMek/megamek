@@ -66,7 +66,7 @@ public class Game implements Serializable {
     /**
      * Track entities removed from the game (probably by death)
      */
-    Vector<Entity> vOutOfGame = new Vector<>();
+    private Vector<Entity> vOutOfGame = new Vector<>();
 
     private Vector<IPlayer> players = new Vector<>();
     private Vector<Team> teams = new Vector<>();
@@ -154,7 +154,7 @@ public class Game implements Serializable {
      */
     private Forces forces = new Forces(this);
 
-    transient private Vector<GameListener> gameListeners = new Vector<>();
+    private transient Vector<GameListener> gameListeners = new Vector<>();
     
     /** 
      * Stores princess behaviors for game factions. It does not indicate that a 
@@ -361,8 +361,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * This returns an immutable clone of the vector of teams. Each element is one of the
-     * teams in the game.
+     * @return an immutable clone of the vector of teams. Each element is one of the teams in the
+     * game.
      */
     public List<Team> getTeamsVector() {
         return Collections.unmodifiableList(teams);
@@ -532,7 +532,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of non-destroyed entities owned by the player
+     * @return the number of non-destroyed entities owned by the player
      */
     public int getLiveEntitiesOwnedBy(IPlayer player) {
         int count = 0;
@@ -546,9 +546,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of non-destroyed entities owned by the player,
-     * including entities not yet deployed. Ignores offboard units and captured
-     * Mek pilots.
+     * @return the number of non-destroyed entities owned by the player, including entities not yet
+     * deployed. Ignores offboard units and captured Mek pilots.
      */
     public int getLiveDeployedEntitiesOwnedBy(IPlayer player) {
         int count = 0;
@@ -563,16 +562,16 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the number of non-destroyed deployed entities owned by the
-     * player. Ignore offboard units and captured Mek pilots.
+     * @return the number of non-destroyed commander entities owned by the player. Ignores offboard
+     * units and captured Mek pilots.
      */
     public int getLiveCommandersOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
-                && !entity.isCarcass()
-                && entity.isCommander() && !entity.isOffBoard()
-                && !entity.isCaptured()) {
+                    && !entity.isCarcass()
+                    && entity.isCommander() && !entity.isOffBoard()
+                    && !entity.isCaptured()) {
                 count++;
             }
         }
@@ -580,8 +579,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns true if the player has a valid unit with the Tactical Genius
-     * pilot special ability.
+     * @return true if the player has a valid unit with the Tactical Genius pilot special ability.
      */
     public boolean hasTacticalGenius(IPlayer player) {
         for (Entity entity : entities) {
@@ -630,7 +628,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the current GameTurn object
+     * @return the current GameTurn object
      */
     public @Nullable GameTurn getTurn() {
         if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
@@ -865,20 +863,18 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an enumeration of all the entities in the game.
+     * @return an enumeration of all the entities in the game.
      */
     public Iterator<Entity> getEntities() {
         return entities.iterator();
     }
 
     /**
-     * Returns the previous entity from the master list of entities. Will wrap
-     * around to the end of the list if necessary.
-     *
      * @param current The <code>Entity</code> whose list position you wish to start from.
-     * @return The previous <code>Entity</code> in the list.
+     * @return The previous <code>Entity</code> from the master list of entities. Will wrap around
+     * to the end of the list if necessary, returning null if there are no entities.
      */
-    public Entity getPreviousEntityFromList(Entity current) {
+    public @Nullable Entity getPreviousEntityFromList(final @Nullable Entity current) {
         if ((current != null) && entities.contains(current)) {
             int prev = entities.indexOf(current) - 1;
             if (prev < 0) {
@@ -890,13 +886,11 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the next entity from the master list of entities. Will wrap around to the beginning
-     * of the list if necessary.
-     *
      * @param current The <code>Entity</code> whose list position you wish to start from.
-     * @return The next <code>Entity</code> in the list.
+     * @return The next <code>Entity</code> from the master list of entities. Will wrap around to
+     * the beginning of the list if necessary, returning null if there are no entities.
      */
-    public Entity getNextEntityFromList(Entity current) {
+    public @Nullable Entity getNextEntityFromList(final @Nullable Entity current) {
         if ((current != null) && entities.contains(current)) {
             int next = entities.indexOf(current) + 1;
             if (next >= entities.size()) {
@@ -908,7 +902,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the actual vector for the entities
+     * @return the actual vector for the entities
      */
     public List<Entity> getEntitiesVector() {
         return Collections.unmodifiableList(entities);
@@ -924,7 +918,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns the actual vector for the out-of-game entities
+     * @return the actual vector for the out-of-game entities
      */
     public Vector<Entity> getOutOfGameEntitiesVector() {
         return vOutOfGame;
@@ -2718,8 +2712,8 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns true if the specified player is either the victor, or is on the
-     * winning team. Best to call during GamePhase::VICTORY.
+     * @return true if the specified player is either the victor, or is on the winning team. Best
+     * to call during GamePhase::VICTORY.
      */
     public boolean isPlayerVictor(IPlayer player) {
         if (player.getTeam() == IPlayer.TEAM_NONE) {

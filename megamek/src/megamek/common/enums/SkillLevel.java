@@ -19,6 +19,7 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
 import java.util.List;
@@ -44,7 +45,8 @@ public enum SkillLevel {
 
     //region Constructors
     SkillLevel(final String name, final String toolTipText) {
-        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages", new EncodeControl());
+        final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
+                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }

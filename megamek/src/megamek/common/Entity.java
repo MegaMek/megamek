@@ -17,7 +17,6 @@ package megamek.common;
 
 import megamek.MegaMek;
 import megamek.client.bot.princess.FireControl;
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
@@ -4788,8 +4787,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (ccs.isDestroyed() || ccs.isBreached() || ccs.isMissing()) {
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
+                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && 
+                            ((m != null) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2())))) {
                         hits++;
                     }
                 }
@@ -7585,10 +7584,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
+        
+        // we check for bog down on entering a new hex or changing altitude
+        // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
+        // not susceptible to bog down as per getBogDownModifier,
+        // and not on pavement
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (step.getElevation() == 0) && !isPavementStep) {
+                && (step.getElevation() == curHex.floor()) && !isPavementStep) {
             roll.append(
                     new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {

@@ -42,16 +42,11 @@ public class SRMDeadFireHandler extends SRMHandler {
         sSalvoType = " dead fire missile(s) ";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
     @Override
-    protected int calcnCluster() {
-        return 1;
+    protected int getClusterModifiers(boolean clusterRangePenalty) {
+        return super.getClusterModifiers(clusterRangePenalty) - 3;
     }
-
+    
     /*
      * (non-Javadoc)
      * 

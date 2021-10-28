@@ -981,53 +981,62 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
-            updateBoard();
-            
-        } else if (e.getName().equals(GUIPreferences.DRAW_ENTITY_LABEL)
-                || e.getName().equals(GUIPreferences.UNIT_LABEL_BORDER)
-                || e.getName().equals(GUIPreferences.TEAM_COLORING)
-                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_DECAL)
-                || e.getName().equals(GUIPreferences.SHOW_DAMAGE_LEVEL)) {
-            updateEntityLabels();
-            for (Sprite s: wreckSprites) {
-                s.prepare();
-            }
-            for (Sprite s: isometricWreckSprites) {
-                s.prepare();
-            }
-            
-        } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
-            getTilesetManager().reloadUnitIcons();
-            
-        } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
-            keybindOverlay.setVisible((boolean)e.getNewValue());
-            repaint();
-            
-        } else if (e.getName().equals(GUIPreferences.AOHEXSHADOWS)
-                || e.getName().equals(GUIPreferences.FLOATINGISO)
-                || e.getName().equals(GUIPreferences.LEVELHIGHLIGHT)
-                || e.getName().equals(GUIPreferences.SHOW_COORDS)
-                || e.getName().equals(GUIPreferences.FOV_DARKEN)
-                || e.getName().equals(GUIPreferences.FOV_DARKEN_ALPHA)
-                || e.getName().equals(GUIPreferences.FOV_GRAYSCALE)
-                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT)
-                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_ALPHA)
-                || e.getName().equals(GUIPreferences.FOV_STRIPES)
-                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB)
-                || e.getName().equals(GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII)
-                || e.getName().equals(GUIPreferences.SHADOWMAP)) {
-            clearHexImageCache();
-            repaint();
-        }
-        if (e.getName().equals(GUIPreferences.INCLINES)) {
-            game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
-            clearHexImageCache();
-            repaint();
-            
-        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
-            repaint();
-            
+        switch (e.getName()) {
+            case IClientPreferences.MAP_TILESET:
+                updateBoard();
+                break;
+
+            case GUIPreferences.UNIT_LABEL_STYLE:
+                clientgui.systemMessage("Label style changed to " + GUIPreferences.getInstance().getUnitLabelStyle().description);
+            case GUIPreferences.UNIT_LABEL_BORDER:
+            case GUIPreferences.TEAM_COLORING:
+            case GUIPreferences.SHOW_DAMAGE_DECAL:
+            case GUIPreferences.SHOW_DAMAGE_LEVEL:
+                updateEntityLabels();
+                for (Sprite s : wreckSprites) {
+                    s.prepare();
+                }
+                for (Sprite s : isometricWreckSprites) {
+                    s.prepare();
+                }
+                break;
+
+            case GUIPreferences.ADVANCED_USE_CAMO_OVERLAY:
+                getTilesetManager().reloadUnitIcons();
+                break;
+
+            case GUIPreferences.SHOW_KEYBINDS_OVERLAY:
+                keybindOverlay.setVisible((boolean) e.getNewValue());
+                repaint();
+                break;
+
+            case GUIPreferences.AOHEXSHADOWS:
+            case GUIPreferences.FLOATINGISO:
+            case GUIPreferences.LEVELHIGHLIGHT:
+            case GUIPreferences.SHOW_COORDS:
+            case GUIPreferences.FOV_DARKEN:
+            case GUIPreferences.FOV_DARKEN_ALPHA:
+            case GUIPreferences.FOV_GRAYSCALE:
+            case GUIPreferences.FOV_HIGHLIGHT:
+            case GUIPreferences.FOV_HIGHLIGHT_ALPHA:
+            case GUIPreferences.FOV_STRIPES:
+            case GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB:
+            case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
+            case GUIPreferences.SHADOWMAP:
+            case GUIPreferences.ANTIALIASING:
+                clearHexImageCache();
+                repaint();
+                break;
+
+            case GUIPreferences.INCLINES:
+                game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
+                clearHexImageCache();
+                repaint();
+                break;
+
+            case KeyBindParser.KEYBINDS_CHANGED:
+                repaint();
+                break;
         }
     }
 

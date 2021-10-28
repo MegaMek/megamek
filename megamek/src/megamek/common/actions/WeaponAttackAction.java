@@ -4725,6 +4725,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
             }
+            if (te.isProne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TargetProne"));
+            }
+            if (te.isImmobile()) {
+                toHit.addModifier(-4, Messages.getString("WeaponAttackAction.TargetImmobile"));
+            }
 
             // If the defender carries mechanized BA, they can fight off the
             // swarm

@@ -2180,6 +2180,10 @@ public class BattleArmor extends Infantry {
         if (hasMyomerBooster()) {
             damage += getTroopers() * 2;
         }
+        
+        // we only track vibro claws at the squad level, so we have either 0, 1 or 2. See TW page 223.
+        damage += getVibroClaws();
+        
         return damage;
     }
 

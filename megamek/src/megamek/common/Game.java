@@ -429,7 +429,7 @@ public class Game implements Serializable {
         }
 
         // May need to copy state over from previous teams, such as initiative
-        if ((teams != null) && (getPhase() != GamePhase.LOUNGE)) {
+        if ((teams != null) && !getPhase().isLounge()) {
             for (Team newTeam : initTeams) {
                 for (Team oldTeam : teams) {
                     if (newTeam.equals(oldTeam)) {
@@ -1697,23 +1697,14 @@ public class Game implements Serializable {
     /**
      * Returns an <code>Iterator</code> of the enemy's active entities at the given coordinates.
      *
-     * @param c the <code>Coords</code> of the hex being examined.
+     * @param coords the <code>Coords</code> of the hex being examined.
      * @param currentEntity the <code>Entity</code> whose enemies are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are
      * enemies of the given unit.
      */
-    public Iterator<Entity> getEnemyEntities(final Coords c, final Entity currentEntity) {
-        // Use an EntitySelector to avoid walking the entities vector twice.
-        return getSelectedEntities(new EntitySelector() {
-            private Coords coords = c;
-            private Entity friendly = currentEntity;
-
-            @Override
-            public boolean accept(Entity entity) {
-                return coords.equals(entity.getPosition()) && entity.isTargetable()
-                        && entity.isEnemyOf(friendly);
-            }
-        });
+    public Iterator<Entity> getEnemyEntities(final Coords coords, final Entity currentEntity) {
+        return getSelectedEntities(entity -> coords.equals(entity.getPosition())
+                && entity.isTargetable() && entity.isEnemyOf(currentEntity));
     }
 
     /**
@@ -1724,36 +1715,20 @@ public class Game implements Serializable {
      * enemies of the given unit.
      */
     public Iterator<Entity> getAllEnemyEntities(final Entity currentEntity) {
-        return getSelectedEntities(new EntitySelector() {
-            private Entity friendly = currentEntity;
-
-            @Override
-            public boolean accept(Entity entity) {
-                return entity.isTargetable() && entity.isEnemyOf(friendly);
-            }
-        });
+        return getSelectedEntities(entity -> entity.isTargetable() && entity.isEnemyOf(currentEntity));
     }
 
     /**
      * Returns an <code>Iterator</code> of friendly active entities at the given coordinates.
      *
-     * @param c the <code>Coords</code> of the hex being examined.
+     * @param coords the <code>Coords</code> of the hex being examined.
      * @param currentEntity the <code>Entity</code> whose friends are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given coordinates who are
      * friends of the given unit.
      */
-    public Iterator<Entity> getFriendlyEntities(final Coords c, final Entity currentEntity) {
-        // Use an EntitySelector to avoid walking the entities vector twice.
-        return getSelectedEntities(new EntitySelector() {
-            private Coords coords = c;
-            private Entity friendly = currentEntity;
-
-            @Override
-            public boolean accept(Entity entity) {
-                return coords.equals(entity.getPosition()) && entity.isTargetable()
-                        && !entity.isEnemyOf(friendly);
-            }
-        });
+    public Iterator<Entity> getFriendlyEntities(final Coords coords, final Entity currentEntity) {
+        return getSelectedEntities(entity -> coords.equals(entity.getPosition())
+                && entity.isTargetable() && !entity.isEnemyOf(currentEntity));
     }
 
     /**
@@ -2089,9 +2064,11 @@ public class Game implements Serializable {
      * Removes the first turn found that the specified entity can move in. Used
      * when a turn is played out of order
      */
-    public GameTurn removeFirstTurnFor(Entity entity) {
-        assert (phase != GamePhase.MOVEMENT); // special move multi cases
-        // ignored
+    public @Nullable GameTurn removeFirstTurnFor(final Entity entity) throws Exception {
+        if (getPhase().isMovement()) {
+            throw new Exception("Cannot remove first turn for an entity when it is the movement phase");
+        }
+
         for (int i = turnIndex; i < turnVector.size(); i++) {
             GameTurn turn = turnVector.elementAt(i);
             if (turn.isValidEntity(entity, this)) {
@@ -2115,14 +2092,11 @@ public class Game implements Serializable {
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
         if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
-            && (entity instanceof Infantry)
-            && (phase == GamePhase.MOVEMENT)) {
+                && (entity instanceof Infantry) && getPhase().isMovement()) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
                     OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an infantry turn, remove
-                // that
-                // contrived, but may come up e.g. one inf accidently kills
-                // another
+                // exception, if the _next_ turn is an infantry turn, remove that
+                // contrived, but may come up e.g. one inf accidentally kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2139,14 +2113,11 @@ public class Game implements Serializable {
         }
         // Same thing but for protos
         if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
-            && (entity instanceof Protomech)
-            && (phase == GamePhase.MOVEMENT)) {
+                && (entity instanceof Protomech) && getPhase().isMovement()) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an protomek turn, remove
-                // that
-                // contrived, but may come up e.g. one inf accidently kills
-                // another
+                // exception, if the _next_ turn is an protomek turn, remove that
+                // contrived, but may come up e.g. one inf accidently kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2164,12 +2135,11 @@ public class Game implements Serializable {
 
         // Same thing but for vehicles
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
-            && (entity instanceof Tank) && (phase == GamePhase.MOVEMENT)) {
+                && (entity instanceof Tank) && getPhase().isMovement()) {
             if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a tank turn, remove that
-                // contrived, but may come up e.g. one tank accidently kills
-                // another
+                // contrived, but may come up e.g. one tank accidentally kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2187,12 +2157,11 @@ public class Game implements Serializable {
 
         // Same thing but for meks
         if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
-            && (entity instanceof Mech) && (phase == GamePhase.MOVEMENT)) {
+                && (entity instanceof Mech) && getPhase().isMovement()) {
             if ((getMechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a mech turn, remove that
-                // contrived, but may come up e.g. one mech accidently kills
-                // another
+                // contrived, but may come up e.g. one mech accidentally kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2713,7 +2682,7 @@ public class Game implements Serializable {
 
     /**
      * @return true if the specified player is either the victor, or is on the winning team. Best
-     * to call during GamePhase::VICTORY.
+     * to call during GamePhase.VICTORY.
      */
     public boolean isPlayerVictor(IPlayer player) {
         if (player.getTeam() == IPlayer.TEAM_NONE) {
@@ -2747,7 +2716,7 @@ public class Game implements Serializable {
      * accepts. This value will not be <code>null</code> but it may be
      * empty.
      */
-    public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
+    public Iterator<Entity> getSelectedEntities(@Nullable EntitySelector selector) {
         Iterator<Entity> retVal;
 
         // If no selector was supplied, return all entities.
@@ -3457,12 +3426,9 @@ public class Game implements Serializable {
         }
         Collections.sort(entitiesInCache);
         Collections.sort(entitiesInVector);
-        if ((entitiesInCacheCount != entityVectorSize)
-                && (getPhase() != GamePhase.DEPLOYMENT)
-                && (getPhase() != GamePhase.EXCHANGE)
-                && (getPhase() != GamePhase.LOUNGE)
-                && (getPhase() != GamePhase.INITIATIVE_REPORT)
-                && (getPhase() != GamePhase.INITIATIVE)) {
+        if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
+                && !getPhase().isExchange() && !getPhase().isLounge()
+                && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
             MegaMek.getLogger().warning("Entities vector has " + entities.size()
                     + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();

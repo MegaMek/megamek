@@ -23,7 +23,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -229,9 +228,8 @@ public enum GamePhase {
             return false;
         }
 
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext();) {
-            Entity entity = e.next();
-            for (Mounted mounted : entity.getAmmo()) {
+        for (final Entity entity : game.getEntitiesVector()) {
+            for (final Mounted mounted : entity.getAmmo()) {
                 AmmoType ammoType = (AmmoType) mounted.getType();
 
                 // per errata, TAG will spot for LRMs and such

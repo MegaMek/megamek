@@ -1954,7 +1954,12 @@ public class Server implements Runnable {
             // turn played out of order
             outOfOrder = true;
             entityUsed.setDone(false);
-            GameTurn removed = game.removeFirstTurnFor(entityUsed);
+            GameTurn removed = null;
+            try {
+                removed = game.removeFirstTurnFor(entityUsed);
+            } catch (Exception e) {
+                MegaMek.getLogger().error(e);
+            }
             entityUsed.setDone(true);
             turnsChanged = true;
             if (removed != null) {

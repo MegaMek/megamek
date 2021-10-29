@@ -1,131 +1,114 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * MegaMek - Copyright (C) 2020, 2021 - The MegaMek Team
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.util.UIUtil;
 
-/** 
- * Allows the player to select the type of entity in the hexes used
- * by the LOS tool.
- */
-public class LOSDialog extends ClientDialog implements ActionListener {
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
-    private static final long serialVersionUID = 5633160028901713806L;
+/** Allows the player to select the type of entity in the hexes used by the LOS tool. */
+public class LOSDialog extends AbstractButtonDialog {
 
-    JButton butOK = new JButton(new OkayAction(this)); 
+    private final boolean isMechFirst;
+    private final boolean isMechSecond;
+    private final JToggleButton[] toggles1 = new JToggleButton[2];
+    private final JToggleButton[] toggles2 = new JToggleButton[2];
 
     /**
-     * The checkboxes for available choices.
+     * Allows the player to select the height of the entities in the hexes used by the LOS tool.
+     * The dialog toggles are preset to the given mechInFirst and mechInSecond.
      */
-    private JCheckBox[] checkboxes1 = new JCheckBox[2];
-    private JCheckBox[] checkboxes2 = new JCheckBox[2];
-
     public LOSDialog(JFrame parent, boolean mechInFirst, boolean mechInSecond) {
-        super(parent, Messages.getString("LOSDialog.title"), true); //$NON-NLS-1$
-        super.setResizable(false);
-
-        // The panel with the options
-        JPanel midPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-
-        JLabel labMessage = new JLabel(Messages
-                .getString("LOSDialog.inFirstHex"), SwingConstants.LEFT); //$NON-NLS-1$
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        midPanel.add(labMessage, c);
-
-        checkboxes1[0] = new JCheckBox(
-                Messages.getString("LOSDialog.Mech"), mechInFirst); //$NON-NLS-1$
-        c.gridwidth = 1;
-        midPanel.add(checkboxes1[0], c);
-
-        checkboxes1[1] = new JCheckBox(
-                Messages.getString("LOSDialog.NonMech"), !mechInFirst); //$NON-NLS-1$
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        midPanel.add(checkboxes1[1], c);
-        
-        addSpacerRow(midPanel, c, 20);
-        
-        labMessage = new JLabel(
-                Messages.getString("LOSDialog.InSecondHex"), SwingConstants.LEFT); //$NON-NLS-1$
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        midPanel.add(labMessage, c);
-
-        checkboxes2[0] = new JCheckBox(
-                Messages.getString("LOSDialog.Mech"), mechInSecond); //$NON-NLS-1$
-        c.gridwidth = 1;
-        midPanel.add(checkboxes2[0], c);
-
-        checkboxes2[1] = new JCheckBox(
-                Messages.getString("LOSDialog.NonMech"), !mechInSecond); //$NON-NLS-1$
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        midPanel.add(checkboxes2[1], c);
-
-        addSpacerRow(midPanel, c, 20);
-        
-        // group the checkboxes
-        ButtonGroup radioGroup1 = new ButtonGroup();
-        radioGroup1.add(checkboxes1[0]);
-        radioGroup1.add(checkboxes1[1]);
-        ButtonGroup radioGroup2 = new ButtonGroup();
-        radioGroup2.add(checkboxes2[0]);
-        radioGroup2.add(checkboxes2[1]);
-        
-        // A bit of spacing
-        add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
-        add(Box.createVerticalStrut(10), BorderLayout.PAGE_START);
-        
-        // Assemble the dialog panel
-        add(midPanel, BorderLayout.CENTER);
-        add(butOK, BorderLayout.PAGE_END);
-        
-        setMinimumSize(new Dimension(300, 140));
-        pack();
-        center();
-
-        butOK.requestFocusInWindow();
+        super(parent, "LOSDialog", "LOSDialog.title");
+        isMechFirst = mechInFirst;
+        isMechSecond = mechInSecond;
+        initialize();
     }
 
-    public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-    }
-
+    /**
+     * Returns true if the unit in the first hex should be counted as having Mech height (2 levels) and
+     * false if it should be counted as having Tank height (1 level).
+     */
     public boolean getMechInFirst() {
-        return checkboxes1[0].isSelected();
+        return toggles1[0].isSelected();
     }
 
+    /**
+     * Returns true if the unit in the second hex should be counted as having Mech height (2 levels) and
+     * false if it should be counted as having Tank height (1 level).
+     */
     public boolean getMechInSecond() {
-        return checkboxes2[0].isSelected();
+        return toggles2[0].isSelected();
+    }
+
+    @Override
+    protected Container createCenterPane() {
+        toggles1[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
+        toggles1[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        var firstButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        firstButtonsPanel.add(toggles1[0]);
+        firstButtonsPanel.add(toggles1[1]);
+        var firstLinePanel = new UIUtil.FixedYPanel();
+        firstLinePanel.add(firstButtonsPanel);
+
+        toggles2[0] = new JToggleButton(Messages.getString("LOSDialog.Mech"));
+        toggles2[1] = new JToggleButton(Messages.getString("LOSDialog.NonMech"));
+        var secondButtonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        secondButtonsPanel.add(toggles2[0]);
+        secondButtonsPanel.add(toggles2[1]);
+        var secondLinePanel = new JPanel();
+        secondLinePanel.add(secondButtonsPanel);
+
+        var firstHeader = new JLabel(Messages.getString("LOSDialog.inFirstHex"), JLabel.CENTER);
+        firstHeader.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+
+        var secondHeader = new JLabel(Messages.getString("LOSDialog.InSecondHex"), JLabel.CENTER);
+        secondHeader.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setBorder(new EmptyBorder(20, 50, 10, 50));
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(firstHeader);
+        centerPanel.add(firstLinePanel);
+        centerPanel.add(Box.createVerticalStrut(20));
+        centerPanel.add(secondHeader);
+        centerPanel.add(secondLinePanel);
+        centerPanel.add(Box.createVerticalGlue());
+
+        toggles1[0].setSelected(isMechFirst);
+        toggles1[1].setSelected(!isMechFirst);
+        toggles2[0].setSelected(isMechSecond);
+        toggles2[1].setSelected(!isMechSecond);
+
+        ButtonGroup radioGroup1 = new ButtonGroup();
+        radioGroup1.add(toggles1[0]);
+        radioGroup1.add(toggles1[1]);
+        ButtonGroup radioGroup2 = new ButtonGroup();
+        radioGroup2.add(toggles2[0]);
+        radioGroup2.add(toggles2[1]);
+
+        return centerPanel;
     }
 }

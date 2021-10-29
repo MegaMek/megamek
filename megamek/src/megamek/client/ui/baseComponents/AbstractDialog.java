@@ -112,7 +112,10 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * this being the abstract basis for all other dialogs.
      */
     protected void finalizeInitialization() {
+        // Pack and fit only affect dialogs when shown for the absolute first time; at any later time,
+        // the setPreferences() below overwrites size and position with stored values
         pack();
+        fitAndCenter();
 
         // Escape keypress
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -130,6 +133,18 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         addWindowListener(this);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferences();
+    }
+
+    /**
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size
+     * when necessary. Then centers the dialog on the screen.
+     */
+    private void fitAndCenter() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        var maxWidth = screenSize.width / 10 * 8;
+        var maxHeight = screenSize.height / 10 * 8;
+        setSize(new Dimension(Math.min(maxWidth, getWidth()), Math.min(maxHeight, getHeight())));
+        setLocation((screenSize.width - getSize().width) / 2, (screenSize.height - getSize().height) / 2);
     }
 
     /**

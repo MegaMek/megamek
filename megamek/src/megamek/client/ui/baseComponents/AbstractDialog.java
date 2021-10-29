@@ -141,8 +141,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      */
     private void fitAndCenter() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        var maxWidth = screenSize.width / 10 * 8;
-        var maxHeight = screenSize.height / 10 * 8;
+        int maxWidth = (int) (screenSize.width * 0.8);
+        int maxHeight = (int) (screenSize.height * 0.8);
         setSize(new Dimension(Math.min(maxWidth, getWidth()), Math.min(maxHeight, getHeight())));
         setLocation((screenSize.width - getSize().width) / 2, (screenSize.height - getSize().height) / 2);
     }

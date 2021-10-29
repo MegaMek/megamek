@@ -1708,7 +1708,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GUIPreferences gp = GUIPreferences.getInstance();
         LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
         ignoreHotKeys = true;
-        if (ld.showDialog() == DialogResult.CONFIRMED) {
+        if (ld.showDialog().isConfirmed()) {
             gp.setMechInFirst(ld.getMechInFirst());
             gp.setMechInSecond(ld.getMechInSecond());
         }

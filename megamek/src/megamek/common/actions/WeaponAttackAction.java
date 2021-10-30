@@ -4366,7 +4366,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // blood stalker SPA
-        if (ae.getBloodStalkerTarget() != Entity.NONE) {
+        if (ae.getBloodStalkerTarget() > Entity.NONE) {
             if (ae.getBloodStalkerTarget() == target.getTargetId()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
             } else {

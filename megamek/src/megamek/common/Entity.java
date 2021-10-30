@@ -10064,10 +10064,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-
-        if (this.id  == 69) {
-            int alpha = 1;
-        }
         
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,

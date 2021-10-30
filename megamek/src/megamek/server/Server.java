@@ -30691,11 +30691,13 @@ public class Server implements Runnable {
      * Sends out player info to all connections
      */
     private void transmitPlayerConnect(IPlayer player) {
-        for (var connection: connections) {
-            var playerId = player.getId();
-            connection.send(
-                createPlayerConnectPacket(player, playerId != connection.getId())
-            );
+        synchronized (connections) {
+            for (var connection: connections) {
+                var playerId = player.getId();
+                connection.send(
+                    createPlayerConnectPacket(player, playerId != connection.getId())
+                );
+            }
         }
     }
 

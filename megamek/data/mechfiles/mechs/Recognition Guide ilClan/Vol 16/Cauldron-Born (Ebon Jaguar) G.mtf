@@ -38,23 +38,23 @@ Improved Heavy Large Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -66,24 +66,24 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLHAG40
-CLHAG40
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
-Hyper-Assault Gauss Rifle/40 Ammo
+CLHAG40 (OMNIPOD)
+CLHAG40 (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/40 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 Clan Endo Steel
 -Empty-
 -Empty-
@@ -147,4 +147,16 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:Introduced in 3049 to address flaws in the venerable Hellbringer, by Operation REVIVAL the Ebon Jaguar had only just started to spread through the Jaguar's touman with the Inner Sphere first encountering the design during the Battle of Luthien.
 
+capabilities:The G devotes most of its tonnage to a massive Hyper-Assault Gauss Rifle 40 that is spread between the left arm and torso. This weapon is fed from a three-ton ammunition bay in the left torso. An Improved Heavy Large Laser provides heavy secondary fire from the right arm. A right torso targeting computer enhances the accuracy of both weapons.
+
+history:Facing it for the first time when engaging the First Jaguar Guards Cluster in the Kado-Guchi Valley, the 'Mech's ability to take damage and remain operational led the Inner Sphere warriors who fought it to call it the Cauldron-Born after the unstoppable zombies of Irish myth. Paradoxically many of the other Clans also used the Inner Sphere Cauldron-Born reporting name, having first learned detailed information of the design from Inner Sphere sources. y Operation BULLDOG the Cauldron-Born made up a large proportion of the heavy 'Mechs of the rebuilding Smoke Jaguars, and following their Annihilation the design proliferated the remaining Clans, save the Jade Falcons, Wolves and Coyotes who continued to favor the Hellbringer. Following the Wars of Reaving the Ebon Jaguar had finally supplanted the Hellbringer in most Homeworld Clans, save the Coyotes who remained loyal to redeeming the honor of the design.
+
+manufacturer:Huntress Manufacturing Plant DL-6
+primaryfactory:Huntress
+systemmanufacturer:CHASSIS:CSJ Type 65.43 Endo
+systemmanufacturer:ENGINE:Consolidated Fusion 325 XL
+systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Hector CC-22E
+systemmanufacturer:TARGETING:Integrated Bravo-7

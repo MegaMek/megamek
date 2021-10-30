@@ -1,0 +1,166 @@
+Version:1.1
+Awesome
+AWS-10KM (Cameron)
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3075
+source:TRO 3050 - Jihad
+rules level:4
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:19 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:10
+RTR armor:10
+RTC armor:20
+
+Weapons:4
+ER Small Laser, Head
+ER PPC, Left Torso
+ER PPC, Right Torso
+Snub-Nose PPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+ISSNPPC
+ISSNPPC
+IS Endo Steel
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+ISC3iUnit
+ISC3iUnit
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine (ARMORED)
+Fusion Engine (ARMORED)
+Fusion Engine (ARMORED)
+Gyro (ARMORED)
+Gyro (ARMORED)
+Fusion Engine (ARMORED)
+Fusion Engine (ARMORED)
+Fusion Engine (ARMORED)
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit (ARMORED)
+ISERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview: Tasked by the SLDF to replace their aging fleet of Strikers, Technicron Manufacturing would present their Awesome in 2665. Few at the time realized that the design would quickly become one of the most coveted Assault 'Mechs of the Succession Wars to come. Nearly always tasked with the heaviest attacks, the Awesome and its PPC-based armament would come to be regarded as the quintessential "zombie" design. Durable, reliable, and near unstoppable, officers jump at any opportunity to field the design within their commands.
+capabilities: The PPCs of most Awesomes give it intimidating firepower over long ranges. Its thick armor plating, intelligent system placement, and lack of explosive components makes disabling one a challenging task; indeed, even flaking 'Mechs will find their attempts thwarted by the Awesome's unusually heavy rear armor. Careful heat management is a must when at the helm of an Awesome. A standard "2-3-2" volley became the norm for most MechWarriors, giving the 'Mech the greatest damage output without compromizing its accuracy. Its slow speed and targeting trouble with the PPCs at short range does give it some weaknesses, however, and it always fares best when well supported by a larger formation.
+deployment: The AWS-10KM is the result of close collaboration between Marik and Kuritan enterprises. Combining advanced PPC technologies with highly compact engine and gyro components, the -10KM instantly became both the toughest and the hardest-hitting Awesome on the market with its launch. Unlike many other Free Worlds designs, the -10KM remained exclusive to their military and the armed forces of the Kuritan empire.
+systemmanufacturer:CHASSIS:Technicron
+systemmode:CHASSIS:Type G
+systemmanufacturer:ENGINE:Pitban
+systemmode:ENGINE:240 Compact
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett
+systemmode:COMMUNICATIONS:T19-G
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:2780
+

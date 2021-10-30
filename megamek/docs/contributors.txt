@@ -6,14 +6,15 @@
   Current Maintainer:
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
-  Lead Developers:
+  Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
 	 Christopher Watford
 	 Juliez
+	 Justin "Windchild" Bowen
 
   Data Lead
-	 Dave Nawton 
+	 Dave "Hammer" Nawton 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -130,6 +131,7 @@
 	 Norman "Flynn" Zinner
 	 Kaji
 	 UlyssesSockdrawer
+	 Stonewall072
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -250,7 +252,7 @@
 	 Bloodwolf
 	 SLDF_gunslinger
 	 
-  Mech Data:
+  Mech (Fluff) Data:
   	From Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
   	
   Translations

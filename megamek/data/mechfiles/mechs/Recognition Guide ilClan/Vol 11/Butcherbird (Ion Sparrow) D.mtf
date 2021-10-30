@@ -150,4 +150,19 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Ion Sparrow was introduced by Clan Jade Falcon on Alyina as an experimental test bed for the advanced Partial Wing system.
+ 
+capabilities:The Ion Sparrow uses an Endo Steel chassis, XL Engine, and Ferro-Fibrous armor to save weight. It also uses a Small Cockpit to save more weight. Eight jump jets have been mounted in the right and left torso; Paired with the Partial Wing, this allows the Ion Sparrow to cover 300 meters per jump. The wing also works with the double heat sinks to dissipate more heat. However, despite the weight saving equipment installed the 'Mech only has four tons of pod space available.
 
+deployment:This configuration carries a pair of ER Medium Lasers in the left arm and a single Medium Pulse Laser in the right arm. 
+
+history:A warrior assigned to the project determined that it would be very effective as a scout and a harasser, and petitioned for its inclusion in the touman. The Ion Sparrow is also frequently used as a trainer for new warrior sibkos. The Lyran Intelligence Corps named the 'Mech the Butcherbird prior to finding out the Jade Falcon's name for the 'Mech.
+manufacturer:CJF Factory Zone 4
+
+primaryfactory:Alyina
+systemmanufacturer:CHASSIS:JF 3B Light Endo Steel
+systemmanufacturer:ENGINE:JF 160 XL
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:JUMPJET:Clan Standard Type A2 with Partial Wing
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVIII KITT

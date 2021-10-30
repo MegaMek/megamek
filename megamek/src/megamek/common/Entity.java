@@ -10123,9 +10123,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         Iterator<Entity> e = game.getEntities();
         while (!canHit && e.hasNext()) {
             Entity target = e.next();
-            if (target.getId() == 18) {
-                int beta = 1;
-            }
 
             // don't shoot at friendlies unless you are into that sort of thing
             // and do not shoot yourself even then

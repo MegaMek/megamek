@@ -29464,8 +29464,12 @@ public class Server implements Runnable {
                     game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
                 }
             }
+            
+            if (game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+                    ServerHelper.clearBloodStalkers(game, entityId, this);
+            }
         }
-
+        
         // during deployment this absolutely must be called before game.removeEntity(), otherwise the game
         // hangs
         // when a unit is removed. Cause unknown.

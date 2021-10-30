@@ -51,6 +51,7 @@ VERSION HISTORY:
 + Issue #3185: Prevent server lockup when processing a club attack (against a unit also equipped with a club?)
 + PR #3218: BotGeometry Null Edge Detected Exception Logging Upgrade
 + PR #3219: Fixing the Messages instance used by Entity
++ Issue #3175: Fix concurrent modification issue preventing multi-bot replacement
 
 0.49.3 (2021-08-23 2000 UTC)
 + PR #2955: Board Tagging

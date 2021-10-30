@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-0.49.4-SNAPSHOT
+0.49.4 (2021-10-30 1800 UTC)
 + PR #3079: Skill Generation Rework
 + PR #3106: Relabel "Start a Saved Game" button to "Load a Saved Game"
 + PR #3113: Unit Readout Dialog: Add missing space between the dialog name and unit name
@@ -41,7 +41,7 @@ VERSION HISTORY:
 + Issue #3147: Dead-fire missiles behave according to updated IO rules (no auto-hotload, cluster hit penalties, 5 point clustering for LRMs)
 + Issue #2894: Allow airborne microlite VTOL infantry to flee
 + Issue #2813: Per TW, updated swarm attack modifiers, battle armor vibro claws now do extra damage during swarm attack.
-+ Data: New sprites/updated unit fixes and Shrapnel units. 
++ Data: New sprites/updated unit fixes and Shrapnel units (including new small arms). 
 + Issue #3813: Multiple improvements to the unit tooltips, in the lobby and otherwise.
 + Issue #3202: "Restore" ability to switch unit name display using ctrl-b (full name, just the chassis name, etc)
 + Issue #2207: Prevent additional MP cost and bog down nagging when moving along water surface while the bottom terrain costs extra MP/causes bog down

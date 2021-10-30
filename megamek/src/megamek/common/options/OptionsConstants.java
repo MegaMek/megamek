@@ -195,7 +195,7 @@ public class OptionsConstants {
     public static final String GUNNERY_WEAPON_SPECIALIST = "weapon_specialist"; // $NON-NLS$
 
     // MISC ABILITIES
-    // public static final String MISC_ANTAGONIZER= "antagonizer"; //$NON-NLS$
+    public static final String MISC_ANTAGONIZER= "antagonizer"; //$NON-NLS$
     // public static final String MISC_COMBAT_INTUITION= "combat_intuition";
     // //$NON-NLS$
     // public static final String MISC_DEMORALIZER= "demoralizer"; //$NON-NLS$

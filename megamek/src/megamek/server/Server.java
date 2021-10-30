@@ -14354,6 +14354,17 @@ public class Server implements Runnable {
                 MovePath path = new MovePath(game, entity);
                 path.addStep(MoveStepType.FLEE);
                 addReport(processLeaveMap(path, false, -1));
+            } else if (ea instanceof ActivateBloodStalkerAction) {
+                ActivateBloodStalkerAction bloodStalkerAction = (ActivateBloodStalkerAction) ea;
+                Entity target = game.getEntity(bloodStalkerAction.getTargetID());
+                
+                if ((entity != null) && (target != null)) {
+                    game.getEntity(bloodStalkerAction.getEntityId()).setBloodStalkerTarget(bloodStalkerAction.getTargetID());
+                    Report r = new Report(10000);                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(target.getDisplayName());
+                    addReport(r);
+                }
             }
         }
     }
@@ -27853,6 +27864,7 @@ public class Server implements Runnable {
 
                 } // Handle the next transported unit.
 
+                ServerHelper.clearBloodStalkers(game, entity.getId(), this);                
             } // End has-transported-unit
 
             // Handle transporting unit.

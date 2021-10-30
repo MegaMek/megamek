@@ -16205,4 +16205,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getBloodStalkerTarget() {
         return bloodStalkerTarget;
     }
+    
+    /**
+     * Whether this entity can activate the "blood stalker" ability
+     */
+    public boolean canActivateBloodStalker() {
+        return hasAbility(OptionsConstants.GUNNERY_BLOOD_STALKER) &&
+                (getBloodStalkerTarget() == Entity.NONE);
+    }
 }

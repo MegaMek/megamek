@@ -27,7 +27,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Hex;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -318,7 +318,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockOptions.booleanOption(Mockito.any(String.class))).thenReturn(false);
         Mockito.when(mockPath.getFinalCoords()).thenReturn(new Coords(0, 0));
 
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
 
         //
         final int mockEnemyMechId = 1;
@@ -331,19 +331,19 @@ public class BasicPathRankerTest {
                .when(testRanker)
                .calculateDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(EntityState.class),
                                          Mockito.any(MovePath.class), Mockito.any(EntityState.class), Mockito.anyInt(),
-                                         Mockito.any(IGame.class));
+                                         Mockito.any(Game.class));
         Mockito.doReturn(10.0)
                .when(testRanker)
                .calculateKickDamagePotential(Mockito.eq(mockEnemyMech), Mockito.any(MovePath.class),
-                                             Mockito.any(IGame.class));
+                                             Mockito.any(Game.class));
         Mockito.doReturn(14.5)
                .when(testRanker)
                .calculateMyDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech),
-                                           Mockito.anyInt(), Mockito.any(IGame.class));
+                                           Mockito.anyInt(), Mockito.any(Game.class));
         Mockito.doReturn(8.0)
                .when(testRanker)
                .calculateMyKickDamagePotential(Mockito.any(MovePath.class), Mockito.eq(mockEnemyMech),
-                                               Mockito.any(IGame.class));
+                                               Mockito.any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
         testBestDamageByEnemies.put(mockEnemyMechId, 0.0);
         Mockito.doReturn(testBestDamageByEnemies)
@@ -380,16 +380,16 @@ public class BasicPathRankerTest {
                .getMovePathSuccessProbability(Mockito.any(MovePath.class), Mockito.any(StringBuilder.class));
         Mockito.doReturn(5)
                .when(testRanker)
-               .distanceToClosestEdge(Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .distanceToClosestEdge(Mockito.any(Coords.class), Mockito.any(Game.class));
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(Game.class));
         Mockito.doReturn(12.0)
                .when(testRanker)
-               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(Game.class));
         Mockito.doReturn(0.0)
                .when(testRanker)
-               .checkPathForHazards(Mockito.any(MovePath.class), Mockito.any(Entity.class), Mockito.any(IGame.class));
+               .checkPathForHazards(Mockito.any(MovePath.class), Mockito.any(Entity.class), Mockito.any(Game.class));
 
         final Entity mockMover = Mockito.mock(BipedMech.class);
         Mockito.when(mockMover.isClan()).thenReturn(false);
@@ -419,7 +419,7 @@ public class BasicPathRankerTest {
         final GameOptions mockGameOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq("no_clan_physical"))).thenReturn(false);
 
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
         Mockito.when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
@@ -447,11 +447,11 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
         testEnemies.add(mockEnemyMech1);
         Mockito.doReturn(mockEnemyMech1)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(Game.class));
 
         final Entity mockEnemyMech2 = Mockito.mock(BipedMech.class);
         Mockito.when(mockEnemyMech2.isOffBoard()).thenReturn(false);
@@ -556,7 +556,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
@@ -587,7 +587,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
         expected = new RankedPath(-61.0, mockPath, "Calculation: {" +
                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
@@ -618,7 +618,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
 
         // Change the damage done by enemy mech 1.
         evalForMockEnemyMech = new EntityEvaluationResponse();
@@ -628,7 +628,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
         expected = new RankedPath(-61.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
@@ -659,7 +659,7 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
         expected = new RankedPath(-41.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
@@ -690,12 +690,12 @@ public class BasicPathRankerTest {
         Mockito.doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(Mockito.eq(mockEnemyMech1), Mockito.any(MovePath.class),
-                                   Mockito.any(IGame.class));
+                                   Mockito.any(Game.class));
 
         // Change the distance to the enemy.
         Mockito.doReturn(2.0)
                .when(testRanker)
-               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(Game.class));
         expected = new RankedPath(-26.25, mockPath, "Calculation: {" +
                                                     "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
                 (0) + " * " + LOG_DECIMAL.format
@@ -721,7 +721,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(22.0)
                .when(testRanker)
-               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(Game.class));
         expected = new RankedPath(-76.25, mockPath, "Calculation: " +
                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -747,7 +747,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(12.0)
                .when(testRanker)
-               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(IGame.class));
+               .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.any(Coords.class), Mockito.any(Game.class));
 
         // Change the distance to my friends.
         friendsCoords = new Coords(0, 10);
@@ -842,7 +842,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(10)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(Game.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -868,7 +868,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(30)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(Game.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -894,7 +894,7 @@ public class BasicPathRankerTest {
         }
         Mockito.doReturn(20)
                .when(testRanker)
-               .distanceToHomeEdge(Mockito.nullable(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(IGame.class));
+               .distanceToHomeEdge(Mockito.nullable(Coords.class), Mockito.any(CardinalEdge.class), Mockito.any(Game.class));
         Mockito.when(mockPrincess.wantsToFallBack(Mockito.eq(mockMover))).thenReturn(false);
         Mockito.when(mockMover.isCrippled()).thenReturn(false);
 
@@ -975,7 +975,7 @@ public class BasicPathRankerTest {
         // Test not being able to find an enemy.
         Mockito.doReturn(null)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(Game.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: " +
                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
                 .format(0) + " * " + LOG_DECIMAL.format
@@ -998,7 +998,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, actual);
         Mockito.doReturn(mockEnemyMech1)
                .when(testRanker)
-               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(IGame.class));
+               .findClosestEnemy(Mockito.eq(mockMover), Mockito.nullable(Coords.class), Mockito.any(Game.class));
     }
 
     @Test
@@ -1025,7 +1025,7 @@ public class BasicPathRankerTest {
 
         final Coords position = new Coords(0, 0);
         final Entity me = Mockito.mock(BipedMech.class);
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
 
         final BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
         Mockito.doReturn(enemyList).when(mockPrincess).getEnemyEntities();
@@ -1072,7 +1072,7 @@ public class BasicPathRankerTest {
         final IBoard mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
 
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
 
         final Entity mockFriend1 = Mockito.mock(BipedMech.class);
@@ -1160,7 +1160,7 @@ public class BasicPathRankerTest {
         entities.add(mockMe);
         entities.add(mockEnemy);
         
-        final IGame mockGame = generateMockGame(entities, mockBoard);
+        final Game mockGame = generateMockGame(entities, mockBoard);
 
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(12.5);
@@ -1215,7 +1215,7 @@ public class BasicPathRankerTest {
         entities.add(mockEnemy);
 
         int testDistance = 10;
-        final IGame mockGame = generateMockGame(entities, mockBoard);
+        final Game mockGame = generateMockGame(entities, mockBoard);
         
         final FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);
@@ -1303,9 +1303,9 @@ public class BasicPathRankerTest {
      * @param entities
      * @return
      */ 
-    private IGame generateMockGame(List<Entity> entities, IBoard mockBoard) {
+    private Game generateMockGame(List<Entity> entities, IBoard mockBoard) {
        
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
         
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
         final GameOptions mockGameOptions = Mockito.mock(GameOptions.class);
@@ -1366,7 +1366,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockUnit.locations()).thenReturn(8);
         Mockito.when(mockUnit.getArmor(Mockito.anyInt())).thenReturn(10);
 
-        final IGame mockGame = Mockito.mock(IGame.class);
+        final Game mockGame = Mockito.mock(Game.class);
 
         final IBoard mockBoard = Mockito.mock(IBoard.class);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);

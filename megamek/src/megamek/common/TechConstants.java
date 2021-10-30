@@ -174,7 +174,7 @@ public class TechConstants {
      * @param game
      * @return
      */
-    public static int getSimpleLevel(IGame game) {
+    public static int getSimpleLevel(Game game) {
         return getSimpleLevel(game.getOptions().stringOption("techlevel"));
     }
 
@@ -234,7 +234,7 @@ public class TechConstants {
      * @param isClan
      * @return
      */
-    public static int getGameTechLevel(IGame game, boolean isClan) {
+    public static int getGameTechLevel(Game game, boolean isClan) {
         // Get the integer simple level based on the string game option
         int simpleTechLvl = getSimpleLevel(game);
         // Arrays.binarySearch could return -1 if string isn't found

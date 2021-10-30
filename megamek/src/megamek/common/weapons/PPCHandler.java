@@ -24,7 +24,7 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -51,7 +51,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      * @param g
      * @param s
      */
-    public PPCHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the

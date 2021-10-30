@@ -24,7 +24,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -63,7 +63,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
      * @param target    Target
      * @return reason the attack is impossible, or null if it is possible
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae,
+    protected static String toHitIsImpossible(Game game, Entity ae,
                                               Targetable target) {
 
         if (target == null) {
@@ -154,7 +154,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         return null;
     }
 
-    protected static void setCommonModifiers(ToHitData toHit, IGame game,
+    protected static void setCommonModifiers(ToHitData toHit, Game game,
                                              Entity ae, Targetable target) {
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);

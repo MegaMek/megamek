@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -43,7 +43,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MGHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         damageType = DamageType.ANTI_INFANTRY;
     }

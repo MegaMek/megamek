@@ -619,7 +619,7 @@ public class EquipChoicePanel extends JPanel {
     private void setupMunitions() {
         GridBagLayout gbl = new GridBagLayout();
         panMunitions.setLayout(gbl);
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 

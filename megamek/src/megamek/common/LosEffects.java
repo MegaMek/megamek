@@ -344,12 +344,12 @@ public class LosEffects {
     }
 
     @Deprecated // Deprecated for nullable passing
-    public static LosEffects calculateLos(final IGame game, final int attackerId,
+    public static LosEffects calculateLos(final Game game, final int attackerId,
                                           final @Nullable Targetable target) {
         return calculateLOS(game, game.getEntity(attackerId), target, false);
     }
 
-    public static LosEffects calculateLOS(final IGame game, final @Nullable Entity attacker,
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
                                           final @Nullable Targetable target) {
         return calculateLOS(game, attacker, target, false);
     }
@@ -365,7 +365,7 @@ public class LosEffects {
      * @param spotting if the person is spotting
      * @return the found LOS Effects
      */
-    public static LosEffects calculateLOS(final IGame game, final @Nullable Entity attacker,
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
                                           final @Nullable Targetable target, final boolean spotting) {
         if ((attacker == null) || (target == null)) {
             return calculateLOS(game, attacker, target,
@@ -415,7 +415,7 @@ public class LosEffects {
         return bestLOS;
     }
 
-    public static LosEffects calculateLOS(final IGame game, final @Nullable Entity attacker,
+    public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
                                           final @Nullable Targetable target,
                                           final @Nullable Coords attackerPosition,
                                           final @Nullable Coords targetPosition,
@@ -533,7 +533,7 @@ public class LosEffects {
         return finalLoS;
     }
 
-    public static LosEffects calculateLos(IGame game, AttackInfo ai) {
+    public static LosEffects calculateLos(Game game, AttackInfo ai) {
         if (ai.attOffBoard) {
             LosEffects los = new LosEffects();
             los.blocked = true;
@@ -587,15 +587,15 @@ public class LosEffects {
      * Returns ToHitData indicating the modifiers to fire for the specified LOS
      * effects data.
      */
-    public ToHitData losModifiers(IGame game) {
+    public ToHitData losModifiers(Game game) {
         return losModifiers(game, 0, false);
     }
     
-    public ToHitData losModifiers(IGame game, boolean underWaterWeapon) {
+    public ToHitData losModifiers(Game game, boolean underWaterWeapon) {
         return losModifiers(game, 0, underWaterWeapon);
     }
 
-    public ToHitData losModifiers(IGame game, int eistatus, boolean underwaterWeapon) {
+    public ToHitData losModifiers(Game game, int eistatus, boolean underwaterWeapon) {
         ToHitData modifiers = new ToHitData();
 
         if ( arcedShot ) {
@@ -730,7 +730,7 @@ public class LosEffects {
      * hexes. Since intervening() returns all the coordinates, we just add the
      * effects of all those hexes.
      */
-    private static LosEffects losStraight(IGame game, AttackInfo ai, 
+    private static LosEffects losStraight(Game game, AttackInfo ai,
             boolean diagramLoS, boolean partialCover) {
         ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos);
         LosEffects los = new LosEffects();
@@ -795,7 +795,7 @@ public class LosEffects {
      * attacker partial cover blocks leg weapons, as we want to return the same
      * sequence regardless of what weapon is attacking.
      */
-    private static LosEffects losDivided(IGame game, AttackInfo ai,
+    private static LosEffects losDivided(Game game, AttackInfo ai,
             boolean diagramLoS, boolean partialCover) {
         ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
                 true);
@@ -1040,7 +1040,7 @@ public class LosEffects {
      * Returns a LosEffects object representing the LOS effects of anything at
      * the specified coordinate.
      */
-    private static LosEffects losForCoords(IGame game, AttackInfo ai,
+    private static LosEffects losForCoords(Game game, AttackInfo ai,
             Coords coords, Building thruBldg, 
             boolean diagramLoS, boolean partialCover) {
         LosEffects los = new LosEffects();
@@ -1330,7 +1330,7 @@ public class LosEffects {
         return los;
     }
 
-    public static boolean hasFireBetween(Coords start, Coords end, IGame game) {
+    public static boolean hasFireBetween(Coords start, Coords end, Game game) {
 
         ArrayList<Coords> in = Coords.intervening(start, end);
         for ( Coords hex : in ) {
@@ -1381,7 +1381,7 @@ public class LosEffects {
      * @param targetInBuilding
      * @param los
      */
-    public static int dividedLeftBetter(ArrayList<Coords> in, IGame game,
+    public static int dividedLeftBetter(ArrayList<Coords> in, Game game,
             AttackInfo ai, boolean targetInBuilding, LosEffects los) {
         boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
         boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
@@ -1428,7 +1428,7 @@ public class LosEffects {
         }
     }
 
-    private static boolean isDeadZone(IGame game, AttackInfo ai) {
+    private static boolean isDeadZone(Game game, AttackInfo ai) {
         //determine who is higher and who is lower
         int highElev = ai.attackAbsHeight;
         int lowElev = ai.targetAbsHeight;

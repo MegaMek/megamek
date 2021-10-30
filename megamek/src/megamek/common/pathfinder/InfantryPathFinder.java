@@ -9,7 +9,7 @@ import java.util.Set;
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.client.bot.princess.FireControl;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -25,7 +25,7 @@ import megamek.common.logging.MMLogger;
  *
  */
 public class InfantryPathFinder {
-    private IGame game;
+    private Game game;
     private List<MovePath> infantryPaths;
     private MMLogger logger;
     private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.InfantryPathFinder";
@@ -33,7 +33,7 @@ public class InfantryPathFinder {
     private Set<Coords> visitedCoords = new HashSet<>();
     
     
-    private InfantryPathFinder(IGame game) {
+    private InfantryPathFinder(Game game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
@@ -106,7 +106,7 @@ public class InfantryPathFinder {
         }
     }
     
-    public static InfantryPathFinder getInstance(IGame game) {
+    public static InfantryPathFinder getInstance(Game game) {
         InfantryPathFinder ipf = new InfantryPathFinder(game);
 
         return ipf;

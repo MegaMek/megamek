@@ -18,12 +18,13 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -43,7 +44,7 @@ public class AR10Handler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public AR10Handler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public AR10Handler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
     
@@ -53,7 +54,7 @@ public class AR10Handler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

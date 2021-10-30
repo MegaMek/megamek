@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 
 /**
@@ -33,7 +33,7 @@ public class ForceVictory implements IVictoryConditions, Serializable {
     public ForceVictory() {
     }
 
-    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult victory(Game game, Map<String, Object> ctx) {
         if (!game.isForceVictory()) {
             return VictoryResult.noResult();
         }

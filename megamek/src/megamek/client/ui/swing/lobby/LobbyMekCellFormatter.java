@@ -50,7 +50,7 @@ class LobbyMekCellFormatter {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + guiScaledFontHTML());
 
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         IPlayer owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
@@ -97,7 +97,7 @@ class LobbyMekCellFormatter {
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
                 || (!entity.isDesignValid())
                 ) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
         }
@@ -390,7 +390,7 @@ class LobbyMekCellFormatter {
      */
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         IPlayer owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
@@ -677,7 +677,7 @@ class LobbyMekCellFormatter {
     
     private static String formatForce(Force force, ChatLounge lobby, float size) {
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);
         IPlayer owner = game.getPlayer(ownerId);

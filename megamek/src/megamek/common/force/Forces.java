@@ -20,7 +20,7 @@ package megamek.common.force;
 
 import megamek.MegaMek;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
@@ -45,9 +45,9 @@ public final class Forces implements Serializable {
     private static final long serialVersionUID = -1382468145554363945L;
     
     private HashMap<Integer, Force> forces = new HashMap<>();
-    private transient IGame game;
+    private transient Game game;
     
-    public Forces(IGame g) {
+    public Forces(Game g) {
         game = g;
     }
     
@@ -417,10 +417,10 @@ public final class Forces implements Serializable {
     }
     
     /** 
-     * Sets the game reference to the provided IGame. Used when transferring
+     * Sets the game reference to the provided Game. Used when transferring
      * the forces between client and server.
      */
-    public void setGame(IGame g) {
+    public void setGame(Game g) {
         game = g;
     }
     

@@ -17,7 +17,7 @@ public class EntityVisibilityUtils {
      * @param entity The entity to check
      * @return Whether or not the player can see the entity.
      */
-    public static boolean detectedOrHasVisual(IPlayer localPlayer, IGame game, Entity entity) {
+    public static boolean detectedOrHasVisual(IPlayer localPlayer, Game game, Entity entity) {
         boolean canSee = (localPlayer == null)
                 || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)

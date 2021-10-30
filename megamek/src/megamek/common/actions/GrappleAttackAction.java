@@ -17,7 +17,7 @@ package megamek.common.actions;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
@@ -46,14 +46,14 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         super(entityId, targetType, targetId);
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
     }
 
     /**
      * To-hit number
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         return toHit(game, attackerId, target, Entity.GRAPPLE_BOTH, false);
     }
 
@@ -71,7 +71,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      *            illegal. See TO pg 289.
      * @return
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
             Targetable target, int grappleSide, boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
         
@@ -187,7 +187,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @param grappleSide
      * @return
      */
-    public static ToHitData checkIllegal(IGame game, Entity ae,
+    public static ToHitData checkIllegal(Game game, Entity ae,
             Targetable target, int grappleSide) {
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE,

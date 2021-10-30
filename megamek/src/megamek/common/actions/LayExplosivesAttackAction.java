@@ -16,7 +16,7 @@ package megamek.common.actions;
 
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -55,7 +55,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         return dmg * numTurns;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()));
     }
@@ -63,7 +63,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
     /**
      * To-hit number, i.e. is the action possible
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if ((target.getTargetType() != Targetable.TYPE_BUILDING)
                 && (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {

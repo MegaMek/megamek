@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -41,7 +41,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
      * @param g
      * @param s
      */
-    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

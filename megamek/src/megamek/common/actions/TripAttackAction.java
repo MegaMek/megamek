@@ -16,7 +16,7 @@ package megamek.common.actions;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
@@ -45,14 +45,14 @@ public class TripAttackAction extends PhysicalAttackAction {
         super(entityId, targetType, targetId);
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return TripAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
     }
 
     /**
      * To-hit number for the specified leg to kick
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");

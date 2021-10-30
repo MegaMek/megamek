@@ -35,7 +35,7 @@ import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
@@ -51,6 +51,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -69,7 +70,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public int roll;
     protected boolean isJammed = false;
 
-    protected IGame game;
+    protected Game game;
     protected transient Server server; // must not save the server
     protected boolean bMissed;
     protected boolean bSalvo = false;
@@ -412,8 +413,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Do we care about the specified phase?
      */
-    public boolean cares(IGame.Phase phase) {
-        if (phase == IGame.Phase.PHASE_FIRING) {
+    public boolean cares(GamePhase phase) {
+        if (phase == GamePhase.FIRING) {
             return true;
         }
         return false;
@@ -770,7 +771,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
-    public boolean handle(IGame.Phase phase, Vector<Report> returnedReports) {
+    public boolean handle(GamePhase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
         }
@@ -1779,7 +1780,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     // Among other things, basically a refactored Server#preTreatWeaponAttack
-    public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public WeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         damageType = DamageType.NONE;
         toHit = t;
         waa = w;
@@ -2041,7 +2042,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Insert any additionaly attacks that should occur before this attack
      */
-    protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    protected void insertAttacks(GamePhase phase, Vector<Report> vPhaseReport) {
         return;
     }
 

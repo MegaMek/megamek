@@ -447,7 +447,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     /**
      * Load all the images we'll need for the game and place them in the tracker
      */
-    public void loadNeededImages(IGame game) {
+    public void loadNeededImages(Game game) {
         loaded = false;
         IBoard board = game.getBoard();
         // pre-match all hexes with images, load hex images

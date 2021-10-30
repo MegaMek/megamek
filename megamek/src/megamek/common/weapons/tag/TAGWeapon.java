@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.tag;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -46,12 +46,12 @@ public abstract class TAGWeapon extends Weapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new TAGHandler(toHit, waa, game, server);
     }
 }

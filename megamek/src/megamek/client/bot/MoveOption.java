@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -131,7 +131,7 @@ public class MoveOption extends MovePath {
     private int facing;
     private boolean prone;
 
-    public MoveOption(IGame game, CEntity centity) {
+    public MoveOption(Game game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
         pos = centity.entity.getPosition();

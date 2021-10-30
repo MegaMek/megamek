@@ -39,7 +39,7 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
@@ -171,14 +171,11 @@ public class UnitOverview implements IDisplayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
-            IGame game = clientgui.getClient().getGame();
-            GameTurn turn;
-            if (game.isPhaseSimultaneous()) {
-                turn = game.getTurnForPlayer(clientgui.getClient()
-                        .getLocalPlayer().getId());
-            } else {
-                turn = game.getTurn();
-            }
+            Game game = clientgui.getClient().getGame();
+            GameTurn turn = game.getPhase().isSimultaneous(game)
+                    ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
+                    : game.getTurn();
+
             if ((turn != null) && turn.isValidEntity(e,game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(

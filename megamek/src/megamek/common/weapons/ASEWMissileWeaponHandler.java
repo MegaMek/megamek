@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Jumpship;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -44,7 +44,7 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
      * @param g - The current game
      * @param s - The current server instance
      */
-    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

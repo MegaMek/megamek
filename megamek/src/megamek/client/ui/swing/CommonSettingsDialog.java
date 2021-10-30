@@ -27,8 +27,8 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.KeyBindParser;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -823,7 +823,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_MOVEMENT);
+            clientgui.updateButtonPanel(GamePhase.MOVEMENT);
         }
         
         // Deploy
@@ -839,7 +839,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_DEPLOYMENT);
+            clientgui.updateButtonPanel(GamePhase.DEPLOYMENT);
         }        
         
         // Firing
@@ -855,7 +855,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_FIRING);
+            clientgui.updateButtonPanel(GamePhase.FIRING);
         }
         
         // Physical
@@ -871,7 +871,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_PHYSICAL);
+            clientgui.updateButtonPanel(GamePhase.PHYSICAL);
         }
         
         // Targeting
@@ -887,7 +887,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
-            clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
+            clientgui.updateButtonPanel(GamePhase.TARGETING);
         }
 
         setVisible(false);

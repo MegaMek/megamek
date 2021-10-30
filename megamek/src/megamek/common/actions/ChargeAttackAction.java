@@ -31,7 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.IPlayer;
@@ -74,11 +74,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, false);
     }
 
-    public ToHitData toHit(IGame game, boolean skid) {
+    public ToHitData toHit(Game game, boolean skid) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
                      entity.getPosition(), entity.getElevation(), entity.moved,
@@ -88,7 +88,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src,
+    public ToHitData toHit(Game game, Targetable target, Coords src,
                            int elevation, EntityMovementType movement, boolean skid,
                            boolean gotUp) {
         final Entity ae = getEntity(game);
@@ -397,7 +397,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     /**
      * Checks if a charge can hit the target, taking account of movement
      */
-    public ToHitData toHit(IGame game, MovePath md) {
+    public ToHitData toHit(Game game, MovePath md) {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
         Coords chargeSrc = ae.getPosition();

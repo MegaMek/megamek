@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -1780,8 +1781,8 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isEligibleFor(IGame.Phase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != IGame.Phase.PHASE_PHYSICAL)) {
+    public boolean isEligibleFor(GamePhase phase) {
+        if ((turnsLayingExplosives > 0) && (phase != GamePhase.PHYSICAL)) {
             return false;
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
@@ -2696,7 +2697,7 @@ public class Infantry extends Entity {
      * @param elevation
      * @return
      */
-    public static boolean hasValidCover(IGame game, Coords pos, int elevation) {
+    public static boolean hasValidCover(Game game, Coords pos, int elevation) {
         // Can't do anything if we don't have a position
         // If elevation > 0, we're either flying, or in a building
         // In either case, we shouldn't be allowed to take cover

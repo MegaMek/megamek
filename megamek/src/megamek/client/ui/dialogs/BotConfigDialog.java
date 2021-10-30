@@ -42,10 +42,11 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
 
 import static megamek.common.Terrains.*;
+
+import megamek.common.enums.GamePhase;
 import megamek.common.logging.LogLevel;
 
 /** A dialog box to configure (Princess) bot properties. */
@@ -806,7 +807,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
                 if (client != null) {
                     IBoard board = client.getBoard();
-                    if (client.getGame().getPhase() == Phase.PHASE_LOUNGE) {
+                    if (client.getGame().getPhase() == GamePhase.LOUNGE) {
                         board = clientGui.chatlounge.getPossibleGameBoard(true);
                     }
                     if (board == null) {

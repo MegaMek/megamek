@@ -37,7 +37,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryHeatWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public InfantryHeatWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         bSalvo = true;

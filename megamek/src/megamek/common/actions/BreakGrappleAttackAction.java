@@ -15,7 +15,7 @@
 package megamek.common.actions;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
@@ -47,16 +47,16 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
      * @param game
      *            the game.
      * @return the to hit data object for this action.
-     * @see #toHit(IGame, int, Targetable)
+     * @see #toHit(Game, int, Targetable)
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
     }
 
     /**
      * To-hit number
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");

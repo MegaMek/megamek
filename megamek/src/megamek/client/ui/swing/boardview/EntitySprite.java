@@ -35,7 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -484,7 +484,7 @@ class EntitySprite extends Sprite {
             // Prone, Hulldown, Stuck, Immobile, Jammed
             if (entity.isProne()) 
                 stStr.add(new Status(Color.RED, "PRONE"));
-            if (entity.isHiddenActivating())
+            if (!entity.getHiddenActivationPhase().isUnknown())
                 stStr.add(new Status(Color.RED, "ACTIVATING"));
             if (entity.isHidden())
                 stStr.add(new Status(Color.RED, "HIDDEN"));
@@ -663,7 +663,7 @@ class EntitySprite extends Sprite {
                     && !(isAero && ((IAero) entity).isSpheroid() && !board
                             .inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
-                if (shouldIndicateNotDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                if (shouldIndicateNotDone() && (bv.game.getPhase() == GamePhase.MOVEMENT)) {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
                     graph.scale(1 / bv.scale, 1 / bv.scale);
@@ -676,7 +676,7 @@ class EntitySprite extends Sprite {
                     graph.setTransform(tr);
                 }
                 
-                if (!entity.isDone() && (bv.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                if (!entity.isDone() && (bv.game.getPhase() == GamePhase.MOVEMENT)) {
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.WHITE);

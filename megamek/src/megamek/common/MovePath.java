@@ -49,11 +49,11 @@ public class MovePath implements Cloneable, Serializable {
     private final transient Object COORD_SET_LOCK = new Object();
     private transient CachedEntityState cachedEntityState;
 
-    public IGame getGame() {
+    public Game getGame() {
         return game;
     }
 
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 
@@ -112,7 +112,7 @@ public class MovePath implements Cloneable, Serializable {
 
     private Vector<MoveStep> steps = new Vector<>();
 
-    private transient IGame game;
+    private transient Game game;
     private transient Entity entity;
     
     // holds the types of steps present in this movement 
@@ -130,7 +130,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Generates a new, empty, movement path object.
      */
-    public MovePath(final IGame game, final Entity entity) {
+    public MovePath(final Game game, final Entity entity) {
         this.setEntity(entity);
         this.setGame(game);
     }
@@ -524,11 +524,11 @@ public class MovePath implements Cloneable, Serializable {
         return this;
     }
 
-    public void compile(final IGame g, final Entity en) {
+    public void compile(final Game g, final Entity en) {
         compile(g, en, true);
     }
 
-    public void compile(final IGame g, final Entity en, boolean clip) {
+    public void compile(final Game g, final Entity en, boolean clip) {
         setGame(g);
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<MoveStep>(steps);

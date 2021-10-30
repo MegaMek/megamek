@@ -31,7 +31,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -41,6 +41,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.server.Server;
@@ -77,7 +78,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * @param g
      */
     public CapitalMissileBearingsOnlyHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
     
@@ -93,9 +94,9 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(IGame.Phase phase) {
-        if ((phase == IGame.Phase.PHASE_FIRING)
-                || (phase == IGame.Phase.PHASE_TARGETING)) {
+    public boolean cares(GamePhase phase) {
+        if ((phase == GamePhase.FIRING)
+                || (phase == GamePhase.TARGETING)) {
             return true;
         }
         return false;
@@ -138,12 +139,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.Phase.PHASE_TARGETING) {
+        if (phase == GamePhase.TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -171,7 +172,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                 .getTarget(game) : null;
-        if (game.getPhase() == IGame.Phase.PHASE_FIRING && entityTarget == null) {
+        if (game.getPhase() == GamePhase.FIRING && entityTarget == null) {
             convertHexTargetToEntityTarget(vPhaseReport);
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;

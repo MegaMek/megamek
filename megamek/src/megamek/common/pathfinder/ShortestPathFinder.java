@@ -9,7 +9,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
@@ -231,7 +231,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     }
 
     private ShortestPathFinder(EdgeRelaxer<MovePath, MovePath> costRelaxer,
-            Comparator<MovePath> comparator, final MoveStepType stepType, IGame game) {
+            Comparator<MovePath> comparator, final MoveStepType stepType, Game game) {
         super(costRelaxer, new NextStepsAdjacencyMap(stepType), comparator, game);
     }
 
@@ -245,7 +245,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param stepType
      * @param game
      */
-    public static ShortestPathFinder newInstanceOfAStar(final Coords destination, final MoveStepType stepType, final IGame game) {
+    public static ShortestPathFinder newInstanceOfAStar(final Coords destination, final MoveStepType stepType, final Game game) {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
                 new ShortestPathFinder.MovePathAStarComparator(destination,
@@ -265,7 +265,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * @param stepType
      * @param game
      */
-    public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType, final IGame game) {
+    public static ShortestPathFinder newInstanceOfOneToAll(final int maxMP, final MoveStepType stepType, final Game game) {
         final ShortestPathFinder spf =
                 new ShortestPathFinder(
                         new ShortestPathFinder.MovePathRelaxer(),
@@ -282,7 +282,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      * destination.
      */
     public static ShortestPathFinder newInstanceOfGreedy(final Coords destination, final MoveStepType stepType,
-            final IGame game) {
+            final Game game) {
 
         final ShortestPathFinder spf =
                 new ShortestPathFinder(new ShortestPathFinder.MovePathRelaxer(),

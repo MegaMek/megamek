@@ -20,7 +20,7 @@ import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Mech;
@@ -48,7 +48,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         super(entityId, targetType, targetId, targetPos);
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                                                          getTargetId()));
     }
@@ -62,7 +62,7 @@ public class PushAttackAction extends DisplacementAttackAction {
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae,
+    protected static String toHitIsImpossible(Game game, Entity ae,
                                               Targetable target) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
                 game, ae, target);
@@ -99,7 +99,7 @@ public class PushAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for the mech to push another mech
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
 
         int targetId = Entity.NONE;

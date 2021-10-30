@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -82,7 +82,7 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {

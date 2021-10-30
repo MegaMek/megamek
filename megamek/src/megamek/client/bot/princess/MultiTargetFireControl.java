@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.options.OptionsConstants;
@@ -44,7 +44,7 @@ public class MultiTargetFireControl extends FireControl {
     @Override
     public FiringPlan getBestFiringPlan(final Entity shooter,
             final IHonorUtil honorUtil,
-            final IGame game,
+            final Game game,
             final Map<Mounted, Double> ammoConservation) { 
         FiringPlan bestPlan = new FiringPlan();
         

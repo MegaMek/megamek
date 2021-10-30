@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.options.GameOptions;
 
 /**
@@ -35,7 +35,7 @@ public class NewtonAerospacePathRankerTest {
     @SuppressWarnings("unused")
     private NewtonianAerospacePathRanker mockPathRanker;
     @SuppressWarnings("unused")
-    private IGame mockGame;
+    private Game mockGame;
     @SuppressWarnings("unused")
     private GameOptions mockGameOptions;
  
@@ -55,7 +55,7 @@ public class NewtonAerospacePathRankerTest {
         Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
         Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
         
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         mockGameOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
         Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)).thenReturn(true);*/

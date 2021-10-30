@@ -33,7 +33,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import megamek.MegaMek;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Report;
 
@@ -46,7 +46,7 @@ public class EmailService {
 
         private RoundReportMessage(InternetAddress from,
                                    IPlayer to,
-                                   IGame game,
+                                   Game game,
                                    Vector<Report> reports,
                                    int sequenceNumber,
                                    Session session) throws Exception {
@@ -98,7 +98,7 @@ public class EmailService {
 
         private static String newMessageId(InternetAddress from,
                                            IPlayer to,
-                                           IGame game,
+                                           Game game,
                                            int actualSequenceNumber) {
             final var address = from.getAddress();
             return String.format(
@@ -151,7 +151,7 @@ public class EmailService {
         mailWorker.start();
     }
 
-    public Vector<IPlayer> getEmailablePlayers(IGame game) {
+    public Vector<IPlayer> getEmailablePlayers(Game game) {
         Vector<IPlayer> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
             if (!StringUtil.isNullOrEmpty(player.getEmail()) &&
@@ -163,7 +163,7 @@ public class EmailService {
         return emailable;
     }
 
-    public Message newReportMessage(IGame game,
+    public Message newReportMessage(Game game,
                                     Vector<Report> reports,
                                     IPlayer player) throws Exception {
         int nextSequence = 0;

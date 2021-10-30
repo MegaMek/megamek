@@ -21,7 +21,7 @@ import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.WeaponType;
@@ -47,7 +47,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
     private Coords oldTargetCoords;
 
     public ArtilleryAttackAction(int entityId, int targetType, int targetId,
-            int weaponId, IGame game) {
+            int weaponId, Game game) {
         super(entityId, targetType, targetId, weaponId);
         this.playerId = game.getEntity(entityId).getOwnerId();
         this.firingCoords = game.getEntity(entityId).getPosition();
@@ -167,7 +167,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
      * Needed after aaa setup by bearings-only missiles, which have a variable velocity
      */
     @Override
-    public void updateTurnsTilHit(IGame game) {
+    public void updateTurnsTilHit(Game game) {
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
         // adjust distance for gravity

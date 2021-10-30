@@ -27,7 +27,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
@@ -37,7 +37,7 @@ import megamek.common.options.OptionsConstants;
 
 public class FireProcessor extends DynamicTerrainProcessor {
 
-    private IGame game;
+    private Game game;
     Vector<Report> vPhaseReport;
 
     public FireProcessor(Server server) {

@@ -24,7 +24,6 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -95,6 +94,7 @@ import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.*;
 import megamek.common.options.*;
@@ -1630,7 +1630,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();
@@ -2152,7 +2152,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     @Override
     public void ready() {
         final Client client = clientgui.getClient();
-        final IGame game = client.getGame();
+        final Game game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         
         // enforce exclusive deployment zones in double blind
@@ -3590,7 +3590,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
     
-    IGame game() {
+    Game game() {
         return clientgui.getClient().getGame();
     }
     

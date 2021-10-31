@@ -45,6 +45,9 @@
         <regexp>\[\[Lmegamek.*</regexp>
         <regexp>\[Lmegamek.*</regexp>
         <regexp>megamek.*</regexp>
+        <regexp>\[\[Lmekhq.*</regexp>
+        <regexp>\[Lmekhq.*</regexp>
+        <regexp>mekhq.*</regexp>
         <regexp>\[Z$</regexp>
     </regexps>
   </whitelist>

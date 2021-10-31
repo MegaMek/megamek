@@ -17,7 +17,7 @@
 package megamek.common.weapons.bayweapons;
 
 import megamek.common.EquipmentTypeLookup;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -67,7 +67,7 @@ public class AMSBayWeapon extends AmmoBayWeapon {
     
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new AmmoBayWeaponHandler(toHit, waa, game, server);
     }
 }

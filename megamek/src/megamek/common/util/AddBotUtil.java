@@ -19,7 +19,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
@@ -62,7 +62,7 @@ public class AddBotUtil {
     }
 
     public String addBot(final String[] args,
-            final IGame game,
+            final Game game,
             final String host,
             final int port) {
         if (2 > args.length) {
@@ -198,7 +198,7 @@ public class AddBotUtil {
     }
 
     public @Nullable Princess addBot(final BehaviorSettings behavior, final String playerName,
-            final IGame game, final String host, final int port, StringBuilder message) {
+            final Game game, final String host, final int port, StringBuilder message) {
         
         Objects.requireNonNull(behavior);
         Objects.requireNonNull(game);

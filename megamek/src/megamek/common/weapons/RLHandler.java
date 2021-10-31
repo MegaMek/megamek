@@ -19,7 +19,7 @@ import java.util.Vector;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Minefield;
 import megamek.common.Report;
 import megamek.common.Targetable;
@@ -40,7 +40,7 @@ public class RLHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public RLHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public RLHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

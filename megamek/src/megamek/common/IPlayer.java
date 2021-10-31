@@ -81,7 +81,7 @@ public interface IPlayer extends ITurnOrdered {
 
     void setColour(PlayerColour colour);
 
-    void setGame(IGame game);
+    void setGame(Game game);
 
     String getName();
 

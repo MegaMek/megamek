@@ -37,7 +37,7 @@ import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.MapSettings;
 import megamek.common.TankTrailerHitch;
@@ -61,7 +61,7 @@ public class LobbyUtility {
      * if "Teams Share Vision" is on.
      * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
      */
-    static boolean isValidStartPos(IGame game, IPlayer player) {
+    static boolean isValidStartPos(Game game, IPlayer player) {
         return isValidStartPos(game, player, player.getStartingPos());
     }
 
@@ -73,7 +73,7 @@ public class LobbyUtility {
      * if "Teams Share Vision" is on.
      * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
      */
-    static boolean isValidStartPos(IGame game, IPlayer player, int pos) {
+    static boolean isValidStartPos(Game game, IPlayer player, int pos) {
         if (!isExclusiveDeployment(game)) {
             return true;
         } else {
@@ -91,7 +91,7 @@ public class LobbyUtility {
      * Returns true when double blind and exclusive deployment are on,
      * meaning that player's deployment zones may not overlap.
      */
-    static boolean isExclusiveDeployment(IGame game) {
+    static boolean isExclusiveDeployment(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
@@ -100,7 +100,7 @@ public class LobbyUtility {
     /**
      * Returns true when blind drop is on.
      */
-    static boolean isBlindDrop(IGame game) {
+    static boolean isBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
     } 
@@ -108,7 +108,7 @@ public class LobbyUtility {
     /**
      * Returns true when real blind drop is on.
      */
-    static boolean isRealBlindDrop(IGame game) {
+    static boolean isRealBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
     }  
@@ -117,7 +117,7 @@ public class LobbyUtility {
      * Returns true when teams share vision is on, reagardless of whether
      * double blind is on.
      */
-    static boolean isTeamsShareVision(IGame game) {
+    static boolean isTeamsShareVision(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
     } 
@@ -228,7 +228,7 @@ public class LobbyUtility {
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
      * Ignores entity ids that don't exist. The resulting list may be empty but not null. 
      */ 
-    public static HashSet<Entity> getEntities(IGame game, String idList) {
+    public static HashSet<Entity> getEntities(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Entity> result = new HashSet<>();
         while (st.hasMoreTokens()) {
@@ -245,7 +245,7 @@ public class LobbyUtility {
      * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
      * Ignores force ids that don't exist. The resulting list may be empty but not null. 
      */ 
-    public static HashSet<Force> getForces(IGame game, String idList) {
+    public static HashSet<Force> getForces(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Force> result = new HashSet<>();
         while (st.hasMoreTokens()) {

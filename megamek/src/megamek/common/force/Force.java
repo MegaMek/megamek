@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
@@ -116,7 +116,7 @@ public final class Force implements Serializable {
         return camouflage;
     }
 
-    public Camouflage getCamouflageOrElse(final IGame game, final Camouflage camouflage) {
+    public Camouflage getCamouflageOrElse(final Game game, final Camouflage camouflage) {
         return getCamouflage().hasDefaultCategory()
                 ? ((getParentId() == NO_FORCE) ? camouflage : getParent(game).getCamouflageOrElse(game, camouflage))
                 : getCamouflage();
@@ -140,7 +140,7 @@ public final class Force implements Serializable {
         return parent;
     }
 
-    public @Nullable Force getParent(final IGame game) {
+    public @Nullable Force getParent(final Game game) {
         return game.getForces().getForce(getParentId());
     }
     

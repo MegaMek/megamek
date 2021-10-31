@@ -59,7 +59,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      *         take in a phase.
      */
     @Override
-    public int getNormalTurns(IGame game) {
+    public int getNormalTurns(Game game) {
         return getMultiTurns(game) + getOtherTurns();
     }
 
@@ -74,7 +74,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     }
 
     @Override
-    public int getMultiTurns(IGame game) {
+    public int getMultiTurns(Game game) {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
@@ -414,7 +414,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     /**
      * This takes a Vector of TurnOrdered and generates a TurnVector.
      */
-    public static TurnVectors generateTurnOrder(List<? extends ITurnOrdered> v, IGame game) {
+    public static TurnVectors generateTurnOrder(List<? extends ITurnOrdered> v, Game game) {
         int[] num_even_turns = new int[v.size()];
         int[] num_normal_turns = new int[v.size()];
         int[] num_space_station_turns = new int[v.size()];

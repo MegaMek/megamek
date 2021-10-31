@@ -25,7 +25,7 @@ import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -47,7 +47,7 @@ public class LegAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
     }

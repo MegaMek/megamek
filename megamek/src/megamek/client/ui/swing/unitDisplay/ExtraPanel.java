@@ -1,67 +1,32 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MMComboBox;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.HeatEffects;
+import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.other.TSEMPWeapon;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.HeatEffects;
-import megamek.client.ui.swing.Slider;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.BattleArmor;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Sensor;
-import megamek.common.Tank;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
-
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-
-    /**
-     * 
-     */
-    private final UnitDisplay unitDisplay;
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4907296187995261075L;
+
+    private final UnitDisplay unitDisplay;
 
     private JLabel lblLastTarget;
     private JLabel curSensorsL;
@@ -93,7 +58,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     JButton activateHidden = new JButton(
             Messages.getString("MechDisplay.ActivateHidden.Label"));
 
-    JComboBox<String> activateHiddenPhase = new JComboBox<>();
+    MMComboBox<GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
 
     ExtraPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -173,22 +138,26 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         curSensorsL.setForeground(Color.WHITE);
         curSensorsL.setOpaque(false);
 
-        chSensors = new JComboBox<String>();
+        chSensors = new JComboBox<>();
         chSensors.addItemListener(this);
 
-        activateHidden.setToolTipText(Messages
-                .getString("MechDisplay.ActivateHidden.ToolTip"));
-        activateHiddenPhase.setToolTipText(Messages
-                .getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
+        activateHidden.setToolTipText(Messages.getString("MechDisplay.ActivateHidden.ToolTip"));
+        comboActivateHiddenPhase.setToolTipText(Messages.getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
         activateHidden.addActionListener(this);
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_MOVEMENT));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_FIRING));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_PHYSICAL));
-        activateHiddenPhase.addItem(Messages
-                .getString("MechDisplay.ActivateHidden.StopActivating"));
+        comboActivateHiddenPhase.addItem(GamePhase.UNKNOWN);
+        comboActivateHiddenPhase.addItem(GamePhase.MOVEMENT);
+        comboActivateHiddenPhase.addItem(GamePhase.FIRING);
+        comboActivateHiddenPhase.addItem(GamePhase.PHYSICAL);
+        comboActivateHiddenPhase.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list,
+                        (((value instanceof GamePhase) && ((GamePhase) value).isUnknown())
+                                ? Messages.getString("MechDisplay.ActivateHidden.StopActivating")
+                                : value),
+                        index, isSelected, cellHasFocus);
+            }
+        });
 
         // layout choice panel
         GridBagLayout gridbag;
@@ -262,9 +231,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
         c.insets = new Insets(1, 9, 6, 9);
-        gridbag.setConstraints(activateHiddenPhase, c);
+        gridbag.setConstraints(comboActivateHiddenPhase, c);
         add(activateHidden);
-        add(activateHiddenPhase);
+        add(comboActivateHiddenPhase);
 
         setBackGround();
         onResize();
@@ -604,7 +573,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
         /*
          * if (en instanceof Aero && ((Aero) en).hasBombs() &&
-         * IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
+         * Game.Phase.DEPLOYMENT != clientgui.getClient().game
          * .getPhase()) { // TODO: I should at some point check and make
          * sure that this // unit has any bombs that it could dump
          * dumpBombs.setEnabled(!dontChange); } else {
@@ -630,7 +599,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
 
         activateHidden.setEnabled(!dontChange && en.isHidden());
-        activateHiddenPhase.setEnabled(!dontChange && en.isHidden());
+        comboActivateHiddenPhase.setEnabled(!dontChange && en.isHidden());
 
         onResize();
     } // End public void displayMech( Entity )
@@ -675,6 +644,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         ClientGUI clientgui = unitDisplay.getClientGUI();
         if (clientgui == null) {
@@ -697,10 +667,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
-            IGame.Phase activationPhase = IGame.Phase
-                    .getPhaseFromName((String) activateHiddenPhase
-                            .getSelectedItem());
-            clientgui.getClient().sendActivateHidden(myMechId, activationPhase);
+            final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
+            clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
         }
     }
 }

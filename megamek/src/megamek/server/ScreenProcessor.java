@@ -19,14 +19,14 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
 public class ScreenProcessor extends DynamicTerrainProcessor {
 
-    private IGame game;
+    private Game game;
     Vector<Report> vPhaseReport;
     
     public ScreenProcessor(Server server) {

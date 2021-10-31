@@ -79,6 +79,7 @@ Tramp JumpShip (Standard)|Tramp JumpShip (2754)
 Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
 #Mechs
+Atlas AS7-D(C)|Atlas C
 Jagermech JM6-DG|JagerMech JM6-DG
 Mad Cat III (Eve)|Mad Cat III 3 (Eve)
 Puma (Adder) A|Adder (Puma) A
@@ -112,6 +113,13 @@ Dasher (Fire Moth) B|Fire Moth (Dasher) B
 Dasher (Fire Moth) C|Fire Moth (Dasher) C
 Dasher (Fire Moth) D|Fire Moth (Dasher) D
 Dasher (Fire Moth) Prime|Fire Moth (Dasher) Prime
+Iron Cheetah Prime-NA|Iron Cheetah Prime.png
+Iron Cheetah A-NA|Iron Cheetah A
+Iron Cheetah B-NA|Iron Cheetah B
+Iron Cheetah C-NA|Iron Cheetah C
+Iron Cheetah D-NA|Iron Cheetah D
+Iron Cheetah E-NA|Iron Cheetah E
+Iron Cheetah F-NA|Iron Cheetah L
 Loki (Hellbringer) A|Hellbringer (Loki) A
 Loki (Hellbringer) B|Hellbringer (Loki) B
 Loki (Hellbringer) Prime|Hellbringer (Loki) Prime

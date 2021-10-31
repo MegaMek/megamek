@@ -40,12 +40,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -53,20 +53,20 @@ CLImprovedHeavyLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -81,7 +81,7 @@ Clan Ferro-Fibrous
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Gauss Ammo
+Clan Gauss Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
@@ -151,6 +151,8 @@ CLDoubleHeatSink
 overview:An early Clan assault OmniMech that may have influenced all subsequent assault OmniMech design, the Kingfisher is rugged and maneuverable. These traits make the Kingfisher an ideal choice for take and hold missions.
 
 capabilities:The tough Kingfisher mounts fourteen and a half tons of Ferro-Fibrous armor on an Endo Steel chassis, the most it can take. Unlike most modern front-line OmniMechs, the Kingfisher uses a standard engine. The 'Mech also has seventeen fixed double heat sinks, forcing three to be mounted outside of the engine.
+
+deployment:This configuration carries nineteen double heat sinks to deal with the heat from two Improved Heavy Large Lasers mounted in the left arm. The right arm has a Gauss Rifle and a ton of Gauss ammo. Another ton of Gauss rifle ammunition is in the right torso.
 
 history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
 

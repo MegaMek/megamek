@@ -28,7 +28,7 @@ import java.util.Set;
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.DefaultMmLogger;
@@ -42,14 +42,14 @@ import megamek.common.logging.MMLogger;
  *
  */
 public class SpheroidPathFinder {
-    private IGame game;
+    private Game game;
     private List<MovePath> spheroidPaths;
     private MMLogger logger;
     private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.SpheroidPathFinder";
     
     private Set<Coords> visitedCoords = new HashSet<>();
     
-    private SpheroidPathFinder(IGame game) {
+    private SpheroidPathFinder(Game game) {
         this.game = game;
         getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
@@ -132,7 +132,7 @@ public class SpheroidPathFinder {
         }
     }
     
-    public static SpheroidPathFinder getInstance(IGame game) {
+    public static SpheroidPathFinder getInstance(Game game) {
         SpheroidPathFinder ipf = new SpheroidPathFinder(game);
 
         return ipf;

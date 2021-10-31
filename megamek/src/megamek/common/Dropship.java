@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -1782,7 +1783,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return (isAirborne() || isSpaceborne() || game.getPhase() == IGame.Phase.PHASE_LOUNGE);
+        return (isAirborne() || isSpaceborne() || game.getPhase() == GamePhase.LOUNGE);
     }
 
     @Override

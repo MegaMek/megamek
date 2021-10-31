@@ -37,6 +37,8 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:16	
+cargobay:2.0:1:1
 </transporters>
 
 <SafeThrust>

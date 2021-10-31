@@ -93,7 +93,7 @@ public final class Team extends TurnOrdered {
     }
 
     //get the next player on this team.
-    public IPlayer getNextValidPlayer(IPlayer p, IGame game) {
+    public IPlayer getNextValidPlayer(IPlayer p, Game game) {
         //start from the next player
         for (int i = players.indexOf(p) + 1; i < players.size(); ++i) {
             if (game.getTurnForPlayer(players.get(i).getId()) != null) {
@@ -121,7 +121,7 @@ public final class Team extends TurnOrdered {
         TurnOrdered.rollInitiative(players, bUseInitComp);
     }
 
-    public TurnVectors determineTeamOrder(IGame game) {
+    public TurnVectors determineTeamOrder(Game game) {
         return TurnOrdered.generateTurnOrder(players, game);
     }
 
@@ -145,7 +145,7 @@ public final class Team extends TurnOrdered {
      *         take in a phase.
      */
     @Override
-    public int getNormalTurns(IGame game) {
+    public int getNormalTurns(Game game) {
         int normal = getMultiTurns(game) + getOtherTurns();
         if (0 == normal) {
             normal = getEvenTurns();
@@ -176,7 +176,7 @@ public final class Team extends TurnOrdered {
     }
 
     @Override
-    public int getMultiTurns(IGame game) {
+    public int getMultiTurns(Game game) {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
         for (Enumeration<IPlayer> loop = players.elements(); loop
@@ -293,7 +293,7 @@ public final class Team extends TurnOrdered {
         }
     }
 
-    public boolean hasTAG(IGame game) {
+    public boolean hasTAG(Game game) {
         for (Enumeration<IPlayer> e = game.getPlayers(); e.hasMoreElements(); ) {
             IPlayer m = e.nextElement();
             if (getId() == m.getTeam()) {

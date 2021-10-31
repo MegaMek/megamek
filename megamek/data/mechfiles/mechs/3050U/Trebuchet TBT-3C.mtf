@@ -3,61 +3,63 @@ Trebuchet
 TBT-3C
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2780
-Source:TRO 3050 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2780
+source:TRO 3050 - Star League
+rules level:2
 
-Mass:50
-Engine:300 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:6
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:6
+jump mp:0
 
-Armor:Standard
-LA Armor:13
-RA Armor:13
-LT Armor:13
-RT Armor:13
-CT Armor:24
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:20
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
-Weapons:4
-2 ISMediumLaser, Right Arm
-1 ISLRM15, Left Arm, Ammo:24
-2 ISMediumLaser, Left Arm
-1 ISLRM15, Right Torso
+Weapons:6
+LRM 15, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Center Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 ISArtemisIV
-ISMediumLaser
-ISMediumLaser
--Empty-
+Medium Laser
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumLaser
-ISMediumLaser
-Endo Steel
-Endo Steel
+Medium Laser
+Medium Laser
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,13 +70,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISCASE
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -82,15 +84,15 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 ISArtemisIV
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
 ISCASE
--Empty-
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -103,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
--Empty-
+Medium Laser
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -125,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,11 +141,29 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Trebuchet (also jovially referred to as the Trenchbucket) is a mainline medium weight BattleMech considered to be a fine blend of long- and short-range fire support for a unit of its size.
+
+capabilities:Unlike many other pre-Clan 'Mechs, the Trebuchet was designed from the beginning to work as part of a lance instead of functioning as a standalone model. 
+
+deployment:The original Trebuchet as produced for the SLDF, it consisted of two Artemis IV-equipped LRM-15s with CASE, four medium lasers, double heat sinks, an Endo-Steel chassis and a 300-rated Extra Light Fusion Engine. However, the attrition of the First Succession War forced Corean Enterprises into redesigning the 'Mech without advanced technology to keep the production lines running.
+
+history:The Trebuchet first walked off assembly lines in 2780 for the SLDF in the final years of the Star League, between the liberation of Terra from Stefan Amaris and Aleksandr Kerensky's departure. With the onset of the Succession Wars the Trebuchet would become an almost exclusive staple of the Free Worlds League since its manufacturing site on Stewart fell within their territory. However the original TBT-3C models proved to be too difficult to repair and produce with the disappearance of advanced technology, and in 2799 Corean Enterprises went back to the drawing board to create the TBT-5N using older, mass-producible technology. The Free Worlds League Military often partnered the Trebuchet with the Archer, while lances consisting of an Archer, two Trebuchets and a Centurion became a common configuration used for siege operations and by the Regulan Hussars. However the design also found its way into the hands of the other Great Houses and served with distinction during the Succession Wars in nearly every major operation, with a number of variants created to fulfill various needs. The technological renaissance which swept through the Inner Sphere during the 3030s allowed first Kali Yama and then the Irian corporations to begin producing the Trebuchet as well, culminating in upgraded designs debuting several years prior to the Clan Invasion. As late as 3071 advanced Trebuchet variants would continue to be produced and found themselves used by new actors on the galactic stage, most notoriously the Word of Blake.
+
+manufacturer:Corean Enterprises,Tvastar Enterprises,Corean Enterprises - MacAdams-Suharno
+primaryfactory:Ramen II,Regulus,Stewart
+systemmanufacturer:CHASSIS:Corean-II Deluxe Endo Steel
+systemmanufacturer:ENGINE:Magna 250 XL
+systemmanufacturer:ARMOR:Starshield with CASE
+systemmanufacturer:JUMPJET:Rawlings 50
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech
+

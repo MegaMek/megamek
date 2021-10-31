@@ -55,33 +55,33 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLSRM6 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
+CLERLargeLaser (OMNIPOD)
+CLSRM6 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLSRM6 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
-CLSRM2 (IOS)
+CLERLargeLaser (OMNIPOD)
+CLSRM6 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
+CLSRM2 (IOS) (OMNIPOD)
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -94,8 +94,8 @@ CLDoubleHeatSink
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -118,7 +118,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightActiveProbe
+CLLightActiveProbe (OMNIPOD)
 -Empty-
 
 Head:

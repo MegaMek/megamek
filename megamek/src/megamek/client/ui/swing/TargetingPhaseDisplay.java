@@ -49,9 +49,9 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.IGame.Phase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -59,16 +59,12 @@ import megamek.common.weapons.artillery.ArtilleryWeapon;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
-/*
+/**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
  */
-
 public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         KeyListener, ItemListener, ListSelectionListener {
-    /**
-     *
-     */
     private static final long serialVersionUID = 3441669419807288865L;
 
     /**
@@ -132,7 +128,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     // is the shift key held?
     private boolean shiftheld;
 
-    private final IGame.Phase phase;
+    private final GamePhase phase;
 
     private Entity[] visibleTargets;
 
@@ -144,8 +140,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
         super(clientgui);
-        phase = offboard ? IGame.Phase.PHASE_OFFBOARD
-                : IGame.Phase.PHASE_TARGETING;
+        phase = offboard ? GamePhase.OFFBOARD
+                : GamePhase.TARGETING;
         shiftheld = false;
 
         // fire
@@ -546,7 +542,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
@@ -796,7 +792,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         WeaponAttackAction waa = new WeaponAttackAction(cen,
                 target.getTargetType(), target.getTargetId(), weaponNum);
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game),
                 waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
@@ -1018,7 +1014,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clientgui.mechD.wPan.wRangeR
                     .setText(String.format("%d %s", targetDistance, flightTimeText)); //$NON-NLS-1$
             
-            IGame game = clientgui.getClient().getGame();
+            Game game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(),
                     target);
             if (m.isUsedThisRound()) {
@@ -1230,7 +1226,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
-            } else if (phase == IGame.Phase.PHASE_TARGETING) {
+            } else if (phase == GamePhase.TARGETING) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
@@ -1317,13 +1313,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             endMyTurn();
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
@@ -1553,7 +1549,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the arty targeting phase
-        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_TARGETING)) return;
+        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.TARGETING)) return;
         
         clientgui.bv.fieldofFireUnit = unit;
         clientgui.bv.fieldofFireRanges = ranges;

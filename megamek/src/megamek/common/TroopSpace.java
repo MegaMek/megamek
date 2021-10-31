@@ -49,7 +49,7 @@ public final class TroopSpace implements Transporter {
      */
     /* package */double currentSpace;
 
-    transient IGame game;
+    transient Game game;
 
 
     // Protected constructors and methods.
@@ -257,7 +257,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
     

@@ -50,7 +50,7 @@ import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
@@ -1053,16 +1053,15 @@ public class Princess extends BotClient {
                 continue;
             }
             
-            if ((entity.isOffBoard() 
+            if (!getGame().getPhase().isSimultaneous(getGame()) && (entity.isOffBoard()
                     || (null == entity.getPosition())
                     || entity.isUnloadedThisTurn()
-                    || !getGame().getTurn().isValidEntity(entity, getGame()))
-                            && !getGame().isPhaseSimultaneous()){
+                    || !getGame().getTurn().isValidEntity(entity, getGame()))) {
                 msg.append("cannot be moved.");
                 continue;
             }
 
-            // Move immobile units & ejected mechwarriors immediately.
+            // Move immobile units & ejected MechWarriors immediately.
             if (isImmobilized(entity) && !(entity instanceof Infantry)) {
                 msg.append("is immobile.");
                 movingEntity = entity;
@@ -1723,7 +1722,7 @@ public class Princess extends BotClient {
         }
     }
 
-    public IGame getGame() {
+    public Game getGame() {
         return game;
     }
 

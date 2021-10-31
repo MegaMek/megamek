@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -39,7 +39,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
      * @param g
      */
     public HyperLaserHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame g, Server s) {
+            WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 

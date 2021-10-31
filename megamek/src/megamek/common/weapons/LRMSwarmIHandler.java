@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -31,7 +31,7 @@ public class LRMSwarmIHandler extends LRMSwarmHandler {
      * @param g
      * @param s
      */
-    public LRMSwarmIHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMSwarmIHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         sSalvoType = " swarm-i missile(s) ";
     }

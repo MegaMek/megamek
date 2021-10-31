@@ -19,9 +19,10 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 
 /**
  * Describes a set of methods a class can use to represent
@@ -32,11 +33,11 @@ import megamek.common.actions.WeaponAttackAction;
 public interface AttackHandler {
 
     // Does it care?
-    public boolean cares(IGame.Phase phase);
+    public boolean cares(GamePhase phase);
 
     // If it cares, call this. If it needs to remain in queue, returns true,
     // else false.
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReports);
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReports);
 
     // Frankly, wish I could get rid of this, but I think certain things
     // occasionally need to know the firer.

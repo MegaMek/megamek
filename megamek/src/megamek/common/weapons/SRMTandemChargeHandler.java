@@ -21,7 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -44,7 +44,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         sSalvoType = " tandem charge missile(s) ";

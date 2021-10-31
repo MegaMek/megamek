@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -64,7 +64,7 @@ public class Victory implements Serializable {
         return victories.toArray(new IVictoryConditions[0]);
     }
 
-    public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
+    public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
         VictoryResult reVal;
 
         // Check for ForceVictory
@@ -95,7 +95,7 @@ public class Victory implements Serializable {
         return reVal;
     }
 
-    private VictoryResult checkOptionalVictory(IGame game, Map<String, Object> context) {
+    private VictoryResult checkOptionalVictory(Game game, Map<String, Object> context) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
 

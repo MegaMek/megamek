@@ -19,7 +19,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
@@ -44,7 +44,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

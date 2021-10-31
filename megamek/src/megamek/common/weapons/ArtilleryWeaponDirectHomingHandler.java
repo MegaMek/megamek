@@ -17,9 +17,10 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -39,7 +40,7 @@ public class ArtilleryWeaponDirectHomingHandler extends
      * @param g
      */
     public ArtilleryWeaponDirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
 
     }
@@ -50,8 +51,8 @@ public class ArtilleryWeaponDirectHomingHandler extends
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(IGame.Phase phase) {
-        if (phase == IGame.Phase.PHASE_FIRING) {
+    public boolean cares(GamePhase phase) {
+        if (phase == GamePhase.FIRING) {
             return true;
         }
         return false;

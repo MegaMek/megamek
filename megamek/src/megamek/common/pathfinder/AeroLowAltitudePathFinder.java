@@ -7,7 +7,7 @@ import java.util.Map;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -23,11 +23,11 @@ public class AeroLowAltitudePathFinder extends AeroGroundPathFinder {
 
     protected static final String LOGGER_CATEGORY = "megamek.common.pathfinder.AeroLowAltitudePathFinder";
     
-    protected AeroLowAltitudePathFinder(IGame game) {
+    protected AeroLowAltitudePathFinder(Game game) {
         super(game);
     }
 
-    public static AeroLowAltitudePathFinder getInstance(IGame game) {
+    public static AeroLowAltitudePathFinder getInstance(Game game) {
         AeroLowAltitudePathFinder alf = new AeroLowAltitudePathFinder(game);
 
         return alf;

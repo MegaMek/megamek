@@ -24,7 +24,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -35,6 +35,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -297,7 +298,7 @@ public class FireCommand extends ClientCommand {
             			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
+            } else if (getClient().getGame().getPhase() == GamePhase.FIRING
                         && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");

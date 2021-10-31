@@ -20,7 +20,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.GameTurn;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -28,8 +28,11 @@ import megamek.common.MechWarrior;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
+import megamek.common.enums.GamePhase;
 import megamek.common.logging.FakeLogger;
 import megamek.common.logging.MMLogger;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +117,7 @@ public class PrincessTest {
 
         Mockito.when(mockPathRanker
                              .distanceToClosestEnemy(Mockito.any(Entity.class), Mockito.nullable(Coords.class),
-                                                     Mockito.nullable(IGame.class)))
+                                                     Mockito.nullable(Game.class)))
                .thenReturn(10.0);
 
         // Test a 6/9/6 regular mech.
@@ -281,11 +284,15 @@ public class PrincessTest {
                .thenReturn(10.0);
 
         // Test a list of normal units.
-        IGame mockGame = Mockito.mock(IGame.class);
+        Game mockGame = Mockito.mock(Game.class);
+        GameOptions mockOptions = Mockito.mock(GameOptions.class);
+        Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
+        Mockito.when(mockOptions.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)).thenReturn(false);
+        Mockito.when(mockGame.getPhase()).thenReturn(GamePhase.MOVEMENT);
         GameTurn mockTurn = Mockito.mock(GameTurn.class);
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);
-        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class))).thenCallRealMethod();
-        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(IGame.class), Mockito.anyBoolean())).thenCallRealMethod();
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(Game.class))).thenCallRealMethod();
+        Mockito.when(mockTurn.isValidEntity(Mockito.any(Entity.class), Mockito.any(Game.class), Mockito.anyBoolean())).thenCallRealMethod();
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         List<Entity> testEntityList = new ArrayList<>();
@@ -296,7 +303,7 @@ public class PrincessTest {
         Entity pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockBA, pickedEntity);
 
-        // Add the off-board artillery, which should be ignored.  Otherwise it would be picked as the next to move.
+        // Add the off-board artillery, which should be ignored. Otherwise it would be picked as the next to move.
         testEntityList.add(mockOffBoardArty);
         pickedEntity = mockPrincess.getEntityToMove();
         Assert.assertEquals(mockBA, pickedEntity);
@@ -425,14 +432,14 @@ public class PrincessTest {
         // Unit is on home edge.
         BasicPathRanker mockRanker = Mockito.mock(BasicPathRanker.class);
         Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
-                                                   Mockito.any(IGame.class))).thenReturn(0);
+                                                   Mockito.any(Game.class))).thenReturn(0);
         Mockito.when(mockPrincess.getPathRanker(Mockito.any(Entity.class))).thenReturn(mockRanker);
 
         // Mock objects so we don't have nulls.
         Coords mockCoords = Mockito.mock(Coords.class);
         Mockito.when(mockMech.getPosition()).thenReturn(mockCoords);
         Mockito.when(mockPrincess.getHomeEdge(Mockito.any(Entity.class))).thenReturn(CardinalEdge.NORTH);
-        IGame mockGame = Mockito.mock(IGame.class);
+        Game mockGame = Mockito.mock(Game.class);
         Mockito.when(mockPrincess.getGame()).thenReturn(mockGame);
 
         // In its current state, the entity does not need to flee the board.
@@ -466,7 +473,7 @@ public class PrincessTest {
         // The unit can flee, but is no longer on the board edge.
         Mockito.when(mockMech.canFlee()).thenReturn(true);
         Mockito.when(mockRanker.distanceToHomeEdge(Mockito.any(Coords.class), Mockito.any(CardinalEdge.class),
-                                                   Mockito.any(IGame.class))).thenReturn(1);
+                                                   Mockito.any(Game.class))).thenReturn(1);
         Assert.assertFalse(mockPrincess.mustFleeBoard(mockMech));
     }
 
@@ -479,7 +486,7 @@ public class PrincessTest {
         Mockito.when(mockHex.getLevel()).thenReturn(0);
         Mockito.when(mockPrincess.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
 
-        IGame mockGame = Mockito.mock(IGame.class);
+        Game mockGame = Mockito.mock(Game.class);
         Mockito.doReturn(mockGame).when(mockPrincess).getGame();
 
         BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);

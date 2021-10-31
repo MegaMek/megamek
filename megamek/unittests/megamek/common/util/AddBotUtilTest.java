@@ -7,7 +7,7 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.event.GameListener;
 import megamek.common.logging.LogLevel;
@@ -36,7 +36,7 @@ public class AddBotUtilTest {
     private static final String DEFAULT_VERBOSITY = LogLevel.WARNING.toString();
 
     private Client mockClient;
-    private IGame mockGame;
+    private Game mockGame;
     private Princess mockPrincess;
     private AddBotUtil testAddBotUtil;
 
@@ -56,7 +56,7 @@ public class AddBotUtilTest {
 
         final Enumeration<IPlayer> playerEnumeration = playerVector.elements();
 
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getPlayersVector()).thenReturn(playerVector);
         Mockito.when(mockGame.getPlayers()).thenReturn(playerEnumeration);
         Mockito.doNothing().when(mockGame).addGameListener(Mockito.any(GameListener.class));

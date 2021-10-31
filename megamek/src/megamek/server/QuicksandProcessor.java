@@ -19,14 +19,14 @@ import java.util.Vector;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
 public class QuicksandProcessor extends DynamicTerrainProcessor {
 
-    private IGame game;
+    private Game game;
     Vector<Report> vPhaseReport;
 
     public QuicksandProcessor(Server server) {

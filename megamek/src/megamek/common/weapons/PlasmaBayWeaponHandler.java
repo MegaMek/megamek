@@ -22,7 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -47,7 +47,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param g
      */
     public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

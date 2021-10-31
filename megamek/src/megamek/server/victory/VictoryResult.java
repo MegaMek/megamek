@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Report;
 
@@ -156,7 +156,7 @@ public class VictoryResult implements IResult {
         return reports;
     }
 
-    public ArrayList<Report> processVictory(IGame game) {
+    public ArrayList<Report> processVictory(Game game) {
         ArrayList<Report> someReports = getReports();
         if (victory()) {
             boolean draw = isDraw();

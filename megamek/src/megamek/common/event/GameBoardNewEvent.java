@@ -15,12 +15,12 @@
 package megamek.common.event;
 
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 
 /**
  * Instances of this class are sent when the new board for game is set
  * 
- * @see IGame#setBoard(IBoard)
+ * @see Game#setBoard(IBoard)
  * @see GameListener
  */
 public class GameBoardNewEvent extends GameEvent {

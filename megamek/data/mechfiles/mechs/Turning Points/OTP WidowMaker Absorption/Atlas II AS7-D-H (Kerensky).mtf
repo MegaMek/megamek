@@ -5,7 +5,7 @@ AS7-D-H (Kerensky)
 Config:Biped
 TechBase:Clan
 Era:2833
-Source:OTP Widowmaker
+Source:OTP Widowmaker - Star League
 Rules Level:2
 
 Mass:100
@@ -152,4 +152,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The technologically-advanced Hegemony counterpart to the SLDF's regular army's AS7-D Atlas, the Atlas II was exclusively reserved for SLDF Royal Regiments.
 
+capabilities:The weapons payload gives the design more broad range attack ability versus the Atlas's brawling weaponry and its limited long range attack capacities.
+
+deployment:The custom version used by Nicholas Kerensky, this version of the Atlas II retains the weapon array of the original but swaps the Inner Sphere components for more advanced Clan equivalents. It also adds a second SRM launcher. All the missile systems are equipped with Artemis IV fire control systems. Double heat sinks were replaced with their less bulky Clan equivalents and increased to nineteen. The ferro-fibrous armor protection remains the same, but again was replaced by more compact Clan version. To handle electronic warfare duties, a small ECM Suite and Active Probe were added to the center torso. The CASE systems were integrated into the side torsos, as was common to all Clan designs.
+
+history:First fielded in 2765, the Atlas II was designed by the Hegemony Research and Development Department, Weapons Division of the original Star League to maintain the technological edge over the other Great Houses. It was exclusively for the SLDF's Royal Regiments. In 2785, when General Aleksandr Kerensky put out his call for loyal forces to join him in his Exodus, every Atlas II pilot responded and left with him. These 'Mechs are prized by the Clans when they were found. One such 'Mech was spotted in 3052 during the Battle of Tukayyid. In the early 3070s, the design was resurrected by the Word of Blake when they captured Hesperus II's factories. After the liberation of Defiance Industries, Devlin Stone's coalition forces kept the 'Mechs in production.
+
+manufacturer:Defiance Industries,Hegemony Research and Development Department, Weapons Division
+primaryfactory:Hesperus II,New Earth
+systemmanufacturer:CHASSIS:Foundation Type 10X
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:StarSlab/2 Ferro Fibrous with CASE
+systemmanufacturer:JUMPJET:Army Comm Class 5
+systemmanufacturer:COMMUNICATIONS:Army Corporation Type 29K

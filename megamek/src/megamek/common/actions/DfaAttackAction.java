@@ -32,7 +32,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -96,7 +96,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
      * Checks if a death from above attack can hit the target, including
      * movement
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, MovePath md) {
         final Entity ae = game.getEntity(attackerId);
 
@@ -194,7 +194,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         return DfaAttackAction.toHit(game, attackerId, target, chargeSrc);
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
         return DfaAttackAction.toHit(game, getEntityId(),
                                      game.getTarget(getTargetType(), getTargetId()),
@@ -205,7 +205,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
      * To-hit number for a death from above attack, assuming that movement has
      * been handled
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
 

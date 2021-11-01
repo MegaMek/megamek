@@ -24,13 +24,14 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HexTarget;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -51,7 +52,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public VGLWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public VGLWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
@@ -64,7 +65,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
      * kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }

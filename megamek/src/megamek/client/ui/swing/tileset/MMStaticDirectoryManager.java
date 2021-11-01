@@ -33,8 +33,9 @@ public class MMStaticDirectoryManager {
     private static AbstractDirectory camouflageDirectory;
     private static MechTileset mechTileset;
 
-    // Re-parsing Prevention Variables: The are True at startup and when the specified directory
-    // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's an error.
+    // Re-parsing Prevention Variables: They are True at startup and when the specified directory
+    // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's
+    // an error.
     private static boolean parsePortraitDirectory = true;
     private static boolean parseCamouflageDirectory = true;
     private static boolean parseMechTileset = true;
@@ -115,8 +116,8 @@ public class MMStaticDirectoryManager {
 
     //region Getters
     /**
-     * Returns an AbstractDirectory object containing all portrait image filenames
-     * found in MM's portrait images folder.
+     * Returns an AbstractDirectory object containing all portrait image filenames found in MM's
+     * portrait images folder.
      * @return an AbstractDirectory object with the portrait folders and filenames.
      * May be null if the directory cannot be parsed.
      */
@@ -126,8 +127,8 @@ public class MMStaticDirectoryManager {
     }
 
     /**
-     * Returns an AbstractDirectory object containing all camo image filenames
-     * found in MM's camo images folder.
+     * Returns an AbstractDirectory object containing all camo image filenames found in MM's camo
+     * images folder.
      * @return an AbstractDirectory object with the camo folders and filenames.
      * May be null if the directory cannot be parsed.
      */
@@ -147,27 +148,25 @@ public class MMStaticDirectoryManager {
 
     //region Refreshers
     /**
-     * Re-reads MM's camo images folder and returns the updated
-     * AbstractDirectory object. This will update the AbstractDirectory object
-     * with changes to the camos (like added image files and folders)
-     * while MM is running.
+     * Re-reads MM's camo images folder and returns the updated AbstractDirectory object. This will
+     * update the AbstractDirectory object with changes to the camos (like added image files and
+     * folders) while MM is running.
      *
      * @see #getCamouflage()
      */
-    public static AbstractDirectory refreshCamouflageDirectory() {
+    public static @Nullable AbstractDirectory refreshCamouflageDirectory() {
         parseCamouflageDirectory = true;
         return getCamouflage();
     }
 
     /**
-     * Re-reads MM's portrait images folder and returns the updated
-     * AbstractDirectory object. This will update the AbstractDirectory object
-     * with changes to the portraits (like added image files and folders)
-     * while MM is running.
+     * Re-reads MM's portrait images folder and returns the updated AbstractDirectory object. This
+     * will update the AbstractDirectory object with changes to the portraits (like added image
+     * files and folders) while MM is running.
      *
      * @see #getPortraits()
      */
-    public static AbstractDirectory refreshPortraitDirectory() {
+    public static @Nullable AbstractDirectory refreshPortraitDirectory() {
         parsePortraitDirectory = true;
         return getPortraits();
     }

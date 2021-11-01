@@ -33,7 +33,7 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 
 public class ReplacePlayersDialog extends AbstractButtonDialog {
@@ -45,7 +45,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     private final ClientGUI clientGui;
     
     /** Convenience field for clientGui.getClient().getGame(). */
-    private final IGame game;
+    private final Game game;
     
     /** The list of displayed ghost players */
     private Set<IPlayer> ghostPlayers;

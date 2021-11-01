@@ -47,7 +47,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
@@ -80,6 +80,7 @@ import megamek.common.UnitType;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
@@ -256,23 +257,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return otherAttackInfo;
     }
 
-    public boolean isAirToGround(IGame game) {
+    public boolean isAirToGround(Game game) {
         return Compute.isAirToGround(getEntity(game), getTarget(game));
     }
 
-    public boolean isAirToAir(IGame game) {
+    public boolean isAirToAir(Game game) {
         return Compute.isAirToAir(getEntity(game), getTarget(game));
     }
 
-    public boolean isGroundToAir(IGame game) {
+    public boolean isGroundToAir(Game game) {
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
 
-    public boolean isDiveBomb(IGame game) {
+    public boolean isDiveBomb(Game game) {
         return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB);
     }
 
-    public int getAltitudeLoss(IGame game) {
+    public int getAltitudeLoss(Game game) {
         if (isAirToGround(game)) {
             if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
                 return 2;
@@ -289,14 +290,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return 0;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return WeaponAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()), isStrafing(), isPointblankShot());
     }
 
-    public ToHitData toHit(IGame game, List<ECMInfo> allECMInfo) {
+    public ToHitData toHit(Game game, List<ECMInfo> allECMInfo) {
         return WeaponAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),
                 getWeaponId(), getAimedLocation(), getAimingMode(), nemesisConfused, swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
@@ -304,18 +305,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 allECMInfo);
     }
 
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE,
                 false, false, null, null, isStrafing, false);
     }
 
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt,
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
             int aimingMode, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, false, false, null,
                 null, isStrafing, false);
     }
 
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt,
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
             int aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
             Targetable originalTarget, boolean isStrafing, boolean isPointblankShot) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId, aimingAt, aimingMode, isNemesisConfused,
@@ -325,7 +326,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
-    private static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt,
+    private static ToHitData toHit(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
             int aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
             Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
@@ -408,17 +409,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isArtilleryDirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
                 (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
-                && (game.getPhase() == IGame.Phase.PHASE_FIRING);
+                && (game.getPhase() == GamePhase.FIRING);
         
         boolean isArtilleryIndirect = (wtype.hasFlag(WeaponType.F_ARTILLERY) ||
                 (wtype instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ae, target)))
-                && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
-                        || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
+                && ((game.getPhase() == GamePhase.TARGETING)
+                        || (game.getPhase() == GamePhase.OFFBOARD));
         
         boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode())
-                            && ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
-                                    || (game.getPhase() == IGame.Phase.PHASE_FIRING));
+                            && ((game.getPhase() == GamePhase.TARGETING)
+                                    || (game.getPhase() == GamePhase.FIRING));
         
         boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponType.F_CRUISE_MISSILE)
                         || (wtype instanceof CapitalMissileWeapon
@@ -812,7 +813,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * not factor in any special weapon or ammo considerations, including range
      * modifiers. Also does not include gunnery skill.
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
 
         Entity te = null;
@@ -938,7 +939,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      * @param underWater  flag that indicates whether or not the weapon being used is underwater
      */
-    private static String toHitIsImpossible(IGame game, Entity ae, int attackerId, Targetable target, int ttype,
+    private static String toHitIsImpossible(Game game, Entity ae, int attackerId, Targetable target, int ttype,
             LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter,
             WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, Mounted ammo, long munition,
             boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isAttackerInfantry,
@@ -1336,15 +1337,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Phase Reasons
 
         // Only bearings-only capital missiles and indirect fire artillery can be fired in the targeting phase
-        if ((game.getPhase() == IGame.Phase.PHASE_TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
+        if ((game.getPhase() == GamePhase.TARGETING) && (!(isArtilleryIndirect || isBearingsOnlyMissile))) {
             return Messages.getString("WeaponAttackAction.NotValidForTargPhase");
         }
         // Only TAG can be fired in the offboard phase
-        if ((game.getPhase() == IGame.Phase.PHASE_OFFBOARD) && !isTAG) {
+        if ((game.getPhase() == GamePhase.OFFBOARD) && !isTAG) {
             return Messages.getString("WeaponAttackAction.OnlyTagInOffboard");
         }
         // TAG can't be fired in any phase but offboard
-        if ((game.getPhase() != IGame.Phase.PHASE_OFFBOARD) && isTAG) {
+        if ((game.getPhase() != GamePhase.OFFBOARD) && isTAG) {
             return Messages.getString("WeaponAttackAction.TagOnlyInOffboard");
         }
         
@@ -2132,7 +2133,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Can't fire in bearings-only mode within direct-fire range (50 hexes)
-                if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+                if (game.getPhase() == GamePhase.TARGETING && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                     return Messages.getString("WeaponAttackAction.BoMissileMinRange");
                 } 
                 // Can't target anything but hexes
@@ -2589,7 +2590,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param isBearingsOnlyMissile  flag that indicates whether this is a bearings-only capital missile attack
      */
-    private static String toHitIsAutomatic(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
+    private static String toHitIsAutomatic(Game game, Entity ae, Targetable target, int ttype, LosEffects los,
             int distance, WeaponType wtype, Mounted weapon, boolean isBearingsOnlyMissile) {
         
         // Buildings
@@ -2622,7 +2623,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // Capital Missiles in bearings-only mode target hexes and always hit them
         if (isBearingsOnlyMissile) {
-            if (game.getPhase() == IGame.Phase.PHASE_TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
+            if (game.getPhase() == GamePhase.TARGETING && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
                 return Messages.getString("WeaponAttackAction.BoMissileHex");
             }
         }
@@ -2653,7 +2654,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Some attacks are the only actions that a particular entity can make
      * during its turn Also, only this unit can make that particular attack.
      */
-    private static boolean isOnlyAttack(IGame game, Entity attacker, String attackType, Entity target) {
+    private static boolean isOnlyAttack(Game game, Entity attacker, String attackType, Entity target) {
         // mechs can only be the target of one leg or swarm attack
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
             EntityAction ea = actions.nextElement();
@@ -2801,7 +2802,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
     
     //This is a stub. ArtilleryAttackActions actually need to use it
-    public void updateTurnsTilHit(IGame game) {        
+    public void updateTurnsTilHit(Game game) {
     }
     
     /**
@@ -2818,7 +2819,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * 
      * @param isArtilleryIndirect  flag that indicates whether this is an indirect-fire artillery attack
      */
-    private static ToHitData compileEnvironmentalToHitMods(IGame game, Entity ae, Targetable target, WeaponType wtype, 
+    private static ToHitData compileEnvironmentalToHitMods(Game game, Entity ae, Targetable target, WeaponType wtype,
                 AmmoType atype, ToHitData toHit, boolean isArtilleryIndirect) {
         
         if (toHit == null) {
@@ -2926,7 +2927,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isIndirect  flag that indicates whether this is an indirect attack (LRM, mortar...)
      * @param narcSpotter  flag that indicates whether this spotting entity is using NARC equipment
      */
-    private static ToHitData compileWeaponToHitMods(IGame game, Entity ae, Entity spotter, Targetable target,
+    private static ToHitData compileWeaponToHitMods(Game game, Entity ae, Entity spotter, Targetable target,
                 int ttype, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, long munition, 
                 boolean isFlakAttack, boolean isIndirect, boolean narcSpotter) {
         if (ae == null || wtype == null || weapon == null) {
@@ -3132,7 +3133,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isECMAffected flag that indicates whether the target is inside an ECM bubble
      * @param isINarcGuided flag that indicates whether the target is broadcasting an iNarc beacon
      */
-    private static ToHitData compileAmmoToHitMods(IGame game, Entity ae, Targetable target, int ttype, ToHitData toHit,
+    private static ToHitData compileAmmoToHitMods(Game game, Entity ae, Targetable target, int ttype, ToHitData toHit,
                 WeaponType wtype, Mounted weapon, AmmoType atype, long munition, boolean bApollo, boolean bArtemisV,
                 boolean bFTL, boolean bHeatSeeking, boolean isECMAffected, boolean isINarcGuided) {
         if (ae == null || atype == null) {
@@ -3281,7 +3282,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isWeaponFieldGuns  flag that indicates whether the attack is being made with infantry field guns
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
-    private static ToHitData compileAttackerToHitMods(IGame game, Entity ae, Targetable target, LosEffects los, ToHitData toHit,
+    private static ToHitData compileAttackerToHitMods(Game game, Entity ae, Targetable target, LosEffects los, ToHitData toHit,
                 int toSubtract, int aimingAt, int aimingMode, WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype,
                 long munition, boolean isFlakAttack, boolean isHaywireINarced, boolean isNemesisConfused, boolean isWeaponFieldGuns,
                 boolean usesAmmo) {
@@ -3548,7 +3549,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isStrafing    flag that indicates whether this is an aero strafing attack
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      */
-    private static ToHitData compileAeroAttackerToHitMods(IGame game, Entity ae, Targetable target, int ttype,
+    private static ToHitData compileAeroAttackerToHitMods(Game game, Entity ae, Targetable target, int ttype,
                 ToHitData toHit, int aimingAt, int aimingMode, int eistatus, WeaponType wtype, Mounted weapon,
                 AmmoType atype, long munition, boolean isArtilleryIndirect, boolean isFlakAttack, boolean isNemesisConfused,
                 boolean isStrafing, boolean usesAmmo) {
@@ -3880,7 +3881,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param wtype The WeaponType of the weapon being used
      * 
      */
-    private static ToHitData compileCrewToHitMods(IGame game, Entity ae, Entity te, ToHitData toHit, WeaponType wtype) {
+    private static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, WeaponType wtype) {
         
         if (ae == null) {
             // These checks won't work without a valid attacker
@@ -4075,7 +4076,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
      * @param usesAmmo  flag that indicates whether or not the WeaponType being used is ammo-fed
      */
-    private static ToHitData compileTargetToHitMods(IGame game, Entity ae, Targetable target, int ttype, LosEffects los,
+    private static ToHitData compileTargetToHitMods(Game game, Entity ae, Targetable target, int ttype, LosEffects los,
                 ToHitData toHit, int toSubtract, int aimingAt, int aimingMode, int distance, WeaponType wtype,
                 Mounted weapon, AmmoType atype, long munition, boolean isArtilleryDirect, boolean isArtilleryIndirect,
                 boolean isAttackerInfantry, boolean exchangeSwarmTarget, boolean isIndirect,
@@ -4400,7 +4401,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param isPointBlankShot  flag that indicates whether or not this is a PBS by a hidden unit
      * @param underWater  flag that indicates whether the weapon being used is underwater
      */
-    private static ToHitData compileTerrainAndLosToHitMods(IGame game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
+    private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype, int aElev, int tElev,
                 int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
                 WeaponType wtype, Mounted weapon, int weaponId, AmmoType atype, long munition, boolean isAttackerInfantry,
                 boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
@@ -4616,7 +4617,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param atype The AmmoType being used for this attack
      * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
-    private static ToHitData handleSpecialWeaponAttacks(IGame game, Entity ae, Targetable target, int ttype,
+    private static ToHitData handleSpecialWeaponAttacks(Game game, Entity ae, Targetable target, int ttype,
                 LosEffects los, ToHitData toHit, WeaponType wtype, AmmoType atype, SpecialResolutionTracker srt) {
         if (ae == null) {
             //*Should* be impossible at this point in the process
@@ -4685,7 +4686,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param wtype The WeaponType of the weapon being used
      * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
-    private static ToHitData handleInfantrySwarmAttacks(IGame game, Entity ae, Targetable target,
+    private static ToHitData handleInfantrySwarmAttacks(Game game, Entity ae, Targetable target,
                 int ttype, ToHitData toHit, WeaponType wtype, SpecialResolutionTracker srt)  {
         if (ae == null) {
             //*Should* be impossible at this point in the process
@@ -4723,6 +4724,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
+            }
+            if (te.isProne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TargetProne"));
+            }
+            if (te.isImmobile()) {
+                toHit.addModifier(-4, Messages.getString("WeaponAttackAction.TargetImmobile"));
             }
 
             // If the defender carries mechanized BA, they can fight off the
@@ -4801,7 +4808,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param inSameBuilding  flag that indicates whether this attack originates from within the same building
      * @param underWater  flag that indicates whether the weapon being used is underwater
      */
-    private static ToHitData handleSwarmSecondaryAttacks(IGame game, Entity ae, Targetable target,
+    private static ToHitData handleSwarmSecondaryAttacks(Game game, Entity ae, Targetable target,
                 Targetable swarmPrimaryTarget, Targetable swarmSecondaryTarget, ToHitData toHit,
                 int toSubtract, int eistatus, int aimingAt, int aimingMode, Mounted weapon, AmmoType atype,
                 long munition, boolean isECMAffected, boolean inSameBuilding, boolean underWater) {
@@ -4916,7 +4923,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param usesAmmo  flag that indicates if the WeaponType being used is ammo-fed
      * @param srt  Class that stores whether or not this WAA should return a special resolution
      */
-    private static ToHitData handleArtilleryAttacks(IGame game, Entity ae, Targetable target, int ttype, 
+    private static ToHitData handleArtilleryAttacks(Game game, Entity ae, Targetable target, int ttype,
                 ToHitData losMods, ToHitData toHit, WeaponType wtype, Mounted weapon, AmmoType atype, 
                 boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect, boolean isHoming,
                 boolean usesAmmo, SpecialResolutionTracker srt) {

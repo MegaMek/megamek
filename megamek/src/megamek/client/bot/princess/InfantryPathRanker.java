@@ -5,7 +5,7 @@ import java.util.List;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MechWarrior;
 import megamek.common.MovePath;
 import megamek.common.options.OptionsConstants;
@@ -19,7 +19,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
     }
 
     @Override
-    protected RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance,
+    protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
             List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");

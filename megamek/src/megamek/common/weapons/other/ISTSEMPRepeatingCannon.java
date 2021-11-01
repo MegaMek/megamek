@@ -50,7 +50,7 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
      * megamek.server.Server)
      */
     /*@Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
         return new TSEMPCannonHandler(toHit, waa, game, server);
     }
     */

@@ -28,7 +28,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.EscapePods;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -75,7 +75,7 @@ public class SharedUtility {
         List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 
         final Entity entity = md.getEntity();
-        final IGame game = entity.getGame();
+        final Game game = entity.getGame();
         // okay, proceed with movement calculations
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
@@ -186,7 +186,7 @@ public class SharedUtility {
         List<TargetRoll> psrList = new ArrayList<TargetRoll>();
 
         final Entity entity = md.getEntity();
-        final IGame game = entity.getGame();
+        final Game game = entity.getGame();
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -737,7 +737,7 @@ public class SharedUtility {
 
     public static MovePath moveAero(MovePath md, Client client) {
         final Entity entity = md.getEntity();
-        final IGame game = entity.getGame();
+        final Game game = entity.getGame();
         // Don't process further unless the entity belongs in space
         if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
             return md;
@@ -843,7 +843,7 @@ public class SharedUtility {
      */
     private static MovePath addSteps(MovePath md, Client client) {
         Entity en = md.getEntity();
-        IGame game = en.getGame();
+        Game game = en.getGame();
 
         // if the last step is a launch or recovery, then I want to keep that at
         // the end

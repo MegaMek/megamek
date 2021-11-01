@@ -73,7 +73,7 @@ public class CamoChooser extends AbstractIconChooser {
             }
             return icons;
         } else {
-            return determineCategoryIcons(category);
+            return super.getIcons(category);
         }
     }
 

@@ -47,23 +47,23 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -110,7 +110,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger (Clan)
+Supercharger (Clan) (OMNIPOD)
 -Empty-
 
 Head:
@@ -132,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (OMNIPOD)
+Talons (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -146,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (OMNIPOD)
+Talons (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

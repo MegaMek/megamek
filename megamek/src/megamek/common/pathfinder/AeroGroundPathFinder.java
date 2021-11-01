@@ -26,7 +26,7 @@ import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.logging.LogLevel;
@@ -54,11 +54,11 @@ public class AeroGroundPathFinder {
         return 3;
     }
 
-    protected IGame game;
+    protected Game game;
     private List<MovePath> aeroGroundPaths;
     protected int maxThrust;
 
-    protected AeroGroundPathFinder(IGame game) {
+    protected AeroGroundPathFinder(Game game) {
         this.game = game;
         MegaMek.getLogger().setLogLevel(LogLevel.DEBUG);
     }
@@ -111,7 +111,7 @@ public class AeroGroundPathFinder {
         }
     }
 
-    public static AeroGroundPathFinder getInstance(IGame game) {
+    public static AeroGroundPathFinder getInstance(Game game) {
         AeroGroundPathFinder apf = new AeroGroundPathFinder(game);
 
         return apf;

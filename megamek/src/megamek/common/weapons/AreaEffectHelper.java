@@ -31,7 +31,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -149,7 +149,7 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
-        IGame game = attacker.getGame();
+        Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
                 game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
@@ -204,7 +204,7 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      */
     public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
-        IGame game = attacker.getGame();
+        Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
                 game.getPlanetaryConditions().getAtmosphere() <= PlanetaryConditions.ATMO_TRACE;
@@ -265,7 +265,7 @@ public class AreaEffectHelper {
      * Checks all units at given coords.
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, IGame game, Server server) {
+            Vector<Report> vPhaseReport, Game game, Server server) {
         for(Entity entity : game.getEntitiesVector(coords)) {
             checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
         }
@@ -276,7 +276,7 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, IGame game, Server server) {
+            Vector<Report> vPhaseReport, Game game, Server server) {
         int rollTarget = -1;
         if(entity instanceof BattleArmor) {
             rollTarget = 7;
@@ -310,7 +310,7 @@ public class AreaEffectHelper {
     /**
      * Worker function that clears minefields.
      */
-    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, IGame game, Server server) {
+    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, Game game, Server server) {
         Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
         ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
         while (minefields.hasMoreElements()) {

@@ -35,13 +35,13 @@ public class CrewTest {
         int piloting = 5;
 
         // Test the default case.
-        IGame mockGame = null;
+        Game mockGame = null;
         double expected = 1.0;
         double actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
         TestCase.assertEquals(expected, actual, 0.001);
 
         // Test a case with the 'alternate_pilot_bv_mod' option turned off.
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         GameOptions mockOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockOptions.booleanOption(Mockito.eq("alternate_pilot_bv_mod"))).thenReturn(false);
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);

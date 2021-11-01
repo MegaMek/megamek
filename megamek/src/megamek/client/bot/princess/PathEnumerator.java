@@ -33,7 +33,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -63,7 +63,7 @@ import megamek.common.pathfinder.SpheroidPathFinder;
 public class PathEnumerator {
 
     private final Princess owner;
-    private final IGame game;
+    private final Game game;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
     private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
@@ -73,7 +73,7 @@ public class PathEnumerator {
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
 
-    public PathEnumerator(Princess owningPrincess, IGame game) {
+    public PathEnumerator(Princess owningPrincess, Game game) {
         owner = owningPrincess;
         this.game = game;
     }
@@ -512,7 +512,7 @@ public class PathEnumerator {
         return lastKnownLocations;
     }
 
-    protected IGame getGame() {
+    protected Game getGame() {
         return game;
     }
 

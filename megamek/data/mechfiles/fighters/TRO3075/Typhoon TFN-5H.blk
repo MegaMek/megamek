@@ -108,3 +108,35 @@ IS Ammo LRM-10 Artemis-capable
 <tonnage>
 90.0
 </tonnage>
+
+<capabilities>
+The Typhoon features a simple flying wing design, intended to provide both excellent glide characteristics and ample room for bomb ports. Though slow compared to more modern designs, the heavily armored Typhoons speed was more than adequate for its ground attack role when compared with contemporaries of the era.
+</capabilities>
+
+<overview>
+In its heyday the Typhoon was the pre-Star League era Lyran Commonwealth's ground attack AeroSpace Fighter of choice.
+</overview>
+
+<deployment>
+This version of the Typhoon is a modern upgrade fielded in 3074. It is wrapped with 7.5 tons of Ferro-Aluminum armor. The missile weapons are changed to an Artemis IV-enhanced LRM-10, and each wing carries 2 Large Lasers and a Heavy PPC. To cool off, 23 double heat sinks are included. 
+</deployment>
+
+<history>
+Developed by CBM Aerospace of Donegal, and a vital part of the Lyran military's AeroSpace forces for many years, technology marched on and CBM ultimately discontinued the Typhoon in 2485 as it was entering into a business alliance with Lockheed Corporation of Tharkad to develop the Thunderbird that would ultimately trigger their merger into the powerful Lockheed/CBM Corporation.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp.
+</manufacturer>
+
+<primaryFactory>
+Donegal
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:CBM T02-A
+ENGINE:PlasmaStar 270
+ARMOR:Lexington Lite Ferro-Aluminum
+COMMUNICATIONS:CBM COMSET 3
+TARGETING:CBM TRAK-2
+</systemManufacturers>

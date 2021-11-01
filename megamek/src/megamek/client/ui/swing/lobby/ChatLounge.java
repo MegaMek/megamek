@@ -24,7 +24,6 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -95,6 +94,7 @@ import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.*;
 import megamek.common.options.*;
@@ -216,6 +216,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     boolean resetSelectedBoards = true;
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
+    private BoardView1 previewBV;
     Dimension currentMapButtonSize = new Dimension(0,0);
     
     private ArrayList<String> invalidBoards = new ArrayList<>();
@@ -727,16 +728,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
-            BoardView1 bv = new BoardView1(boardPreviewGame, null, null);
-            bv.setDisplayInvalidHexInfo(false);
-            bv.setUseLOSTool(false);
-            boardPreviewW.add(bv.getComponent(true));
+            previewBV = new BoardView1(boardPreviewGame, null, null);
+            previewBV.setDisplayInvalidHexInfo(false);
+            previewBV.setUseLOSTool(false);
+            boardPreviewW.add(previewBV.getComponent(true));
             boardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
             // Most boards will be far too large on the standard zoom
-            bv.zoomOut();
-            bv.zoomOut();
-            bv.zoomOut();
-            bv.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
+            previewBV.zoomOut();
             boardPreviewW.center();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
@@ -1629,7 +1630,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();
@@ -2151,7 +2152,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     @Override
     public void ready() {
         final Client client = clientgui.getClient();
-        final IGame game = client.getGame();
+        final Game game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         
         // enforce exclusive deployment zones in double blind
@@ -3589,7 +3590,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     };
     
-    IGame game() {
+    Game game() {
         return clientgui.getClient().getGame();
     }
     
@@ -3608,5 +3609,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog)w).isModal());
     }
 
+    public void killPreviewBV() {
+        if (previewBV != null) {
+            previewBV.die();
+        }
+    }
 }
 

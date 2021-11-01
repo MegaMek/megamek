@@ -18,41 +18,26 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.swing.lobby.MekTableModel.DOT_SPACER;
-import static megamek.client.ui.swing.util.UIUtil.*;
-
-import java.awt.Color;
-import java.text.MessageFormat;
-import java.util.List;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.Aero;
-import megamek.common.Board;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.IStartingPositions;
-import megamek.common.Infantry;
-import megamek.common.MapSettings;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.UnitType;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
+
+import java.awt.*;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
+import java.util.List;
+
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.lobby.MekTableModel.DOT_SPACER;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 class LobbyMekCellFormatter {
     
@@ -65,7 +50,7 @@ class LobbyMekCellFormatter {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + guiScaledFontHTML());
 
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         IPlayer owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
@@ -112,7 +97,7 @@ class LobbyMekCellFormatter {
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
                 || (!entity.isDesignValid())
                 ) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
         }
@@ -141,7 +126,9 @@ class LobbyMekCellFormatter {
         if (forceView) {
             result.append(DOT_SPACER);
         }
-        result.append(Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons"));
+        NumberFormat formatter = NumberFormat.getNumberInstance(PreferenceManager.getClientPreferences().getLocale());
+        result.append(formatter.format(entity.getWeight()));
+        result.append(Messages.getString("ChatLounge.Tons"));
         result.append("</FONT>");
         
         // Invalid Design
@@ -403,7 +390,7 @@ class LobbyMekCellFormatter {
      */
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         IPlayer owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
@@ -690,7 +677,7 @@ class LobbyMekCellFormatter {
     
     private static String formatForce(Force force, ChatLounge lobby, float size) {
         Client client = lobby.getClientgui().getClient();
-        IGame game = client.getGame();
+        Game game = client.getGame();
         IPlayer localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);
         IPlayer owner = game.getPlayer(ownerId);

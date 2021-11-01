@@ -22,9 +22,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.sorter.NaturalOrderComparator;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * AbstractDirectory is a class that is used to define a directory.
@@ -37,12 +35,12 @@ public abstract class AbstractDirectory {
     /**
      * A map of the category names to the direct sub-categories
      */
-    protected TreeMap<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
+    private Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
 
     /**
      * A map of item names to the <code>ItemFile</code>s in the root category
      */
-    protected TreeMap<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
+    private Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
     //endregion Variable Declarations
 
     //region Constructors
@@ -54,9 +52,9 @@ public abstract class AbstractDirectory {
      */
     protected AbstractDirectory(final File file, final @Nullable String rootName,
                                 final @Nullable String rootPath,
-                                final ItemFileFactory itemFileFactory) {
-        assert file != null : "A null root directory was passed.";
-        assert itemFileFactory != null : "A null item factory was passed.";
+                                final ItemFileFactory itemFileFactory) throws NullPointerException {
+        Objects.requireNonNull(file, "A null root directory was passed.");
+        Objects.requireNonNull(itemFileFactory, "A null item factory was passed.");
 
         setRootName((rootName == null) ? "" : rootName);
         setRootPath((rootPath == null) ? "" : rootPath);
@@ -80,7 +78,7 @@ public abstract class AbstractDirectory {
         this.rootPath = rootPath;
     }
 
-    public TreeMap<String, AbstractDirectory> getCategories() {
+    public Map<String, AbstractDirectory> getCategories() {
         return categories;
     }
 
@@ -88,7 +86,7 @@ public abstract class AbstractDirectory {
         return categoryPath.isBlank() ? this : getCategory(categoryPath.split("/"), 0);
     }
 
-    public @Nullable AbstractDirectory getCategory(final String[] categories, final int index) {
+    private @Nullable AbstractDirectory getCategory(final String[] categories, final int index) {
         if (categories.length == 0) {
             return null;
         } else if (index >= categories.length) {
@@ -101,17 +99,21 @@ public abstract class AbstractDirectory {
         return (category == null) ? null : category.getCategory(categories, index + 1);
     }
 
-    /**
-     * Get the names of all the categories.
-     *
-     * @return an <code>Iterator</code> of <code>String</code> names.
-     *         This value will not be <code>null</code>, but it may be empty.
-     */
-    public Iterator<String> getCategoryNames() {
-        return getCategories().keySet().iterator();
+    public List<String> getNonEmptyCategoryPaths() {
+        // This needs to be a list because the same name can be found twice, in different paths
+        final List<String> categoryNames = new ArrayList<>();
+        for (final AbstractDirectory directory : getCategories().values()) {
+            categoryNames.addAll(directory.getNonEmptyCategoryPaths());
+        }
+
+        if (!getItems().isEmpty()) {
+            categoryNames.add(getRootPath());
+        }
+
+        return categoryNames;
     }
 
-    public TreeMap<String, ItemFile> getItems() {
+    public Map<String, ItemFile> getItems() {
         return items;
     }
 

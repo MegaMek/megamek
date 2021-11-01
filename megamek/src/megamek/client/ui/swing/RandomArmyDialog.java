@@ -21,7 +21,7 @@ import megamek.client.generator.RandomUnitGenerator;
 import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -551,8 +551,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
       
                         autoSetSkillsAndName(e);
                         e.setOwner(c.getLocalPlayer());
-                        if (c.getGame().getPhase() != Phase.PHASE_LOUNGE){
-                            e.setDeployRound(c.getGame().getRoundCount()+1);
+                        if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+                            e.setDeployRound(c.getGame().getRoundCount() + 1);
                             e.setGame(c.getGame());
                             // Set these to true, otherwise units reinforced in
                             // the movement turn are considered selectable

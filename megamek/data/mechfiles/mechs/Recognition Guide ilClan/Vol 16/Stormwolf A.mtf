@@ -69,9 +69,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLLargePulseLaser
-CLLargePulseLaser
-CLActiveProbe
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+CLActiveProbe (OMNIPOD)
 CLMASC
 CLMASC
 -Empty-
@@ -83,10 +83,10 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +148,11 @@ Clan Reflective
 -Empty-
 -Empty-
 
-
+manufacturer:Manufacturing Plant SFF-IT5, Kallon Weapon Industries
+primaryfactory:CSF Kraken Mobile Production Facility, Thermopolis
+systemmanufacturer:CHASSIS:Mynx Type Medium Endo-Steel
+systemmanufacturer:ENGINE:300 Extralight
+systemmanufacturer:ARMOR:Gamma Special Reflective
+systemmanufacturer:JUMPJET:Grandthrust Mk 3
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:SyncTracker (39-42071)

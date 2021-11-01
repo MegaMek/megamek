@@ -15,7 +15,7 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -74,7 +74,7 @@ public class ISSRM2Primitive extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, IGame game, Server server) {
+                                              WeaponAttackAction waa, Game game, Server server) {
         return new SRMHandler(toHit, waa, game, server, -2);
     }
 }

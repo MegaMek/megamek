@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -56,7 +56,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-400
+480
 </fuel>
 
 <engine_type>
@@ -103,14 +103,6 @@ IS Ammo LRM-15 Artemis-capable
 IS Ammo LRM-15 Artemis-capable
 </Fuselage Equipment>
 
-<source>
-TRO 3075 - Star League
-</source>
-
-<tonnage>
-100.0
-</tonnage>
-
 <overview>
 While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
 </overview>
@@ -138,3 +130,12 @@ ARMOR:L/CBM AeroSteel
 COMMUNICATIONS:Neil 6000-a
 TARGETING:N&D Longreach
 </systemManufacturers>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

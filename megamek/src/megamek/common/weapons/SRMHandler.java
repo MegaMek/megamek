@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,11 +36,11 @@ public class SRMHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         this(t, w, g, s, 0);
     }
 
-    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s,
+    public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s,
             int salvoMod) {
         super(t, w, g, s);
         nSalvoBonus = salvoMod;

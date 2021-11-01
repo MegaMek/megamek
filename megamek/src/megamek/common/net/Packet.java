@@ -105,7 +105,7 @@ public class Packet {
     public static final int COMMAND_REROLL_INITIATIVE = 440;
     public static final int COMMAND_UNLOAD_STRANDED = 450;
 
-    public static final int COMMAND_SET_ARTYAUTOHITHEXES = 460;
+    public static final int COMMAND_SET_ARTILLERY_AUTOHIT_HEXES = 460;
     public static final int COMMAND_SENDING_ARTILLERYATTACKS = 470;
     public static final int COMMAND_SENDING_FLARES = 480;
 

@@ -22,7 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -40,7 +40,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;

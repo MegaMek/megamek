@@ -18,14 +18,11 @@
  *
  * Created on April 1, 2002, 1:29 PM
  */
-
 package megamek.common;
-
-import java.io.Serializable;
-import java.util.*;
 
 import megamek.MegaMek;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -34,11 +31,12 @@ import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
+import java.io.Serializable;
+import java.util.*;
+
 /**
  * This describes equipment mounted on a mech.
- *
  * @author Ben
- * @version
  */
 public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
@@ -135,7 +133,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     private int armorValue = 0;
 
-    private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
+    private GamePhase phase = GamePhase.UNKNOWN;
 
     public static final int MINE_NONE = -1;
     public static final int MINE_CONVENTIONAL = 0;
@@ -409,7 +407,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         called.reset();
     }
 
-    public void newPhase(IGame.Phase phase) {
+    public void newPhase(GamePhase phase) {
         jammed = jammedThisPhase;
     }
 
@@ -607,15 +605,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (usedThisRound) {
             phase = entity.game.getPhase();
         } else {
-            phase = IGame.Phase.PHASE_UNKNOWN;
+            phase = GamePhase.UNKNOWN;
         }
     }
 
-    public IGame.Phase usedInPhase() {
+    public GamePhase usedInPhase() {
         if (usedThisRound) {
             return phase;
         }
-        return IGame.Phase.PHASE_UNKNOWN;
+        return GamePhase.UNKNOWN;
     }
 
     public boolean isBreached() {
@@ -915,9 +913,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
 
             isHotLoaded = link.hotloaded;
-            if (((AmmoType) link.getType()).getMunitionType() == AmmoType.M_DEAD_FIRE) {
-                return true;
-            }
 
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
@@ -932,10 +927,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
         if (getType() instanceof AmmoType) {
             isHotLoaded = hotloaded;
-
-            if (((AmmoType) getType()).getMunitionType() == AmmoType.M_DEAD_FIRE) {
-                return true;
-            }
 
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during

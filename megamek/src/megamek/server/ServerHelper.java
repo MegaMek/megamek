@@ -41,7 +41,7 @@ public class ServerHelper {
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
-    public static boolean infantryInOpen(Entity te, IHex te_hex, IGame game, 
+    public static boolean infantryInOpen(Entity te, IHex te_hex, Game game, 
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
@@ -68,7 +68,7 @@ public class ServerHelper {
     /**
      * Worker function that handles heat as applied to aerospace fighter
      */
-    public static void resolveAeroHeat(IGame game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
+    public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
             int radicalHSBonus, int hotDogMod, Server s) {
         Report r;
         
@@ -451,6 +451,71 @@ public class ServerHelper {
         }
     }
 
-
-  
+    /**
+     * Loops through all active entities in the game and performs mine detection
+     */
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, Server server) {
+        boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
+        
+        // if the entity is on the board
+        // and it either a) hasn't moved or b) we're not using TacOps BAP rules
+        // if we are not using the TacOps BAP rules, that means we only check the entity's final hex
+        // if we are using TacOps BAP rules, all moved entities have made all their checks already
+        // so we just need to do the unmoved entities
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!entity.isOffBoard() && entity.isDeployed() &&
+                    ((entity.delta_distance == 0) || !tacOpsBap)) {
+                detectMinefields(game, entity, entity.getPosition(), vPhaseReport, server);
+            }
+        }
+    }
+    
+    /**
+     * Checks for minefields within the entity's active probe range.
+     * @return True if any minefields have been detected.
+     */
+    public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
+            Vector<Report> vPhaseReport, Server server) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+            return false;
+        }
+        
+        int probeRange = entity.getBAPRange();
+        if (probeRange <= 0) {
+            return false;
+        }
+        
+        boolean minefieldDetected = false;
+        
+        for (int distance = 1; distance <= probeRange; distance++) {      
+            for (Coords potentialMineCoords : coords.allAtDistance(distance)) {
+                if (!game.getBoard().contains(potentialMineCoords)) {
+                    continue;
+                }
+                
+                for (Minefield minefield : game.getMinefields(potentialMineCoords)) {
+                    // no need to roll for already revealed minefields
+                    if (entity.getOwner().containsMinefield(minefield)) {
+                        continue;
+                    }
+                    
+                    int roll = Compute.d6(2);
+                    
+                    if (roll >= minefield.getBAPDetectionTarget()) {
+                        minefieldDetected = true;
+                        
+                        Report r = new Report(2163);
+                        r.subject = entity.getId();
+                        r.add(entity.getShortName(), true);
+                        r.add(potentialMineCoords.toFriendlyString());
+                        vPhaseReport.add(r);
+                        
+                        server.revealMinefield(entity.getOwner(), minefield);
+                    }
+                }
+            }
+        }
+        
+        return minefieldDetected;
+    }  
 }

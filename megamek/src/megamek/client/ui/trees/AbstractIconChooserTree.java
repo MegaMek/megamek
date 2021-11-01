@@ -55,7 +55,8 @@ public abstract class AbstractIconChooserTree extends JTree {
         return new DefaultTreeModel(root);
     }
 
-    private void recursivelyAddToRoot(final DefaultMutableTreeNode root, final AbstractDirectory directory) {
+    private void recursivelyAddToRoot(final DefaultMutableTreeNode root,
+                                      final AbstractDirectory directory) {
         for (final Map.Entry<String, AbstractDirectory> category : directory.getCategories().entrySet()) {
             final DefaultMutableTreeNode node = new DefaultMutableTreeNode(category.getKey());
             recursivelyAddToRoot(node, category.getValue());

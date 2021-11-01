@@ -3827,7 +3827,7 @@ Ravager Assault Battle Armor (Standard):JUGGERNAUT
 Raven II RVN-5X:SCOUT
 Raven RVN-1X:SCOUT
 Raven RVN-2X:STRIKER
-Raven RVN-3L:STRIKER
+Raven RVN-3L:SCOUT
 Raven RVN-3M:MISSILE_BOAT
 Raven RVN-3X:SCOUT
 Raven RVN-4L:SCOUT
@@ -5874,6 +5874,31 @@ Kingfisher G:JUGGERNAUT
 Kingfisher I:BRAWLER
 Kingfisher X:BRAWLER
 #ilClan Rec Guide 19
+Mercury MCY-105:SCOUT
+Spider SDR-9M:SCOUT
+Cougar T:BRAWLER
+Cougar E:BRAWLER
+Cougar F:BRAWLER
+Cougar G:SNIPER
+Cougar H:BRAWLER
+Cougar I:STRIKER
+Rime Otter Prime:BRAWLER
+Rime Otter A:SKIRMISHER
+Rime Otter B:SKIRMISHER
+Rime Otter C:SKIRMISHER
+Rime Otter D:SCOUT
+Scorpion SCP-1BR:SKIRMISHER
+Scorpion SCP-1O:SKIRMISHER
+Scorpion SCP-1TB:MISSILE_BOAT
+Scorpion SCP-2N:SKIRMISHER
+Scorpion C:SKIRMISHER
+Orion C 2:BRAWLER
+Iron Cheetah Prime:SNIPER
+Iron Cheetah A:JUGGERNAUT
+Iron Cheetah B:JUGGERNAUT
+Iron Cheetah C:BRAWLER
+Iron Cheetah D:BRAWLER
+Iron Cheetah L:BRAWLER
 #ilClan Rec Guide 20
 #ilClan Rec Guide 21
 #ilClan Rec Guide 22
@@ -6044,6 +6069,8 @@ Gyrfalcon 5:SKIRMISHER
 Thunder Stallion 4:JUGGERNAUT
 SuburbanMech UM-R90:AMBUSHER
 SuburbanMech UM-R100:SNIPER
+Crusader CRD-9S:SNIPER
+Crusader CRD-10S:MISSILE_BOAT
 #Tukayyid
 Puma (Adder) TC:STRIKER
 Shadow Cat TC:SCOUT

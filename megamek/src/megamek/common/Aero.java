@@ -27,6 +27,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
@@ -3600,7 +3601,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // capital fighters can load other capital fighters (becoming squadrons)
         // but not in the deployment phase
         if (isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() && (getId() != unit.getId())
-                && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
+                && (game.getPhase() != GamePhase.DEPLOYMENT)) {
             return true;
         }
 

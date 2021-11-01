@@ -5,7 +5,7 @@ import megamek.common.IPlayer;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.server.Server;
-import megamek.common.IGame;
+import megamek.common.Game;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -19,8 +19,8 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class ServerTest {
 
-    protected IGame createMockedGame() {
-        IGame testGame = Mockito.mock(IGame.class);
+    protected Game createMockedGame() {
+        Game testGame = Mockito.mock(Game.class);
         Forces testForces = new Forces(testGame);
         Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
         Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
@@ -38,7 +38,7 @@ public class ServerTest {
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
 
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
@@ -55,7 +55,7 @@ public class ServerTest {
     public void testVictoryDrawReport() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
@@ -68,7 +68,7 @@ public class ServerTest {
     public void testVictoryFalseReport() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
@@ -82,7 +82,7 @@ public class ServerTest {
     public void testCancelVictory() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         Mockito.when(testGame.isForceVictory()).thenReturn(true);
 
@@ -101,7 +101,7 @@ public class ServerTest {
 
         // Mock a win victory result
         // Only 1 report should be generated as the team is set to TEAM_NONE
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         VictoryResult victoryResult = Mockito.mock(VictoryResult.class);
         Mockito.when(victoryResult.processVictory(testGame)).thenCallRealMethod();
         Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());

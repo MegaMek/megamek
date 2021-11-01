@@ -45,55 +45,55 @@ Medium Pulse Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-Clan LB 2-X AC Ammo
-Clan LB 5-X AC Ammo
+CLERLargeLaser (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+Clan LB 2-X AC Ammo (omnipod)
+Clan LB 5-X AC Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-Clan LB 2-X Cluster Ammo
-Clan LB 5-X Cluster Ammo
+CLERLargeLaser (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+Clan LB 2-X Cluster Ammo (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLLRM5
+CLLRM5 (omnipod)
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLLRM5
-Clan Ammo LRM-5
+CLLRM5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -110,7 +110,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
@@ -154,4 +154,14 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Turkina is a powerful OmniMech that was first seen in the Turkina Keshik at the Battle of Tukayyid, and entered general service with Clan Jade Falcon following the end of the Refusal War. In a design oddity, the Turkina mounts enough jump jets to vault 90 meters hardwired onto the frame, rather than using them in modular pods. While this simplified repair, it also uses tonnage that could be devoted to other systems when a mission does not call for jumping. Designers also included fifteen double heat sinks, four more than could be fit into the engine, so they are fixed in the torso. The Turkina has 42 tons available for modular pods.
 
+capabilities:Each arm of this Turkina configuration carries an ER Large Laser, LB 2-X, and an LB 5-X, plus a ton of ammunition for each autocannon. These are supplemented by an LRM-5 in each side torso and a center torso mounted Medium Pulse Laser. Sixteen double heat sinks are carried as well.  
+
+history:The Turkina is named after Turkina, the first Jade Falcon to be tamed, who inspired the leaders of Clan Jade Falcon in its early days. The name of the Turkina Keshik is also derived from this bird.
+manufacturer:Complex Beta, Olivetti Weapons
+primaryfactory:Ironhold, Sudeten
+systemmanufacturer:CHASSIS:JF Standard
+systemmanufacturer:ENGINE:285 JF Extralight
+systemmanufacturer:ARMOR:JF Standard
+systemmanufacturer:COMMUNICATIONS:JF Integrated

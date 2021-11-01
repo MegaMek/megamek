@@ -23,7 +23,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -47,7 +47,7 @@ public class MGAWeaponHandler extends MGHandler {
      * @param w
      * @param g
      */
-    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

@@ -33,7 +33,7 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
      * @param g
      * @param s
      */
-    public LRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public LRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         sSalvoType = " anti-TSM missile(s) ";

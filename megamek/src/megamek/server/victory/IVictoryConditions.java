@@ -15,7 +15,7 @@ package megamek.server.victory;
 
 import java.util.Map;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 
 /**
  * Interface for classes judging whether a victory occurred or not. These
@@ -49,5 +49,5 @@ public interface IVictoryConditions {
      * @return a result with true if victory occured, false if not must not
      *         return null MUST NOT modify game state!
      */
-    VictoryResult victory(IGame game, Map<String, Object> context);
+    VictoryResult victory(Game game, Map<String, Object> context);
 }

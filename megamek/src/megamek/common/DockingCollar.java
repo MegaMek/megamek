@@ -42,7 +42,7 @@ public class DockingCollar implements Transporter {
     private boolean damaged = false;
     private int collarNumber = 0;
 
-    transient IGame game;
+    transient Game game;
 
     /**
      * The total amount of space available for troops.
@@ -313,7 +313,7 @@ public class DockingCollar implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

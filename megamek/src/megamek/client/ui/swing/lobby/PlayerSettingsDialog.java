@@ -113,8 +113,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final Client client;
     private final ClientGUI clientgui;
     
-    private static final int TOOLTIP_WIDTH = 300;
-
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
     private final TipTextField fldInit = new TipTextField(3);
@@ -150,9 +148,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         setupValues();
         
         JPanel mainPanel = new JPanel();
-        ContentScrollPane scrMain = new ContentScrollPane(mainPanel);
-        add(scrMain, BorderLayout.CENTER);
-
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(headerSection());
         if (client instanceof BotClient) {
@@ -168,6 +163,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             mainPanel.add(emailSection());
         }
         mainPanel.add(Box.createVerticalGlue());
+
+        var scrMain = new JScrollPane(mainPanel);
+        scrMain.getVerticalScrollBar().setUnitIncrement(16);
+        scrMain.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrMain.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrMain.setBorder(null);
         return scrMain;
     }
     
@@ -363,27 +364,4 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         }
     }
 
-    /** 
-     * A specialized JScrollPane that reports 80% of the parent frame's
-     * height as its maximum preferred viewport height. This makes the dialog
-     * scale to about 80% of MM's window height when needed but not more. 
-     */
-    private class ContentScrollPane extends JScrollPane {
-        private static final long serialVersionUID = -4976675600736422725L;
-        
-        public ContentScrollPane(Component view) {
-            super(view);
-            getVerticalScrollBar().setUnitIncrement(16);
-            setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-            setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            setBorder(null);
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            var prefSize = super.getPreferredSize();
-            var maxHeight = clientgui.getFrame().getHeight() / 10 * 8;
-            return new Dimension(prefSize.width, Math.min(maxHeight, prefSize.height));
-        }
-    }
 }

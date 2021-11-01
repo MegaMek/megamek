@@ -24,14 +24,12 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
-import megamek.client.ui.swing.CancelAction;
-import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
@@ -52,29 +50,22 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  * minefields, and maybe other things in the future like force abilities.
  * 
  * @author Jay Lawson
+ * @author Simon (Juliez)
  */
-public class PlayerSettingsDialog extends ClientDialog {
+public class PlayerSettingsDialog extends AbstractButtonDialog {
 
-    private static final long serialVersionUID = -4597870528499580517L;
-    
     public PlayerSettingsDialog(ClientGUI cg, Client cl) {
-        super(cg.frame, Messages.getString("PlayerSettingsDialog.title"), true, true);
+        super(cg.frame, "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
         clientgui = cg;
         currentPlayerStartPos = cl.getLocalPlayer().getStartingPos();
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
         }
-        setupDialog();
+        initialize();
+        UIUtil.adjustDialog(this);
     }
     
-    /** Sets the dialog visible and returns true if the user pressed the Okay button. */
-    public boolean showDialog() {
-        userResponse = false;
-        setVisible(true);
-        return userResponse;
-    }
-
     /** Returns the chosen initiative modifier. */
     public int getInit() {
         return parseField(fldInit);
@@ -123,46 +114,45 @@ public class PlayerSettingsDialog extends ClientDialog {
     private final ClientGUI clientgui;
     
     private static final int TOOLTIP_WIDTH = 300;
-    private static final String PSD = "PlayerSettingsDialog.";
-    
+
     // Initiative Section
-    private JLabel labInit = new TipLabel(Messages.getString(PSD + "initMod"), SwingConstants.RIGHT, this);
-    private TipTextField fldInit = new TipTextField(3);
+    private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
+    private final TipTextField fldInit = new TipTextField(3);
 
     // Mines Section
-    private JLabel labConventional = new JLabel(getString(PSD + "labConventional"), SwingConstants.RIGHT); 
-    private JLabel labVibrabomb = new JLabel(getString(PSD + "labVibrabomb"), SwingConstants.RIGHT); 
-    private JLabel labActive = new JLabel(getString(PSD + "labActive"), SwingConstants.RIGHT); 
-    private JLabel labInferno = new JLabel(getString(PSD + "labInferno"), SwingConstants.RIGHT); 
-    private JTextField fldConventional = new JTextField(3);
-    private JTextField fldVibrabomb = new JTextField(3);
-    private JTextField fldActive = new JTextField(3);
-    private JTextField fldInferno = new JTextField(3);
+    private final JLabel labConventional = new JLabel(getString("PlayerSettingsDialog.labConventional"), SwingConstants.RIGHT);
+    private final JLabel labVibrabomb = new JLabel(getString("PlayerSettingsDialog.labVibrabomb"), SwingConstants.RIGHT);
+    private final JLabel labActive = new JLabel(getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT);
+    private final JLabel labInferno = new JLabel(getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT);
+    private final JTextField fldConventional = new JTextField(3);
+    private final JTextField fldVibrabomb = new JTextField(3);
+    private final JTextField fldActive = new JTextField(3);
+    private final JTextField fldInferno = new JTextField(3);
 
     // Skills Section
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
 
     // Email section
-    private JLabel labEmail = new JLabel(getString(PSD + "labEmail"), SwingConstants.RIGHT);
-    private JTextField fldEmail = new JTextField(20);
+    private final JLabel labEmail = new JLabel(getString("PlayerSettingsDialog.labEmail"), SwingConstants.RIGHT);
+    private final JTextField fldEmail = new JTextField(20);
 
-    private JPanel panStartButtons = new JPanel();
-    private TipButton[] butStartPos = new TipButton[11];
-    private JButton butBotSettings = new JButton(Messages.getString(PSD + "botSettings"));
-    private DialogButton butOkay = new DialogButton(Messages.getString("Okay"));
+    // Deployment Section
+    private final JPanel panStartButtons = new JPanel();
+    private final TipButton[] butStartPos = new TipButton[11];
+
+    // Bot Settings Section
+    private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
     
     private int currentPlayerStartPos;
-    
-    private boolean userResponse;
-    
-    private void setupDialog() {
+
+    @Override
+    protected Container createCenterPane() {
         setupValues();
         
         JPanel mainPanel = new JPanel();
         ContentScrollPane scrMain = new ContentScrollPane(mainPanel);
         add(scrMain, BorderLayout.CENTER);
-        add(buttonPanel(), BorderLayout.PAGE_END);
-        
+
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(headerSection());
         if (client instanceof BotClient) {
@@ -178,6 +168,7 @@ public class PlayerSettingsDialog extends ClientDialog {
             mainPanel.add(emailSection());
         }
         mainPanel.add(Box.createVerticalGlue());
+        return scrMain;
     }
     
     private JPanel headerSection() {
@@ -192,7 +183,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
 
     private JPanel botSection() {
-        JPanel result = new OptionPanel(PSD + "header.botPlayer");
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.botPlayer");
         Content panContent = new Content(new FlowLayout());
         result.add(panContent);
         panContent.add(butBotSettings);
@@ -201,7 +192,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
     
     private JPanel startSection() {
-        JPanel result = new OptionPanel(PSD + "header.startPos");
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
         Content panContent = new Content(new GridLayout(1, 1));
         result.add(panContent);
         setupStartGrid();
@@ -210,18 +201,18 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
     
     private JPanel initiativeSection() {
-        JPanel result = new OptionPanel(PSD + "header.initMod");
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.initMod");
         Content panContent = new Content(new GridLayout(1, 2, 10, 5));
         result.add(panContent);
         panContent.add(labInit);
         panContent.add(fldInit);
-        labInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
-        fldInit.setToolTipText(formatTooltip(Messages.getString(PSD + "initModTT")));
+        labInit.setToolTipText(Messages.getString("PlayerSettingsDialog.initModTT"));
+        fldInit.setToolTipText(Messages.getString("PlayerSettingsDialog.initModTT"));
         return result;
     }
 
     private JPanel mineSection() {
-        JPanel result = new OptionPanel(PSD + "header.minefields");
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.minefields");
         Content panContent = new Content(new GridLayout(4, 2, 10, 5));
         result.add(panContent);
         panContent.add(labConventional);
@@ -236,7 +227,7 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
 
     private JPanel skillsSection() {
-        final JPanel skillsPanel = new OptionPanel(PSD + "header.skills");
+        final JPanel skillsPanel = new OptionPanel("PlayerSettingsDialog.header.skills");
         skillsPanel.setName("skillsPanel");
 
         skillGenerationOptionsPanel = new SkillGenerationOptionsPanel(clientgui.getFrame(), clientgui, client);
@@ -248,19 +239,11 @@ public class PlayerSettingsDialog extends ClientDialog {
     }
 
     private JPanel emailSection() {
-        JPanel result = new OptionPanel(PSD + "header.email");
+        JPanel result = new OptionPanel("PlayerSettingsDialog.header.email");
         Content panContent = new Content(new GridLayout(1, 2, 10, 5));
         result.add(panContent);
         panContent.add(labEmail);
         panContent.add(fldEmail);
-        return result;
-    }
-
-    private JPanel buttonPanel() {
-        JPanel result = new JPanel(new FlowLayout());
-        butOkay.addActionListener(listener);
-        result.add(butOkay);
-        result.add(new DialogButton(new CancelAction(this)));
         return result;
     }
 
@@ -310,7 +293,7 @@ public class PlayerSettingsDialog extends ClientDialog {
             butText[i].append("<HTML><P ALIGN=CENTER>");
             if (!isValidStartPos(client.getGame(), client.getLocalPlayer(), i)) {
                 butText[i].append(guiScaledFontHTML(uiYellow()));
-                butTT[i].append(Messages.getString(PSD + "invalidStartPosTT"));
+                butTT[i].append(Messages.getString("PlayerSettingsDialog.invalidStartPosTT"));
             } else {
                 butText[i].append(guiScaledFontHTML());
             }
@@ -327,7 +310,7 @@ public class PlayerSettingsDialog extends ClientDialog {
                     if (butTT[index].length() > 0) {
                         butTT[index].append("<BR><BR>");
                     }
-                    butTT[index].append(Messages.getString(PSD + "deployingHere"));
+                    butTT[index].append(Messages.getString("PlayerSettingsDialog.deployingHere"));
                     hasPlayer[index] = true;
                 }
                 butTT[index].append("<BR>").append(player.getName());
@@ -340,7 +323,7 @@ public class PlayerSettingsDialog extends ClientDialog {
         for (int i = 0; i < 11; i++) {
             butStartPos[i].setText(butText[i].toString());
             if (butTT[i].length() > 0) {
-                butStartPos[i].setToolTipText(formatTooltip(butTT[i].toString()));
+                butStartPos[i].setToolTipText(butTT[i].toString());
             }
         }
     }
@@ -348,12 +331,6 @@ public class PlayerSettingsDialog extends ClientDialog {
     ActionListener listener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // OKAY
-            if (e.getSource().equals(butOkay)) {
-                userResponse = true;
-                setVisible(false);
-            } 
-
             // Deployment buttons
             for (int i = 0; i < 11; i++) {
                 if (butStartPos[i].equals(e.getSource())) {
@@ -384,15 +361,6 @@ public class PlayerSettingsDialog extends ClientDialog {
         } catch (NumberFormatException ex) {
             return 0;
         }
-    }
-
-    /** 
-     * Completes the tooltip for this dialog, setting its width and adding
-     * HTML tags.
-     */
-    private String formatTooltip(String text) {
-        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
-        return scaleStringForGUI(result);
     }
 
     /** 

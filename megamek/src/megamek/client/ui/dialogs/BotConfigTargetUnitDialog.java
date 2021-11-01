@@ -67,7 +67,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
         JPanel unitIDPanel = new UIUtil.FixedYPanel();
-        unitIDField.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("BotConfigDialog.unitIdTip")));
+        unitIDField.setToolTipText(Messages.getString("BotConfigDialog.unitIdTip"));
         unitIDLabel.setLabelFor(unitIDField);
         unitIDLabel.setDisplayedMnemonic(KeyEvent.VK_I);
         unitIDPanel.add(unitIDLabel);

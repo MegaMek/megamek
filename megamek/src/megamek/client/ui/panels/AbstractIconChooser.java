@@ -125,7 +125,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     protected void initialize() {
         // Set up the image list (right panel)
         setImageList(new ImageList(new AbstractIconRenderer()));
-        JScrollPane scrpImages = new JScrollPane(getImageList());
+        final JScrollPane scrpImages = new JScrollPane(getImageList());
         scrpImages.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrpImages.setMinimumSize(new Dimension(500, 240));
 
@@ -137,12 +137,12 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         scrpTree.setBackground(UIManager.getColor("Table.background"));
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, scrpTree, scrpImages);
-        splitPane.setName("iconSplitPane");
-        splitPane.setResizeWeight(0.5);
+        getSplitPane().setName("iconSplitPane");
+        getSplitPane().setResizeWeight(0.5);
 
         setLayout(new BorderLayout());
         add(searchPanel(), BorderLayout.PAGE_START);
-        add(splitPane, BorderLayout.CENTER);
+        add(getSplitPane(), BorderLayout.CENTER);
 
         finalizeInitialization();
     }
@@ -186,7 +186,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     }
 
     private void addCategoryIcons(final String category, final List<AbstractIcon> icons) {
-        for (Iterator<String> iconNames = getDirectory().getItemNames(category); iconNames.hasNext(); ) {
+        for (final Iterator<String> iconNames = getDirectory().getItemNames(category); iconNames.hasNext(); ) {
             icons.add(createIcon(category, iconNames.next()));
         }
     }
@@ -218,7 +218,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         if (contents.length() > 2) {
             getImageList().updateImages(getSearchedItems(contents));
         } else {
-            TreePath path = getTreeCategories().getSelectionPath();
+            final TreePath path = getTreeCategories().getSelectionPath();
             if (path == null) {
                 return;
             }
@@ -227,8 +227,8 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
             // The conversion starts with the node below the root
             // if there's any, so when the root itself is selected,
             // category remains "".
-            Object[] nodes = path.getPath();
-            StringBuilder category = new StringBuilder();
+            final Object[] nodes = path.getPath();
+            final StringBuilder category = new StringBuilder();
             for (int i = 1; i < nodes.length; i++) {
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }
@@ -274,7 +274,7 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         setTreeCategories(newTree);
         getTreeCategories().addTreeSelectionListener(this);
         scrpTree = new JScrollPane(getTreeCategories());
-        splitPane.setLeftComponent(scrpTree);
+        getSplitPane().setLeftComponent(scrpTree);
         setSelection(getOriginalIcon());
     }
 
@@ -320,8 +320,8 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         // For a category that contains the search string, all its items
         // are added to the list. Additionally, all items that contain
         // the search string are added.
-        List<AbstractIcon> result = new ArrayList<>();
-        String lowerSearched = searchString.toLowerCase();
+        final List<AbstractIcon> result = new ArrayList<>();
+        final String lowerSearched = searchString.toLowerCase();
 
         for (final String category : getDirectory().getNonEmptyCategoryPaths()) {
             if (category.toLowerCase().contains(lowerSearched)) {
@@ -329,8 +329,8 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
                 continue;
             }
 
-            for (Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext(); ) {
-                String item = itemNames.next();
+            for (final Iterator<String> itemNames = getDirectory().getItemNames(category); itemNames.hasNext(); ) {
+                final String item = itemNames.next();
                 if (item.toLowerCase().contains(lowerSearched)) {
                     result.add(createIcon(category, item));
                 }
@@ -349,23 +349,24 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
             return;
         }
 
-        // This cumbersome code takes the category name and transforms it into
-        // a TreePath so it can be selected in the dialog
+        // This cumbersome code takes the category name and transforms it into a TreePath, so it can
+        // be selected in the dialog.
         // When the icon directory has changes, the previous selection might not be found
         boolean found = false;
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode) getTreeCategories().getModel().getRoot();
+        final DefaultMutableTreeNode root = (DefaultMutableTreeNode) getTreeCategories().getModel().getRoot();
         DefaultMutableTreeNode currentNode = root;
         if (icon != null) {
-            for (String name : icon.getCategory().split(Pattern.quote("/"))) {
+            for (final String name : icon.getCategory().split(Pattern.quote("/"))) {
                 found = false;
-                for (Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
-                    DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
+                for (final Enumeration<?> enm = currentNode.children(); enm.hasMoreElements(); ) {
+                    final DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
                     if (name.equals(child.getUserObject())) {
                         currentNode = child;
                         found = true;
                         break;
                     }
                 }
+
                 if (!found) {
                     break;
                 }
@@ -391,8 +392,8 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
             // Convert the path to a single String
             // The conversion starts with the node below the root
             // if there's any, so when the root itself is selected, category remains "".
-            Object[] nodes = path.getPath();
-            StringBuilder category = new StringBuilder();
+            final Object[] nodes = path.getPath();
+            final StringBuilder category = new StringBuilder();
             for (int i = 1; i < nodes.length; i++) {
                 category.append((String) ((DefaultMutableTreeNode) nodes[i]).getUserObject()).append("/");
             }

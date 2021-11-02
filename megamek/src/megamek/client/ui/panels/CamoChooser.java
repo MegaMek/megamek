@@ -36,7 +36,7 @@ public class CamoChooser extends AbstractIconChooser {
     //endregion Variable Declarations
 
     //region Constructors
-    public CamoChooser(final JFrame frame, @Nullable AbstractIcon camouflage,
+    public CamoChooser(final JFrame frame, final @Nullable AbstractIcon camouflage,
                        final boolean canHaveIndividualCamouflage) {
         super(frame, "CamouflageChooser", new CamoChooserTree(), camouflage);
         setCanHaveIndividualCamouflage(canHaveIndividualCamouflage);

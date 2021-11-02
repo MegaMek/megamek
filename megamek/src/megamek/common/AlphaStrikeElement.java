@@ -22,6 +22,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.Quirks;
 
+import javax.swing.*;
+
 import static megamek.common.BattleForceSPA.*;
 import static megamek.common.ASUnitType.*;
 import static java.util.stream.Collectors.*;
@@ -438,59 +440,86 @@ public class AlphaStrikeElement extends BattleForceElement {
     }
     
     @Override
+//    public void writeCsv(BufferedWriter w) throws IOException {
+//        w.write(name);
+//        w.write("\t");
+//        w.write(asUnitType.toString());
+//        w.write("\t");
+//        w.write(Integer.toString(size));
+//        w.write("\t");
+//        w.write(getMovementAsString());
+//        w.write("\t");
+//        w.write(Integer.toString((int)Math.round(armor)));
+//        if (threshold >= 0) {
+//            w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
+//        }
+//        w.write("\t");
+//        w.write(Integer.toString(structure));
+//        w.write("\t");
+//        StringJoiner sj = new StringJoiner(", ");
+//        for (int loc = 0; loc < weaponLocations.length; loc++) {
+//            StringBuilder str = new StringBuilder();
+//            String damStr = getASDamageString(loc, false);
+//            if (damStr.length() > 0) {
+//                str.append(damStr);
+//                sj.add(str.toString());
+//            }
+//        }
+//        if (sj.length() > 0) {
+//            w.write(sj.toString());
+//        } else {
+//            w.write(rangeBands > 3? "0/0/0/0" : "0/0/0");
+//        }
+//        w.write("\t");
+//        sj = new StringJoiner(", ");
+//        for (int loc = 0; loc < weaponLocations.length; loc++) {
+//            if (weaponLocations[loc].getOverheat() >= 1) {
+//                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
+//            }
+//        }
+//        if (sj.length() > 0) {
+//            w.write(sj.toString());
+//        } else {
+//            w.write("-");
+//        }
+//        w.write("\t");
+//        w.write(Integer.toString(getFinalPoints()));
+//        w.write("\t");
+//        w.write(specialAbilities.keySet().stream()
+//                .filter(spa -> spa.usedByAlphaStrike()
+//                        && !spa.isDoor())
+//                .map(spa -> formatSPAString(spa))
+//                .collect(Collectors.joining(", ")));
+//        w.newLine();
+//    }
+
     public void writeCsv(BufferedWriter w) throws IOException {
         w.write(name);
         w.write("\t");
-        w.write(asUnitType.toString());
+        w.write(asUnitType + "");
         w.write("\t");
-        w.write(Integer.toString(size));
+        w.write(size + "");
         w.write("\t");
         w.write(getMovementAsString());
         w.write("\t");
-        w.write(Integer.toString((int)Math.round(armor)));
-        if (threshold >= 0) {
-            w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
-        }
+        w.write(getTMM() + "");
         w.write("\t");
-        w.write(Integer.toString(structure));
+        w.write(getFinalArmor() + "");
         w.write("\t");
-        StringJoiner sj = new StringJoiner(", ");
-        for (int loc = 0; loc < weaponLocations.length; loc++) {
-            StringBuilder str = new StringBuilder();
-            String damStr = getASDamageString(loc, false);
-            if (damStr.length() > 0) {
-                str.append(damStr);
-                sj.add(str.toString());
-            }
-        }
-        if (sj.length() > 0) {
-            w.write(sj.toString());
-        } else {
-            w.write(rangeBands > 3? "0/0/0/0" : "0/0/0");
-        }
+        w.write(getFinalThreshold() + "");
         w.write("\t");
-        sj = new StringJoiner(", ");
-        for (int loc = 0; loc < weaponLocations.length; loc++) {
-            if (weaponLocations[loc].getOverheat() >= 1) {
-                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
-            }
-        }
-        if (sj.length() > 0) {
-            w.write(sj.toString());
-        } else {
-            w.write("-");
-        }
+        w.write(structure + "");
         w.write("\t");
-        w.write(Integer.toString(getFinalPoints()));
+        w.write(getStandardDamage() + "");
         w.write("\t");
-        w.write(specialAbilities.keySet().stream()
-                .filter(spa -> spa.usedByAlphaStrike()
-                        && !spa.isDoor())
-                .map(spa -> formatSPAString(spa))
-                .collect(Collectors.joining(", ")));
+        w.write(getOverheat() + "");
+        w.write("\t");
+        w.write(getFinalPoints() + "");
+        w.write("\t");
+        w.write(getSpecialsString());
         w.newLine();
     }
-    
+
     public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";

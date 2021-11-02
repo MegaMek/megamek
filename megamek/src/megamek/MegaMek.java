@@ -21,26 +21,14 @@ import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.preferences.MMPreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.common.Aero;
-import megamek.common.AlphaStrikeElement;
-import megamek.common.BattleArmor;
-import megamek.common.BattleForceElement;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechView;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.DefaultMmLogger;
 import megamek.common.logging.LogConfig;
@@ -694,6 +682,15 @@ public class MegaMek {
 
         private void processUnitAlphaStrikeConverter() {
             String filename;
+            ASUnitType typeFilter = null;
+            if (getToken() == TOK_OPTION) {
+                try {
+                    typeFilter = ASUnitType.valueOf(getTokenValue().strip().toUpperCase());
+                } catch (Exception e) {
+                    // cannot parse the type: no filtering
+                }
+                nextToken();
+            }
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
                 nextToken();
@@ -711,18 +708,20 @@ public class MegaMek {
                 try (Writer w = new FileWriter(file); BufferedWriter bw = new BufferedWriter(w)) {
                     bw.write("Megamek Unit AlphaStrike Converter");
                     bw.newLine();
-                    bw.write("This file can be regenerated with java -jar MegaMek.jar -asc filename");
+                    bw.write("This file can be regenerated with java -jar MegaMek.jar -asc [-TT] filename");
                     bw.newLine();
-                    bw.write("Element\tType\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
+                    bw.write("-TT: Optional AlphaStrike unit type, e.g. -AF: limits the export to units of that type");
+                    bw.newLine();
+                    bw.write("Element\tType\tSize\tMP\tTMM\tArmor\tThreshold\tStructure\tStandard Damage\tOV\tPoint Value\tAbilities");
                     bw.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
                     for (MechSummary unit : units) {
-                        Entity entity = new MechFileParser(unit.getSourceFile(),
-                                unit.getEntryName()).getEntity();
-
-                        AlphaStrikeElement ase = new AlphaStrikeElement(entity);
-                        ase.writeCsv(bw);
+                        Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                        AlphaStrikeElement ase = AlphaStrikeConverter.convert(entity);
+                        if ((typeFilter == null) || ase.isType(typeFilter)) {
+                            ase.writeCsv(bw);
+                        }
                     }
                 } catch (Exception ex) {
                     getLogger().error(ex);

@@ -415,7 +415,6 @@ public class MegaMek {
         private static final String OPTION_UNIT_VALIDATOR = "validate";
         private static final String OPTION_UNIT_EXPORT = "export";
         private static final String OPTION_OFFICAL_UNIT_LIST = "oul";
-        private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc";
         private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc";
         private static final String OPTION_DATADIR = "data";
         private static final String OPTION_RATGEN_EDIT = "editratgen";
@@ -494,9 +493,6 @@ public class MegaMek {
                         break;
                     case OPTION_OFFICAL_UNIT_LIST:
                         processUnitExporter(true);
-                        break;
-                    case OPTION_UNIT_BATTLEFORCE_CONVERSION:
-                        processUnitBattleForceConverter();
                         break;
                     case OPTION_UNIT_ALPHASTRIKE_CONVERSION:
                         processUnitAlphaStrikeConverter();
@@ -638,45 +634,6 @@ public class MegaMek {
             } else {
                 throw new ParseException("\"chassis model\" expected as input");
             }
-            System.exit(0);
-        }
-
-        private void processUnitBattleForceConverter() {
-            String filename;
-            if (getToken() == TOK_LITERAL) {
-                filename = getTokenValue();
-                nextToken();
-
-                if (!new File("./docs").exists()) {
-                    if (!new File("./docs").mkdir()) {
-                        getLogger().error(
-                                "Error in creating directory ./docs. We know this is annoying, and apologise. "
-                                        + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                        + " and we will try to resolve your issue.");
-                    }
-                }
-                File file = new File("./docs/" + filename);
-                try (Writer w = new FileWriter(file); BufferedWriter fw = new BufferedWriter(w)) {
-                    fw.write("Megamek Unit BattleForce Converter");
-                    fw.newLine();
-                    fw.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
-                    fw.newLine();
-                    fw.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
-                    fw.newLine();
-
-                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                    for (MechSummary unit : units) {
-                        Entity entity = new MechFileParser(unit.getSourceFile(),
-                                unit.getEntryName()).getEntity();
-
-                        BattleForceElement bfe = new BattleForceElement(entity);
-                        bfe.writeCsv(fw);
-                    }
-                } catch (Exception e) {
-                    getLogger().error(e);
-                }
-            }
-
             System.exit(0);
         }
 

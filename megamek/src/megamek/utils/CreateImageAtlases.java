@@ -95,11 +95,11 @@ public class CreateImageAtlases {
     void scanDirectory(File file) {
         if (file.isDirectory()) {
             // Ignore certian directories
-            if (file.toString().contains("hexes\\largeTextures")) {
+            if (file.toString().contains("largeTextures")) {
                 return;
             }
             //TODO:  If this works, refactor this code to iterate through an ingore list of directories.
-            if (file.toString().contains("hexes\\Structured_Water")) {
+            if (file.toString().contains("Structured_Water")) {
                 return;
             }
             processDirectory(file);

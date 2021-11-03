@@ -1317,7 +1317,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     private void doActivateSpecialAbility() {
         Map<String, String> skillNames = new HashMap<>();
         
-        if (canActivateBloodStalker()) {                
+        if (canActivateBloodStalker() && (target != null)) {                
             skillNames.put("Blood Stalker", OptionsConstants.GUNNERY_BLOOD_STALKER);
         }
         
@@ -1333,7 +1333,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         switch (skillNames.get(input)) {
         case OptionsConstants.GUNNERY_BLOOD_STALKER:
             // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
-            
             ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getTargetId());
             attacks.add(0, bloodStalkerAction);
             ce().setBloodStalkerTarget(target.getTargetId());
@@ -1351,7 +1350,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // and the target is something that can be blood-stalked
         return ce().canActivateBloodStalker() &&
                 (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
-                !attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction);
+                attacks.stream().noneMatch(item -> item instanceof ActivateBloodStalkerAction);
     }
 
     /**
@@ -2431,7 +2430,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         // if we're clearing a "blood stalker" activation from the queue, 
         // clear the local entity's blood stalker 
-        if ((ce() != null) && (attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction))) {
+        if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
             ce().setBloodStalkerTarget(Entity.NONE);
         }
         clearAttacks();        

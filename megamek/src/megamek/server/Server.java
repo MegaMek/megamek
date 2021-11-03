@@ -30416,7 +30416,7 @@ public class Server implements Runnable {
                     game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
                 }
                 
-                if (game.getPhase() != GamePhase.LOUNGE) {
+                if (!game.getPhase().isLounge()) {
                     ServerHelper.clearBloodStalkers(game, entityId, this);
                 }
             }

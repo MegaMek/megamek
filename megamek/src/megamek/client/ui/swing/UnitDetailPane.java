@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import javax.swing.JTabbedPane;
 
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
@@ -46,10 +47,26 @@ public class UnitDetailPane extends DetachablePane {
         );
         window.setResizable(true);
         UIUtil.updateWindowBounds(window);
+
+        var state = getState();
+        try {
+            state = Mode.valueOf(prefs.getUnitDetailState().toUpperCase());
+        } catch (Exception e) {
+            MegaMek.getLogger().error("Error setting unit detail state", e);
+        }
+        setState(state);
     }
 
     public UnitDisplay getDetail() {
         return this.detail;
     }
 
+    @Override
+    public void setState(Mode newState) {
+        var existing = getState();
+        super.setState(newState);
+        if (newState != existing) {
+            GUIPreferences.getInstance().setUnitDetailState(newState.name());
+        }
+    }
 }

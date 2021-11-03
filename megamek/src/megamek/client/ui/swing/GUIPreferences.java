@@ -112,6 +112,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DETAIL_POS_Y = "UnitDetailPosY";
     public static final String UNIT_DETAIL_SIZE_HEIGHT = "UnitDetailSizeHeight";
     public static final String UNIT_DETAIL_SIZE_WIDTH = "UnitDetailSizeWidth";
+    public static final String UNIT_DETAIL_STATE = "UnitDetailState";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -547,6 +548,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getUnitDetailSizeWidth() {
         return store.getInt(UNIT_DETAIL_SIZE_WIDTH);
+    }
+
+    public String getUnitDetailState() {
+        return store.getString(UNIT_DETAIL_STATE);
     }
 
     public boolean getGameSummaryBoardView() {
@@ -1036,6 +1041,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDetailSizeWidth(int i) {
         store.setValue(UNIT_DETAIL_SIZE_WIDTH, i);
+    }
+
+    public void setUnitDetailState(String state) {
+        store.setValue(UNIT_DETAIL_STATE, state);
     }
 
     public void setGameSummaryBoardView(boolean state) {

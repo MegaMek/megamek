@@ -47,7 +47,7 @@ public class TankTrailerHitch implements Transporter {
      * The entity being towed by this hitch.
      */
     protected int towed = Entity.NONE;
-    private transient IGame game;
+    private transient Game game;
 
     /**
      * The <code>String</code> reported when the hitch is in use.
@@ -280,7 +280,7 @@ public class TankTrailerHitch implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 } // End package class TankTrailerHitch implements Transporter

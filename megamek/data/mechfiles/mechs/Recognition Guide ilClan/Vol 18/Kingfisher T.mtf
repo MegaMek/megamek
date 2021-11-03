@@ -45,36 +45,36 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakSRM6
-CLStreakSRM6
-CLERMediumLaser
-Clan Streak SRM 6 Ammo
-CLCASEII
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedSmallHeavyLaser
-CLCASEII
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLCASEII (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLStreakLRM10
-CLStreakLRM10
-CLERMediumLaser
-Clan Streak LRM 10 Ammo
-CLCASEII
+CLStreakLRM10 (OMNIPOD)
+CLStreakLRM10 (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+Clan Streak LRM 10 Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -86,9 +86,9 @@ Clan Ferro-Fibrous
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLTargeting Computer
-CLTargeting Computer
-CLERMediumLaser
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -108,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
 -Empty-
 
 Head:
@@ -154,11 +154,9 @@ CLDoubleHeatSink
 -Empty-
 
 overview:An early Clan assault OmniMech that may have influenced all subsequent assault OmniMech design, the Kingfisher is rugged and maneuverable. These traits make the Kingfisher an ideal choice for take and hold missions.
-
 capabilities:The tough Kingfisher mounts fourteen and a half tons of Ferro-Fibrous armor on an Endo Steel chassis, the most it can take. Unlike most modern front-line OmniMechs, the Kingfisher uses a standard engine. The 'Mech also has seventeen fixed double heat sinks, forcing three to be mounted outside of the engine.
-
+deployment:The left arm of this configuration has a Streak SRM-6 with a ton of ammunition and an ER Medium Laser. The right arm carries an Improved Heavy Large Laser and an Improved Heavy Small Laser. An ER Medium Laser is carried in each torso location. The left torso has a Streak LRM-10 with a ton of ammunition. The energy weapons are all tied into an advanced Targeting Computer. Explosive components in the arms and left torso are all protected by CASE II systems. Nineteen double heat sinks are carried as well. 
 history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
-
 manufacturer:Snow Raven Industrial Complex Alpha, Strana Mechty ’Mech Production Facility Beta
 primaryfactory:Dante, Strana Mechty
 systemmanufacturer:CHASSIS:SL YT-A Endo
@@ -166,3 +164,4 @@ systemmanufacturer:ENGINE:Star League Standard 360
 systemmanufacturer:ARMOR:Forging Z5 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Model 74/129.3 TCS
 systemmanufacturer:TARGETING:S438 Mk. III Mod. 7 TTS
+

@@ -18,7 +18,7 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -77,10 +77,10 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game - the <code>IGame</code> object containing all entities.
+     * @param game - the <code>Game</code> object containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                                                          getTargetId()), getArm());
     }
@@ -90,7 +90,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      * this attack misses, the Mek will suffer punch damage. This same action is
      * used to remove iNARC pods.
      *
-     * @param game       - the <code>IGame</code> object containing all entities.
+     * @param game       - the <code>Game</code> object containing all entities.
      * @param attackerId - the <code>int</code> ID of the attacking unit.
      * @param target     - the <code>Targetable</code> object being targeted.
      * @param arm        - the <code>int</code> of the arm making the attack; this
@@ -98,7 +98,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *                   <code>BrushOffAttackAction.LEFT</code>.
      * @return the <code>ToHitData</code> containing the target roll.
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;

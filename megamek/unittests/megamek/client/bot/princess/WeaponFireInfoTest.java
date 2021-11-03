@@ -7,7 +7,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -47,7 +47,7 @@ public class WeaponFireInfoTest {
     private EntityState mockShooterState;
     private BipedMech mockTarget;
     private EntityState mockTargetState;
-    private IGame mockGame;
+    private Game mockGame;
     private Mounted mockWeapon;
     private WeaponType mockWeaponType;
     private WeaponAttackAction mockWeaponAttackAction;
@@ -57,7 +57,7 @@ public class WeaponFireInfoTest {
 
     @Before
     public void setUp() {
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
 
         mockToHitSix = Mockito.mock(ToHitData.class);
         Mockito.when(mockToHitSix.getValue()).thenReturn(6);
@@ -73,7 +73,7 @@ public class WeaponFireInfoTest {
                                                                                                                 .class),
                                                                  Mockito.any(Targetable.class),
                                                                  Mockito.any(EntityState.class),
-                                                                 Mockito.any(Mounted.class), Mockito.any(IGame.class)))
+                                                                 Mockito.any(Mounted.class), Mockito.any(Game.class)))
                .thenReturn(mockToHitEight);
 
         MMLogger fakeLogger = new FakeLogger();
@@ -111,7 +111,7 @@ public class WeaponFireInfoTest {
         Mockito.when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
 
         mockWeaponAttackAction = Mockito.mock(WeaponAttackAction.class);
-        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(IGame.class))).thenReturn(mockShooter);
+        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(Game.class))).thenReturn(mockShooter);
     }
 
     private void setupLightTarget() {

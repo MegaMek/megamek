@@ -21,7 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -41,7 +41,7 @@ public class FlamerHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;

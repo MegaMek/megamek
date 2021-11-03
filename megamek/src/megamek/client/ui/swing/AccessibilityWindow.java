@@ -23,7 +23,7 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.event.*;
 
 import javax.swing.*;
@@ -71,7 +71,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                systemEvent("Phase changed it is now " + IGame.Phase.getDisplayableName(e.getNewPhase()) + ".");
+                systemEvent("Phase changed it is now " + e.getNewPhase() + ".");
                 if (client.phaseReport != null) {
                     systemEvent(cleanHtml(client.phaseReport));
                 }

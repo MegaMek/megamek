@@ -42,7 +42,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         bSalvo = true;

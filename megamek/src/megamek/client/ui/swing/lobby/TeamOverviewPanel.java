@@ -205,7 +205,7 @@ public class TeamOverviewPanel extends JPanel {
         }
 
         /** Updates the stored data from the provided game. */
-        public void updateTable(IGame game) {
+        public void updateTable(Game game) {
             clearData();
             for (Team team: game.getTeamsVector()) {
                 teams.add(team);
@@ -383,7 +383,7 @@ public class TeamOverviewPanel extends JPanel {
         }
         
         private boolean seeTeam(int row) {
-            IGame game = clientGui.getClient().getGame();
+            Game game = clientGui.getClient().getGame();
             return !game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)
                     || game.getTeamForPlayer(clientGui.getClient().getLocalPlayer()).getId() == teamID.get(row);
         }

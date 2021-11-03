@@ -22,7 +22,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -69,7 +69,7 @@ public final class PhysicalCalculator {
         return null;
     }
 
-    public static PhysicalOption getBestPhysical(Entity entity, IGame game) {
+    public static PhysicalOption getBestPhysical(Entity entity, Game game) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
             return null;
@@ -321,7 +321,7 @@ public final class PhysicalCalculator {
     }
 
     static PhysicalOption getBestPhysicalAttack(Entity from, Entity to,
-                                                IGame game) {        
+                                                Game game) {
         Targetable target = to;
         
         // if the object of our affections is in a building, we have to target the building instead
@@ -602,7 +602,7 @@ public final class PhysicalCalculator {
     }
 
     private static double getExpectedKickDamage(Entity from, Entity to,
-                                                IGame game, int locTable, int arc, int action) {
+                                                Game game, int locTable, int arc, int action) {
         double self_damage;
         double dmg;
         double coll_damage = 0.0;

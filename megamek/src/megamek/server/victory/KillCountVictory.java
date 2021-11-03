@@ -19,7 +19,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -41,7 +41,7 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         killCondition = kc;
     }
 
-    public VictoryResult victory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult victory(Game game, Map<String, Object> ctx) {
         boolean victory = false;
         VictoryResult vr = new VictoryResult(true);
         // Stores the number of kills for each team
@@ -90,7 +90,7 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
         return VictoryResult.noResult();
     }
     
-    private void updateKillTables(IGame game,
+    private void updateKillTables(Game game,
             Hashtable<Integer, Integer> teamKills,
             Hashtable<Integer, Integer> playerKills,
             Enumeration<Entity> victims) {

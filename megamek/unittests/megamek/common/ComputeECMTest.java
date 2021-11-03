@@ -702,7 +702,7 @@ public class ComputeECMTest {
      * @return
      */
     private static Vector<Entity> createECMEnemy(IPlayer owner, 
-            IGame mockGame) {
+            Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<Entity>();
         
         // Add Entity with ECM
@@ -760,7 +760,7 @@ public class ComputeECMTest {
      * @return
      */    
     private static Vector<Entity> createAngelEnemy(IPlayer owner, 
-            IGame mockGame) {
+            Game mockGame) {
         Vector<Entity> entitiesVector = new Vector<Entity>();
         
         // Attacking Entity

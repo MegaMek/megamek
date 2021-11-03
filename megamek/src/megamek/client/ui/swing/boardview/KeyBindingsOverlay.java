@@ -32,9 +32,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.KeyBindParser;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -113,7 +113,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The cached image for this Display. */
     Image displayImage;
     /** The current game phase. */
-    Phase currentPhase;
+    GamePhase currentPhase;
     /** True while fading in this overlay. */
     private boolean fadingIn = false;
     /** True while fading out this overlay. */
@@ -125,7 +125,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * An overlay for the Boardview that displays a selection of keybinds
      * for the current game situation. 
      */
-    public KeyBindingsOverlay(IGame game, ClientGUI cg) {
+    public KeyBindingsOverlay(Game game, ClientGUI cg) {
         visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
@@ -212,15 +212,16 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
                 List<KeyCommandBind> listForPhase = new ArrayList<>();
                 switch (currentPhase) {
-                case PHASE_MOVEMENT:
-                    listForPhase = BINDS_MOVE;
-                    break;
-                case PHASE_FIRING:
-                case PHASE_OFFBOARD:
-                case PHASE_PHYSICAL:
-                    listForPhase = BINDS_FIRE;
-                    break;
-                default:
+                    case MOVEMENT:
+                        listForPhase = BINDS_MOVE;
+                        break;
+                    case FIRING:
+                    case OFFBOARD:
+                    case PHYSICAL:
+                        listForPhase = BINDS_FIRE;
+                        break;
+                    default:
+                        break;
                 }
 
                 result.addAll(convertToStrings(listForPhase));

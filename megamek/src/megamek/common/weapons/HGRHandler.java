@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.EntityWeightClass;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.PilotingRollData;
 import megamek.common.Report;
@@ -44,7 +44,7 @@ public class HGRHandler extends GRHandler {
      * @param g
      * @param s
      */
-    public HGRHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.MegaMek;
-import megamek.common.IGame.Phase;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -724,7 +724,7 @@ public class FighterSquadron extends Aero {
             // Add the unit to our squadron.
             fighters.addElement(unit.getId());
         }
-        if (game.getPhase() != Phase.PHASE_LOUNGE) {
+        if (game.getPhase() != GamePhase.LOUNGE) {
             computeSquadronBombLoadout();
             // updateWeaponGroups() and loadAllWeapons() are called in
             // computeSquadronBombLoadout()
@@ -757,7 +757,7 @@ public class FighterSquadron extends Aero {
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
         boolean success = fighters.removeElement(unit.getId());
-        if (game.getPhase() != Phase.PHASE_LOUNGE) {
+        if (game.getPhase() != GamePhase.LOUNGE) {
             computeSquadronBombLoadout();
             // updateWeaponGroups() and loadAllWeapons() are called in
             // computeSquadronBombLoadout()

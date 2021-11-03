@@ -46,9 +46,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -60,9 +60,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -74,12 +74,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 CLMASC
 CLMASC
-CLLightTAG
+CLLightTAG (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -88,13 +88,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-CLCASEII
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+CLATM9 (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+Clan Ammo ATM-9 (OMNIPOD)
+CLCASEII (OMNIPOD)
 -Empty-
 
 Center Torso:
@@ -153,4 +153,11 @@ Clan Reflective
 -Empty-
 -Empty-
 
-
+manufacturer:Manufacturing Plant SFF-IT5, Kallon Weapon Industries
+primaryfactory:CSF Kraken Mobile Production Facility, Thermopolis
+systemmanufacturer:CHASSIS:Mynx Type Medium Endo-Steel
+systemmanufacturer:ENGINE:300 Extralight
+systemmanufacturer:ARMOR:Gamma Special Reflective
+systemmanufacturer:JUMPJET:Grandthrust Mk 3
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:SyncTracker (39-42071)

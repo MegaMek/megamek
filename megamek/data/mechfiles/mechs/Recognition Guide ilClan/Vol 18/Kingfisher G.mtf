@@ -44,9 +44,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLSRM6
-CLERSmallLaser
-Clan Ammo SRM-6
+CLSRM6 (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -57,22 +57,22 @@ Clan Ammo SRM-6
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
 -Empty-
 
 Left Torso:
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -85,10 +85,10 @@ Clan Ferro-Fibrous
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-Clan LB 20-X AC Ammo
-Clan LB 20-X Cluster Ammo
+CLImprovedMediumHeavyLaser (OMNIPOD)
+CLImprovedMediumHeavyLaser (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-Supercharger (Clan)
+CLERSmallLaser (OMNIPOD)
+Supercharger (Clan) (OMNIPOD)
 
 Head:
 Life Support
@@ -156,12 +156,15 @@ overview:An early Clan assault OmniMech that may have influenced all subsequent 
 
 capabilities:The tough Kingfisher mounts fourteen and a half tons of Ferro-Fibrous armor on an Endo Steel chassis, the most it can take. Unlike most modern front-line OmniMechs, the Kingfisher uses a standard engine. The 'Mech also has seventeen fixed double heat sinks, forcing three to be mounted outside of the engine.
 
-history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
+deployment:A close combat specialist the G configuration is equipped with an LB 20-X in the right arm. Additional firepower comes from three Improved Heavy Medium Lasers, one in the right torso and two in the left. An ER Small Laser is carried in the center torso. The left arm carries an SRM-6 with a tone of ammunition and another ER Small Laser. Seventeen double heat sinks are present to control the heat. To compensate for the relatively short range of the weapons, an engine Supercharger allows the Kingfisher to sprint at speeds of 86km/h. Two tons of LB-X ammunition are carried in the right torso. 
 
+history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
 manufacturer:Snow Raven Industrial Complex Alpha, Strana Mechty ’Mech Production Facility Beta
+
 primaryfactory:Dante, Strana Mechty
 systemmanufacturer:CHASSIS:SL YT-A Endo
 systemmanufacturer:ENGINE:Star League Standard 360
 systemmanufacturer:ARMOR:Forging Z5 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Model 74/129.3 TCS
 systemmanufacturer:TARGETING:S438 Mk. III Mod. 7 TTS
+

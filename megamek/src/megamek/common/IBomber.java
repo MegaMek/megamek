@@ -93,9 +93,8 @@ public interface IBomber {
      * equipment.
      */
     default void applyBombs() {
-        IGame game = ((Entity)this).getGame();
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions()
-                .stringOption("techlevel"));
+        Game game = ((Entity) this).getGame();
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
         Integer[] sorted = new Integer[BombType.B_NUM];
         // Apply the largest bombs first because we need to fit larger bombs into a single location
         // in LAMs.
@@ -120,7 +119,7 @@ public interface IBomber {
                 if (null != BombType.getBombWeaponName(type)) {
                     Mounted m = null;
                     try {
-                        m = ((Entity)this).addBomb(EquipmentType.get(BombType
+                        m = ((Entity) this).addBomb(EquipmentType.get(BombType
                                 .getBombWeaponName(type)), loc);
                         // Add bomb itself as single-shot ammo.
                         if (type != BombType.B_TAG) {
@@ -128,7 +127,7 @@ public interface IBomber {
                                     EquipmentType.get(BombType.getBombInternalName(type)));
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
-                            ((Entity)this).addEquipment(ammo, loc, false);
+                            ((Entity) this).addEquipment(ammo, loc, false);
                                                         
                         }
                     } catch (LocationFullException ex) {
@@ -136,7 +135,7 @@ public interface IBomber {
                     }
                 } else {
                     try {
-                        ((Entity)this).addEquipment(EquipmentType.get(BombType
+                        ((Entity) this).addEquipment(EquipmentType.get(BombType
                                 .getBombInternalName(type)), loc, false);
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());

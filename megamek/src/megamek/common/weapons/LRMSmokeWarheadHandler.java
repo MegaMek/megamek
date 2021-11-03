@@ -19,7 +19,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -43,7 +43,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * @param g
      * @param s
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

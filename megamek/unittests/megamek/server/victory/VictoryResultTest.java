@@ -1,6 +1,6 @@
 package megamek.server.victory;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,7 +68,7 @@ public class VictoryResultTest {
         IPlayer playerMock = Mockito.mock(IPlayer.class);
         Mockito.when(playerMock.getColorForPlayer()).thenReturn("");
 
-        IGame gameMock = Mockito.mock(IGame.class);
+        Game gameMock = Mockito.mock(Game.class);
         Mockito.when(gameMock.getPlayer(Mockito.anyInt())).thenReturn(playerMock);
 
         assertTrue(victoryResult.processVictory(gameMock).isEmpty());

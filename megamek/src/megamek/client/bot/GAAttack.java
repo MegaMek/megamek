@@ -20,7 +20,7 @@ import megamek.client.bot.ga.Chromosome;
 import megamek.client.bot.ga.GA;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -32,7 +32,7 @@ public class GAAttack extends GA {
 
     protected ArrayList<ArrayList<AttackOption>> attack;
     protected CEntity attacker;
-    protected IGame game;
+    protected Game game;
     protected CEntity.Table targets;
     protected ArrayList<Entity> target_array = null;
     protected ArrayList<Integer> valid_target_indexes = null;

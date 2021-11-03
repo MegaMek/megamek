@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MechSummaryCache;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
@@ -79,7 +79,7 @@ public class ScenarioLoaderTest {
         if(file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) { //$NON-NLS-1$
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
-                IGame game = loader.createGame();
+                Game game = loader.createGame();
                 Server server = new Server("test", port ++); //$NON-NLS-1$
                 server.setGame(game);
                 loader.applyDamage(server);

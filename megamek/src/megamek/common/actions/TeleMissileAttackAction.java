@@ -24,7 +24,7 @@ import java.util.Enumeration;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Mounted;
 import megamek.common.TargetRoll;
@@ -96,7 +96,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Since this normally only applies to weaponhandlers, we must recreate it to deal with telemissile
      * entities
      */
-    private boolean checkPDConditions(IGame game, Targetable target) {
+    private boolean checkPDConditions(Game game, Targetable target) {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         if ((target == null)
                 || (target.getTargetType() != Targetable.TYPE_ENTITY)
@@ -159,7 +159,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
      * Calculates the attack value of point defense weapons used against a missile bay attack
      * This is the main large craft point defense method
      */    
-    public int calcCounterAV(IGame game, Targetable target) {
+    public int calcCounterAV(Game game, Targetable target) {
         if (!checkPDConditions(game, target)) {
             return 0;
         }
@@ -266,11 +266,11 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     /**
      * To-hit number for a charge, assuming that movement has been handled
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, game.getTarget(getTargetType(), getTargetId()));
     }
     
-    public ToHitData toHit(IGame game, Targetable target) {
+    public ToHitData toHit(Game game, Targetable target) {
         final Entity ae = getEntity(game);
 
         // arguments legal?

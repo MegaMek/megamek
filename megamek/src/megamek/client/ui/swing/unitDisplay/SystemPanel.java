@@ -42,7 +42,7 @@ import megamek.common.Configuration;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -50,6 +50,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -491,7 +492,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
                                 && (clientgui.getClient().getGame()
-                                        .getPhase() != IGame.Phase.PHASE_FIRING)) {
+                                        .getPhase() != GamePhase.FIRING)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase"));//$NON-NLS-1$
                             return;
@@ -500,7 +501,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
                                 && (clientgui.getClient().getGame().getPhase()
-                                != IGame.Phase.PHASE_PHYSICAL)) {
+                                != GamePhase.PHYSICAL)) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase"));//$NON-NLS-1$
                             return;
@@ -508,7 +509,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                                && (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT)) {
                             clientgui.systemMessage(Messages.getString(
                                                     "MechDisplay.RetractableBladeModePhase"));//$NON-NLS-1$
                             return;
@@ -539,7 +540,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             this.unitDisplay.wPan.selectWeapon(weap);
                             // displaySlots();
                         } else {
-                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
+                            if (GamePhase.DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",
                                         m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
@@ -810,8 +811,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
-                        && (client.getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (client.getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
+                        && (client.getGame().getPhase() != GamePhase.DEPLOYMENT)
+                        && (client.getGame().getPhase() != GamePhase.MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()

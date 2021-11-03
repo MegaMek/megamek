@@ -18,7 +18,7 @@ import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
@@ -119,7 +119,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         return toReturn;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return KickAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getLeg());
     }
@@ -127,7 +127,7 @@ public class KickAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified leg to kick
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
             Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null) {

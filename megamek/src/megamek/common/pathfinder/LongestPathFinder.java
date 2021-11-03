@@ -25,7 +25,7 @@ import java.util.List;
 
 import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.Coords;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -45,7 +45,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
     protected LongestPathFinder(EdgeRelaxer<Deque<MovePath>, MovePath> edgeRelaxer,
             AdjacencyMap<MovePath> edgeAdjacencyMap, Comparator<MovePath> comparator,
-            IGame game) {
+            Game game) {
         super(edgeRelaxer, edgeAdjacencyMap, comparator, game);
     }
 
@@ -61,7 +61,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param game
      * @return a longest path finder
      */
-    public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, IGame game) {
+    public static LongestPathFinder newInstanceOfLongestPath(int maxMP, MoveStepType stepType, Game game) {
         LongestPathFinder lpf = new LongestPathFinder(new LongestPathRelaxer(),
                 new NextStepsAdjacencyMap(stepType),
                 new MovePathMinMPMaxDistanceComparator(),
@@ -80,7 +80,7 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param game
      * @return a longest path finder for aeros
      */
-    public static LongestPathFinder newInstanceOfAeroPath(int maxMP, IGame game) {
+    public static LongestPathFinder newInstanceOfAeroPath(int maxMP, Game game) {
         LongestPathFinder lpf = new LongestPathFinder(new AeroMultiPathRelaxer(!game.getBoard().inSpace()),
                 new NextStepsAdjacencyMap(MoveStepType.FORWARDS),
                 new AeroMultiPathComparator(),

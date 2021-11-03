@@ -13,64 +13,22 @@
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
+import megamek.common.*;
+import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.*;
+import megamek.common.net.Packet;
+import megamek.common.options.GameOptions;
+import megamek.server.SmokeCloud;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.Entity;
-import megamek.common.Flare;
-import megamek.common.Game;
-import megamek.common.GameTurn;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TagInfo;
-import megamek.common.UnitLocation;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEvent;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.event.GameVictoryEvent;
-import megamek.common.net.Packet;
-import megamek.common.options.GameOptions;
-import megamek.server.SmokeCloud;
 
 /**
  * unit_potential_locations keeps track of all the potential coordinates and
@@ -87,7 +45,7 @@ public class Precognition implements Runnable {
      *  Princess share the same game reference, than this will cause concurrency
      *  issues. 
      */
-    private IGame game;
+    private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
@@ -224,7 +182,7 @@ public class Precognition implements Runnable {
                     receiveBuildingCollapse(c);
                     break;
                 case Packet.COMMAND_PHASE_CHANGE:
-                    getGame().setPhase((IGame.Phase) c.getObject(0));
+                    getGame().setPhase((GamePhase) c.getObject(0));
                     break;
                 case Packet.COMMAND_TURN:
                     getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
@@ -496,7 +454,7 @@ public class Precognition implements Runnable {
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
                     // Ignore entity changes that don't happen during movement
-                    if (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+                    if (!getGame().getPhase().isMovement()) {
                         continue;
                     }
                     GameEntityChangeEvent changeEvent = (GameEntityChangeEvent) event;
@@ -508,9 +466,10 @@ public class Precognition implements Runnable {
                         continue; // not sure how this can happen, but just to be
                         // safe
                     }
-                    // a lot of odd entity changes are send during the firing phase,
+
+                    // a lot of odd entity changes are sent during the firing phase,
                     // none of which are relevant
-                    if (getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
+                    if (getGame().getPhase().isFiring()) {
                         continue;
                     }
                     Coords position = entity.getPosition();
@@ -531,7 +490,7 @@ public class Precognition implements Runnable {
                     getOwner().getLogger().debug("Phase change detected: " + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
-                    if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    if (phaseChange.getNewPhase().isMovement()) {
                         getPathEnumerator().clear();
                         for (Entity entity : getGame().getEntitiesVector()) {
                             if (entity.isActive() && entity.isDeployed() && entity.getPosition() != null) {
@@ -586,10 +545,9 @@ public class Precognition implements Runnable {
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<>();
                 for (Integer index : toDirty) {
-                    if ((getGame().getEntity(index) == null) || (!getGame()
-                            .getEntity(index).isSelectableThisTurn())
-                            && (getGame()
-                                    .getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    if ((getGame().getEntity(index) == null)
+                            || (!getGame().getEntity(index).isSelectableThisTurn()
+                                    && getGame().getPhase().isMovement())) {
                         toRemove.add(index);
                     }
                 }
@@ -617,8 +575,8 @@ public class Precognition implements Runnable {
                 getDirtyUnits().addAll(toDirty);
             }
             Entity entity = getGame().getEntity(id);
-            if ((entity != null) && (entity.isSelectableThisTurn()) ||
-                (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+            if (((entity != null) && entity.isSelectableThisTurn())
+                    || !getGame().getPhase().isMovement()) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
                 getPathEnumerator().getLastKnownLocations().put(id,
@@ -691,7 +649,7 @@ public class Precognition implements Runnable {
         }
     }
 
-    private IGame getGame() {
+    private Game getGame() {
         GAME_LOCK.lock();
         try {
             getOwner().getLogger().debug("GAME_LOCK read locked.");

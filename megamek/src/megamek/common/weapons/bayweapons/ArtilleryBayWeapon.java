@@ -18,6 +18,7 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.weapons.*;
 import megamek.server.Server;
 
@@ -56,12 +57,12 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, IGame game, Server server) {
+                                              WeaponAttackAction waa, Game game, Server server) {
         Entity ae = game.getEntity(waa.getEntityId());
         boolean useHoming = false;
         for (int wId : ae.getEquipment(waa.getWeaponId()).getBayWeapons()) {
@@ -77,13 +78,13 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             break;
         }
         if (useHoming) {
-            if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+            if (game.getPhase() == GamePhase.FIRING) {
                 return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa,
                         game, server);
             }
             return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa,
                     game, server);
-        } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+        } else if (game.getPhase() == GamePhase.FIRING) {
             return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game,
                     server);
         } else {

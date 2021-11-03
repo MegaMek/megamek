@@ -15,7 +15,7 @@
 package megamek.common.actions;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -54,10 +54,10 @@ public class ThrashAttackAction extends AbstractAttackAction {
      * attack will force a PSR check for the prone Mek; if the PSR is missed,
      * the Mek takes normal falling damage.
      * 
-     * @param game - the <code>IGame</code> object containing all entities.
+     * @param game - the <code>Game</code> object containing all entities.
      * @return the <code>ToHitData</code> containing the target roll.
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         final Entity ae = getEntity(game);
         final Targetable target = getTarget(game);
         // arguments legal?

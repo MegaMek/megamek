@@ -165,7 +165,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         
         Mounted ammoUsed = ammoCarrier.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = ammoUsed != null ? (AmmoType) ammoUsed.getType() : null;
+        final AmmoType atype = (ammoUsed != null) ? (AmmoType) ammoUsed.getType() : null;
         
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {

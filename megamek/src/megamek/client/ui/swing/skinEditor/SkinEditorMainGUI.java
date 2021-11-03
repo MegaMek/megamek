@@ -257,8 +257,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         mainNames.clear();
         secondaryNames.clear();
 
+        var game = new Game();
+        testEntity.setGame(game);
+
         try {
-            bv = new BoardView1(new Game(), null, null);
+            bv = new BoardView1(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -290,10 +293,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         mainNames.clear();
         secondaryNames.clear();
         menuBar = new CommonMenuBar();
+
+        var game = new Game();
+        testEntity.setGame(game);
+
         initializeFrame();
+
         try {
             // Create the board viewer.
-            bv = new BoardView1(new Game(), null, null);
+            bv = new BoardView1(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");

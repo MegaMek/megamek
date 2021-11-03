@@ -230,10 +230,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setIconImages(iconList);
 
         mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        x = GUIPreferences.getInstance().getUnitDetailPosX();
+        y = GUIPreferences.getInstance().getUnitDetailPosY();
+        h = GUIPreferences.getInstance().getUnitDetailSizeHeight();
+        w = GUIPreferences.getInstance().getUnitDetailSizeWidth();
         if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
             w = Math.min(w, (int)virtualBounds.getWidth());
@@ -357,8 +357,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         int w;
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
+        x = GUIPreferences.getInstance().getUnitDetailPosX();
+        y = GUIPreferences.getInstance().getUnitDetailPosY();
         h = 480;
         w = 640;
         if ((x + w) > gd.getDisplayMode().getWidth()) {
@@ -377,10 +377,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         skinSpecEditorD.add(skinSpecEditor);
         skinSpecEditorD.setVisible(true);
 
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        x = GUIPreferences.getInstance().getUnitDetailPosX();
+        y = GUIPreferences.getInstance().getUnitDetailPosY();
+        h = GUIPreferences.getInstance().getUnitDetailSizeHeight();
+        w = GUIPreferences.getInstance().getUnitDetailSizeWidth();
         if ((x + w) > gd.getDisplayMode().getWidth()) {
             x = 0;
             w = Math.min(w, gd.getDisplayMode().getWidth());

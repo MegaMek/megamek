@@ -505,10 +505,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         add(this.unitDetailPane, BorderLayout.EAST);
 
         Rectangle virtualBounds = getVirtualBounds();
-        int x = GUIPreferences.getInstance().getDisplayPosX();
-        int y = GUIPreferences.getInstance().getDisplayPosY();
-        int h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        int w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        int x = GUIPreferences.getInstance().getUnitDetailPosX();
+        int y = GUIPreferences.getInstance().getUnitDetailPosY();
+        int h = GUIPreferences.getInstance().getUnitDetailSizeHeight();
+        int w = GUIPreferences.getInstance().getUnitDetailSizeWidth();
         if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
             w = Math.min(w, (int)virtualBounds.getWidth());
@@ -932,10 +932,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // also mech display
         var unitDetailWindow = this.unitDetailPane.getWindow();
         if ((unitDetailWindow.getSize().width * unitDetailWindow.getSize().height) > 0) {
-            GUIPreferences.getInstance().setDisplayPosX(unitDetailWindow.getLocation().x);
-            GUIPreferences.getInstance().setDisplayPosY(unitDetailWindow.getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(unitDetailWindow.getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(unitDetailWindow.getSize().height);
+            GUIPreferences.getInstance().setUnitDetailPosX(unitDetailWindow.getLocation().x);
+            GUIPreferences.getInstance().setUnitDetailPosY(unitDetailWindow.getLocation().y);
+            GUIPreferences.getInstance().setUnitDetailSizeWidth(unitDetailWindow.getSize().width);
+            GUIPreferences.getInstance().setUnitDetailSizeHeight(unitDetailWindow.getSize().height);
         }
 
         // also ruler display

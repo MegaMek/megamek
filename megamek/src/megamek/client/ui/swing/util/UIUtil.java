@@ -13,12 +13,14 @@
 */ 
 package megamek.client.ui.swing.util;
 
+import java.awt.Rectangle;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Image;
@@ -943,6 +945,39 @@ public final class UIUtil {
             menuItem.setFont(scaledFont);
         } 
     }
-    
+
+    /**
+     * Ensures an on-screen window fits within the bounds of a display.
+     */
+    public static void updateWindowBounds(Window window) {
+        var bounds = new Rectangle();
+        var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        var gs = ge.getScreenDevices();
+        for (var gd : gs) {
+            var gc = gd.getConfigurations();
+            for (var element : gc) {
+                bounds = bounds.union(element.getBounds());
+            }
+        }
+
+        var size = window.getSize();
+        var location = window.getLocation();
+
+        if ((location.x < bounds.getMinX()) || ((location.x + size.width) > bounds.getMaxX())) {
+            location.x = 0;
+        }
+        if ((location.y < bounds.getMinY()) || ((location.y + size.height) > bounds.getMaxY())) {
+            location.y = 0;
+        }
+        if (size.width > bounds.width) {
+            size.width = bounds.width;
+        }
+        if (size.height > bounds.height) {
+            size.height = bounds.height;
+        }
+
+        window.setLocation(location);
+        window.setSize(size);
+    }
 
 }

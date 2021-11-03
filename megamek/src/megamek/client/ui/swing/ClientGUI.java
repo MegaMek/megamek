@@ -63,7 +63,6 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.DetachablePane;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
@@ -199,7 +198,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     public BoardView1 bv;
     private Component bvc;
-    public DetachablePane unitDetailPane;
+    private UnitDetailPane unitDetailPane;
     public UnitDisplay mechD;
     public JDialog minimapW;
     private MapMenu popup;
@@ -309,7 +308,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return bv;
     }
 
-    public DetachablePane getUnitDetailPane() {
+    public UnitDetailPane getUnitDetailPane() {
         return this.unitDetailPane;
     }
 
@@ -474,23 +473,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         mechD = new UnitDisplay(this, controller);
         mechD.addMechDisplayListener(bv);
 
-        this.unitDetailPane = new DetachablePane("", this.mechD);
+        this.unitDetailPane = new UnitDetailPane(this.mechD);
         this.unitDetailPane.setVisible(false);
         this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
         add(this.unitDetailPane, BorderLayout.EAST);
-
-        var unitDetailWindow = this.unitDetailPane.getWindow();
-        unitDetailWindow.setLocation(
-            prefs.getUnitDetailPosX(),
-            prefs.getUnitDetailPosY()
-        );
-        unitDetailWindow.setSize(
-            prefs.getUnitDetailSizeHeight(),
-            prefs.getUnitDetailSizeWidth()
-        );
-        unitDetailWindow.setResizable(true);
-        UIUtil.updateWindowBounds(unitDetailWindow);
-
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();

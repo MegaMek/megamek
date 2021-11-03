@@ -60,12 +60,12 @@ import megamek.client.ui.swing.ReportDisplay;
 import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
 import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
+import megamek.client.ui.swing.UnitDetailPane;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.DetachablePane;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -100,8 +100,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
 
-    public DetachablePane unitDetailPane;
-    public UnitDisplay unitDisplay;
+    private UnitDisplay unitDisplay;
+    private UnitDetailPane unitDetailPane;
 
     protected JComponent curPanel;
 
@@ -219,21 +219,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         this.unitDisplay = new UnitDisplay(null);
 
-        this.unitDetailPane = new DetachablePane("", this.unitDisplay);
+        this.unitDetailPane = new UnitDetailPane(this.unitDisplay);
         this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
         add(this.unitDetailPane, BorderLayout.EAST);
-
-        var unitDetailWindow = this.unitDetailPane.getWindow();
-        unitDetailWindow.setLocation(
-            prefs.getUnitDetailPosX(),
-            prefs.getUnitDetailPosY()
-        );
-        unitDetailWindow.setSize(
-            prefs.getUnitDetailSizeHeight(),
-            prefs.getUnitDetailSizeWidth()
-        );
-        unitDetailWindow.setResizable(true);
-        UIUtil.updateWindowBounds(unitDetailWindow);
 
         this.unitDisplay.displayEntity(testEntity);
     }

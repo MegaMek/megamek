@@ -19,11 +19,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,6 +64,8 @@ import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.DetachablePane;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -102,7 +100,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
 
-    public JDialog mechW;
+    public DetachablePane unitDetailPane;
     public UnitDisplay unitDisplay;
 
     protected JComponent curPanel;
@@ -185,33 +183,23 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         frame.setJMenuBar(menuBar);
-        Rectangle virtualBounds = getVirtualBounds();
-        int x, y, w, h;
-        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            x = GUIPreferences.getInstance().getWindowPosX();
-            y = GUIPreferences.getInstance().getWindowPosY();
-            w = GUIPreferences.getInstance().getWindowSizeWidth();
-            h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX())
-                    || ((x + w) > virtualBounds.getMaxX())) {
-                x = 0;
-            }
-            if ((y < virtualBounds.getMinY())
-                    || ((y + h) > virtualBounds.getMaxY())) {
-                y = 0;
-            }
-            if (w > virtualBounds.getWidth()) {
-                w = (int) virtualBounds.getWidth();
-            }
-            if (h > virtualBounds.getHeight()) {
-                h = (int) virtualBounds.getHeight();
-            }
-            frame.setLocation(x, y);
-            frame.setSize(w, h);
+
+        var prefs = GUIPreferences.getInstance();
+        if (prefs.getWindowSizeHeight() != 0) {
+            frame.setLocation(
+                prefs.getWindowPosX(),
+                prefs.getWindowPosY()
+            );
+            frame.setSize(
+                prefs.getWindowSizeWidth(),
+                prefs.getWindowSizeHeight()
+            );
         } else {
             frame.setSize(800, 600);
         }
         frame.setMinimumSize(new Dimension(640, 480));
+        UIUtil.updateWindowBounds(frame);
+
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<>();
@@ -229,26 +217,25 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                         .toString()));
         frame.setIconImages(iconList);
 
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        x = GUIPreferences.getInstance().getUnitDetailPosX();
-        y = GUIPreferences.getInstance().getUnitDetailPosY();
-        h = GUIPreferences.getInstance().getUnitDetailSizeHeight();
-        w = GUIPreferences.getInstance().getUnitDetailSizeWidth();
-        if ((x + w) > virtualBounds.getWidth()) {
-            x = 0;
-            w = Math.min(w, (int)virtualBounds.getWidth());
-        }
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int)virtualBounds.getHeight());
-        }
-        mechW.setLocation(x, y);
-        mechW.setSize(w, h);
-        mechW.setResizable(true);
-        unitDisplay = new UnitDisplay(null);
-        mechW.add(unitDisplay);
-        mechW.setVisible(true);
-        unitDisplay.displayEntity(testEntity);
+        this.unitDisplay = new UnitDisplay(null);
+
+        this.unitDetailPane = new DetachablePane("", this.unitDisplay);
+        this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
+        add(this.unitDetailPane, BorderLayout.EAST);
+
+        var unitDetailWindow = this.unitDetailPane.getWindow();
+        unitDetailWindow.setLocation(
+            prefs.getUnitDetailPosX(),
+            prefs.getUnitDetailPosY()
+        );
+        unitDetailWindow.setSize(
+            prefs.getUnitDetailSizeHeight(),
+            prefs.getUnitDetailSizeWidth()
+        );
+        unitDetailWindow.setResizable(true);
+        UIUtil.updateWindowBounds(unitDetailWindow);
+
+        this.unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -284,28 +271,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         switchPanel(GamePhase.MOVEMENT);
         frame.validate();
 
-        // This is a horrible hack
-        // Essentially, UnitDisplay (I think specifically ArmorPanel), relies
-        // upon addNotify being called, so I need to way to set the
-        // isDisplayable state to true.  However, if I create a new JDialog, or
-        // called JDialog.setVisible(true), focus will get stolen from the
-        // Skin Spec Editor, which causes undesirable behavior, particularly
-        // with the path JTextFields
-        Dimension sz = mechW.getSize();
-        mechW.remove(unitDisplay);
-        // UnitDisplay has no way to update the skin without being recreated
-        unitDisplay = new UnitDisplay(null);
-        mechW.add(unitDisplay);
-        if (mechW.isVisible()) {
-            // This will cause the isDisplayable state to be true, in effect
-            // ensuring addNotify has been called.
-            mechW.pack();
-        } else {
-            mechW.setVisible(true);
-        }
-        // Packing is going to change the dimensions, so we'll restore old sz
-        mechW.setSize(sz);
-        unitDisplay.displayEntity(testEntity);
+        this.unitDisplay.displayEntity(this.testEntity);
     }
 
     /**
@@ -349,46 +315,24 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             }
         });
 
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice();
-        int x;
-        int y;
-        int h;
-        int w;
+        skinSpecEditor = new SkinSpecEditor(this);
+
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
-        x = GUIPreferences.getInstance().getUnitDetailPosX();
-        y = GUIPreferences.getInstance().getUnitDetailPosY();
-        h = 480;
-        w = 640;
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
-            x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
-        }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
-            y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
-        }
-        skinSpecEditorD.setLocation(x, y);
-        skinSpecEditorD.setSize(w, h);
+
+        var prefs = GUIPreferences.getInstance();
+        skinSpecEditorD.setLocation(
+            prefs.getUnitDetailPosX(),
+            prefs.getUnitDetailPosY()
+        );
+        skinSpecEditorD.setSize(640, 480);
         skinSpecEditorD.setResizable(true);
+        UIUtil.updateWindowBounds(skinSpecEditorD);
+
         skinSpecEditorD.addWindowListener(this);
-        skinSpecEditor = new SkinSpecEditor(this);
         skinSpecEditorD.add(skinSpecEditor);
         skinSpecEditorD.setVisible(true);
 
-        x = GUIPreferences.getInstance().getUnitDetailPosX();
-        y = GUIPreferences.getInstance().getUnitDetailPosY();
-        h = GUIPreferences.getInstance().getUnitDetailSizeHeight();
-        w = GUIPreferences.getInstance().getUnitDetailSizeWidth();
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
-            x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
-        }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
-            y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
-        }
         frame.pack();
         frame.setVisible(true);
     }
@@ -936,22 +880,4 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         return curPanel;
     }
 
-    /**
-     * Returns the 'virtual bounds' of the screen.  That is, the union of the
-     * displayable space on all available screen devices.
-     *
-     * @return
-     */
-    private Rectangle getVirtualBounds() {
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (GraphicsDevice gd : gs) {
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (GraphicsConfiguration element : gc) {
-                virtualBounds = virtualBounds.union(element.getBounds());
-            }
-        }
-        return virtualBounds;
-    }
 }

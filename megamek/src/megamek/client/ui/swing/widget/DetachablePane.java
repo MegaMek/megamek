@@ -189,7 +189,6 @@ public class DetachablePane extends JComponent {
 
                     this.window.add(this.root, BorderLayout.CENTER);
                     this.window.setAlwaysOnTop(true);
-                    this.window.pack();
                     this.window.setVisible(true);
 
                     break;

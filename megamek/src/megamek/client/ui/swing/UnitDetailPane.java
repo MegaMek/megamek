@@ -41,8 +41,8 @@ public class UnitDetailPane extends DetachablePane {
             prefs.getUnitDetailPosY()
         );
         window.setSize(
-            prefs.getUnitDetailSizeHeight(),
-            prefs.getUnitDetailSizeWidth()
+            prefs.getUnitDetailSizeWidth(),
+            prefs.getUnitDetailSizeHeight()
         );
         window.setResizable(true);
         UIUtil.updateWindowBounds(window);

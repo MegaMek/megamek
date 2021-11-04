@@ -98,10 +98,6 @@ public class CreateImageAtlases {
             if (file.toString().contains("largeTextures")) {
                 return;
             }
-            //TODO:  If this works, refactor this code to iterate through an ingore list of directories.
-            if (file.toString().contains("Structured_Water")) {
-                return;
-            }
             processDirectory(file);
             for (File subFile : file.listFiles()) {
                 if (subFile.isDirectory()) {

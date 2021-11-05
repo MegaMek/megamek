@@ -118,8 +118,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
-    public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
-    public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
     public static final String MOVE_ENVELOPE = "MoveEnvelope";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
@@ -236,8 +234,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
-    public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
-    public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     
     // RAT dialog preferences
@@ -346,8 +342,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
-        store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
-        store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
         store.setDefault(FIRING_SOLUTIONS,true);
         store.setDefault(GUI_SCALE, 1);
         store.setDefault(SHOW_UNIT_DISPLAY, true);
@@ -472,8 +466,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TEAM_COLORING, true);
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
-        setDefault(OPTIONS_SHOW_UNOFFICIAL, true);
-        setDefault(OPTIONS_SHOW_LEGACY, true);
     }
 
     public void setDefault(String name, Color color) {
@@ -567,14 +559,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFocus() {
         return store.getBoolean(FOCUS);
-    }
-
-    public int getGameOptionsSizeHeight(){
-        return store.getInt(GAME_OPTIONS_SIZE_HEIGHT);
-    }
-
-    public int getGameOptionsSizeWidth(){
-        return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
     }
 
     public boolean getFiringSolutions() {
@@ -1056,14 +1040,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setGetFocus(boolean state) {
         store.setValue(FOCUS, state);
-    }
-
-    public void setGameOptionsSizeHeight(int i){
-        store.setValue(GAME_OPTIONS_SIZE_HEIGHT,i);
-    }
-
-    public void setGameOptionsSizeWidth(int i){
-        store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
     }
 
     public void setFiringSolutions(boolean state){

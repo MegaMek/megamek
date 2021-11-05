@@ -45,7 +45,7 @@ import org.w3c.dom.NodeList;
  */
 public class GameOptions extends AbstractOptions {
     private static final long serialVersionUID = 4916321960852747706L;
-    private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml"; //$NON-NLS-1$
+    private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml"; 
 
     public GameOptions() {
         super();
@@ -53,109 +53,111 @@ public class GameOptions extends AbstractOptions {
 
     @Override
     public synchronized void initialize() {
-        IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_DEEP_DEPLOYMENT, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_BLIND_DROP, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_BRIDGECF, 0); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_RNG_LOG, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
-        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0); //$NON-NLS-1$
+        IBasicOptionGroup base = addGroup("basic"); 
+        addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false); 
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false); 
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false); 
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true); 
+        addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true); 
+        addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true); 
+        addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true); 
+        addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false); 
+        addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true); 
+        addOption(base, OptionsConstants.BASE_DEEP_DEPLOYMENT, false); 
+        addOption(base, OptionsConstants.BASE_BLIND_DROP, false); 
+        addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false); 
+        addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false); 
+        addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1); 
+        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false); 
+        addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false); 
+        addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false); 
+        addOption(base, OptionsConstants.BASE_BRIDGECF, 0); 
+        addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); 
+        addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); 
+        addOption(base, OptionsConstants.BASE_RNG_LOG, false); 
+        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false); 
+        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); 
+        addOption(base, OptionsConstants.BASE_BREEZE, false); 
+        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); 
+        addOption(base, OptionsConstants.BASE_AUTO_AMS, true); 
+        addOption(base, OptionsConstants.BASE_TURN_TIMER, 0);
+        addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);
+        addOption(base, OptionsConstants.BASE_HIDE_LEGACY, false);
 
-        IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_USE_BV_RATIO, false); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4); //$NON-NLS-1$
-        addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false); //$NON-NLS-1$
+        IBasicOptionGroup victory = addGroup("victory"); 
+        addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); 
+        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); 
+        addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1); 
+        addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false); 
+        addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100); 
+        addOption(victory, OptionsConstants.VICTORY_USE_BV_RATIO, false); 
+        addOption(victory, OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300); 
+        addOption(victory, OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false); 
+        addOption(victory, OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10); 
+        addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false); 
+        addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4); 
+        addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false); 
 
-        IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
+        IBasicOptionGroup allowed = addGroup("allowedUnits"); 
+        addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); 
+        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); 
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); //$NON-NLS-1$
-        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); 
            
-        IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BAP, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MECHWARRIORS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\
-        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
+        IBasicOptionGroup advancedRules = addGroup("advancedRules"); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BAP, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MECHWARRIORS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); 
         
 
-        IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
+        IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false); // $NON-NLS-1$
@@ -219,106 +221,106 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false); // $NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false); // $NON-NLS-1$
     
-        IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_EVADE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TURN_MODE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false); //$NON-NLS-1$
+        IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_EVADE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TURN_MODE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false);
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false);
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false); 
 
-        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false); //$NON-NLS-1$
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false); //$NON-NLS-1$
+        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false); 
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false); 
 
-        IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); //$NON-NLS-1$
-        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); //$NON-NLS-1$
+        IBasicOptionGroup initiative = addGroup("initiative"); 
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); 
+        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false); 
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false); 
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false); 
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); 
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); 
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false); 
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false); 
+        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3); 
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false); 
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false); 
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false); 
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false); 
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false); 
+        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); 
+        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); 
         
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
-        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.EDGE, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); //$NON-NLS-1$
-        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); 
+        addOption(rpg, OptionsConstants.EDGE, false); 
+        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); 
+        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false); 
+        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false); 
+        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false); 
+        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false); 
+        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false); 
+        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); 
+        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); 
+        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false); 
 
-        //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
+        //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); 
 
     }
 
@@ -384,15 +386,15 @@ public class GameOptions extends AbstractOptions {
                                 break;
                         }
                         if (print) {
-                            System.out.println("Set option '" + name //$NON-NLS-1$
-                                    + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+                            System.out.println("Set option '" + name 
+                                    + "' to '" + value + "'.");  //$NON-NLS-2$
                         }
 
                         option = tempOption;
                     } catch (IllegalArgumentException iaEx) {
                         System.out.println("Error trying to load option '"
                                 + name + "' with a value of '" + value
-                                + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                + "'.");  //$NON-NLS-2$ //$NON-NLS-3$
                     }
                 }
             } else {
@@ -432,7 +434,7 @@ public class GameOptions extends AbstractOptions {
             
             marshaller.marshal(element, new File(file));
         } catch (JAXBException ex) {
-            System.err.println("Error writing XML for game options: " + ex.getMessage()); //$NON-NLS-1$
+            System.err.println("Error writing XML for game options: " + ex.getMessage()); 
             ex.printStackTrace();
         }
     }

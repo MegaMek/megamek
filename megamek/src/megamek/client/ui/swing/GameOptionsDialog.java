@@ -142,9 +142,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     protected JPanel createButtonPanel() {
-        butOkay.addActionListener(this);
-        butCancel.addActionListener(this);
-        butDefaults.addActionListener(this);
+        butOkay.addActionListener(this::okButtonActionPerformed);
+        butCancel.addActionListener(this::cancelActionPerformed);
+        butDefaults.addActionListener(this::resetToDefaults);
         butSave.addActionListener(this);
         butLoad.addActionListener(this);
         butUnofficial.addActionListener(this);
@@ -204,7 +204,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return output;
     }
 
-    private void resetToDefaults() {
+    private void resetToDefaults(final ActionEvent ev) {
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             for (DialogOptionComponent comp : comps) {
                 if (!comp.isDefaultValue()) {
@@ -750,21 +750,18 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         }
     }
 
+    @Override
+    protected void okAction() {
+        if (clientGui != null) {
+            send();
+        }
+        if (performSave) {
+            doSave();
+        }
+    }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == butOkay) {
-            if (clientGui != null) {
-                send();
-            }
-            if (performSave) {
-                doSave();
-            }
-            setVisible(false);
-
-        } else if (e.getSource() == butDefaults) {
-            resetToDefaults();
-
-        } else if (e.getSource() == butSave) {
+        if (e.getSource() == butSave) {
             File gameOptsFile = selectGameOptionsFile(true);
             if (gameOptsFile != null) {
                 GameOptions.saveOptions(getOptions(), gameOptsFile.getAbsolutePath());
@@ -794,9 +791,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     }
                 }
             }
-
-        } else if (e.getSource() == butCancel) {
-            setVisible(false);
 
         } else if (e.getSource().equals(butUnofficial)) {
             if (!butUnofficial.isSelected()) {

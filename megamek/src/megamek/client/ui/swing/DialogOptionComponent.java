@@ -223,7 +223,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public boolean isDefaultValue() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                return checkbox.isSelected() == (Boolean) option.getDefault();
+                return checkbox.isSelected() == (boolean) option.getDefault();
             case IOption.CHOICE:
                 // Assume first choice is always default
                 return choice.getSelectedIndex() == 0;
@@ -235,7 +235,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox.setSelected((Boolean) option.getDefault());
+                checkbox.setSelected((boolean) option.getDefault());
                 break;
             case IOption.CHOICE:
                 choice.setSelectedIndex(0); // Assume first choice is always default

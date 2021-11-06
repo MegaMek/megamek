@@ -2142,8 +2142,6 @@ Hellhound (Conjurer) 5:SKIRMISHER
 Hellion A:MISSILE_BOAT
 Hellion B:STRIKER
 Hellion C:STRIKER
-Hellion D:STRIKER
-Hellion E:STRIKER
 Hellion F:STRIKER
 Hellion G:STRIKER
 Hellion Prime:STRIKER
@@ -4216,8 +4214,6 @@ Shadow Cat II 4:SNIPER
 Shadow Cat J:STRIKER
 Shadow Cat Prime:STRIKER
 Shadow Hawk C:SKIRMISHER
-Shadow Hawk IIC (Standard):STRIKER
-Shadow Hawk IIC 2:STRIKER
 Shadow Hawk IIC 3:STRIKER
 Shadow Hawk IIC 4:STRIKER
 Shadow Hawk IIC 5:SCOUT
@@ -5900,6 +5896,32 @@ Iron Cheetah C:BRAWLER
 Iron Cheetah D:BRAWLER
 Iron Cheetah L:BRAWLER
 #ilClan Rec Guide 20
+Hellion T:STRIKER
+Hellion D:STRIKER
+Hellion E:STRIKER
+Hellion F:STRIKER
+Hellion P:STRIKER
+Shadow Hawk IIC (Standard):STRIKER
+Shadow Hawk IIC 2:STRIKER
+Shadow Hawk IIC 10:STRIKER
+Shadow Hawk IIC 11:STRIKER
+Longbow LGB-0H:SNIPER
+Longbow LGB-0W2:MISSILE_BOAT
+Longbow LGB-8C:MISSILE_BOAT
+Longbow LGB-10C:MISSILE_BOAT
+Longbow LGB-10K:JUGGERNAUT
+Longbow LGB-14Q:MISSILE_BOAT
+Longbow LGB-14V:BRAWLER
+Masakari (Warhawk) T:BRAWLER
+Masakari (Warhawk) F:SNIPER
+Masakari (Warhawk) G:JUGGERNAUT
+Masakari (Warhawk) I:SNIPER
+Masakari (Warhawk) L:BRAWLER
+Mastodon Prime:SNIPER
+Mastodon A:SNIPER
+Mastodon B:JUGGERNAUT
+Mastodon C:JUGGERNAUT
+Mastodon D:MISSILE_BOAT
 #ilClan Rec Guide 21
 #ilClan Rec Guide 22
 #ilClan Rec Guide 23

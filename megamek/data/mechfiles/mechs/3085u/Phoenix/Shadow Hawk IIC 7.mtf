@@ -148,4 +148,17 @@ Clan Improved Jump Jet
 -Empty-
 -Empty-
 
+overview:The Shadow Hawk IIC is a second-line Clan BattleMech based upon the Shadow Hawk that was first fielded by the Star League.
 
+capabilities:The inexpensive unit is protected by seven and a half tons of Ferro-Fibrous armor, mounted on a weight-saving Endo Steel chassis. This medium 'Mech can reach a respectable top speed of 97 km/h, though it also carries enough jump jets to vault up to 180 meters at a time.
+
+deployment:This Clan Snow Raven variant is used in space combat to support or repel boarding attacks. By carrying eight Improved Jump Jets tied into extended capacity fuel tanks, the Shadow Hawk IIC 7 can maneuver in space very easily. On the ground the smaller XL Engine used reduces the top speed slightly, but the jump jets easily compensate for this. To reduce handling problems in space the weapons array consists of low-recoil ER Large and Medium lasers with a Medium Pulse Laser. In fact the only recoil-inducing weapon is the ATM-6 in the right torso. Three tons of ammunition space allow the IIC 7 pilot to tailor the weapon load depending on the situation.
+
+manufacturer:Eden Rose [Potemkin Class]/Facility 12-D,Snow Raven Industrial Complex Alpha 
+primaryfactory:Dante,Dante
+systemmanufacturer:CHASSIS:Lang T3
+systemmanufacturer:ENGINE:Consolidated Fusion 270 Standard
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M45
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:TRTTS Mark II

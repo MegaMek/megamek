@@ -3,32 +3,32 @@ Longbow
 LGB-12R
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3082
-Source:Dark Age
-Rules Level:2
+techbase:Inner Sphere
+era:3082
+source:Dark Age
+rules level:2
 
-Mass:85
-Engine:255 Light Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:255 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:11 Double
-Walk MP:3
-Jump MP:3
+heat sinks:11 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:25
-RT Armor:25
-CT Armor:35
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:25
+RT armor:25
+CT armor:35
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:6
 LRM 15, Left Arm
@@ -150,4 +150,18 @@ Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Longbow .jpg
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
+
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:This version of the Longbow carries a quartet of LRM-15 launchers, backed up by an ER Large Laser and ER Medium Laser. CASE protects the ammunition bins, while three jump jets allow the 12R to cover 90 meters at a time. To make room for this equipment, a Light Fusion Engine is used.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 255 Light
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C
+

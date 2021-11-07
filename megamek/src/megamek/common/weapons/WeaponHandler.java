@@ -410,6 +410,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return ae.getId();
     }
 
+    public Entity getAttacker() {
+        return ae;
+    }
+    
     /**
      * Do we care about the specified phase?
      */

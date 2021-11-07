@@ -35465,8 +35465,7 @@ public class Server implements Runnable {
                         r = new Report(3100);
                     }
                     r.subject = aId;
-                    Entity ae = game.getEntity(aId);
-                    r.addDesc(ae);
+                    r.addDesc(ah.getAttacker());
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
@@ -35500,13 +35499,7 @@ public class Server implements Runnable {
                         r = new Report(3100);
                     }
                     r.subject = aId;
-                    Entity ae = game.getEntity(aId);
-                    // for arty, attacker may be dead, or fled, so check out-of-
-                    // game entities
-                    if (ae == null) {
-                        ae = game.getOutOfGameEntity(aId);
-                    }
-                    r.addDesc(ae);
+                    r.addDesc(ah.getAttacker());
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;

@@ -104,6 +104,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final long ETYPE_QUADVEE = 1L << 27;
 
     public static final int NONE = -1;
+    public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
     public static final int LOC_NONE = -1;
     public static final int LOC_DESTROYED = -2;
@@ -820,6 +821,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     /** The force this entity belongs to. */
     private int forceId = Force.NO_FORCE;
+    
+    /**
+     * The current target of the Blood Stalker SPA.
+     */
+    private int bloodStalkerTarget = Entity.NONE;
     
     /**
      * Generates a new, blank, entity.
@@ -10013,7 +10019,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
-
+        
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
                         MiscType.S_DEMOLITION_CHARGE)) {
@@ -16125,5 +16131,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     
     public boolean partOfForce() {
         return forceId != Force.NO_FORCE;
+    }
+    
+    public void setBloodStalkerTarget(int value) {
+        bloodStalkerTarget = value;
+    }
+    
+    public int getBloodStalkerTarget() {
+        return bloodStalkerTarget;
+    }
+    
+    /**
+     * Whether this entity can activate the "blood stalker" ability
+     */
+    public boolean canActivateBloodStalker() {
+        return hasAbility(OptionsConstants.GUNNERY_BLOOD_STALKER) &&
+                (getBloodStalkerTarget() == Entity.NONE);
     }
 }

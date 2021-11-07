@@ -2880,7 +2880,19 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>BSW-S2r</model>
 		<unitType>Mech</unitType>
 		<quirk>low_profile</quirk>
-		<quirk>no_twist</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Bushwacker</chassis>
+		<model>BSW-X4</model>
+		<unitType>Mech</unitType>
+		<quirk>low_profile</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>ISERLargeLaser</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -2888,7 +2900,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>BSW-X1</model>
 		<unitType>Mech</unitType>
 		<quirk>low_profile</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>CT</location>
@@ -2902,7 +2913,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>BSW-S2</model>
 		<unitType>Mech</unitType>
 		<quirk>low_profile</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>CT</location>
@@ -2916,7 +2926,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>BSW-X2</model>
 		<unitType>Mech</unitType>
 		<quirk>low_profile</quirk>
-		<quirk>no_twist</quirk>
 	</unit>
 
 <!-- BEGIN C. Mechs -->
@@ -12090,7 +12099,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-5WB</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 	</unit>
 
 	<unit>
@@ -12098,7 +12106,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3KB</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>
@@ -12112,7 +12119,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3L</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>
@@ -12126,7 +12132,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-C</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>
@@ -12140,7 +12145,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3Lb</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 	</unit>
 
 	<unit>
@@ -12148,7 +12152,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3M</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>
@@ -12161,8 +12164,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Sentinel</chassis>
 		<model>STN-4D</model>
 		<unitType>Mech</unitType>
-		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 	</unit>
 
 	<unit>
@@ -12170,7 +12171,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-1S</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 	</unit>
 
 	<unit>
@@ -12178,7 +12178,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3K</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>
@@ -12192,7 +12191,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>STN-3KA</model>
 		<unitType>Mech</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>no_twist</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>RT</location>

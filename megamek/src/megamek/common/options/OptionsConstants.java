@@ -173,8 +173,8 @@ public class OptionsConstants {
     public static final String PILOT_ZWEIHANDER= "zweihander"; 
 
     // GUNNERY SKILLS
-    // public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
-    // 
+    public static final String GUNNERY_BLOOD_STALKER= "blood_stalker";
+     
     public static final String GUNNERY_CLUSTER_HITTER = "cluster_hitter"; 
     public static final String GUNNERY_CLUSTER_MASTER = "cluster_master"; 
     // public static final String GUNNERY_FIST_FIRE= "fist_fire"; 
@@ -195,7 +195,7 @@ public class OptionsConstants {
     public static final String GUNNERY_WEAPON_SPECIALIST = "weapon_specialist"; 
 
     // MISC ABILITIES
-    // public static final String MISC_ANTAGONIZER= "antagonizer"; 
+    // public static final String MISC_ANTAGONIZER = "antagonizer"; 
     // public static final String MISC_COMBAT_INTUITION= "combat_intuition";
     // 
     // public static final String MISC_DEMORALIZER= "demoralizer"; 

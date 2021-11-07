@@ -150,4 +150,16 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
 
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:The primary weapons on the Longbow are its LRM launchers. The Longbow carries four launchers in all. The largest are a pair of Holly LRM-20s which have the firepower of two Delta Dart LRM-5s added to them. Combined, the launchers can put a devastating barrage of up to fifty missiles at ranges of six hundred and thirty meters. To protect itself in close combat, the Longbow has two Ceres Arms Medium Lasers.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C

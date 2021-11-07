@@ -79,6 +79,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
+        FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_MORE("fireMore");
 
         String cmd;
@@ -1308,6 +1309,49 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
     }
+    
+    /**
+     * This pops up a menu allowing the user to choose one of several 
+     * SPAs, and then performs the appropriate steps.
+     */
+    private void doActivateSpecialAbility() {
+        Map<String, String> skillNames = new HashMap<>();
+        
+        if (canActivateBloodStalker() && (target != null)) {                
+            skillNames.put("Blood Stalker", OptionsConstants.GUNNERY_BLOOD_STALKER);
+        }
+        
+        String targetString = (target != null) ? 
+                String.format("\nTarget: %s", target.getDisplayName()) : "";
+        
+        String input = (String) JOptionPane.showInputDialog(clientgui, 
+                String.format("Pick a Special Pilot Ability to activate.%s", targetString), 
+                "Activate Special Pilot Ability", 
+                JOptionPane.QUESTION_MESSAGE, null, skillNames.keySet().toArray(), null);
+        
+        // unsafe, but since we're generating it right here, it should be fine.
+        switch (skillNames.get(input)) {
+        case OptionsConstants.GUNNERY_BLOOD_STALKER:
+            // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
+            ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getTargetId());
+            attacks.add(0, bloodStalkerAction);
+            ce().setBloodStalkerTarget(target.getTargetId());
+            break;
+        }
+        
+        updateActivateSPA();
+    }
+    
+    /**
+     * Worker function that determines if we can activate the "blood stalker" ability
+     */
+    private boolean canActivateBloodStalker() {
+        // can be activated if the entity can do it and haven't done it already 
+        // and the target is something that can be blood-stalked
+        return ce().canActivateBloodStalker() &&
+                (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                attacks.stream().noneMatch(item -> item instanceof ActivateBloodStalkerAction);
+    }
 
     /**
      * fire searchlight
@@ -1926,6 +1970,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } 
 
         updateSearchlight();
+        updateActivateSPA();
 
         // Hidden units can only spot
         if ((ce() != null) && ce().isHidden()) {
@@ -2220,6 +2265,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             doClearWeaponJam();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
             doStrafe();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
+            doActivateSpecialAbility();
         }
     }
 
@@ -2276,6 +2323,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else {
             setStrafeEnabled(false);
         }
+    }
+    
+    private void updateActivateSPA() {
+        setActivateSPAEnabled(canActivateBloodStalker());
     }
 
     protected void setFireEnabled(boolean enabled) {
@@ -2358,6 +2409,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
     }
+    
+    protected void setActivateSPAEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
+    }
 
     @Override
     public void clear() {
@@ -2371,6 +2427,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
             target(null);
+        }
+        // if we're clearing a "blood stalker" activation from the queue, 
+        // clear the local entity's blood stalker 
+        if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
+            ce().setBloodStalkerTarget(Entity.NONE);
         }
         clearAttacks();        
         clientgui.getBoardView().select(null);

@@ -1707,9 +1707,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private void showLOSSettingDialog() {
         GUIPreferences gp = GUIPreferences.getInstance();
         LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
-        ld.setVisible(true);
-        gp.setMechInFirst(ld.getMechInFirst());
-        gp.setMechInSecond(ld.getMechInSecond());
+        ignoreHotKeys = true;
+        if (ld.showDialog().isConfirmed()) {
+            gp.setMechInFirst(ld.getMechInFirst());
+            gp.setMechInSecond(ld.getMechInSecond());
+        }
+        ignoreHotKeys = false;
     }
 
     /**

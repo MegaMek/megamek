@@ -220,7 +220,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         this.unitDisplay = new UnitDisplay(null);
 
         this.unitDetailPane = new UnitDetailPane(this.unitDisplay);
-        this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
         add(this.unitDetailPane, BorderLayout.EAST);
 
         this.unitDisplay.displayEntity(testEntity);

@@ -475,7 +475,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         this.unitDetailPane = new UnitDetailPane(this.mechD);
         this.unitDetailPane.setVisible(false);
-        this.unitDetailPane.setPreferredSize(new Dimension(400, 600));
         add(this.unitDetailPane, BorderLayout.EAST);
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();

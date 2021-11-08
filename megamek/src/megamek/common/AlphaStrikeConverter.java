@@ -1946,7 +1946,7 @@ public final class AlphaStrikeConverter {
     }
     
     private static int getPointValue(Entity entity, AlphaStrikeElement element) {
-        if ((entity instanceof Mech) || (entity instanceof Infantry) || (entity instanceof Tank)) {
+        if (element.isGround()) {
             int dmgS = element.getDmgS();
             int dmgM = element.getDmgM();
             int dmgL = element.getDmgL();
@@ -1955,7 +1955,7 @@ public final class AlphaStrikeConverter {
             offensiveValue += element.isMinimalDmgM() ? 1 : 0;
             offensiveValue += element.isMinimalDmgL() ? 0.5 : 0;
             
-            if (element.asUnitType == ASUnitType.BM) {
+            if (element.isAnyTypeOf(BM, PM)) {
                 offensiveValue += 0.5 * element.getSize();
             }
             
@@ -2257,9 +2257,9 @@ public final class AlphaStrikeConverter {
     private static double agileBonus(AlphaStrikeElement element) {
         double result = 0;
         if (element.getTMM() >= 2) {
-            int dmgS = element.getDmgS();
-            int dmgM = element.getDmgM();
-            if (dmgM >= 1) {
+            double dmgS = element.isMinimalDmgS() ? 0.5 : element.getDmgS();
+            double dmgM = element.isMinimalDmgM() ? 0.5 : element.getDmgM();
+            if (dmgM > 0) {
                 result = (element.getTMM() - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
                 result = (element.getTMM() - 2) * dmgS;

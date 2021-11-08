@@ -675,6 +675,10 @@ public class MegaMek {
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
                     for (MechSummary unit : units) {
                         Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                        System.out.println(entity.getShortName());
+                        if (!AlphaStrikeConverter.canConvert(entity)) {
+                            continue;
+                        }
                         AlphaStrikeElement ase = AlphaStrikeConverter.convert(entity);
                         if ((typeFilter == null) || ase.isType(typeFilter)) {
                             ase.writeCsv(bw);

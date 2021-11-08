@@ -1496,8 +1496,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         
         PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
-        DialogResult result = psd.showDialog();
-        if (result.isConfirmed()) {
+        if (psd.showDialog().isConfirmed()) {
             IPlayer player = c.getLocalPlayer();
             player.setConstantInitBonus(psd.getInit());
             player.setNbrMFConventional(psd.getCnvMines());

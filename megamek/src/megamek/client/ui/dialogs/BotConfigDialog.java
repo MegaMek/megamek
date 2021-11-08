@@ -35,6 +35,7 @@ import megamek.client.Client;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.dialogs.helpDialogs.PrincessHelpDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
@@ -61,7 +62,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private TipTextField nameField = new TipTextField("", 16);
-    private JComboBox<String> verbosityCombo;
+    private MMComboBox<String> verbosityCombo;
     private JLabel verbosityLabel = new JLabel(Messages.getString("BotConfigDialog.verbosityLabel"), SwingConstants.RIGHT);
     
     private JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
@@ -72,10 +73,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
-    private JComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
+    private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
     private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
     private JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
-    private JComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
+    private MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
     
     private TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
@@ -199,7 +200,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         namePanel.add(nameField);
         
         var verbosityPanel = new JPanel();
-        verbosityCombo = new TipCombo<String>("Verbosity", LogLevel.getLogLevelNames());
+        verbosityCombo = new TipCombo<>("Verbosity", LogLevel.getLogLevelNames());
         verbosityCombo.setToolTipText(Messages.getString("BotConfigDialog.verbosityToolTip"));
         verbosityCombo.setSelectedIndex(0);
         verbosityLabel.setLabelFor(verbosityCombo);
@@ -623,19 +624,19 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
-        tempBehavior.setVerbosity(LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
+        tempBehavior.setVerbosity(LogLevel.getLogLevel(verbosityCombo.getSelectedItem()));
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
         tempBehavior.setForcedWithdrawal(forcedWithdrawalCheck.isSelected());
         tempBehavior.setAutoFlee(autoFleeCheck.isSelected());
-        tempBehavior.setDestinationEdge((CardinalEdge) fleeEdgeCombo.getSelectedItem());
-        tempBehavior.setRetreatEdge((CardinalEdge) withdrawEdgeCombo.getSelectedItem());
+        tempBehavior.setDestinationEdge(fleeEdgeCombo.getSelectedItem());
+        tempBehavior.setRetreatEdge(withdrawEdgeCombo.getSelectedItem());
         tempBehavior.setHyperAggressionIndex(aggressionSlidebar.getValue());
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
-                tempBehavior.addStrategicTarget(((Coords)targetsListModel.get(i)).toString());
+                tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());
             } else {
                 tempBehavior.addPriorityUnit(Integer.toString((int)targetsListModel.get(i)));
             }

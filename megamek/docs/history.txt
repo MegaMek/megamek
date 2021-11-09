@@ -6,6 +6,8 @@ VERSION HISTORY:
 + PR #3225: Blood Stalker SPA
 + PR #3222: Base Components: New Dialogs Appear Centered, LOSDialog Swapover
 + PR #3235: Base Components: GameOptionsDialog Swapover, Making Hide Legacy and Hide Unofficial Full Game Options
++ PR #3228: Base Components: PlayerSettingsDialog Update
++ Issue #3231: Detachable Unit Detail Tweaks
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

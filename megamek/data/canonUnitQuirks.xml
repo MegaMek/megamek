@@ -12164,6 +12164,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Sentinel</chassis>
 		<model>STN-4D</model>
 		<unitType>Mech</unitType>
+		<quirk>imp_com</quirk>
 	</unit>
 
 	<unit>

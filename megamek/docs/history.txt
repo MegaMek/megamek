@@ -8,6 +8,7 @@ VERSION HISTORY:
 + PR #3235: Base Components: GameOptionsDialog Swapover, Making Hide Legacy and Hide Unofficial Full Game Options
 + PR #3228: Base Components: PlayerSettingsDialog Update
 + Issue #3231: Detachable Unit Detail Tweaks
++ Data: Updating Deadborder Map Pack and some quirk fixes and surname fixes.
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

@@ -148,4 +148,17 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Shadow Hawk IIC is a second-line Clan BattleMech based upon the Shadow Hawk that was first fielded by the Star League.
 
+capabilities:The inexpensive unit is protected by seven and a half tons of Ferro-Fibrous armor, mounted on a weight-saving Endo Steel chassis. This medium 'Mech can reach a respectable top speed of 97 km/h, though it also carries enough jump jets to vault up to 180 meters at a time.
+
+deployment:First fielded in 3060, the IIC 4 was a joint effort by Clan Nova Cat and Clan Diamond Shark to upgrade their second-line forces. The result was a 'Mech that is visually very different from the design it is considered a variant of. This 'Mech carries a Type 6 Series ATM System with three tons of ammunition to allow for flexibility of choice. The missile launcher is backed up by two Series 14NC Medium Pulse Lasers and a Series 2NC ER Medium Laser.
+
+manufacturer:Barcella Alpha,Irece Alpha 
+primaryfactory:Barcella,Irece
+systemmanufacturer:CHASSIS:Lang T3
+systemmanufacturer:ENGINE:Consolidated Fusion 270 Standard
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M45
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:TRTTS Mark II

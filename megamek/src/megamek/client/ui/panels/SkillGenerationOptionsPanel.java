@@ -28,6 +28,8 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
 
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
@@ -36,9 +38,9 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
     //region Variable Declarations
     private final ClientGUI clientGUI;
     private Client client;
-    private MMComboBox<SkillGeneratorMethod> comboMethod;
-    private MMComboBox<SkillGeneratorType> comboType;
-    private MMComboBox<SkillLevel> comboSkillLevel;
+    private TipCombo<SkillGeneratorMethod> comboMethod;
+    private TipCombo<SkillGeneratorType> comboType;
+    private TipCombo<SkillLevel> comboSkillLevel;
     private MMToggleButton tglForceClose;
     //endregion Variable Declarations
 
@@ -69,7 +71,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return comboMethod;
     }
 
-    public void setComboMethod(final MMComboBox<SkillGeneratorMethod> comboMethod) {
+    public void setComboMethod(final TipCombo<SkillGeneratorMethod> comboMethod) {
         this.comboMethod = comboMethod;
     }
 
@@ -77,7 +79,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return comboType;
     }
 
-    public void setComboType(final MMComboBox<SkillGeneratorType> comboType) {
+    public void setComboType(final TipCombo<SkillGeneratorType> comboType) {
         this.comboType = comboType;
     }
 
@@ -85,7 +87,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return comboSkillLevel;
     }
 
-    public void setComboSkillLevel(final MMComboBox<SkillLevel> comboSkillLevel) {
+    public void setComboSkillLevel(final TipCombo<SkillLevel> comboSkillLevel) {
         this.comboSkillLevel = comboSkillLevel;
     }
 
@@ -102,72 +104,66 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
     @Override
     protected void initialize() {
         // Create Panel Components
-        final JLabel lblMethod = new JLabel(resources.getString("lblMethod.text"));
+        final JLabel lblMethod = new TipLabel(resources.getString("lblMethod.text"));
         lblMethod.setToolTipText(resources.getString("lblMethod.toolTipText"));
         lblMethod.setName("lblMethod");
 
-        setComboMethod(new MMComboBox<>("comboMethod", SkillGeneratorMethod.values()));
+        setComboMethod(new TipCombo<>("comboMethod", SkillGeneratorMethod.values()));
         getComboMethod().setToolTipText(resources.getString("lblMethod.toolTipText"));
-        getComboMethod().setName("comboMethod");
         getComboMethod().setSelectedItem(getClient().getSkillGenerator().getMethod());
         getComboMethod().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
                                                           final int index, final boolean isSelected,
                                                           final boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof SkillGeneratorMethod) {
-                    list.setToolTipText(((SkillGeneratorMethod) value).getToolTipText());
+                    list.setToolTipText(formatSideTooltip(((SkillGeneratorMethod) value).getToolTipText()));
                 }
-                return this;
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             }
         });
 
-        final JLabel lblType = new JLabel(resources.getString("lblType.text"));
+        final JLabel lblType = new TipLabel(resources.getString("lblType.text"));
         lblType.setToolTipText(resources.getString("lblType.toolTipText"));
         lblType.setName("lblType");
 
-        setComboType(new MMComboBox<>("comboType", SkillGeneratorType.values()));
+        setComboType(new TipCombo<>("comboType", SkillGeneratorType.values()));
         getComboType().setToolTipText(resources.getString("lblType.toolTipText"));
-        getComboType().setName("comboType");
         getComboType().setSelectedItem(getClient().getSkillGenerator().getType());
         getComboType().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
                                                           final int index, final boolean isSelected,
                                                           final boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof SkillGeneratorType) {
-                    list.setToolTipText(((SkillGeneratorType) value).getToolTipText());
+                    list.setToolTipText(formatSideTooltip(((SkillGeneratorType) value).getToolTipText()));
                 }
-                return this;
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             }
         });
 
-        final JLabel lblSkillLevel = new JLabel(resources.getString("lblSkillLevel.text"));
+        final JLabel lblSkillLevel = new TipLabel(resources.getString("lblSkillLevel.text"));
         lblSkillLevel.setToolTipText(resources.getString("lblSkillLevel.toolTipText"));
         lblSkillLevel.setName("lblSkillLevel");
 
         final DefaultComboBoxModel<SkillLevel> skillLevelModel = new DefaultComboBoxModel<>();
         skillLevelModel.addAll(SkillLevel.getGeneratableValues());
-        setComboSkillLevel(new MMComboBox<>("comboSkillLevel", skillLevelModel));
+        setComboSkillLevel(new TipCombo<>("comboSkillLevel", skillLevelModel));
         getComboSkillLevel().setToolTipText(resources.getString("lblSkillLevel.toolTipText"));
-        getComboSkillLevel().setName("comboSkillLevel");
         getComboSkillLevel().setSelectedItem(getClient().getSkillGenerator().getLevel());
         getComboSkillLevel().setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(final JList<?> list, final Object value,
                                                           final int index, final boolean isSelected,
                                                           final boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (value instanceof SkillLevel) {
-                    list.setToolTipText(((SkillLevel) value).getToolTipText());
+                    list.setToolTipText(formatSideTooltip(((SkillLevel) value).getToolTipText()));
                 }
-                return this;
+                return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             }
         });
 
-        setTglForceClose(new MMToggleButton(resources.getString("tglForceClose.text")));
+        setTglForceClose(new TipMMToggleButton(resources.getString("tglForceClose.text")));
         getTglForceClose().setToolTipText(resources.getString("tglForceClose.toolTipText"));
         getTglForceClose().setName("tglForceClose");
         getTglForceClose().setSelected(getClient().getSkillGenerator().isForceClose());

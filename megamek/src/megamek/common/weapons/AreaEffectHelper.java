@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -599,6 +600,16 @@ public class AreaEffectHelper {
      * @return
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
+        if (ammo == null) {
+            MegaMek.getLogger().error("Attempting to calculate damage fall-off with null ammo.\n\n" + Thread.currentThread().getStackTrace());
+
+            DamageFalloff empty = new DamageFalloff();
+            empty.damage = 0;
+            empty.falloff = 10;
+            empty.clusterMunitionsFlag = false;
+            return empty;
+        }
+        
         int damage = ammo.getRackSize();
         int falloff = 10;
         boolean clusterMunitionsFlag = false;

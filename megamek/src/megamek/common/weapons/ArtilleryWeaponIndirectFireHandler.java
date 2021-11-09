@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -155,11 +156,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         
-        //Trailers can share ammo, which means the entity carrying the ammo might not be
-        //the firing entity, so we get the specific ammo used from the ammo carrier
-        Entity ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
+        // Trailers can share ammo, which means the entity carrying the ammo might not be
+        // the firing entity, so we get the specific ammo used from the ammo carrier
+        // However, we only bother with this if the ammo carrier is actually different from the attacker
+        Entity ammoCarrier = ae; 
+        
+        if ((ae != null) && (aaa.getAmmoCarrier() != ae.getId())) {
+            ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
+        }
+        
         Mounted ammoUsed = ammoCarrier.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = (AmmoType) ammoUsed.getType();
+        final AmmoType atype = (ammoUsed != null) ? (AmmoType) ammoUsed.getType() : null;
         
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
@@ -320,6 +327,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             handleCounterBatteryObservation(aaa, targetPos, vPhaseReport);
         }
 
+        // if we have no ammo for this attack then don't bother doing anything else, but log the error
+        if (atype == null) {
+            MegaMek.getLogger().error("Artillery weapon fired with no ammo.\n\n" + Thread.currentThread().getStackTrace());
+            return false;
+        }
+        
         if (atype.getMunitionType() == AmmoType.M_FAE) {
             AreaEffectHelper.processFuelAirDamage(targetPos, 
                     atype, aaa.getEntity(game), vPhaseReport, server);
@@ -376,6 +389,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             server.deliverLIsmoke(targetPos, vPhaseReport);
             return false;
         }
+        
         int altitude = 0;
         if (isFlak) {
             altitude = target.getElevation();

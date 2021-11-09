@@ -517,5 +517,18 @@ public class ServerHelper {
         }
         
         return minefieldDetected;
-    }  
+    }
+    
+    /**
+     * Loop through the game and clear 'blood stalker' flag for
+     * any entities that have the given unit as the blood stalker target.
+     */
+    public static void clearBloodStalkers(Game game, int stalkeeID, Server server) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getBloodStalkerTarget() == stalkeeID) {
+                entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
+                server.entityUpdate(entity.getId());
+            }
+        }
+    }
 }

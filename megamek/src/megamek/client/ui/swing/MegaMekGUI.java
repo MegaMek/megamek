@@ -16,56 +16,7 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.Compute.d6;
-
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
-import java.awt.MediaTracker;
-import java.awt.SystemColor;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.awt.Window;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-
 import com.thoughtworks.xstream.XStream;
-
 import megamek.MegaMek;
 import megamek.MegaMekConstants;
 import megamek.client.Client;
@@ -88,7 +39,6 @@ import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.logging.LogLevel;
-import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -99,6 +49,25 @@ import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+
+import static megamek.common.Compute.d6;
 
 public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg";
@@ -113,7 +82,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private Client client;
     private Server server;
     private CommonAboutDialog about;
-    private GameOptionsDialog optionsDialog;
     private CommonSettingsDialog settingsDialog;
 
     private MegaMekController controller;
@@ -426,20 +394,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     }
 
     /**
-     * Display the game options dialog.
-     */
-    void showGameOptions() {
-        GameOptions options = new GameOptions();
-        options.initialize();
-        options.loadOptions();
-        if (optionsDialog == null) {
-            optionsDialog = new GameOptionsDialog(frame, options, true);
-        }
-        optionsDialog.update(options);
-        optionsDialog.setVisible(true);
-    }
-
-    /**
      * Display the board editor.
      */
     void showEditor() {
@@ -514,8 +468,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             client.die();
         }
         launch(gui.getFrame());
-
-        optionsDialog = null;
     }
 
     void loadGame() {
@@ -605,8 +557,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.setVisible(false);
             client.die();
         }
-        optionsDialog = null;
-
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
@@ -655,8 +605,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
             frame.setVisible(false);
             client.die();
         }
-        optionsDialog = null;
-
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
@@ -825,7 +773,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 client.die();
             }
         }
-        optionsDialog = null;
 
         // calculate initial BV
         server.calculatePlayerInitialCounts();
@@ -1025,7 +972,7 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
         System.runFinalization();
     }
     
-    private ActionListener actionListener = ev -> {
+    private final ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
             case ClientGUI.BOARD_NEW:
                 showEditor();
@@ -1053,9 +1000,6 @@ public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
                 break;
             case ClientGUI.FILE_GAME_QLOAD:
                 quickLoadGame();
-                break;
-            case ClientGUI.VIEW_GAME_OPTIONS:
-                showGameOptions();
                 break;
             case ClientGUI.HELP_ABOUT:
                 showAbout();

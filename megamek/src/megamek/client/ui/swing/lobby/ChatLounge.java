@@ -1496,9 +1496,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         
         PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
-        boolean okay = psd.showDialog();
-        
-        if (okay) {
+        if (psd.showDialog().isConfirmed()) {
             IPlayer player = c.getLocalPlayer();
             player.setConstantInitBonus(psd.getInit());
             player.setNbrMFConventional(psd.getCnvMines());
@@ -1703,11 +1701,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butBotSettings)) {
                 doBotSettings();
             } else if (ev.getSource().equals(butOptions)) {
-                // Make sure the game options dialog is editable.
-                if (!clientgui.getGameOptionsDialog().isEditable()) {
-                    clientgui.getGameOptionsDialog().setEditable(true);
-                }
-                // Display the game options dialog.
+                clientgui.getGameOptionsDialog().setEditable(true);
                 clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
             } else if (ev.getSource().equals(butCompact)) {

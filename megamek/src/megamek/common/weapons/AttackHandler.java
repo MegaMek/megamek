@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Game;
+import megamek.common.Entity;
 import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -42,6 +42,8 @@ public interface AttackHandler {
     // Frankly, wish I could get rid of this, but I think certain things
     // occasionally need to know the firer.
     public int getAttackerId();
+    
+    public Entity getAttacker();
 
     public boolean announcedEntityFiring();
 

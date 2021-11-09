@@ -33,6 +33,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
@@ -501,19 +502,20 @@ public final class UIUtil {
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipLabel extends JLabel {
-        private static final long serialVersionUID = -338233022633675883L;
-        
-        private JDialog parentDialog;
 
-        public TipLabel(String text, int align, JDialog parent) {
+        public TipLabel(String text) {
+            super(text);
+        }
+
+        public TipLabel(String text, int align) {
             super(text, align);
-            parentDialog = parent;
         }
 
         @Override
         public Point getToolTipLocation(MouseEvent event) {
-            Point p = SwingUtilities.convertPoint(this, 0, 0, parentDialog);
-            return new Point(parentDialog.getWidth() - p.x, 0);
+            Window win = SwingUtilities.getWindowAncestor(this);
+            Point origin = SwingUtilities.convertPoint(this, 0, 0, win);
+            return new Point(win.getWidth() - origin.x, 0);
         }
         
         @Override
@@ -522,6 +524,11 @@ public final class UIUtil {
             tip.setBackground(alternateTableBGColor());
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
+        }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
         }
     }
     
@@ -550,21 +557,31 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
-     * A JComboBox with a specialized tooltip display. Displays the tooltip to the right side
+     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the right side
+
      * of the parent dialog, not following the mouse. 
-     * Used in the player settings and planetary settings dialogs.
+     * Used in the player settings dialog.
      */
-    public static class TipCombo<E> extends JComboBox<E> {
+    public static class TipCombo<E> extends MMComboBox<E> {
         
-        public TipCombo() {
-            super();
+        public TipCombo(String name) {
+            super(name);
         }
         
-        public TipCombo(E[] items) {
-            super(items);
+        public TipCombo(String name, E[] items) {
+            super(name, items);
+        }
+
+        public TipCombo(String name, final ComboBoxModel<E> model) {
+            super(name, model);
         }
 
         @Override
@@ -580,6 +597,11 @@ public final class UIUtil {
             tip.setBackground(alternateTableBGColor());
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
+        }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
         }
     }
     
@@ -611,6 +633,11 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
@@ -620,8 +647,7 @@ public final class UIUtil {
      * Used in the player settings and planetary settings dialogs.
      */
     public static class TipTextField extends JTextField {
-        private static final long serialVersionUID = -2226586551388519966L;
-        
+
         String hintText;
         
         public TipTextField(int n) {
@@ -692,6 +718,11 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
@@ -722,6 +753,11 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
@@ -749,6 +785,11 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
@@ -775,6 +816,11 @@ public final class UIUtil {
             tip.setBorder(BorderFactory.createLineBorder(uiGray(), 4));
             return tip;
         }
+
+        @Override
+        public void setToolTipText(String text) {
+            super.setToolTipText(formatSideTooltip(text));
+        }
     }
     
     /** 
@@ -782,8 +828,8 @@ public final class UIUtil {
      * its width and adding HTML tags. 
      */
     public static String formatSideTooltip(String text) {
-        String result = "<P WIDTH=" + UIUtil.scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
-        return UIUtil.scaleStringForGUI(result);
+        String result = "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return scaleStringForGUI(result);
     }
     
     /**
@@ -854,10 +900,8 @@ public final class UIUtil {
     public static Font getScaledFont() {
         return new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1));
     }
-    
-    
-    
-    // PRIVATE 
+
+    // PRIVATE
     
     private final static Color LIGHTUI_GREEN = new Color(20, 140, 20);
     private final static Color DARKUI_GREEN = new Color(40, 180, 40);

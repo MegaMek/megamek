@@ -88,7 +88,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         
         var coordsFieldPanel = new UIUtil.FixedYPanel();
         coordsFieldPanel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        coordsField.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("BotConfigDialog.hexCoordsTip")));
+        coordsField.setToolTipText(Messages.getString("BotConfigDialog.hexCoordsTip"));
         coordsLabel.setLabelFor(coordsField);
         coordsLabel.setDisplayedMnemonic(KeyEvent.VK_X);
         coordsFieldPanel.add(coordsLabel);

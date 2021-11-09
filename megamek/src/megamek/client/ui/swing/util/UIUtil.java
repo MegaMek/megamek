@@ -565,7 +565,8 @@ public final class UIUtil {
     }
     
     /** 
-     * An MMComboBox with a specialized tooltip display. Displays the tooltip to the right side
+     * A MMComboBox with a specialized tooltip display. Displays the tooltip to the right side
+
      * of the parent dialog, not following the mouse. 
      * Used in the player settings dialog.
      */

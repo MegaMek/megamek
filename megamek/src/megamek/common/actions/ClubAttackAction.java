@@ -24,7 +24,7 @@ import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
@@ -248,7 +248,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         return zweihandering;
     }
     
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return ClubAttackAction.toHit(game, getEntityId(),
                                       game.getTarget(getTargetType(), getTargetId()), getClub(),
                                       aiming, zweihandering);
@@ -264,7 +264,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
      * @param zweihandering - a boolean indicating whether the attacker is zweihandering (using both hands)
      * @return
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Mounted club, int aimTable, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
         MiscType clubType;

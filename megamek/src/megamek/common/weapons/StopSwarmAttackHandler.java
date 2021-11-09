@@ -20,11 +20,12 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -42,7 +43,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * @param g
      */
     public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -52,7 +53,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         Entity entityTarget = (Entity) target;
         // ... but only as their *only* attack action.
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

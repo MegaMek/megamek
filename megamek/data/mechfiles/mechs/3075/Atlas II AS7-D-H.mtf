@@ -3,32 +3,32 @@ Atlas II
 AS7-D-H
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2765
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2765
+source:TRO 3075 - Star League
+rules level:2
 
-Mass:100
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:3
-Jump MP:0
+heat sinks:14 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:47
-HD Armor:9
-LL Armor:41
-RL Armor:41
-RTL Armor:10
-RTR Armor:10
-RTC Armor:14
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
 
 Weapons:7
 ER Large Laser, Left Arm
@@ -51,7 +51,7 @@ ISERLargeLaser
 ISERLargeLaser
 ISERLargeLaser
 ISERLargeLaser
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -64,8 +64,8 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 ISDoubleHeatSink
@@ -77,9 +77,9 @@ ISMediumPulseLaser
 ISMediumPulseLaser
 IS Ammo SRM-6
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 LRM 20
@@ -92,8 +92,8 @@ IS Ammo LRM-20
 IS LB 10-X AC Ammo
 IS LB 10-X Cluster Ammo
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -151,4 +151,19 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The technologically-advanced Hegemony counterpart to the SLDF's regular army's AS7-D Atlas, the Atlas II was exclusively reserved for SLDF Royal Regiments.
+
+capabilities:The weapons payload gives the design more broad range attack ability versus the Atlas's brawling weaponry and its limited long range attack capacities.
+
+deployment:The Atlas II is armed with an array of weaponry, including an LB-X Autocannon/10, a pair of ER Large Lasers, and a 20-tube Long Range Missile Launcher for long range attacks. For close range combat, the 'Mech is equipped with a pair of Medium Pulse Lasers and a Holly Six Pack. In addition, the 'Mech has been given CASE for both sides of the torso in order to keep an ammunition cook-off from consuming the 'Mech.
+
+history:First fielded in 2765, the Atlas II was designed by the Hegemony Research and Development Department, Weapons Division of the original Star League to maintain the technological edge over the other Great Houses. It was exclusively for the SLDF's Royal Regiments. In 2785, when General Aleksandr Kerensky put out his call for loyal forces to join him in his Exodus, every Atlas II pilot responded and left with him. These 'Mechs are prized by the Clans when they were found. One such 'Mech was spotted in 3052 during the Battle of Tukayyid. In the early 3070s, the design was resurrected by the Word of Blake when they captured Hesperus II's factories. After the liberation of Defiance Industries, Devlin Stone's coalition forces kept the 'Mechs in production.
+
+manufacturer:Defiance Industries,Hegemony Research and Development Department, Weapons Division
+primaryfactory:Hesperus II,New Earth
+systemmanufacturer:CHASSIS:Foundation Type 10X
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:StarSlab/2 Ferro Fibrous with CASE
+systemmanufacturer:JUMPJET:Army Comm Class 5
+systemmanufacturer:COMMUNICATIONS:Army Corporation Type 29K
 

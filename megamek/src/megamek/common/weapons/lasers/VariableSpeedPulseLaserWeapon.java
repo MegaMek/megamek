@@ -14,7 +14,7 @@
 package megamek.common.weapons.lasers;
 
 import megamek.common.BattleForceElement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -48,7 +48,7 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game,
                 server);
     }

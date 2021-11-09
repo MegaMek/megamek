@@ -17,7 +17,7 @@ package megamek.client.bot.princess;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Protomech;
@@ -54,7 +54,7 @@ public class MoralUtil implements IMoralUtil {
     }
 
     @Override
-    public void checkMoral(boolean forcedWithdrawal, int bravery, int selfPreservation, IPlayer player, IGame game) {
+    public void checkMoral(boolean forcedWithdrawal, int bravery, int selfPreservation, IPlayer player, Game game) {
         StringBuilder logMsg = new StringBuilder("Starting moral checks for ").append(player.getName());
 
         try {
@@ -154,7 +154,7 @@ public class MoralUtil implements IMoralUtil {
         return Compute.d6(2);
     }
 
-    private int calcBvRatioMod(IPlayer player, IGame game, StringBuilder logMsg) {
+    private int calcBvRatioMod(IPlayer player, Game game, StringBuilder logMsg) {
         int friendlyBv = 0;
         int enemyBv = 0;
 

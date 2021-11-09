@@ -19,7 +19,7 @@ package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -81,7 +81,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new PlasmaCannonHandler(toHit, waa, game, server);
     }
 

@@ -108,18 +108,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
-    public static final String DISPLAY_POS_X = "DisplayPosX";
-    public static final String DISPLAY_POS_Y = "DisplayPosY";
-    public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
-    public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String UNIT_DETAIL_POS_X = "UnitDetailPosX";
+    public static final String UNIT_DETAIL_POS_Y = "UnitDetailPosY";
+    public static final String UNIT_DETAIL_SIZE_HEIGHT = "UnitDetailSizeHeight";
+    public static final String UNIT_DETAIL_SIZE_WIDTH = "UnitDetailSizeWidth";
+    public static final String UNIT_DETAIL_STATE = "UnitDetailState";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
-    public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
-    public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
     public static final String MOVE_ENVELOPE = "MoveEnvelope";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
@@ -236,8 +235,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MY_UNIT_COLOR = "MyUnitColor";
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
-    public static final String OPTIONS_SHOW_UNOFFICIAL = "OptionsShowUnofficial";
-    public static final String OPTIONS_SHOW_LEGACY = "OptionsShowLegacy";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
     
     // RAT dialog preferences
@@ -339,15 +336,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
-        store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
-        store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(UNIT_DETAIL_SIZE_HEIGHT, 500);
+        store.setDefault(UNIT_DETAIL_SIZE_WIDTH, 300);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
-        store.setDefault(GAME_OPTIONS_SIZE_HEIGHT, 400);
-        store.setDefault(GAME_OPTIONS_SIZE_WIDTH, 400);
         store.setDefault(FIRING_SOLUTIONS,true);
         store.setDefault(GUI_SCALE, 1);
         store.setDefault(SHOW_UNIT_DISPLAY, true);
@@ -472,8 +467,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TEAM_COLORING, true);
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
-        setDefault(OPTIONS_SHOW_UNOFFICIAL, true);
-        setDefault(OPTIONS_SHOW_LEGACY, true);
     }
 
     public void setDefault(String name, Color color) {
@@ -533,20 +526,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(CUSTOM_UNIT_WIDTH);
     }
 
-    public int getDisplayPosX() {
-        return store.getInt(DISPLAY_POS_X);
+    public int getUnitDetailPosX() {
+        return store.getInt(UNIT_DETAIL_POS_X);
     }
 
-    public int getDisplayPosY() {
-        return store.getInt(DISPLAY_POS_Y);
+    public int getUnitDetailPosY() {
+        return store.getInt(UNIT_DETAIL_POS_Y);
     }
 
-    public int getDisplaySizeHeight() {
-        return store.getInt(DISPLAY_SIZE_HEIGHT);
+    public int getUnitDetailSizeHeight() {
+        return store.getInt(UNIT_DETAIL_SIZE_HEIGHT);
     }
 
-    public int getDisplaySizeWidth() {
-        return store.getInt(DISPLAY_SIZE_WIDTH);
+    public int getUnitDetailSizeWidth() {
+        return store.getInt(UNIT_DETAIL_SIZE_WIDTH);
+    }
+
+    public String getUnitDetailState() {
+        return store.getString(UNIT_DETAIL_STATE);
     }
 
     public boolean getGameSummaryBoardView() {
@@ -567,14 +564,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFocus() {
         return store.getBoolean(FOCUS);
-    }
-
-    public int getGameOptionsSizeHeight(){
-        return store.getInt(GAME_OPTIONS_SIZE_HEIGHT);
-    }
-
-    public int getGameOptionsSizeWidth(){
-        return store.getInt(GAME_OPTIONS_SIZE_WIDTH);
     }
 
     public boolean getFiringSolutions() {
@@ -1022,20 +1011,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
-    public void setDisplayPosX(int i) {
-        store.setValue(DISPLAY_POS_X, i);
+    public void setUnitDetailPosX(int i) {
+        store.setValue(UNIT_DETAIL_POS_X, i);
     }
 
-    public void setDisplayPosY(int i) {
-        store.setValue(DISPLAY_POS_Y, i);
+    public void setUnitDetailPosY(int i) {
+        store.setValue(UNIT_DETAIL_POS_Y, i);
     }
 
-    public void setDisplaySizeHeight(int i) {
-        store.setValue(DISPLAY_SIZE_HEIGHT, i);
+    public void setUnitDetailSizeHeight(int i) {
+        store.setValue(UNIT_DETAIL_SIZE_HEIGHT, i);
     }
 
-    public void setDisplaySizeWidth(int i) {
-        store.setValue(DISPLAY_SIZE_WIDTH, i);
+    public void setUnitDetailSizeWidth(int i) {
+        store.setValue(UNIT_DETAIL_SIZE_WIDTH, i);
+    }
+
+    public void setUnitDetailState(String state) {
+        store.setValue(UNIT_DETAIL_STATE, state);
     }
 
     public void setGameSummaryBoardView(boolean state) {
@@ -1056,14 +1049,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setGetFocus(boolean state) {
         store.setValue(FOCUS, state);
-    }
-
-    public void setGameOptionsSizeHeight(int i){
-        store.setValue(GAME_OPTIONS_SIZE_HEIGHT,i);
-    }
-
-    public void setGameOptionsSizeWidth(int i){
-        store.setValue(GAME_OPTIONS_SIZE_WIDTH,i);
     }
 
     public void setFiringSolutions(boolean state){

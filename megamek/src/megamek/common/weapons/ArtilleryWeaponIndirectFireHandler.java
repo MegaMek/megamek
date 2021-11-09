@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -27,7 +28,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.HexTarget;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.INarcPod;
 import megamek.common.LosEffects;
 import megamek.common.Minefield;
@@ -39,6 +40,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
@@ -69,7 +71,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ArtilleryWeaponIndirectFireHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor)w.getEntity(g)).getNumberActiverTroopers();
@@ -82,9 +84,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override
-    public boolean cares(IGame.Phase phase) {
-        if ((phase == IGame.Phase.PHASE_OFFBOARD)
-                || (phase == IGame.Phase.PHASE_TARGETING)) {
+    public boolean cares(GamePhase phase) {
+        if ((phase == GamePhase.OFFBOARD)
+                || (phase == GamePhase.TARGETING)) {
             return true;
         }
         return false;
@@ -96,13 +98,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.Phase.PHASE_TARGETING) {
+        if (phase == GamePhase.TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -154,11 +156,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return true;
         }
         
-        //Trailers can share ammo, which means the entity carrying the ammo might not be
-        //the firing entity, so we get the specific ammo used from the ammo carrier
-        Entity ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
+        // Trailers can share ammo, which means the entity carrying the ammo might not be
+        // the firing entity, so we get the specific ammo used from the ammo carrier
+        // However, we only bother with this if the ammo carrier is actually different from the attacker
+        Entity ammoCarrier = ae; 
+        
+        if ((ae != null) && (aaa.getAmmoCarrier() != ae.getId())) {
+            ammoCarrier = aaa.getEntity(game, aaa.getAmmoCarrier());
+        }
+        
         Mounted ammoUsed = ammoCarrier.getEquipment(aaa.getAmmoId());
-        final AmmoType atype = (AmmoType) ammoUsed.getType();
+        final AmmoType atype = (ammoUsed != null) ? (AmmoType) ammoUsed.getType() : null;
         
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
@@ -319,6 +327,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             handleCounterBatteryObservation(aaa, targetPos, vPhaseReport);
         }
 
+        // if we have no ammo for this attack then don't bother doing anything else, but log the error
+        if (atype == null) {
+            MegaMek.getLogger().error("Artillery weapon fired with no ammo.\n\n" + Thread.currentThread().getStackTrace());
+            return false;
+        }
+        
         if (atype.getMunitionType() == AmmoType.M_FAE) {
             AreaEffectHelper.processFuelAirDamage(targetPos, 
                     atype, aaa.getEntity(game), vPhaseReport, server);
@@ -375,6 +389,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             server.deliverLIsmoke(targetPos, vPhaseReport);
             return false;
         }
+        
         int altitude = 0;
         if (isFlak) {
             altitude = target.getElevation();

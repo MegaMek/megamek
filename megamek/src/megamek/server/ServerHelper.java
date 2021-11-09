@@ -20,7 +20,6 @@ package megamek.server;
 
 import java.util.*;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
 
@@ -42,7 +41,7 @@ public class ServerHelper {
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
-    public static boolean infantryInOpen(Entity te, IHex te_hex, IGame game, 
+    public static boolean infantryInOpen(Entity te, IHex te_hex, Game game, 
             boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
         
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
@@ -69,7 +68,7 @@ public class ServerHelper {
     /**
      * Worker function that handles heat as applied to aerospace fighter
      */
-    public static void resolveAeroHeat(IGame game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
+    public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
             int radicalHSBonus, int hotDogMod, Server s) {
         Report r;
         
@@ -455,7 +454,7 @@ public class ServerHelper {
     /**
      * Loops through all active entities in the game and performs mine detection
      */
-    public static void detectMinefields(IGame game, Vector<Report> vPhaseReport, Server server) {
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, Server server) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
         
         // if the entity is on the board
@@ -475,7 +474,7 @@ public class ServerHelper {
      * Checks for minefields within the entity's active probe range.
      * @return True if any minefields have been detected.
      */
-    public static boolean detectMinefields(IGame game, Entity entity, Coords coords, 
+    public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
             Vector<Report> vPhaseReport, Server server) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
@@ -518,5 +517,18 @@ public class ServerHelper {
         }
         
         return minefieldDetected;
-    }  
+    }
+    
+    /**
+     * Loop through the game and clear 'blood stalker' flag for
+     * any entities that have the given unit as the blood stalker target.
+     */
+    public static void clearBloodStalkers(Game game, int stalkeeID, Server server) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getBloodStalkerTarget() == stalkeeID) {
+                entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
+                server.entityUpdate(entity.getId());
+            }
+        }
+    }
 }

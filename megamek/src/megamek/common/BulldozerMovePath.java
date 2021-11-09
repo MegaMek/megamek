@@ -40,7 +40,7 @@ public class BulldozerMovePath extends MovePath {
     List<Coords> coordsToLevel = new ArrayList<>();
     double maxPointBlankDamage = -1;
 
-    public BulldozerMovePath(IGame game, Entity entity) {
+    public BulldozerMovePath(Game game, Entity entity) {
         super(game, entity);
     }
 

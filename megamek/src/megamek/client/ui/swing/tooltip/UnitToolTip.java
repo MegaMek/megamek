@@ -25,8 +25,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
@@ -67,7 +67,7 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
-        IGame game = entity.getGame();
+        Game game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
 
         // Unit Chassis and Player
@@ -567,7 +567,7 @@ public final class UnitToolTip {
     /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, IPlayer localPlayer) {
         StringBuilder result = new StringBuilder();
-        IGame game = entity.getGame();
+        Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         
         // Coloring and italic to make these transient entries stand out
@@ -602,10 +602,10 @@ public final class UnitToolTip {
         // Actual Movement
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
-            if (!entity.isDone() && game.getPhase() == Phase.PHASE_MOVEMENT) {
+            if (!entity.isDone() && game.getPhase() == GamePhase.MOVEMENT) {
                 result.append(addToTT("NotYetMoved", BR));
-            } else if ((entity.isDone() && game.getPhase() == Phase.PHASE_MOVEMENT) 
-                    || game.getPhase() == Phase.PHASE_FIRING) {
+            } else if ((entity.isDone() && game.getPhase() == GamePhase.MOVEMENT)
+                    || game.getPhase() == GamePhase.FIRING) {
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
                     result.append(addToTT("NoMove", BR, tmm));
@@ -661,9 +661,8 @@ public final class UnitToolTip {
             result.append("</FONT>");
         }
 
-        if (entity.isHiddenActivating()) {
-            result.append(addToTT("HiddenActivating", BR,
-                    IGame.Phase.getDisplayableName(entity.getHiddenActivationPhase())));
+        if (!entity.getHiddenActivationPhase().isUnknown()) {
+            result.append(addToTT("HiddenActivating", BR, entity.getHiddenActivationPhase().toString()));
         } else if (entity.isHidden()) {
             result.append(addToTT("Hidden", BR));
         }
@@ -901,12 +900,12 @@ public final class UnitToolTip {
     }
     
     /** Returns true when Hot-Loading LRMs is on. */
-    static boolean isHotLoadActive(IGame game) {
+    static boolean isHotLoadActive(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
     }
     
     /** Returns true when Hot-Loading LRMs is on. */
-    static boolean isRapidFireActive(IGame game) {
+    static boolean isRapidFireActive(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
     }
 

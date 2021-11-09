@@ -17,12 +17,13 @@ import java.util.Vector;
 
 import megamek.MegaMek;
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.server.Server;
 
 /**
@@ -41,7 +42,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      * @param g
      * @param s
      */
-    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }
@@ -116,7 +117,7 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         // just launch the tele-missile
         server.deployTeleMissile(ae, wtype, getBayAmmoType(), ae.getEquipmentNum(weapon),
                 getCapMisMod(), calcBayDamageAndHeat(), missileArmor, vPhaseReport);

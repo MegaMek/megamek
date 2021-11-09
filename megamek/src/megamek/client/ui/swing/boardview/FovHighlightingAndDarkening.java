@@ -1,34 +1,21 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.LosEffects;
-import megamek.common.MoveStep;
-import megamek.common.IGame.Phase;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * A helper class for highlighting and darkening hexes.
@@ -117,7 +104,7 @@ class FovHighlightingAndDarkening {
         boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
 
         if ((darken || highlight)
-                && (this.boardView1.game.getPhase() == Phase.PHASE_MOVEMENT)) {
+                && (this.boardView1.game.getPhase() == GamePhase.MOVEMENT)) {
 
             final int pad = 0;
             final int lw = 7;
@@ -130,15 +117,10 @@ class FovHighlightingAndDarkening {
             boolean inclusiveSensorsOn = boardView1.game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
 
-            boolean targetIlluminated = false;
-            for (Entity target : this.boardView1.game.getEntitiesVector(c)){
-                targetIlluminated |= target.isIlluminated();
-            }
-            // Target may be in an illuminated hex
-            if (!targetIlluminated) {
-                int lightLvl = boardView1.game.isPositionIlluminated(c);
-                targetIlluminated = lightLvl != Game.ILLUMINATED_NONE;
-            }
+            // Determine if any of the entities at the coordinates are illuminated, or if the
+            // coordinates are illuminated themselves
+            boolean targetIlluminated = boardView1.game.getEntitiesVector(c).stream().anyMatch(Entity::isIlluminated)
+                    || !IlluminationLevel.determineIlluminationLevel(boardView1.game, c).isNone();
 
             final int max_dist;
             // We don't want to have to compute a LoSEffects yet, as that

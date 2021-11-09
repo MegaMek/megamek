@@ -24,7 +24,7 @@ import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -47,7 +47,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * @param g
      */
     public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
         // payload = waa.getBombPayload();

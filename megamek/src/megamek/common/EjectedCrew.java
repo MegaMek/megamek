@@ -61,7 +61,7 @@ public class EjectedCrew extends Infantry {
         }
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
-        IGame tmpGame = originalRide.getGame();
+        Game tmpGame = originalRide.getGame();
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
@@ -109,7 +109,7 @@ public class EjectedCrew extends Infantry {
         initializeInternal(Integer.MAX_VALUE, Infantry.LOC_INFANTRY);
     }
     
-    public EjectedCrew(Crew crew, IPlayer owner, IGame game) {
+    public EjectedCrew(Crew crew, IPlayer owner, Game game) {
         super();
         setCrew(crew);
         setChassis(VEE_EJECT_NAME);
@@ -128,7 +128,7 @@ public class EjectedCrew extends Infantry {
             }
             setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
         }
-        IGame tmpGame = game;
+        Game tmpGame = game;
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {

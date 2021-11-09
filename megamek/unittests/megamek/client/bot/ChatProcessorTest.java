@@ -23,7 +23,7 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.FakeLogger;
@@ -53,7 +53,7 @@ import org.mockito.stubbing.Answer;
 public class ChatProcessorTest {
 
     private static BotClient mockBotHal;
-    private static final IGame MOCK_GAME = Mockito.mock(IGame.class);
+    private static final Game MOCK_GAME = Mockito.mock(Game.class);
     private static final LogLevel LOG_LEVEL = LogLevel.ERROR;
 
     private static IPlayer mockBotPlayerHal;

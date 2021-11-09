@@ -30,7 +30,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -162,9 +162,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * legality.
      */
     public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
-        IGame game;
+        Game game;
 
-        public MovePathLegalityFilter(IGame game) {
+        public MovePathLegalityFilter(Game game) {
             this.game = game;
         }
 
@@ -338,7 +338,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
                           AdjacencyMap<MovePath> edgeAdjacencyMap,
                           Comparator<MovePath> comparator,
-                          IGame game) {
+                          Game game) {
         super(new MovePathDestinationMap(),
               edgeRelaxer,
               edgeAdjacencyMap,

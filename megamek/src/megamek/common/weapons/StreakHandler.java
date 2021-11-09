@@ -20,7 +20,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -45,7 +45,7 @@ public class StreakHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public StreakHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

@@ -2142,8 +2142,6 @@ Hellhound (Conjurer) 5:SKIRMISHER
 Hellion A:MISSILE_BOAT
 Hellion B:STRIKER
 Hellion C:STRIKER
-Hellion D:STRIKER
-Hellion E:STRIKER
 Hellion F:STRIKER
 Hellion G:STRIKER
 Hellion Prime:STRIKER
@@ -3827,7 +3825,7 @@ Ravager Assault Battle Armor (Standard):JUGGERNAUT
 Raven II RVN-5X:SCOUT
 Raven RVN-1X:SCOUT
 Raven RVN-2X:STRIKER
-Raven RVN-3L:STRIKER
+Raven RVN-3L:SCOUT
 Raven RVN-3M:MISSILE_BOAT
 Raven RVN-3X:SCOUT
 Raven RVN-4L:SCOUT
@@ -4216,8 +4214,6 @@ Shadow Cat II 4:SNIPER
 Shadow Cat J:STRIKER
 Shadow Cat Prime:STRIKER
 Shadow Hawk C:SKIRMISHER
-Shadow Hawk IIC (Standard):STRIKER
-Shadow Hawk IIC 2:STRIKER
 Shadow Hawk IIC 3:STRIKER
 Shadow Hawk IIC 4:STRIKER
 Shadow Hawk IIC 5:SCOUT
@@ -5874,7 +5870,58 @@ Kingfisher G:JUGGERNAUT
 Kingfisher I:BRAWLER
 Kingfisher X:BRAWLER
 #ilClan Rec Guide 19
+Mercury MCY-105:SCOUT
+Spider SDR-9M:SCOUT
+Cougar T:BRAWLER
+Cougar E:BRAWLER
+Cougar F:BRAWLER
+Cougar G:SNIPER
+Cougar H:BRAWLER
+Cougar I:STRIKER
+Rime Otter Prime:BRAWLER
+Rime Otter A:SKIRMISHER
+Rime Otter B:SKIRMISHER
+Rime Otter C:SKIRMISHER
+Rime Otter D:SCOUT
+Scorpion SCP-1BR:SKIRMISHER
+Scorpion SCP-1O:SKIRMISHER
+Scorpion SCP-1TB:MISSILE_BOAT
+Scorpion SCP-2N:SKIRMISHER
+Scorpion C:SKIRMISHER
+Orion C 2:BRAWLER
+Iron Cheetah Prime:SNIPER
+Iron Cheetah A:JUGGERNAUT
+Iron Cheetah B:JUGGERNAUT
+Iron Cheetah C:BRAWLER
+Iron Cheetah D:BRAWLER
+Iron Cheetah L:BRAWLER
 #ilClan Rec Guide 20
+Hellion T:STRIKER
+Hellion D:STRIKER
+Hellion E:STRIKER
+Hellion F:STRIKER
+Hellion P:STRIKER
+Shadow Hawk IIC (Standard):STRIKER
+Shadow Hawk IIC 2:STRIKER
+Shadow Hawk IIC 10:STRIKER
+Shadow Hawk IIC 11:STRIKER
+Longbow LGB-0H:SNIPER
+Longbow LGB-0W2:MISSILE_BOAT
+Longbow LGB-8C:MISSILE_BOAT
+Longbow LGB-10C:MISSILE_BOAT
+Longbow LGB-10K:JUGGERNAUT
+Longbow LGB-14Q:MISSILE_BOAT
+Longbow LGB-14V:BRAWLER
+Masakari (Warhawk) T:BRAWLER
+Masakari (Warhawk) F:SNIPER
+Masakari (Warhawk) G:JUGGERNAUT
+Masakari (Warhawk) I:SNIPER
+Masakari (Warhawk) L:BRAWLER
+Mastodon Prime:SNIPER
+Mastodon A:SNIPER
+Mastodon B:JUGGERNAUT
+Mastodon C:JUGGERNAUT
+Mastodon D:MISSILE_BOAT
 #ilClan Rec Guide 21
 #ilClan Rec Guide 22
 #ilClan Rec Guide 23

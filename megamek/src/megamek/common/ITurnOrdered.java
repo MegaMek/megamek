@@ -32,13 +32,13 @@ public interface ITurnOrdered extends Serializable {
      * @return the <code>int</code> number of "normal" turns this item should
      *         take in a phase.
      */
-    int getNormalTurns(IGame game);
+    int getNormalTurns(Game game);
 
     int getOtherTurns();
 
     int getEvenTurns();
 
-    int getMultiTurns(IGame game);
+    int getMultiTurns(Game game);
 
     int getSpaceStationTurns();
 

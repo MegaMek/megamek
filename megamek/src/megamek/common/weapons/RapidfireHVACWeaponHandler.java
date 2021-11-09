@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
@@ -26,6 +26,7 @@ import megamek.common.Report;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -44,7 +45,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
      * @param s
      */
     public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -52,11 +53,11 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
      * (non-Javadoc)
      * 
      * @see
-     * megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
+     * megamek.common.weapons.WeaponHandler#handle(megamek.common.Game.Phase,
      * java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {

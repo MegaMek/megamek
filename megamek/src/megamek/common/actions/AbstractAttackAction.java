@@ -14,16 +14,9 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 
 import java.util.Enumeration;
@@ -66,7 +59,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         this.targetId = targetId;
     }
 
-    public @Nullable Targetable getTarget(final IGame game) {
+    public @Nullable Targetable getTarget(final Game game) {
         return game.getTarget(getTargetType(), getTargetId());
     }
 
@@ -74,7 +67,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets the entity associated with this attack action, using the passed-in game object.
      * Returns the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(IGame g) {
+    public Entity getEntity(Game g) {
         return getEntity(g, getEntityId());
     }
     
@@ -82,7 +75,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets an entity with the given ID, using the passed-in game object.
      * Returns the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(IGame g, int entityID) {
+    public Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
         // if we have an artyattack, we might need to get an out-of-game entity
         // if it died or fled
@@ -96,7 +89,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * used by the toHit of derived classes atype may be null if not using an
      * ammo based weapon
      */
-    public static ToHitData nightModifiers(IGame game, Targetable target,
+    public static ToHitData nightModifiers(Game game, Targetable target,
             AmmoType atype, Entity attacker, boolean isWeapon) {
         ToHitData toHit = null;
 
@@ -107,13 +100,14 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         toHit = new ToHitData();
 
         int lightCond = game.getPlanetaryConditions().getLight();
-        if(lightCond == PlanetaryConditions.L_DAY) {
+        if (lightCond == PlanetaryConditions.L_DAY) {
             //not nighttime so just return
             return toHit;
         }
 
         // The base night penalty
-        int hexIllumLvl = game.isPositionIlluminated(target.getPosition());
+        final IlluminationLevel hexIllumLvl = IlluminationLevel.determineIlluminationLevel(game,
+                target.getPosition());
         int night_modifier = 0;
         night_modifier = game.getPlanetaryConditions().getLightHitPenalty(
                 isWeapon);
@@ -152,27 +146,16 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                         "target illuminated by searchlight");
                 night_modifier = night_modifier - searchlightMod;
             }
-        }
-        /*
-        // Ignored with EI system & implants
-        else if (attacker.hasActiveEiCockpit()) {
-            toHit.addModifier(-night_modifier, "EI system");
-            night_modifier = 0;
-        }
-        */
-        // So do flares
-        else if (hexIllumLvl == Game.ILLUMINATED_FLARE) {
+        } else if (hexIllumLvl.isFlare()) {
+            // Flares reduce the night modifier to zero
             toHit.addModifier(-night_modifier, "target illuminated by flare");
             night_modifier = 0;
-        }
-        else if (hexIllumLvl == Game.ILLUMINATED_FIRE) {
+        } else if (hexIllumLvl.isFire()) {
             int fireMod = Math.min(2, night_modifier);
             toHit.addModifier(-fireMod, "target illuminated by fire");
             night_modifier -= fireMod;
-        } 
-        else if (hexIllumLvl == Game.ILLUMINATED_LIGHT) {
-            toHit.addModifier(-searchlightMod,
-                    "target illuminated by searchlight");
+        } else if (hexIllumLvl.isSearchlight()) {
+            toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
         }
         // Certain ammunitions reduce the penalty

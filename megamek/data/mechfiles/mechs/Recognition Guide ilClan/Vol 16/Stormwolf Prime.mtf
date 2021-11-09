@@ -70,28 +70,28 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
+CLERMediumLaser (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
+CLRotaryAC5 Ammo (OMNIPOD)
 CLMASC
 CLMASC
-CLLightTAG
-CLCASEII
+CLLightTAG (OMNIPOD)
+CLCASEII (OMNIPOD)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
+CLRotaryAC5 (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -149,4 +149,12 @@ Clan Reflective
 -Empty-
 -Empty-
 
+manufacturer:Manufacturing Plant SFF-IT5, Kallon Weapon Industries
+primaryfactory:CSF Kraken Mobile Production Facility, Thermopolis
+systemmanufacturer:CHASSIS:Mynx Type Medium Endo-Steel
+systemmanufacturer:ENGINE:300 Extralight
+systemmanufacturer:ARMOR:Gamma Special Reflective
+systemmanufacturer:JUMPJET:Grandthrust Mk 3
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:SyncTracker (39-42071)
 

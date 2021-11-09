@@ -1298,7 +1298,7 @@ public class LobbyActions {
         return !forces.stream().anyMatch(f -> game().getForces().getOwner(f).isEnemyOf(owner));
     }
     
-    private IGame game() {
+    private Game game() {
         return lobby.game();
     }
     

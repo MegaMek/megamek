@@ -20,7 +20,7 @@ import java.util.List;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
@@ -177,7 +177,7 @@ public class InfantryFireControl extends FireControl {
      */
     @Override
     protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter, @Nullable EntityState shooterState,
-            final Targetable target, @Nullable EntityState targetState, int maxHeat, final IGame game) {
+            final Targetable target, @Nullable EntityState targetState, int maxHeat, final Game game) {
         FiringPlan bestPlan = new FiringPlan(target);
         
         // Shooting isn't possible if one of us isn't on the board.
@@ -256,7 +256,7 @@ public class InfantryFireControl extends FireControl {
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     private FiringPlan guessFiringPlan(final Entity shooter, @Nullable EntityState shooterState,
-            final Targetable target, @Nullable EntityState targetState, final IGame game, InfantryFiringPlanType firingPlanType) {
+            final Targetable target, @Nullable EntityState targetState, final Game game, InfantryFiringPlanType firingPlanType) {
         
         final FiringPlan myPlan = new FiringPlan(target);
 

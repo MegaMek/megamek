@@ -24,8 +24,8 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.IGame.Phase;
 import megamek.common.actions.*;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -79,6 +79,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         FIRE_CLEAR_WEAPON("fireClearWeaponJam"),
         FIRE_CALLED("fireCalled"),
         FIRE_CANCEL("fireCancel"),
+        FIRE_ACTIVATE_SPA("fireActivateSPA"),
         FIRE_MORE("fireMore");
 
         String cmd;
@@ -784,7 +785,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
@@ -877,9 +878,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             tt = null;
         }
         // end my turn, then.
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == IGame.Phase.PHASE_FIRING)
+        if ((game.getPhase() == GamePhase.FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setUnitDisplayVisible(false);
@@ -1308,6 +1309,49 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
     }
+    
+    /**
+     * This pops up a menu allowing the user to choose one of several 
+     * SPAs, and then performs the appropriate steps.
+     */
+    private void doActivateSpecialAbility() {
+        Map<String, String> skillNames = new HashMap<>();
+        
+        if (canActivateBloodStalker() && (target != null)) {                
+            skillNames.put("Blood Stalker", OptionsConstants.GUNNERY_BLOOD_STALKER);
+        }
+        
+        String targetString = (target != null) ? 
+                String.format("\nTarget: %s", target.getDisplayName()) : "";
+        
+        String input = (String) JOptionPane.showInputDialog(clientgui, 
+                String.format("Pick a Special Pilot Ability to activate.%s", targetString), 
+                "Activate Special Pilot Ability", 
+                JOptionPane.QUESTION_MESSAGE, null, skillNames.keySet().toArray(), null);
+        
+        // unsafe, but since we're generating it right here, it should be fine.
+        switch (skillNames.get(input)) {
+        case OptionsConstants.GUNNERY_BLOOD_STALKER:
+            // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
+            ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getTargetId());
+            attacks.add(0, bloodStalkerAction);
+            ce().setBloodStalkerTarget(target.getTargetId());
+            break;
+        }
+        
+        updateActivateSPA();
+    }
+    
+    /**
+     * Worker function that determines if we can activate the "blood stalker" ability
+     */
+    private boolean canActivateBloodStalker() {
+        // can be activated if the entity can do it and haven't done it already 
+        // and the target is something that can be blood-stalked
+        return ce().canActivateBloodStalker() &&
+                (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                attacks.stream().noneMatch(item -> item instanceof ActivateBloodStalkerAction);
+    }
 
     /**
      * fire searchlight
@@ -1347,7 +1391,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
     
     private void updateStrafingTargets() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         final Mounted m = ce().getEquipment(weaponId);
         ToHitData toHit;
@@ -1439,7 +1483,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * queue.
      */
     void fire() {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         // get the selected weaponnum
         final int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
@@ -1820,7 +1864,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      */
     public void updateTarget() {
         setFireEnabled(false);
-        IGame game = clientgui.getClient().getGame();
+        Game game = clientgui.getClient().getGame();
         // allow spotting
         if ((ce() != null) && !ce().isSpotting() && ce().canSpot() && (target != null)
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
@@ -1926,6 +1970,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } 
 
         updateSearchlight();
+        updateActivateSPA();
 
         // Hidden units can only spot
         if ((ce() != null) && ce().isHidden()) {
@@ -2111,16 +2156,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
-        if (clientgui.getClient().getGame().isPhaseSimultaneous()
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
                 && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING) {
+        if (clientgui.getClient().getGame().getPhase() == GamePhase.FIRING) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
@@ -2147,7 +2192,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // In case of a /reset command, ensure the state gets reset
         if (clientgui.getClient().getGame().getPhase() 
-                == IGame.Phase.PHASE_LOUNGE) {
+                == GamePhase.LOUNGE) {
             endMyTurn();
         }
 
@@ -2158,12 +2203,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         if (clientgui.getClient().isMyTurn()
                 && (clientgui.getClient().getGame().getPhase() 
-                        != IGame.Phase.PHASE_FIRING)) {
+                        != GamePhase.FIRING)) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
         if (clientgui.getClient().getGame().getPhase() 
-                == IGame.Phase.PHASE_FIRING) {
+                == GamePhase.FIRING) {
             setStatusBarText(Messages
                     .getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
         }
@@ -2220,6 +2265,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             doClearWeaponJam();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_STRAFE.getCmd())) {
             doStrafe();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ACTIVATE_SPA.getCmd())) {
+            doActivateSpecialAbility();
         }
     }
 
@@ -2276,6 +2323,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else {
             setStrafeEnabled(false);
         }
+    }
+    
+    private void updateActivateSPA() {
+        setActivateSPAEnabled(canActivateBloodStalker());
     }
 
     protected void setFireEnabled(boolean enabled) {
@@ -2358,6 +2409,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_NEXT.getCmd(), enabled);
     }
+    
+    protected void setActivateSPAEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_ACTIVATE_SPA).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ACTIVATE_SPA.getCmd(), enabled);
+    }
 
     @Override
     public void clear() {
@@ -2371,6 +2427,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
             target(null);
+        }
+        // if we're clearing a "blood stalker" activation from the queue, 
+        // clear the local entity's blood stalker 
+        if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
+            ce().setBloodStalkerTarget(Entity.NONE);
         }
         clearAttacks();        
         clientgui.getBoardView().select(null);
@@ -2430,7 +2491,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         if (event.getSource().equals(clientgui.mechD.wPan.weaponList)
-                && (clientgui.getClient().getGame().getPhase() == Phase.PHASE_FIRING)) {
+                && (clientgui.getClient().getGame().getPhase() == GamePhase.FIRING)) {
             // If we aren't in the firing phase, there's no guarantee that cen
             // is set properly, hence we can't update
 
@@ -2454,7 +2515,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-        final IGame game = clientgui.getClient().getGame();
+        final Game game = clientgui.getClient().getGame();
         boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
@@ -2621,7 +2682,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the movement phase
-        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_FIRING)) return;
+        if (!(clientgui.getClient().getGame().getPhase() == GamePhase.FIRING)) return;
         
         clientgui.bv.fieldofFireUnit = unit;
         clientgui.bv.fieldofFireRanges = ranges;

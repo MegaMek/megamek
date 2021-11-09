@@ -161,7 +161,7 @@ public class Sensor implements Serializable {
         }
     }
 
-    public int adjustRange(int range, IGame game, LosEffects los) {
+    public int adjustRange(int range, Game game, LosEffects los) {
 
         if (((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
                 || (type == TYPE_VEE_MAGSCAN) || (type == TYPE_MEK_MAGSCAN))
@@ -444,7 +444,7 @@ public class Sensor implements Serializable {
         }
     }
 
-    public int entityAdjustments(int range, Entity target, IGame game) {
+    public int entityAdjustments(int range, Entity target, Game game) {
 
         // you need to have moved to be detected by sesmic and be on the ground
         if (((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC))

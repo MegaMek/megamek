@@ -39,7 +39,7 @@ import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
@@ -71,6 +71,7 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
@@ -268,16 +269,16 @@ public class FireControl {
     }
 
     /**
-     * Returns the movement modifier calculated by {@link Compute#getAttackerMovementModifier(IGame, int,
+     * Returns the movement modifier calculated by {@link Compute#getAttackerMovementModifier(Game, int,
      * EntityMovementType)}.
      *
-     * @param game            The {@link IGame} being played.
+     * @param game            The {@link Game} being played.
      * @param shooterId       The ID of the unit doing the shooting.
      * @param shooterMoveType The {@link EntityMovementType} of the unit doing the shooting.
      * @return The attacker movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
-    protected ToHitData getAttackerMovementModifier(final IGame game,
+    protected ToHitData getAttackerMovementModifier(final Game game,
                                                     final int shooterId,
                                                     final EntityMovementType shooterMoveType) {
         return Compute.getAttackerMovementModifier(game, shooterId, shooterMoveType);
@@ -299,19 +300,19 @@ public class FireControl {
 
     /**
      * Returns the movement modifier calculated by {@link Compute#getTargetMovementModifier(int, boolean, boolean,
-     * IGame)}
+     * Game)}
      *
      * @param hexesMoved The number of hexes the target unit moved.
      * @param jumping    Set TRUE if the target jumped.
      * @param vtol       Set TRUE if the target is a {@link VTOL}.
-     * @param game       The {@link IGame} being played.
+     * @param game       The {@link Game} being played.
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
     protected ToHitData getTargetMovementModifier(final int hexesMoved,
                                                   final boolean jumping,
                                                   final boolean vtol,
-                                                  final IGame game) {
+                                                  final Game game) {
         return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
     }
 
@@ -330,7 +331,7 @@ public class FireControl {
                                                    final Targetable target,
                                                    @Nullable EntityState targetState,
                                                    final int distance,
-                                                   final IGame game) {
+                                                   final Game game) {
 
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
@@ -475,7 +476,7 @@ public class FireControl {
                                          final Targetable target,
                                          @Nullable EntityState targetState,
                                          final PhysicalAttackType attackType,
-                                         final IGame game) {
+                                         final Game game) {
 
         // todo weapons, frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
@@ -635,9 +636,9 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link LosEffects#calculateLOS(IGame, Entity, Targetable, Coords, Coords, boolean)}.
+     * Returns the value of {@link LosEffects#calculateLOS(Game, Entity, Targetable, Coords, Coords, boolean)}.
      *
-     * @param game            The {@link IGame} being played.
+     * @param game            The {@link Game} being played.
      * @param shooter         The shooting unit.
      * @param target          The unit being shot at as a {@link Targetable} object.
      * @param shooterPosition The current {@link Coords} of the shooter.
@@ -646,7 +647,7 @@ public class FireControl {
      * @return The resulting {@link LosEffects}.
      */
     @StaticWrapper
-    LosEffects getLosEffects(final IGame game, final @Nullable Entity shooter,
+    LosEffects getLosEffects(final Game game, final @Nullable Entity shooter,
                              final @Nullable Targetable target,
                              final @Nullable Coords shooterPosition,
                              final @Nullable Coords targetPosition, final boolean spotting) {
@@ -654,7 +655,7 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#getSwarmMekBaseToHit(Entity, Entity, IGame)}.
+     * Returns the value of {@link Compute#getSwarmMekBaseToHit(Entity, Entity, Game)}.
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
@@ -664,12 +665,12 @@ public class FireControl {
     @StaticWrapper
     private ToHitData getSwarmMekBaseToHit(final Entity attacker,
                                            final Entity defender,
-                                           final IGame game) {
+                                           final Game game) {
         return Compute.getSwarmMekBaseToHit(attacker, defender, game);
     }
 
     /**
-     * Returns the value of {@link Compute#getLegAttackBaseToHit(Entity, Entity, IGame)}.
+     * Returns the value of {@link Compute#getLegAttackBaseToHit(Entity, Entity, Game)}.
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
@@ -679,7 +680,7 @@ public class FireControl {
     @StaticWrapper
     private ToHitData getLegAttackBaseToHit(final Entity attacker,
                                             final Entity defender,
-                                            final IGame game) {
+                                            final Game game) {
         return Compute.getLegAttackBaseToHit(attacker, defender, game);
     }
 
@@ -741,7 +742,7 @@ public class FireControl {
      * @param weapon
      *            The weapon being fired as a {@link Mounted} object.
      * @param game
-     *            The {@link IGame being played.}
+     *            The {@link Game being played.}
      * @return The to hit modifiers for the given weapon firing at the given
      *         target as a {@link ToHitData} object.
      */
@@ -750,7 +751,7 @@ public class FireControl {
                                           final Targetable target,
                                           @Nullable EntityState targetState,
                                           final Mounted weapon,
-                                          final IGame game) {
+                                          final Game game) {
 
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
@@ -1025,7 +1026,7 @@ public class FireControl {
      *            The weapon being fired as a {@link megamek.common.Mounted}
      *            object.
      * @param game
-     *            The {@link megamek.common.IGame being played.}
+     *            The {@link megamek.common.Game being played.}
      * @param assumeUnderFlightPlan
      *            Set TRUE to assume that the target falls under the given
      *            flight path.
@@ -1038,7 +1039,7 @@ public class FireControl {
                                                   @Nullable EntityState targetState,
                                                   final MovePath flightPath,
                                                   final Mounted weapon,
-                                                  final IGame game,
+                                                  final Game game,
                                                   final boolean assumeUnderFlightPlan) {
 
         if (null == targetState) {
@@ -1118,7 +1119,7 @@ public class FireControl {
     private String checkGuess(final Entity shooter,
                               final Targetable target,
                               final Mounted weapon,
-                              final IGame game) {
+                              final Game game) {
 
         // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
         if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
@@ -1170,7 +1171,7 @@ public class FireControl {
     private String checkGuessPhysical(final Entity shooter,
                                       final Targetable target,
                                       final PhysicalAttackType attackType,
-                                      final IGame game) {
+                                      final Game game) {
 
         // This really should only be done for debugging purposes. Regular play
         // should avoid the overhead.
@@ -1215,7 +1216,7 @@ public class FireControl {
      * @return A description of the differences or NULL if there are none.
      */
     String checkAllGuesses(final Entity shooter,
-                           final IGame game) {
+                           final Game game) {
 
         // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
         if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
@@ -1507,7 +1508,7 @@ public class FireControl {
                                        final Targetable target,
                                        final EntityState targetState,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, shooterState, target, targetState,
                 weapon, game, guessToHit, owner);
@@ -1532,7 +1533,7 @@ public class FireControl {
                                        final Targetable target,
                                        final EntityState targetState,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean assumeUnderFlightPath,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
@@ -1559,7 +1560,7 @@ public class FireControl {
                                                final Targetable target,
                                                @SuppressWarnings("SameParameterValue") final EntityState targetState,
                                                final Mounted weapon,
-                                               final IGame game,
+                                               final Game game,
                                                final boolean assumeUnderFlightPath,
                                                final boolean guessToHit,
                                                final int[] bombPayload) {
@@ -1580,7 +1581,7 @@ public class FireControl {
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                        final Targetable target,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, target, weapon, game, guessToHit, owner);
     }
@@ -1606,7 +1607,7 @@ public class FireControl {
                                    @Nullable EntityState shooterState,
                                    final Targetable target,
                                    @Nullable EntityState targetState,
-                                   final IGame game) {
+                                   final Game game) {
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
         }
@@ -1681,7 +1682,7 @@ public class FireControl {
                                         final Targetable target,
                                         @Nullable EntityState targetState,
                                         final MovePath flightPath,
-                                        final IGame game,
+                                        final Game game,
                                         final boolean assumeUnderFlightPath) {
         if (null == targetState) {
             targetState = new EntityState(target);
@@ -1770,7 +1771,7 @@ public class FireControl {
     private FiringPlan getDiveBombPlan(final Entity shooter,
                                       final MovePath flighPath,
                                       final Targetable target,
-                                       final IGame game,
+                                       final Game game,
                                       final boolean passedOverTarget,
                                       final boolean guess) {
         final FiringPlan diveBombPlan = new FiringPlan(target);
@@ -1827,7 +1828,7 @@ public class FireControl {
     FiringPlan getFullFiringPlan(final Entity shooter,
                                  final Targetable target,
                                  final Map<Mounted, Double> ammoConservation,
-                                 final IGame game) {
+                                 final Game game) {
         final NumberFormat DECF = new DecimalFormat("0.000");
 
         final FiringPlan myPlan = new FiringPlan(target);
@@ -2066,7 +2067,7 @@ public class FireControl {
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final Targetable target,
-                                 final IGame game,
+                                 final Game game,
                                  final Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
@@ -2125,7 +2126,7 @@ public class FireControl {
                                                     final Targetable target,
                                                     @Nullable final EntityState targetState,
                                                     int maxHeat,
-                                                    final IGame game) {
+                                                    final Game game) {
 
         // can't have less than zero heat
         if (0 > maxHeat) {
@@ -2343,7 +2344,7 @@ public class FireControl {
      * @return A list of potential targets.
      */
     protected List<Targetable> getTargetableEnemyEntities(final Entity shooter,
-                                                        final IGame game,
+                                                        final Game game,
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
@@ -2376,7 +2377,7 @@ public class FireControl {
      * @param game    The game being played.
      * @return A list of potential targets.
      */
-    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final IGame game, final FireControlState fireControlState) {
+    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final Game game, final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
@@ -2408,7 +2409,7 @@ public class FireControl {
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final IHonorUtil honorUtil,
-                                 final IGame game,
+                                 final Game game,
                                  final Map<Mounted, Double> ammoConservation) {
         FiringPlan bestPlan = null;
 
@@ -3265,7 +3266,7 @@ public class FireControl {
             
             for (Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
                 // if it's already lit up, don't count it 
-                if (shooter.getGame().isPositionIlluminated(intervening) > 0) {
+                if (!IlluminationLevel.determineIlluminationLevel(shooter.getGame(), intervening).isNone()) {
                     continue;
                 }
                 

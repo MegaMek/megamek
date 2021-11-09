@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -42,10 +42,10 @@ public abstract class AmmoWeapon extends Weapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#fire(megamek.common.actions.WeaponAttackAction
-     * , megamek.common.IGame)
+     * , megamek.common.Game)
      */
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
@@ -56,7 +56,7 @@ public abstract class AmmoWeapon extends Weapon {
     /**
      * 
      */
-    protected void checkAmmo(WeaponAttackAction waa, IGame g) {
+    protected void checkAmmo(WeaponAttackAction waa, Game g) {
         Entity ae = waa.getEntity(g);
         Mounted weapon = ae.getEquipment(waa.getWeaponId());
         Mounted ammo = weapon.getLinked();
@@ -71,11 +71,11 @@ public abstract class AmmoWeapon extends Weapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new AmmoWeaponHandler(toHit, waa, game, server);
     }
 }

@@ -3,31 +3,32 @@ Orion
 ON3-M
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3083
-Rules Level:3
+techbase:Inner Sphere
+era:3083
+source:TRO Prototypes - Early Republic
+rules level:3
 
-Mass:75
-Engine:300 XL Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:75
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:35
-HD Armor:9
-LL Armor:31
-RL Armor:31
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:35
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:5
 Extended LRM 15, Left Arm
@@ -148,4 +149,15 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Orion was built in 2456 as the first true heavy BattleMech. Originally designed for the Terran Hegemony to maintain its dominance and built on Hesperus II.
+capabilities:The Orion is a dependable workhorse design that can handle almost any combat role, thanks to its mix of long and short-range weaponry and its respectable armoring.
+deployment:This version introduced in 3083 was based on the earlier ON3-MX, although it addresses some of the shortcomings of that 'Mech and shares many of the same features as the ON1-M. Providing a more balanced weapon suite it still carries an Extended LRM-15 with four tons of ammo and an ER medium laser in each arm but instead uses a Grand Slam Gauss Rifle with two tons of ammo in the right torso. It also uses CASE II to protect the ammunition and has a head-mounted TAG system to call in artillery. Initial feedback and advanced orders convinced Kali Yama to switch most of their Orion production lines over to making the ON3-M in 3086, but were soon set back a few years later when pressure from the Republic of the Sphere caused the Federated Suns to cancel their order. The company has seen sold the 'Mech at below-market prices and suffered financial hardship.
+history:After the K model was introduced in 2525 the 'Mech first saw combat during the Reunification War and continued to serve the Star League and its Member States for the next few centuries. Perhaps its most famous role was as the personal 'Mech of Aleksandr Kerensky during the Amaris Civil War, and it was while piloting his Orion that the general kicked down the palace doors to take the Usurper prisoner. The inspiration for the Orion's beginnings is said to be a direct result of Operation Prometheus when the Terran Hegemony realized they would no longer be the sole user of BattleMechs. Work began shortly after with the HAF requesting machines suited for various combat roles and the Hegemony's military leadership were soon accepting proposals for competing designs almost simultaneously. With other designs already underway, it would be General Mechanics winning a contract for a proposal that would ultimately become the Hegemony's premier heavy attack BattleMech: the Orion. Ironically, GM had actually unveiled a prototype as early as 2453, but the HAF, while interested at the time, were dismissive as it did not meet the High Command's requirements for speed and armor, and its armament was considered too lackluster for a front-line war machine. GM had returned to the drawing board in the following years, further refining their design by settling for a smaller, less powerful engine to free up weight for additional weaponry. It would not be until GM's third prototype - the ON1-H which mounted a newly developed class-10 heavy autocannon, that the HAF would finally approve the design one year following Operation Prometheus in 2456. Following the successful introduction of the prototype, the HAF immediately pushed General Mechanics to produce as many Orions as possible. The armed forces of the Hegemony quickly assigned them to BattleMech regiments in whole companies at a time, adding to their growing ranks of Mackies, Banshees, and later Archers and Griffins. After the fall of the Star League, Kali Yama Weapons Industries took over production of the Orion, building new models from their factories on Kalidasa. This left the Free Worlds League as the only producer of new Orions during the Succession Wars, although the other Successor States were capable of building spare parts to repair their 'Mechs, and meant the Free Worlds League Military was the largest Orion user. When Kali Yama merged to create the Kali Yama - Alphard Trading Corporation Orion production was started up on Kendall as well. The League's dominance in new Orions began to change during the Clan Invasion when the Successor States met on Outreach and agreed to work together to combat the Clans. Kali Yama/ATC was among those companies which agreed to sell war materiel, including the Orion, to the other States undergoing Clan attacks. In spite of the design's age it still finds itself utilized extensively on the modern battlefield and new variants continue to be produced
+manufacturer:KaliYama/Alphard Trading Corp.
+primaryfactory:Kendall
+systemmanufacturer:CHASSIS:Kali Yama Chassis
+systemmanufacturer:ENGINE:Hermes 300 XL
+systemmanufacturer:ARMOR:Valiant Lamellor with CASE II
+systemmanufacturer:COMMUNICATIONS:Irian Orator-5K
+systemmanufacturer:TARGETING:Wasat Aggressor Type 5 with TAG
 

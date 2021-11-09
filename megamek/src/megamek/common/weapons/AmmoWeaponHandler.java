@@ -22,7 +22,7 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -47,7 +47,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_BALLISTIC;

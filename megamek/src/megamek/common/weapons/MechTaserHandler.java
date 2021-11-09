@@ -20,7 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Report;
@@ -42,7 +42,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MechTaserHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

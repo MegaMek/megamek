@@ -66,7 +66,7 @@ public class HexTileset implements BoardListener {
 
     public static final String TRANSPARENT_THEME = "transparent";
     
-    private IGame game;
+    private Game game;
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
@@ -79,7 +79,7 @@ public class HexTileset implements BoardListener {
     /**
      * Creates new HexTileset
      */
-    public HexTileset(IGame g) {
+    public HexTileset(Game g) {
         game = g;
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);

@@ -22,7 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IAero;
 import megamek.common.IBoard;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.OffBoardDirection;
@@ -41,7 +41,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
      * Find the closest enemy to a unit with a path that ends at the given position.
      */
     @Override
-    public Entity findClosestEnemy(Entity me, Coords position, IGame game) {
+    public Entity findClosestEnemy(Entity me, Coords position, Game game) {
         int range = 9999;
         Entity closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
@@ -70,7 +70,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
      */
     @Override
     double calculateMyDamagePotential(MovePath path, Entity enemy,
-            int distance, IGame game) {
+            int distance, Game game) {
         Entity me = path.getEntity();
 
         int maxRange = getOwner().getMaxWeaponRange(me, enemy.isAirborne());

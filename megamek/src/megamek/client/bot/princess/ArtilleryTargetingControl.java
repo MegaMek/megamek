@@ -28,7 +28,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HexTarget;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
@@ -75,7 +75,7 @@ public class ArtilleryTargetingControl {
      * @param shooter
      * @param game
      */
-    public double calculateDamageValue(int damage, Coords coords, Entity shooter, IGame game, Princess owner) {
+    public double calculateDamageValue(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
         if(getDamageValue(damage, coords) != null) {
             return getDamageValue(damage, coords);
         }
@@ -110,7 +110,7 @@ public class ArtilleryTargetingControl {
      * @param shooter Entity doing the shooting
      * @param game Game pointer
      */
-    private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, IGame game, Princess owner) {
+    private double calculateDamageValueForHex(int damage, Coords coords, Entity shooter, Game game, Princess owner) {
         double value = 0;
         
         for(Entity entity : game.getEntitiesVector(coords, true)) {
@@ -188,7 +188,7 @@ public class ArtilleryTargetingControl {
      * @param game Game pointer
      * @param owner Bot pointer
      */
-    private void buildTargetList(Entity shooter, IGame game, Princess owner) {
+    private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
         
         for(Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
@@ -226,7 +226,7 @@ public class ArtilleryTargetingControl {
      * @param targetList List of target hexes
      * @param game game pointer
      */
-    private void addHexDonuts(Coords coords, Set<Targetable> targetList, IGame game) {
+    private void addHexDonuts(Coords coords, Set<Targetable> targetList, Game game) {
         // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
         // of the designated coordinates 
         for(int radius = 1; radius <= MAX_ARTILLERY_BLAST_RADIUS; radius++) {
@@ -246,7 +246,7 @@ public class ArtilleryTargetingControl {
      * @param owner Princess pointer
      * @return Firing plan
      */
-    public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, IGame game, Princess owner) {
+    public FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner) {
         FiringPlan bestPlan = calculateIndirectArtilleryPlan(shooter, game, owner, 0);
         
         return bestPlan;
@@ -259,7 +259,7 @@ public class ArtilleryTargetingControl {
      * @param owner Princess pointer
      * @return Firing plan
      */
-    private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, IGame game, Princess owner, int facingChange) {
+    private FiringPlan calculateIndirectArtilleryPlan(Entity shooter, Game game, Princess owner, int facingChange) {
         FiringPlan retval = new FiringPlan();
         
         // if we're fleeing and haven't been shot at, then try not to agitate guys that may pursue us.
@@ -361,7 +361,7 @@ public class ArtilleryTargetingControl {
      * @param owner
      * @return
      */
-    private WeaponFireInfo getTAGInfo(Mounted weapon, Entity shooter, IGame game, Princess owner) {
+    private WeaponFireInfo getTAGInfo(Mounted weapon, Entity shooter, Game game, Princess owner) {
         WeaponFireInfo retval = null;
         double hitOdds = 0.0;
         
@@ -384,7 +384,7 @@ public class ArtilleryTargetingControl {
      * @param game
      * @return
      */
-    private int findAmmo(Entity shooter, Mounted currentWeapon, IGame game) {
+    private int findAmmo(Entity shooter, Mounted currentWeapon, Game game) {
         int ammoEquipmentNum = NO_AMMO;
         
         // simply grab the first valid ammo and let 'er rip.

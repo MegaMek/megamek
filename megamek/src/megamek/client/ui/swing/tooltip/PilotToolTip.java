@@ -67,7 +67,7 @@ public final class PilotToolTip {
     /** Returns a tooltip part with names and skills of the crew. */
     private static StringBuilder crewInfo(final Entity entity) {
         Crew crew = entity.getCrew();
-        IGame game = entity.getGame();
+        Game game = entity.getGame();
         StringBuilder result = new StringBuilder();
         result.append(guiScaledFontHTML());
         

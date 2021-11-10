@@ -434,19 +434,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 });
 
         // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
                 new CommandAction() {
-
                     @Override
                     public boolean shouldPerformAction() {
-                        if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return clientgui.getClient().isMyTurn()
+                                && !clientgui.bv.getChatterBoxActive()
+                                && !display.isIgnoringEvents()
+                                && display.isVisible();
                     }
 
                     @Override

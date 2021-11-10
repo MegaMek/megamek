@@ -199,7 +199,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                 });
 
         // Register the action for UNDO
-        controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
+        controller.registerCommandAction(KeyCommandBind.UNDO_LAST_STEP.cmd,
                 new CommandAction() {
 
                     @Override

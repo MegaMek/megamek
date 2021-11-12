@@ -30607,7 +30607,7 @@ public class Server implements Runnable {
      */
     void transmitPlayerUpdate(IPlayer player) {
         synchronized (connections) {
-            for (var connection: connections) {
+            for (var connection : connections) {
                 var playerId = player.getId();
                 var destPlayer = player;
     

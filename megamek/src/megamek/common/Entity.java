@@ -7591,7 +7591,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
         
-        boolean groundingVTOL = isAirborneVTOLorWIGE() && step.getElevation() == 0;
+        final boolean groundingVTOL = isAirborneVTOLorWIGE() && (step.getElevation() == 0);
         boolean floorLevelGroundUnit = step.getElevation() == curHex.floor();
         
         // we check for bog down on entering a new hex or changing altitude

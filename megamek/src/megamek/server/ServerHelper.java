@@ -485,6 +485,11 @@ public class ServerHelper {
             return false;
         }
         
+        // can't detect minefields if there aren't any to detect
+        if (!game.getMinedCoords().hasMoreElements()) {
+            return false;
+        }
+        
         // can't detect minefields if we have no probe
         int probeRange = entity.getBAPRange();
         if (probeRange <= 0) {

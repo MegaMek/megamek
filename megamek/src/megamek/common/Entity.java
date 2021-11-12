@@ -7591,6 +7591,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
         
+        final boolean groundingVTOL = isAirborneVTOLorWIGE() && (step.getElevation() == 0);
+        boolean floorLevelGroundUnit = step.getElevation() == curHex.floor();
+        
         // we check for bog down on entering a new hex or changing altitude
         // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
         // not susceptible to bog down as per getBogDownModifier,
@@ -7598,15 +7601,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (step.getElevation() == curHex.floor()) && !isPavementStep) {
-            roll.append(
-                    new PilotingRollData(getId(), bgMod, "avoid bogging down"));
+                && (floorLevelGroundUnit || groundingVTOL) && !isPavementStep) {
+            
+            roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
+            
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
+            
             if (hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)) {
                 roll.addModifier(-1, "Swamp Beast");
             }
+            
             addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {

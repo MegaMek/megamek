@@ -24731,19 +24731,6 @@ public class Server implements Runnable {
         reports.addElement(r);
         switch (cs.getIndex()) {
             case Mech.SYSTEM_COCKPIT:
-                // Lets auto-eject if we can!
-                Mech mech = (Mech) en;
-                if (game.getOptions().booleanOption(
-                        OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
-                    if (mech.isAutoEject()
-                        && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                            || (game.getOptions().booleanOption(
-                                    OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                            && mech.isCondEjectHeadshot()))) {
-                        reports.addAll(ejectEntity(en, true, true));
-                    }
-                }
-
                 //First check whether this hit takes out the whole crew; for multi-crew cockpits
                 //we need to check the other critical positions (if any).
                 boolean allDead = true;

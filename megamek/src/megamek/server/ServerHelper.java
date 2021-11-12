@@ -480,6 +480,12 @@ public class ServerHelper {
             return false;
         }
         
+        // can't detect minefields if the coordinates are invalid
+        if (coords == null) {
+            return false;
+        }
+        
+        // can't detect minefields if we have no probe
         int probeRange = entity.getBAPRange();
         if (probeRange <= 0) {
             return false;
@@ -487,7 +493,7 @@ public class ServerHelper {
         
         boolean minefieldDetected = false;
         
-        for (int distance = 1; distance <= probeRange; distance++) {      
+        for (int distance = 1; distance <= probeRange; distance++) {
             for (Coords potentialMineCoords : coords.allAtDistance(distance)) {
                 if (!game.getBoard().contains(potentialMineCoords)) {
                     continue;

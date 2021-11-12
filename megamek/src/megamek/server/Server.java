@@ -30593,22 +30593,24 @@ public class Server implements Runnable {
      * Sends out player info updates for a player to all connections
      */
     void transmitPlayerUpdate(IPlayer player) {
-        for (var connection: connections) {
-            var playerId = player.getId();
-            var destPlayer = player;
-
-            if (playerId != connection.getId()) {
-                // Sending the player's data to another player's
-                // connection, need to redact any private data
-                destPlayer = player.copy();
-                destPlayer.redactPrivateData();
+        synchronized (connections) {
+            for (var connection : connections) {
+                var playerId = player.getId();
+                var destPlayer = player;
+    
+                if (playerId != connection.getId()) {
+                    // Sending the player's data to another player's
+                    // connection, need to redact any private data
+                    destPlayer = player.copy();
+                    destPlayer.redactPrivateData();
+                }
+                connection.send(
+                    new Packet(
+                        Packet.COMMAND_PLAYER_UPDATE,
+                        new Object[] { playerId, destPlayer }
+                    )
+                );
             }
-            connection.send(
-                new Packet(
-                    Packet.COMMAND_PLAYER_UPDATE,
-                    new Object[] { playerId, destPlayer }
-                )
-            );
         }
     }
 

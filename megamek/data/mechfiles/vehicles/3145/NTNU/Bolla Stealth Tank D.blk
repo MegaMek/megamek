@@ -73,8 +73,8 @@ IS Vehicular Stealth
 IS Vehicular Stealth
 ISC3SlaveUnit
 ISGuardianECMSuite
-CLSniperCannonAmmo:OMNI
-CLSniperCannonAmmo:OMNI
+ISSniperCannonAmmo:OMNI
+ISSniperCannonAmmo:OMNI
 CLMediumChemLaserAmmo:OMNI
 IS Machine Gun Ammo - Half
 </Body Equipment>

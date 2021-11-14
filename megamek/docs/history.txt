@@ -14,6 +14,7 @@ VERSION HISTORY:
 + Issue #3245: Prevent concurrent modification exception when sending out player turn updates
 + Issue #3237: Prevent VTOLs from getting stuck in a swamp while going up and down in the air
 + PR #3249: Ammo/Weapon techbase mismatch fixes + one instance of missing ammo
++ Increasing MegaMek's base RAM allocation to 2 GB
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

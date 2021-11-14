@@ -43,7 +43,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    jvmOptions = ['-Xmx1024m']
+    jvmOptions = ['-Xmx2048m']
 	userdata = "userdata"
     data = "data"
     conf = "mmconf"

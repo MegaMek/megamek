@@ -15,7 +15,8 @@ VERSION HISTORY:
 + Issue #3237: Prevent VTOLs from getting stuck in a swamp while going up and down in the air
 + PR #3249: Ammo/Weapon techbase mismatch fixes + one instance of missing ammo
 + Increasing MegaMek's base RAM allocation to 2 GB
-+ Data:Updating mechfiles (fluff, some errata) new sprites. 
++ Data:Updating mechfiles (fluff, some errata) new sprites updated quirks (includes fix for #3253).
++ Updating Mechview to have a line break between fluff text. 
 
 0.49.5 (2021-11-06 1800 UTC)
 + Whitelist fix for MekHQ

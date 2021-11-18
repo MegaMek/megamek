@@ -7970,7 +7970,8 @@ public class Server implements Runnable {
             // every time we enter a new hex
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
                     && !lastPos.equals(curPos)) {
-                if (ServerHelper.detectMinefields(game, entity, curPos, vPhaseReport, this)) {
+                if (ServerHelper.detectMinefields(game, entity, curPos, vPhaseReport, this) ||
+                        ServerHelper.detectHiddenUnits(game, entity, curPos, vPhaseReport, this)) {
                     detectedHiddenHazard = true;
                     
                     if (i.hasMoreElements() && (stepMoveType != EntityMovementType.MOVE_JUMP)) {
@@ -14014,103 +14015,10 @@ public class Server implements Runnable {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
         }
-        // Get all hidden units
-        List<Entity> hiddenUnits = new ArrayList<>();
-        for (Entity ent : game.getEntitiesVector()) {
-            if (ent.isHidden()) {
-                hiddenUnits.add(ent);
-            }
-        }
-
-        // If no one is hidden, there's nothing to do
-        if (hiddenUnits.isEmpty()) {
-            return;
-        }
-
-        Set<Integer> reportPlayers = new HashSet<>();
+        
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
-            // Units without a position won't be able to detect
-            // check for this before calculating BAP range, as that's expensive
-            if (detector.getPosition() == null) {
-                continue;
-            }
-           
-            int probeRange = detector.getBAPRange();
-            
-            // if no probe, save ourselves a few loops
-            if (probeRange <= 0) {
-                continue;
-            }
-
-            for (Entity detected : hiddenUnits) {
-                // Only detected enemy units
-                if (!detector.isEnemyOf(detected)) {
-                    continue;
-                }
-                // Can't detect units without a position
-                if (detected.getPosition() == null) {
-                    continue;
-                }
-                // Can only detect units within the probes range
-                int dist = detector.getPosition().distance(
-                        detected.getPosition());
-
-                // An adjacent enemy unit will detect hidden units, TW pg 259
-                if (dist > 1 && dist > probeRange) {
-                    continue;
-                }
-
-                // Check for Void/Null Sig - only detected by Bloodhound probes
-                if (dist > 1 && (detected instanceof Mech)) {
-                    Mech m = (Mech)detected;
-                    if ((m.isVoidSigActive() || m.isNullSigActive())
-                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
-                        continue;
-                    }
-                }
-
-                // Check for Infantry stealth armor
-                if (dist > 1 && (detected instanceof BattleArmor)) {
-                    BattleArmor ba = (BattleArmor) detected;
-                    // Need Bloodhound to detect BA stealth armor
-                    if (ba.isStealthy()
-                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
-                        continue;
-                    }
-                } else if (dist > 1 && (detected instanceof Infantry)) {
-                    Infantry inf = (Infantry) detected;
-                    // Can't detect sneaky infantry
-                    if (inf.isStealthy()) {
-                        continue;
-                    }
-                    // Need bloodhound to detect non-sneaky inf
-                    if (!detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
-                        continue;
-                    }
-                }
-
-                LosEffects los = LosEffects.calculateLOS(game, detector, detected);
-                if (los.canSee() || dist <= 1) {
-                    detected.setHidden(false);
-                    entityUpdate(detected.getId());
-                    Report r = new Report(9960);
-                    r.addDesc(detector);
-                    r.subject = detector.getId();
-                    r.add(detected.getPosition().getBoardNum());
-                    vPhaseReport.addElement(r);
-                    Report.addNewline(vPhaseReport);
-                    reportPlayers.add(detector.getOwnerId());
-                    reportPlayers.add(detected.getOwnerId());
-                }
-            }
-        }
-
-        if (vPhaseReport.size() > 0 && game.getPhase() == GamePhase.MOVEMENT
-                && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
-            for (Integer playerId : reportPlayers) {
-                send(playerId, createSpecialReportPacket());
-            }
+            ServerHelper.detectHiddenUnits(game, detector, detector.getPosition(), vPhaseReport, this);
         }
     }
 

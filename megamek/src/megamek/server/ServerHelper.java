@@ -20,7 +20,6 @@ package megamek.server;
 
 import java.util.*;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
 
@@ -543,8 +542,7 @@ public class ServerHelper {
         
         // Units without a position won't be able to detect
         // check for this before calculating BAP range, as that's expensive
-        if ((detector.getPosition() == null) ||
-                (detectorCoords == null)) {
+        if ((detector.getPosition() == null) || (detectorCoords == null)) {
             return false;
         }
        
@@ -578,23 +576,24 @@ public class ServerHelper {
         for (Entity detected : hiddenUnits) {            
             // Can only detect units within the probes range
             int dist = detector.getPosition().distance(detected.getPosition());
+            boolean beyondPointBlankRange = dist > 1;
 
             // Check for Void/Null Sig - only detected by Bloodhound probes
-            if (dist > 1 && (detected instanceof Mech)) {
-                Mech m = (Mech)detected;
+            if (beyondPointBlankRange && (detected instanceof Mech)) {
+                Mech m = (Mech) detected;
                 if ((m.isVoidSigActive() || m.isNullSigActive()) && !detectorHasBloodhound) {
                     continue;
                 }
             }
 
             // Check for Infantry stealth armor
-            if (dist > 1 && (detected instanceof BattleArmor)) {
+            if (beyondPointBlankRange && (detected instanceof BattleArmor)) {
                 BattleArmor ba = (BattleArmor) detected;
                 // Need Bloodhound to detect BA stealth armor
                 if (ba.isStealthy() && !detectorHasBloodhound) {
                     continue;
                 }
-            } else if (dist > 1 && (detected instanceof Infantry)) {
+            } else if (beyondPointBlankRange && (detected instanceof Infantry)) {
                 Infantry inf = (Infantry) detected;
                 // Can't detect sneaky infantry
                 if (inf.isStealthy()) {
@@ -607,7 +606,7 @@ public class ServerHelper {
             }
 
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(), false);
-            if (los.canSee() || dist <= 1) {
+            if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
                 server.entityUpdate(detected.getId());
                 Report r = new Report(9960);
@@ -623,7 +622,7 @@ public class ServerHelper {
             }
         }
 
-        if (vPhaseReport.size() > 0 && game.getPhase() == GamePhase.MOVEMENT
+        if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
                 && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
             for (Integer playerId : reportPlayers) {
                 server.send(playerId, server.createSpecialReportPacket());

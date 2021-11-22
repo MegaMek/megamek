@@ -5392,12 +5392,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (e.getPosition() == null) {
                 continue;
             }
+            
+            boolean entityIsEnemy = e.getOwner().isEnemyOf(localPlayer);           
+            
             // If this unit isn't spotted somehow, it's ECM doesn't show up
             if ((localPlayer != null)
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                    && e.getOwner().isEnemyOf(localPlayer)
+                    && entityIsEnemy
                     && !e.hasSeenEntity(localPlayer)
                     && !e.hasDetectedEntity(localPlayer)) {
+                continue;
+            }
+            
+            // hidden enemy entities don't show their ECM bubble
+            if (entityIsEnemy && e.isHidden()) {
                 continue;
             }
 
@@ -5439,6 +5447,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
                 continue;
             }
+            
+            // hidden enemy entities don't show their ECM bubble
+            if (ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer) && 
+                    ecmInfo.getEntity().isHidden()) {
+                continue;
+            }
+            
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();
 

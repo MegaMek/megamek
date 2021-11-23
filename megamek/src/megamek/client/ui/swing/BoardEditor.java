@@ -48,7 +48,7 @@ import megamek.client.event.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.BoardEditorHelpDialog;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
@@ -206,7 +206,7 @@ public class BoardEditor extends JPanel
     private JFrame frame = new JFrame();
     private Game game = new Game();
     private IBoard board = game.getBoard();
-    private BoardView1 bv;
+    private BoardView bv;
     public static final int [] allDirections = {0,1,2,3,4,5};
     boolean isDragging = false;
     private Component bvc;
@@ -336,7 +336,7 @@ public class BoardEditor extends JPanel
     public BoardEditor(MegaMekController c) {
         controller = c;
         try {
-            bv = new BoardView1(game, controller, null);
+            bv = new BoardView(game, controller, null);
             bvc = bv.getComponent(true);
             bv.setDisplayInvalidHexInfo(true);
         } catch (IOException e) {
@@ -2285,7 +2285,7 @@ public class BoardEditor extends JPanel
             if (curHex != null) {
                 // draw the terrain images
                 TilesetManager tm = bv.getTilesetManager();
-                g.drawImage(tm.baseFor(curHex), 0, 0, BoardView1.HEX_W, BoardView1.HEX_H, this);
+                g.drawImage(tm.baseFor(curHex), 0, 0, BoardView.HEX_W, BoardView.HEX_H, this);
                 for (final Image newVar : safeList(tm.supersFor(curHex))) {
                     g.drawImage(newVar, 0, 0, this);
                 }
@@ -2304,8 +2304,8 @@ public class BoardEditor extends JPanel
                 StringBuffer errBuf = new StringBuffer();
                 if (!curHex.isValid(errBuf)) {
                     g.setFont(new Font("SansSerif", Font.BOLD, 14));
-                    Point hexCenter = new Point(BoardView1.HEX_W / 2, BoardView1.HEX_H / 2);
-                    BoardView1.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
+                    Point hexCenter = new Point(BoardView.HEX_W / 2, BoardView.HEX_H / 2);
+                    BoardView.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
                             hexCenter, guip.getWarningColor(), false);
                     String tooltip = Messages.getString("BoardEditor.invalidHex") + errBuf;
                     tooltip = tooltip.replace("\n", "<br>");

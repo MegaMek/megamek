@@ -31,7 +31,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -148,8 +148,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity. BoardView1 should take care of that itself.
-        if (clientgui.bv instanceof BoardView1) {
-            ((BoardView1) clientgui.bv).clearC3Networks();
+        if (clientgui.bv instanceof BoardView) {
+            ((BoardView) clientgui.bv).clearC3Networks();
         }
         cen = en;
         clientgui.setSelectedEntityNum(en);

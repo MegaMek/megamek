@@ -92,7 +92,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     private BufferedImage mapImage;
-    private final IBoardView bv;
+    private final BoardView bv;
     private final Game game;
     private IBoard board;
     private final JDialog dialog;
@@ -137,7 +137,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * @param game A game containing at least the board, but not necessarily anything else
      * @param cg Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, Game game, @Nullable ClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
         result.setAutoRequestFocus(false);
         result.setFocusable(false);
@@ -173,7 +173,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * Returns a minimap image of the given board at the given zoom index. The 
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, IBoardView bv, int zoom) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < 0) || (zoom > MAX_ZOOM)) {
@@ -197,7 +197,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
      * used to create a snapshot image. When a boardview is given, the visible area is shown.
      */
-    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
+    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;

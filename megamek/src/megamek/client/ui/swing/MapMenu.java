@@ -29,7 +29,7 @@ import javax.swing.*;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.event.BoardViewEvent;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -1318,9 +1318,9 @@ public class MapMenu extends JPopupMenu {
         ((MovementDisplay) currentPanel).actionPerformed(e);
 
         // Cursor over the hex.
-        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+        ((BoardView) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CURSOR, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
         // Click
-        ((BoardView1) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+        ((BoardView) gui.bv).mouseAction(coords, BoardViewEvent.BOARD_HEX_CLICKED, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
     }
 
     Targetable decodeTargetInfo(String info) {

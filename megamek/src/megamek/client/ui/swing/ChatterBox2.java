@@ -15,28 +15,9 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import megamek.client.Client;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -47,13 +28,22 @@ import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
- *  A graphical chatterbox within the boardview.
+ * A graphical chatterbox within the boardview.
  * @author beerockxs2
- *
  */
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
@@ -116,7 +106,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private Vector<String> messages = new Vector<String>();
 
     private Client client;
-    private BoardView1 bv;
+    private BoardView bv;
 
     private Image upbutton;
     private Image downbutton;
@@ -126,18 +116,17 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private FontMetrics fm;
 
-    public ChatterBox2(ClientGUI client, IBoardView boardview,
-            MegaMekController controller) {
+    public ChatterBox2(ClientGUI client, BoardView boardview, MegaMekController controller) {
         this.client = client.getClient();
         client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 addChatMessage(e.getMessage());
             }
+
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     addChatMessage("MegaMek: " + e.getNumberOfEntities() + 
                             " Entities added.");
                 }
@@ -152,7 +141,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             }
         });
 
-        bv = (BoardView1)boardview;
+        bv = (BoardView)boardview;
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();

@@ -14,57 +14,21 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.AWTEvent;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-// import java.awt.Dimension; Import never used
-// import java.awt.Insets; Import never used
+import megamek.common.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 /**
- * <p>
- * Title: Ruler
- * </p>
- * <p>
- * Description:
- * </p>
- * 
  * @author Ken Nguyen (kenn)
  * @version 1.0
  */
 public class Ruler extends JDialog implements BoardViewListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
     public static Color color2 = Color.magenta;
@@ -75,7 +39,7 @@ public class Ruler extends JDialog implements BoardViewListener {
     private Color endColor;
     private int distance;
     private Client client;
-    private IBoardView bv;
+    private BoardView bv;
     private boolean flip;
 
     private JPanel buttonPanel;
@@ -102,8 +66,8 @@ public class Ruler extends JDialog implements BoardViewListener {
     private JCheckBox cboIsMech2 = 
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
-    public Ruler(JFrame f, Client c, IBoardView b) {
-        super(f, Messages.getString("Ruler.title"), false); //$NON-NLS-1$
+    public Ruler(JFrame f, Client c, BoardView b) {
+        super(f, Messages.getString("Ruler.title"), false);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
         start = null;

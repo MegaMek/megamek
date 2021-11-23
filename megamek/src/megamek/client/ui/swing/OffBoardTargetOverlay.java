@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -227,28 +227,28 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if(showDirectionalElement(OffBoardDirection.NORTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.NORTH, rect);
             buttons.put(OffBoardDirection.NORTH, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView) clientgui.getBoardView());
         }
         
         // draw left icon, if necessary
         if(showDirectionalElement(OffBoardDirection.WEST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.WEST, rect);
             buttons.put(OffBoardDirection.WEST, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView) clientgui.getBoardView());
         }
         
         // draw bottom icon, if necessary
         if(showDirectionalElement(OffBoardDirection.SOUTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.SOUTH, rect);
             buttons.put(OffBoardDirection.SOUTH, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView) clientgui.getBoardView());
         }
         
         // draw right icon, if necessary. This one is hairy because of the unit overview pane
         if(showDirectionalElement(OffBoardDirection.EAST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.EAST, rect);
             buttons.put(OffBoardDirection.EAST, button);
-            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView1) clientgui.getBoardView());
+            graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, (BoardView) clientgui.getBoardView());
         }
         
         // be nice, leave the color as we found it

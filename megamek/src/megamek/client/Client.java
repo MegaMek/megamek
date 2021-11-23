@@ -27,7 +27,7 @@ import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -108,7 +108,7 @@ public class Client implements IClientCommandHandler {
     private Hashtable<Integer, String> imgCache;
 
     //board view for getting entity art assets
-    private BoardView1 bv;
+    private BoardView bv;
 
     ConnectionHandler packetUpdate;
 
@@ -224,7 +224,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    public void setBoardView(BoardView1 bv){
+    public void setBoardView(BoardView bv){
         this.bv = bv;
     }
 

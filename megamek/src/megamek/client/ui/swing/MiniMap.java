@@ -20,28 +20,17 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.*;
-import static megamek.common.Terrains.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import megamek.client.Client;
-import megamek.client.event.*;
-import megamek.client.ui.*;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.minimap.MiniMapUnitSymbols;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -49,6 +38,24 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.common.Terrains.*;
 
 /**
  * Obviously, displays the map in scaled-down size. 

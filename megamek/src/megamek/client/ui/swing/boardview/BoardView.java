@@ -23,6 +23,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -84,7 +85,7 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView extends JPanel implements Scrollable, BoardListener, MouseListener,
-        IPreferenceChangeListener {
+        MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 

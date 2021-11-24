@@ -27,10 +27,6 @@ import megamek.common.options.OptionsConstants;
  * @author Ben
  */
 public class Terrain implements ITerrain, Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -7624691566755134033L;
     private final int type;
     /**
@@ -39,7 +35,7 @@ public class Terrain implements ITerrain, Serializable {
      * levels.
      */
     private int level;
-    private boolean exitsSpecified = false;
+    private boolean exitsSpecified;
     private int exits;
     private int terrainFactor;
 
@@ -78,12 +74,9 @@ public class Terrain implements ITerrain, Serializable {
         type = Terrains.getType(name);
         if (firstColon == lastColon) {
             level = levelFor(terrain.substring(firstColon + 1));
-            exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
-            if ((type == Terrains.BUILDING) || (type == Terrains.FUEL_TANK)) {
-                exitsSpecified = true;
-            }
+            exitsSpecified = (type == Terrains.BUILDING) || (type == Terrains.FUEL_TANK);
         } else {
             level = levelFor(terrain.substring(firstColon + 1, lastColon));
             exitsSpecified = true;

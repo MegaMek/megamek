@@ -214,7 +214,6 @@ public class BoardEditor extends JPanel
     private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private ITerrainFactory TF = Terrains.getTerrainFactory();
     private JDialog minimapW;
     private MegaMekController controller;
     
@@ -696,7 +695,7 @@ public class BoardEditor extends JPanel
                 } else if (elev != 1) {
                     elev = 2;
                 }
-                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FOLIAGE_ELEV, elev));
+                curHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, elev));
             }
             // Reset the terrain to the former state
             // if the new would be invalid.
@@ -738,27 +737,27 @@ public class BoardEditor extends JPanel
             if (e.isShiftDown()) {
                 int oldLevel = curHex.getTerrain(Terrains.BLDG_CF).getLevel();
                 int newLevel = Math.max(10, oldLevel + (wheelDir * 5));
-                curHex.addTerrain(TF.createTerrain(Terrains.BLDG_CF, newLevel));
+                curHex.addTerrain(new Terrain(Terrains.BLDG_CF, newLevel));
             } else if (e.isControlDown()) {
                 int oldLevel = curHex.getTerrain(Terrains.BUILDING).getLevel();
                 int newLevel = Math.max(1, Math.min(4, oldLevel + wheelDir)); // keep between 1 and 4
 
                 if (newLevel != oldLevel) {
                     ITerrain curTerr = curHex.getTerrain(Terrains.BUILDING);
-                    curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 
+                    curHex.addTerrain(new Terrain(Terrains.BUILDING, 
                             newLevel, curTerr.hasExitsSpecified(), curTerr.getExits()));
 
                     // Set the CF to the appropriate standard value *IF* it is the appropriate value now,
                     // i.e. if the user has not manually set it to something else
                     int curCF = curHex.getTerrain(Terrains.BLDG_CF).getLevel();
                     if (curCF == Building.getDefaultCF(oldLevel)) {
-                        curHex.addTerrain(TF.createTerrain(Terrains.BLDG_CF, Building.getDefaultCF(newLevel)));
+                        curHex.addTerrain(new Terrain(Terrains.BLDG_CF, Building.getDefaultCF(newLevel)));
                     }
                 }
             } else {
                 int oldLevel = curHex.getTerrain(Terrains.BLDG_ELEV).getLevel();
                 int newLevel = Math.max(1, oldLevel + wheelDir);
-                curHex.addTerrain(TF.createTerrain(Terrains.BLDG_ELEV, newLevel));
+                curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, newLevel));
             }
 
             refreshTerrainList();
@@ -782,18 +781,18 @@ public class BoardEditor extends JPanel
                 terrainType = Terrains.BRIDGE_CF;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(10, oldLevel + wheelDir*10);
-                curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
+                curHex.addTerrain(new Terrain(terrainType, newLevel));
             } else if (e.isControlDown()) {
                 ITerrain terrain = curHex.getTerrain(Terrains.BRIDGE);
                 boolean hasExits = terrain.hasExitsSpecified();
                 int exits = terrain.getExits();
                 newLevel = Math.max(1, terrain.getLevel() + wheelDir);
-                curHex.addTerrain(TF.createTerrain(Terrains.BRIDGE, newLevel, hasExits, exits));
+                curHex.addTerrain(new Terrain(Terrains.BRIDGE, newLevel, hasExits, exits));
             } else {
                 terrainType = Terrains.BRIDGE_ELEV;
                 int oldLevel = curHex.getTerrain(terrainType).getLevel();
                 newLevel = Math.max(0, oldLevel + wheelDir);
-                curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
+                curHex.addTerrain(new Terrain(terrainType, newLevel));
             }
 
             refreshTerrainList();
@@ -828,7 +827,7 @@ public class BoardEditor extends JPanel
                 newLevel = Math.max(1, oldLevel + wheelDir);
             }
 
-            curHex.addTerrain(TF.createTerrain(terrainType, newLevel));
+            curHex.addTerrain(new Terrain(terrainType, newLevel));
             refreshTerrainList();
             repaintWorkingHex();
         });
@@ -1050,7 +1049,7 @@ public class BoardEditor extends JPanel
     
     // Helper to shorten the code
     private void addManyButtons(JPanel panel, List<? extends AbstractButton> terrainButtons) {
-        terrainButtons.stream().forEach(panel::add);
+        terrainButtons.forEach(panel::add);
     }
     
     /**
@@ -1203,11 +1202,11 @@ public class BoardEditor extends JPanel
                 || (type == Terrains.BRIDGE_CF) || (type == Terrains.BRIDGE_ELEV)
                 || (type == Terrains.FUEL_TANK_CF) || (type == Terrains.FUEL_TANK_ELEV)
                 || (type == Terrains.FUEL_TANK_MAGN)) {
-            return Terrains.getTerrainFactory().createTerrain(type, level, false, 0);
+            return new Terrain(type, level, false, 0);
         } else {
             boolean exitsSpecified = cheTerrExitSpecified.isSelected();
             int exits = texTerrExits.getNumber();
-            return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
+            return new Terrain(type, level, exitsSpecified, exits);
         }
     }
 
@@ -1243,7 +1242,7 @@ public class BoardEditor extends JPanel
             exitsSpecified = present.hasExitsSpecified();
             exits = present.getExits();
         }
-        ITerrain toAdd = Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
+        ITerrain toAdd = new Terrain(type, level, exitsSpecified, exits);
         curHex.addTerrain(toAdd);
         refreshTerrainList();
         repaintWorkingHex();
@@ -1254,18 +1253,18 @@ public class BoardEditor extends JPanel
      */
     private void setBasicFuelTank() {
         // There is only fuel_tank:1, so this can be set
-        curHex.addTerrain(TF.createTerrain(Terrains.FUEL_TANK, 1, true, 0));
+        curHex.addTerrain(new Terrain(Terrains.FUEL_TANK, 1, true, 0));
 
         if (!curHex.containsTerrain(Terrains.FUEL_TANK_CF)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.FUEL_TANK_CF, 40, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_CF, 40, false, 0));
         }
         
         if (!curHex.containsTerrain(Terrains.FUEL_TANK_ELEV)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.FUEL_TANK_ELEV, 1, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, 1, false, 0));
         }
         
         if (!curHex.containsTerrain(Terrains.FUEL_TANK_MAGN)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.FUEL_TANK_MAGN, 100, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAGN, 100, false, 0));
         }
 
         refreshTerrainList();
@@ -1278,15 +1277,15 @@ public class BoardEditor extends JPanel
      */
     private void setBasicBridge() {
         if (!curHex.containsTerrain(Terrains.BRIDGE_CF)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BRIDGE_CF, 40, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, 40, false, 0));
         }
         
         if (!curHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BRIDGE_ELEV, 1, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, 1, false, 0));
         }
         
         if (!curHex.containsTerrain(Terrains.BRIDGE)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BRIDGE, 1, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.BRIDGE, 1, false, 0));
         }
         
         refreshTerrainList();
@@ -1299,21 +1298,21 @@ public class BoardEditor extends JPanel
      */
     private void setBasicBuilding(boolean ALT_Held) {
         if (!curHex.containsTerrain(Terrains.BLDG_CF)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BLDG_CF, 15, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.BLDG_CF, 15, false, 0));
         }
 
         if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BLDG_ELEV, 1, false, 0));
+            curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 1, false, 0));
         }
 
         if (!curHex.containsTerrain(Terrains.BUILDING)) {
-            curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 1, ALT_Held, 0));
+            curHex.addTerrain(new Terrain(Terrains.BUILDING, 1, ALT_Held, 0));
         }
 
         // When clicked with ALT, only toggle the exits
         if (ALT_Held) {
             ITerrain curTerr = curHex.getTerrain(Terrains.BUILDING);
-            curHex.addTerrain(TF.createTerrain(Terrains.BUILDING, 
+            curHex.addTerrain(new Terrain(Terrains.BUILDING, 
                     curTerr.getLevel(), !curTerr.hasExitsSpecified(), curTerr.getExits()));
         }
         
@@ -1331,8 +1330,7 @@ public class BoardEditor extends JPanel
             butDelTerrain.setEnabled(false);
         } else {
             butDelTerrain.setEnabled(true);
-            ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
-                    lisTerrain.getSelectedValue().getTerrain());
+            ITerrain terrain = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             terrain = curHex.getTerrain(terrain.getType());
             TerrainHelper terrainHelper = new TerrainHelper(terrain.getType());
             terrListBlocker = true;
@@ -1796,8 +1794,7 @@ public class BoardEditor extends JPanel
             correctExits();
             validateBoard(true);
         } else if (ae.getSource().equals(butDelTerrain) && !lisTerrain.isSelectionEmpty()) {
-            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
-                    lisTerrain.getSelectedValue().getTerrain());
+            ITerrain toRemove = new Terrain(lisTerrain.getSelectedValue().getTerrain());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -1872,47 +1869,47 @@ public class BoardEditor extends JPanel
             curHex.setTheme((String)choTheme.getSelectedItem());
             repaintWorkingHex();
         } else if (ae.getSource().equals(buttonLW)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.WOODS, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            setConvenientTerrain(ae, new Terrain(Terrains.WOODS, 1), new Terrain(Terrains.FOLIAGE_ELEV, 2));
         } else if (ae.getSource().equals(buttonOW)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.WOODS, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.WOODS, 1), new Terrain(Terrains.FOLIAGE_ELEV, 1));
         } else if (ae.getSource().equals(buttonMg)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.MAGMA, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.MAGMA, 1));
         } else if (ae.getSource().equals(buttonLJ)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.JUNGLE, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 2));
+            setConvenientTerrain(ae, new Terrain(Terrains.JUNGLE, 1), new Terrain(Terrains.FOLIAGE_ELEV, 2));
         } else if (ae.getSource().equals(buttonOJ)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.JUNGLE, 1), TF.createTerrain(Terrains.FOLIAGE_ELEV, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.JUNGLE, 1), new Terrain(Terrains.FOLIAGE_ELEV, 1));
         } else if (ae.getSource().equals(buttonWa)) {
             buttonUpDn.setSelected(false);
             if ((ae.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                 int rapidsLevel = curHex.containsTerrain(Terrains.RAPIDS, 1) ? 2 : 1;
                 if (!curHex.containsTerrain(Terrains.WATER)
                         || (curHex.getTerrain(Terrains.WATER).getLevel() == 0)) {
-                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel), 
-                            TF.createTerrain(Terrains.WATER, 1));
+                    setConvenientTerrain(ae, new Terrain(Terrains.RAPIDS, rapidsLevel), 
+                            new Terrain(Terrains.WATER, 1));
                 } else {
-                    setConvenientTerrain(ae, TF.createTerrain(Terrains.RAPIDS, rapidsLevel),
+                    setConvenientTerrain(ae, new Terrain(Terrains.RAPIDS, rapidsLevel),
                             curHex.getTerrain(Terrains.WATER));
                 }
             } else {
                 if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
                     curHex.removeAllTerrains();
                 }
-                setConvenientTerrain(ae, TF.createTerrain(Terrains.WATER, 1));
+                setConvenientTerrain(ae, new Terrain(Terrains.WATER, 1));
             }
         } else if (ae.getSource().equals(buttonSw)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.SWAMP, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.SWAMP, 1));
         } else if (ae.getSource().equals(buttonRo)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.ROUGH, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.ROUGH, 1));
         } else if (ae.getSource().equals(buttonPv)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.PAVEMENT, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.PAVEMENT, 1));
         } else if (ae.getSource().equals(buttonMd)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.MUD, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.MUD, 1));
         } else if (ae.getSource().equals(buttonTu)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.TUNDRA, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.TUNDRA, 1));
         } else if (ae.getSource().equals(buttonIc)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.ICE, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.ICE, 1));
         } else if (ae.getSource().equals(buttonSn)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.SNOW, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.SNOW, 1));
         } else if (ae.getSource().equals(buttonCl)) {
             curHex.removeAllTerrains();
             buttonUpDn.setSelected(false);
@@ -1946,7 +1943,7 @@ public class BoardEditor extends JPanel
             buttonUpDn.setSelected(false);
             setBasicFuelTank();
         } else if (ae.getSource().equals(buttonRd)) {
-            setConvenientTerrain(ae, TF.createTerrain(Terrains.ROAD, 1));
+            setConvenientTerrain(ae, new Terrain(Terrains.ROAD, 1));
         } else if (ae.getSource().equals(buttonUpDn)) {
             // Not so useful to only do on clear terrain
             buttonOOC.setSelected(false);
@@ -2147,13 +2144,13 @@ public class BoardEditor extends JPanel
                         if (hex.containsTerrain(BRIDGE) 
                                 && (hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() >= surface)) {
                             newHex.addTerrain(hex.getTerrain(BRIDGE)); 
-                            newHex.addTerrain(TF.createTerrain(BRIDGE_ELEV, 
+                            newHex.addTerrain(new Terrain(BRIDGE_ELEV, 
                                     hex.getLevel() + hex.getTerrain(BRIDGE_ELEV).getLevel() - surface));
                             newHex.addTerrain(hex.getTerrain(BRIDGE_CF));
                         }
                     }
                     int addedWater = surface - hex.getLevel();
-                    newHex.addTerrain(TF.createTerrain(Terrains.WATER, addedWater + presentDepth));
+                    newHex.addTerrain(new Terrain(Terrains.WATER, addedWater + presentDepth));
                     newHex.setLevel(newHex.getLevel() + addedWater);
                     board.setHex(c, newHex);
                 }
@@ -2251,9 +2248,9 @@ public class BoardEditor extends JPanel
         ((TitledBorder) panelHexSettings.getBorder()).setTitleFont(scaledFont);
         ((TitledBorder) panelTerrSettings.getBorder()).setTitleFont(scaledFont);
         
-        terrainButtons.stream().forEach(ScalingIconButton::rescale);
-        undoButtons.stream().forEach(ScalingIconButton::rescale);
-        brushButtons.stream().forEach(ScalingIconToggleButton::rescale);
+        terrainButtons.forEach(ScalingIconButton::rescale);
+        undoButtons.forEach(ScalingIconButton::rescale);
+        brushButtons.forEach(ScalingIconToggleButton::rescale);
         butTerrDown.rescale();
         butTerrUp.rescale();
         butElevDown.rescale();

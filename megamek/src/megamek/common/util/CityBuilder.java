@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.util;
 
 import java.util.ArrayList;
@@ -19,15 +18,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.ITerrainFactory;
-import megamek.common.MapSettings;
-import megamek.common.Terrains;
+import megamek.common.*;
 
 /**
  * @author Torren + Coelocanth
@@ -361,24 +352,21 @@ public class CityBuilder {
     }
 
     private void addRoad(IHex hex, int exitDirection, int type) {
-        ITerrainFactory tf = Terrains.getTerrainFactory();
         if (hex.containsTerrain(Terrains.WATER)) {
             hex.removeTerrain(Terrains.WATER);
-            hex.addTerrain(tf.createTerrain(Terrains.WATER, 0));
+            hex.addTerrain(new Terrain(Terrains.WATER, 0));
             type = 1;
         }
-        hex.addTerrain(tf.createTerrain(Terrains.ROAD, type, true,
+        hex.addTerrain(new Terrain(Terrains.ROAD, type, true,
                 (1 << exitDirection) & 63));
     }
 
     private void addBridge(IHex hex, int exits, int altitude, int cf) {
-        ITerrainFactory tf = Terrains.getTerrainFactory();
         int bridgeElevation = altitude - hex.getLevel();
 
-        hex.addTerrain(tf.createTerrain(Terrains.BRIDGE,
-                getBuildingTypeByCF(cf), true, (exits & 63)));
-        hex.addTerrain(tf.createTerrain(Terrains.BRIDGE_ELEV, bridgeElevation));
-        hex.addTerrain(tf.createTerrain(Terrains.BRIDGE_CF, cf));
+        hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf), true, (exits & 63)));
+        hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, bridgeElevation));
+        hex.addTerrain(new Terrain(Terrains.BRIDGE_CF, cf));
     }
 
     private void connectHexes(Coords src, Coords dest, int roadStyle) {
@@ -388,6 +376,7 @@ public class CityBuilder {
             if (t == null) {
                 t = hex.getTerrain(Terrains.BRIDGE);
             }
+
             if (t == null) {
                 addRoad(hex, src.direction(dest), roadStyle);
             } else {
@@ -405,9 +394,11 @@ public class CityBuilder {
      * @return coordinates to resume roadbuilding
      */
     private Coords tryToBuildBridge(Coords start, int direction) {
-        if (!board.contains(start))
+        if (!board.contains(start)) {
             return null;
-        Vector<Coords> hexes = new Vector<Coords>(7);
+        }
+
+        Vector<Coords> hexes = new Vector<>(7);
         Coords end = null;
         Coords next = start.translated(direction);
         while (hexes.size() < 6) {
@@ -422,6 +413,7 @@ public class CityBuilder {
             hexes.add(next);
             next = next.translated(direction);
         }
+
         if (end != null) {
             // got start and end, can we make a bridge?
             if (hexes.size() == 0)
@@ -462,8 +454,7 @@ public class CityBuilder {
             if (nextDirection == E || nextDirection == W) {
                 nextDirection = coords.direction(next);
             }
-            Coords end = tryToBuildBridge(coords, nextDirection);
-            return end;
+            return tryToBuildBridge(coords, nextDirection);
         }
         connectHexes(coords, next, roadStyle);
         connectHexes(next, coords, roadStyle);
@@ -514,8 +505,7 @@ public class CityBuilder {
      * turn in it. Map must be at least 3x3.
      */
     private void addGenericRoad() {
-        Coords c = new Coords(Compute.randomInt(board.getWidth()), Compute
-                .randomInt(board.getHeight()));
+        Coords c = new Coords(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int side0 = Compute.randomInt(6);
         int side1 = Compute.randomInt(5);
         if (side1 >= side0) {

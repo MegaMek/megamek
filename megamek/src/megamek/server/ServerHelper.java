@@ -27,7 +27,6 @@ import megamek.common.weapons.other.TSEMPWeapon;
  * This class contains computations carried out by the Server class.
  * Methods put in here should be static and self-contained. 
  * @author NickAragua
- *
  */
 public class ServerHelper {
     /**
@@ -37,7 +36,7 @@ public class ServerHelper {
      * @param te_hex Hex where target entity is located.
      * @param game Game being played.
      * @param isPlatoon Whether the target unit is a platoon.
-     * @param ammoExplosion Whether we're considering a "big boom" ammo explosion from tacops.
+     * @param ammoExplosion Whether we're considering a "big boom" ammo explosion from TacOps.
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
@@ -442,7 +441,7 @@ public class ServerHelper {
             
             if (roll >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 server.sendChangedHex(curPos);
                 for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
                     server.doMagmaDamage(en, false);

@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -23,22 +22,18 @@ import megamek.common.annotations.Nullable;
 
 /**
  * Hex represents a single hex on the board.
- *
  * @author Ben
  */
 public class Hex implements IHex, Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 82483704768044698L;
     private int level;
+
     /**
      * A HashMap to <code>terrains</code>. It contains the exact same terrain
      * types that the old <code>terrains</code> did, however it allows an
      * efficient way to access all present terrains.
-     *
      */
-    private HashMap<Integer, ITerrain> terrains = new HashMap<Integer, ITerrain>(1);
+    private HashMap<Integer, ITerrain> terrains = new HashMap<>(1);
     private String theme;
     private String originalTheme;
     private int fireTurn;
@@ -79,11 +74,11 @@ public class Hex implements IHex, Serializable {
         this(level, terrain, theme, new Coords(0, 0));
     }
 
-    /** Contructs hex with string terrain info */
+    /** Constructs hex with string terrain info */
     public Hex(int level, String terrain, String theme, Coords c) {
         this(level, new ITerrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
-            addTerrain(Terrains.getTerrainFactory().createTerrain(st.nextToken()));
+            addTerrain(new Terrain(st.nextToken()));
         }
     }
 
@@ -92,6 +87,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#getTerrainTypes()
      */
+    @Override
     public int[] getTerrainTypes() {
         return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
     }
@@ -101,6 +97,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#getLevel()
      */
+    @Override
     public int getLevel() {
         return level;
     }
@@ -110,6 +107,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#setLevel(int)
      */
+    @Override
     public void setLevel(int level) {
         this.level = level;
     }
@@ -119,6 +117,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#getTheme()
      */
+    @Override
     public String getTheme() {
         return theme;
     }
@@ -128,6 +127,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#setTheme(java.lang.String)
      */
+    @Override
     public void setTheme(String theme) {
         this.theme = theme;
     }
@@ -388,6 +388,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#contains(int, int)
      */
+    @Override
     public boolean containsTerrain(int type, int level) {
         ITerrain terrain = getTerrain(type);
         if (terrain != null) {
@@ -401,6 +402,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#hasPavement()
      */
+    @Override
     public boolean hasPavement() {
         return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
     }
@@ -410,6 +412,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#levelOf(int)
      */
+    @Override
     public int terrainLevel(int type) {
         ITerrain terrain = getTerrain(type);
         if (terrain != null) {
@@ -423,6 +426,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#getTerrain(int)
      */
+    @Override
     public ITerrain getTerrain(int type) {
         return terrains.get(type);
     }
@@ -454,6 +458,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#removeTerrain(int)
      */
+    @Override
     public void removeTerrain(int type) {
         terrains.remove(type);
     }
@@ -463,6 +468,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#removeAllTerrains()
      */
+    @Override
     public void removeAllTerrains() {
         terrains.clear();
     }
@@ -472,6 +478,7 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#terrainsPresent()
      */
+    @Override
     public int displayableTerrainsPresent() {
         int present = 0;
         for (Integer i : terrains.keySet()) {
@@ -485,6 +492,7 @@ public class Hex implements IHex, Serializable {
     /*
      * report the number of terrains present for the tooltips.
      */
+    @Override
     public int terrainsPresent() {
         return terrains.size();
     }
@@ -494,21 +502,23 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#duplicate
      */
+    @Override
     public IHex duplicate() {
         ITerrain[] tcopy = new ITerrain[Terrains.SIZE];
-        ITerrainFactory f = Terrains.getTerrainFactory();
         for (Integer i : terrains.keySet()) {
-            tcopy[i] = f.createTerrain(terrains.get(i));
+            tcopy[i] = new Terrain(terrains.get(i));
         }
         return new Hex(level, tcopy, theme, coords);
     }
 
+    @Override
     public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         for (Integer i : terrains.keySet()) {
             terrains.get(i).pilotingModifier(moveMode, roll, enteringRubble);
         }
     }
 
+    @Override
     public int movementCost(Entity entity) {
         int rv = 0;
         for (ITerrain terrain : terrains.values()) {
@@ -525,39 +535,39 @@ public class Hex implements IHex, Serializable {
         for (ITerrain terrain : terrains.values()) {
             if (terrain != null) {
                 switch (terrain.getType()) {
-                case Terrains.WOODS:
-                    if (terrain.getLevel() == 2) {
-                        temp = temp + "Heavy Woods";
-                    } else if (terrain.getLevel() == 1) {
-                        temp = temp + "Light Woods";
-                    } else {
-                        temp = temp + "??? Woods";
-                    }
-                    break;
-                case Terrains.WATER:
-                    temp = temp + "Water, depth: " + terrain.getLevel();
-                    break;
-                case Terrains.ROAD:
-                    temp = temp + "Road";
-                    break;
-                case Terrains.ROUGH:
-                    temp = temp + "Rough";
-                    break;
-                case Terrains.RUBBLE:
-                    temp = temp + "Rubble";
-                    break;
-                case Terrains.SWAMP:
-                    temp = temp + "Swamp";
-                    break;
-                case Terrains.ARMS:
-                    temp = temp + "Arm";
-                    break;
-                case Terrains.LEGS:
-                    temp = temp + "Leg";
-                    break;
-                default:
-                    temp = temp + Terrains.getName(terrain.getType()) + "(" + terrain.getLevel() + ", "
-                            + terrain.getTerrainFactor() + ")";
+                    case Terrains.WOODS:
+                        if (terrain.getLevel() == 2) {
+                            temp = temp + "Heavy Woods";
+                        } else if (terrain.getLevel() == 1) {
+                            temp = temp + "Light Woods";
+                        } else {
+                            temp = temp + "??? Woods";
+                        }
+                        break;
+                    case Terrains.WATER:
+                        temp = temp + "Water, depth: " + terrain.getLevel();
+                        break;
+                    case Terrains.ROAD:
+                        temp = temp + "Road";
+                        break;
+                    case Terrains.ROUGH:
+                        temp = temp + "Rough";
+                        break;
+                    case Terrains.RUBBLE:
+                        temp = temp + "Rubble";
+                        break;
+                    case Terrains.SWAMP:
+                        temp = temp + "Swamp";
+                        break;
+                    case Terrains.ARMS:
+                        temp = temp + "Arm";
+                        break;
+                    case Terrains.LEGS:
+                        temp = temp + "Leg";
+                        break;
+                    default:
+                        temp = temp + Terrains.getName(terrain.getType()) + "(" + terrain.getLevel() + ", "
+                                + terrain.getTerrainFactor() + ")";
                 }
                 temp = temp + "; ";
             }

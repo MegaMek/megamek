@@ -2947,7 +2947,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             mekModel.refreshCells();
             refreshTree();
         } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
-            clientgui.bv.getTilesetManager().reloadUnitIcons();
+            clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
             mekModel.refreshCells();
             refreshTree();
         }

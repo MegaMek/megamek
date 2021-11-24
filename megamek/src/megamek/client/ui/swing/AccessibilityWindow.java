@@ -19,7 +19,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
-import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -27,8 +26,8 @@ import megamek.common.event.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
@@ -179,9 +178,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                     Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
-            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+            gui.getBoardView().mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
             // Click.
-            ((BoardView) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+            gui.getBoardView().mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
         }
     }
 

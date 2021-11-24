@@ -103,7 +103,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private Point lastScrollPoint;
 
-    private Vector<String> messages = new Vector<String>();
+    private Vector<String> messages = new Vector<>();
 
     private Client client;
     private BoardView bv;
@@ -141,7 +141,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             }
         });
 
-        bv = (BoardView)boardview;
+        bv = boardview;
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();
@@ -175,11 +175,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (!bv.getChatterBoxActive()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return bv.getChatterBoxActive();
                     }
 
                     @Override
@@ -190,6 +186,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 });
     }
 
+    @Override
     public boolean isReleased() {
         if (scrolling) {
             stopScrolling();
@@ -209,6 +206,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return false;
     }
 
+    @Override
     public boolean isSliding() {
         return slidingDown || slidingUp;
     }
@@ -240,6 +238,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return !isSliding() && (slideOffset == MIN_SLIDE_OFFSET);
     }
 
+    @Override
     public synchronized void setIdleTime(long timeIdle, boolean add) {
         if (!lockOpen) {
             if (add) {
@@ -307,6 +306,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         decreasedChatScroll = false;
     }
 
+    @Override
     public boolean isDragged(Point p, Dimension size) {
         if (scrolling) {
             scroll(p, size);

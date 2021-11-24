@@ -188,7 +188,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public MegaMekController controller;
     private ChatterBox cb;
     public ChatterBox2 cb2;
-    public BoardView bv;
+    private BoardView bv;
     private Component bvc;
     private UnitDetailPane unitDetailPane;
     public UnitDisplay mechD;

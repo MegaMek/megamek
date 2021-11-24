@@ -48,15 +48,12 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             "unknown_unit.gif").toString();
 
     private ChatLounge lobby;
-    //    private final Color TRANSPARENT = new Color(250,250,250,0);
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
     private IPlayer localPlayer;
     private JTree tree;
     private int row;
-
-    static int counter = 0;
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
@@ -96,7 +93,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
                 Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
-                Image image = lobby.getClientgui().bv.getTilesetManager().loadPreviewImage(entity, camo, this);
+                Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo, this);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
@@ -122,7 +119,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
         }
         Rectangle r = tree.getRowBounds(row);
         if (r != null && event.getPoint().x > r.getWidth() - UIUtil.scaleForGUI(50)) {
-            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings).toString();
+            return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings);
         }
         return null;
     }

@@ -743,8 +743,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         cs.setUseAverageSkills(useAverageSkills.isSelected());
         cs.setGenerateNames(generateNames.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
-        if ((clientgui != null) && (clientgui.bv != null)) {
-            clientgui.bv.updateEntityLabels();
+        if ((clientgui != null) && (clientgui.getBoardView() != null)) {
+            clientgui.getBoardView().updateEntityLabels();
         }
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
@@ -783,8 +783,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         if (tileSetChoice.getSelectedIndex() >= 0) {
             String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex());
             if (!cs.getMapTileset().equals(tileSetFileName) &&
-                    (clientgui != null) && (clientgui.bv != null))  {
-                clientgui.bv.clearShadowMap();
+                    (clientgui != null) && (clientgui.getBoardView() != null))  {
+                clientgui.getBoardView().clearShadowMap();
             }
             cs.setMapTileset(tileSetFileName);
         }

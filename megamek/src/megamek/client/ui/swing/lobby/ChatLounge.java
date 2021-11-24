@@ -83,7 +83,7 @@ import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.dialogs.EntityReadoutDialog;
 import megamek.client.ui.swing.*;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
@@ -216,7 +216,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     boolean resetSelectedBoards = true;
     private ClientDialog boardPreviewW;
     private Game boardPreviewGame = new Game();
-    private BoardView1 previewBV;
+    private BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0,0);
     
     private ArrayList<String> invalidBoards = new ArrayList<>();
@@ -728,7 +728,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
-            previewBV = new BoardView1(boardPreviewGame, null, null);
+            previewBV = new BoardView(boardPreviewGame, null, null);
             previewBV.setDisplayInvalidHexInfo(false);
             previewBV.setUseLOSTool(false);
             boardPreviewW.add(previewBV.getComponent(true));
@@ -2947,7 +2947,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             mekModel.refreshCells();
             refreshTree();
         } else if (e.getName().equals(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)) {
-            clientgui.bv.getTilesetManager().reloadUnitIcons();
+            clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
             mekModel.refreshCells();
             refreshTree();
         }

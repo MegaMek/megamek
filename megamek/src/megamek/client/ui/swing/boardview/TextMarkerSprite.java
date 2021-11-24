@@ -15,7 +15,7 @@ public class TextMarkerSprite extends HexSprite {
     private String spriteText;
     private Color spriteColor;
 
-    public TextMarkerSprite(BoardView1 boardView1, Coords loc, String text, Color color) {
+    public TextMarkerSprite(BoardView boardView1, Coords loc, String text, Color color) {
         super(boardView1, loc);
         spriteText = text;
         spriteColor = color;

@@ -88,8 +88,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 if (isIgnoringEvents()) {
                     return;
                 }
-                if (clientgui.bv.getChatterBoxActive()) {
-                    clientgui.bv.setChatterBoxActive(false);
+                if (clientgui.getBoardView().getChatterBoxActive()) {
+                    clientgui.getBoardView().setChatterBoxActive(false);
                     clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
                     // Users can draw movement envelope during the movement phase 

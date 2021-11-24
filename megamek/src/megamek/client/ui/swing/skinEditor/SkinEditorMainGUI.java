@@ -14,71 +14,30 @@
  */
 package megamek.client.ui.swing.skinEditor;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.IOException;
-import java.util.*;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.CommonMenuBar;
-import megamek.client.ui.swing.ConfirmDialog;
-import megamek.client.ui.swing.DeployMinefieldDisplay;
-import megamek.client.ui.swing.DeploymentDisplay;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.PhysicalDisplay;
-import megamek.client.ui.swing.ReportDisplay;
-import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
-import megamek.client.ui.swing.StatusBarPhaseDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
-import megamek.client.ui.swing.UnitDetailPane;
-import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IPlayer;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardViewListener,
         ActionListener, ComponentListener {
@@ -95,7 +54,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
 
-    private BoardView1 bv;
+    private BoardView bv;
     private Component bvc;
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
@@ -173,7 +132,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         }
     }
 
-    public IBoardView getBoardView() {
+    public BoardView getBoardView() {
         return bv;
     }
 
@@ -248,7 +207,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         testEntity.setGame(game);
 
         try {
-            bv = new BoardView1(game, null, null);
+            bv = new BoardView(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -288,7 +247,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         try {
             // Create the board viewer.
-            bv = new BoardView1(game, null, null);
+            bv = new BoardView(game, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");

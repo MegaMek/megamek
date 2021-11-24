@@ -357,7 +357,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             @Override
             public boolean shouldPerformAction() {
                 if (!clientgui.getClient().isMyTurn()
-                        || clientgui.bv.getChatterBoxActive()
+                        || clientgui.getBoardView().getChatterBoxActive()
                         || display.isIgnoringEvents()
                         || !display.isVisible()) {
                     return false;
@@ -371,8 +371,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             @Override
             public void performAction() {
                 if (!thisKeyPressed) {
-                    clientgui.bv.showAllDeployment = !clientgui.bv.showAllDeployment;
-                    clientgui.bv.repaint();
+                    clientgui.getBoardView().showAllDeployment = !clientgui.getBoardView().showAllDeployment;
+                    clientgui.getBoardView().repaint();
                 }
                 thisKeyPressed = true;
             }

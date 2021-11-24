@@ -20,11 +20,11 @@ class CursorSprite extends Sprite {
 
     private Coords hexLoc;
 
-    public CursorSprite(BoardView1 boardView1, final Color color) {
+    public CursorSprite(BoardView boardView1, final Color color) {
         super(boardView1);
         this.color = color;
-        bounds = new Rectangle(BoardView1.hexPoly.getBounds().width + 1,
-                BoardView1.hexPoly.getBounds().height + 1);
+        bounds = new Rectangle(BoardView.hexPoly.getBounds().width + 1,
+                BoardView.hexPoly.getBounds().height + 1);
         image = null;
 
         // start offscreen
@@ -49,7 +49,7 @@ class CursorSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
         // draw attack poly
         graph.setColor(color);
-        graph.drawPolygon(BoardView1.hexPoly);
+        graph.drawPolygon(BoardView.hexPoly);
 
         // create final image
         image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
@@ -74,8 +74,8 @@ class CursorSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(BoardView1.hexPoly.getBounds().width + 1,
-                BoardView1.hexPoly.getBounds().height + 1);
+        bounds = new Rectangle(BoardView.hexPoly.getBounds().width + 1,
+                BoardView.hexPoly.getBounds().height + 1);
         bounds.setLocation(bv.getHexLocation(hexLoc));
 
         return bounds;

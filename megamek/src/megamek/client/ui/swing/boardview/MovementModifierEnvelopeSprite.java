@@ -36,7 +36,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
      * @param boardView1
      * @param mp
      */
-    public MovementModifierEnvelopeSprite(BoardView1 boardView1, MovePath mp) {
+    public MovementModifierEnvelopeSprite(BoardView boardView1, MovePath mp) {
         super(boardView1, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());

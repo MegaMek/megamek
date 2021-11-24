@@ -15,69 +15,6 @@
 */
 package megamek.client.ui.swing.boardview;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Composite;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Toolkit;
-import java.awt.Transparency;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
-import java.awt.image.Kernel;
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneLayout;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalTheme;
-
 import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -86,7 +23,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
-import megamek.client.ui.IBoardView;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -104,70 +41,14 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.ArtilleryTracker;
-import megamek.common.Building;
+import megamek.common.*;
 import megamek.common.Building.BasementType;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.ECMInfo;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Flare;
-import megamek.common.FuelTank;
-import megamek.common.GunEmplacement;
-import megamek.common.IBoard;
-import megamek.common.Game;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.KeyBindParser;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.PlanetaryConditions;
-import megamek.common.QuadMech;
-import megamek.common.SpecialHexDisplay;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
-import megamek.common.UnitLocation;
-import megamek.common.WeaponType;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.PhysicalAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.IlluminationLevel;
-import megamek.common.event.BoardEvent;
-import megamek.common.event.BoardListener;
-import megamek.common.event.GameBoardChangeEvent;
-import megamek.common.event.GameBoardNewEvent;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.*;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -181,11 +62,30 @@ import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.image.*;
+import java.io.File;
+import java.util.List;
+import java.util.Queue;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView1 extends JPanel implements IBoardView, Scrollable,
-        BoardListener, MouseListener, IPreferenceChangeListener {
+public class BoardView extends JPanel implements Scrollable, BoardListener, MouseListener,
+        MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -516,7 +416,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(final Game game, final MegaMekController controller, ClientGUI clientgui)
+    public BoardView(final Game game, final MegaMekController controller, ClientGUI clientgui)
             throws java.io.IOException {
         this.game = game;
         this.clientgui = clientgui;
@@ -752,7 +652,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         FILENAME_RADAR_BLIP_IMAGE).toString());
     }
 
-    private void registerKeyboardCommands(final BoardView1 bv,
+    private void registerKeyboardCommands(final BoardView bv,
             final MegaMekController controller) {
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
@@ -2258,6 +2158,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         graph.drawString(string, x, y);
     }
 
+    /**
+     * This method creates an image the size of the entire board (all mapsheets), draws the hexes
+     * onto it, and returns that image.
+     *
+     * @param ignoreUnits If true, no units are drawn, only the board
+     * @param useBaseZoom If true, save the image at zoom = 1, otherwise at the
+     * current board zoom.
+     * @return the image of the whole board
+     */
     public BufferedImage getEntireBoardImage(boolean ignoreUnits, boolean useBaseZoom) {
         // Set zoom to base, so we get a consist board image
 
@@ -4254,10 +4163,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         flyOverSprites.add(new FlyOverSprite(this, e));
     }
 
+    /**
+     * @param c the given coords
+     * @return any entities flying over the given coords
+     */
     public List<Entity> getEntitiesFlyingOver(Coords c) {
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
         for (FlyOverSprite fsprite : flyOverSprites) {
-            //Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
+            // Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
             if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
                 entities.add(fsprite.getEntity());
             }
@@ -4963,6 +4876,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
+    /**
+     * @param c The new colour of the highlight cursor.
+     */
     public void setHighlightColor(Color c) {
         highlightSprite.setColor(c);
         highlightSprite.prepare();
@@ -5195,11 +5111,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
             if (b != null) {
-                b.removeBoardListener(BoardView1.this);
+                b.removeBoardListener(BoardView.this);
             }
             b = e.getNewBoard();
             if (b != null) {
-                b.addBoardListener(BoardView1.this);
+                b.addBoardListener(BoardView.this);
             }
             boardBackgrounds.clear();
             if (b.hasBoardBackground()) {
@@ -5356,6 +5272,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
+    /**
+     * @param e the BoardView's currently selected entity
+     */
     public synchronized void selectEntity(Entity e) {
         selectedEntity = e;
         checkFoVHexImageCacheClear();

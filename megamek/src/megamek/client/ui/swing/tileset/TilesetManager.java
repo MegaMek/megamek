@@ -34,7 +34,7 @@ import java.io.IOException;
 import megamek.MegaMek;
 import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tileset.MechTileset.MechEntry;
 import megamek.client.ui.swing.util.*;
 import megamek.common.*;
@@ -74,7 +74,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public static final int ARTILLERY_INCOMING = 2;
 
     // component to load images to
-    private BoardView1 boardview;
+    private BoardView boardview;
 
     // keep tracking of loading images
     private MediaTracker tracker;
@@ -111,7 +111,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private Map<Color, Image> ecmStaticImages = new HashMap<>();
 
     /** Creates new TilesetManager. */
-    public TilesetManager(BoardView1 bv) throws IOException {
+    public TilesetManager(BoardView bv) throws IOException {
         boardview = bv;
         hexTileset = new HexTileset(boardview.game);
         tracker = new MediaTracker(boardview);

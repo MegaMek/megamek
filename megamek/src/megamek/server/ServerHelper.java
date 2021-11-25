@@ -627,7 +627,7 @@ public class ServerHelper {
         }
 
         if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
-                && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
+                && ((game.getTurnIndex() + 1) < game.getTurnVector().size())) {
             for (Integer playerId : reportPlayers) {
                 server.send(playerId, server.createSpecialReportPacket());
             }

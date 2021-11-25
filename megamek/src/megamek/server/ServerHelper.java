@@ -550,7 +550,7 @@ public class ServerHelper {
             return false;
         }
        
-        int probeRange = 100;//detector.getBAPRange();
+        int probeRange = detector.getBAPRange();
         
         // if no probe, save ourselves a few loops
         if (probeRange <= 0) {

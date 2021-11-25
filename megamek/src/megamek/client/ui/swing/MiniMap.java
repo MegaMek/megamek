@@ -20,28 +20,17 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.*;
-import static megamek.common.Terrains.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import megamek.client.Client;
-import megamek.client.event.*;
-import megamek.client.ui.*;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.minimap.MiniMapUnitSymbols;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -49,6 +38,24 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.List;
+import java.util.*;
+
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.common.Terrains.*;
 
 /**
  * Obviously, displays the map in scaled-down size. 
@@ -92,7 +99,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     private BufferedImage mapImage;
-    private final IBoardView bv;
+    private final BoardView bv;
     private final Game game;
     private IBoard board;
     private final JDialog dialog;
@@ -137,7 +144,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * @param game A game containing at least the board, but not necessarily anything else
      * @param cg Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable IBoardView bv, Game game, @Nullable ClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
         result.setAutoRequestFocus(false);
         result.setFocusable(false);
@@ -173,7 +180,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * Returns a minimap image of the given board at the given zoom index. The 
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, IBoardView bv, int zoom) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < 0) || (zoom > MAX_ZOOM)) {
@@ -197,7 +204,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
      * used to create a snapshot image. When a boardview is given, the visible area is shown.
      */
-    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable IBoardView bview, @Nullable ClientGUI cg) {
+    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;

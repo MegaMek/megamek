@@ -182,7 +182,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()
                                 || !butDone.isEnabled()) {
@@ -205,7 +205,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -227,7 +227,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -250,7 +250,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -273,7 +273,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()
                                 || !buttons.get(FiringCommand.FIRE_FIRE)
@@ -297,7 +297,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -319,7 +319,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.isProcessingPointblankShot()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -341,7 +341,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -363,7 +363,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
-                                || clientgui.bv.getChatterBoxActive()
+                                || clientgui.getBoardView().getChatterBoxActive()
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
@@ -384,7 +384,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (clientgui.bv.getChatterBoxActive()
+                        if (clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -457,7 +457,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
             refreshAll();
 
-            clientgui.bv.centerOnHex(ce().getPosition());
+            clientgui.getBoardView().centerOnHex(ce().getPosition());
 
             // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing()
@@ -476,9 +476,10 @@ public class PointblankShotDisplay extends FiringDisplay implements
     /**
      * Does turn start stuff
      */
+    @Override
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
-        clientgui.bv.clearFieldofF();
+        clientgui.getBoardView().clearFieldofF();
 
         butDone.setEnabled(true);
         if (numButtonGroups > 1)
@@ -506,10 +507,10 @@ public class PointblankShotDisplay extends FiringDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.bv.clearMovementData();
-        clientgui.bv.clearFiringSolutionData();
-        clientgui.bv.clearStrafingCoords();
-        clientgui.bv.clearFieldofF();
+        clientgui.getBoardView().clearMovementData();
+        clientgui.getBoardView().clearFiringSolutionData();
+        clientgui.getBoardView().clearStrafingCoords();
+        clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
@@ -1077,7 +1078,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
 
         if (clientgui.isProcessingPointblankShot() && (ce() != null)) {
             clientgui.maybeShowUnitDisplay();
-            clientgui.bv.centerOnHex(ce().getPosition());
+            clientgui.getBoardView().centerOnHex(ce().getPosition());
         }
     }
 
@@ -1095,7 +1096,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
             clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-                clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.getBoardView().centerOnHex(e.getPosition());
             }
         }
     }

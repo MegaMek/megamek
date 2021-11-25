@@ -80,8 +80,8 @@ class EntitySprite extends Sprite {
             "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
             "Fighting", "Fire", "Suport", "Reconnaissance", "Fast");
     
-    public EntitySprite(BoardView1 boardView1, final Entity entity,
-            int secondaryPos, Image radarBlipImage) {
+    public EntitySprite(BoardView boardView1, final Entity entity,
+                        int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
@@ -335,7 +335,7 @@ class EntitySprite extends Sprite {
                     }
 
                 } else {
-                    BoardView1.drawCenteredText(g, curStatus.status, 
+                    BoardView.drawCenteredText(g, curStatus.status,
                             stR.x+stR.height*0.5f-0.5f, stR.y+stR.height*0.5f-2, curStatus.color, false);
                 }
             }
@@ -348,7 +348,7 @@ class EntitySprite extends Sprite {
             g.setFont(bigFont);
             Point pos = new Point(bv.hex_size.width/2, bv.hex_size.height/2);
             bv.drawTextShadow(g, "!", pos, bigFont);
-            BoardView1.drawCenteredText(g, "!", pos, Color.RED, false);
+            BoardView.drawCenteredText(g, "!", pos, Color.RED, false);
             return;
         }
         
@@ -359,7 +359,7 @@ class EntitySprite extends Sprite {
         for (Status curStatus: statusStrings) {
             if (!curStatus.small) { // Critical status
                 bv.drawTextShadow(g, curStatus.status, new Point(bv.hex_size.width/2,y), boldFont);
-                BoardView1.drawCenteredText(g, curStatus.status, bv.hex_size.width/2, y, curStatus.color, false);
+                BoardView.drawCenteredText(g, curStatus.status, bv.hex_size.width/2, y, curStatus.color, false);
                 y -= 14*bv.scale;
             }
         }
@@ -636,7 +636,7 @@ class EntitySprite extends Sprite {
                 if (isSelected) {
                     textColor = guip.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
                 }
-                BoardView1.drawCenteredText(graph, getAdjShortName(),
+                BoardView.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,
                         labelRect.y + labelRect.height / 2 - 1, textColor,
                         (entity.isDone() && !onlyDetectedBySensors()));

@@ -48,8 +48,8 @@ class StepSprite extends Sprite {
     private boolean isLastStep;
     private Image baseScaleImage;
 
-    public StepSprite(BoardView1 boardView1, final MoveStep step,
-               boolean isLastStep) {
+    public StepSprite(BoardView boardView1, final MoveStep step,
+                      boolean isLastStep) {
         super(boardView1);
         this.step = step;
         this.isLastStep = isLastStep;
@@ -75,7 +75,7 @@ class StepSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
+        Image tempImage = new BufferedImage(BoardView.HEX_W, BoardView.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
         Graphics2D g2D = (Graphics2D) graph;
@@ -84,7 +84,7 @@ class StepSprite extends Sprite {
 
         // fill with key color
         graph.setColor(new Color(0, 0, 0, 0));
-        graph.fillRect(0, 0, BoardView1.HEX_W, BoardView1.HEX_H);
+        graph.fillRect(0, 0, BoardView.HEX_W, BoardView.HEX_H);
 
         // setup some variables
         Shape moveArrow = bv.movementPolys[step.getFacing()];

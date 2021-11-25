@@ -261,7 +261,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         clientgui.mechD.displayEntity(entity);
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
 
-        clientgui.bv.centerOnHex(entity.getPosition());
+        clientgui.getBoardView().centerOnHex(entity.getPosition());
 
         // does it have a club?
         String clubLabel = null;
@@ -332,7 +332,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.bv.clearMovementData();
+        clientgui.getBoardView().clearMovementData();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
@@ -576,7 +576,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
-        clientgui.bv.addAttack(saa);
+        clientgui.getBoardView().addAttack(saa);
 
         // and prevent duplicates
         setSearchlightEnabled(false);
@@ -1729,7 +1729,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
             clientgui.mechD.displayEntity(e);
             if (e.isDeployed()) {
-                clientgui.bv.centerOnHex(e.getPosition());
+                clientgui.getBoardView().centerOnHex(e.getPosition());
             }
         }
     }

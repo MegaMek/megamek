@@ -18,7 +18,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.Entity;
@@ -421,7 +421,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
-        store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView1.HEX_DIAG);
+        store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView.HEX_DIAG);
         store.setDefault(SHOW_WPS_IN_TT, true);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, true);
         store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);

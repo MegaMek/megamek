@@ -16,13 +16,13 @@ import java.awt.image.ImageObserver;
  */
 abstract class Sprite implements ImageObserver, Comparable<Sprite> {
 
-    protected final BoardView1 bv;
+    protected final BoardView bv;
     protected Rectangle bounds;
     protected Image image;
     // Set this to true if you don't want the sprite to be drawn.
     protected boolean hidden = false;
 
-    Sprite(BoardView1 boardView1) {
+    Sprite(BoardView boardView1) {
         bv = boardView1;
     }
 

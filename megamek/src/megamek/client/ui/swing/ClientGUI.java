@@ -14,31 +14,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.Image;
-import java.awt.SystemColor;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
@@ -49,12 +24,11 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.lobby.ChatLounge;
@@ -75,8 +49,26 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientGUI extends JPanel implements BoardViewListener,
                     ActionListener, ComponentListener, IPreferenceChangeListener {
@@ -196,7 +188,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public MegaMekController controller;
     private ChatterBox cb;
     public ChatterBox2 cb2;
-    public BoardView1 bv;
+    private BoardView bv;
     private Component bvc;
     private UnitDetailPane unitDetailPane;
     public UnitDisplay mechD;
@@ -304,7 +296,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         add(panDisplay, BorderLayout.CENTER);
     }
 
-    public IBoardView getBoardView() {
+    public BoardView getBoardView() {
         return bv;
     }
 
@@ -410,7 +402,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.getGame(), controller, this);
+            bv = new BoardView(client.getGame(), controller, this);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");

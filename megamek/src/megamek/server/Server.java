@@ -563,8 +563,7 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum
-                .hasMoreElements(); ) {
+        for (Enumeration<IConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
             IConnection conn = connEnum.nextElement();
             conn.close();
         }
@@ -592,7 +591,8 @@ public class Server implements Runnable {
         if (serverBrowserUpdateTimer != null) {
             serverBrowserUpdateTimer.cancel();
         }
-        if (!metaServerUrl.equals("")) {
+
+        if (!metaServerUrl.isBlank()) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 
@@ -9820,26 +9820,24 @@ public class Server implements Runnable {
                 } catch (InterruptedException e) {
                     return 0;
                 }
+
                 // Get the packet, if there's something to get
-                ReceivedPacket rp;
-                if (cfrPacketQueue.size() > 0) {
-                    rp = cfrPacketQueue.poll();
-                    int cfrType = rp.packet.getIntValue(0);
-                    // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
-                        MegaMek.getLogger().error("Expected a " 
-                                + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
-                        continue;
-                    }
-                    // Check packet came from right ID
-                    if (rp.connId != playerId) {
-                        MegaMek.getLogger().error("Expected a " 
-                                + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
-                                + " but instead it came from player " + rp.connId);
-                        continue;
-                    }
-                    return (int)rp.packet.getData()[1];
-                } // If no packets, wait again
+                ReceivedPacket rp = cfrPacketQueue.poll();
+                int cfrType = rp.packet.getIntValue(0);
+                // Make sure we got the right type of response
+                if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
+                    MegaMek.getLogger().error("Expected a "
+                            + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet, " + "received: " + cfrType);
+                    continue;
+                }
+                // Check packet came from right ID
+                if (rp.connId != playerId) {
+                    MegaMek.getLogger().error("Expected a "
+                            + "COMMAND_CFR_TELEGUIDED_TARGET CFR packet " + "from player  " + playerId
+                            + " but instead it came from player " + rp.connId);
+                    continue;
+                }
+                return (int) rp.packet.getData()[1];
             }
         }
     }
@@ -9857,24 +9855,22 @@ public class Server implements Runnable {
                 }
                 // Get the packet, if there's something to get
                 ReceivedPacket rp;
-                if (cfrPacketQueue.size() > 0) {
-                    rp = cfrPacketQueue.poll();
-                    int cfrType = rp.packet.getIntValue(0);
-                    // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
-                        MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, "
-                                        + "received: " + cfrType);
-                        continue;
-                    }
-                    // Check packet came from right ID
-                    if (rp.connId != playerId) {
-                        MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet "
-                                        + "from player  " + playerId
-                                        + " but instead it came from player " + rp.connId);
-                        continue;
-                    }
-                    return (int) rp.packet.getData()[1];
+                rp = cfrPacketQueue.poll();
+                int cfrType = rp.packet.getIntValue(0);
+                // Make sure we got the right type of response
+                if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
+                    MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet, "
+                                    + "received: " + cfrType);
+                    continue;
                 }
+                // Check packet came from right ID
+                if (rp.connId != playerId) {
+                    MegaMek.getLogger().error("Expected a " + "COMMAND_CFR_TAG_TARGET CFR packet "
+                                    + "from player  " + playerId
+                                    + " but instead it came from player " + rp.connId);
+                    continue;
+                }
+                return (int) rp.packet.getData()[1];
             }
         }
     }
@@ -10198,8 +10194,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -10210,8 +10205,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, duration);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
     }
 
@@ -10222,8 +10216,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -10239,8 +10232,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -10256,8 +10248,7 @@ public class Server implements Runnable {
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
             hex = game.getBoard().getHex(tempcoords);
-            hex.addTerrain(new Terrain(
-                    Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
+            hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -10274,8 +10265,7 @@ public class Server implements Runnable {
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
         IHex hex = game.getBoard().getHex(coords);
-        hex.addTerrain(new Terrain(
-                Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+        hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -10291,8 +10281,7 @@ public class Server implements Runnable {
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
             hex = game.getBoard().getHex(tempcoords);
-            hex.addTerrain(new Terrain(
-                    Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
+            hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -10379,11 +10368,9 @@ public class Server implements Runnable {
         int nscreens = h.terrainLevel(Terrains.SCREEN);
         if (nscreens > 0) {
             h.removeTerrain(Terrains.SCREEN);
-            h.addTerrain(new Terrain(
-                    Terrains.SCREEN, nscreens + 1));
+            h.addTerrain(new Terrain(Terrains.SCREEN, nscreens + 1));
         } else {
-            h.addTerrain(new Terrain(
-                    Terrains.SCREEN, 1));
+            h.addTerrain(new Terrain(Terrains.SCREEN, 1));
         }
         sendChangedHex(coords);
     }
@@ -14632,8 +14619,7 @@ public class Server implements Runnable {
         // Is there a blown off arm in the hex?
         if (curHex.terrainLevel(Terrains.ARMS) > 0) {
             clubType = EquipmentType.get(EquipmentTypeLookup.LIMB_CLUB);
-            curHex.addTerrain(new Terrain(
-                    Terrains.ARMS, curHex.terrainLevel(Terrains.ARMS) - 1));
+            curHex.addTerrain(new Terrain(Terrains.ARMS, curHex.terrainLevel(Terrains.ARMS) - 1));
             sendChangedHex(entity.getPosition());
             r = new Report(3035);
             r.subject = entity.getId();
@@ -14643,8 +14629,7 @@ public class Server implements Runnable {
         // Is there a blown off leg in the hex?
         else if (curHex.terrainLevel(Terrains.LEGS) > 0) {
             clubType = EquipmentType.get(EquipmentTypeLookup.LIMB_CLUB);
-            curHex.addTerrain(new Terrain(
-                    Terrains.LEGS, curHex.terrainLevel(Terrains.LEGS) - 1));
+            curHex.addTerrain(new Terrain(Terrains.LEGS, curHex.terrainLevel(Terrains.LEGS) - 1));
             sendChangedHex(entity.getPosition());
             r = new Report(3040);
             r.subject = entity.getId();
@@ -14910,19 +14895,16 @@ public class Server implements Runnable {
             if (tf <= 0) {
                 h.removeTerrain(Terrains.WOODS);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                h.addTerrain(new Terrain(
-                        Terrains.ROUGH, 1));
+                h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 // light converted to rough
                 r = new Report(3090, reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
                 h.removeTerrain(Terrains.WOODS);
-                h.addTerrain(new Terrain(
-                        Terrains.WOODS, 1));
+                h.addTerrain(new Terrain(Terrains.WOODS, 1));
                 if (folEl != 1) {
-                    h.addTerrain(new Terrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 woods = h.getTerrain(Terrains.WOODS);
                 // heavy converted to light
@@ -14930,12 +14912,10 @@ public class Server implements Runnable {
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
-                h.removeTerrain(Terrains.WOODS);
-                h.addTerrain(new Terrain(
+                h.removeTerrain(Terrains.WOODS);h.addTerrain(new Terrain(
                         Terrains.WOODS, 2));
                 if (folEl != 1) {
-                    h.addTerrain(new Terrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 woods = h.getTerrain(Terrains.WOODS);
                 // ultra heavy converted to heavy
@@ -14952,19 +14932,16 @@ public class Server implements Runnable {
             if (tf < 0) {
                 h.removeTerrain(Terrains.JUNGLE);
                 h.removeTerrain(Terrains.FOLIAGE_ELEV);
-                h.addTerrain(new Terrain(
-                        Terrains.ROUGH, 1));
+                h.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 // light converted to rough
                 r = new Report(3091, reportType);
                 r.subject = entityId;
                 vPhaseReport.add(r);
             } else if ((tf <= 50) && (level > 1)) {
                 h.removeTerrain(Terrains.JUNGLE);
-                h.addTerrain(new Terrain(
-                        Terrains.JUNGLE, 1));
+                h.addTerrain(new Terrain(Terrains.JUNGLE, 1));
                 if (folEl != 1) {
-                    h.addTerrain(new Terrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // heavy converted to light
@@ -14973,11 +14950,9 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             } else if ((tf <= 90) && (level > 2)) {
                 h.removeTerrain(Terrains.JUNGLE);
-                h.addTerrain(new Terrain(
-                        Terrains.JUNGLE, 2));
+                h.addTerrain(new Terrain(Terrains.JUNGLE, 2));
                 if (folEl != 1) {
-                    h.addTerrain(new Terrain(
-                            Terrains.FOLIAGE_ELEV, 2));
+                    h.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
                 }
                 jungle = h.getTerrain(Terrains.JUNGLE);
                 // ultra heavy converted to heavy
